@@ -37,9 +37,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net">
-      <HintPath>..\..\..\Binaries\log4net\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Binaries\SharePoint\Microsoft.Office.Server.Search.dll</HintPath>
@@ -113,10 +110,6 @@
     <Compile Include="Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
-    <Compile Include="Logging\Log4Net\FixedUdpAppender.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetLogger.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetLoggerFactory.cs" />
-    <Compile Include="Logging\Log4Net\SpecialFolderRollingFileAppender.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="Logging\TraceLoggerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
