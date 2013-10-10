@@ -36,6 +36,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation">
+      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.dll</HintPath>
@@ -52,6 +58,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -98,10 +105,6 @@
     <Compile Include="Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
-    <Compile Include="Logging\Log4Net\FixedUdpAppender.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetLogger.cs" />
-    <Compile Include="Logging\Log4Net\Log4NetLoggerFactory.cs" />
-    <Compile Include="Logging\Log4Net\SpecialFolderRollingFileAppender.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="Logging\TraceLoggerFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
