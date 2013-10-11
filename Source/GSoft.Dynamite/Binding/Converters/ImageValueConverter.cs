@@ -1,7 +1,6 @@
-using GSoft.Dynamite.Sharepoint2013.ValueTypes;
-using Microsoft.SharePoint.Publishing.Fields;
+using GSoft.Dynamite.Sharepoint.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding.Converters
+namespace GSoft.Dynamite.Sharepoint.Binding.Converters
 {
     /// <summary>
     /// Conversion class for image values.

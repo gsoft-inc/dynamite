@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Sharepoint.Binding
 {
     /// <summary>
     /// The binder for SharePoint entities.

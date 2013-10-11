@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using GSoft.Dynamite.Sharepoint2013.Extensions;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.Repositories
+namespace GSoft.Dynamite.Sharepoint.Repositories
 {
     /// <summary>
     /// Class to interact with folders

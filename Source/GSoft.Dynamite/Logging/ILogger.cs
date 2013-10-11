@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace GSoft.Dynamite.Sharepoint2013.Logging
+namespace GSoft.Dynamite.Sharepoint.Logging
 {
     /// <summary>
     /// Defines the standard logging interface.

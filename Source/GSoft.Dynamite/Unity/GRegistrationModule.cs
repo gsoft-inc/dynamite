@@ -1,11 +1,11 @@
-﻿using GSoft.Dynamite.Sharepoint2013.Binding;
-using GSoft.Dynamite.Sharepoint2013.Logging;
-using GSoft.Dynamite.Sharepoint2013.Repositories;
-using GSoft.Dynamite.Sharepoint2013.Taxonomy;
-using GSoft.Dynamite.Sharepoint2013.Utils;
+﻿using GSoft.Dynamite.Sharepoint.Binding;
+using GSoft.Dynamite.Sharepoint.Logging;
+using GSoft.Dynamite.Sharepoint.Repositories;
+using GSoft.Dynamite.Sharepoint.Taxonomy;
+using GSoft.Dynamite.Sharepoint.Utils;
 using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Sharepoint2013.Unity
+namespace GSoft.Dynamite.Sharepoint.Unity
 {
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components

@@ -7,8 +7,8 @@
     <ProjectGuid>{0A3EB4A1-3004-4F23-B046-6EF2E20F53A4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GSoft.Dynamite.Sharepoint2013</RootNamespace>
-    <AssemblyName>GSoft.Dynamite.Sharepoint2013</AssemblyName>
+    <RootNamespace>GSoft.Dynamite.Sharepoint</RootNamespace>
+    <AssemblyName>GSoft.Dynamite.Sharepoint</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

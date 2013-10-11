@@ -15,12 +15,8 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Utilities;
-using Microsoft.SharePoint.WebPartPages;
-using WebPart = System.Web.UI.WebControls.WebParts.WebPart;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Sharepoint.Utils
 {
     /// <summary>
     /// Used to solve the problem of issues with document types deploying without the usage of the document set welcome page.

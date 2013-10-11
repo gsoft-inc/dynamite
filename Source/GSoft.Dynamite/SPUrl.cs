@@ -1,8 +1,6 @@
 ﻿using System;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Sharepoint2013
+namespace GSoft.Dynamite.Sharepoint
 {
     /// <summary>
     /// A class for encapsulating a SharePoint URL.

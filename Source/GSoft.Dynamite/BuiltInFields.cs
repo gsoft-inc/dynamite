@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using GSoft.Dynamite.Sharepoint2013.Utils;
-using Microsoft.SharePoint;
+using GSoft.Dynamite.Sharepoint.Utils;
 
-namespace GSoft.Dynamite.Sharepoint2013
+namespace GSoft.Dynamite.Sharepoint
 {
     /// <summary>
     /// Site columns constants for built-in (OOTB) content types

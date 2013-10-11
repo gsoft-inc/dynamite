@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Sharepoint.Utils
 {
     /// <summary>
     /// A comparer class that uses a delegate.

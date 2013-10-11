@@ -1,7 +1,7 @@
 ﻿using System;
-using GSoft.Dynamite.Sharepoint2013.Binding.Converters;
+using GSoft.Dynamite.Sharepoint.Binding.Converters;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Sharepoint.Binding
 {
     /// <summary>
     /// A projected property from a Lookup value.

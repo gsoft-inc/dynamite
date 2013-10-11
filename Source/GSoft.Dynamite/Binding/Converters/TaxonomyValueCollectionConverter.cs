@@ -1,8 +1,7 @@
 ﻿using System.Linq;
-using GSoft.Dynamite.Sharepoint2013.ValueTypes;
-using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Sharepoint.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding.Converters
+namespace GSoft.Dynamite.Sharepoint.Binding.Converters
 {
     /// <summary>
     /// The converter for multi-value taxonomy fields.

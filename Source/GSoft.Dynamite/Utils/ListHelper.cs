@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Sharepoint.Utils
 {
     /// <summary>
     /// Helper class to manage lists.

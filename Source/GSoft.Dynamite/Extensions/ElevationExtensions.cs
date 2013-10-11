@@ -1,7 +1,6 @@
 ﻿using System;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.Extensions
+namespace GSoft.Dynamite.Sharepoint.Extensions
 {
     /// <summary>
     /// Extensions for SPSite and SPWeb that elevate privileges.

@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Sharepoint2013.Binding
+﻿namespace GSoft.Dynamite.Sharepoint.Binding
 {
     /// <summary>
     /// The type of binding used in a bound Property.

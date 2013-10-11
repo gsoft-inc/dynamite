@@ -1,6 +1,4 @@
-using Microsoft.SharePoint;
-
-namespace GSoft.Dynamite.Sharepoint2013.ValueTypes
+namespace GSoft.Dynamite.Sharepoint.ValueTypes
 {
     /// <summary>
     /// An entity type for a user.

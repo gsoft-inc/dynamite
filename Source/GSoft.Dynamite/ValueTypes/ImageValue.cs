@@ -1,6 +1,4 @@
-using Microsoft.SharePoint.Publishing.Fields;
-
-namespace GSoft.Dynamite.Sharepoint2013.ValueTypes
+namespace GSoft.Dynamite.Sharepoint.ValueTypes
 {
     /// <summary>
     /// An image value entity.

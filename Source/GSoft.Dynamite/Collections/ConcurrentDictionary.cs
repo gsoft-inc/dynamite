@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Threading;
 
-namespace GSoft.Dynamite.Sharepoint2013.Collections
+namespace GSoft.Dynamite.Sharepoint.Collections
 {
     /// <summary>
     /// A simple implementation of a ConcurrentDictionary using a ReaderWriter lock.

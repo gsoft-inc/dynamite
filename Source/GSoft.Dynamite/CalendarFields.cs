@@ -1,7 +1,7 @@
 ﻿using System;
-using GSoft.Dynamite.Sharepoint2013.Utils;
+using GSoft.Dynamite.Sharepoint.Utils;
 
-namespace GSoft.Dynamite.Sharepoint2013
+namespace GSoft.Dynamite.Sharepoint
 {
     /// <summary>
     /// Site columns constants for (OOTB) event content types

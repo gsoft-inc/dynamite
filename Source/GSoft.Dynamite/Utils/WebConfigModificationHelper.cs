@@ -2,10 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Administration;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Sharepoint.Utils
 {
     /// <summary>
     /// Helper class to add, clean, remove WebConfig modifications programmatically

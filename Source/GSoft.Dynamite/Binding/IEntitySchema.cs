@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Sharepoint.Binding
 {
     /// <summary>
     /// A schema to apply on entities.

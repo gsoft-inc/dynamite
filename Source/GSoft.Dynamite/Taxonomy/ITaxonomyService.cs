@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using GSoft.Dynamite.Sharepoint2013.ValueTypes;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Sharepoint.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint2013.Taxonomy
+namespace GSoft.Dynamite.Sharepoint.Taxonomy
 {
     /// <summary>
     /// Interface for interacting with the Managed Metadata Service

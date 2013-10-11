@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using GSoft.Dynamite.Sharepoint2013.Utils;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Sharepoint.Utils;
 
-namespace GSoft.Dynamite.Sharepoint2013.Repositories
+namespace GSoft.Dynamite.Sharepoint.Repositories
 {
     /// <summary>
     /// Utility to find lists

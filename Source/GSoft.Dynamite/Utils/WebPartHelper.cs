@@ -2,10 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.WebPartPages;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Sharepoint.Utils
 {
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
