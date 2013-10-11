@@ -4,14 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite", "GSoft.Dynamite.csproj", "{0A3EB4A1-3004-4F23-B046-6EF2E20F53A4}"
 EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs.gsoft-group.com/tfs/gprojectcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = GSoft.Dynamite.csproj
-		SccLocalPath1 = .
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
