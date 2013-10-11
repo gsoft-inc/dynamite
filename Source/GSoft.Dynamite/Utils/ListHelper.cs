@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace GSoft.Dynamite.Sharepoint.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Helper class to manage lists.

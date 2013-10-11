@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Sharepoint
+namespace GSoft.Dynamite
 {
     /// <summary>
     /// A class for encapsulating a SharePoint URL.

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// An adapter class to convert a SPListItemVersion to an IDictionary&lt;string, object&gt;.

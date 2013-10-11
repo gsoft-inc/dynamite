@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace GSoft.Dynamite.Sharepoint.Repositories
+namespace GSoft.Dynamite.Repositories
 {
     /// <summary>
     /// Class to interact with folders

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace GSoft.Dynamite.Sharepoint.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// A helper class for dealing with the Multilanguage UI.

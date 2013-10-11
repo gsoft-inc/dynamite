@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// The schema for an entity.

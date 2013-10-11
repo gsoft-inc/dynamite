@@ -16,7 +16,7 @@ using System.Security.Permissions;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml;
 
-namespace GSoft.Dynamite.Sharepoint.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Used to solve the problem of issues with document types deploying without the usage of the document set welcome page.

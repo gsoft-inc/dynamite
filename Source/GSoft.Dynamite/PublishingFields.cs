@@ -1,7 +1,7 @@
 ﻿using System;
-using GSoft.Dynamite.Sharepoint.Utils;
+using GSoft.Dynamite.Utils;
 
-namespace GSoft.Dynamite.Sharepoint
+namespace GSoft.Dynamite
 {
     /// <summary>
     /// Site column constants for Publishing (OOTB) content types

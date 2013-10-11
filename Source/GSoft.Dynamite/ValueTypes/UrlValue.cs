@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace GSoft.Dynamite.Sharepoint.ValueTypes
+namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>
     /// A URL value entity.

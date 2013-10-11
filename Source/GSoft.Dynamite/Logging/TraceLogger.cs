@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Sharepoint.Logging
+﻿namespace GSoft.Dynamite.Logging
 {
     /// <summary>
     /// A logger that logs to SharePoint's ULS.

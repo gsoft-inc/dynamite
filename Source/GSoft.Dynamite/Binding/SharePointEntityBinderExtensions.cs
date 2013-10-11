@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// Extensions to the basic functionality of ISharePointEntityBinder

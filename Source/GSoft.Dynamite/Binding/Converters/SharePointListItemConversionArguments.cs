@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GSoft.Dynamite.Sharepoint.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// The arguments for a SharePoint conversion.

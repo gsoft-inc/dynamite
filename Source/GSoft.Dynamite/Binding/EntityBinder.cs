@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// The default entity binder class.

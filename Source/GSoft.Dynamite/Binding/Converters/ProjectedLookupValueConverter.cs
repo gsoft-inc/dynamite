@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace GSoft.Dynamite.Sharepoint.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// A converter for a projected Lookup value.

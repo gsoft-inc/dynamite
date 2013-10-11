@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Sharepoint.Binding
+﻿namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// Values that are loaded from a SharePoint list.

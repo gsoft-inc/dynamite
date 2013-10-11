@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using GSoft.Dynamite.Sharepoint.Binding.Converters;
-using GSoft.Dynamite.Sharepoint.ValueTypes;
+using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// The default entity binder for SharePoint.

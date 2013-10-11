@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Sharepoint.Extensions
+﻿namespace GSoft.Dynamite.Extensions
 {
     /// <summary>
     /// Extensions for the SPWeb type.

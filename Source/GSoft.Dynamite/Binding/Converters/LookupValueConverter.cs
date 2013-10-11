@@ -1,6 +1,6 @@
-using GSoft.Dynamite.Sharepoint.ValueTypes;
+using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// A converter for the Lookup type.

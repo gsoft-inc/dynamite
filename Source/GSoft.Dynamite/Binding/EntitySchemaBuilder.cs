@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using GSoft.Dynamite.Sharepoint.Collections;
+using GSoft.Dynamite.Collections;
 
-namespace GSoft.Dynamite.Sharepoint.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// The default builder for the schema.
