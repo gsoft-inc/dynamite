@@ -1,7 +1,6 @@
-﻿using GSoft.Dynamite.Sharepoint2013.ValueTypes;
-using Microsoft.SharePoint.Taxonomy;
+﻿using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// The converter for taxonomy fields.

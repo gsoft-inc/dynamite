@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using GSoft.Dynamite.Sharepoint2013.Extensions;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Helps in setting custom regional settings for users as they switch MUI.

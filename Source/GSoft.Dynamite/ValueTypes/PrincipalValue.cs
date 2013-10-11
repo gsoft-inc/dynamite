@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Sharepoint2013.ValueTypes
+namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>
     /// A SharePoint principal.

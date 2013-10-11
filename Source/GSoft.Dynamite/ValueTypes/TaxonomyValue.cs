@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Globalization;
-using Microsoft.SharePoint.Taxonomy;
 
-namespace GSoft.Dynamite.Sharepoint2013.ValueTypes
+namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>
     /// A taxonomy value.

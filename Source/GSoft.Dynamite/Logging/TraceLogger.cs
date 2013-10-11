@@ -1,6 +1,4 @@
-﻿using Microsoft.SharePoint.Administration;
-
-namespace GSoft.Dynamite.Sharepoint2013.Logging
+﻿namespace GSoft.Dynamite.Logging
 {
     /// <summary>
     /// A logger that logs to SharePoint's ULS.

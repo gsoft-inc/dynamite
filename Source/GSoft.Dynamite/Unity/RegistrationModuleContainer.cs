@@ -1,6 +1,6 @@
 ﻿using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Sharepoint2013.Unity
+namespace GSoft.Dynamite.Unity
 {
     /// <summary>
     /// Modularized Unity container

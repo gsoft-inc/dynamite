@@ -1,8 +1,7 @@
 using System.Globalization;
-using GSoft.Dynamite.Sharepoint2013.ValueTypes;
-using Microsoft.SharePoint;
+using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// The conversion class for a User.

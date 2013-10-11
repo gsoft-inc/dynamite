@@ -1,6 +1,6 @@
 using System;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// The interface for the schema builder.

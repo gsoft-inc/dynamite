@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Sharepoint2013.Logging
+namespace GSoft.Dynamite.Logging
 {
     /// <summary>
     /// The factory for Trace loggers.

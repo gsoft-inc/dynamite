@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// Details for an entity binding.

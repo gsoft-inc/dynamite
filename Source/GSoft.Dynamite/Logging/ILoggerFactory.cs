@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Sharepoint2013.Logging
+namespace GSoft.Dynamite.Logging
 {
     /// <summary>
     /// The standard interface for creating ILogger objects.

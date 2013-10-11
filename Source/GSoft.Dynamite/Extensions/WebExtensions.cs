@@ -1,7 +1,4 @@
-﻿using Microsoft.SharePoint;
-using Microsoft.SharePoint.Utilities;
-
-namespace GSoft.Dynamite.Sharepoint2013.Extensions
+﻿namespace GSoft.Dynamite.Extensions
 {
     /// <summary>
     /// Extensions for the SPWeb type.

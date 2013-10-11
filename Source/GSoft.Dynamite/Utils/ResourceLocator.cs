@@ -2,9 +2,8 @@
 using System.Globalization;
 using System.Resources;
 using System.Web;
-using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Locates resource objects from either AppGlobalResources or from 14/Resources

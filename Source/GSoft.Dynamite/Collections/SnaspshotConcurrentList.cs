@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace GSoft.Dynamite.Sharepoint2013.Collections
+namespace GSoft.Dynamite.Collections
 {
     /// <summary>
     /// A concurrent collection that will return a snapshot of itself when enumerating instead
