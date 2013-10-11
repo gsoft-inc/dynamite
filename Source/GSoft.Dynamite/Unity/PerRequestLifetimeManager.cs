@@ -2,7 +2,7 @@
 using System.Web;
 using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Sharepoint2013.Unity
+namespace GSoft.Dynamite.Unity
 {
     /// <summary>
     /// Pre-request lifetime manager. Only one instance of the class is used per HttpRequest.

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GSoft.Dynamite.Sharepoint2013.Utils;
+using GSoft.Dynamite.Utils;
 
-namespace GSoft.Dynamite.Sharepoint2013.Collections
+namespace GSoft.Dynamite.Collections
 {
     /// <summary>
     /// A list that maintains its elements in order.

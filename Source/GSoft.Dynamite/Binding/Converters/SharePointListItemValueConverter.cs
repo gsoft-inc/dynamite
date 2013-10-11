@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding.Converters
+namespace GSoft.Dynamite.Binding.Converters
 {
     /// <summary>
     /// A base class for SharePoint list item value conversions.

@@ -1,7 +1,7 @@
 using System;
-using GSoft.Dynamite.Sharepoint2013.Collections;
+using GSoft.Dynamite.Collections;
 
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// A cached schema builder.

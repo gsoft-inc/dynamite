@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace GSoft.Dynamite.Sharepoint2013
+namespace GSoft.Dynamite
 {
     /// <summary>
     /// A class representing a language.

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Defines the field info structure.

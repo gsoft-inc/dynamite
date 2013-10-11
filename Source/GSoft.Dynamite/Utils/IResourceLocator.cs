@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Abstraction for localization service

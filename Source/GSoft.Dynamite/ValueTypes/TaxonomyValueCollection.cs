@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using Microsoft.SharePoint.Taxonomy;
 
-namespace GSoft.Dynamite.Sharepoint2013.ValueTypes
+namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>
     /// Multiple taxonomy values.

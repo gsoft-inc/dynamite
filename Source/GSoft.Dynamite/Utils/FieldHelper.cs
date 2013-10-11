@@ -4,11 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using GSoft.Dynamite.Sharepoint2013.Logging;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Logging;
 
-namespace GSoft.Dynamite.Sharepoint2013.Utils
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Helper class for managing SP Fields.

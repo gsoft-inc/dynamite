@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
-namespace GSoft.Dynamite.Sharepoint2013.Collections
+namespace GSoft.Dynamite.Collections
 {
     /// <summary>
     /// A list that supports synchronized reading and writing.

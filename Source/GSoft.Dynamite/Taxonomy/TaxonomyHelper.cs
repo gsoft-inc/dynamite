@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using GSoft.Dynamite.Sharepoint2013.Utils;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Utils;
 
-namespace GSoft.Dynamite.Sharepoint2013.Taxonomy
+namespace GSoft.Dynamite.Taxonomy
 {
     /// <summary>
     /// Helper class for managing Taxonomy.

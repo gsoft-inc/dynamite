@@ -1,4 +1,4 @@
-namespace GSoft.Dynamite.Sharepoint2013.Binding
+namespace GSoft.Dynamite.Binding
 {
     /// <summary>
     /// A conversion handler.
