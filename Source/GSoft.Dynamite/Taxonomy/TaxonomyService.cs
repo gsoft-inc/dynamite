@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {

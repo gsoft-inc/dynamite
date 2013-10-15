@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.WebPartPages;
 
 namespace GSoft.Dynamite.Utils
 {

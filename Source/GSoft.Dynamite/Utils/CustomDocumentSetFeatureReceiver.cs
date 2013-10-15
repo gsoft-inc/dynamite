@@ -15,6 +15,10 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Web.UI.WebControls.WebParts;
 using System.Xml;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
+using Microsoft.SharePoint.WebPartPages;
+using WebPart = System.Web.UI.WebControls.WebParts.WebPart;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -175,7 +179,7 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// Gets the welcome page web part manager.
         /// </summary>
-        /// <param name="file">The file to return a <see cref="SPLimitedWebPartManager"/> instance for.</param>
+        /// <param name="file">The file to return a <see cref="Microsoft.SharePoint.WebPartPages.SPLimitedWebPartManager"/> instance for.</param>
         /// <returns>The web part manager of the welcome page.</returns>
         protected static SPLimitedWebPartManager GetWelcomePageWebPartmanager(SPFile file)
         {

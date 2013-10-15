@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Repositories
 {

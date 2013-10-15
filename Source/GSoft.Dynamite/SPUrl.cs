@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite
 {

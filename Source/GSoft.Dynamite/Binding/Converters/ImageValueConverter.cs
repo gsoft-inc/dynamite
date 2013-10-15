@@ -1,4 +1,5 @@
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint.Publishing.Fields;
 
 namespace GSoft.Dynamite.Binding.Converters
 {

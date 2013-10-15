@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.ValueTypes
 {

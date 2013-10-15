@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
