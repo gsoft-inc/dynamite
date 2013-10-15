@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Binding.Converters
 {

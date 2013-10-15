@@ -1,5 +1,6 @@
 using System.Globalization;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding.Converters
 {

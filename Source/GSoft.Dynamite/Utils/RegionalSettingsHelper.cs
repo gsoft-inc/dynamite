@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using GSoft.Dynamite.Extensions;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Utils
 {

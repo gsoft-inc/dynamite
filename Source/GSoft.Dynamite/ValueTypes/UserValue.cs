@@ -1,3 +1,5 @@
+using Microsoft.SharePoint;
+
 namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>

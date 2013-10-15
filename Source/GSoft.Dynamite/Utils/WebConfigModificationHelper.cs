@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Utils
 {

@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {

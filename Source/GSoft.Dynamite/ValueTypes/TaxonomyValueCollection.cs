@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.ValueTypes
 {

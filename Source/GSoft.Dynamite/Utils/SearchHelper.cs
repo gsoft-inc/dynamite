@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Microsoft.Office.Server.Search.Administration;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Utils
 {  

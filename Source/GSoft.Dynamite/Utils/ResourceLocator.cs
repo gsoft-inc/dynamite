@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Resources;
 using System.Web;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Utils
 {

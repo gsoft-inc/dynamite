@@ -5,6 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using GSoft.Dynamite.Logging;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Utils
 {

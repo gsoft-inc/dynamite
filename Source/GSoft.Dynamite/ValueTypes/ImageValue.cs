@@ -1,3 +1,5 @@
+using Microsoft.SharePoint.Publishing.Fields;
+
 namespace GSoft.Dynamite.ValueTypes
 {
     /// <summary>

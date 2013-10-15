@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
