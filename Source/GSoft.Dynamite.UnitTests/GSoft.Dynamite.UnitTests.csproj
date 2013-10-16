@@ -80,8 +80,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="NMock3\NMockTest.cs" />
-    <Compile Include="NMockTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>
@@ -95,7 +93,6 @@
     <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
     <Fakes Include="Fakes\System.fakes" />
     <Fakes Include="Fakes\System.Web.fakes" />
-    <None Include="NMock3\NMock3 Cheat Sheet.pdf" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>
