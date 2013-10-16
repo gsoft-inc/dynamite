@@ -40,9 +40,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NMock3, Version=3.5.44.0, Culture=neutral, PublicKeyToken=cf53a760d95f4c33, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\GSoft.Dynamite\packages\NMock3.3.5.44\lib\net40\NMock3.dll</HintPath>
+    <Reference Include="NMock3">
+      <HintPath>..\packages\NMock3.3.5.44\lib\net40\NMock3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
