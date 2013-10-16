@@ -1,0 +1,208 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.QualityTools.Testing.Emulators</name>
+    </assembly>
+    <members>
+        <member name="T:__InstrumentAttribute">
+            <summary>
+            Types marked by an attribute of this type or assembly will be instrumented.
+            </summary>
+            <remarks>
+            Note that the unmanaged profiler does not care where this attribute is defined; it simply looks for an attribute 
+            which has the name __InstrumentAttribute.
+            </remarks>
+        </member>
+        <member name="T:__DoNotInstrumentAttribute">
+            <summary>
+            Types  marked by an attribute of this type will not be
+            instrumented.
+            </summary>
+            <remarks>
+            Note that the unmanaged profiler does not care where this attribute is defined; it simply looks for an attribute 
+            which has the name __DoNotInstrumentAttribute.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.EmulationMode">
+            <summary>
+             Indicates if target API will be emulated or executed directly.
+            </summary>
+        </member>
+        <member name="F:Microsoft.QualityTools.Testing.Emulators.EmulationMode.Enabled">
+            <summary>
+            Indicates that the target API will be emulated.
+            </summary>
+        </member>
+        <member name="F:Microsoft.QualityTools.Testing.Emulators.EmulationMode.Passthrough">
+            <summary>
+            Indicate that the target API will be called directly.
+            </summary>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.EmulationScope">
+            <summary>
+            Enables emulation of target APIs in a block of code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulationScope.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.QualityTools.Testing.Emulators.EmulationScope"/>.
+            to emulate the target APIs.
+            </summary>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulationScope.#ctor(Microsoft.QualityTools.Testing.Emulators.EmulationMode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.QualityTools.Testing.Emulators.EmulationScope"/>.
+            </summary>
+            <param name="emulationMode">
+            A <see cref="P:Microsoft.QualityTools.Testing.Emulators.EmulationScope.EmulationMode"/> value that determines wither emulation is enabled or disabled.
+            </param>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulationScope.Dispose">
+            <summary>
+            Dispose shimsContext object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulationScope.Dispose(System.Boolean)">
+            <summary>
+            Disables emulation context created by this class.
+            </summary>
+            <param name="disposing">
+            A <see cref="T:System.Boolean"/> value that indicates whether this object is being disposed or finalized.
+            </param>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.EmulationScope.EmulationMode">
+            <summary>
+            Returns the current EmulationMode
+            </summary>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.Emulator`2">
+            <summary>
+            Abstract base class for behaved implementations based on Shims.
+            </summary>
+            <typeparam name="TInstance"></typeparam>
+            <typeparam name="TFake">type that is assignable to T or to IInstanced&lt;T&gt;</typeparam>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.IEmulator`2">
+            <summary>
+            An strongly typed instance holder that has a behavior
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.IEmulator`2.Fake">
+            <summary>
+            Gets the underlying fake (shim or stub).
+            </summary>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.Emulator`2.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the behaved and wraps the runtime instance
+            </summary>
+            <param name="instance">runtime instance, may be null</param>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Emulator`2.Fake">
+            <summary>
+            Gets the underlying fake (shim or stub).
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Emulator`2.Instance">
+            <summary>
+            Gets the runtime instance
+            </summary>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.EmulatorCollection`3">
+            <summary>
+            A behaved collection of custom collection types. 
+            Built on top of a BeavedCollection.
+            </summary>
+            <typeparam name="TItem">the collection item type</typeparam>
+            <typeparam name="TCollection">the collection type</typeparam>
+            <typeparam name="TCollectionFake">the holder type of <typeparamref name="TCollection"/></typeparam>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulatorCollection`3.#ctor(`1)">
+            <summary>
+            Initializes a new instance of the collection.
+            </summary>
+            <param name="instance">runtime instance</param>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulatorCollection`3.CreateItem">
+            <summary>
+            Creates a new collection item.
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.EmulatorCollection`3.Instance">
+            <summary>
+            Gets the object configured by this emulator.
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.EmulatorCollection`3.Fake">
+            <summary>
+            Gets the underlying fake (shim or stub).
+            </summary>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Properties.Resources.MemberNotEmulatedErrorMessage">
+            <summary>
+              Looks up a localized string similar to A pass-through {0} object cannot be accessed inside of an emulation scope. Consider creating all objects required for a test inside of the emulation scope..
+            </summary>
+        </member>
+        <member name="P:Microsoft.QualityTools.Testing.Emulators.Properties.Resources.MemberNotSupportedErrorMessage">
+            <summary>
+              Looks up a localized string similar to {0} is not supported by the emulator. Consider using Shims to implement a replacement..
+            </summary>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.EmulationNotSupportedBehavior.GetMemberDisplayName">
+            <remarks>
+            This does not have proper support for generic types and methods.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.QualityTools.Testing.Emulators.__BehaviorMethods">
+            <summary>
+            Internal infrastructure class. 
+            </summary>
+            <remarks>
+            This class needs to be public to allow calling its methods from code dynamically emitted at runtime.
+            It can be eliminated if we can figure out how to emit this code inline.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.__BehaviorMethods.ReportUnsupportedInstanceMethod(System.Object,System.String)">
+            <summary>
+            Internal infrastructure method.
+            </summary>
+            <remarks>
+            <para>
+            This method throws an <see cref="T:System.InvalidOperationException"/> when user tries calling 
+            a supported method of an object that does not have an emulator. This can happen when 
+            the user creates a pass-through/live object and then tries using it inside of an 
+            emulation scope.
+            </para>
+            <para>
+            The method throws a <see cref="T:System.NotSupportedException"/> when the object is emulated, 
+            but the method is not supported.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Microsoft.QualityTools.Testing.Emulators.__BehaviorMethods.ReportUnsupportedStaticMethod(System.String)">
+            <summary>
+            Internal infrastructure method.
+            </summary>
+            <remarks>
+            The method throws a <see cref="T:System.NotSupportedException"/> when the class is emulated, 
+            but the method is not supported.
+            </remarks>
+        </member>
+    </members>
+</doc>

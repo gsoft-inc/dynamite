@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.ValueTypes
@@ -29,7 +30,7 @@ namespace GSoft.Dynamite.ValueTypes
                 throw new ArgumentNullException("taxonomyValue");
             }
 
-            if (!Guid.TryParse(taxonomyValue.TermGuid, out termGuid))
+            if (!GuidExtension.TryParse(taxonomyValue.TermGuid, out termGuid))
             {
                 throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "taxonomyValue");
             }

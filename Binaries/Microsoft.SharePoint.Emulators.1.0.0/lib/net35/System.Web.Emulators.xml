@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>System.Web.Emulators</name>
+    </assembly>
+    <members>
+        <member name="T:System.Web.Emulators.EmHttpContext">
+            <summary>
+            Behaved type of <see cref="T:System.Web.HttpContext"/>
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpContext.#ctor">
+            <summary>
+            Initializes a new instance of the behaved context
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpContext.Prepare">
+            <summary>
+            Prepare Method for Shim
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpContext.SetCurrent">
+            <summary>
+            Sets the current context returned by Current and returns it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpContext.ResetCurrent">
+            <summary>
+            Sets the current context returned by Current and returns it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpContext.FromInstance(System.Web.HttpContext)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpContext.Current">
+            <summary>
+            Gets or sets the current HttpContext
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpContext.Request">
+            <summary>
+            Gets or sets the request
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpContext.Response">
+            <summary>
+            Gets or sets the response instance
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpContext.Timestamp">
+            <summary>
+            Gets or sets the timestamp
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpContext.Items">
+            <summary>
+            Gets the items dictionary
+            </summary>
+        </member>
+        <member name="T:System.Web.Emulators.EmHttpRequest">
+            <summary>
+            Behaved type of <see cref="T:System.Web.HttpRequest"/>
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpRequest.#ctor">
+            <summary>
+            Initializes a new instance of the type
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpRequest.#ctor(System.Web.HttpRequest)">
+            <summary>
+            Initializes a new instance of the type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpRequest.FromInstance(System.Web.HttpRequest)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpRequest.Url">
+            <summary>
+            Gets or sets the url
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpRequest.UserHostAddress">
+            <summary>
+            Gets or sets the UserHostAddress
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpRequest.UserAgent">
+            <summary>
+            Gets or sets the UserAgent
+            </summary>
+        </member>
+        <member name="P:System.Web.Emulators.EmHttpRequest.QueryString">
+            <summary>
+            Gets or Sets the QueryString
+            </summary>
+        </member>
+        <member name="T:System.Web.Emulators.EmHttpResponse">
+            <summary>
+            Behaved type of <see cref="T:System.Web.HttpResponse"/>
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpResponse.#ctor">
+            <summary>
+            Initializes a new instance of the type
+            </summary>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpResponse.#ctor(System.Web.HttpResponse)">
+            <summary>
+            Initializes a new instance of the type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:System.Web.Emulators.EmHttpResponse.FromInstance(System.Web.HttpResponse)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+    </members>
+</doc>

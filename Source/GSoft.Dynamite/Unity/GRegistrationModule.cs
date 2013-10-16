@@ -12,8 +12,8 @@ namespace GSoft.Dynamite.Unity
     /// </summary>
     public class GRegistrationModule : IRegistrationModule
     {
-        private string _logCategoryName;
-        private string _defaultResourceFileName;
+        private readonly string _logCategoryName;
+        private readonly string _defaultResourceFileName;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
