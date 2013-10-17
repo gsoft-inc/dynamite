@@ -47,6 +47,9 @@
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.14.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Emulators">
       <HintPath>..\..\Binaries\Microsoft.SharePoint.Emulators.1.0.0\lib\net35\Microsoft.SharePoint.Emulators.dll</HintPath>
     </Reference>
@@ -58,11 +61,20 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
+    <Reference Include="mscorlib.2.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\mscorlib.2.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="NMock3">
       <HintPath>..\packages\NMock3.3.5.44\lib\net35\NMock3.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.2.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\System.2.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.2.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\System.Web.2.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Emulators">
       <HintPath>..\..\Binaries\Microsoft.SharePoint.Emulators.1.0.0\lib\net35\System.Web.Emulators.dll</HintPath>
     </Reference>
@@ -81,6 +93,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\FolderRepositoryTest.cs" />
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -91,8 +104,11 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
-    <Fakes Include="Fakes\System.fakes" />
+    <Fakes Include="Fakes\System.fakes">
+      <SubType>Designer</SubType>
+    </Fakes>
     <Fakes Include="Fakes\System.Web.fakes" />
+    <Fakes Include="Fakes\mscorlib.fakes" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

@@ -46,6 +46,7 @@
     <Add FullName="Microsoft.SharePoint.SPViewCollection!"/>
     <Add FullName="Microsoft.SharePoint.SPViewContext!"/>
     <Add FullName="Microsoft.SharePoint.SPWeb!"/>
+    <Add FullName="Microsoft.SharePoint.SPWeb.Language!"/>
     <Add FullName="Microsoft.SharePoint.SPWebCollection!"/>
     <Add FullName="Microsoft.SharePoint.Administration.SPAutoSerializingObject!"/>
     <Add FullName="Microsoft.SharePoint.Administration.SPFarm!"/>
