@@ -6,7 +6,7 @@
     <ProjectGuid>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ClassLibrary</AssemblyName>
+    <AssemblyName>GSoft.Dynamite</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,6 +31,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>GSoft.Dynamite</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Office.Server.Search, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=AMD64">
@@ -150,6 +156,9 @@
     <Compile Include="ValueTypes\TaxonomyValueCollection.cs" />
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
