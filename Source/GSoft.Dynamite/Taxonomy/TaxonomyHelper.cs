@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Taxonomy
     /// </summary>
     public class TaxonomyHelper
     {
-        private const string ASSEMBLYFULLNAME = "Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+        private const string ASSEMBLYFULLNAME = "Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
         private const string CLASSFULLNAME = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
         
         private EventReceiverHelper _eventReceiverHelper;
@@ -106,7 +106,7 @@ namespace GSoft.Dynamite.Taxonomy
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public void EnableListEnterpriseKeywordsSetting(SPList list, bool keywordsAsSocialTags)
         {
-            Assembly taxonomyAssembly = Assembly.Load("Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
+            Assembly taxonomyAssembly = Assembly.Load("Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
 
             // Get an instance of internal class for the keyword association
             Type listFieldSettings = taxonomyAssembly.GetType("Microsoft.SharePoint.Taxonomy.MetadataListFieldSettings");

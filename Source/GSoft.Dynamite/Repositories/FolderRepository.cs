@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint;
