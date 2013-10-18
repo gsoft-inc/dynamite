@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using GSoft.Dynamite.Examples.Core.Constants;
-using GSoft.Dynamite.Examples.Core.Entities;
-using GSoft.Dynamite.Examples.Core.Repositories;
+using GSoft.Dynamite.Examples.Constants;
+using GSoft.Dynamite.Examples.Entities;
+using GSoft.Dynamite.Examples.Repositories;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Examples.Core.ViewModels
+namespace GSoft.Dynamite.Examples.ViewModels
 {
     /// <summary>
     /// View model for the Wall web part

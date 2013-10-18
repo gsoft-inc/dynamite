@@ -4,7 +4,7 @@ function global:Configure-ProjectTaxonomyFields() {
 	$CAProperty = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Shared Tools\Web Server Extensions\14.0\WSS\" -Name CentralAdministrationURL
 	$centralAdminURL = $CAProperty.CentralAdministrationURL
 	$taxonomyService = "Managed Metadata Service"
-	$siteUrl = "http://sptao/sites/client"
+	$siteUrl = "http://spdev-luji/sites/client"
 
 	Write-Host "Connecting to term store..."
 

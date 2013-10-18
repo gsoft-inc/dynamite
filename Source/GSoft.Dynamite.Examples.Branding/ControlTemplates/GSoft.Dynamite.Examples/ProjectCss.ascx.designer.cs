@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GSoft.Dynamite.Examples.Branding.ControlTemplates.GSoft.Dynamite.Examples {
+namespace GSoft.Dynamite.Examples.Branding.ControlTemplates {
     
     
     public partial class ProjectCss {

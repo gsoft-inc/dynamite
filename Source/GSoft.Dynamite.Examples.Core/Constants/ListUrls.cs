@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Examples.Core.Constants
+﻿namespace GSoft.Dynamite.Examples.Constants
 {
     /// <summary>
     /// List instance URL paths

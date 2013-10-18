@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SandboxedSolution>False</SandboxedSolution>
+    <ActiveDeploymentConfiguration>No Activation</ActiveDeploymentConfiguration>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,14 +51,16 @@
     <Reference Include="Microsoft.SharePoint" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlTemplates\Client.Project\ProjectCss.ascx.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectCss.ascx.cs">
       <DependentUpon>ProjectCss.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ControlTemplates\Client.Project\ProjectCss.ascx.designer.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectCss.ascx.designer.cs">
       <DependentUpon>ProjectCss.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProjectBrand\SiteFeatureReceiver.cs" />
+    <Compile Include="Features\Project Brand\Project Brand.EventReceiver.cs">
+      <DependentUpon>Project Brand.feature</DependentUpon>
+    </Compile>
     <Compile Include="ProjectBrand\WebEventReceiver\WebEventReceiver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -69,7 +72,7 @@
       <SharePointProjectItemId>{5d145076-e5a0-429d-b5a9-823d52965427}</SharePointProjectItemId>
     </None>
     <None Include="Features\Project Brand\Project Brand.feature">
-      <FeatureId>{0abb18f3-1712-4871-ad31-ce5f4d9d058c}</FeatureId>
+      <FeatureId>{862ead80-a328-44ca-a3e6-138a5c84de71}</FeatureId>
     </None>
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{30f19cdc-f8bc-48be-83bb-0a6625ce5f91}</SharePointProjectItemId>
@@ -101,13 +104,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ControlTemplates\Client.Project\ProjectCss.ascx" />
+    <Content Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectCss.ascx" />
     <Content Include="Features\Project Brand\Project Brand.Template.xml">
       <DependentUpon>Project Brand.feature</DependentUpon>
     </Content>
-    <Content Include="Layouts\Client.Project\Css\Client.Project.css" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Css\GSoft.Dynamite.Examples.css" />
     <Content Include="ProjectBrand\MasterPages\Elements.xml" />
-    <Content Include="ProjectBrand\Style\Client.Project.Custom.css" />
+    <Content Include="ProjectBrand\Style\GSoft.Dynamite.Examples.Custom.css" />
     <Content Include="ProjectBrand\Style\Elements.xml" />
     <Content Include="ProjectBrand\WebEventReceiver\Elements.xml" />
   </ItemGroup>

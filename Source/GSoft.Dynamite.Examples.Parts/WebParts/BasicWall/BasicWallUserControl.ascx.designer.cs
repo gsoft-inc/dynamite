@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GSoft.Dynamite.Examples.Parts.WebParts.BasicWall {
+namespace GSoft.Dynamite.Examples.Parts.BasicWall {
     
     
     public partial class BasicWallUserControl {

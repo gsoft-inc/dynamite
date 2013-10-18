@@ -1,7 +1,7 @@
 ﻿using System;
 using GSoft.Dynamite.Binding;
 
-namespace GSoft.Dynamite.Examples.Core.Entities
+namespace GSoft.Dynamite.Examples.Entities
 {
     /// <summary>
     /// Base entity, parent class for all content type-fed entities

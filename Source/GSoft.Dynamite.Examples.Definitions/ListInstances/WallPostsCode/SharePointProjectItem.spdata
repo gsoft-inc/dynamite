@@ -3,4 +3,7 @@
   <Files>
     <ProjectItemFile Source="Elements.xml" Target="WallPostsCode\" Type="ElementManifest" />
   </Files>
+  <ExtensionData>
+    <ExtensionDataItem Key="DeploymentConflictResolutionBehavior" Value="Automatic" />
+  </ExtensionData>
 </ProjectItem>

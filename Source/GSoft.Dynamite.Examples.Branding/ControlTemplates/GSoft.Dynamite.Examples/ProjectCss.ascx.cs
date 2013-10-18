@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.UI;
-using GSoft.Dynamite.Examples.Core.Utilities;
+using GSoft.Dynamite.Examples.Utilities;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.SharePoint.WebControls;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Examples.Core.Constants
+namespace GSoft.Dynamite.Examples.Constants
 {
     /// <summary>
     /// Content Type constants.

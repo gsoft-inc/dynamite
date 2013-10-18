@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Examples.Core.Constants;
+using GSoft.Dynamite.Examples.Constants;
 using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Examples.Core.Entities
+namespace GSoft.Dynamite.Examples.Entities
 {
     /// <summary>
     /// Entity for replies to wall posts

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.UI;
 
-namespace GSoft.Dynamite.Examples.Parts.ControlTemplates.GSoft.Dynamite.Examples
+namespace GSoft.Dynamite.Examples.Parts.ControlTemplates
 {
     /// <summary>
     /// Includes Javascript libraries

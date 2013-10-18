@@ -13,7 +13,11 @@ $centralAdmin = Get-SPSite $centralAdminURL
 $taxonomySession = Get-SPTaxonomySession -Site $centralAdmin
 $termStore = $taxonomySession.TermStores[$taxonomyService]
 
-Import-SPTerms -ParentTermStore $termStore -InputFile "C:\\GSoftDynamiteExamplesTerms.xml"
+$scriptpath = $MyInvocation.MyCommand.Path
+$dir = Split-Path $scriptpath
+
+
+Import-SPTerms -ParentTermStore $termStore -InputFile  "$dir\GSoftDynamiteExamplesTerms.xml"
 
 Write-Host @"
 

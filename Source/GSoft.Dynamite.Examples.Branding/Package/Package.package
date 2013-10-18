@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="0498ed97-7f93-4f9e-8694-0fe778cebc93" solutionId="0498ed97-7f93-4f9e-8694-0fe778cebc93" resetWebServer="true" name="GSoft.Dynamite.Examples.Branding" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <features>
-    <featureReference itemId="0abb18f3-1712-4871-ad31-ce5f4d9d058c" />
+    <featureReference itemId="862ead80-a328-44ca-a3e6-138a5c84de71" />
   </features>
   <projectItems>
     <projectItemReference itemId="30f19cdc-f8bc-48be-83bb-0a6625ce5f91" />

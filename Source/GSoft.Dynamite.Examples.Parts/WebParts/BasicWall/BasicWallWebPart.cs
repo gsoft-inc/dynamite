@@ -2,7 +2,7 @@
 using System.Web.UI;
 using System.Web.UI.WebControls.WebParts;
 
-namespace GSoft.Dynamite.Examples.Parts.WebParts.BasicWall
+namespace GSoft.Dynamite.Examples.Parts.BasicWall
 {
     /// <summary>
     /// Basic wall web part

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ProjectItem Type="CKS.Dev.SharePoint.Branding" FeatureReceiverClass="GSoft.Dynamite.Examples.Branding.SiteFeatureReceiver" FeatureReceiverAssembly="$SharePoint.Project.AssemblyFullName$" SupportedTrustLevels="All" SupportedDeploymentScopes="Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
+<ProjectItem Type="CKS.Dev.SharePoint.Branding" SupportedTrustLevels="All" SupportedDeploymentScopes="Site" xmlns="http://schemas.microsoft.com/VisualStudio/2010/SharePointTools/SharePointProjectItemModel">
   <Files />
   <FeatureProperties>
     <FeatureProperty Key="MasterPage" Value="Branding.master" />

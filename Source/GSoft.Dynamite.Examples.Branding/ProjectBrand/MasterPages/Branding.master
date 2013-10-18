@@ -1,6 +1,7 @@
 ﻿<%@Master language="C#"%>
+<%@ Import Namespace="GSoft.Dynamite.Examples.Utilities" %>
 <%@ Register Tagprefix="SharePoint" Namespace="Microsoft.SharePoint.WebControls" Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %> <%@ Assembly Name="Microsoft.Web.CommandUI, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
-<%@ Assembly Name="GSoft.Dynamite.Examples, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d2394e78ae5699d5" %>
+<%@ Assembly Name="GSoft.Dynamite.Examples, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5" %>
 <%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
 <%@ Register TagPrefix="wssuc" TagName="Welcome" src="~/_controltemplates/Welcome.ascx" %>
 <%@ Register TagPrefix="wssuc" TagName="MUISelector" src="~/_controltemplates/MUISelector.ascx" %>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.UI;
-using GSoft.Dynamite.Examples.Core.Utilities;
+using GSoft.Dynamite.Examples.Utilities;
 
 namespace GSoft.Dynamite.Examples.Parts.ControlTemplates
 {

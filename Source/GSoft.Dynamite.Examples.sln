@@ -35,9 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{D6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{7D694B8F-2882-408E-8923-A13EC411ED84}"
 	ProjectSection(SolutionItems) = preProject
-		..\Shared\Scripts\ClientProjectTerms.xml = ..\Shared\Scripts\ClientProjectTerms.xml
 		..\Shared\Scripts\Configure-ProjectTaxonomyFields.ps1 = ..\Shared\Scripts\Configure-ProjectTaxonomyFields.ps1
 		..\Shared\Scripts\Export-ProjectTerms.ps1 = ..\Shared\Scripts\Export-ProjectTerms.ps1
+		..\Shared\Scripts\GSoftDynamiteExamplesTerms.xml = ..\Shared\Scripts\GSoftDynamiteExamplesTerms.xml
 		..\Shared\Scripts\Import-ProjectTerms.ps1 = ..\Shared\Scripts\Import-ProjectTerms.ps1
 		..\Shared\Scripts\Recreate-ProjectSite.ps1 = ..\Shared\Scripts\Recreate-ProjectSite.ps1
 	EndProjectSection
@@ -51,6 +51,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Examples", "GSoft.Dynamite.Examples.Core\GSoft.Dynamite.Examples.csproj", "{44EB811C-783E-483B-92B1-8037A994D7DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Examples.Dependencies", "GSoft.Dynamite.Examples.Dependencies\GSoft.Dynamite.Examples.Dependencies.csproj", "{85A51885-70CC-476D-9CA4-DF26D9484EED}"
+	ProjectSection(ProjectDependencies) = postProject
+		{72576E04-75B4-4EAF-AF1E-7482355FC8C1} = {72576E04-75B4-4EAF-AF1E-7482355FC8C1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

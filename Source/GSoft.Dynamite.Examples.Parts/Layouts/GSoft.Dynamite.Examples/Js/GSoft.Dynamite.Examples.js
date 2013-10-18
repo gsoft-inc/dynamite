@@ -1,5 +1,6 @@
 ﻿// Setup the namespace (use existing if any)
-window.Client = window.Client || {};
+window.GSoft = window.GSoft || {};
+window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 window.GSoft.Dynamite.Examples = window.GSoft.Dynamite.Examples || {};
 
 // ====================

@@ -4,13 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using GSoft.Dynamite.Examples.Core.Entities;
-using GSoft.Dynamite.Examples.Core.Unity;
-using GSoft.Dynamite.Examples.Core.ViewModels;
+using GSoft.Dynamite.Examples.Entities;
+using GSoft.Dynamite.Examples.Unity;
+using GSoft.Dynamite.Examples.ViewModels;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Examples.Parts.WebParts.BasicWall
+namespace GSoft.Dynamite.Examples.Parts.BasicWall
 {
     /// <summary>
     /// Basic wall user control

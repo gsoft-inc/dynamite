@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
-using GSoft.Dynamite.Examples.Core.Constants;
-using GSoft.Dynamite.Examples.Core.Unity;
+using GSoft.Dynamite.Examples.Constants;
+using GSoft.Dynamite.Examples.Unity;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;

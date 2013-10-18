@@ -1,6 +1,6 @@
 ﻿using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Examples.Branding.ProjectBrand.WebEventReceiver
+namespace GSoft.Dynamite.Examples.Branding
 {
     /// <summary>
     /// Web-level Branding event receiver that changes the site's master page

@@ -1,12 +1,20 @@
-﻿using Microsoft.SharePoint;
+using System;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Examples.Branding.ProjectBrand
+namespace GSoft.Dynamite.Examples.Branding.Features.Project_Brand
 {
     /// <summary>
-    /// Branding feature reciever
+    /// This class handles events raised during feature activation, deactivation, installation, uninstallation, and upgrade.
     /// </summary>
-    public class SiteFeatureReceiver : SPFeatureReceiver
+    /// <remarks>
+    /// The GUID attached to this class may be used during packaging and should not be modified.
+    /// </remarks>
+
+    [Guid("464f2971-bf2a-409f-8b2f-d1da79dbd9bc")]
+    public class Project_BrandEventReceiver : SPFeatureReceiver
     {
         /// <summary>
         /// Branding feature activation handler

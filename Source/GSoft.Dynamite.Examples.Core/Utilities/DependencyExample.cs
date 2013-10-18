@@ -1,6 +1,6 @@
 ﻿using ThirdPartyDependency;
 
-namespace GSoft.Dynamite.Examples.Core.Utilities
+namespace GSoft.Dynamite.Examples.Utilities
 {
     /// <summary>
     /// Example of dependency usage

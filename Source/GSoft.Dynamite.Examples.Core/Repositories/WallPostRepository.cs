@@ -2,13 +2,13 @@
 using System.Globalization;
 using System.Linq;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Examples.Core.Constants;
-using GSoft.Dynamite.Examples.Core.Entities;
+using GSoft.Dynamite.Examples.Constants;
+using GSoft.Dynamite.Examples.Entities;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Examples.Core.Repositories
+namespace GSoft.Dynamite.Examples.Repositories
 {
     /// <summary>
     /// Data access for wall posts

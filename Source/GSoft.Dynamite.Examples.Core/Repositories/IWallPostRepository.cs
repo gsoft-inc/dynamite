@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using GSoft.Dynamite.Examples.Core.Entities;
+using GSoft.Dynamite.Examples.Entities;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Examples.Core.Repositories
+namespace GSoft.Dynamite.Examples.Repositories
 {
     /// <summary>
     /// Interface for wall posts repository

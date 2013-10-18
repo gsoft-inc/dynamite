@@ -1,7 +1,7 @@
 ﻿using GSoft.Dynamite.Unity;
 using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Examples.Core.Unity
+namespace GSoft.Dynamite.Examples.Unity
 {
     /// <summary>
     /// Dependency injection container

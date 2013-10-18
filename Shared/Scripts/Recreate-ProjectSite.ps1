@@ -5,7 +5,7 @@
 . .\Configure-ProjectTaxonomyFields.ps1
 
 # Init script variables
-$siteURL = "http://sptao/sites/client"
+$siteURL = "http://spdev-luji/sites/client"
 $owner = "SPSDEV\administrator"
 $secondary = "SPSDEV\dev"
 

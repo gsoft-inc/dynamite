@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Examples.Core.Utilities
+namespace GSoft.Dynamite.Examples.Utilities
 {
     /// <summary>
     /// TODO: Update summary.

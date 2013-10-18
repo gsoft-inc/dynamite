@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Utils;
 
-namespace GSoft.Dynamite.Examples.Core.Constants
+namespace GSoft.Dynamite.Examples.Constants
 {
     /// <summary>
     /// Field constants for Wall content types.

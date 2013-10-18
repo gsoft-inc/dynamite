@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <SandboxedSolution>False</SandboxedSolution>
+    <ActiveDeploymentConfiguration>No Activation</ActiveDeploymentConfiguration>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,18 +58,18 @@
     <Reference Include="Microsoft.SharePoint" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlTemplates\Client.Project\ProjectScripts.ascx.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx.cs">
       <DependentUpon>ProjectScripts.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ControlTemplates\Client.Project\ProjectScripts.ascx.designer.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx.designer.cs">
       <DependentUpon>ProjectScripts.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="ControlTemplates\Client.Project\ScriptDependencies.ascx.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx.cs">
       <DependentUpon>ScriptDependencies.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="ControlTemplates\Client.Project\ScriptDependencies.ascx.designer.cs">
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx.designer.cs">
       <DependentUpon>ScriptDependencies.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,18 +116,18 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ControlTemplates\Client.Project\ProjectScripts.ascx" />
-    <Content Include="ControlTemplates\Client.Project\ScriptDependencies.ascx" />
+    <Content Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx" />
+    <Content Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx" />
     <Content Include="Features\Basic Wall\Basic Wall.Template.xml">
       <DependentUpon>Basic Wall.feature</DependentUpon>
     </Content>
     <Content Include="Features\Client Scripts\Client Scripts.Template.xml">
       <DependentUpon>Client Scripts.feature</DependentUpon>
     </Content>
-    <Content Include="Layouts\Client.Project\Js\Client.Project.js" />
-    <Content Include="Layouts\Client.Project\Js\jquery-no-conflict.js" />
-    <Content Include="Layouts\Client.Project\Js\lib\jquery-1.7.1.min.js" />
-    <Content Include="Modules\CustomizableScript\Client.Project.Custom.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\GSoft.Dynamite.Examples.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\jquery-no-conflict.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\lib\jquery-1.7.1.min.js" />
+    <Content Include="Modules\CustomizableScript\GSoft.Dynamite.Examples.Custom.js" />
     <Content Include="Modules\CustomizableScript\Elements.xml" />
     <Content Include="Modules\ScriptLinks\Elements.xml" />
     <Content Include="WebParts\BasicWall\BasicWallUserControl.ascx" />

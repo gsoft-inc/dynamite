@@ -1,8 +1,8 @@
-﻿using GSoft.Dynamite.Examples.Core.Repositories;
+﻿using GSoft.Dynamite.Examples.Repositories;
 using GSoft.Dynamite.Unity;
 using Microsoft.Practices.Unity;
 
-namespace GSoft.Dynamite.Examples.Core.Unity
+namespace GSoft.Dynamite.Examples.Unity
 {
     /// <summary>
     /// Type bindings for Wall components
