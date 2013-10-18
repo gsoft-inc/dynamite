@@ -37,8 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,6 +51,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
     <None Include="AppGlobalResources\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{80a35134-bab8-4dda-b8a4-1fb508d769d4}</SharePointProjectItemId>
     </None>

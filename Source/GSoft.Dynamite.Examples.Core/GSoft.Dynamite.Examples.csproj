@@ -37,8 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JohnHolliday.Caml.Net">
@@ -83,6 +82,9 @@
     <Compile Include="ViewModels\WallViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
     <None Include="Package\Package.package">
       <PackageId>{3267c369-c4c0-4056-bd2a-86505b43d5c5}</PackageId>
     </None>
