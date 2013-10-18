@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Fakes;
-using GSoft.Dynamite.Repositories;
 using Microsoft.QualityTools.Testing.Emulators;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;

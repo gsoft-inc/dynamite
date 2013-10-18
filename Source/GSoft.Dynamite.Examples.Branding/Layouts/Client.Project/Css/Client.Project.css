@@ -1,0 +1,157 @@
+﻿body
+{
+}
+
+/* Basic Wall Web Part */
+.basic.wall 
+{
+    padding: 10px;
+}
+
+.new-wall-post
+{
+    float: left;
+    width: 75%;
+    background-color: #EBEBEB;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.new-wall-post .text-box
+{
+    float: left;
+    width: 95%;
+    height: 50px;
+}
+
+.new-wall-post .button
+{
+    clear: both;
+    float: right;
+    width: 20%;
+    height: 30px;
+    margin-top: 5px;
+    margin-right: 5%;
+}
+
+.wall-post
+{
+    width: 75%;
+    clear: both;
+    float: left;
+    padding: 10px;
+    margin: 5px;
+    margin-left: 0px;
+    border-left: 1px solid #EBEBEB;
+    border-bottom: 1px solid #EBEBEB;
+}
+
+.wall-post-author
+{
+    float: left;
+    padding: 2px;
+    font-size: 14px;
+    color: #0072BC;
+}
+
+.wall-post-text
+{
+    clear: left;
+    float: left;
+    padding: 2px;
+    font-size: 14px;
+}
+
+.wall-post-tags, .wall-reply-tags
+{
+    clear: left;
+    float: left;
+    margin-top: 5px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    font-size: 9px;
+}
+
+.tag-label
+{
+    margin-right: 2px;
+    padding: 2px;
+    background-color: #0072BC;
+    color: white;
+    border-radius: 2px;
+}
+
+.wall-post-replies
+{
+    clear: left;
+    float: left;
+    width: 65%;
+}
+
+.new-wall-reply-open-form
+{
+    clear: left;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    color: #0072BC;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.new-wall-reply-open-form a:visited
+{
+    color: #0072BC;
+}
+
+.new-wall-reply
+{
+    clear: left;
+    float: left;
+    width: 60%;
+    margin-top: 5px;
+    background-color: #EBEBEB;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.new-wall-reply .text-box
+{
+    float: left;
+    width: 95%;
+    height: 30px;
+}
+
+.new-wall-reply .button
+{
+    clear: both;
+    float: right;
+    width: 20%;
+    height: 25px;
+    margin-top: 5px;
+    margin-right: 5%;
+}
+
+.wall-reply
+{
+    width: 90%;
+    clear: both;
+    float: left;
+    padding: 5px;
+    border-top: 1px dotted #EBEBEB;
+    
+}
+
+.wall-reply-author
+{
+    float: left;
+    padding: 2px;
+    color: #0072BC;
+}
+
+.wall-reply-text
+{
+    clear: left;
+    float: left;
+    padding: 2px;
+}

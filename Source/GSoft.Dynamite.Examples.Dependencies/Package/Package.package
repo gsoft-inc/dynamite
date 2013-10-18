@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="325ffdae-c13e-488f-8677-488f3c391199" solutionId="325ffdae-c13e-488f-8677-488f3c391199" resetWebServer="false" name="GSoft.Dynamite.Examples.Dependencies" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <assemblies>
+    <customAssembly location="ThirdPartyDependency.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Example\v1.0\ThirdPartyDependency.dll" />
+    <customAssembly location="ThirdPartyDependency.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Example\v1.1\ThirdPartyDependency.dll" />
+  </assemblies>
+</package>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite", "..\GSoft.Dynamite\GSoft.Dynamite.csproj", "{72576E04-75B4-4EAF-AF1E-7482355FC8C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite", "GSoft.Dynamite\GSoft.Dynamite.csproj", "{72576E04-75B4-4EAF-AF1E-7482355FC8C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

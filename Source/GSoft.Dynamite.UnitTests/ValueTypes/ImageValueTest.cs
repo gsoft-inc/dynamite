@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Emulators;
 using Microsoft.QualityTools.Testing.Emulators;
