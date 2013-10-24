@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -15,11 +16,17 @@ namespace GSoft.Dynamite.Examples.Server.Rest
             ResponseFormat = WebMessageFormat.Json, UriTemplate = "/Test")]
         string Test();
 
-        [OperationContract]
-        [WebGet(UriTemplate = "/_api/web/lists/getbytitle('{listName}')/items",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        ListResponseWrapper GetByTitle(string listName);
+        //[OperationContract]
+        //[WebGet(UriTemplate = "/_api/web/lists/getbytitle('{listName}')/items",
+        //    RequestFormat = WebMessageFormat.Json,
+        //    ResponseFormat = WebMessageFormat.Json)]
+        //ListResponseWrapper GetItemsByTitle(string listName);
+
+        //[OperationContract]
+        //[WebGet(UriTemplate = "/_api/web/lists/getbytitle('{listName}')/fields",
+        //    RequestFormat = WebMessageFormat.Json,
+        //    ResponseFormat = WebMessageFormat.Json)]
+        //ListResponseWrapper GetColumnsByTitle(string listName);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/_api/web/lists/getbytitle('{ListName}')/additem",
@@ -190,45 +197,5 @@ namespace GSoft.Dynamite.Examples.Server.Rest
         public SearchPrimaryQueryResult PrimaryQueryResult;
     }
 
-    [DataContract]
-    public class ListResponseWrapper
-    {
-        [DataMember]
-        public ListResponse ListResponse;
-    }
-
-    [DataContract]
-    public class ListResponse
-    {
-        [DataMember]
-        public List<ListResult> Results;
-    }
-
-    [DataContract]
-    public class ListResponseMetaData
-    {
-        [DataMember]
-        public int Id { get; set; }
-        [DataMember]
-        public string Type { get; set; }
-
-        [DataMember]
-        public Uri Uri { get; set; }
-    }
-
-    [DataContract]
-    public class ListResult
-    {
-        [DataMember(Name = "__metadata", Order = 1)]
-        public ListResponseMetaData Metadata;
-
-        [DataMember(Order = 2)]
-        public string Title;
-
-        [DataMember(Order = 3)]
-        public DateTime Created;
-
-        [DataMember(Order = 4)]
-        public string Description;
-    }
+   
 }

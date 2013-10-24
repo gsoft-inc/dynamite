@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.ServiceModel.Activation;
+using System.Web;
+using GSoft.Dynamite.Examples.Server.Rest.Services;
 using Microsoft.Office.Server.ActivityFeed;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
@@ -19,47 +21,96 @@ namespace GSoft.Dynamite.Examples.Server.Rest
 
         public string Test()
         {
+            var tata = HttpContext.Current.Request.ApplicationPath;
+            var toto = SPContext.Current;
+
             return "Hello World";
         }
 
-        public ListResponseWrapper GetByTitle(string listName)
-        {
-            var listResults = new List<ListResult>();
-            SPSecurity.RunWithElevatedPrivileges(delegate()
-            {
+        //public CacheDataContext.ListResponseWrapper GetItemsByTitle(string listName)
+        //{
+        //    var tata = HttpContext.Current.Request.ApplicationPath;
+        //    var toto = SPContext.Current;
 
-                using (SPSite site = new SPSite(SharepointSiteUrl))
-                {
-                    SPWeb web = site.OpenWeb();
-                    web.AllowUnsafeUpdates = true;
-                    SPList listByTitle = web.Lists[listName];
 
-                    foreach (SPListItem item in listByTitle.Items)
-                    {
-                        listResults.Add(new ListResult
-                        {
-                            Metadata = new ListResponseMetaData()
-                            {
-                                Id = item.ID,
-                                Type = item.GetType().FullName
-                            },
-                            Title = item.Title,
-                            Created = DateTime.Parse(item["Created"].ToString()),
-                            Description = item["Description"] != null ? item["Description"].ToString() : string.Empty
-                        });
-                    }
-                    web.AllowUnsafeUpdates = false;
-                }
-            });
-            var response = new ListResponseWrapper()
-            {
-                ListResponse = new ListResponse()
-                {
-                    Results = listResults
-                }
-            };
-            return response;
-        }
+        //    var listResults = new List<CacheDataContext.ListResult>();
+        //    SPSecurity.RunWithElevatedPrivileges(delegate()
+        //    {
+
+        //        using (SPSite site = new SPSite(SharepointSiteUrl))
+        //        {
+        //            SPWeb web = site.OpenWeb();
+        //            web.AllowUnsafeUpdates = true;
+        //            SPList listByTitle = web.Lists[listName];
+
+        //            foreach (SPListItem item in listByTitle.Items)
+        //            {
+        //                listResults.Add(new ListResult
+        //                {
+        //                    Metadata = new ListResponseMetaData()
+        //                    {
+        //                        Id = item.ID.ToString(),
+        //                        Type = item.GetType().FullName
+        //                    },
+        //                    Title = item.Title,
+        //                    Created = DateTime.Parse(item["Created"].ToString()),
+        //                    Description = item["Description"] != null ? item["Description"].ToString() : string.Empty
+        //                });
+        //            }
+        //            web.AllowUnsafeUpdates = false;
+        //        }
+        //    });
+        //    var response = new ListResponseWrapper()
+        //    {
+        //        ListResponse = new ListResponse()
+        //        {
+        //            Results = listResults
+        //        }
+        //    };
+        //    return response;
+        //}
+
+        //public ListResponseWrapper GetColumnsByTitle(string listName)
+        //{
+           
+        //    var listResults = new List<ListResult>();
+        //    SPSecurity.RunWithElevatedPrivileges(delegate()
+        //    {
+
+        //        using (SPSite site = new SPSite(SharepointSiteUrl))
+        //        {
+        //            SPWeb web = site.OpenWeb();
+        //            web.AllowUnsafeUpdates = true;
+        //            SPList listByTitle = web.Lists.TryGetList(listName);
+
+        //            if (listByTitle != null)
+        //            {
+        //                foreach (SPField field in listByTitle.Fields)
+        //                {
+        //                    listResults.Add(new ListResult
+        //                    {
+        //                        Metadata = new ListResponseMetaData()
+        //                        {
+        //                            Id = field.Id.ToString(),
+        //                            Type = field.GetType().FullName
+        //                        },
+        //                        Title = field.Title,
+        //                        Description = field.Description
+        //                    });
+        //                }
+        //            }
+        //            web.AllowUnsafeUpdates = false;
+        //        }
+        //    });
+        //    var response = new ListResponseWrapper()
+        //    {
+        //        ListResponse = new ListResponse()
+        //        {
+        //            Results = listResults
+        //        }
+        //    };
+        //    return response;
+        //}
 
         public string AddListItem(string listName, string title, string description)
         {

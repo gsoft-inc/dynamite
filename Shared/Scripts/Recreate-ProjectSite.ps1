@@ -25,7 +25,7 @@ Recreating site...
 
 $startTime = Get-Date
 $teamTemplate = Get-SPWebTemplate "STS#0"
-New-SPSite -Url $siteURL -Name "Client Project" -Language 1033 -OwnerAlias $owner -SecondaryOwnerAlias $secondary -Template $teamTemplate
+New-SPSite -Url $siteURL -Name "GSoft.Dynamite.Examples" -Language 1033 -OwnerAlias $owner -SecondaryOwnerAlias $secondary -Template $teamTemplate
 $elapsedTime = ($(get-date) - $StartTime).TotalSeconds
 Write-Host "Took $elapsedTime sec."
 
