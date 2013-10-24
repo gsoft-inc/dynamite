@@ -1,5 +1,6 @@
 using System;
 using GSoft.Dynamite.Collections;
+using GSoft.Dynamite.Logging;
 
 namespace GSoft.Dynamite.Binding
 {
@@ -14,6 +15,8 @@ namespace GSoft.Dynamite.Binding
 
         private readonly ConcurrentDictionary<Type, IEntitySchema> _cachedSchemas = new ConcurrentDictionary<Type, IEntitySchema>();
 
+        private readonly ILogger _logger;
+
         #endregion
 
         #region Constructors
@@ -22,9 +25,11 @@ namespace GSoft.Dynamite.Binding
         /// Initializes a new instance of the <see cref="CachedSchemaBuilder"/> class.
         /// </summary>
         /// <param name="schemaBuilder">The schema builder.</param>
-        public CachedSchemaBuilder(IEntitySchemaBuilder schemaBuilder)
+        /// <param name="logger">The logging utility.</param>
+        public CachedSchemaBuilder(IEntitySchemaBuilder schemaBuilder, ILogger logger)
         {
             this._schemaBuilder = schemaBuilder;
+            this._logger = logger;
         }
 
         #endregion
@@ -56,8 +61,19 @@ namespace GSoft.Dynamite.Binding
             IEntitySchema schema;
             if (!this._cachedSchemas.TryGetValue(type, out schema))
             {
-                schema = this._schemaBuilder.GetSchema(type);
-                this._cachedSchemas.Add(type, schema);
+                try
+                {
+                    schema = this._schemaBuilder.GetSchema(type);
+                    this._cachedSchemas.Add(type, schema);
+                }
+                catch (ArgumentException exception)
+                {
+                    this._logger.Warn("Entity Binding Concurrency Conflict - Schema was already added for type " + type.FullName + " - Exception: " + exception.ToString());
+
+                    // The schema was cached by a concurrent thread already, use the already stored value instead of the useless duplicate 
+                    // we just created with the schema builder
+                    schema = this._cachedSchemas[type];
+                }
             }
 
             return schema;
