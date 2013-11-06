@@ -69,6 +69,28 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Assigns a term set to a site column in the default term store from the site collection's reserved group
+        /// term store.
+        /// </summary>
+        /// <param name="web">The web containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termStoreGroupName">The name of the term store group.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termSetName, string termSubsetName)
+        {
+            if (web.Fields.Contains(fieldId))
+            {
+                TaxonomySession session = new TaxonomySession(web.Site);
+                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                Group siteCollectionGroup = termStore.GetSiteCollectionGroup(web.Site);
+                TaxonomyField field = (TaxonomyField)web.Fields[fieldId];
+                AssignTermSetToSiteColumn(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
+            }
+        }
+
+        /// <summary>
         /// Ensures the taxonomy event receivers.
         /// </summary>
         /// <param name="eventReceivers">The event receivers definition collection.</param>

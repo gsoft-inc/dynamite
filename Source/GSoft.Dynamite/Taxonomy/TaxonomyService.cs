@@ -12,6 +12,11 @@ namespace GSoft.Dynamite.Taxonomy
     /// <summary>
     /// Helper class for interacting with the Managed Metadata Service
     /// </summary>
+    /// <remarks>
+    /// For all methods: if a term or a term set is not found by its default label 
+    /// in the term store's default working language, the other alternate available 
+    /// languages should be attempted.
+    /// </remarks>
     public class TaxonomyService : ITaxonomyService
     {
         private ILogger log;
@@ -59,6 +64,26 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Retrieves a TaxonomyValue corresponding to a term label within the default term store in the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>The taxonomy value or null if not found</returns>
+        public TaxonomyValue GetTaxonomyValueForLabel(SPSite site, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTaxonomyValue(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+        }
+
+        /// <summary>
         /// Retrieves a Term corresponding to a term label within a desired term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -92,6 +117,26 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Retrieves a Term corresponding to a term label within the default term store in the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>The term or null if not found</returns>
+        public Term GetTermForLabel(SPSite site, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTerm(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+        }
+
+        /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -106,6 +151,26 @@ namespace GSoft.Dynamite.Taxonomy
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTaxonomyValues(termStore, termStoreGroupName, termSetName, termLabel);
+        }
+
+        /// <summary>
+        /// Retrieves all TaxonomyValues corresponding to a term label within the default term store in the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>A list of taxonomy values</returns>
+        public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTaxonomyValues(termStore, siteCollectionGroup.Name, termSetName, termLabel);
         }
 
         /// <summary>
@@ -137,6 +202,25 @@ namespace GSoft.Dynamite.Taxonomy
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
             return GetTaxonomyValues(termStore, termStoreGroupName, termSetName);
+        }
+
+        /// <summary>
+        /// Retrieves all TaxonomyValues corresponding to a term set in the default term store from the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <returns>A list of taxonomy values</returns>
+        public IList<TaxonomyValue> GetTaxonomyValuesForTermSet(SPSite site, string termSetName)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTaxonomyValues(termStore, siteCollectionGroup.Name, termSetName);
         }
 
         /// <summary>
@@ -173,6 +257,26 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Retrieves a Term corresponding to a term label within the default term store in the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>A list of terms</returns>
+        public IList<Term> GetTermsForLabel(SPSite site, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTerms(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+        }
+
+        /// <summary>
         /// Retrieves all terms corresponding to a term label within a desired term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -201,6 +305,26 @@ namespace GSoft.Dynamite.Taxonomy
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
             return GetTerms(termStore, termStoreGroupName, termSetName);
+        }
+
+        /// <summary>
+        /// Retrieves all Terms corresponding to a term set in the default term store from the site collection's reserved group
+        /// </summary>
+        /// <remarks>
+        /// Use other overloads and specify a group name to fetch from farm-global term sets instead of being limited 
+        /// to the site collection's associated term group
+        /// </remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <returns>A list of taxonomy values</returns>
+        public IList<Term> GetTermsForTermSet(SPSite site, string termSetName)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+
+            return GetTerms(termStore, siteCollectionGroup.Name, termSetName);
+
         }
 
         /// <summary>
