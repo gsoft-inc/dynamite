@@ -30,6 +30,8 @@ namespace GSoft.Dynamite.Taxonomy
             this.log = logger;
         }
 
+        #region GetTaxonomyValueForLabel overloads
+
         /// <summary>
         /// Retrieves a TaxonomyValue corresponding to a term label within a desired term store
         /// </summary>
@@ -44,7 +46,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTaxonomyValue(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTaxonomyValueForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
-            return GetTaxonomyValue(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTaxonomyValueForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -79,9 +81,14 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTaxonomyValue(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+            return GetTaxonomyValueForLabelInternal(termStore, siteCollectionGroup, termSet, termLabel);
         }
+
+        #endregion
+
+        #region GetTermForLabel overloads
 
         /// <summary>
         /// Retrieves a Term corresponding to a term label within a desired term store
@@ -97,7 +104,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTerm(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTermForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -113,7 +120,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
-            return GetTerm(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTermForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -132,9 +139,14 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTerm(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+            return GetTermForLabelInternal(termStore, siteCollectionGroup, termSet, termLabel);
         }
+
+        #endregion
+
+        #region GetTaxonomyValuesForLabel overloads
 
         /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store
@@ -150,7 +162,23 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTaxonomyValues(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTaxonomyValuesForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
+        }
+
+        /// <summary>
+        /// Retrieves all TaxonomyValues corresponding to a term label within the default term store
+        /// </summary>
+        /// <param name="site">The current site</param>
+        /// <param name="termStoreGroupName">The group name</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>A list of taxonomy values</returns>
+        public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            return GetTaxonomyValuesForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -169,9 +197,14 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTaxonomyValues(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+            return GetTaxonomyValuesForLabelInternal(termStore, siteCollectionGroup, termSet, termLabel);
         }
+
+        #endregion
+
+        #region GetTaxonomyValuesForTermSet overloads
 
         /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term store term set
@@ -186,7 +219,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTaxonomyValues(termStore, termStoreGroupName, termSetName);
+            return GetTaxonomyValuesForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
 
         /// <summary>
@@ -201,7 +234,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
-            return GetTaxonomyValues(termStore, termStoreGroupName, termSetName);
+            return GetTaxonomyValuesForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
 
         /// <summary>
@@ -219,25 +252,14 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTaxonomyValues(termStore, siteCollectionGroup.Name, termSetName);
+            return GetTaxonomyValuesForTermSetInternal(termStore, siteCollectionGroup, termSet);
         }
 
-        /// <summary>
-        /// Retrieves all TaxonomyValues corresponding to a term label within the default term store
-        /// </summary>
-        /// <param name="site">The current site</param>
-        /// <param name="termStoreGroupName">The group name</param>
-        /// <param name="termSetName">The term set name</param>
-        /// <param name="termLabel">The default label of the term</param>
-        /// <returns>A list of taxonomy values</returns>
-        public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
-        {
-            TaxonomySession session = new TaxonomySession(site);
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+        #endregion
 
-            return GetTaxonomyValues(termStore, termStoreGroupName, termSetName, termLabel);
-        }
+        #region GetTermsForLabel overloads
 
         /// <summary>
         /// Retrieves all terms corresponding to a term label within a desired term store
@@ -253,7 +275,24 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
+            return GetTermsForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
+        }
+
+        /// <summary>
+        /// Retrieves a Term corresponding to a term label within the default term store
+        /// </summary>
+        /// <remarks>If many terms are found with the corresponding label, a root term is returned if found.</remarks>
+        /// <param name="site">The current site</param>
+        /// <param name="termStoreGroupName">The group name</param>
+        /// <param name="termSetName">The term set name</param>
+        /// <param name="termLabel">The default label of the term</param>
+        /// <returns>A list of terms</returns>
+        public IList<Term> GetTermsForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            return GetTermsForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
         /// <summary>
@@ -272,9 +311,14 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTerms(termStore, siteCollectionGroup.Name, termSetName, termLabel);
+            return GetTermsForLabelInternal(termStore, siteCollectionGroup, termSet, termLabel);
         }
+
+        #endregion
+
+        #region GetTermsForTermSet overloads
 
         /// <summary>
         /// Retrieves all terms corresponding to a term label within a desired term store
@@ -289,7 +333,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
 
-            return GetTerms(termStore, termStoreGroupName, termSetName);
+            return GetTermsForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
 
         /// <summary>
@@ -304,7 +348,7 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
 
-            return GetTerms(termStore, termStoreGroupName, termSetName);
+            return GetTermsForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
 
         /// <summary>
@@ -322,31 +366,26 @@ namespace GSoft.Dynamite.Taxonomy
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
-            return GetTerms(termStore, siteCollectionGroup.Name, termSetName);
-
+            return GetTermsForTermSetInternal(termStore, siteCollectionGroup, termSet);
         }
 
-        /// <summary>
-        /// Retrieves a Term corresponding to a term label within the default term store
-        /// </summary>
-        /// <remarks>If many terms are found with the corresponding label, a root term is returned if found.</remarks>
-        /// <param name="site">The current site</param>
-        /// <param name="termStoreGroupName">The group name</param>
-        /// <param name="termSetName">The term set name</param>
-        /// <param name="termLabel">The default label of the term</param>
-        /// <returns>A list of terms</returns>
-        public IList<Term> GetTermsForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
-        {
-            TaxonomySession session = new TaxonomySession(site);
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+        #endregion
 
-            return GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
+        #region Private utility methods
+
+        private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        {
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return GetTaxonomyValueForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
         }
 
-        private static TaxonomyValue GetTaxonomyValue(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)
         {
-            Term term = GetTerm(termStore, termStoreGroupName, termSetName, termLabel);
+            Term term = GetTermForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
 
             TaxonomyValue value = null;
             if (term != null)
@@ -357,10 +396,18 @@ namespace GSoft.Dynamite.Taxonomy
             return value;
         }
 
-        private static Term GetTerm(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        private static Term GetTermForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        {
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return GetTermForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
+        }
+
+        private static Term GetTermForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)
         {
             Term term = null;
-            IList<Term> terms = GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
+            IList<Term> terms = GetTermsForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
 
             if (terms.Count > 1)
             {
@@ -377,16 +424,32 @@ namespace GSoft.Dynamite.Taxonomy
             return term;
         }
 
-        private static IList<TaxonomyValue> GetTaxonomyValues(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        private static IList<TaxonomyValue> GetTaxonomyValuesForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
-            IList<Term> terms = GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return GetTaxonomyValuesForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
+        }
+
+        private static IList<TaxonomyValue> GetTaxonomyValuesForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)
+        {
+            IList<Term> terms = GetTermsForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
             return terms.Select(term => new TaxonomyValue(term)).ToList();
         }
 
-        private static IList<TaxonomyValue> GetTaxonomyValues(TermStore termStore, string termStoreGroupName, string termSetName)
+        private static IList<TaxonomyValue> GetTaxonomyValuesForTermSetInternal(TermStore termStore, string termStoreGroupName, string termSetName)
+        {
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return GetTaxonomyValuesForTermSetInternal(termStore, termStoreGroup, termSet);
+        }
+
+        private static IList<TaxonomyValue> GetTaxonomyValuesForTermSetInternal(TermStore termStore, Group termStoreGroup, TermSet termSet)
         {
             IList<TaxonomyValue> termsList = new List<TaxonomyValue>();
-            IList<Term> terms = GetTerms(termStore, termStoreGroupName, termSetName);
+            IList<Term> terms = GetTermsForTermSetInternal(termStore, termStoreGroup, termSet);
 
             if (terms != null && terms.Count > 0)
             {
@@ -396,7 +459,7 @@ namespace GSoft.Dynamite.Taxonomy
             return termsList;
         }
 
-        private static IList<Term> GetTerms(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        private static IList<Term> GetTermsForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
             if (termStore == null)
             {
@@ -418,25 +481,33 @@ namespace GSoft.Dynamite.Taxonomy
                 throw new ArgumentNullException("termLabel");
             }
 
-            // Always interact with the term sets in the term store's default language
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = termStore.DefaultLanguage;
+            Group group = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, group, termSetName);
 
-            Group group = termStore.Groups[termStoreGroupName];
+            return GetTermsForLabelInternal(termStore, group, termSet, termLabel);
+        }
 
-            if (group == null)
+        private static IList<Term> GetTermsForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)
+        {
+            if (termStore == null)
             {
-                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
+                throw new ArgumentNullException("termStore");
             }
 
-            TermSet termSet = group.TermSets[termSetName];
+            if (termStoreGroup == null)
+            {
+                throw new ArgumentNullException("termStoreGroup");
+            }
 
             if (termSet == null)
             {
-                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
+                throw new ArgumentNullException("termSetName");
             }
 
-            termStore.WorkingLanguage = originalWorkingLanguage;
+            if (string.IsNullOrEmpty(termLabel))
+            {
+                throw new ArgumentNullException("termLabel");
+            }
 
             // Attempt to find the terms assuming the label is in the term store default language
             TermCollection termCollection = termSet.GetTerms(termLabel, termStore.DefaultLanguage, true);
@@ -460,13 +531,13 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (termCollection == null || termCollection.Count == 0)
             {
-                throw new ArgumentException("Could not find term with label " + termLabel + " in term set " + termSetName + " from group " + termStoreGroupName);
+                throw new ArgumentException("Could not find term with label " + termLabel + " in term set " + termSet.Name + " from group " + termStoreGroup.Name);
             }
 
             return termCollection.Cast<Term>().ToList();
         }
 
-        private static IList<Term> GetTerms(TermStore termStore, string termStoreGroupName, string termSetName)
+        private static IList<Term> GetTermsForTermSetInternal(TermStore termStore, string termStoreGroupName, string termSetName)
         {
             if (termStore == null)
             {
@@ -485,25 +556,30 @@ namespace GSoft.Dynamite.Taxonomy
 
             IList<Term> termsList = new List<Term>();
 
-            // Always interact with the term sets in the term store's default language
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = termStore.DefaultLanguage;
+            Group group = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, group, termSetName);
 
-            Group group = termStore.Groups[termStoreGroupName];
+            return GetTermsForTermSetInternal(termStore, group, termSet);
+        }
 
-            if (group == null)
+        private static IList<Term> GetTermsForTermSetInternal(TermStore termStore, Group termStoreGroup, TermSet termSet)
+        {
+            if (termStore == null)
             {
-                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
+                throw new ArgumentNullException("termStore");
             }
 
-            TermSet termSet = group.TermSets[termSetName];
+            if (termStoreGroup == null)
+            {
+                throw new ArgumentNullException("termStoreGroup");
+            }
 
             if (termSet == null)
             {
-                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
+                throw new ArgumentNullException("termSet");
             }
 
-            termStore.WorkingLanguage = originalWorkingLanguage;
+            IList<Term> termsList = new List<Term>();
 
             if (termSet.Terms.Count() > 0)
             {
@@ -512,5 +588,43 @@ namespace GSoft.Dynamite.Taxonomy
 
             return termsList;
         }
+
+        private static Group GetGroupFromTermStore(TermStore termStore, string groupName)
+        {
+            // Always interact with the term sets in the term store's default language
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            Group group = termStore.Groups[groupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term store group with name " + groupName);
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
+
+        private static TermSet GetTermSetFromGroup(TermStore termStore, Group group, string termSetName)
+        {
+            // Always interact with the term sets in the term store's default language
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            TermSet termSet = group.TermSets[termSetName];
+
+            if (termSet == null)
+            {
+                throw new ArgumentException("Could not find term set with name " + termSetName + " in group " + group.Name);
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return termSet;
+        }
+
+        #endregion
     }
 }
