@@ -124,7 +124,7 @@
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Unity\GRegistrationModule.cs" />
+    <Compile Include="Unity\DynamiteRegistrationModule.cs" />
     <Compile Include="Unity\IRegistrationModule.cs" />
     <Compile Include="Unity\PerRequestLifetimeManager.cs" />
     <Compile Include="Unity\RegistrationModuleContainer.cs" />

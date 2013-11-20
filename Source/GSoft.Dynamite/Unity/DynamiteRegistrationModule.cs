@@ -10,21 +10,33 @@ namespace GSoft.Dynamite.Unity
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
-    public class GRegistrationModule : IRegistrationModule
+    public class DynamiteRegistrationModule : IRegistrationModule
     {
         private readonly string _logCategoryName;
-        private readonly string _defaultResourceFileName;
+        private readonly string[] _defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
-        /// for GSoft.G.SharePoint components
+        /// for GSoft.Dynamite components
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public GRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public DynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
         {
             this._logCategoryName = logCategoryName;
-            this._defaultResourceFileName = defaultResourceFileName;
+            this._defaultResourceFileNames = new string[] { defaultResourceFileName };
+        }
+
+        /// <summary>
+        /// Creates a new registration module to prepare dependency injection
+        /// for GSoft.Dynamite components
+        /// </summary>
+        /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
+        /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
+        public DynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
+        {
+            this._logCategoryName = logCategoryName;
+            this._defaultResourceFileNames = defaultResourceFileNames;
         }
 
         /// <summary>
@@ -58,7 +70,7 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<ListLocator>();
 
             // Utilities
-            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileName));
+            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileNames));
 
             container.RegisterType<ContentTypeHelper>();
             container.RegisterType<EventReceiverHelper>();
