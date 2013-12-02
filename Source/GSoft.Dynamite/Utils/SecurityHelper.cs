@@ -172,7 +172,9 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserApprover()
         {
-            return SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems);
+            return SPContext.Current.ListItem == null ||
+                (SPContext.Current.Web.CurrentUser != null
+                && SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems));
         }
 
         /// <summary>
