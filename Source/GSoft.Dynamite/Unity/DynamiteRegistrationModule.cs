@@ -10,21 +10,33 @@ namespace GSoft.Dynamite.Unity
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
-    public class GRegistrationModule : IRegistrationModule
+    public class DynamiteRegistrationModule : IRegistrationModule
     {
-        private string _logCategoryName;
-        private string _defaultResourceFileName;
+        private readonly string _logCategoryName;
+        private readonly string[] _defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
-        /// for GSoft.G.SharePoint components
+        /// for GSoft.Dynamite components
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public GRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public DynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
         {
             this._logCategoryName = logCategoryName;
-            this._defaultResourceFileName = defaultResourceFileName;
+            this._defaultResourceFileNames = new string[] { defaultResourceFileName };
+        }
+
+        /// <summary>
+        /// Creates a new registration module to prepare dependency injection
+        /// for GSoft.Dynamite components
+        /// </summary>
+        /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
+        /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
+        public DynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
+        {
+            this._logCategoryName = logCategoryName;
+            this._defaultResourceFileNames = defaultResourceFileNames;
         }
 
         /// <summary>
@@ -33,9 +45,19 @@ namespace GSoft.Dynamite.Unity
         /// <param name="container">The container on which to register type bindings</param>
         public void Register(IUnityContainer container)
         {
+#if DEBUG
+            // Logger with debug output
+            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, true);
+            container.RegisterInstance<ILogger>(logger);
+#else
+            // Logger without debug output
+            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, false);
+            container.RegisterInstance<ILogger>(logger);
+#endif
+
             // Binding
             var builder = new EntitySchemaBuilder<SharePointEntitySchema>();
-            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(builder));
+            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(builder, logger));
             container.RegisterInstance<ISharePointEntityBinder>(binder);
 
             // Taxonomy
@@ -48,14 +70,8 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<ListLocator>();
 
             // Utilities
-            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileName));
-#if DEBUG
-            // Logger with debug output
-            container.RegisterInstance<ILogger>(new TraceLogger(this._logCategoryName, this._logCategoryName, true));
-#else
-            // Logger without debug output
-            container.RegisterInstance<ILogger>(new TraceLogger(this._logCategoryName, this._logCategoryName, false));
-#endif
+            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileNames));
+
             container.RegisterType<ContentTypeHelper>();
             container.RegisterType<EventReceiverHelper>();
             container.RegisterType<FieldHelper>();

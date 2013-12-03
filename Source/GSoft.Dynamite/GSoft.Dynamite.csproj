@@ -6,9 +6,10 @@
     <ProjectGuid>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ClassLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>GSoft.Dynamite</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,6 +19,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,8 +32,13 @@
   <PropertyGroup>
     <RootNamespace>GSoft.Dynamite</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Office.Server.Search, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
@@ -101,6 +108,7 @@
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
+    <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -110,12 +118,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
+    <Compile Include="Repositories\IFolderRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Unity\GRegistrationModule.cs" />
+    <Compile Include="Unity\DynamiteRegistrationModule.cs" />
     <Compile Include="Unity\IRegistrationModule.cs" />
     <Compile Include="Unity\PerRequestLifetimeManager.cs" />
     <Compile Include="Unity\RegistrationModuleContainer.cs" />
@@ -147,6 +156,9 @@
     <Compile Include="ValueTypes\TaxonomyValueCollection.cs" />
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

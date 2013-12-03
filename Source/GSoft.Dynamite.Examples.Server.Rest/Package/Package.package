@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="d6ad6f4e-52e0-4a7a-8913-d766105700e0" solutionId="d6ad6f4e-52e0-4a7a-8913-d766105700e0" resetWebServer="false" name="GSoft.Dynamite.Examples.Server.Rest" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <projectItems>
+    <projectItemReference itemId="6439b9fe-eda6-4291-be22-dd609650cc47" />
+  </projectItems>
+</package>

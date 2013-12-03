@@ -11,16 +11,26 @@ namespace GSoft.Dynamite.Utils
     /// </summary>
     public class ResourceLocator : IResourceLocator
     {
-        private string _defaultResourceFileName;
+        private string[] _defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new resource locator which will default to the provided
         /// resource file name.
         /// </summary>
-        /// <param name="defaultApplicationResourceFileName">The current application's default/global resource file name</param>
+        /// <param name="defaultApplicationResourceFileNames">The current application's default/global resource file names</param>
         public ResourceLocator(string defaultApplicationResourceFileName)
         {
-            this._defaultResourceFileName = defaultApplicationResourceFileName;
+            this._defaultResourceFileNames = new string[] { defaultApplicationResourceFileName };
+        }
+
+        /// <summary>
+        /// Creates a new resource locator which will default to the provided
+        /// resource file name.
+        /// </summary>
+        /// <param name="defaultApplicationResourceFileNames">The current application's default/global resource file names</param>
+        public ResourceLocator(string[] defaultApplicationResourceFileNames)
+        {
+            this._defaultResourceFileNames = defaultApplicationResourceFileNames;
         }
 
         /// <summary>
@@ -30,7 +40,7 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The resource in the current UI language</returns>
         public string Find(string resourceKey)
         {
-            return this.Find(this._defaultResourceFileName, resourceKey, CultureInfo.CurrentUICulture);
+            return this.Find(resourceKey, CultureInfo.CurrentUICulture.LCID);
         }
 
         /// <summary>
@@ -41,7 +51,21 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The resource in the specified language</returns>
         public string Find(string resourceKey, int lcid)
         {
-            return this.Find(this._defaultResourceFileName, resourceKey, new CultureInfo(lcid));
+            string resourceValue = null;
+
+            // Scan all the default resource files
+            foreach (var fileName in this._defaultResourceFileNames)
+            {
+                resourceValue = this.Find(fileName, resourceKey, new CultureInfo(lcid));
+
+                if (resourceValue != null)
+                {
+                    // exit as soon as you find the resource in one of the default files
+                    break;
+                }
+            }
+
+            return resourceValue;
         }
 
         /// <summary>

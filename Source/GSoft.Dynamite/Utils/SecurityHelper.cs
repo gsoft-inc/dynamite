@@ -151,6 +151,48 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Checks if the user is member of the members group.
+        /// </summary>
+        /// <returns>True of part of site's associated member group, false otherwise.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
+        public bool IsCurrentUserMember()
+        {
+            if (SPContext.Current.Web.AssociatedMemberGroup != null)
+            {
+                return SPContext.Current.Web.AssociatedMemberGroup.ContainsCurrentUser;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the user is member of the approvers group
+        /// </summary>
+        /// <returns>True of part of site's associated owners group, false otherwise.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
+        public bool IsCurrentUserApprover()
+        {
+            return SPContext.Current.ListItem == null ||
+                (SPContext.Current.Web.CurrentUser != null
+                && SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems));
+        }
+
+        /// <summary>
+        /// Checks if the user is member of the members group.
+        /// </summary>
+        /// <returns>True is member of visitor's group and can't edit current list item, false otherwise.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
+        public bool IsCurrentUserOwner()
+        {
+            if (SPContext.Current.Web.AssociatedOwnerGroup != null)
+            {
+                return SPContext.Current.Web.AssociatedOwnerGroup.ContainsCurrentUser;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Adds the role.
         /// </summary>
         /// <param name="web">The web containing the role definitions.</param>

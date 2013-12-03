@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="CssFiles" Url="Style Library" RootWebOnly="FALSE">
+    <File Url="GSoft.Dynamite.Examples.Custom.css" Name="GSoft.Dynamite.Examples.Custom.css" Type="GhostableInLibrary" Path="Style\GSoft.Dynamite.Examples.Custom.css" />
+  </Module>
+  <Control Id="AdditionalPageHead" Sequence="50" ControlSrc="~/_controltemplates/GSoft.Dynamite.Examples/ProjectCss.ascx"></Control>
+</Elements>

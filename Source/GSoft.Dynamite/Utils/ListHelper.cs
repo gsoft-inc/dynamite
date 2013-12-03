@@ -75,6 +75,41 @@ namespace GSoft.Dynamite.Utils
             return list;
         }
 
+
+        /// <summary>
+        /// Creates the list or returns the existing one.
+        /// </summary>
+        /// <remarks>The list name and description will not be translated</remarks>
+        /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
+        /// <param name="web">The current web</param>
+        /// <param name="name">The name of the list</param>
+        /// <param name="description">The description of the list</param>
+        /// <param name="template">The desired list template type to use to instantiate the list</param>
+        /// <returns>The new list or the existing list</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
+        {
+            var list = web.Lists.TryGetList(name);
+
+            if (list != null)
+            {
+                // List already exists, check for correct template
+                if (list.BaseTemplate != templateType)
+                {
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, templateType));
+                }
+            }
+            else
+            {
+                // Create new list
+                var id = web.Lists.Add(name, description, templateType);
+
+                list = web.Lists[id];
+            }
+
+            return list;
+        }
+
         /// <summary>
         /// Adds the content type id.
         /// </summary>

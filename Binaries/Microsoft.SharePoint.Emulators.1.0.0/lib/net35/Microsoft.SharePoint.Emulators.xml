@@ -1,0 +1,2149 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SharePoint.Emulators</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPEventPropertiesBase">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPEventPropertiesBase"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPEventPropertiesBase.FromInstance(Microsoft.SharePoint.SPEventPropertiesBase)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPEventPropertiesBase.ErrorMessage">
+            <summary>
+             Error message of the project.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFieldUrlValue">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFieldUrlValue"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldUrlValue.Prepare">
+            <summary>
+            Sets the trap and hooks constructors if neeed
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldUrlValue.Description">
+            <summary>
+             Get/sets description field.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldUrlValue.Url">
+            <summary>
+             Url of the SPFieldUrlValue field
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPSecurableObject">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPSecurableObject"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSecurableObject.#ctor(Microsoft.SharePoint.SPSecurableObject)">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+            <param name="instance">The uninitialized <see cref="T:Microsoft.SharePoint.SPSecurableObject"/> instance.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSecurableObject.FromInstance(Microsoft.SharePoint.SPSecurableObject)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSecurableObject.RoleAssignments">
+            <summary>
+            Gets the role assignments for this securable object.
+            </summary>
+            <remarks>
+            This property emulator has not been tested yet.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPSecurity">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPSecurity"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSecurity.Prepare">
+            <summary>
+            Sets delegate that do not change the security settings
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.CannotDeleteContentFromCollection">
+            <summary>
+              Looks up a localized string similar to Cannot delete content type from collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.CannotModifyReadonlyCollection">
+            <summary>
+              Looks up a localized string similar to Cannot modify readonly collection..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.CouldNotFindFieldIndex">
+            <summary>
+              Looks up a localized string similar to Could not find FieldIndex..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.CyclicDependencyBetweenObjects">
+            <summary>
+              Looks up a localized string similar to Cyclic dependency between objects added into the list..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.DefaultAssetLocation">
+            <summary>
+              Looks up a localized string similar to List designed as a default asset location for images..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.DefaultLocationFoWikiPage">
+            <summary>
+              Looks up a localized string similar to List designed as a default location for wiki pages..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.EmSPListQueryItemsNotImplemented">
+            <summary>
+              Looks up a localized string similar to EmSPList.QueryItems is not currently supported in the SharePoint emulator..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentIsEmpty">
+            <summary>
+              Looks up a localized string similar to The specified argument cannot be empty..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentIsNegative">
+            <summary>
+              Looks up a localized string similar to The specified argument cannot be negative..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentNotTypeOf">
+            <summary>
+              Looks up a localized string similar to The specified argument must have the following type: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentPropertyIsEmpty">
+            <summary>
+              Looks up a localized string similar to The specified argument has the following property, which cannot be an empty string: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentPropertyIsNegative">
+            <summary>
+              Looks up a localized string similar to The  specified argument has the following property, which cannot be negative: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentPropertyIsNull">
+            <summary>
+              Looks up a localized string similar to The specified argument has the following property, which cannot be null: {0}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.Error_ArgumentPropertyNotTypeOf">
+            <summary>
+              Looks up a localized string similar to The specified argument has the following property: {0}. This property must have the following type: {1}..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.ExceedMaxEmailLength">
+            <summary>
+              Looks up a localized string similar to Specified email length exceeds the maximum allowed length of {{0})..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.FieldIsAlreadySet">
+            <summary>
+              Looks up a localized string similar to {0} is already set..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.InstanceIsAlreadySPFarmObject">
+            <summary>
+              Looks up a localized string similar to Instance is already an SPFarm instance..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.ListIsNotFound">
+            <summary>
+              Looks up a localized string similar to List {0} was not found..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.ListItemAlreadySpecified">
+            <summary>
+              Looks up a localized string similar to ListItem already specified in the SPItemEventProperties..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.SingleLineofText">
+            <summary>
+              Looks up a localized string similar to Single line of text.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.SPFieldUrlValueIncorrectFormat">
+            <summary>
+              Looks up a localized string similar to Passed in parameter fieldValue does not contain delimiter..
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.TestNeedToBeRunUnder64BitArchitecture">
+            <summary>
+              Looks up a localized string similar to Sharepoint emulator tests need to be run under 64 bit architecture. You can change the run by selecting &apos;x64&apos; from menu &apos;TEST&apos;-&gt;&apos;Test Settings&apos;-&gt;&apos;Default Processor Architecture&apos;.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.Properties.Resources.UnableToFindList">
+            <summary>
+              Looks up a localized string similar to Unable to find list from SPListCollection..
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPContentType">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPContentType"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentType.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContentType"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentType.#ctor(Microsoft.SharePoint.SPContentType)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContentType"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentType.Prepare">
+            <summary>
+            Prepares the <see cref="T:Microsoft.SharePoint.SPContentType"/> type.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentType.FromInstance(Microsoft.SharePoint.SPContentType)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.Id">
+            <summary>
+            Gets or sets the Id
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.Parent">
+            <summary>
+            Gets or sets the parent content type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.Group">
+            <summary>
+            Gets or sets the group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.Updated">
+            <summary>
+            Gets or sets a value indicating if the element was updated
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentType.FieldLinks">
+            <summary>
+            Gets the field links
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPContentTypeCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection.#ctor(Microsoft.SharePoint.SPContentTypeCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection"/>
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContentTypeCollection.ReadOnly">
+            <summary>
+            Gets or sets the readonly flag
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPContext">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPContext"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContext"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.#ctor(Microsoft.SharePoint.SPContext)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPContext"/>.
+            </summary>
+            <param name="instance">the runtime instance if any</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.Prepare">
+            <summary>
+            Wire up SPContext.Current/GetCurrent(SPWeb) property
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetGetContextHttpContext">
+            <summary>
+             Wire up SPContext.GetCurrent(HttpContext)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetGetContextSPWeb">
+            <summary>
+            Wire up SPContext.GetCurrent(SPWeb)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetDefaultSPContextKey(System.Web.HttpContext)">
+            <summary>
+            Helper to set up the key to be access by SPContext.Current 
+            </summary>
+            <param name="httpContext"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetCurrent">
+            <summary>
+            Emulate SPContext.GetContext by specifying an EmSPContext.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetListItem">
+            <summary>
+            Sets the list item
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetList">
+            <summary>
+            Create a behaved list and assigns it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetSite">
+            <summary>
+            Sets the behaved web and site
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.SetViewContext">
+            <summary>
+            Sets the view context
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPContext.FromInstance(Microsoft.SharePoint.SPContext)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.Item">
+            <summary>
+            Gets or sets the item
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.ListItem">
+            <summary>
+            Gets the list item if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.ListItemDisplayName">
+            <summary>
+            Gets the list item display name if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.List">
+            <summary>
+            Gets or sets the list
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.Web">
+            <summary>
+            Gets or sets the web
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.Site">
+            <summary>
+            Gets the current site if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.ViewContext">
+            <summary>
+            Gets or sets the view context
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPContext.Current">
+            <summary>
+            Gets or sets the current context
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPDocumentLibrary">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPDocumentLibrary"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPList.TrimOffExcessString(System.String)">
+            <summary>
+            Trim off excess string. Sharepoint server trim off string if it's too long when constructing  Url
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPList.FromInstance(Microsoft.SharePoint.SPList)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.ID">
+            <summary>
+             Get/Set ID
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.EnableAttachments">
+            <summary>
+            Gets or sets the EnableAttachment value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Hidden">
+            <summary>
+            Gets or sets the hidden value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Url">
+            <summary>
+            Gets or sets the Url. This is NOT a real property,
+            but it is used in the fake implementation of GetList
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.ContentTypesEnabled">
+            <summary>
+            Gets or sets the ContentTypeEnabled value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.ContentTypes">
+            <summary>
+            Gets the content types
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Items">
+            <summary>
+            Gets the list items
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Fields">
+            <summary>
+            Gets the fields
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.FieldIndexes">
+            <summary>
+            Gets the field indexes
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Views">
+            <summary>
+            Gets the views
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Title">
+            <summary>
+            Gets or sets the title
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.RootFolder">
+            <summary>
+            Gets or sets the root folder
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.RootFolderUrl">
+            <summary>
+            Gets the root folder url
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Updated">
+            <summary>
+            Gets or sets a value indicating if Updated was called and with which value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPList.Instance">
+            <summary>
+            Gets the runtime instance
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPDocumentLibrary.FromInstance(Microsoft.SharePoint.SPDocumentLibrary)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPFarm">
+            <summary>
+            A behaved type for the <see cref="T:Microsoft.SharePoint.Administration.SPFarm"/> object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedUpgradableObject">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.Administration.SPPersistedUpgradableObject"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.Administration.SPPersistedObject"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.#ctor(Microsoft.SharePoint.Administration.SPPersistedObject)">
+            <summary>
+            Initializes a new instance of the persisted object
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.FromInstance(Microsoft.SharePoint.Administration.SPPersistedObject)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.WasDeleted">
+            <summary>
+            Gets a flag indicating if the object was deleted
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.Updated">
+            <summary>
+            Gets the number of times Update was invoked
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.Properties">
+            <summary>
+            Gets or sets the properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.Farm">
+            <summary>
+            Gets or sets the farm
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.Parent">
+            <summary>
+            Gets or sets the parent
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedUpgradableObject.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedObject"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedUpgradableObject.#ctor(Microsoft.SharePoint.Administration.SPPersistedUpgradableObject)">
+            <summary>
+            Initializes a new instance of the persisted object
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPPersistedUpgradableObject.FromInstance(Microsoft.SharePoint.Administration.SPPersistedUpgradableObject)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.#ctor">
+            <summary>
+            Initializes a new instance of the type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.#ctor(Microsoft.SharePoint.Administration.SPFarm)">
+            <summary>
+            Initialises a new instance of the type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.Prepare">
+            <summary>
+            Sets the Current property as a behaved type 
+            if necessary
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.SetLocal">
+            <summary>
+            Assings a new farm to Local and returns it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.FromInstance(Microsoft.SharePoint.Administration.SPFarm)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.TraceSessionGuid">
+            <summary>
+            Gets the trace session guid (which is hard coded)
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.Local">
+            <summary>
+            Gets or sets the Local farm. Setting the farm also attaches the shim.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPFarm.Instance">
+            <summary>
+            Gets the SPFarm instance
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFeature">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFeature"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeature.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeature"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeature.#ctor(Microsoft.SharePoint.SPFeature)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeature"/>
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeature.FromInstance(Microsoft.SharePoint.SPFeature)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeature.Definition">
+            <summary>
+            Gets or sets the feature definition
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeature.Parent">
+            <summary>
+            Gets or sets the parent
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeature.Properties">
+            <summary>
+            Gets the property collection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeature.DefinitionId">
+            <summary>
+            Gets or sets the DefinitionId
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFeatureCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFeatureCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeatureCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureCollection.#ctor(Microsoft.SharePoint.SPFeatureCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeatureCollection"/>
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureCollection.ScopeParent">
+            <summary>
+            Gets or sets the scope parent
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFeaturePropertyCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFeaturePropertyCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeaturePropertyCollection.GetEnumerator">
+            <summary>
+            Gets the enumerator
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeaturePropertyCollection.Count">
+            <summary>
+            Gets or sets the count of the collection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFieldIndex">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFieldIndex"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldIndex.FromInstance(Microsoft.SharePoint.SPFieldIndex)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldIndex.Parent">
+            <summary>
+            Gets or sets the parent
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldIndex.Id">
+            <summary>
+            Gets or sets the field Id value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldIndex.Ids">
+            <summary>
+            Gets the other ids collection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFieldIndexCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection.#ctor(Microsoft.SharePoint.SPFieldIndexCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection"/>
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection.SetNext">
+            <summary>
+            Sets the next list behaved instance
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection.List">
+            <summary>
+            Gets or sets the list
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldIndexCollection.Capacity">
+            <summary>
+            Gets a value that is the maximum number of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFieldIndex"/> objects that the collection can contain.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFieldLink">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFieldLink"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldLink.#ctor">
+            <summary>
+            Initializes the instance
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldLink.#ctor(Microsoft.SharePoint.SPFieldLink)">
+            <summary>
+            Initializes the instance
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldLink.Prepare">
+            <summary>
+            Prepares the shim for SPFieldLink
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFieldLink.Field">
+            <summary>
+            Gets or sets the field
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFieldLinkCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFieldLinkCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldLinkCollection.#ctor">
+            <summary>
+            Initializes a new instance of the collection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFieldLinkCollection.#ctor(Microsoft.SharePoint.SPFieldLinkCollection)">
+            <summary>
+            Initializes a new instance of the collection
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFile">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFile"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFile.#ctor">
+            <summary>
+            Initializes a new instance
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFile.#ctor(Microsoft.SharePoint.SPFile)">
+            <summary>
+            Initializes a new instance around the SPFile
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFile.Delete">
+            <summary>
+            Deletes the file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFile.FromInstance(Microsoft.SharePoint.SPFile)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFile.Item">
+            <summary>
+            Gets the <see cref="T:Microsoft.SharePoint.Emulators.EmSPListItem"/> object corresponding to the file.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFile.Name">
+            <summary>
+            Gets the name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFileCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFileCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFileCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFileCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFileCollection.#ctor(Microsoft.SharePoint.SPFileCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFileCollection"/>
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFileCollection.Add(System.String,System.Byte[])">
+            <summary>
+            Creates a file in the collection using the specified URL and a byte array that contains the file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFileCollection.Delete(System.String)">
+            <summary>
+            Deletes the file located at the specified URL. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFolder">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFolder"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolder.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFolder"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolder.#ctor(Microsoft.SharePoint.SPFolder)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFolder"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolder.Delete">
+            <summary>
+            Deletes the folder.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolder.FromInstance(Microsoft.SharePoint.SPFolder)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFolder.Files">
+            <summary>
+            Gets the collection of all files contained in the folder. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFolder.Item">
+            <summary>
+            Gets the <see cref="T:Microsoft.SharePoint.Emulators.EmSPListItem"/> object corresponding to the folder.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFolder.SubFolders">
+            <summary>
+            Gets the collection of subfolders contained within the folder.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFolder.Name">
+            <summary>
+            Gets or sets the name of the folder. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFolderCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFolderCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolderCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFolderCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolderCollection.#ctor(Microsoft.SharePoint.SPFolderCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFolderCollection"/>.
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolderCollection.Add(System.String)">
+            <summary>
+            Adds the folder that is located at the specified <paramref name="url"/> to the collection. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFolderCollection.Delete(System.String)">
+            <summary>
+            Deletes the folder that is located at the specified <paramref name="url"/> from the collection. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFolderCollection.Folder">
+            <summary>
+            Gets the parent folder of the collection. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPItem">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPItem"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItem.#ctor(Microsoft.SharePoint.SPItem)">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItem.FromInstance(Microsoft.SharePoint.SPItem)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPItemEventDataCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPItemEventDataCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventDataCollection.#ctor">
+            <summary>
+            Initializes a new constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventDataCollection.#ctor(Microsoft.SharePoint.SPItemEventDataCollection)">
+            <summary>
+            Initializes a new instance
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventDataCollection.FromInstance(Microsoft.SharePoint.SPItemEventDataCollection)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPItemEventDataCollection.Properties">
+            <summary>
+            Gets the properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListCollection.TryGetWeb(Microsoft.SharePoint.SPWeb@)">
+            <summary>
+            Tries to get the web if any
+            </summary>
+            <param name="outWeb"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListCollection.SetOne">
+            <summary>
+            Adds a new list to the collection. Returns the new instantiated behaved type of the list.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListCollection.SetNext">
+            <summary>
+            Sets the next list behaved instance
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListCollection.FromInstance(Microsoft.SharePoint.SPListCollection)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListCollection.Web">
+            <summary>
+            Gets the web that owns this list
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPListEventProperties">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPListEventProperties"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListEventProperties.#ctor">
+            <summary>
+            Initializes a new instance of the behaved and allocates a runtime
+            instance of <see cref="T:Microsoft.SharePoint.SPListEventProperties"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListEventProperties.#ctor(Microsoft.SharePoint.SPListEventProperties)">
+            <summary>
+            Initializes a new instance of the behaved and allocates a runtime
+            instance of <see cref="T:Microsoft.SharePoint.SPListEventProperties"/> if needed
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListEventProperties.FromInstance(Microsoft.SharePoint.SPListEventProperties)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.FeatureId">
+            <summary>
+             Get/set FeatureId
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.TemplateId">
+            <summary>
+             Get/set TemplateId 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.WebUrl">
+            <summary>
+             Get/Set WebUrl
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.UserDisplayName">
+            <summary>
+            Get/Set UserDisplayName
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.UserLoginName">
+            <summary>
+             Gets/Sets UserLoginName
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.Web">
+            <summary>
+             Gets Web
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.Site">
+            <summary>
+             Gets the Site
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.ListId">
+            <summary>
+            Get/Set ListId
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListEventProperties.ListTitle">
+            <summary>
+             Get/Sets ListTitle
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListItemCollection.SetOne">
+            <summary>
+            Sets the state of the collection as a single element
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListItemCollection.SetNext">
+            <summary>
+            Adds an item to the collection
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPRoleAssignment">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPRoleAssignment"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.#ctor">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.#ctor(Microsoft.SharePoint.SPRoleAssignment)">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.SetMemberAsUser">
+            <summary>
+            Instantiate a new EmSPUser, associates to the Member property
+            and returns it
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.FromInstance(Microsoft.SharePoint.SPRoleAssignment)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.Member">
+            <summary>
+            Gets or sets the principal member
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPRoleAssignment.Parent">
+            <summary>
+            Gets or sets the parent
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPRoleAssignmentCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPRoleAssignmentCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignmentCollection.#ctor">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPRoleAssignmentCollection.#ctor(Microsoft.SharePoint.SPRoleAssignmentCollection)">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPSite">
+            <summary>
+            The emulator for <see cref="T:Microsoft.SharePoint.SPSite"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPSite"/>.
+            </summary>
+            <param name="siteUrl">The absolute URL for the site collection.</param>
+            <remarks>
+            This constructor emulates <see cref="M:Microsoft.SharePoint.SPSite.#ctor(System.String)"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.#ctor(Microsoft.SharePoint.SPSite,System.String)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPSite"/>.
+            </summary>
+            <param name="instance">The uninitialized <see cref="T:Microsoft.SharePoint.SPSite"/> instance.</param>
+            <param name="siteUrl">The absolute URL for the site collection.</param>
+            <remarks>
+            This constructor is the internal implementation of the <see cref="M:Microsoft.SharePoint.SPSite.#ctor(System.String)"/> emulator.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.Dispose">
+            <summary>
+            Releases all unmanaged resources that are used by the site collection object.
+            </summary>
+            <remarks>
+            This method emulates <see cref="M:Microsoft.SharePoint.SPSite.Dispose"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.OpenWeb">
+            <summary>
+            Returns the Web site that is associated with the URL that is used in an <see cref="T:Microsoft.SharePoint.SPSite"/> constructor.
+            </summary>
+            <returns>An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the Web site.</returns>
+            <remarks>
+            This method emulates <see cref="M:Microsoft.SharePoint.SPSite.OpenWeb"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.OpenWeb(System.Guid)">
+            <summary>
+            Returns the Web site with the specified GUID.
+            </summary>
+            <param name="webId">A GUID that specifies which Web site to return.</param>
+            <returns>An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the Web site.</returns>
+            <exception cref="T:System.IO.FileNotFoundException">
+            Throws a <see cref="T:System.IO.FileNotFoundException"/> when a Web site with the specified GUID could not be found.
+            </exception>
+            <remarks>
+            This method emulates <see cref="M:Microsoft.SharePoint.SPSite.OpenWeb(System.Guid)"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.OpenWeb(System.String)">
+            <summary>
+            Returns the Web site that is located at the specified server-relative or site-relative URL.
+            </summary>
+            <param name="url">
+            A string that contains either the server-relative or site-relative URL of the Web site. 
+            A server-relative URL begins with a forward slash ("/"), while a site-relative URL does not begin with a forward slash.
+            </param>
+            <returns>An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the Web site.</returns>
+            <remarks>
+            This method emulates <see cref="M:Microsoft.SharePoint.SPSite.OpenWeb(System.String)"/>.
+            If a web site with the specified URL could not be found, returns a "non-existent" <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/>.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPSite.FromInstance(Microsoft.SharePoint.SPSite)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.AllWebs">
+            <summary>
+            Gets the collection of all Web sites that are contained within the site collection, including the top-level site and its subsites.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.AllWebs"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.Features">
+            <summary>
+            Gets the collection of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeature"/> objects that are associated with the site collection.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.Features"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.ID">
+            <summary>
+            Gets the GUID that identifies the site collection.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.ID"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.RootWeb">
+            <summary>
+            Gets the root Web site of the site collection.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.RootWeb"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.Url">
+            <summary>
+            Gets the full URL to the root Web site of the site collection, including host name, port number, and path.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.Url"/>.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPSite.WebApplication">
+            <summary>
+            Gets the SharePoint Foundation Web application to which the site collection belongs.
+            </summary>
+            <remarks>
+            This property emulates <see cref="P:Microsoft.SharePoint.SPSite.WebApplication"/>.
+            It is currently internal because we don't officially support the <see cref="T:Microsoft.SharePoint.Administration.SPWebApplication"/> yet.
+            </remarks>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPSiteCollection">
+            <summary>
+            The behaved type of <see cref="T:Microsoft.SharePoint.Administration.SPSiteCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPSiteCollection.#ctor">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPSiteCollection.#ctor(Microsoft.SharePoint.Administration.SPSiteCollection)">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPSiteCollection.WebApplication">
+            <summary>
+            Gets or sets the web application
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPUser">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPUser"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPUser.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPUser"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPUser.#ctor(Microsoft.SharePoint.SPUser)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPUser"/>
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPUser.FromInstance(Microsoft.SharePoint.SPUser)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPUser.ID">
+            <summary>
+            Gets or sets the ID
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPUser.Email">
+            <summary>
+            Gets or sets the email
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPUser.LoginName">
+            <summary>
+            Gets or sets the login name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPUser.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPUser.Notes">
+            <summary>
+            Gets or sets the notes
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPUserCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPUserCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPUserCollection.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPUserCollection"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPUserCollection.#ctor(Microsoft.SharePoint.SPUserCollection)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPUserCollection"/>
+            </summary>
+            <param name="instance">runtime instance; may be null</param>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPWebCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPWebCollection"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPWebCollection.Add(System.String)">
+            <summary>
+            Creates an <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object with the specified website-relative URL. 
+            </summary>
+            <param name="webUrl">
+            A string that specifies the URL for the new website. If the <see cref="T:Microsoft.SharePoint.Emulators.EmSPWebCollection"/> object represents 
+            the websites within a site collection, the URL is server-relative and begins with a forward slash 
+            (for example, "/sites/MySitecollection/MyNewWebSite"). If the SPWebCollection object represents the child websites 
+            directly beneath a website, the URL is relative to the website and does not begin with a forward slash 
+            (for example, "MyNewWebSite").
+            </param>
+            <returns>
+            An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the web site.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPWebCollection.Delete(System.String)">
+            <summary>
+            Deletes the website with the specified website-relative URL from the collection. 
+            </summary>
+            <param name="webUrl">
+            A string that contains the website URL relative to the root website in the site collection. 
+            For example, if the website to delete is located at http://MyServer/sites/MySiteCollection/DeleteSubsite, 
+            specify DeleteSubsite, or if it is located at http://MyServer/sites/MySiteCollection/Subsite/DeleteSubsite, 
+            specify Subsite/DeleteSubsite.
+            </param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWebCollection.Item(System.Guid)">
+            <summary>
+            Gets the website with the specified GUID from the collection. 
+            </summary>
+            <param name="id">A <see cref="T:System.Guid"/> that identifies the website.</param>
+            <returns>An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the element.</returns>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWebCollection.Item(System.String)">
+            <summary>
+            Gets the website with the specified site-relative URL from the collection
+            </summary>
+            <param name="url">A string that contains the site-relative URL.</param>
+            <returns>An <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object that represents the website.</returns>
+            <remarks>
+            If the specified <paramref name="url"/> does not point to an existing website, this 
+            property returns a an <see cref="T:Microsoft.SharePoint.Emulators.EmSPWeb"/> object with the <see cref="P:Microsoft.SharePoint.Emulators.EmSPWeb.Exists"/> 
+            property set to false.
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWebCollection.Names">
+            <summary>
+            Gets an array that contains the site-relative URLs of all the Web sites in the collection.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPWeb">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPWeb"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPWeb.FromInstance(Microsoft.SharePoint.SPWeb)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPWeb.UpdateUrls">
+            <summary>
+            Helper to update the Url when Name or parented under a web
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.AllowUnsafeUpdates">
+            <summary>
+            Gets or sets the AllowUnsafeUpdates property
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Exists">
+            <summary>
+            Gets or sets the Exists property value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Site">
+            <summary>
+            Gets the parent site
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.AllProperties">
+            <summary>
+            Gets the all properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.CurrentUser">
+            <summary>
+            Gets or sets the current user
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.ParentWeb">
+            <summary>
+            Gets the parent web if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.ParentWebId">
+            <summary>
+            Gets the parent web id if any, the empty guid otherwise.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Fields">
+            <summary>
+            Gets the fields
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.AvailableFields">
+            <summary>
+            Gets the avaiable fields
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Lists">
+            <summary>
+            Gets web lists
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Users">
+            <summary>
+            Gets the users
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Features">
+            <summary>
+            Gets the features
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.ContentTypes">
+            <summary>
+            Gets the content types
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.AvailableContentTypes">
+            <summary>
+            Gets the available content types
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Folders">
+            <summary>
+            Gets the folders
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Properties">
+            <summary>
+            Gets the properties bag
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Webs">
+            <summary>
+            Gets the list of child webs
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.DisposeCount">
+            <summary>
+            Gets the number of times dispose was called
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Locale">
+            <summary>
+            Gets or sets the Locale
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.ServerRelativeUrl">
+            <summary>
+            Gets or sets the ServerRelativeUrl value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Url">
+            <summary>
+            Gets or sets the web url
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Title">
+            <summary>
+            Gets or sets the Title field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Name">
+            <summary>
+            Gets or sets the Title field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.ID">
+            <summary>
+            Gets or sets the web id
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPWeb.Updated">
+            <summary>
+            Get or sets a value indicating if the updated method was called
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPField">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPField"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPField.#ctor">
+            <summary>
+            Initializes a new instance of the behaved type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPField.#ctor(Microsoft.SharePoint.SPField)">
+            <summary>
+            Initialises a new instance of the behaved type
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPField.Delete">
+            <summary>
+            Deletes the field.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPField.FromInstance(Microsoft.SharePoint.SPField)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.InternalName">
+            <summary>
+            Gets or sets the InternalName property
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Title">
+            <summary>
+            Gets or sets the Title field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Type">
+            <summary>
+            Gets or sets the field type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Required">
+            <summary>
+            Gets or sets the required field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.ReadOnly">
+            <summary>
+            Gets or sets the read only field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Description">
+            <summary>
+            Gets or sets the description field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Indexed">
+            <summary>
+            Gets or sets the indexed value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Id">
+            <summary>
+            Gets or sets the field Id
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.TypeDisplayName">
+            <summary>
+             Gets or sets TypeDisplayName
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.DefaultFormula">
+            <summary>
+             Gets or sets DefaultFormula 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.DefaultValue">
+            <summary>
+             Gets or sets DefaultValue
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Fields">
+            <summary>
+            Gets or sets the parent field collection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.ParentList">
+            <summary>
+            Gets the parent list
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPField.Updated">
+            <summary>
+            Gets or sets a value indicating the field was updated
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListItem.SetFile">
+            <summary>
+            Assings the behaved file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPListItem.FromInstance(Microsoft.SharePoint.SPListItem)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.ID">
+            <summary>
+            Get/Set ID
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.FileSystemObjectType">
+            <summary>
+             Get/Set FileSystemObjectType 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.ListItems">
+            <summary>
+            Get/set ListItems
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Item(System.Guid)">
+            <summary>
+            Gets or sets the value that is contained by the field identified by the specified GUID.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Item(System.Int32)">
+            <summary>
+            Gets or sets the value that is contained by the field at the specified index in the field collection of the parent list. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Item(System.String)">
+            <summary>
+            Gets or sets the value at a particular field
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Name">
+            <summary>
+            Gets or sets the name of the item.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Title">
+            <summary>
+            Gets or sets the title of the item.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Folder">
+            <summary>
+            Gets a folder object that is associated with a folder item.     
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.File">
+            <summary>
+            Gets the file that is represented by the item from a document library.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPListItem.Instance">
+            <summary>
+            Gets the runtime instance
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPItemEventProperties">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPItemEventProperties"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventProperties.#ctor">
+            <summary>
+            Initializes a new instance of the behaved and allocates a runtime
+            instance of <see cref="T:Microsoft.SharePoint.SPItemEventProperties"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventProperties.#ctor(Microsoft.SharePoint.SPItemEventProperties)">
+            <summary>
+            Initializes a new instance of the behaved and allocates a runtime
+            instance of <see cref="T:Microsoft.SharePoint.SPItemEventProperties"/> if needed
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPItemEventProperties.FromInstance(Microsoft.SharePoint.SPItemEventProperties)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPItemEventProperties.UserDisplayName">
+            <summary>
+            Gets or sets the user display name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPItemEventProperties.UserLoginName">
+            <summary>
+            Gets or sets the UserLoginName
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPView">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPView"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPView.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPView"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPView.#ctor(Microsoft.SharePoint.SPView)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPView"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPView.FromInstance(Microsoft.SharePoint.SPView)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPView.ID">
+            <summary>
+            Gets or sets the ID
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPView.Url">
+            <summary>
+            Gets or sets the url value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPView.Title">
+            <summary>
+            Gets or sets the title value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPView.ParentList">
+            <summary>
+            Gets or sets the parent list
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPViewCollection">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPViewCollection"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPViewCollection.SetOne">
+            <summary>
+            Initializes the collection to a single view instance and returns it.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPViewCollection.List">
+            <summary>
+            Gets or sets the list
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPViewCollection.DefaultView">
+            <summary>
+            Gets the default view if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPViewCollection.DefaultViewIndex">
+            <summary>
+            Gets or sets the default view index
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPViewContext">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPViewContext"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPViewContext.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPViewContext"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPViewContext.#ctor(Microsoft.SharePoint.SPViewContext)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPViewContext"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPViewContext.SetView">
+            <summary>
+            Sets the current context view
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPViewContext.FromInstance(Microsoft.SharePoint.SPViewContext)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPViewContext.View">
+            <summary>
+            Gets or sets the view
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPViewContext.ViewType">
+            <summary>
+            Gets or sets the ViewType
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFeatureProperty">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFeatureProperty"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureProperty.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeatureProperty"/>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureProperty.#ctor(Microsoft.SharePoint.SPFeatureProperty)">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPFeatureProperty"/>
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureProperty.FromInstance(Microsoft.SharePoint.SPFeatureProperty)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureProperty.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureProperty.Value">
+            <summary>
+             Gets or sets the value.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPQuery">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPQuery"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPQuery.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPQuery"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPQuery.#ctor(Microsoft.SharePoint.SPQuery)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Emulators.EmSPQuery"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPQuery.FromInstance(Microsoft.SharePoint.SPQuery)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPQuery.Query">
+            <summary>
+            Gets or sets the query OLAP entry
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.SPFeatureReceiverProperties"/>.
+            This class has not been fully tested yet.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.#ctor">
+            <summary>
+            Initializes a new instance of the class
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.#ctor(Microsoft.SharePoint.SPFeatureReceiverProperties)">
+            <summary>
+            Wraps a new behaved type around the runtime instance
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.Disposed">
+            <summary>
+            Gets or sets a value indicating if the properties was disposed
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.Definition">
+            <summary>
+            Gets or sets the definition. If not set, the definition of Feature
+            is queried
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.Feature">
+            <summary>
+            Gets or sets the feature
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Emulators.EmSPFeatureReceiverProperties.UserCodeSite">
+            <summary>
+            Gets or sets the user code site
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication">
+            <summary>
+            The behaved type of <see cref="T:Microsoft.SharePoint.Administration.SPWebApplication"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication.#ctor(Microsoft.SharePoint.Administration.SPWebApplication)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication"/>.
+            </summary>
+            <param name="instance">the runtime instance if any</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication.FromInstance(Microsoft.SharePoint.Administration.SPWebApplication)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication.Sites">
+            <summary>
+            Gets the sites
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebApplication.WebConfigModifications">
+            <summary>
+            Gets the web config modifications
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification">
+            <summary>
+            The behaved type of <see cref="T:Microsoft.SharePoint.Administration.SPWebConfigModification"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.#ctor">
+            <summary>
+            Initializes a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.#ctor(Microsoft.SharePoint.Administration.SPWebConfigModification)">
+            <summary>
+            Initialises a new instance of <see cref="T:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification"/>.
+            </summary>
+            <param name="instance">the runtime instance if any</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.FromInstance(Microsoft.SharePoint.Administration.SPWebConfigModification)">
+            <summary>
+            Returns the emulator of the specified <paramref name="instance"/>.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.Type">
+            <summary>
+            Gets or sets the type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.Sequence">
+            <summary>
+             get/set sequence
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.Name">
+            <summary>
+            Gets or sets the name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.Owner">
+            <summary>
+            Gets or sets the owner value
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Administration.Emulators.EmSPWebConfigModification.Value">
+            <summary>
+            Gets or sets the value
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.SharePointEmulationScope">
+            <summary>
+            Enables emulation of SharePoint APIs in a block of code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.SharePointEmulationScope.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SharePoint.Emulators.SharePointEmulationScope"/>.
+            to emulate the SharePoint APIs.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.SharePointEmulationScope.#ctor(Microsoft.QualityTools.Testing.Emulators.EmulationMode)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SharePoint.Emulators.SharePointEmulationScope"/>.
+            </summary>
+            <param name="emulationMode">
+            A <see cref="T:Microsoft.QualityTools.Testing.Emulators.EmulationMode"/> value that determines wither emulation is enabled or disabled.
+            </param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.SharePointEmulationScope.IsProcessRunning32Bit">
+            <summary>
+            Determine whether the current process is running under 32 bit native/emulation mode
+            Since Microsoft.Sharepoint.Emulators.csproj is compiled under .NET framework 3.5,
+            we cannot use Environment.Is64BitOperatingSystem. 
+            As an alternative, we are doing a pointer size check which is very performant
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag">
+            <summary>
+            The emulator of <see cref="T:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag.#ctor">
+            <summary>
+            Initializes a new instance of the property bag
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag.#ctor(Microsoft.SharePoint.Utilities.SPPropertyBag)">
+            <summary>
+            Initializes a new instance of the property bag
+            </summary>
+            <param name="instance"></param>
+        </member>
+        <member name="P:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag.Values">
+            <summary>
+            Gets or sets the count
+            </summary>
+        </member>
+        <member name="P:Microsoft.SharePoint.Utilities.Emulators.EmSPPropertyBag.Updated">
+            <summary>
+            Gets or sets a value indicating if the bag was updated
+            </summary>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.ValidateArg">
+            <summary>
+            Helper to validate parameters.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArg.NotNull``1(``0,System.String)">
+            <summary>
+            Throws ArgumentNullException if the argument is null, otherwise passes it through.
+            </summary>
+            <param name="arg">The argument to check.</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArg.NotNegative(System.Int32,System.String)">
+            <summary>
+            Throws ArgumentOutOfRangeException if the argument is less than zero.
+            </summary>
+            <param name="arg">The argument to check.</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArg.NotNegative(System.Int64,System.String)">
+            <summary>
+            Throws ArgumentOutOfRangeException if the argument is less than zero.
+            </summary>
+            <param name="arg">The argument to check.</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArg.NotNullOrEmpty``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Throws ArgumentNullException if the string is null, ArgumentException if the string is empty.
+            </summary>
+            <param name="arg">The argument to check.</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArg.TypeOf``1(System.Object,System.String)">
+            <summary>
+            Throws ArgumentNullException if the argument is null, ArgumentException if the argument is not the correct type.
+            </summary>
+            <param name="arg">The argument to check.</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+            <typeparam name="T">The type of the expected argument.</typeparam>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.ValidateArgProperty">
+            <summary>
+            Helper to validate parameter properties.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArgProperty.NotNull(System.Object,System.String,System.String)">
+            <summary>
+            Throws ArgumentException if the argument is null.
+            </summary>
+            <param name="arg">The argument to check (e.g. Param1.PropertyA).</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+            <param name="propertyName">The property name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArgProperty.NotNegative(System.Int32,System.String,System.String)">
+            <summary>
+            Throws ArgumentException if the argument is less than zero.
+            </summary>
+            <param name="arg">The argument to check (e.g. Param1.PropertyA).</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+            <param name="propertyName">The property name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArgProperty.NotNullOrEmpty(System.String,System.String,System.String)">
+            <summary>
+            Throws ArgumentException if the argument string is null or empty.
+            </summary>
+            <param name="arg">The argument to check (e.g. Param1.PropertyA).</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+            <param name="propertyName">The property name of the argument.</param>
+        </member>
+        <member name="M:Microsoft.SharePoint.Emulators.ValidateArgProperty.TypeOf``1(System.Object,System.String,System.String)">
+            <summary>
+            Throws ArgumentException if the argument is null or is not the correct type.
+            </summary>
+            <param name="arg">The argument to check (e.g. Param1.PropertyA).</param>
+            <param name="parameterName">The parameter name of the argument.</param>
+            <param name="propertyName">The property name of the argument.</param>
+            <typeparam name="T">The type of the expected argument.</typeparam>
+        </member>
+        <member name="T:Microsoft.SharePoint.Emulators.ValidatedNotNullAttribute">
+            <summary>
+            Secret attribute that tells the CA1062 validate arguments rule that this method validates the argument is not null.
+            </summary>
+        </member>
+    </members>
+</doc>
