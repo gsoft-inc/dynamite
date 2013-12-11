@@ -7,6 +7,12 @@ using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {
+    using System.Collections.Generic;
+
+    using GSoft.Dynamite.ValueTypes;
+
+    using Microsoft.SharePoint.Utilities;
+
     /// <summary>
     /// Helper class for managing Taxonomy.
     /// </summary>
@@ -16,14 +22,16 @@ namespace GSoft.Dynamite.Taxonomy
         private const string CLASSFULLNAME = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
         
         private EventReceiverHelper _eventReceiverHelper;
+        private ITaxonomyService _taxonomyService = null;
 
         /// <summary>
         /// Creates a taxonomy helper
         /// </summary>
         /// <param name="eventReceiverHelper">An event receiver helper</param>
-        public TaxonomyHelper(EventReceiverHelper eventReceiverHelper)
+        public TaxonomyHelper(EventReceiverHelper eventReceiverHelper, ITaxonomyService taxonomyService)
         {
             this._eventReceiverHelper = eventReceiverHelper;
+            this._taxonomyService = taxonomyService;
         }
 
         /// <summary>
@@ -142,6 +150,164 @@ namespace GSoft.Dynamite.Taxonomy
 
             // Update the list
             listFieldSettings.GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(listSettings, null);
+        }
+
+        /// <summary>
+        /// Get the validated string for a Taxonomy Field
+        /// </summary>
+        /// <param name="web">Web to look for</param>
+        /// <param name="fieldName">Field to search</param>
+        /// <param name="termSet">The term set</param>
+        /// <param name="termLabel">The term label</param>
+        /// <param name="termGroup">The term group</param>
+        /// <returns>The validated string.</returns>
+        public string GetTaxonomyFieldValueValidatedString(SPWeb web, string fieldName, string termGroup, string termSet, string termLabel)
+        {
+            SPField field = web.Fields.GetFieldByInternalName(fieldName);
+
+            TaxonomyValue term = this._taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroup, termSet, termLabel);
+
+            if (term != null)
+            {
+                // Must be exist in the Taxonomy Hidden List
+                var taxonomyFieldValue = new TaxonomyFieldValue(field);
+                taxonomyFieldValue.PopulateFromLabelGuidPair(TaxonomyItem.NormalizeName(term.Label) + "|" + term.Id);
+
+                return taxonomyFieldValue.ValidatedString;
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Set default value for a taxonomy site column
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="field">The field.</param>
+        /// <param name="termGroupName">The term group name.</param>
+        /// <param name="termSetName">the term set name.</param>
+        /// <param name="termLabel">The term label.</param>
+        public void SetDefaultTaxonomyValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel)
+        {
+            var term = this._taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
+
+            var taxonomySession = new TaxonomySession(web.Site);
+            TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
+
+            var termGroup = termStore.Groups[termGroupName];
+            var termSet = termGroup.TermSets[termSetName];
+
+            if (term != null)
+            {
+                var statusTaxonomyFieldDefaultValue = new TaxonomyFieldValue(field);
+                string path = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                              + term.Id.ToString();
+                statusTaxonomyFieldDefaultValue.PopulateFromLabelGuidPair(path);
+
+                int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
+
+                if (ids.Length == 0)
+                {
+                    statusTaxonomyFieldDefaultValue.WssId = -1;
+                }
+
+                statusTaxonomyFieldDefaultValue.TermGuid = statusTaxonomyFieldDefaultValue.TermGuid.ToUpperInvariant();
+                field.DefaultValue = statusTaxonomyFieldDefaultValue.ValidatedString;
+                field.Update();
+            }
+        }
+
+        /// <summary>
+        /// Set default value for a multi valued taxonomy site column
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="field">The field.</param>
+        /// <param name="termGroupName">Term group name</param>
+        /// <param name="termSetName">Term set name</param>
+        /// <param name="terms">Term label</param>
+        public void SetDefaultTaxonomyMultiValue(
+            SPWeb web, SPField field, string termGroupName, string termSetName, string[] terms)
+        {
+            var taxonomySession = new TaxonomySession(web.Site);
+            TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
+
+            var multipleterms = new List<string>();
+
+            var termGroup = termStore.Groups[termGroupName];
+            var termSet = termGroup.TermSets[termSetName];
+
+            foreach (var label in terms)
+            {
+                var term = this._taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, label);
+
+                if (term != null)
+                {
+                    int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
+
+                    int wssId = -1;
+
+                    if (ids.Length >= 1)
+                    {
+                        wssId = ids[0];
+                    }
+
+                    string path = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                                 + term.Id.ToString();
+
+                    multipleterms.Add(wssId + ";#" + path);
+                }
+            }
+
+            if (multipleterms.Count >= 1)
+            {
+                string allvalues = string.Join(";#", multipleterms.ToArray());
+
+                var lookup = (SPFieldLookup)field;
+                lookup.DefaultValue = allvalues;
+                lookup.Update();
+            }
+        }
+
+        /// <summary>
+        /// Set a taxonomy value for a SPListItem
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="item">The SPListItem.</param>
+        /// <param name="fieldName">Field name to update.</param>
+        /// <param name="termGroupName">Term group name.</param>
+        /// <param name="termSetName">Term Set Name.</param>
+        /// <param name="termLabel">Term Label.</param>
+        public void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
+        {
+            var term = this._taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
+
+            var taxonomySession = new TaxonomySession(web.Site);
+            TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
+
+            var termGroup = termStore.Groups[termGroupName];
+            var termSet = termGroup.TermSets[termSetName];
+
+            var taxField = item.Fields.GetFieldByInternalName(fieldName);
+
+            if (term != null)
+            {
+                var taxonomyFieldValue = new TaxonomyFieldValue(taxField);
+                string path = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                              + term.Id.ToString();
+
+                taxonomyFieldValue.PopulateFromLabelGuidPair(path);
+
+                int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
+
+                if (ids.Length == 0)
+                {
+                    taxonomyFieldValue.WssId = -1;
+                }
+
+                ((TaxonomyField)taxField).SetFieldValue(item, taxonomyFieldValue);
+
+                item.Update();
+            }
         }
 
         #region Private Methods
