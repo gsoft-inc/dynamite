@@ -148,6 +148,7 @@
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\Unsafe.cs" />
+    <Compile Include="Utils\VariationsHelper.cs" />
     <Compile Include="Utils\WebConfigModificationHelper.cs" />
     <Compile Include="Utils\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
