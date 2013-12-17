@@ -85,6 +85,9 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<RegionalSettingsHelper>();
             container.RegisterType<CustomActionHelper>();
             container.RegisterType<WebConfigModificationHelper>();
+            container.RegisterType<ContentOrganizerHelper>();
+            container.RegisterType<DateHelper>();
+            container.RegisterType<UserHelper>();
         }
     }
 }

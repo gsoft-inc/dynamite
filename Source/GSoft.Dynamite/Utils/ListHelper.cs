@@ -169,5 +169,26 @@ namespace GSoft.Dynamite.Utils
             this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType.Id, contentType.Name);
             list.Update(true);
         }
+
+        /// <summary>
+        /// Get the list bu root folder url
+        /// </summary>
+        /// <param name="web">
+        /// The web.
+        /// </param>
+        /// <param name="listRootFolderUrl">
+        /// The list Root Folder Url.
+        /// </param>
+        /// <returns>
+        /// The list
+        /// </returns>
+        public SPList GetListByRootFolderUrl(SPWeb web, string listRootFolderUrl)
+        {
+            return
+
+                (from SPList list in web.Lists
+                 where list.RootFolder.Name.Equals(listRootFolderUrl, StringComparison.Ordinal)
+                 select list).FirstOrDefault();
+        }
     }
 }

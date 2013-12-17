@@ -60,9 +60,9 @@ namespace GSoft.Dynamite.Utils
                         else
                         {
                             // Create the content type directly on the list
-                            var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
-                            var returnedContentType = list.ContentTypes.Add(newContentType);
-                            return returnedContentType;
+                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                            var returnedListContentType = list.ContentTypes.Add(newListContentType);
+                            return returnedListContentType;
                         }
                     }
                 }
@@ -81,15 +81,20 @@ namespace GSoft.Dynamite.Utils
                     if (contentTypeInWeb == null)
                     {
                         // Add the content type to the collection.
-                        var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
-                        var returnedContentType = contentTypeCollection.Add(newContentType);
-                        return returnedContentType;
+                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                        var returnedWebContentType = contentTypeCollection.Add(newWebContentType);
+                        return returnedWebContentType;
                     }
                     else
                     {
                         return contentTypeInWeb;
                     }
                 }
+
+                // Case if there is no Content Types in the Web (e.g single SPWeb)
+                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                var returnedContentType = contentTypeCollection.Add(newContentType);
+                return returnedContentType;
             }
 
             return null;
@@ -270,30 +275,36 @@ namespace GSoft.Dynamite.Utils
 
         private static bool TryGetListFromContentTypeCollection(SPContentTypeCollection collection, out SPList list)
         {
-            SPContentType first = collection[0];
-            if (first != null)
+            if (collection.Count > 0)
             {
-                if (first.ParentList != null)
+                SPContentType first = collection[0];
+                if (first != null)
                 {
-                    list = first.ParentList;
-                    return true;
+                    if (first.ParentList != null)
+                    {
+                        list = first.ParentList;
+                        return true;
+                    }
                 }
             }
-
+         
             list = null;
             return false;
         }
 
         private static bool TryGetWebFromContentTypeCollection(SPContentTypeCollection collection, out SPWeb web)
         {
-            SPContentType first = collection[0];
-            if (first != null)
+            if (collection.Count > 0)
             {
-                if (first.ParentWeb != null)
+                SPContentType first = collection[0];
+                if (first != null)
                 {
-                    web = first.ParentWeb;
-                    return true;
-                }
+                    if (first.ParentWeb != null)
+                    {
+                        web = first.ParentWeb;
+                        return true;
+                    }
+                }  
             }
 
             web = null;
