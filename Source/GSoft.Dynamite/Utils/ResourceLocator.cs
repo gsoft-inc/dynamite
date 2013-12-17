@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.Utils
             {
                 resourceValue = this.Find(fileName, resourceKey, new CultureInfo(lcid));
 
-                if (resourceValue != null)
+                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources"))
                 {
                     // exit as soon as you find the resource in one of the default files
                     break;
