@@ -130,6 +130,7 @@
     <Compile Include="Unity\IRegistrationModule.cs" />
     <Compile Include="Unity\PerRequestLifetimeManager.cs" />
     <Compile Include="Unity\RegistrationModuleContainer.cs" />
+    <Compile Include="Utils\CatalogHelper.cs" />
     <Compile Include="Utils\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
