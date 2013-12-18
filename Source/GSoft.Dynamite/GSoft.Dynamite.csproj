@@ -123,6 +123,7 @@
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
     <Compile Include="SPUrl.cs" />
+    <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\Unsafe.cs" />
+    <Compile Include="Utils\VariationsHelper.cs" />
     <Compile Include="Utils\WebConfigModificationHelper.cs" />
     <Compile Include="Utils\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
@@ -160,9 +162,7 @@
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Structures\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="..\..\Shared\GSoft.Dynamite.snk">
       <Link>GSoft.Dynamite.snk</Link>
