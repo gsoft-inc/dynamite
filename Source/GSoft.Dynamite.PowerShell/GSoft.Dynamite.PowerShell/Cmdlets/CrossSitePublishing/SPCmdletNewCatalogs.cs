@@ -14,15 +14,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     /// <summary>
     /// Cmdlet for catalogs creation
     /// </summary>
-    [Cmdlet("Create", "SPCatalogs")]
-    public class SPCatalog : Cmdlet
+    [Cmdlet(VerbsCommon.New, "SPCatalogs")]
+    public class SPCmdletNewCatalogs : Cmdlet
     {
         /// <summary>
         /// Dynamite Helpers
         /// </summary>
         private ListHelper _listHelper;
         private CatalogHelper _catalogHelper;
-        private ContentTypeHelper _contentTypeHelper;
 
         private XDocument _configurationFile = null;
 
@@ -110,7 +109,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         {
             this._listHelper = PowerShellContainer.Current.Resolve<ListHelper>();
             this._catalogHelper = PowerShellContainer.Current.Resolve<CatalogHelper>();
-            this._contentTypeHelper = PowerShellContainer.Current.Resolve<ContentTypeHelper>();
         }
     }
 

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Xml;
 using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
 {
+    /// <summary>
+    /// Original class from Gary Lapointe Cmdlets
+    /// http://blog.falchionconsulting.com/index.php/downloads/
+    /// </summary>
     public class XmlDocumentPipeBind : SPCmdletPipeBind<XmlDocument>
     {
         private string _xml;
@@ -21,7 +20,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
 
         public XmlDocumentPipeBind(string inputString)
         {
-            XmlDocument xml = new XmlDocument();
+            var xml = new XmlDocument();
             try
             {
                 if (File.Exists(inputString))
@@ -49,7 +48,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
 
         public override XmlDocument Read()
         {
-            XmlDocument xml = new XmlDocument();
+            var xml = new XmlDocument();
             xml.LoadXml(_xml);
             return xml;
         }
