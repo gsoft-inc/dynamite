@@ -8,14 +8,15 @@ using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
     /// <summary>
     /// Cmdlet for catalogs creation
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "SPCatalogs")]
-    public class SPCmdletNewCatalogs : Cmdlet
+    [Cmdlet(VerbsCommon.New, "DSPCatalogs")]
+    public class DSPCmdletNewCatalogs : Cmdlet
     {
         /// <summary>
         /// Dynamite Helpers
@@ -78,6 +79,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         foreach (var contentType in contentTypes)
                         {
                             var ct = spWeb.AvailableContentTypes[contentType];
+
+                            if (ct == null)
+                            {
+                                WriteWarning("Content type " + contentType + " doesn't exist");
+                            }
 
                             if (ct != null)
                             {

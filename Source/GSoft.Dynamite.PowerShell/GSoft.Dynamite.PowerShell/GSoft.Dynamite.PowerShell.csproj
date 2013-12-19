@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cmdlets\CrossSitePublishing\SPCmdletNewCatalogs.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
     <Compile Include="PipeBindsObjects\XmlDocumentPipeBind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
