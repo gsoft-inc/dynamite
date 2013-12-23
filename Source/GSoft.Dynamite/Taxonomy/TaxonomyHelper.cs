@@ -122,6 +122,41 @@ namespace GSoft.Dynamite.Taxonomy
             listFieldSettings.GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(listSettings, null);
         }
 
+        /// <summary>
+        /// Gets the term group by name.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">Name of the group.</param>
+        /// <returns>The term group.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public Group GetTermGroupByName(TermStore termStore, string groupName)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var group = termStore.Groups[groupName];
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
+
+        /// <summary>
+        /// Gets the term set by name.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="group">The term group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>The term set.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public TermSet GetTermSetByName(TermStore termStore, Group group, string termSetName)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var termSet = group.TermSets[termSetName];
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return termSet;
+        }
+
         #region Private Methods
         private static void AssignTermSetToSiteColumn(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
         {
