@@ -173,7 +173,6 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-<<<<<<< HEAD
         /// Create a taxonomy Field in a SharePoint list
         /// </summary>
         /// <param name="list">The list.</param>
@@ -314,7 +313,8 @@ namespace GSoft.Dynamite.Taxonomy
                 lookup.DefaultValue = allvalues;
                 lookup.Update();
             }
-=======
+        }
+
         /// Gets the term group by name.
         /// </summary>
         /// <param name="termStore">The term store.</param>
@@ -347,7 +347,6 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = originalWorkingLanguage;
 
             return termSet;
->>>>>>> ae1b0a5117898a96e1ec090e38d9eee9ce6bb9bf
         }
 
         #region Private Methods
