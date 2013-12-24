@@ -122,6 +122,8 @@
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
+    <Compile Include="Schemas\GenericFieldSchema.cs" />
+    <Compile Include="Schemas\TaxonomyFieldSchema.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
