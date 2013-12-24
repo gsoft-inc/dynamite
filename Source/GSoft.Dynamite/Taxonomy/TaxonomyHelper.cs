@@ -173,6 +173,7 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Create a taxonomy Field in a SharePoint list
         /// </summary>
         /// <param name="list">The list.</param>
@@ -313,6 +314,40 @@ namespace GSoft.Dynamite.Taxonomy
                 lookup.DefaultValue = allvalues;
                 lookup.Update();
             }
+=======
+        /// Gets the term group by name.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">Name of the group.</param>
+        /// <returns>The term group.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public Group GetTermGroupByName(TermStore termStore, string groupName)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var group = termStore.Groups[groupName];
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
+
+        /// <summary>
+        /// Gets the term set by name.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="group">The term group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>The term set.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public TermSet GetTermSetByName(TermStore termStore, Group group, string termSetName)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var termSet = group.TermSets[termSetName];
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return termSet;
+>>>>>>> ae1b0a5117898a96e1ec090e38d9eee9ce6bb9bf
         }
 
         #region Private Methods

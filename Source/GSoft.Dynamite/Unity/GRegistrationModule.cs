@@ -74,6 +74,7 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<CustomActionHelper>();
             container.RegisterType<WebConfigModificationHelper>();
             container.RegisterType<VariationsHelper>();
+            container.RegisterType<NavigationHelper>();
         }
     }
 }
