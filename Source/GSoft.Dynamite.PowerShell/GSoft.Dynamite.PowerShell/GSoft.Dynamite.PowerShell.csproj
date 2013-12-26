@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.PowerShell, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management">
@@ -54,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlets\Catalog\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
     <Compile Include="Cmdlets\Navigation\DSPCmdletSetManagedNavigation.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
