@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.SharePoint;
+using System.Globalization;
+using System.Threading;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -44,9 +47,8 @@ namespace GSoft.Dynamite.Utils
             // For fields name, you need to pass the internal name of the column directly followed by "OWSTEXT"
             foreach (var availableField in availableFields)
             {
-                fieldList.Add("\"" + availableField + "OWSTEXT\"");
+                fieldList.Add("\"" + availableField + "\"");
             }
-
 
             var fUrlFieldsProperty = String.Join(",", fieldList.ToArray());
 
@@ -67,15 +69,49 @@ namespace GSoft.Dynamite.Utils
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
-        /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation. NOT IMPLEMENTED YET.</param>
+        /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <returns>The SharePoint list.</returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields,
             string taxonomyFieldMap)
         {
-            // TODO: Format the taxonomyFieldMap as follow
-            // {"FurlFields":["MyColumn2OWSTEXT","MyColumn1OWSTEXT","owstaxidMyLangue"],"TaxonomyFieldMap":[{"FieldDisplayName":"MyLangue","FieldManagedPropertyName":"owstaxidMyLangue","FieldId":"3a35406b-97f3-4711-9a2c-bb777c1e95ab","TermSetId":"e9a57134-ff11-4025-af3b-3d7bd1972722","IsSelected":true,"TermStoreId":"baf66b76-0edf-4f3d-ad84-539b8d181b34","TermId":"00000000-0000-0000-0000-000000000000"}]}
-            
-            throw new NotImplementedException();
+            var spList = this.SetListAsCatalog(list, availableFields);
+            var rootFolder = spList.RootFolder;
+
+            // Set current culture to be able to get the "Title" of the list
+            CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
+            Thread.CurrentThread.CurrentUICulture =
+                new CultureInfo((int)list.ParentWeb.Language);
+
+            // Format property
+            var taxonomyField = list.Fields.GetFieldByInternalName(taxonomyFieldMap) as TaxonomyField;
+            var title = taxonomyField.Title;
+            var managedPropertyName = "owstaxid" + taxonomyFieldMap;
+            var fieldId = taxonomyField.Id;
+            var termSetId = taxonomyField.TermSetId;
+            var termStoreId = taxonomyField.SspId;
+            var termId = "00000000-0000-0000-0000-000000000000";
+
+            var fields = new Collection<string>();
+
+            fields.Add("{\"FieldDisplayName\":\"" + title + "\"");
+            fields.Add("\"FieldManagedPropertyName\":\"" + managedPropertyName + "\"");
+            fields.Add("\"FieldId\":\"" + fieldId + "\"");
+            fields.Add("\"TermSetId\":\"" + termSetId + "\"");
+            fields.Add("\"IsSelected\":true");
+            fields.Add("\"TermStoreId\":\"" + termStoreId + "\"");
+            fields.Add("\"TermId\":\"" + termId + "\"}");
+
+            var taxonomyFieldMapProperty = "\"TaxonomyFieldMap\":[" + String.Join(",", fields.ToArray()) + "]";
+
+            var oldValue = rootFolder.Properties["PublishingCatalogSettings"];
+            var newValue = rootFolder.Properties["PublishingCatalogSettings"].ToString().Replace("\"TaxonomyFieldMap\":[]", taxonomyFieldMapProperty);
+
+            rootFolder.Properties["PublishingCatalogSettings"] = newValue;
+
+            rootFolder.Update();
+            list.Update();
+
+            return list;
         }
     }
 }
