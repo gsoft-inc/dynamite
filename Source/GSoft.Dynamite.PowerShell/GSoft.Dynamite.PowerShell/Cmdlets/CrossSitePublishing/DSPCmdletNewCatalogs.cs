@@ -79,7 +79,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var catalogUrl = catalogNode.Attribute("RootFolderUrl").Value;
                         var catalogName = catalogNode.Attribute("DisplayName").Value;
                         var catalogDescription = catalogNode.Attribute("Description").Value;
-                        var listTemplate = spWeb.ListTemplates[catalogNode.Attribute("ListTemplate").Value];
+                        var listTemplateId = int.Parse(catalogNode.Attribute("ListTemplateId").Value);
+                        var listTemplate = spWeb.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType) listTemplateId);
                         var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
                         var overwrite = Boolean.Parse(catalogNode.Attribute("Overwrite").Value);
 
@@ -204,6 +205,13 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <param name="list">The list to configure.</param>
         private void CreateContentTypes(IEnumerable<XElement> contentTypesCollection, SPList list)
         {
+            // If content type is direct child of item, remove it
+            var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
+            if (itemContentTypeId.Parent == SPBuiltInContentTypeId.Item)
+            {
+                list.ContentTypes.Delete(itemContentTypeId);
+            }
+            
             // Add content type to the list if doesn't exist
             foreach (XElement contentType in contentTypesCollection)
             {
