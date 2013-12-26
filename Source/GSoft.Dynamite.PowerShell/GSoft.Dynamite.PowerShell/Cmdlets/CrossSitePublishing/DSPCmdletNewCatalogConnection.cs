@@ -7,7 +7,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.PowerShell.Cmdlets.Catalog
+namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
     /// <summary>
     /// Cmdlet for creating a catalog connection
@@ -61,18 +61,20 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Catalog
 
         private static CatalogConnectionSettings GetCatalogConnectionSettingsFromNode(SPWeb web, XElement node)
         {
-            return new CatalogConnectionSettings()
-            {
-                ConnectedWebId = web.ID,
-                ConnectedWebServerRelativeUrl = web.ServerRelativeUrl,
-                CatalogName = node.Attribute("Name").Value,
-                CatalogSiteUrl = node.Attribute("CatalogSiteUrl").Value,
-                CatalogUrl = SPUtility.ConcatUrls(node.Attribute("CatalogSiteUrl").Value, node.Attribute("SiteRelativeCatalogUrl").Value),
-                RewriteCatalogItemUrls = bool.Parse(node.Attribute("RewriteCatalogItemUrls").Value),
-                IsReusedWithPinning = bool.Parse(node.Attribute("IsReusedWithPinning").Value),
-                CatalogTaxonomyManagedProperty = node.Attribute("CatalogTaxonomyManagedProperty").Value,
-                CatalogItemUrlRewriteTemplate = node.Attribute("CatalogItemUrlRewriteTemplate").Value
-            };
+            // Fetch catalog settings with utility
+            var catalogUrl = SPUtility.ConcatUrls(node.Attribute("CatalogSiteUrl").Value, node.Attribute("SiteRelativeCatalogUrl").Value);
+            var settings = PublishingCatalogUtility.GetPublishingCatalog(web.Site, catalogUrl);
+
+            // Configure settings per XML
+            settings.ConnectedWebId = web.ID;
+            settings.ConnectedWebServerRelativeUrl = web.ServerRelativeUrl;
+            settings.RewriteCatalogItemUrls = bool.Parse(node.Attribute("RewriteCatalogItemUrls").Value);
+            settings.IsManualCatalogItemUrlRewriteTemplate = bool.Parse(node.Attribute("IsManualCatalogItemUrlRewriteTemplate").Value);
+            settings.IsReusedWithPinning = bool.Parse(node.Attribute("IsReusedWithPinning").Value);
+            settings.CatalogTaxonomyManagedProperty = node.Attribute("CatalogTaxonomyManagedProperty").Value;
+            settings.CatalogItemUrlRewriteTemplate = node.Attribute("CatalogItemUrlRewriteTemplate").Value;
+
+            return settings;
         }
     }
 }

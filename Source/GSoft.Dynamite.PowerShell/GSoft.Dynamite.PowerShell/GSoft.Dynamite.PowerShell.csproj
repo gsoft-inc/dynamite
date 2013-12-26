@@ -56,7 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cmdlets\Catalog\DSPCmdletNewCatalogConnection.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
     <Compile Include="Cmdlets\Navigation\DSPCmdletSetManagedNavigation.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
