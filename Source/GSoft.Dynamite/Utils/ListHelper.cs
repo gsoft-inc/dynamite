@@ -12,14 +12,16 @@ namespace GSoft.Dynamite.Utils
     public class ListHelper
     {
         private ContentTypeHelper _contentTypeHelper;
+        private IResourceLocator _resourceLocator;
 
         /// <summary>
         /// Creates a list helper
         /// </summary>
         /// <param name="contentTypeHelper">A content type helper</param>
-        public ListHelper(ContentTypeHelper contentTypeHelper)
+        public ListHelper(ContentTypeHelper contentTypeHelper, IResourceLocator resourceLocator)
         {
             this._contentTypeHelper = contentTypeHelper;
+            this._resourceLocator = resourceLocator;
         }
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplate template)
         {
-            var list = web.Lists.TryGetList(name);
+            var list = this.TryGetList(web, name);
 
             if (list != null)
             {
@@ -89,7 +91,7 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
         {
-            var list = web.Lists.TryGetList(name);
+            var list = this.TryGetList(web, name);
 
             if (list != null)
             {
@@ -189,6 +191,37 @@ namespace GSoft.Dynamite.Utils
                 (from SPList list in web.Lists
                  where list.RootFolder.Name.Equals(listRootFolderUrl, StringComparison.Ordinal)
                  select list).FirstOrDefault();
+        }
+
+        private SPList TryGetList(SPWeb web, string nameOrResourceString)
+        {
+            // first try finding the list by name, simple
+            var list = web.Lists.TryGetList(nameOrResourceString);
+
+            if (list == null)
+            {
+                // then, try to handle the name as a resource key string
+                string[] resourceStringSplit = nameOrResourceString.Split(',');
+                string nameFromResourceString = string.Empty;
+
+                if (resourceStringSplit.Length > 1)
+                {
+                    // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
+                    nameFromResourceString = this._resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
+                }
+                else
+                {
+                    // let's try to find a resource with that string directly as key
+                    nameFromResourceString = this._resourceLocator.Find(nameOrResourceString, web.UICulture.LCID);
+                }                    
+                    
+                if (!string.IsNullOrEmpty(nameFromResourceString))
+                {
+                    list = web.Lists.TryGetList(nameFromResourceString);
+                }
+            }
+
+            return list;
         }
     }
 }
