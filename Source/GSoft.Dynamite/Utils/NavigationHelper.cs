@@ -1,4 +1,8 @@
-﻿using GSoft.Dynamite.Navigation;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Navigation;
@@ -47,6 +51,25 @@ namespace GSoft.Dynamite.Utils
                     termStore.CommitAll(); 
                 }
             }
+        }
+
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
+        {
+            if (navigationTerms == null)
+            {
+                return null;
+            }
+
+            var terms = navigationTerms as IList<NavigationTerm> ?? navigationTerms.ToList();
+            var term = terms.FirstOrDefault(x => x.Id == id);
+            if (term != null)
+            {
+                return term;
+            }
+
+            var childTerms = terms.SelectMany(x => x.Terms);
+            return this.GetNavigationTermById(childTerms, id);
         }
     }
 }
