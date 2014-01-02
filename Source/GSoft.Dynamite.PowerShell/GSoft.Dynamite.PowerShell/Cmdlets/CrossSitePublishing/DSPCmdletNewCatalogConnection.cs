@@ -26,7 +26,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
-        [Parameter(HelpMessage = "Delete result sources configuration",
+        [Parameter(HelpMessage = "Delete catalog connections configuration",
         Position = 2)]
         public SwitchParameter Delete
         {
@@ -34,7 +34,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             set { _delete = value; }
         }
 
-        [Parameter(HelpMessage = "Specifies if result sources should be overwritten",
+        [Parameter(HelpMessage = "Specifies if catalog connections should be overwritten",
         Position = 3)]
         public SwitchParameter Overwrite
         {
