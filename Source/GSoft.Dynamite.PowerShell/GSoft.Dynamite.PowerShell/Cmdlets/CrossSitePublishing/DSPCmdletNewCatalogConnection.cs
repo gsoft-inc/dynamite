@@ -16,6 +16,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     public class DspCmdletNewCatalogConnection : Cmdlet
     {
         private XDocument _configurationFile;
+        private bool _delete;
+        private bool _overwrite;
 
         [Parameter(Mandatory = true,
             ValueFromPipeline = true,
@@ -23,6 +25,22 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
+
+        [Parameter(HelpMessage = "Delete result sources configuration",
+        Position = 2)]
+        public SwitchParameter Delete
+        {
+            get { return _delete; }
+            set { _delete = value; }
+        }
+
+        [Parameter(HelpMessage = "Specifies if result sources should be overwritten",
+        Position = 3)]
+        public SwitchParameter Overwrite
+        {
+            get { return _overwrite; }
+            set { _overwrite = value; }
+        }
 
         protected override void EndProcessing()
         {
@@ -48,10 +66,23 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         // Add each connection to the catalog manager
                         foreach (var catalogConnection in catalogConnectionNodes.Select(x => GetCatalogConnectionSettingsFromNode(web, x)))
                         {
-                            catalogManager.AddCatalogConnection(catalogConnection);
-                        }
+                            if(Delete || Overwrite)
+                            {
+                                if (catalogManager.Contains(catalogConnection.CatalogUrl))
+                                {
+                                    WriteWarning("Deleting catalog connection: " + catalogConnection.CatalogUrl);
+                                    catalogManager.DeleteCatalogConnection(catalogConnection.CatalogUrl);
+                                    catalogManager.Update();
+                                }
+                            }
 
-                        catalogManager.Update();
+                            if (!Delete)
+                            {
+                                WriteWarning("Creating catalog connection: " + catalogConnection.CatalogUrl);
+                                catalogManager.AddCatalogConnection(catalogConnection);
+                                catalogManager.Update();
+                            }                         
+                        }                        
                     }
                 }
             }

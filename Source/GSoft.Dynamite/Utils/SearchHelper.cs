@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Microsoft.Office.Server.Search.Administration;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
+using Microsoft.Office.Server.Search.Administration;
+using Microsoft.Office.Server.Search.Administration.Query;
+using Microsoft.Office.Server.Search.Query.Rules;
+using Microsoft.Office.Server.Search.Query;
 
 namespace GSoft.Dynamite.Utils
 {  
@@ -99,6 +103,97 @@ namespace GSoft.Dynamite.Utils
             remoteScopes.StartCompilation();
 
             return scope;
+        }
+
+        /// <summary>
+        /// Ensure a search result source
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level"The search object level.</param>
+        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        /// <param name="query">The search query in KQL format.</param>
+        /// <param name="properties">Query properties.</param>
+        /// <returns>The result source.</returns>
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite)
+        {
+
+            var federationManager = new FederationManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+
+            if (resultSource != null && overwrite)
+            {
+                  federationManager.RemoveSource(resultSource);              
+            }
+
+            if (resultSource == null || overwrite)
+            {
+                resultSource = federationManager.CreateSource(searchOwner);
+                resultSource.Name = resultSourceName;
+                resultSource.ProviderId = federationManager.ListProviders()["Local SharePoint Provider"].Id;
+                resultSource.CreateQueryTransform(properties, query);
+                resultSource.Commit();
+            }
+            
+            return resultSource;
+        }
+
+        /// <summary>
+        /// Ensure a search result source
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level"The search object level.</param>
+        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        /// <param name="query">The search query in KQL format.</param>
+        /// <param name="sortField">Internal name of the sort field.</param>
+        /// <param name="direction">The sort direction.</param>
+        /// <returns>The result source.</returns>
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
+        {
+            var sortCollection = new SortCollection();
+            sortCollection.Add(sortField, direction);
+
+            var queryProperties = new QueryTransformProperties();
+            queryProperties["SortList"] = sortCollection;
+
+            return this.EnsureResultSource(ssa, resultSourceName, level, contextWeb, query, queryProperties, overwrite);
+        }
+
+        /// <summary>
+        /// Get the service application by its name
+        /// </summary>
+        /// <param name="site"></param>
+        /// <param name="appName"></param>
+        /// <returns>The search service application.</returns>
+        public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
+        {
+            SearchService s = new SearchService("OSearch15", SPFarm.Local);
+            var SearchApplication = from SearchServiceApplication sapp in s.SearchApplications
+                                    where sapp.GetSearchApplicationDisplayName() == appName
+                                    select sapp;
+
+            SearchServiceApplication serviceApp = SearchApplication.First();
+
+            return serviceApp;
+        }
+
+        /// <summary>
+        /// Delete a result source.
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level"The search object level.</param>
+        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        public void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
+        {
+            var federationManager = new FederationManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+            federationManager.RemoveSource(resultSource);
         }
     }
 }
