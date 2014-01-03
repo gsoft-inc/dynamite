@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Schemas
 {
@@ -13,6 +14,7 @@ namespace GSoft.Dynamite.Schemas
         protected string _fieldDisplayName;
         protected string _fieldDescription;
         protected string _fieldGroup;
+        protected Guid _fieldId;
 
         protected XElement _fieldSchema;
 
@@ -66,6 +68,7 @@ namespace GSoft.Dynamite.Schemas
             this._fieldDisplayName = string.Empty;
             this._fieldDescription = string.Empty;
             this._fieldGroup = string.Empty;
+            this._fieldId = new Guid();
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace GSoft.Dynamite.Schemas
         /// Get the XML schema as string of the field.
         /// </summary>
         /// <returns>A string that represents the XML schema.</returns>
-        public abstract string ToString();
+        public abstract override string ToString();
         
     }
 }

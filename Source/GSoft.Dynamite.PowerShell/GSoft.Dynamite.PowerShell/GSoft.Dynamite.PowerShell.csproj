@@ -33,9 +33,15 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.PowerShell, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
@@ -50,6 +56,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -58,7 +65,12 @@
   <ItemGroup>
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletRemoveCatalogConnection.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletRemoveCatalogs.cs" />
     <Compile Include="Cmdlets\Navigation\DSPCmdletSetManagedNavigation.cs" />
+    <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
+    <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
+    <Compile Include="Cmdlets\Variations\DSPCmdletSyncList.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
     <Compile Include="PipeBindsObjects\XmlDocumentPipeBind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

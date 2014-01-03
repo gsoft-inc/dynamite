@@ -8,18 +8,28 @@ namespace GSoft.Dynamite.Schemas
     /// </summary>
     public class TaxonomyFieldSchema : GenericFieldSchema
     {
-        private string _isMultiple = "FALSE";
-        private string _enforceUniqueValues = "FALSE";
+        private bool _isMultiple = false;
+        private bool _enforceUniqueValues = false;
 
         #region Properties
 
-        public string IsMultiple
+        public bool IsMultiple
         {
             get { return _isMultiple; }
-            set { _isMultiple = value; }
+            set { 
+                if (value == false)
+                {
+                    this._isMultiple = true;
+                    this._fieldType = "TaxonomyFieldType";
+                }
+                else
+                {
+                    this._fieldType = "TaxonomyFieldTypeMulti";
+                }       
+            }
         }
 
-        public string EnforceUniqueValues
+        public bool EnforceUniqueValues
         {
             get { return _enforceUniqueValues; }
             set { _enforceUniqueValues = value; }
@@ -31,23 +41,6 @@ namespace GSoft.Dynamite.Schemas
         /// Default constructor
         /// </summary>
         public TaxonomyFieldSchema() : base() { }
-
-        /// <summary>
-        /// Inititlaize a Taxonomy Field Schema 
-        /// </summary>
-        /// <param name="isMultiple">Specifies if the field allows multiple values.</param>
-        public TaxonomyFieldSchema(bool isMultiple)
-        {
-            if (isMultiple)
-            {
-                this._isMultiple = "TRUE";
-                this._fieldType = "TaxonomyFieldType";
-            }
-            else
-            {
-                this._fieldType = "TaxonomyFieldTypeMulti";
-            }
-        }
 
         /// <summary>
         /// Get the XML schema of the field.
@@ -63,13 +56,13 @@ namespace GSoft.Dynamite.Schemas
              new XElement("Field",
                 new XAttribute("Name", this.FieldName),
                 new XAttribute("Type", this.FieldType),
-                new XAttribute("ID", "{" + Guid.NewGuid().ToString() + "}"),
+                new XAttribute("ID", "{" + this._fieldId.ToString() + "}"),
                 new XAttribute("StaticName", this.FieldStaticName),
                 new XAttribute("DisplayName", this.FieldDisplayName),
                 new XAttribute("Description", this.FieldDescription),
                 new XAttribute("Group", this.FieldGroup),
-                new XAttribute("EnforceUniqueValues", this._enforceUniqueValues),
-                new XAttribute("Mult", this._isMultiple),
+                new XAttribute("EnforceUniqueValues", this._enforceUniqueValues.ToString().ToUpper()),
+                new XAttribute("Mult", this._isMultiple.ToString().ToUpper()),
                 new XElement("Customization",
                     new XElement("ArrayOfProperty",
                         new XElement("Property",

@@ -43,14 +43,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
    
         public bool _delete;
 
-        [Parameter(HelpMessage = "Delete catalog configuration",
-            Position = 2)]
-        public SwitchParameter Delete
-        {
-            get { return _delete; }
-            set { _delete = value; }
-        }
-
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
@@ -83,6 +75,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var listTemplate = spWeb.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType) listTemplateId);
                         var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
                         var overwrite = Boolean.Parse(catalogNode.Attribute("Overwrite").Value);
+                        var removeDefaultContentType = Boolean.Parse(catalogNode.Attribute("RemoveDefaultContentType").Value);
 
                         // Get content types
                         var contentTypes = from contentType in catalogNode.Descendants("ContentTypes").Descendants("ContentType")
@@ -107,66 +100,62 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         // Create the list if doesn't exists
                         var list = this._listHelper.GetListByRootFolderUrl(spWeb, catalogUrl);
-
-                        if(this._delete)
+                       
+                        if(list == null)
                         {
-                            if(list !=null)
-                            {
-                                WriteWarning("Delete the list " + catalogName);
-
-                                // Delete the list
-                                list.Delete();
-                            }
-                            else
-                            {
-                                WriteWarning("No list with the name " + catalogName);
-                            }
+                            list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);
                         }
                         else
                         {
-                            if(list == null)
+                            WriteWarning("Catalog " + catalogName + " is already exists");
+
+                            // If the Overwrite paramter is set to true, celete and recreate the catalog
+                            if(overwrite)
                             {
-                                list = CreateList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);
+                                WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
+
+                                list.Delete();
+                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);                               
                             }
                             else
                             {
-                                WriteWarning("Catalog " + catalogName + " is already exists");
+                                // Get the existing list
+                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);     
+                            }                              
+                        }
 
-                                // If the Overwrite paramter is set to true, celete and recreate the catalog
-                                if(overwrite)
-                                {
-                                    WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
+                        // Create return object
+                        var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWebUrl, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
 
-                                    list.Delete();
-                                    list = CreateList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);                               
-                                }
-                            }
+                        // Add content types to the list
+                        CreateContentTypes(contentTypes, list, removeDefaultContentType);
 
-                            // Add content types to the list
-                            CreateContentTypes(contentTypes, list);
+                        // Add Segments
+                        CreateSegments(segments, list);
 
-                            // Add Segments
-                            CreateSegments(segments, list);
+                        // Set default values
+                        SetTaxonomyDefaults(defaultsTaxFields, list);
 
-                            // Set default values
-                            SetTaxonomyDefaults(defaultsTaxFields, list);
+                        if (String.IsNullOrEmpty(taxonomyFieldMap))
+                        {
+                            // Set the list as catalog without navigation
+                            this._catalogHelper.SetListAsCatalog(list, availableFields);
+                        }
+                        else
+                        {
+                            // Set the list as catalog with navigation term
+                            this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
+                        }
 
-                            if (String.IsNullOrEmpty(taxonomyFieldMap))
-                            {
-                                // Set the list as catalog without navigation
-                                this._catalogHelper.SetListAsCatalog(list, availableFields);
-                            }
-                            else
-                            {
-                                // Set the list as catalog with navigation term
-                                this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
-                            }
-                        }                        
+                        // Write object to the pipeline
+                        WriteObject(catalog, true);
+                                                
                     }   
                 }
             }
 
             base.EndProcessing();
+            
         }
 
         /// <summary>
@@ -188,9 +177,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <param name="listDescription">The list description.</param>
         /// <param name="listTemplate">The list template.</param>
         /// <returns></returns>
-        private SPList CreateList(SPWeb web, string listUrl, string displayName, string listDescription, SPListTemplate listTemplate)
+        private SPList EnsureList(SPWeb web, string listUrl, string displayName, string listDescription, SPListTemplate listTemplate)
         {
-            var list = this._listHelper.EnsureList(web, listUrl, listDescription, listTemplate);
+            var list = this._listHelper.GetListByRootFolderUrl(web, listUrl);
+                
+            if(list == null)
+            {
+                // Create new list
+                var id = web.Lists.Add(listUrl, listDescription, listTemplate);
+                list = web.Lists[id];
+            }
+
             list.Title = displayName;
             list.ContentTypesEnabled = true;
             list.Update(true);
@@ -203,15 +200,18 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// </summary>
         /// <param name="contentTypesCollection">Content Types collection.</param>
         /// <param name="list">The list to configure.</param>
-        private void CreateContentTypes(IEnumerable<XElement> contentTypesCollection, SPList list)
+        private void CreateContentTypes(IEnumerable<XElement> contentTypesCollection, SPList list, bool removeDefaultContentType)
         {
-            // If content type is direct child of item, remove it
-            var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
-            if (itemContentTypeId.Parent == SPBuiltInContentTypeId.Item)
+            if(removeDefaultContentType)
             {
-                list.ContentTypes.Delete(itemContentTypeId);
+                // If content type is direct child of item, remove it
+                var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
+                if (itemContentTypeId.Parent == SPBuiltInContentTypeId.Item)
+                {
+                    list.ContentTypes.Delete(itemContentTypeId);
+                }
             }
-            
+
             // Add content type to the list if doesn't exist
             foreach (XElement contentType in contentTypesCollection)
             {
@@ -310,5 +310,16 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Object to pass to the pipeline
+    /// </summary>
+    public class Catalog
+    {
+        public string Name { get; set; }
+        public Guid Id { get; set; }
+        public string ParentWebUrl { get; set; }
+        public string RootFolder { get; set; }
     }
 }

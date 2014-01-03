@@ -189,8 +189,9 @@ namespace GSoft.Dynamite.Taxonomy
             // TaxonomyField field = list.Fields.CreateNewField("TaxonomyFieldType", fieldInternalName) as TaxonomyField;
 
             // Create the schema 
-            var taxonomySchema = new TaxonomyFieldSchema(false);
+            var taxonomySchema = new TaxonomyFieldSchema();
 
+            taxonomySchema.IsMultiple = false;
             taxonomySchema.FieldName = fieldInternalName;
 
             // Here is a trick: We have to pass the internal name as display name and set the display name after creation

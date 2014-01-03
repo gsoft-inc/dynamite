@@ -10,13 +10,13 @@ using Microsoft.SharePoint.Utilities;
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
     /// <summary>
-    /// Cmdlet for creating a catalog connection
+    /// Cmdlet for deleting a catalog connection
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "DSPCatalogConnection")]
-    public class DspCmdletNewCatalogConnection : Cmdlet
+    [Cmdlet(VerbsCommon.Remove, "DSPCatalogConnection")]
+    // ReSharper disable once InconsistentNaming
+    public class DSPCmdletRemoveCatalogConnection: Cmdlet
     {
         private XDocument _configurationFile;
-        private bool _overwrite;
 
         [Parameter(Mandatory = true,
             ValueFromPipeline = true,
@@ -25,14 +25,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
-        [Parameter(HelpMessage = "Specifies if catalog connections should be overwritten",
-        Position = 3)]
-        public SwitchParameter Overwrite
-        {
-            get { return _overwrite; }
-            set { _overwrite = value; }
-        }
-
         protected override void EndProcessing()
         {
             var xml = InputFile.Read();
@@ -40,24 +32,26 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
             // Get all webs nodes
             var webNodes = from webNode in _configurationFile.Descendants("Web")
-                       select (webNode);
+                           select (webNode);
 
-            foreach (var webNode in webNodes)
+            var isContinue = ShouldContinue("Are you sure?", "Delete all catalog connections");
+
+            if(isContinue)
             {
-                var webUrl = webNode.Attribute("Url").Value;
-                using (var site = new SPSite(webUrl))
+                foreach (var webNode in webNodes)
                 {
-                    using (var web = site.OpenWeb())
+                    var webUrl = webNode.Attribute("Url").Value;
+                    using (var site = new SPSite(webUrl))
                     {
-                        var catalogManager = new CatalogConnectionManager(site);
-                        
-                        // Get catalog connection nodes
-                        var catalogConnectionNodes = webNode.Descendants("CatalogConnection");
-
-                        // Add each connection to the catalog manager
-                        foreach (var catalogConnection in catalogConnectionNodes.Select(x => GetCatalogConnectionSettingsFromNode(web, x)))
+                        using (var web = site.OpenWeb())
                         {
-                            if(Overwrite)
+                            var catalogManager = new CatalogConnectionManager(site);
+
+                            // Get catalog connection nodes
+                            var catalogConnectionNodes = webNode.Descendants("CatalogConnection");
+                     
+                            // Delete each connection from the catalog manager
+                            foreach (var catalogConnection in catalogConnectionNodes.Select(x => GetCatalogConnectionSettingsFromNode(web, x)))
                             {
                                 if (catalogManager.Contains(catalogConnection.CatalogUrl))
                                 {
@@ -66,14 +60,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                     catalogManager.Update();
                                 }
                             }
-
-                            WriteWarning("Creating catalog connection: " + catalogConnection.CatalogUrl);
-                            catalogManager.AddCatalogConnection(catalogConnection);
-                            catalogManager.Update();                                                 
-                        }                        
+                                             
+                        }
                     }
                 }
-            }
+            }    
 
             base.EndProcessing();
         }
