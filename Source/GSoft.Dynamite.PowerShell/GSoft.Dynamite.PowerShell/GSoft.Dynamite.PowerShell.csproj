@@ -65,8 +65,11 @@
   <ItemGroup>
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletRemoveCatalogConnection.cs" />
+    <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletRemoveCatalogs.cs" />
     <Compile Include="Cmdlets\Navigation\DSPCmdletSetManagedNavigation.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
+    <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
     <Compile Include="Cmdlets\Variations\DSPCmdletSyncList.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
     <Compile Include="PipeBindsObjects\XmlDocumentPipeBind.cs" />

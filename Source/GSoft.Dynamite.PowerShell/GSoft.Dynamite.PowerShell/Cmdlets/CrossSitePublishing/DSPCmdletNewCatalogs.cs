@@ -43,14 +43,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
    
         public bool _delete;
 
-        [Parameter(HelpMessage = "Delete catalog configuration",
-            Position = 2)]
-        public SwitchParameter Delete
-        {
-            get { return _delete; }
-            set { _delete = value; }
-        }
-
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
@@ -108,72 +100,56 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         // Create the list if doesn't exists
                         var list = this._listHelper.GetListByRootFolderUrl(spWeb, catalogUrl);
-
-                        if(this._delete)
+                       
+                        if(list == null)
                         {
-                            if(list !=null)
-                            {
-                                WriteWarning("Delete the list " + catalogName);
-
-                                // Delete the list
-                                list.Delete();
-                            }
-                            else
-                            {
-                                WriteWarning("No list with the name " + catalogName);
-                            }
+                            list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);
                         }
                         else
                         {
-                            if(list == null)
+                            WriteWarning("Catalog " + catalogName + " is already exists");
+
+                            // If the Overwrite paramter is set to true, celete and recreate the catalog
+                            if(overwrite)
                             {
-                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);
+                                WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
+
+                                list.Delete();
+                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);                               
                             }
                             else
                             {
-                                WriteWarning("Catalog " + catalogName + " is already exists");
+                                // Get the existing list
+                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);     
+                            }                              
+                        }
 
-                                // If the Overwrite paramter is set to true, celete and recreate the catalog
-                                if(overwrite)
-                                {
-                                    WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
+                        // Create return object
+                        var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWebUrl, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
 
-                                    list.Delete();
-                                    list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);                               
-                                }
-                                else
-                                {
-                                    // Get the existing list
-                                    list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);     
-                                }                              
-                            }
+                        // Add content types to the list
+                        CreateContentTypes(contentTypes, list, removeDefaultContentType);
 
-                            // Create return object
-                            var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWebUrl, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
+                        // Add Segments
+                        CreateSegments(segments, list);
 
-                            // Add content types to the list
-                            CreateContentTypes(contentTypes, list, removeDefaultContentType);
+                        // Set default values
+                        SetTaxonomyDefaults(defaultsTaxFields, list);
 
-                            // Add Segments
-                            CreateSegments(segments, list);
+                        if (String.IsNullOrEmpty(taxonomyFieldMap))
+                        {
+                            // Set the list as catalog without navigation
+                            this._catalogHelper.SetListAsCatalog(list, availableFields);
+                        }
+                        else
+                        {
+                            // Set the list as catalog with navigation term
+                            this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
+                        }
 
-                            // Set default values
-                            SetTaxonomyDefaults(defaultsTaxFields, list);
-
-                            if (String.IsNullOrEmpty(taxonomyFieldMap))
-                            {
-                                // Set the list as catalog without navigation
-                                this._catalogHelper.SetListAsCatalog(list, availableFields);
-                            }
-                            else
-                            {
-                                // Set the list as catalog with navigation term
-                                this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
-                            }
-
-                            // Write object to the pipeline
-                            WriteObject(catalog, true);
-                        }                        
+                        // Write object to the pipeline
+                        WriteObject(catalog, true);
+                                                
                     }   
                 }
             }

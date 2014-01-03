@@ -193,7 +193,10 @@ namespace GSoft.Dynamite.Utils
             var searchOwner = new SearchObjectOwner(level, contextWeb);
 
             var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-            federationManager.RemoveSource(resultSource);
+            if (resultSource != null)
+            {
+                federationManager.RemoveSource(resultSource);
+            }           
         }
     }
 }

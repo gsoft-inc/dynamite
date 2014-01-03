@@ -1,5 +1,4 @@
 ﻿using GSoft.Dynamite.PowerShell.PipeBindsObjects;
-using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.Utils;
 using System;
@@ -9,29 +8,25 @@ using System.Management.Automation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.Practices.Unity;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.SharePoint;
-using Microsoft.Office.Server.Search.Query;
-using Microsoft.Office.Server.Search.Query.Rules;
-using Microsoft.Office.Server.Search.Administration.Query;
-using Microsoft.SharePoint.Administration;
+using GSoft.Dynamite.PowerShell.Unity;
+using Microsoft.Practices.Unity;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 {
     /// <summary>
-    /// Creates result sources in the search serviec application
+    /// Removes Search Result Sources confguration
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "DSPResultSources")]
-    public class DSPCmdletNewResultSources: Cmdlet
+    [Cmdlet(VerbsCommon.Remove, "DSPResultSources")]
+    public class DSPCmdletRemoveResultSources: Cmdlet
     {
-         /// <summary>
+        /// <summary>
         /// Dynamite Helpers
         /// </summary>
         private SearchHelper _searchHelper;
 
         private XDocument _configurationFile;
-        private bool _overwrite;
 
         [Parameter(Mandatory = true,
             ValueFromPipeline = true,
@@ -39,14 +34,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
-
-        [Parameter(HelpMessage = "Specifies if result sources should be overwritten",
-        Position = 3)]
-        public SwitchParameter Overwrite
-        {
-            get { return _overwrite; }
-            set { _overwrite = value; }
-        }
 
         protected override void EndProcessing()
         {
@@ -60,51 +47,31 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
             var searchServiceApp = this._searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
 
             var sourceNodes = from sourceNode in _configurationFile.Descendants("Source")
-                          select (sourceNode);
+                              select (sourceNode);
 
             foreach (var sourceNode in sourceNodes)
             {
                 var sourceName = sourceNode.Attribute("Name").Value;
                 var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
 
-                var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel),objectLevelAsString);
+                var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
                 var contextWeb = sourceNode.Attribute("ContextWeb").Value;
 
                 var spSite = new SPSite(contextWeb);
                 var spWeb = spSite.OpenWeb(contextWeb);
 
-
-                if(Overwrite)
+                var doProcess = ShouldContinue("Are you sure?", "Delete all result sources");
+                if(doProcess)
                 {
-                    WriteWarning("Overwrite specified. Deleting and recreating result source:" + sourceName);
+                    WriteWarning("Deleting result source:" + sourceName);
                     this._searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, spWeb);
                 }
-                else
-                {
-                    WriteWarning("Creating result source:" + sourceName);
-                }
-                    
-                var sortDirectionAsString = sourceNode.Attribute("SortDirection").Value;
-                var sortField = sourceNode.Attribute("SortField").Value;
-
-                var query = sourceNode.Descendants("Query").Single().Value;
-
-                if (!String.IsNullOrEmpty(sortDirectionAsString) && !String.IsNullOrEmpty(sortField))
-                {
-                    var sortDirection = (SortDirection)Enum.Parse(typeof(SortDirection), sortDirectionAsString);
-                    this._searchHelper.EnsureResultSource(searchServiceApp, sourceName, sortObjectLevel, spWeb, query, sortField, sortDirection, Overwrite);
-                }
-                else
-                {
-                    this._searchHelper.EnsureResultSource(searchServiceApp, sourceName, sortObjectLevel, spWeb, query, null, Overwrite);
-                }
-                
 
                 spWeb.Dispose();
                 spSite.Dispose();
             }
 
-            base.EndProcessing();           
+            base.EndProcessing();
         }
 
         /// <summary>
@@ -114,7 +81,5 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         {
             this._searchHelper = PowerShellContainer.Current.Resolve<SearchHelper>();
         }
-
-
     }
 }
