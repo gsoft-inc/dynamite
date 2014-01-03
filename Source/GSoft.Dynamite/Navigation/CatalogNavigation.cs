@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using GSoft.Dynamite.Logging;
@@ -187,7 +186,7 @@ namespace GSoft.Dynamite.Navigation
                 QueryText = string.Format("{0}:{1} {2}={3}", this.AssociationKeyManagedPropertyName, this.AssociationKeyValue, "DetectedLanguage", labelLocalAgnosticLanguage),
             };
 
-            // 
+            // Search query must include the following properties for the friendly URL to work
             query.SelectProperties.AddRange(new[] { this.CatalogNavigationTermManagedPropertyName, "Path", "spSiteUrl", "ListID" });
             var tables = new SearchExecutor().ExecuteQuery(query);
             if (tables.Exists(KnownTableTypes.RelevantResults))
@@ -221,17 +220,6 @@ namespace GSoft.Dynamite.Navigation
                 throw new NullReferenceException(string.Format(
                     "{0}: Property '{1}' is null or empty string.", callingMethodName, "AssociationKeyValue"));
             }
-        }
-
-        private static string[] ReplaceFirstSegments(IList<string> sourceSegments, IEnumerable<string> destinationSegments)
-        {
-            var replacedSegments = new List<string>(destinationSegments);
-            for (var i = 0; i < sourceSegments.Count; i++)
-            {
-                replacedSegments[i] = (i == (sourceSegments.Count - 1)) ? sourceSegments[i] + "/" : sourceSegments[i];
-            }
-
-            return replacedSegments.ToArray();
         }
     }
 }
