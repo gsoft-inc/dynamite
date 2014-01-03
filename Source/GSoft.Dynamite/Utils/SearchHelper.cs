@@ -2,7 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Office.Server.Search.Administration;
+using Microsoft.Office.Server.Search.Administration.Query;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Utils
 {  
@@ -99,6 +101,32 @@ namespace GSoft.Dynamite.Utils
             remoteScopes.StartCompilation();
 
             return scope;
+        }
+
+        /// <summary>
+        /// Gets the result source by name using the default application name:'Search Service Application'.
+        /// </summary>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="owner">The owner.</param>
+        /// <returns>The corresponding result source.</returns>
+        public SourceRecord GetResultSourceByName(string resultSourceName, SearchObjectLevel owner)
+        {
+            return GetResultSourceByName(resultSourceName, owner, "Search Service Application");
+        }
+
+        /// <summary>
+        /// Gets the result source by name.
+        /// </summary>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="owner">The owner.</param>
+        /// <param name="serviceApplicationName">Name of the service application.</param>
+        /// <returns>The corresponding result source.</returns>
+        public SourceRecord GetResultSourceByName(string resultSourceName, SearchObjectLevel owner, string serviceApplicationName)
+        {
+            var settingsProxy = SPFarm.Local.ServiceProxies.GetValue<SearchQueryAndSiteSettingsServiceProxy>();
+            var searchProxy = settingsProxy.ApplicationProxies.GetValue<SearchServiceApplicationProxy>(serviceApplicationName);
+            var serviceApplicationOwner = new SearchObjectOwner(owner);
+            return searchProxy.GetResultSourceByName(resultSourceName, serviceApplicationOwner);
         }
     }
 }

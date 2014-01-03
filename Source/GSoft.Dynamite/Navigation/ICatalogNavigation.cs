@@ -1,0 +1,50 @@
+﻿using System;
+using Microsoft.SharePoint.Publishing;
+
+namespace GSoft.Dynamite.Navigation
+{
+    /// <summary>
+    /// Catalog navigation interface.
+    /// </summary>
+    public interface ICatalogNavigation
+    {
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
+        /// <value>
+        /// The type.
+        /// </value>
+        CatalogNavigationType Type { get; }
+
+        /// <summary>
+        /// Gets or sets the name of the catalog navigation term managed property.
+        /// </summary>
+        /// <value>
+        /// The name of the catalog navigation term managed property.
+        /// </value>
+        string CatalogNavigationTermManagedPropertyName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the association key managed property.
+        /// </summary>
+        /// <value>
+        /// The name of the association key managed property.
+        /// </value>
+        string AssociationKeyManagedPropertyName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the association key value.
+        /// </summary>
+        /// <value>
+        /// The association key value.
+        /// </value>
+        string AssociationKeyValue { get; set; }
+
+        /// <summary>
+        /// Gets the variation peer URL.
+        /// </summary>
+        /// <param name="label">The variation label.</param>
+        /// <returns>The peer URL.</returns>
+        Uri GetVariationPeerUrl(VariationLabel label);
+    }
+}
