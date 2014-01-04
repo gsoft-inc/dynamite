@@ -127,6 +127,7 @@
     <Compile Include="Repositories\ListLocator.cs" />
     <Compile Include="Schemas\GenericFieldSchema.cs" />
     <Compile Include="Schemas\TaxonomyFieldSchema.cs" />
+    <Compile Include="Schemas\TextFieldSchema.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />

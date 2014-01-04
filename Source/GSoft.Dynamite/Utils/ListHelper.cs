@@ -3,6 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Microsoft.SharePoint;
+using System.Xml.Linq;
+using GSoft.Dynamite.Schemas;
+using System.Threading;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -12,14 +16,16 @@ namespace GSoft.Dynamite.Utils
     public class ListHelper
     {
         private ContentTypeHelper _contentTypeHelper;
+        private FieldHelper _fieldHelper;
 
         /// <summary>
         /// Creates a list helper
         /// </summary>
         /// <param name="contentTypeHelper">A content type helper</param>
-        public ListHelper(ContentTypeHelper contentTypeHelper)
+        public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper)
         {
             this._contentTypeHelper = contentTypeHelper;
+            this._fieldHelper = fieldHelper;
         }
 
         /// <summary>
@@ -154,6 +160,108 @@ namespace GSoft.Dynamite.Utils
                 (from SPList list in web.Lists
                  where list.RootFolder.Name.Equals(listRootFolderUrl, StringComparison.Ordinal)
                  select list).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Creates a field on the list
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="fieldInternalName">The Field internal name.</param>f
+        /// <param name="fieldDisplayName">The field display name.</param>
+        /// <param name="fieldDescription">The field description.</param>
+        /// <param name="fieldGroup">The field group.</param>
+        /// <returns>The internal name of newly created field.</returns>
+        public string CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
+        {
+            genericField.FieldName = fieldInternalName;
+
+            // Here is a trick: We have to pass the internal name as display name and set the display name after creation
+            genericField.FieldDisplayName = fieldInternalName;
+
+            genericField.FieldDescription = fieldDescription;
+            genericField.FieldStaticName = fieldInternalName;
+            genericField.FieldGroup = fieldGroup;
+
+
+            var fieldName = this._fieldHelper.AddField(list.Fields, genericField.ToXElement());
+
+            if (string.IsNullOrEmpty(fieldName))
+            {
+                fieldName = genericField.FieldDisplayName;
+            }
+
+            // When you set title, need to be in the same Culture as Current web Culture 
+            // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
+            CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
+            Thread.CurrentThread.CurrentUICulture =
+                new CultureInfo((int)list.ParentWeb.Language);
+
+            // Get the new field - Be careful, return the display name    
+            var field = list.Fields[fieldName];
+            field.Title = genericField.FieldDisplayName;
+            field.Update(true);
+
+            list.Update();
+
+            return fieldName;
+        }
+
+        /// <summary>
+        /// Create a taxonomy Field in a SharePoint list
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="fieldInternalName">The Field internal name.</param>f
+        /// <param name="fieldDisplayName">The field display name.</param>
+        /// <param name="fieldDescription">The field description.</param>
+        /// <param name="fieldGroup">The field group.</param>
+        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
+        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
+        /// <returns>The newly created field.</returns>
+        public SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen)
+        {
+            // Dont'use CreateNewField method because of its doesn't generate the Field ID
+            // TaxonomyField field = list.Fields.CreateNewField("TaxonomyFieldType", fieldInternalName) as TaxonomyField;
+
+            // Create the schema 
+            var taxonomySchema = new TaxonomyFieldSchema();
+            taxonomySchema.IsMultiple = false;
+
+            var fieldName = this.CreateListField(list, taxonomySchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
+
+            // Get the new field - Be careful, return the display name    
+            var field = list.Fields[fieldName] as TaxonomyField;
+            field.Open = isOpen;
+            field.AllowMultipleValues = isMultiple;
+            field.TargetTemplate = string.Empty;
+            field.Update(true);
+            list.Update();
+
+            return field;
+        }
+
+        /// <summary>
+        /// Create a text field
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="fieldInternalName">The Field internal name.</param>f
+        /// <param name="fieldDisplayName">The field display name.</param>
+        /// <param name="fieldDescription">The field description.</param>
+        /// <param name="fieldGroup">The field group.</param>
+        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
+        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
+        /// <returns>The newly created field.</returns>
+        public SPField CreateTextField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiLines)
+        {
+            // Create the schema 
+            var textFieldSchema = new TextFieldSchema();
+
+            textFieldSchema.IsMultiLine = false;
+            var fieldName = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
+
+            // Get the new field - Be careful, return the display name    
+            var field = list.Fields[fieldName];
+
+            return field;
         }
     }
 }

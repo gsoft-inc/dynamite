@@ -173,61 +173,6 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Create a taxonomy Field in a SharePoint list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>f
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
-        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
-        /// <returns>The newly created field.</returns>
-        public SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen)
-        {
-            // Dont'use CreateNewField method because of its doesn't generate the Field ID
-            // TaxonomyField field = list.Fields.CreateNewField("TaxonomyFieldType", fieldInternalName) as TaxonomyField;
-
-            // Create the schema 
-            var taxonomySchema = new TaxonomyFieldSchema();
-
-            taxonomySchema.IsMultiple = false;
-            taxonomySchema.FieldName = fieldInternalName;
-
-            // Here is a trick: We have to pass the internal name as display name and set the display name after creation
-            taxonomySchema.FieldDisplayName = fieldInternalName;
-
-            taxonomySchema.FieldDescription = fieldDescription;
-            taxonomySchema.FieldStaticName = fieldInternalName;
-            taxonomySchema.FieldGroup = fieldGroup;
-
-            var fieldName = this._fieldHelper.AddField(list.Fields, taxonomySchema.ToXElement());
-
-            if (string.IsNullOrEmpty(fieldName))
-            {
-                fieldName = fieldDisplayName;
-            }
-
-            // When you set title, need to be in the same Culture as Current web Culture 
-            // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
-            CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture =
-                new CultureInfo((int)list.ParentWeb.Language);
-
-            // Get the new field - Be careful, return the display name    
-            var field = list.Fields[fieldName] as TaxonomyField;
-            field.Open = isOpen;
-            field.AllowMultipleValues = isMultiple;
-            field.TargetTemplate = string.Empty;
-            field.Title = fieldDisplayName;
-            field.Update(true);
-
-            list.Update();
-            
-            return field;
-        }
-
-        /// <summary>
         /// Set default value for a taxonomy site column
         /// </summary>
         /// <param name="web">The web.</param>

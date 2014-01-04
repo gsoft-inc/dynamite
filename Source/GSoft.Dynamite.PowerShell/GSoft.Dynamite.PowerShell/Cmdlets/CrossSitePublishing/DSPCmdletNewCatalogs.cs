@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Threading;
 using Microsoft.SharePoint.Taxonomy;
 using System.Collections.ObjectModel;
+using GSoft.Dynamite.Schemas;
 
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
@@ -85,13 +86,21 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var availableFields = from contentType in catalogNode.Descendants("ManagedProperties").Descendants("Property")
                                               select contentType.Attribute("Name").Value;
 
-                        // Get segments
-                        var segments = from segment in catalogNode.Descendants("Segments").Descendants("Segment")
+                        // Get TaxonomyFields segments
+                        var taxonomyFieldSegments = from segment in catalogNode.Descendants("Segments").Descendants("TaxonomyField")
                                        select segment;
 
+                        // Get TextFields segments
+                        var textFieldSegments = from segment in catalogNode.Descendants("Segments").Descendants("TextField")
+                                               select segment;
+
                         // Get defaults for taxonomy Fields
-                        var defaultsTaxFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TaxonomyField")
+                        var defaultsTaxonomyFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TaxonomyField")
                                        select defaultValue;
+
+                        // Get defaults for text fields
+                        var defaultsTextFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TextField")
+                                                select defaultValue;
 
                         // Set current culture to be able to set the "Title" of the list
                         CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
@@ -130,11 +139,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         // Add content types to the list
                         CreateContentTypes(contentTypes, list, removeDefaultContentType);
 
-                        // Add Segments
-                        CreateSegments(segments, list);
+                        // Add Taxonomy Fields Segments
+                        CreateTaxonomyFieldSegments(taxonomyFieldSegments, list);
 
-                        // Set default values
-                        SetTaxonomyDefaults(defaultsTaxFields, list);
+                        // Add Text Fields Segments
+                        CreateTextFieldSegments(textFieldSegments, list);
+
+                        // Set default values for Taxonomy Fields
+                        SetTaxonomyDefaults(defaultsTaxonomyFields, list);
+
+                        // Set default values for Text Fields
+                        SetTextFieldDefaults(defaultsTextFields, list);
 
                         if (String.IsNullOrEmpty(taxonomyFieldMap))
                         {
@@ -241,11 +256,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         }
 
         /// <summary>
-        /// Create segements
+        /// Create TaxonomyFields segments
         /// </summary>
         /// <param name="segmentsCollection">The segments collection.</param>
-        /// <param name="list">List to confgiure.</param>
-        private void CreateSegments(IEnumerable<XElement> segmentsCollection, SPList list)
+        /// <param name="list">List to configure.</param>
+        private void CreateTaxonomyFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
         {
             // Add segments to the list
             foreach (XElement segment in segmentsCollection)
@@ -260,12 +275,35 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 var termSetName = segment.Attribute("TermSetName").Value;
              
                 // Create the column in the list
-                var taxonomyField = this._taxonomyHelper.CreateListTaxonomyField(list, internalName, displayName, description, group, isMultiple, isOpen);
+                var taxonomyField = this._listHelper.CreateListTaxonomyField(list, internalName, displayName, description, group, isMultiple, isOpen);
 
                 // Assign the termSet to the field
                 this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, string.Empty);
+                                       
+                WriteVerbose("TaxonomyField " + internalName + " successfully created!");
+            }
+        }
 
-                WriteVerbose("Segment " + internalName + " successfully created!");
+        /// <summary>
+        /// Create TextField segments
+        /// </summary>
+        /// <param name="segmentsCollection">The segments collection.</param>
+        /// <param name="list">List to configure.</param>
+        private void CreateTextFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
+        {
+            // Add segments to the list
+            foreach (XElement segment in segmentsCollection)
+            {
+                var internalName = segment.Attribute("InternalName").Value;
+                var displayName = segment.Attribute("DisplayName").Value;
+                var description = segment.Attribute("Description").Value;
+                var group = segment.Attribute("Group").Value;
+                var isMultiple = Boolean.Parse(segment.Attribute("IsMultiline").Value);
+                
+                // Create the column in the list
+                var textField = this._listHelper.CreateTextField(list, internalName, displayName, description, group, isMultiple);
+                     
+                WriteVerbose("TextField " + internalName + " successfully created!");
             }
         }
 
@@ -290,7 +328,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     var terms = new Collection<string>();
 
                     // Get terms
-                    foreach(var term in defaultValue.Descendants("Term"))
+                    foreach(var term in defaultValue.Descendants("Value"))
                     {
                         terms.Add(term.Value);
                     }
@@ -307,6 +345,39 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 else
                 {
                     WriteWarning("Field " + internalName + " is not a TaxonomyField");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set default values for text fields
+        /// </summary>
+        /// <param name="defaultsCollection">Defaults values.</param>
+        /// <param name="list">The list to configure.</param>
+        private void SetTextFieldDefaults(IEnumerable<XElement> defaultsCollection, SPList list)
+        {
+            // Add segments to the list
+            foreach (XElement defaultValue in defaultsCollection)
+            {
+                var internalName = defaultValue.Attribute("InternalName").Value;
+                var field = list.Fields.GetFieldByInternalName(internalName);
+
+                if (field.GetType() == typeof(SPFieldText))
+                {
+                    if(defaultValue.Descendants("Value").Count() > 1)
+                    {
+                        WriteWarning("There is more than one default value for " + internalName + " SPField. Please specify  an unique value.");
+                    }
+                    else
+                    {
+                        var val = defaultValue.Descendants("Value").Single().Value;
+                        field.DefaultValue = val;
+                        field.Update();
+                    }                
+                }
+                else
+                {
+                    WriteWarning("Field " + internalName + " is not a SPField");
                 }
             }
         }

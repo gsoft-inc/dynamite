@@ -56,6 +56,12 @@ namespace GSoft.Dynamite.Schemas
             set { _fieldGroup = value; }
         }
 
+        public Guid FieldId
+        {
+            get { return _fieldId; }
+            set { _fieldId = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -68,7 +74,7 @@ namespace GSoft.Dynamite.Schemas
             this._fieldDisplayName = string.Empty;
             this._fieldDescription = string.Empty;
             this._fieldGroup = string.Empty;
-            this._fieldId = new Guid();
+            this._fieldId = Guid.NewGuid();
         }
 
         /// <summary>
