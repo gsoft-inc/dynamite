@@ -1,5 +1,6 @@
 ﻿using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
@@ -52,6 +53,9 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<ITaxonomyService, TaxonomyService>();
             container.RegisterType<TaxonomyService>();
             container.RegisterType<TaxonomyHelper>();
+
+            // Navigation
+            container.RegisterType<ICatalogNavigation, CatalogNavigation>();
 
             // Repositories
             container.RegisterType<FolderRepository>();

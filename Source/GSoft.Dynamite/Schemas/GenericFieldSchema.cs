@@ -87,7 +87,7 @@ namespace GSoft.Dynamite.Schemas
         /// Get the XML schema as string of the field.
         /// </summary>
         /// <returns>A string that represents the XML schema.</returns>
-        public abstract string ToString();
+        public abstract override string ToString();
         
     }
 }

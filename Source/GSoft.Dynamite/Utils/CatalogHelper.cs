@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using Microsoft.SharePoint;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Utils
@@ -14,16 +14,6 @@ namespace GSoft.Dynamite.Utils
     /// </summary>
     public class CatalogHelper
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
-        private ListHelper _listHelper;
-
-        public CatalogHelper(ListHelper listHelper)
-        {
-            _listHelper = listHelper;
-        }
-
         /// <summary>
         /// Set a SharePoint as a product catalog without navigation term associated
         /// </summary>

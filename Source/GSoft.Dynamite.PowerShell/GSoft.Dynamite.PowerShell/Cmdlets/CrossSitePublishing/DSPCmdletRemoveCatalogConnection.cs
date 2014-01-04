@@ -13,11 +13,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     /// Cmdlet for deleting a catalog connection
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "DSPCatalogConnection")]
+    // ReSharper disable once InconsistentNaming
     public class DSPCmdletRemoveCatalogConnection: Cmdlet
     {
         private XDocument _configurationFile;
-        private bool _delete;
-        private bool _overwrite;
 
         [Parameter(Mandatory = true,
             ValueFromPipeline = true,
