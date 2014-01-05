@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
@@ -53,6 +56,12 @@ namespace GSoft.Dynamite.Utils
             }
         }
 
+        /// <summary>
+        /// Gets the navigation term by identifier.
+        /// </summary>
+        /// <param name="navigationTerms">The navigation terms.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The navigation term.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
         {
@@ -70,6 +79,50 @@ namespace GSoft.Dynamite.Utils
 
             var childTerms = terms.SelectMany(x => x.Terms);
             return this.GetNavigationTermById(childTerms, id);
+        }
+
+        /// <summary>
+        /// Generates the friendly URL slug.
+        /// </summary>
+        /// <param name="phrase">The phrase.</param>
+        /// <param name="maxLength">The maximum length.</param>
+        /// <returns>A friendly URL slug containing human readable characters.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public string GenerateFriendlyUrlSlug(string phrase, int maxLength = 75)
+        {
+            // Remove diacritics (accented characters)
+            var slug = RemoveDiacritics(phrase.ToLower());
+
+            // invalid chars, make into spaces
+            slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+
+            // convert multiple spaces/hyphens into one space       
+            slug = Regex.Replace(slug, @"[\s-]+", " ").Trim();
+
+            // cut and trim it
+            slug = slug.Substring(0, slug.Length <= maxLength ? slug.Length : maxLength).Trim();
+
+            // hyphens
+            slug = Regex.Replace(slug, @"\s", "-");
+
+            return slug;
+        }
+
+        private static string RemoveDiacritics(string text)
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var character in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(character);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(character);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }
