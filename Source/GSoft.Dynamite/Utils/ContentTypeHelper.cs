@@ -290,6 +290,31 @@ namespace GSoft.Dynamite.Utils
             }
         }
 
+        /// <summary>
+        /// Reorders fields in the content type according to index position.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<FieldInfo> orderedFields)
+        {
+            var fieldInternalNames = contentType.FieldLinks.Cast<SPFieldLink>().Where(x => !x.Hidden).Select(x => x.Name).ToList();
+
+            foreach (var orderedField in orderedFields)
+            {
+                fieldInternalNames.Remove(orderedField.InternalName);
+            }
+
+            var orderedFieldsArray = orderedFields.ToArray();
+            for (var i = 0; i < orderedFieldsArray.Length; i++)
+            {
+                fieldInternalNames.Insert(i, orderedFieldsArray[i].InternalName);
+            }
+
+            contentType.FieldLinks.Reorder(fieldInternalNames.ToArray());
+            contentType.Update();
+        }
+
         #region Private methods
         private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType)
         {
