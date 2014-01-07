@@ -73,6 +73,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var catalogName = catalogNode.Attribute("DisplayName").Value;
                         var catalogDescription = catalogNode.Attribute("Description").Value;
                         var listTemplateId = int.Parse(catalogNode.Attribute("ListTemplateId").Value);
+
+                        DraftVisibilityType draftVisibilityType;
+
                         var listTemplate = spWeb.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType) listTemplateId);
                         var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
                         var overwrite = Boolean.Parse(catalogNode.Attribute("Overwrite").Value);
@@ -150,6 +153,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         // Set default values for Text Fields
                         SetTextFieldDefaults(defaultsTextFields, list);
+
+                        // Set versioning settings
+                        if (!String.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
+                        {
+                            draftVisibilityType = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), catalogNode.Attribute("DraftVisibilityType").Value, true);
+                            list.DraftVersionVisibility = draftVisibilityType;
+                            list.Update();
+                        }
 
                         if (String.IsNullOrEmpty(taxonomyFieldMap))
                         {

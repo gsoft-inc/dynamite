@@ -171,7 +171,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="fieldDescription">The field description.</param>
         /// <param name="fieldGroup">The field group.</param>
         /// <returns>The internal name of newly created field.</returns>
-        public string CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
+        public SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
             genericField.FieldName = fieldInternalName;
 
@@ -185,25 +185,24 @@ namespace GSoft.Dynamite.Utils
 
             var fieldName = this._fieldHelper.AddField(list.Fields, genericField.ToXElement());
 
-            if (string.IsNullOrEmpty(fieldName))
-            {
-                fieldName = genericField.FieldDisplayName;
+            if (!string.IsNullOrEmpty(fieldName))
+            {            
+                // When you set title, need to be in the same Culture as Current web Culture 
+                // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
+                CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
+                Thread.CurrentThread.CurrentUICulture =
+                    new CultureInfo((int)list.ParentWeb.Language);
+
+                // Get the new field - Be careful, return the display name    
+                var field = list.Fields.GetFieldByInternalName(fieldInternalName);
+                field.Title = genericField.FieldDisplayName;
+                field.Description = fieldDescription;
+                field.Update(true);
+
+                list.Update();
             }
 
-            // When you set title, need to be in the same Culture as Current web Culture 
-            // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
-            CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture =
-                new CultureInfo((int)list.ParentWeb.Language);
-
-            // Get the new field - Be careful, return the display name    
-            var field = list.Fields[fieldName];
-            field.Title = genericField.FieldDisplayName;
-            field.Update(true);
-
-            list.Update();
-
-            return fieldName;
+            return list.Fields.GetFieldByInternalName(fieldInternalName); 
         }
 
         /// <summary>
@@ -226,10 +225,8 @@ namespace GSoft.Dynamite.Utils
             var taxonomySchema = new TaxonomyFieldSchema();
             taxonomySchema.IsMultiple = false;
 
-            var fieldName = this.CreateListField(list, taxonomySchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
+            var field = this.CreateListField(list, taxonomySchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup) as TaxonomyField;
 
-            // Get the new field - Be careful, return the display name    
-            var field = list.Fields[fieldName] as TaxonomyField;
             field.Open = isOpen;
             field.AllowMultipleValues = isMultiple;
             field.TargetTemplate = string.Empty;
@@ -256,10 +253,7 @@ namespace GSoft.Dynamite.Utils
             var textFieldSchema = new TextFieldSchema();
 
             textFieldSchema.IsMultiLine = false;
-            var fieldName = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
-
-            // Get the new field - Be careful, return the display name    
-            var field = list.Fields[fieldName];
+            var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
 
             return field;
         }
