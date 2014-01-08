@@ -17,7 +17,6 @@ namespace GSoft.Dynamite.Navigation
     /// </summary>
     public class CatalogNavigation : ICatalogNavigation
     {
-        private const string SiteMapProviderName = "GlobalNavigationTaxonomyProvider";
         private const string LocalSharePointResultsSourceName = "Local SharePoint Results";
         private readonly ILogger _logger;
         private readonly NavigationHelper _navigationHelper;
@@ -88,6 +87,14 @@ namespace GSoft.Dynamite.Navigation
         public string AssociationKeyManagedPropertyName { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the language managed property.
+        /// </summary>
+        /// <value>
+        /// The name of the language managed property.
+        /// </value>
+        public string LanguageManagedPropertyName { get; set; }
+
+        /// <summary>
         /// Gets or sets the association key value.
         /// </summary>
         /// <value>
@@ -144,13 +151,13 @@ namespace GSoft.Dynamite.Navigation
             using (var labelWeb = SPContext.Current.Site.OpenWeb(labelSiteRelativeUrl))
             {
                 // Create view to return all navigation terms
-                var view = new NavigationTermSetView(labelWeb, SiteMapProviderName)
+                var view = new NavigationTermSetView(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider)
                 {
                     ExcludeTermsByProvider = false
                 };
 
                 var navigationTermSet =
-                    TaxonomyNavigation.GetTermSetForWeb(labelWeb, SiteMapProviderName, true).GetWithNewView(view);
+                    TaxonomyNavigation.GetTermSetForWeb(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true).GetWithNewView(view);
 
                 // Get the matching label navigation term and return it's friendly URL
                 var navigationTerm = this._navigationHelper.GetNavigationTermById(navigationTermSet.Terms,
@@ -183,7 +190,7 @@ namespace GSoft.Dynamite.Navigation
             var query = new KeywordQuery(SPContext.Current.Web)
             {
                 SourceId = searchResultSource.Id,
-                QueryText = string.Format("{0}:{1} {2}={3}", this.AssociationKeyManagedPropertyName, this.AssociationKeyValue, "DetectedLanguage", labelLocalAgnosticLanguage),
+                QueryText = string.Format("{0}:{1} {2}={3}", this.AssociationKeyManagedPropertyName, this.AssociationKeyValue, this.LanguageManagedPropertyName, labelLocalAgnosticLanguage),
             };
 
             // Search query must include the following properties for the friendly URL to work

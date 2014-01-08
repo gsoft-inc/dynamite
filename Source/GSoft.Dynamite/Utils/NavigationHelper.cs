@@ -82,6 +82,30 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Gets the navigation parent terms.
+        /// </summary>
+        /// <param name="navigationTerm">The navigation term.</param>
+        /// <returns>A collection of parent terms, traversing upwards.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public IEnumerable<NavigationTerm> GetNavigationParentTerms(NavigationTerm navigationTerm)
+        {
+            if (navigationTerm != null)
+            {
+                var currentTerm = navigationTerm;
+                var navigationTerms = new List<NavigationTerm> { currentTerm };
+                while (currentTerm.Parent != null)
+                {
+                    currentTerm = currentTerm.Parent;
+                    navigationTerms.Add(currentTerm);
+                }
+
+                return navigationTerms; 
+            }
+
+            return new List<NavigationTerm>();
+        }
+
+        /// <summary>
         /// Generates the friendly URL slug.
         /// </summary>
         /// <param name="phrase">The phrase.</param>

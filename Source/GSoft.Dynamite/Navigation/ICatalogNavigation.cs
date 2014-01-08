@@ -41,6 +41,14 @@ namespace GSoft.Dynamite.Navigation
         string AssociationKeyValue { get; set; }
 
         /// <summary>
+        /// Gets or sets the name of the language managed property.
+        /// </summary>
+        /// <value>
+        /// The name of the language managed property.
+        /// </value>
+        string LanguageManagedPropertyName { get; set; }
+
+        /// <summary>
         /// Gets the variation peer URL.
         /// </summary>
         /// <param name="label">The variation label.</param>
