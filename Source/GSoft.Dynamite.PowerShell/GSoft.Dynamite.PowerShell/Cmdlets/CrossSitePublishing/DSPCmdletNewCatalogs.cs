@@ -158,6 +158,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         if (!String.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
                         {
                             draftVisibilityType = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), catalogNode.Attribute("DraftVisibilityType").Value, true);
+                            list.EnableModeration = true;
                             list.DraftVersionVisibility = draftVisibilityType;
                             list.Update();
                         }
