@@ -80,6 +80,7 @@
     <ProjectReference Include="..\..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
       <Name>GSoft.Dynamite</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
