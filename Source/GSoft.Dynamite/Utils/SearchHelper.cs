@@ -109,27 +109,18 @@ namespace GSoft.Dynamite.Utils
         /// Gets the result source by name using the default application name:'Search Service Application'.
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="application">The application.</param>
         /// <param name="owner">The owner.</param>
-        /// <returns>The corresponding result source.</returns>
-        public SourceRecord GetResultSourceByName(string resultSourceName, SearchObjectLevel owner)
-        {
-            return GetResultSourceByName(resultSourceName, owner, "Search Service Application");
-        }
-
-        /// <summary>
-        /// Gets the result source by name.
-        /// </summary>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="owner">The owner.</param>
-        /// <param name="serviceApplicationName">Name of the service application.</param>
-        /// <returns>The corresponding result source.</returns>
-        public SourceRecord GetResultSourceByName(string resultSourceName, SearchObjectLevel owner,
-            string serviceApplicationName)
+        /// <returns>
+        /// The corresponding result source.
+        /// </returns>
+        public SourceRecord GetResultSourceByName(string resultSourceName, SearchServiceApplication application, SearchObjectLevel owner)
         {
             var settingsProxy = SPFarm.Local.ServiceProxies.GetValue<SearchQueryAndSiteSettingsServiceProxy>();
             var searchProxy =
-                settingsProxy.ApplicationProxies.GetValue<SearchServiceApplicationProxy>(serviceApplicationName);
+                settingsProxy.ApplicationProxies.GetValue<SearchServiceApplicationProxy>(application.Name);
             var serviceApplicationOwner = new SearchObjectOwner(owner);
+
             return searchProxy.GetResultSourceByName(resultSourceName, serviceApplicationOwner);
         }
 
@@ -206,6 +197,30 @@ namespace GSoft.Dynamite.Utils
             SearchServiceApplication serviceApp = SearchApplication.First();
 
             return serviceApp;
+        }
+
+        /// <summary>
+        /// Gets the default search service application from a site.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The search service application.</returns>
+        public SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site)
+        {
+            var context = SPServiceContext.GetContext(site);
+
+            // Get the search service application proxy
+            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
+
+            // Get the search service application info object so we can find the Id of our Search Service App
+            if (searchProxy != null)
+            {
+                var applicationInfo = searchProxy.GetSearchServiceApplicationInfo();
+
+                // Get the application itself
+                return SearchService.Service.SearchApplications.GetValue<SearchServiceApplication>(applicationInfo.SearchServiceApplicationId);
+            }
+
+            return null;
         }
 
         /// <summary>
