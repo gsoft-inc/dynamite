@@ -2,6 +2,8 @@
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Logging;
+using System;
 
 namespace GSoft.Dynamite.Repositories
 {
@@ -11,14 +13,16 @@ namespace GSoft.Dynamite.Repositories
     public class ListLocator
     {
         private IResourceLocator _resources;
+        private ILogger _logger;
 
         /// <summary>
         /// Creates a list finder
         /// </summary>
         /// <param name="resources">The resource locator</param>
-        public ListLocator(IResourceLocator resources)
+        public ListLocator(IResourceLocator resources, ILogger logger)
         {
             this._resources = resources;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -31,7 +35,18 @@ namespace GSoft.Dynamite.Repositories
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "List urls are available as strings through the ListUrls utility.")]
         public SPList GetByUrl(SPWeb web, string listUrl)
         {
-            return web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
+            SPList list = null;
+
+            try
+            {
+                list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
+            }
+            catch (ArgumentException)
+            {
+                this._logger.Warn("Failed to find list " + listUrl + " in web " + web.ServerRelativeUrl);
+            }
+
+            return list;
         }
 
         /// <summary>
@@ -42,7 +57,24 @@ namespace GSoft.Dynamite.Repositories
         /// <returns>The list</returns>
         public SPList GetByNameResourceKey(SPWeb web, string listNameResourceKey)
         {
-            return web.Lists[this._resources.Find(listNameResourceKey, (int)web.Language)];
+            SPList list = null;
+            string listName = string.Empty;
+
+            try
+            {
+                listName = this._resources.Find(listNameResourceKey, (int)web.Language);
+                    
+                if (!string.IsNullOrEmpty(listName))
+                {
+                    list = web.Lists[listName];
+                }
+            }
+            catch (ArgumentException)
+            {
+                this._logger.Warn("Failed to find list from resource key " + listNameResourceKey + " in web " + web.ServerRelativeUrl);
+            }
+
+            return list;
         }
     }
 }
