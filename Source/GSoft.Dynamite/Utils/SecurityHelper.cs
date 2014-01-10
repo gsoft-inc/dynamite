@@ -100,7 +100,7 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public SPRoleDefinition GetRoleDefinitionByRoleType(SPWeb web, SPRoleType roleType)
         {
-            return web.RoleDefinitions.Cast<SPRoleDefinition>().Where(x => x.Type == roleType).First();
+            return web.RoleDefinitions.Cast<SPRoleDefinition>().First(x => x.Type == roleType);
         }
 
         /// <summary>
@@ -140,14 +140,24 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserVisitor()
         {
-            if (SPContext.Current.Web.AssociatedVisitorGroup != null)
+            var currentWeb = SPContext.Current.Web;
+            var currentUser = currentWeb.CurrentUser;
+            bool returnValue;
+
+            // Is an Anonymous user
+            if (currentUser == null)
             {
-                bool isReadOnlyOnCurrentListItem = (SPContext.Current.ListItem == null) || (SPContext.Current.ListItem != null
-                                                 && !SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems));
-                return SPContext.Current.Web.AssociatedVisitorGroup.ContainsCurrentUser && isReadOnlyOnCurrentListItem;
+                return true;
             }
 
-            return false;
+            bool isReadOnlyOnCurrentListItem = (SPContext.Current.ListItem == null) || (SPContext.Current.ListItem != null
+                                 && !SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems));
+            return SPContext.Current.Web.AssociatedVisitorGroup != null 
+                && SPContext.Current.Web.AssociatedVisitorGroup.ContainsCurrentUser 
+                && isReadOnlyOnCurrentListItem
+                && !this.IsCurrentUserOwner()
+                && !this.IsCurrentUserApprover()
+                && !this.IsCurrentUserMember();
         }
 
         /// <summary>
@@ -157,6 +167,12 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserMember()
         {
+            // Is an Anonymous user
+            if (SPContext.Current.Web.CurrentUser == null)
+            {
+                return false;
+            }
+
             if (SPContext.Current.Web.AssociatedMemberGroup != null)
             {
                 return SPContext.Current.Web.AssociatedMemberGroup.ContainsCurrentUser;
@@ -172,9 +188,14 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserApprover()
         {
+            // Is an Anonymous user
+            if (SPContext.Current.Web.CurrentUser == null)
+            {
+                return false;
+            }
+
             return SPContext.Current.ListItem == null ||
-                (SPContext.Current.Web.CurrentUser != null
-                && SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems));
+                SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems);
         }
 
         /// <summary>
@@ -184,6 +205,12 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserOwner()
         {
+            // Is an Anonymous user
+            if (SPContext.Current.Web.CurrentUser == null)
+            {
+                return false;
+            }
+
             if (SPContext.Current.Web.AssociatedOwnerGroup != null)
             {
                 return SPContext.Current.Web.AssociatedOwnerGroup.ContainsCurrentUser;
