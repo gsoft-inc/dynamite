@@ -65,12 +65,12 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
         {
-            if (navigationTerms == null)
+            var terms = navigationTerms == null ? new NavigationTerm[] {} : navigationTerms.ToArray();
+            if (terms.Length <= 0)
             {
                 return null;
             }
 
-            var terms = navigationTerms as IList<NavigationTerm> ?? navigationTerms.ToList();
             var term = terms.FirstOrDefault(x => x.Id == id);
             if (term != null)
             {
