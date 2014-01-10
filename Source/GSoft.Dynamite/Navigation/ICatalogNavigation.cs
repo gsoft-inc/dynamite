@@ -54,5 +54,12 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="label">The variation label.</param>
         /// <returns>The peer URL.</returns>
         Uri GetVariationPeerUrl(VariationLabel label);
+
+        /// <summary>
+        /// Determines whether [is current item] [the specified item URL].
+        /// </summary>
+        /// <param name="itemUrl">The item URL.</param>
+        /// <returns></returns>
+        bool IsCurrentItem(string itemUrl);
     }
 }

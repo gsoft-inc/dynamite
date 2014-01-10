@@ -48,7 +48,6 @@ namespace GSoft.Dynamite.Navigation
             {
                 if (TaxonomyNavigationContext.Current != null)
                 {
-                    var currentUrl = HttpContext.Current.Request.Url;
                     if (TaxonomyNavigationContext.Current.HasCatalogUrl)
                     {
                         return CatalogNavigationType.ItemPage;
@@ -101,6 +100,19 @@ namespace GSoft.Dynamite.Navigation
         /// The association key value.
         /// </value>
         public string AssociationKeyValue { get; set; }
+
+        /// <summary>
+        /// Determines whether [is current item] [the specified item URL].
+        /// </summary>
+        /// <param name="itemUrl">The item URL.</param>
+        /// <returns></returns>
+        public bool IsCurrentItem(string itemUrl)
+        {
+            var queryStrings = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
+            var urlSuffix = queryStrings.Get("UrlSuffix");
+
+            return !string.IsNullOrEmpty(urlSuffix) && itemUrl.EndsWith(urlSuffix, StringComparison.InvariantCultureIgnoreCase);
+        }
 
         public Uri GetVariationPeerUrl(VariationLabel label)
         {
@@ -177,12 +189,6 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        /// <summary>
-        /// Gets the peer catalog item URL.
-        /// </summary>
-        /// <param name="currentUrl">The current URL.</param>
-        /// <param name="label">The label.</param>
-        /// <returns></returns>
         private Uri GetPeerCatalogItemUrl(Uri currentUrl, VariationLabel label)
         {
             this.ValidateProperties("GetPeerCatalogItemUrl");
