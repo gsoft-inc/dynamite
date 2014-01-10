@@ -71,6 +71,7 @@
     <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
     <Compile Include="Cmdlets\Variations\DSPCmdletSyncList.cs" />
+    <Compile Include="Cmdlets\Variations\DSPCmdletSyncWeb.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
     <Compile Include="PipeBindsObjects\XmlDocumentPipeBind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

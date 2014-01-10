@@ -19,10 +19,10 @@ using System.Web;
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 {
     /// <summary>
-    /// Cmdlet for variations list sync
+    /// Cmdlet for variations web sync
     /// </summary>
-    [Cmdlet("Sync", "DSPList")]
-    public class DSPCmdletSyncList : Cmdlet
+    [Cmdlet("Sync", "DSPWeb")]
+    public class DSPCmdletSyncWeb : Cmdlet
     {
         /// <summary>
         /// Dynamite Helpers
@@ -37,12 +37,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 
         [Parameter(Mandatory = true,
         ValueFromPipeline = true,
-        HelpMessage = "The source list guid",
-        Position = 1)]
-        public Guid SourceListGuid { get; set; }
-
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
         HelpMessage = "The label to Sync",
         Position = 1)]
         public string LabelToSync { get; set; }
@@ -51,10 +45,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         {
             this.ResolveDependencies();
 
-            // Get the list
-            var list = SourceWeb.Lists[SourceListGuid];
+            WriteWarning("Sync SPWeb " + SourceWeb.Url + " to the " + LabelToSync.ToUpper() + " variation label...");
 
-            _variationHelper.SyncList(list, LabelToSync);
+            _variationHelper.SyncWeb(SourceWeb, LabelToSync);
 
             base.EndProcessing();
         }
@@ -66,5 +59,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         {
             this._variationHelper = PowerShellContainer.Current.Resolve<VariationsHelper>();
         } 
+
     }
 }

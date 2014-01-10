@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Web;
 using System.Collections.Generic;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -107,7 +108,7 @@ namespace GSoft.Dynamite.Utils
                         // Get the labels to sync
                         var labels = this.GetVariationLabels(sourceWeb.Site, labelToSync);
 
-                        // Very important to set the HttpComnterct to null (AllowUnsafeUpdates is ignored by the SharePoint method)
+                        // Very important to set the HttpContext to null (AllowUnsafeUpdates is ignored by the SharePoint method)
                         HttpContext.Current = null;
 
                         Object[] workItemParam = new Object[3];
@@ -144,6 +145,47 @@ namespace GSoft.Dynamite.Utils
         {
             var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
             return site.RootWeb.Lists[guid];
+        }
+
+        /// <summary>
+        /// Sync a SPWeb with variations
+        /// </summary>
+        /// <param name="web">The source web instance to sync.</param>
+        /// <param name="labelToSync">Source label to sync</param>
+        public void SyncWeb(SPWeb web, string labelToSync)
+        {
+            var publishingAssembly = Assembly.LoadFrom("C:\\Program Files\\Common Files\\Microsoft Shared\\Web Server Extensions\\15\\ISAPI\\Microsoft.SharePoint.Publishing.dll");
+            var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
+            var cachedVariationSettings = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.CachedVariationSettings");
+
+            // Get the labels to sync
+            var labels = this.GetVariationLabels(web.Site, labelToSync);
+
+            // Very important to set the HttpContext to null (AllowUnsafeUpdates is ignored by the SharePoint method)
+            HttpContext.Current = null;
+
+            Type[] methodParam = new Type[3];
+            methodParam[0] = typeof(SPSite);
+            methodParam[1] = typeof(SPUrlZone);
+            methodParam[2] = typeof(bool);
+
+            var bindingFlags = BindingFlags.NonPublic | BindingFlags.Static;
+
+            Object[] cvsParam = new Object[3];
+            cvsParam[0] = web.Site;
+            cvsParam[1] = web.Site.Zone;
+            cvsParam[2] = true;
+
+            var cvsMethod = cachedVariationSettings.GetMethod("CreateVariationSettings", bindingFlags, null, methodParam, null);
+            var cvs = cvsMethod.Invoke(null, cvsParam);
+
+            Object[] workItemParam = new Object[3];
+            workItemParam[0] = web;
+            workItemParam[1] = labels;
+            workItemParam[2] = cvs;
+            
+            var method = workItemHelper.GetMethod("EnqueueCreateSiteJobs", bindingFlags);
+            method.Invoke(null, workItemParam);
         }
     }
 }
