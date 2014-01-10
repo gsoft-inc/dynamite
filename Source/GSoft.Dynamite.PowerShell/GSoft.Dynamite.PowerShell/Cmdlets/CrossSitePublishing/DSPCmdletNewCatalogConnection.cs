@@ -85,6 +85,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             var settings = PublishingCatalogUtility.GetPublishingCatalog(web.Site, catalogUrl);
 
             // Configure settings per XML
+            settings.CatalogName = node.Attribute("Name").Value;
             settings.ConnectedWebId = web.ID;
             settings.ConnectedWebServerRelativeUrl = web.ServerRelativeUrl;
             settings.RewriteCatalogItemUrls = bool.Parse(node.Attribute("RewriteCatalogItemUrls").Value);
