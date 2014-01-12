@@ -137,7 +137,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         }
 
                         // Create return object
-                        var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWebUrl, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
+                        var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWeb.Url, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
 
                         // Add content types to the list
                         CreateContentTypes(contentTypes, list, removeDefaultContentType);
