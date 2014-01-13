@@ -47,6 +47,42 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Adds the role.
+        /// </summary>
+        /// <param name="listItem">The list item.</param>
+        /// <param name="principal">The principal.</param>
+        /// <param name="roleDefinitionName">Name of the role.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddRole(SPListItem listItem, SPPrincipal principal, string roleDefinitionName)
+        {
+            AddRole(listItem.Web, listItem, principal, roleDefinitionName);
+        }
+
+        /// <summary>
+        /// Adds the role.
+        /// </summary>
+        /// <param name="list">The list to add the role to.</param>
+        /// <param name="principal">The principal.</param>
+        /// <param name="roleDefinitionName">Name of the role.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddRole(SPList list, SPPrincipal principal, string roleDefinitionName)
+        {
+            AddRole(list.ParentWeb, list, principal, roleDefinitionName);
+        }
+
+        /// <summary>
+        /// Adds the role.
+        /// </summary>
+        /// <param name="web">The web to add the role to.</param>
+        /// <param name="principal">The principal.</param>
+        /// <param name="roleDefinitionName">Name of the role.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddRole(SPWeb web, SPPrincipal principal, string roleDefinitionName)
+        {
+            AddRole(web, web, principal, roleDefinitionName);
+        }
+
+        /// <summary>
         /// Removes the role.
         /// </summary>
         /// <param name="target">The target.</param>
@@ -257,6 +293,41 @@ namespace GSoft.Dynamite.Utils
                 throw new ArgumentException("No RoleDefinition found for type " + roleType);
             }
         }
+
+        /// <summary>
+        /// Adds the role.
+        /// </summary>
+        /// <param name="web">The web containing the role definitions.</param>
+        /// <param name="target">The target.</param>
+        /// <param name="principal">The principal.</param>
+        /// <param name="roleDefinitionName">Name of the role.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
+        internal static void AddRole(SPWeb web, SPSecurableObject target, SPPrincipal principal, string roleDefinitionName)
+        {
+            var roleToAdd = web.RoleDefinitions.Cast<SPRoleDefinition>().FirstOrDefault(x => x.Name == roleDefinitionName);
+            if (roleToAdd != null)
+            {
+                EnsureBrokenRoleInheritance(target);
+
+                var assignments = target.RoleAssignments.Cast<SPRoleAssignment>().FirstOrDefault(x => x.Member.ID == principal.ID);
+                if (assignments == null)
+                {
+                    assignments = new SPRoleAssignment(principal);
+                    assignments.RoleDefinitionBindings.Add(roleToAdd);
+                    target.RoleAssignments.Add(assignments);
+                }
+                else
+                {
+                    assignments.RoleDefinitionBindings.Add(roleToAdd);
+                    assignments.Update();
+                }
+            }
+            else
+            {
+                throw new ArgumentException("No RoleDefinition found for the name " + roleDefinitionName);
+            }
+        }
+
 
         private static void EnsureBrokenRoleInheritance(SPSecurableObject target)
         {
