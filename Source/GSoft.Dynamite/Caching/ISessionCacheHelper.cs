@@ -35,14 +35,12 @@ namespace GSoft.Dynamite.Caching
         /// <summary>
         /// Clear all cached information
         /// </summary>
-        /// <param name="keyPrefix">The key prefix.</param>
-        void ClearCache(string keyPrefix);
+        void ClearCache();
 
         /// <summary>
         /// Clear all cached information
         /// </summary>
-        /// <param name="keyPrefix">The key prefix.</param>
         /// <param name="conditionFunc">The conditional function to clear the cache.</param>
-        void ClearCache(string keyPrefix, Func<bool> conditionFunc);
+        void ClearCache(Func<bool> conditionFunc);
     }
 }

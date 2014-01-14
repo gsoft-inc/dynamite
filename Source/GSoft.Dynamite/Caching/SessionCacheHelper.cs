@@ -61,19 +61,17 @@ namespace GSoft.Dynamite.Caching
         /// <summary>
         /// Clear all cached information
         /// </summary>
-        /// <param name="keyPrefix">The key prefix.</param>
-        public void ClearCache(string keyPrefix)
+        public void ClearCache()
         {
-            this.ClearCache(keyPrefix, () => true);
+            this.ClearCache(() => true);
         }
 
         /// <summary>
         /// Clear all cached information
         /// </summary>
-        /// <param name="keyPrefix">The key prefix.</param>
         /// <param name="conditionFunc">The conditional function to clear the cache.</param>
         /// <exception cref="System.InvalidOperationException">Can't clear cache if you don't have ApproveItems permission.</exception>
-        public void ClearCache(string keyPrefix, Func<bool> conditionFunc)
+        public void ClearCache(Func<bool> conditionFunc)
         {
             this._logger.Info("ClearCache: Clearing session cache.");
 
