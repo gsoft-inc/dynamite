@@ -107,6 +107,12 @@
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
+    <Compile Include="Caching\SessionCacheHelper.cs" />
+    <Compile Include="Caching\AppCacheHelper.cs" />
+    <Compile Include="Caching\IAppCacheHelper.cs" />
+    <Compile Include="Caching\ISessionCacheHelper.cs" />
+    <Compile Include="Caching\ICacheKey.cs" />
+    <Compile Include="Caching\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
@@ -140,6 +146,7 @@
     <Compile Include="Unity\PerRequestLifetimeManager.cs" />
     <Compile Include="Unity\RegistrationModuleContainer.cs" />
     <Compile Include="Utils\CatalogHelper.cs" />
+    <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Utils\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />

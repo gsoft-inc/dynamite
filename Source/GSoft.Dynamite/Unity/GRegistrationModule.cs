@@ -1,4 +1,5 @@
 ﻿using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
@@ -56,6 +57,10 @@ namespace GSoft.Dynamite.Unity
 
             // Navigation
             container.RegisterType<ICatalogNavigation, CatalogNavigation>();
+
+            // Caching
+            container.RegisterType<IAppCacheHelper, AppCacheHelper>();
+            container.RegisterType<ISessionCacheHelper, SessionCacheHelper>();
 
             // Repositories
             container.RegisterType<FolderRepository>();
