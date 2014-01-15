@@ -1,27 +1,20 @@
-﻿using System.Linq;
+﻿using System;
 using System.Management.Automation;
-using System.Xml.Linq;
-using GSoft.Dynamite.Navigation;
-using GSoft.Dynamite.PowerShell.Extensions;
-using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
-using System;
-using Microsoft.SharePoint.Publishing;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Collections.Generic;
-using System.IO;
-using System.Web;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Cmdlet for variations list sync
     /// </summary>
     [Cmdlet("Sync", "DSPList")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    // ReSharper disable once InconsistentNaming
     public class DSPCmdletSyncList : Cmdlet
     {
         /// <summary>
@@ -29,32 +22,44 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         /// </summary>
         private VariationsHelper _variationHelper;
 
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
-        HelpMessage = "The variation source web",
+        /// <summary>
+        /// Gets or sets the source web.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+        ValueFromPipeline = true, 
+        HelpMessage = "The variation source web", 
         Position = 1)]
         public SPWeb SourceWeb { get; set; }
 
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
-        HelpMessage = "The source list guid",
+        /// <summary>
+        /// Gets or sets the source list unique identifier.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+        ValueFromPipeline = true, 
+        HelpMessage = "The source list guid", 
         Position = 1)]
         public Guid SourceListGuid { get; set; }
 
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
-        HelpMessage = "The label to Sync",
+        /// <summary>
+        /// Gets or sets the label to sync.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+        ValueFromPipeline = true, 
+        HelpMessage = "The label to Sync", 
         Position = 1)]
         public string LabelToSync { get; set; }
 
+        /// <summary>
+        /// The end processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
 
             // Get the list
-            var list = SourceWeb.Lists[SourceListGuid];
+            var list = this.SourceWeb.Lists[this.SourceListGuid];
 
-            _variationHelper.SyncList(list, LabelToSync);
+            this._variationHelper.SyncList(list, this.LabelToSync);
 
             base.EndProcessing();
         }

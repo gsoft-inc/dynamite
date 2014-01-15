@@ -9,38 +9,49 @@ using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Cmdlet for creating a catalog connection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPCatalogConnection")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class DspCmdletNewCatalogConnection : Cmdlet
     {
         private XDocument _configurationFile;
         private bool _overwrite;
 
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the catalog connection configuration or an XmlDocument object or XML string.",
+        /// <summary>
+        /// Gets or sets the input file.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+            ValueFromPipeline = true, 
+            HelpMessage = "The path to the file containing the catalog connection configuration or an XmlDocument object or XML string.", 
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
-        [Parameter(HelpMessage = "Specifies if catalog connections should be overwritten",
+        /// <summary>
+        /// Gets or sets the overwrite.
+        /// </summary>
+        [Parameter(HelpMessage = "Specifies if catalog connections should be overwritten", 
         Position = 3)]
         public SwitchParameter Overwrite
         {
-            get { return _overwrite; }
-            set { _overwrite = value; }
+            get { return this._overwrite; }
+            set { this._overwrite = value; }
         }
 
+        /// <summary>
+        /// The end processing.
+        /// </summary>
         protected override void EndProcessing()
         {
-            var xml = InputFile.Read();
-            _configurationFile = xml.ToXDocument();
+            var xml = this.InputFile.Read();
+            this._configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in _configurationFile.Descendants("Web")
-                       select (webNode);
+            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {
@@ -57,17 +68,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         // Add each connection to the catalog manager
                         foreach (var catalogConnection in catalogConnectionNodes.Select(x => GetCatalogConnectionSettingsFromNode(web, x)))
                         {
-                            if(Overwrite)
+                            if (this.Overwrite)
                             {
                                 if (catalogManager.Contains(catalogConnection.CatalogUrl))
                                 {
-                                    WriteWarning("Deleting catalog connection: " + catalogConnection.CatalogUrl);
+                                    this.WriteWarning("Deleting catalog connection: " + catalogConnection.CatalogUrl);
                                     catalogManager.DeleteCatalogConnection(catalogConnection.CatalogUrl);
                                     catalogManager.Update();
                                 }
                             }
 
-                            WriteWarning("Creating catalog connection: " + catalogConnection.CatalogUrl);
+                            this.WriteWarning("Creating catalog connection: " + catalogConnection.CatalogUrl);
                             catalogManager.AddCatalogConnection(catalogConnection);
                             catalogManager.Update();                                                 
                         }                        

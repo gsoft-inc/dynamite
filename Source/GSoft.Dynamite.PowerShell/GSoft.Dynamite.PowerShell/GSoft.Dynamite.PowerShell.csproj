@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlets\CrossSitePublishing\Catalog.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletRemoveCatalogConnection.cs" />

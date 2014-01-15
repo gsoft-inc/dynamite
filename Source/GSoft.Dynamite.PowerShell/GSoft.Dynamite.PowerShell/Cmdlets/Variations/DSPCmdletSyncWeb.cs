@@ -1,20 +1,9 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Xml.Linq;
-using GSoft.Dynamite.Navigation;
-using GSoft.Dynamite.PowerShell.Extensions;
-using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
-using System;
-using Microsoft.SharePoint.Publishing;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Collections.Generic;
-using System.IO;
-using System.Web;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 {
@@ -22,6 +11,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
     /// Cmdlet for variations web sync
     /// </summary>
     [Cmdlet("Sync", "DSPWeb")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    // ReSharper disable once InconsistentNaming
     public class DSPCmdletSyncWeb : Cmdlet
     {
         /// <summary>
@@ -29,25 +20,34 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         /// </summary>
         private VariationsHelper _variationHelper;
 
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
-        HelpMessage = "The variation source web",
+        /// <summary>
+        /// Gets or sets the source web.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+        ValueFromPipeline = true, 
+        HelpMessage = "The variation source web", 
         Position = 1)]
         public SPWeb SourceWeb { get; set; }
 
-        [Parameter(Mandatory = true,
-        ValueFromPipeline = true,
-        HelpMessage = "The label to Sync",
+        /// <summary>
+        /// Gets or sets the label to sync.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+        ValueFromPipeline = true, 
+        HelpMessage = "The label to Sync", 
         Position = 1)]
         public string LabelToSync { get; set; }
 
+        /// <summary>
+        /// The end processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
 
-            WriteWarning("Sync SPWeb " + SourceWeb.Url + " to the " + LabelToSync.ToUpper() + " variation label...");
+           this.WriteWarning("Sync SPWeb " + this.SourceWeb.Url + " to the " + this.LabelToSync.ToUpper() + " variation label...");
 
-            _variationHelper.SyncWeb(SourceWeb, LabelToSync);
+           this._variationHelper.SyncWeb(this.SourceWeb, this.LabelToSync);
 
             base.EndProcessing();
         }
@@ -59,6 +59,5 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         {
             this._variationHelper = PowerShellContainer.Current.Resolve<VariationsHelper>();
         } 
-
     }
 }

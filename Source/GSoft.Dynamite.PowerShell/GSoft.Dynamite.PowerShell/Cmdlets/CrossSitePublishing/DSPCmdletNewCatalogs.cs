@@ -1,29 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
+using System.Threading;
 using System.Xml.Linq;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
+using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.PowerShell;
-using System.Collections.Generic;
-using GSoft.Dynamite.Taxonomy;
-using System.Globalization;
-using System.Threading;
 using Microsoft.SharePoint.Taxonomy;
-using System.Collections.ObjectModel;
-using GSoft.Dynamite.Schemas;
-
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Cmdlet for catalogs creation
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPCatalogs")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    // ReSharper disable once InconsistentNaming
     public class DSPCmdletNewCatalogs : Cmdlet
     {
         /// <summary>
@@ -32,40 +33,41 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         private ListHelper _listHelper;
         private CatalogHelper _catalogHelper;
         private TaxonomyHelper _taxonomyHelper;
+        private XDocument _configurationFile;
 
-        private XDocument _configurationFile = null;
-
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.",
+        /// <summary>
+        /// Gets or sets the input file.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+            ValueFromPipeline = true, 
+            HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.", 
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
-   
-        public bool _delete;
 
+        /// <summary>
+        /// The end processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
 
-            var xml = InputFile.Read();
-            _configurationFile = xml.ToXDocument();
+            var xml = this.InputFile.Read();
+            this._configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in _configurationFile.Descendants("Web")
-                       select (webNode);
+            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {
                 var webUrl = webNode.Attribute("Url").Value;
 
-                using (var spSite = new SPSite(webUrl))
+                using (var site = new SPSite(webUrl))
                 {
-                    var spWeb = spSite.OpenWeb();
+                    var web = site.OpenWeb();
 
                     // Get all catalogs nodes
-                    var catalogNodes = from catalogNode in webNode.Descendants("Catalog")
-                                       select (catalogNode);
+                    var catalogNodes = from catalogNode in webNode.Descendants("Catalog") select catalogNode;
 
                     foreach (var catalogNode in catalogNodes)
                     {
@@ -74,12 +76,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var catalogDescription = catalogNode.Attribute("Description").Value;
                         var listTemplateId = int.Parse(catalogNode.Attribute("ListTemplateId").Value);
 
-                        DraftVisibilityType draftVisibilityType;
-
-                        var listTemplate = spWeb.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType) listTemplateId);
+                        var listTemplate = web.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType)listTemplateId);
                         var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
-                        var overwrite = Boolean.Parse(catalogNode.Attribute("Overwrite").Value);
-                        var removeDefaultContentType = Boolean.Parse(catalogNode.Attribute("RemoveDefaultContentType").Value);
+                        var overwrite = bool.Parse(catalogNode.Attribute("Overwrite").Value);
+                        var removeDefaultContentType = bool.Parse(catalogNode.Attribute("RemoveDefaultContentType").Value);
 
                         // Get content types
                         var contentTypes = from contentType in catalogNode.Descendants("ContentTypes").Descendants("ContentType")
@@ -106,64 +106,62 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                                 select defaultValue;
 
                         // Set current culture to be able to set the "Title" of the list
-                        CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
-                        Thread.CurrentThread.CurrentUICulture =
-                            new CultureInfo((int)spWeb.Language);
+                        Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
                         // Create the list if doesn't exists
-                        var list = this._listHelper.GetListByRootFolderUrl(spWeb, catalogUrl);
+                        var list = this._listHelper.GetListByRootFolderUrl(web, catalogUrl);
                        
-                        if(list == null)
+                        if (list == null)
                         {
-                            list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);
+                            list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);
                         }
                         else
                         {
-                            WriteWarning("Catalog " + catalogName + " is already exists");
+                            this.WriteWarning("Catalog " + catalogName + " is already exists");
 
                             // If the Overwrite paramter is set to true, celete and recreate the catalog
-                            if(overwrite)
+                            if (overwrite)
                             {
-                                WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
+                                this.WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
 
                                 list.Delete();
-                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);                               
+                                list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);                               
                             }
                             else
                             {
                                 // Get the existing list
-                                list = EnsureList(spWeb, catalogUrl, catalogName, catalogDescription, listTemplate);     
+                                list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);     
                             }                              
                         }
 
                         // Create return object
-                        var catalog = new Catalog() {Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWeb.Url, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
+                        var catalog = new Catalog() { Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWeb.Url, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
 
                         // Add content types to the list
-                        CreateContentTypes(contentTypes, list, removeDefaultContentType);
+                        this.CreateContentTypes(contentTypes, list, removeDefaultContentType);
 
                         // Add Taxonomy Fields Segments
-                        CreateTaxonomyFieldSegments(taxonomyFieldSegments, list);
+                        this.CreateTaxonomyFieldSegments(taxonomyFieldSegments, list);
 
                         // Add Text Fields Segments
-                        CreateTextFieldSegments(textFieldSegments, list);
+                        this.CreateTextFieldSegments(textFieldSegments, list);
 
                         // Set default values for Taxonomy Fields
-                        SetTaxonomyDefaults(defaultsTaxonomyFields, list);
+                        this.SetTaxonomyDefaults(defaultsTaxonomyFields, list);
 
                         // Set default values for Text Fields
-                        SetTextFieldDefaults(defaultsTextFields, list);
+                        this.SetTextFieldDefaults(defaultsTextFields, list);
 
                         // Set versioning settings
-                        if (!String.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
+                        if (!string.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
                         {
-                            draftVisibilityType = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), catalogNode.Attribute("DraftVisibilityType").Value, true);
+                            var draftVisibilityType = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), catalogNode.Attribute("DraftVisibilityType").Value, true);
                             list.EnableModeration = true;
                             list.DraftVersionVisibility = draftVisibilityType;
                             list.Update();
                         }
 
-                        if (String.IsNullOrEmpty(taxonomyFieldMap))
+                        if (string.IsNullOrEmpty(taxonomyFieldMap))
                         {
                             // Set the list as catalog without navigation
                             this._catalogHelper.SetListAsCatalog(list, availableFields);
@@ -175,14 +173,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         }
 
                         // Write object to the pipeline
-                        WriteObject(catalog, true);
-                                                
+                        this.WriteObject(catalog, true);
                     }   
                 }
             }
 
             base.EndProcessing();
-            
         }
 
         /// <summary>
@@ -195,20 +191,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             this._taxonomyHelper = PowerShellContainer.Current.Resolve<TaxonomyHelper>();
         }
 
-        /// <summary>
-        /// Create the list
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="listUrl">The list url.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="listDescription">The list description.</param>
-        /// <param name="listTemplate">The list template.</param>
-        /// <returns></returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
         private SPList EnsureList(SPWeb web, string listUrl, string displayName, string listDescription, SPListTemplate listTemplate)
         {
             var list = this._listHelper.GetListByRootFolderUrl(web, listUrl);
                 
-            if(list == null)
+            if (list == null)
             {
                 // Create new list
                 var id = web.Lists.Add(listUrl, listDescription, listTemplate);
@@ -222,14 +210,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             return list;
         }
 
-        /// <summary>
-        /// Create Content Types
-        /// </summary>
-        /// <param name="contentTypesCollection">Content Types collection.</param>
-        /// <param name="list">The list to configure.</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
         private void CreateContentTypes(IEnumerable<XElement> contentTypesCollection, SPList list, bool removeDefaultContentType)
         {
-            if(removeDefaultContentType)
+            if (removeDefaultContentType)
             {
                 // If content type is direct child of item, remove it
                 var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
@@ -248,7 +232,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                 if (ct == null)
                 {
-                    WriteWarning("Content type " + contentType + " doesn't exists");
+                    this.WriteWarning("Content type " + contentType + " doesn't exists");
                 }
 
                 if (ct != null)
@@ -257,9 +241,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     {
                         list.ContentTypes.Add(ct);
                     }
-                    catch(SPException ex)
+                    catch (SPException ex)
                     {
-                        WriteWarning(ex.Message);
+                        this.WriteWarning(ex.Message);
                     }
                 }
             }
@@ -270,8 +254,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// Create TaxonomyFields segments
         /// </summary>
-        /// <param name="segmentsCollection">The segments collection.</param>
-        /// <param name="list">List to configure.</param>
+        /// <param name="segmentsCollection">
+        /// The segments collection.
+        /// </param>
+        /// <param name="list">
+        /// List to configure.
+        /// </param>
         private void CreateTaxonomyFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
         {
             // Add segments to the list
@@ -281,8 +269,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 var displayName = segment.Attribute("DisplayName").Value;
                 var description = segment.Attribute("Description").Value;
                 var group = segment.Attribute("Group").Value;
-                var isMultiple = Boolean.Parse(segment.Attribute("IsMultiple").Value);
-                var isOpen = Boolean.Parse(segment.Attribute("IsOpen").Value);
+                var isMultiple = bool.Parse(segment.Attribute("IsMultiple").Value);
+                var isOpen = bool.Parse(segment.Attribute("IsOpen").Value);
                 var termSetGroupName = segment.Attribute("TermSetGroupName").Value;
                 var termSetName = segment.Attribute("TermSetName").Value;
              
@@ -292,15 +280,19 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 // Assign the termSet to the field
                 this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, string.Empty);
                                        
-                WriteVerbose("TaxonomyField " + internalName + " successfully created!");
+                this.WriteVerbose("TaxonomyField " + internalName + " successfully created!");
             }
         }
 
         /// <summary>
         /// Create TextField segments
         /// </summary>
-        /// <param name="segmentsCollection">The segments collection.</param>
-        /// <param name="list">List to configure.</param>
+        /// <param name="segmentsCollection">
+        /// The segments collection.
+        /// </param>
+        /// <param name="list">
+        /// List to configure.
+        /// </param>
         private void CreateTextFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
         {
             // Add segments to the list
@@ -310,20 +302,24 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 var displayName = segment.Attribute("DisplayName").Value;
                 var description = segment.Attribute("Description").Value;
                 var group = segment.Attribute("Group").Value;
-                var isMultiple = Boolean.Parse(segment.Attribute("IsMultiline").Value);
+                var isMultiple = bool.Parse(segment.Attribute("IsMultiline").Value);
                 
                 // Create the column in the list
                 var textField = this._listHelper.CreateTextField(list, internalName, displayName, description, group, isMultiple);
                      
-                WriteVerbose("TextField " + internalName + " successfully created!");
+                this.WriteVerbose("TextField " + internalName + " successfully created!");
             }
         }
 
         /// <summary>
         /// Set default values for taxonomy fields
         /// </summary>
-        /// <param name="defaultsCollection">Defaults values.</param>
-        /// <param name="list">The list to configure.</param>
+        /// <param name="defaultsCollection">
+        /// Defaults values.
+        /// </param>
+        /// <param name="list">
+        /// The list to configure.
+        /// </param>
         private void SetTaxonomyDefaults(IEnumerable<XElement> defaultsCollection, SPList list)
         {
             // Add segments to the list
@@ -335,17 +331,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                 var field = list.Fields.GetFieldByInternalName(internalName);
 
-                if(field.GetType() == typeof(TaxonomyField))
+                if (field.GetType() == typeof(TaxonomyField))
                 {
                     var terms = new Collection<string>();
 
                     // Get terms
-                    foreach(var term in defaultValue.Descendants("Value"))
+                    foreach (var term in defaultValue.Descendants("Value"))
                     {
                         terms.Add(term.Value);
                     }
 
-                    if(((TaxonomyField)field).AllowMultipleValues)
+                    if (((TaxonomyField)field).AllowMultipleValues)
                     {
                         this._taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, termGroup, termSet, terms.ToArray<string>());
                     }
@@ -356,7 +352,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 }
                 else
                 {
-                    WriteWarning("Field " + internalName + " is not a TaxonomyField");
+                    this.WriteWarning("Field " + internalName + " is not a TaxonomyField");
                 }
             }
         }
@@ -364,8 +360,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// Set default values for text fields
         /// </summary>
-        /// <param name="defaultsCollection">Defaults values.</param>
-        /// <param name="list">The list to configure.</param>
+        /// <param name="defaultsCollection">
+        /// Defaults values.
+        /// </param>
+        /// <param name="list">
+        /// The list to configure.
+        /// </param>
         private void SetTextFieldDefaults(IEnumerable<XElement> defaultsCollection, SPList list)
         {
             // Add segments to the list
@@ -376,9 +376,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                 if (field.GetType() == typeof(SPFieldText))
                 {
-                    if(defaultValue.Descendants("Value").Count() > 1)
+                    if (defaultValue.Descendants("Value").Count() > 1)
                     {
-                        WriteWarning("There is more than one default value for " + internalName + " SPField. Please specify  an unique value.");
+                       this.WriteWarning("There is more than one default value for " + internalName + " SPField. Please specify  an unique value.");
                     }
                     else
                     {
@@ -389,20 +389,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 }
                 else
                 {
-                    WriteWarning("Field " + internalName + " is not a SPField");
+                   this.WriteWarning("Field " + internalName + " is not a SPField");
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Object to pass to the pipeline
-    /// </summary>
-    public class Catalog
-    {
-        public string Name { get; set; }
-        public Guid Id { get; set; }
-        public string ParentWebUrl { get; set; }
-        public string RootFolder { get; set; }
     }
 }

@@ -1,16 +1,14 @@
-﻿using GSoft.Dynamite.PowerShell.PipeBindsObjects;
-using GSoft.Dynamite.PowerShell.Extensions;
-using GSoft.Dynamite.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.SharePoint;
+
+using GSoft.Dynamite.PowerShell.Extensions;
+using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
+using GSoft.Dynamite.Utils;
+
 using Microsoft.Practices.Unity;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -18,44 +16,49 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     /// Removes catalogs configuration
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "DSPCatalogs")]
-    public class DSPCmdletRemoveCatalogs :Cmdlet
+
+    // ReSharper disable once InconsistentNaming
+    public class DSPCmdletRemoveCatalogs : Cmdlet
     {
         /// <summary>
         /// Dynamite Helpers
         /// </summary>
         private ListHelper _listHelper;
 
-        private XDocument _configurationFile = null;
+        private XDocument _configurationFile;
 
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.",
+        /// <summary>
+        /// Gets or sets the input file.
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, 
+            HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.", 
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
+        /// <summary>
+        /// Ends the processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
 
-            var xml = InputFile.Read();
-            _configurationFile = xml.ToXDocument();
+            var xml = this.InputFile.Read();
+            this._configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in _configurationFile.Descendants("Web")
-                           select (webNode);
+            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {
                 var webUrl = webNode.Attribute("Url").Value;
 
-                using (var spSite = new SPSite(webUrl))
+                using (var site = new SPSite(webUrl))
                 {
-                    var spWeb = spSite.OpenWeb();
+                    var web = site.OpenWeb();
 
                     // Get all catalogs nodes
-                    var catalogNodes = from catalogNode in webNode.Descendants("Catalog")
-                                       select (catalogNode);
+                    var catalogNodes = from catalogNode in webNode.Descendants("Catalog") select catalogNode;
 
                     foreach (var catalogNode in catalogNodes)
                     {
@@ -63,29 +66,28 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         var isContinue = ShouldContinue("Are you sure?", "Delete Catalogs configuration");
 
-                        if(isContinue)
+                        if (isContinue)
                         {
                             // Create the list if doesn't exists
-                            var list = this._listHelper.GetListByRootFolderUrl(spWeb, catalogUrl);
+                            var list = this._listHelper.GetListByRootFolderUrl(web, catalogUrl);
 
                             if (list != null)
                             {
-                                WriteWarning("Delete the list " + catalogUrl);
+                                this.WriteWarning("Delete the list " + catalogUrl);
 
                                 // Delete the list
                                 list.Delete();
                             }
                             else
                             {
-                                WriteWarning("No list with the name " + catalogUrl);
+                                this.WriteWarning("No list with the name " + catalogUrl);
                             }
-                        }                    
-                     }
-                }                          
+                        }
+                    }
+                }
             }
 
             base.EndProcessing();
-
         }
 
         /// <summary>

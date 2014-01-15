@@ -1,25 +1,26 @@
-﻿using GSoft.Dynamite.PowerShell.PipeBindsObjects;
-using GSoft.Dynamite.PowerShell.Extensions;
-using GSoft.Dynamite.Utils;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Microsoft.Office.Server.Search.Administration;
-using Microsoft.SharePoint;
+
+using GSoft.Dynamite.PowerShell.Extensions;
+using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
+using GSoft.Dynamite.Utils;
+
+using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Practices.Unity;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 {
     /// <summary>
-    /// Removes Search Result Sources confguration
+    /// Removes Search Result Sources configuration
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "DSPResultSources")]
-    public class DSPCmdletRemoveResultSources: Cmdlet
+
+    // ReSharper disable once InconsistentNaming
+    public class DSPCmdletRemoveResultSources : Cmdlet
     {
         /// <summary>
         /// Dynamite Helpers
@@ -28,26 +29,32 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 
         private XDocument _configurationFile;
 
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.",
+        /// <summary>
+        /// Gets or sets the input file.
+        /// </summary>
+        /// <value>
+        /// The input file.
+        /// </value>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, 
+            HelpMessage =
+                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", 
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
+        /// <summary>
+        /// Ends the processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
 
-            var xml = InputFile.Read();
-            _configurationFile = xml.ToXDocument();
+            var xml = this.InputFile.Read();
+            this._configurationFile = xml.ToXDocument();
 
-            var serviceApplicationName = _configurationFile.Root.Attribute("SearchServiceApplication").Value;
-
+            var serviceApplicationName = this._configurationFile.Root.Attribute("SearchServiceApplication").Value;
             var searchServiceApp = this._searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
-
-            var sourceNodes = from sourceNode in _configurationFile.Descendants("Source")
-                              select (sourceNode);
+            var sourceNodes = from sourceNode in this._configurationFile.Descendants("Source") select sourceNode;
 
             foreach (var sourceNode in sourceNodes)
             {
@@ -57,18 +64,18 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                 var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
                 var contextWeb = sourceNode.Attribute("ContextWeb").Value;
 
-                var spSite = new SPSite(contextWeb);
-                var spWeb = spSite.OpenWeb(contextWeb);
+                var site = new SPSite(contextWeb);
+                var web = site.OpenWeb(contextWeb);
 
                 var doProcess = ShouldContinue("Are you sure?", "Delete all result sources");
-                if(doProcess)
+                if (doProcess)
                 {
-                    WriteWarning("Deleting result source:" + sourceName);
-                    this._searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, spWeb);
+                    this.WriteWarning("Deleting result source:" + sourceName);
+                    this._searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, web);
                 }
 
-                spWeb.Dispose();
-                spSite.Dispose();
+                web.Dispose();
+                site.Dispose();
             }
 
             base.EndProcessing();

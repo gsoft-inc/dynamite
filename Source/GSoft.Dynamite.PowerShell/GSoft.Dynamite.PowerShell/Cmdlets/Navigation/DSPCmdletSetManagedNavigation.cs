@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
 using GSoft.Dynamite.Navigation;
@@ -15,6 +16,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
     /// Cmdlet for managed metadata navigation configuration
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "DSPManagedNavigation")]
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    // ReSharper disable once InconsistentNaming
     public class DSPCmdletSetManagedNavigation : Cmdlet
     {
         /// <summary>
@@ -22,24 +25,29 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
         /// </summary>
         private NavigationHelper _navigationHelper;
 
-        private XDocument _configurationFile = null;
+        private XDocument _configurationFile;
 
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.",
+        /// <summary>
+        /// Gets or sets the input file.
+        /// </summary>
+        [Parameter(Mandatory = true, 
+            ValueFromPipeline = true, 
+            HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.", 
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
+        /// <summary>
+        /// The end processing.
+        /// </summary>
         protected override void EndProcessing()
         {
             this.ResolveDependencies();
-            var xml = InputFile.Read();
-            _configurationFile = xml.ToXDocument();
+            var xml = this.InputFile.Read();
+            this._configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in _configurationFile.Descendants("Web")
-                       select (webNode);
+            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {

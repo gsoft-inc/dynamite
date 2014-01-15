@@ -1,8 +1,12 @@
 ﻿using GSoft.Dynamite.Unity;
+
 using Microsoft.Practices.Unity;
 
 namespace GSoft.Dynamite.PowerShell.Unity
 {
+    /// <summary>
+    /// The power shell container.
+    /// </summary>
     public static class PowerShellContainer
     {
         /// <summary>
@@ -18,7 +22,7 @@ namespace GSoft.Dynamite.PowerShell.Unity
         /// <summary>
         /// The singleton instance
         /// </summary>
-        private static IUnityContainer instance = null;
+        private static IUnityContainer instance;
 
         /// <summary>
         /// Dependency injection container instance
