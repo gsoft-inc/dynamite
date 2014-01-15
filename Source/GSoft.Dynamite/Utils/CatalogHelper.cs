@@ -16,6 +16,7 @@ namespace GSoft.Dynamite.Utils
     {
         /// <summary>
         /// Set a SharePoint as a product catalog without navigation term associated
+        /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
@@ -26,11 +27,14 @@ namespace GSoft.Dynamite.Utils
             list.IndexedRootFolderPropertyKeys.Add("PublishingCatalogSettings");
             list.IndexedRootFolderPropertyKeys.Add("IsPublishingCatalog");
 
+            // Allow anonymous access on the parentWeb
+            list.ParentWeb.FirstUniqueAncestorWeb.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessWebLists;
+
             // Break list inheritance for anonymous access
             list.BreakRoleInheritance(true, false);
 
-            // Allow anonymous acces on the list
-            list.AnonymousPermMask64 = SPBasePermissions.AnonymousSearchAccessList;
+            // Allow anonymous access on the list
+            list.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessList;
 
             var fieldList = new Collection<string>();
 
