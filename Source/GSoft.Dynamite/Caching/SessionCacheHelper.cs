@@ -52,7 +52,6 @@ namespace GSoft.Dynamite.Caching
             // Define the cache key based on the user's current language
             var cacheKey = currentUserLcid == Language.French.Culture.LCID ? key.InFrench : key.InEnglish;
 
-
             // Note that caching is only possible if we currently have a valid HttpContext.
             this._logger.Info("Get: Getting session cache value(s) for key '{0}'.", cacheKey);
             return HttpContext.Current != null ? this.GetFromCache<T>(func, cacheKey) : func.Invoke();
@@ -117,7 +116,6 @@ namespace GSoft.Dynamite.Caching
             }
 
             return null;
-
         }
     }
 }

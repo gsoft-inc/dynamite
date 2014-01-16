@@ -8,74 +8,87 @@ namespace GSoft.Dynamite.Schemas
     /// </summary>
     public abstract class GenericFieldSchema
     {
-        protected string _fieldName;
-        protected string _fieldStaticName;
-        protected string _fieldType;
-        protected string _fieldDisplayName;
-        protected string _fieldDescription;
-        protected string _fieldGroup;
-        protected Guid _fieldId;
-
-        protected XElement _fieldSchema;
-
-        #region Properties
-
-        public string FieldName
-        {
-            get { return _fieldName; }
-            set { _fieldName = value; }
-        }
-
-        public string FieldStaticName
-        {
-            get { return _fieldStaticName; }
-            set { _fieldStaticName = value; }
-        }
-
-        public string FieldType
-        {
-            get { return _fieldType; }
-            set { _fieldType = value; }
-        }
-     
-        public string FieldDisplayName
-        {
-            get { return _fieldDisplayName; }
-            set { _fieldDisplayName = value; }
-        }
-
-        public string FieldDescription
-        {
-            get { return _fieldDescription; }
-            set { _fieldDescription = value; }
-        }
-
-        public string FieldGroup
-        {
-            get { return _fieldGroup; }
-            set { _fieldGroup = value; }
-        }
-
-        public Guid FieldId
-        {
-            get { return _fieldId; }
-            set { _fieldId = value; }
-        }
-
-        #endregion
+        private Guid _fieldId;
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        public GenericFieldSchema()
+        protected GenericFieldSchema()
         {
-            this._fieldName = string.Empty;
-            this._fieldStaticName = string.Empty;
-            this._fieldDisplayName = string.Empty;
-            this._fieldDescription = string.Empty;
-            this._fieldGroup = string.Empty;
             this._fieldId = Guid.NewGuid();
         }
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the name of the field.
+        /// </summary>
+        /// <value>
+        /// The name of the field.
+        /// </value>
+        public string FieldName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the field static.
+        /// </summary>
+        /// <value>
+        /// The name of the field static.
+        /// </value>
+        public string FieldStaticName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of the field.
+        /// </summary>
+        /// <value>
+        /// The type of the field.
+        /// </value>
+        public string FieldType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the display name of the field.
+        /// </summary>
+        /// <value>
+        /// The display name of the field.
+        /// </value>
+        public string FieldDisplayName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the field description.
+        /// </summary>
+        /// <value>
+        /// The field description.
+        /// </value>
+        public string FieldDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the field group.
+        /// </summary>
+        /// <value>
+        /// The field group.
+        /// </value>
+        public string FieldGroup { get; set; }
+
+        /// <summary>
+        /// Gets or sets the field identifier.
+        /// </summary>
+        /// <value>
+        /// The field identifier.
+        /// </value>
+        public Guid FieldId
+        {
+            get { return this._fieldId; }
+            set { this._fieldId = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the field schema.
+        /// </summary>
+        /// <value>
+        /// The field schema.
+        /// </value>
+        public XElement FieldSchema { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Get the XML schema of the field.
@@ -88,6 +101,5 @@ namespace GSoft.Dynamite.Schemas
         /// </summary>
         /// <returns>A string that represents the XML schema.</returns>
         public abstract override string ToString();
-        
     }
 }

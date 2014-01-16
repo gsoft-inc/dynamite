@@ -41,7 +41,6 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The type.
         /// </value>
-        /// <exception cref="System.NotImplementedException"></exception>
         public CatalogNavigationType Type
         {
             get
@@ -52,20 +51,14 @@ namespace GSoft.Dynamite.Navigation
                     {
                         return CatalogNavigationType.ItemPage;
                     }
-                    else if(TaxonomyNavigationContext.Current.NavigationTerm != null)
+
+                    if (TaxonomyNavigationContext.Current.NavigationTerm != null)
                     {
                         return CatalogNavigationType.CategoryPage;
                     }
-                    else
-                    {
-                        return CatalogNavigationType.None;
-                    }
+                }
 
-                }
-                else
-                {
-                    return CatalogNavigationType.None;
-                }
+                return CatalogNavigationType.None;
             }
         }
 
@@ -105,7 +98,7 @@ namespace GSoft.Dynamite.Navigation
         /// Determines whether [is current item] [the specified item URL].
         /// </summary>
         /// <param name="itemUrl">The item URL.</param>
-        /// <returns></returns>
+        /// <returns>True if URL is the current catalog item.</returns>
         public bool IsCurrentItem(string itemUrl)
         {
             var queryStrings = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
@@ -114,6 +107,13 @@ namespace GSoft.Dynamite.Navigation
             return !string.IsNullOrEmpty(urlSuffix) && itemUrl.EndsWith(urlSuffix, StringComparison.InvariantCultureIgnoreCase);
         }
 
+        /// <summary>
+        /// Gets the variation peer URL.
+        /// </summary>
+        /// <param name="label">The variation label.</param>
+        /// <returns>
+        /// The peer URL.
+        /// </returns>
         public Uri GetVariationPeerUrl(VariationLabel label)
         {
             var currentUrl = HttpContext.Current.Request.Url;
@@ -138,7 +138,8 @@ namespace GSoft.Dynamite.Navigation
             {
                 try
                 {
-                    return new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+                    return new Uri(
+                        Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
                         UriKind.Relative);
                 }
                 catch (ArgumentOutOfRangeException)
@@ -172,18 +173,22 @@ namespace GSoft.Dynamite.Navigation
                     TaxonomyNavigation.GetTermSetForWeb(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true).GetWithNewView(view);
 
                 // Get the matching label navigation term and return it's friendly URL
-                var navigationTerm = this._navigationHelper.GetNavigationTermById(navigationTermSet.Terms,
-                    termId);
+                var navigationTerm = this._navigationHelper.GetNavigationTermById(navigationTermSet.Terms, termId);
                 if (navigationTerm != null)
                 {
-                    this._logger.Info("GetPeerCatalogCategoryUrl: Navigation term found for term id '{0}': '{1}'",
-                        termId, navigationTerm.Title);
-                    return new Uri(navigationTerm.GetResolvedDisplayUrl(String.Empty), UriKind.Relative);
+                    this._logger.Info(
+                        "GetPeerCatalogCategoryUrl: Navigation term found for term id '{0}': '{1}'",
+                        termId,
+                        navigationTerm.Title);
+
+                    return new Uri(navigationTerm.GetResolvedDisplayUrl(string.Empty), UriKind.Relative);
                 }
                 else
                 {
                     this._logger.Error("GetPeerCatalogCategoryUrl: Navigation term not found for term id '{0}'", termId);
-                    return new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+
+                    return new Uri(
+                        Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
                         UriKind.Relative);
                 }
             }

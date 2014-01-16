@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.Collections
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedCollection{T}"/> class.
         /// </summary>
-        /// <param name="comparerfunction">The comparerfunction.</param>
+        /// <param name="comparerfunction">The comparer function.</param>
         public OrderedCollection(Func<T, T, int> comparerfunction)
             : this(new DelegateComparer<T>(comparerfunction))
         {

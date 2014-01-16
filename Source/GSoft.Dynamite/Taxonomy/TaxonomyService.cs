@@ -6,7 +6,6 @@ using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
-
 namespace GSoft.Dynamite.Taxonomy
 {
     /// <summary>
@@ -14,7 +13,7 @@ namespace GSoft.Dynamite.Taxonomy
     /// </summary>
     public class TaxonomyService : ITaxonomyService
     {
-        private ILogger log;
+        private readonly ILogger _log;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyService"/> class.
@@ -22,7 +21,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="logger">The logger.</param>
         public TaxonomyService(ILogger logger)
         {
-            this.log = logger;
+            this._log = logger;
         }
 
         /// <summary>

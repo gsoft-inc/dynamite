@@ -1,31 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Schemas
 {
-    public class TextFieldSchema: GenericFieldSchema
+    /// <summary>
+    /// Text field schema.
+    /// </summary>
+    public class TextFieldSchema : GenericFieldSchema
     {
-        private bool _isMultiLine = false;
+        private bool _isMultiLine;
         
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [is multi line].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [is multi line]; otherwise, <c>false</c>.
+        /// </value>
         public bool IsMultiLine
         {
-            get { return _isMultiLine; }
+            get
+            {
+                return this._isMultiLine;
+            }
+
             set
             {
                 if (value == false)
                 {
                     this._isMultiLine = true;
-                    this._fieldType = "Text";
+                    this.FieldType = "Text";
                 }
                 else
                 {
-                    this._fieldType = "Note";
+                    this.FieldType = "Note";
                 }
             }
         }
@@ -33,28 +41,22 @@ namespace GSoft.Dynamite.Schemas
         #endregion
 
         /// <summary>
-        /// Default constructor
-        /// </summary>
-        public TextFieldSchema() : base() { }
-
-        /// <summary>
         /// Get the XML schema of the field.
         /// </summary>
         /// <returns>The XML schema.</returns>
         public override XElement ToXElement()
         {
-
-            this._fieldSchema =
-             new XElement("Field",
+            this.FieldSchema = new XElement(
+                "Field",
                 new XAttribute("Name", this.FieldName),
                 new XAttribute("Type", this.FieldType),
-                new XAttribute("ID", "{" + this._fieldId.ToString() + "}"),
+                new XAttribute("ID", "{" + this.FieldId + "}"),
                 new XAttribute("StaticName", this.FieldStaticName),
                 new XAttribute("DisplayName", this.FieldDisplayName),
                 new XAttribute("Description", this.FieldDescription),
                 new XAttribute("Group", this.FieldGroup));
 
-            return _fieldSchema;
+            return this.FieldSchema;
         }
 
         /// <summary>
@@ -63,7 +65,7 @@ namespace GSoft.Dynamite.Schemas
         /// <returns>A string that represents the XML schema.</returns>
         public override string ToString()
         {
-            return this._fieldSchema.ToString();
+            return this.FieldSchema.ToString();
         }
     }
 }

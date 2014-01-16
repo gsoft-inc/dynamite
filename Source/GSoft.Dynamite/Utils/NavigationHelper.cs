@@ -26,7 +26,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="taxonomyHelper">The taxonomy helper.</param>
         public NavigationHelper(TaxonomyHelper taxonomyHelper)
         {
-            _taxonomyHelper = taxonomyHelper;
+            this._taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace GSoft.Dynamite.Utils
             if (taxonomySession.TermStores.Count > 0)
             {
                 var termStore = taxonomySession.TermStores[settings.TermStoreName];
-                var group = _taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
-                var termSet = _taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
+                var group = this._taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
+                var termSet = this._taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
                 var navigationSettings = new WebNavigationSettings(web);
                 
                 navigationSettings.GlobalNavigation.TermStoreId = termStore.Id;
@@ -65,7 +65,7 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
         {
-            var terms = navigationTerms == null ? new NavigationTerm[] {} : navigationTerms.ToArray();
+            var terms = navigationTerms == null ? new NavigationTerm[] { } : navigationTerms.ToArray();
             if (terms.Length <= 0)
             {
                 return null;
@@ -118,7 +118,7 @@ namespace GSoft.Dynamite.Utils
             var slug = RemoveDiacritics(phrase.ToLower());
 
             // invalid chars, make into spaces
-            slug = Regex.Replace(slug, @"[^a-z0-9\s-]", "");
+            slug = Regex.Replace(slug, @"[^a-z0-9\s-]", string.Empty);
 
             // convert multiple spaces/hyphens into one space       
             slug = Regex.Replace(slug, @"[\s-]+", " ").Trim();

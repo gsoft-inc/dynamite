@@ -50,10 +50,10 @@ namespace GSoft.Dynamite.Navigation
         public bool AddNewPagesToNavigation { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to [create friendly urls for news pages].
+        /// Gets or sets a value indicating whether to [create friendly URLs for news pages].
         /// </summary>
         /// <value>
-        /// <c>true</c> if [create friendly urls for news pages]; otherwise, <c>false</c>.
+        /// <c>true</c> if [create friendly URLs for news pages]; otherwise, <c>false</c>.
         /// </value>
         public bool CreateFriendlyUrlsForNewsPages { get; set; }
 
@@ -65,8 +65,8 @@ namespace GSoft.Dynamite.Navigation
         /// </value>
         public string TermStoreName
         {
-            get { return _termStoreName; }
-            set { _termStoreName =  value; }
+            get { return this._termStoreName; }
+            set { this._termStoreName = value; }
         }
 
         /// <summary>

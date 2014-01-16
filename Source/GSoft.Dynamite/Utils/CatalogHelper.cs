@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace GSoft.Dynamite.Utils
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
-        /// <returns>The SharePoint list.</returns>
+        /// <returns>The SharePoint list configured as a catalog.</returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields)
         {
             // Add properties for catalog publishing on the root folder
@@ -44,11 +43,11 @@ namespace GSoft.Dynamite.Utils
                 fieldList.Add("\"" + availableField + "\"");
             }
 
-            var fUrlFieldsProperty = String.Join(",", fieldList.ToArray());
+            var friendlyUrlFieldsProperty = string.Join(",", fieldList.ToArray());
 
             var rootFolder = list.RootFolder;
             rootFolder.Properties["IsPublishingCatalog"] = "True";
-            rootFolder.Properties["PublishingCatalogSettings"] = "{\"FurlFields\":[" + fUrlFieldsProperty + "],\"TaxonomyFieldMap\":[]}";
+            rootFolder.Properties["PublishingCatalogSettings"] = "{\"FurlFields\":[" + friendlyUrlFieldsProperty + "],\"TaxonomyFieldMap\":[]}";
 
             rootFolder.Properties["vti_indexedpropertykeys"] = "UAB1AGIAbABpAHMAaABpAG4AZwBDAGEAdABhAGwAbwBnAFMAZQB0AHQAaQBuAGcAcwA=|SQBzAFAAdQBiAGwAaQBzAGgAaQBuAGcAQwBhAHQAYQBsAG8AZwA=|";
 
@@ -59,22 +58,19 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
-        /// Set a SharePoint as a product catalog with a taxonomy term for navigation
+        /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
-        /// <returns>The SharePoint list.</returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields,
-            string taxonomyFieldMap)
+        /// <returns>The SharePoint list configured as a catalog.</returns>
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap)
         {
-            var spList = this.SetListAsCatalog(list, availableFields);
-            var rootFolder = spList.RootFolder;
+            var catalogList = this.SetListAsCatalog(list, availableFields);
+            var rootFolder = catalogList.RootFolder;
 
             // Set current culture to be able to get the "Title" of the list
-            CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
-            Thread.CurrentThread.CurrentUICulture =
-                new CultureInfo((int)list.ParentWeb.Language);
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)list.ParentWeb.Language);
 
             // Format property
             var taxonomyField = list.Fields.GetFieldByInternalName(taxonomyFieldMap) as TaxonomyField;
@@ -95,9 +91,8 @@ namespace GSoft.Dynamite.Utils
             fields.Add("\"TermStoreId\":\"" + termStoreId + "\"");
             fields.Add("\"TermId\":\"" + termId + "\"}");
 
-            var taxonomyFieldMapProperty = "\"TaxonomyFieldMap\":[" + String.Join(",", fields.ToArray()) + "]";
+            var taxonomyFieldMapProperty = "\"TaxonomyFieldMap\":[" + string.Join(",", fields.ToArray()) + "]";
 
-            var oldValue = rootFolder.Properties["PublishingCatalogSettings"];
             var newValue = rootFolder.Properties["PublishingCatalogSettings"].ToString().Replace("\"TaxonomyFieldMap\":[]", taxonomyFieldMapProperty);
 
             rootFolder.Properties["PublishingCatalogSettings"] = newValue;

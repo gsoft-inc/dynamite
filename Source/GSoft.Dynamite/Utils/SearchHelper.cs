@@ -130,13 +130,15 @@ namespace GSoft.Dynamite.Utils
         /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">The result source name</param>
         /// <param name="level">The search object level.</param>
-        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
         /// <param name="properties">Query properties.</param>
-        /// <returns>The result source.</returns>
+        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
+        /// <returns>
+        /// The result source.
+        /// </returns>
         public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite)
         {
-
             var federationManager = new FederationManager(ssa);
             var searchOwner = new SearchObjectOwner(level, contextWeb);
 
@@ -165,11 +167,14 @@ namespace GSoft.Dynamite.Utils
         /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">The result source name</param>
         /// <param name="level">The search object level.</param>
-        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
         /// <param name="sortField">Internal name of the sort field.</param>
         /// <param name="direction">The sort direction.</param>
-        /// <returns>The result source.</returns>
+        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
+        /// <returns>
+        /// The result source.
+        /// </returns>
         public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
         {
             var sortCollection = new SortCollection();
@@ -184,17 +189,18 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// Get the service application by its name
         /// </summary>
-        /// <param name="site"></param>
-        /// <param name="appName"></param>
-        /// <returns>The search service application.</returns>
+        /// <param name="appName">Name of the application.</param>
+        /// <returns>
+        /// The search service application.
+        /// </returns>
         public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
         {
-            SearchService s = new SearchService("OSearch15", SPFarm.Local);
-            var SearchApplication = from SearchServiceApplication sapp in s.SearchApplications
+            var s = new SearchService("OSearch15", SPFarm.Local);
+            var searchApplication = from SearchServiceApplication sapp in s.SearchApplications
                                     where sapp.GetSearchApplicationDisplayName() == appName
                                     select sapp;
 
-            SearchServiceApplication serviceApp = SearchApplication.First();
+            var serviceApp = searchApplication.First();
 
             return serviceApp;
         }
@@ -224,12 +230,12 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
-        /// Delete a result source.
+        /// Deletes the result source.
         /// </summary>
         /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level"The search object level.</param>
-        /// <param name="contextWeb">The SPWeb to retieve the search context.</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="level">The level.</param>
+        /// <param name="contextWeb">The context web.</param>
         public void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
         {
             var federationManager = new FederationManager(ssa);

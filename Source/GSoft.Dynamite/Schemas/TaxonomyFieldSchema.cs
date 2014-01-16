@@ -8,39 +8,50 @@ namespace GSoft.Dynamite.Schemas
     /// </summary>
     public class TaxonomyFieldSchema : GenericFieldSchema
     {
-        private bool _isMultiple = false;
-        private bool _enforceUniqueValues = false;
+        private bool _isMultiple, _enforceUniqueValues;
 
         #region Properties
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [is multiple].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [is multiple]; otherwise, <c>false</c>.
+        /// </value>
         public bool IsMultiple
         {
-            get { return _isMultiple; }
-            set { 
+            get
+            {
+                return this._isMultiple;
+            }
+
+            set
+            {
                 if (value == false)
                 {
                     this._isMultiple = true;
-                    this._fieldType = "TaxonomyFieldType";
+                    this.FieldType = "TaxonomyFieldType";
                 }
                 else
                 {
-                    this._fieldType = "TaxonomyFieldTypeMulti";
+                    this.FieldType = "TaxonomyFieldTypeMulti";
                 }       
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether [enforce unique values].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [enforce unique values]; otherwise, <c>false</c>.
+        /// </value>
         public bool EnforceUniqueValues
         {
-            get { return _enforceUniqueValues; }
-            set { _enforceUniqueValues = value; }
+            get { return this._enforceUniqueValues; }
+            set { this._enforceUniqueValues = value; }
         }
 
         #endregion
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public TaxonomyFieldSchema() : base() { }
 
         /// <summary>
         /// Get the XML schema of the field.
@@ -48,43 +59,42 @@ namespace GSoft.Dynamite.Schemas
         /// <returns>The XML schema.</returns>
         public override XElement ToXElement()
         {
-
-            XNamespace xmlns = "http://schemas.microsoft.com/sharepoint/";
             XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";
-
-            this._fieldSchema =
-             new XElement("Field",
+            this.FieldSchema = new XElement(
+                "Field",
                 new XAttribute("Name", this.FieldName),
                 new XAttribute("Type", this.FieldType),
-                new XAttribute("ID", "{" + this._fieldId.ToString() + "}"),
+                new XAttribute("ID", "{" + this.FieldId + "}"),
                 new XAttribute("StaticName", this.FieldStaticName),
                 new XAttribute("DisplayName", this.FieldDisplayName),
                 new XAttribute("Description", this.FieldDescription),
                 new XAttribute("Group", this.FieldGroup),
                 new XAttribute("EnforceUniqueValues", this._enforceUniqueValues.ToString().ToUpper()),
                 new XAttribute("Mult", this._isMultiple.ToString().ToUpper()),
-                new XElement("Customization",
-                    new XElement("ArrayOfProperty",
-                        new XElement("Property",
+                new XElement(
+                    "Customization",
+                    new XElement(
+                        "ArrayOfProperty",
+                        new XElement(
+                            "Property",
                             new XElement("Name", "TextField"),
-                            new XElement("Value",
-                                new XAttribute(XNamespace.Xmlns +"q6", "http://www.w3.org/2001/XMLSchema"),
-                                new XAttribute(p4+"type", "q6:string"),
+                            new XElement(
+                                "Value",
+                                new XAttribute(XNamespace.Xmlns + "q6", "http://www.w3.org/2001/XMLSchema"),
+                                new XAttribute(p4 + "type", "q6:string"),
                                 new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                                "{" + Guid.NewGuid().ToString() + "}")),
-                        new XElement("Property",
+                                "{" + Guid.NewGuid() + "}")),
+                        new XElement(
+                            "Property",
                             new XElement("Name", "IsPathRendered"),
-                            new XElement("Value",
+                            new XElement(
+                                "Value",
                                 new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
-                                new XAttribute(p4+"type", "q7:boolean"),
+                                new XAttribute(p4 + "type", "q7:boolean"),
                                 new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                                "false")
-                                )
-                            )
-                        )
-                    );
+                                "false")))));
 
-            return _fieldSchema;
+            return this.FieldSchema;
         }
 
         /// <summary>
@@ -93,7 +103,7 @@ namespace GSoft.Dynamite.Schemas
         /// <returns>A string that represents the XML schema.</returns>
         public override string ToString()
         {
-            return this._fieldSchema.ToString();
+            return this.FieldSchema.ToString();
         }
     }
 }

@@ -2,10 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using Microsoft.SharePoint;
-using System.Xml.Linq;
-using GSoft.Dynamite.Schemas;
 using System.Threading;
+using GSoft.Dynamite.Schemas;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Utils
@@ -15,13 +14,14 @@ namespace GSoft.Dynamite.Utils
     /// </summary>
     public class ListHelper
     {
-        private ContentTypeHelper _contentTypeHelper;
-        private FieldHelper _fieldHelper;
+        private readonly ContentTypeHelper _contentTypeHelper;
+        private readonly FieldHelper _fieldHelper;
 
         /// <summary>
         /// Creates a list helper
         /// </summary>
         /// <param name="contentTypeHelper">A content type helper</param>
+        /// <param name="fieldHelper">The field helper.</param>
         public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper)
         {
             this._contentTypeHelper = contentTypeHelper;
@@ -166,22 +166,23 @@ namespace GSoft.Dynamite.Utils
         /// Creates a field on the list
         /// </summary>
         /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>f
+        /// <param name="genericField">The generic field.</param>
+        /// <param name="fieldInternalName">The Field internal name.</param>
         /// <param name="fieldDisplayName">The field display name.</param>
         /// <param name="fieldDescription">The field description.</param>
         /// <param name="fieldGroup">The field group.</param>
-        /// <returns>The internal name of newly created field.</returns>
+        /// <returns>
+        /// The internal name of newly created field.
+        /// </returns>
         public SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
             genericField.FieldName = fieldInternalName;
 
             // Here is a trick: We have to pass the internal name as display name and set the display name after creation
             genericField.FieldDisplayName = fieldInternalName;
-
             genericField.FieldDescription = fieldDescription;
             genericField.FieldStaticName = fieldInternalName;
             genericField.FieldGroup = fieldGroup;
-
 
             var fieldName = this._fieldHelper.AddField(list.Fields, genericField.ToXElement());
 
@@ -189,7 +190,6 @@ namespace GSoft.Dynamite.Utils
             {            
                 // When you set title, need to be in the same Culture as Current web Culture 
                 // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
-                CultureInfo originalUICulture = Thread.CurrentThread.CurrentUICulture;
                 Thread.CurrentThread.CurrentUICulture =
                     new CultureInfo((int)list.ParentWeb.Language);
 
@@ -240,19 +240,18 @@ namespace GSoft.Dynamite.Utils
         /// Create a text field
         /// </summary>
         /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>f
+        /// <param name="fieldInternalName">The Field internal name.</param>
         /// <param name="fieldDisplayName">The field display name.</param>
         /// <param name="fieldDescription">The field description.</param>
         /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
-        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
-        /// <returns>The newly created field.</returns>
+        /// <param name="isMultiLines">if set to <c>true</c> [is multi lines].</param>
+        /// <returns>
+        /// The newly created field.
+        /// </returns>
         public SPField CreateTextField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiLines)
         {
             // Create the schema 
-            var textFieldSchema = new TextFieldSchema();
-
-            textFieldSchema.IsMultiLine = false;
+            var textFieldSchema = new TextFieldSchema { IsMultiLine = false };
             var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
 
             return field;

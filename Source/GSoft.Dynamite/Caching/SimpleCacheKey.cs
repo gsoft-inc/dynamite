@@ -6,11 +6,6 @@
     public class SimpleCacheKey : ICacheKey
     {
         /// <summary>
-        /// The prefix of the keep to identify the Laval keys in the config list.
-        /// </summary>
-        public string Prefix { get; private set; }
-
-        /// <summary>
         /// Creates a new simple cache key to cache the same items regardless of the current language
         /// </summary>
         /// <param name="keyPrefix">The key prefix.</param>
@@ -32,6 +27,11 @@
             this.InEnglish = this.Prefix + englishKey;
             this.InFrench = this.Prefix + frenchKey;
         }
+
+        /// <summary>
+        /// The prefix of the keep to identify the Laval keys in the config list.
+        /// </summary>
+        public string Prefix { get; private set; }
 
         /// <summary>
         /// Get english key

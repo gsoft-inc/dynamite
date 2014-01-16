@@ -56,7 +56,6 @@ namespace GSoft.Dynamite.Caching
             var expiration = DateTime.Now.AddSeconds(expirationInSeconds);
             var cacheKey = currentUserLcid == Language.French.Culture.LCID ? key.InFrench : key.InEnglish;
 
-
             // Note that caching is only possible if we currently have a valid HttpContext.
             this._logger.Info("Getting app cache value(s) for key '{0}'.", cacheKey);
             return HttpContext.Current != null ? this.GetFromCache<T>(func, cacheKey, expiration) : func.Invoke();

@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.Navigation
         /// Determines whether [is current item] [the specified item URL].
         /// </summary>
         /// <param name="itemUrl">The item URL.</param>
-        /// <returns></returns>
+        /// <returns>True if URL is the current catalog item.</returns>
         bool IsCurrentItem(string itemUrl);
     }
 }

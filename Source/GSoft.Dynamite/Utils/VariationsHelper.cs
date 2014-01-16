@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Publishing;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.Web;
-using System.Collections.Generic;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Utils
 {
+    using System.Diagnostics.CodeAnalysis;
+
     /// <summary>
     /// Variations helper class.
     /// </summary>
@@ -36,30 +38,31 @@ namespace GSoft.Dynamite.Utils
         /// Get the variations labels for the site collection.
         /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
-        /// <param name="Site">The site.</param>
+        /// <param name="site">The site.</param>
         /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
         /// <returns>A collection of unique label.</returns>
-        public ReadOnlyCollection<VariationLabel> GetVariationLabels(SPSite Site, string labelToSync)
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        public ReadOnlyCollection<VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
-            SPWeb spWeb = Site.RootWeb;
-            SPList variationLabelsList = spWeb.GetList(spWeb.ServerRelativeUrl + "/Variation Labels/Allitems.aspx");
-            List<VariationLabel> list = new List<VariationLabel>();
-            SPQuery query = new SPQuery
+            var web = site.RootWeb;
+            var variationLabelsList = web.GetList(web.ServerRelativeUrl + "/Variation Labels/Allitems.aspx");
+            var list = new List<VariationLabel>();
+            var query = new SPQuery
             {
                 Query = "<Where><Eq><FieldRef Name='Title'/><Value Type='Text'>" + labelToSync + "</Value></Eq></Where><OrderBy><FieldRef Name=\"Title\" Ascending=\"TRUE\"></FieldRef></OrderBy>"
             };
 
             foreach (SPListItem item in variationLabelsList.GetItems(query))
             {
-                string webUrl = (string)item["Top Web URL"];
+                var webUrl = (string)item["Top Web URL"];
                 webUrl = webUrl.Substring(webUrl.IndexOf(',') + 1);
 
-                PublishingWeb pubWeb = PublishingWeb.GetPublishingWeb(Site.OpenWeb(webUrl));
-                VariationLabel varLbl = pubWeb.Label;
+                var pubWeb = PublishingWeb.GetPublishingWeb(site.OpenWeb(webUrl));
+                var varLbl = pubWeb.Label;
                 list.Add(varLbl);
             }
 
-            return new ReadOnlyCollection<VariationLabel>((IList<VariationLabel>)list);
+            return new ReadOnlyCollection<VariationLabel>(list);
         }
 
         /// <summary>
@@ -67,6 +70,7 @@ namespace GSoft.Dynamite.Utils
         /// </summary>
         /// <param name="listToSync">The source SPList instance to sync.</param>
         /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public void SyncList(SPList listToSync, string labelToSync)
         {
             var sourceWeb = listToSync.ParentWeb;
@@ -78,40 +82,37 @@ namespace GSoft.Dynamite.Utils
              */
             SPSecurity.RunWithElevatedPrivileges((SPSecurity.CodeToRunElevated)(() =>
             {
-                using (SPSite elevatedSite = new SPSite(sourceWeb.Site.ID))
+                using (var elevatedSite = new SPSite(sourceWeb.Site.ID))
                 {
-                    using (SPWeb elevatedWeb = elevatedSite.OpenWeb(sourceWeb.ID))
+                    using (var elevatedWeb = elevatedSite.OpenWeb(sourceWeb.ID))
                     {
                         var list = elevatedWeb.Lists[sourceListGuid];
 
                         var publishingAssembly = Assembly.LoadFrom("C:\\Program Files\\Common Files\\Microsoft Shared\\Web Server Extensions\\15\\ISAPI\\Microsoft.SharePoint.Publishing.dll");
                         var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
-                        Type MultiLingualResourceList = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.MultiLingualResourceList");
+                        var multiLingualResourceList = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.MultiLingualResourceList");
 
-                        Type[] types = new Type[1];
+                        var types = new Type[1];
                         types[0] = typeof(SPList);
 
-                        Object[] args = new Object[1];
+                        var args = new object[1];
                         args[0] = list;
 
-                        Object[] resParam = new Object[2];
+                        var resParam = new object[2];
                         resParam[0] = list;
                         resParam[1] = true;
 
                         // Initialize the list
-                        var nominateResources = MultiLingualResourceList.GetMethod("NominateResource", BindingFlags.Public | BindingFlags.Static);
+                        var nominateResources = multiLingualResourceList.GetMethod("NominateResource", BindingFlags.Public | BindingFlags.Static);
                         nominateResources.Invoke(null, resParam);
 
-                        var ctor = MultiLingualResourceList.GetConstructor(types);
+                        var ctor = multiLingualResourceList.GetConstructor(types);
                         var multilingualList = ctor.Invoke(args);
-
-                        // Get the labels to sync
-                        var labels = this.GetVariationLabels(sourceWeb.Site, labelToSync);
 
                         // Very important to set the HttpContext to null (AllowUnsafeUpdates is ignored by the SharePoint method)
                         HttpContext.Current = null;
 
-                        Object[] workItemParam = new Object[3];
+                        var workItemParam = new object[3];
                         workItemParam[0] = elevatedSite;
                         workItemParam[1] = elevatedWeb;
                         workItemParam[2] = multilingualList;
@@ -123,28 +124,6 @@ namespace GSoft.Dynamite.Utils
                     }
                 }
             }));
-        }
-
-        /// <summary>
-        /// Get the hidden relationships list for a site collection.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The relationships list.</returns>
-        private SPList GetVariationLabelHiddenList(SPSite site)
-        {
-            var guid = new Guid(site.RootWeb.GetProperty("_VarLabelsListId").ToString());
-            return site.RootWeb.Lists[guid];
-        }
-
-        /// <summary>
-        /// Get the hidden variation labels for a site collection.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>the variation labels list.</returns>
-        private SPList GetRelationshipsHiddenList(SPSite site)
-        {
-            var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
-            return site.RootWeb.Lists[guid];
         }
 
         /// <summary>
@@ -171,7 +150,7 @@ namespace GSoft.Dynamite.Utils
 
             var bindingFlags = BindingFlags.NonPublic | BindingFlags.Static;
 
-            Object[] cvsParam = new Object[3];
+            object[] cvsParam = new object[3];
             cvsParam[0] = web.Site;
             cvsParam[1] = web.Site.Zone;
             cvsParam[2] = true;
@@ -179,13 +158,35 @@ namespace GSoft.Dynamite.Utils
             var cvsMethod = cachedVariationSettings.GetMethod("CreateVariationSettings", bindingFlags, null, methodParam, null);
             var cvs = cvsMethod.Invoke(null, cvsParam);
 
-            Object[] workItemParam = new Object[3];
+            object[] workItemParam = new object[3];
             workItemParam[0] = web;
             workItemParam[1] = labels;
             workItemParam[2] = cvs;
-            
+
             var method = workItemHelper.GetMethod("EnqueueCreateSiteJobs", bindingFlags);
             method.Invoke(null, workItemParam);
+        }
+
+        /// <summary>
+        /// Get the hidden relationships list for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The relationships list.</returns>
+        private SPList GetVariationLabelHiddenList(SPSite site)
+        {
+            var guid = new Guid(site.RootWeb.GetProperty("_VarLabelsListId").ToString());
+            return site.RootWeb.Lists[guid];
+        }
+
+        /// <summary>
+        /// Get the hidden variation labels for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>the variation labels list.</returns>
+        private SPList GetRelationshipsHiddenList(SPSite site)
+        {
+            var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
+            return site.RootWeb.Lists[guid];
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using GSoft.Dynamite.Schemas;
-using System.Globalization;
-using System.Threading;
-using System.Collections.Generic;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -16,21 +13,20 @@ namespace GSoft.Dynamite.Taxonomy
     /// </summary>
     public class TaxonomyHelper
     {
-        private const string ASSEMBLYFULLNAME = "Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
-        private const string CLASSFULLNAME = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
+        private const string AssemblyFullName = "Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
+        private const string ClassFullName = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
         
-        private EventReceiverHelper _eventReceiverHelper;
-        private FieldHelper _fieldHelper;
-        private ITaxonomyService _taxonomyService;
+        private readonly EventReceiverHelper _eventReceiverHelper;
+        private readonly ITaxonomyService _taxonomyService;
 
         /// <summary>
-        /// Creates a taxonomy helper
+        /// Creates a taxonomy helper.
         /// </summary>
-        /// <param name="eventReceiverHelper">An event receiver helper</param>
-        public TaxonomyHelper(EventReceiverHelper eventReceiverHelper, FieldHelper fieldHelper, ITaxonomyService taxonomyService)
+        /// <param name="eventReceiverHelper">An event receiver helper.</param>
+        /// <param name="taxonomyService">The taxonomy service.</param>
+        public TaxonomyHelper(EventReceiverHelper eventReceiverHelper, ITaxonomyService taxonomyService)
         {
             this._eventReceiverHelper = eventReceiverHelper;
-            this._fieldHelper = fieldHelper;
             this._taxonomyService = taxonomyService;
         }
 
@@ -131,19 +127,19 @@ namespace GSoft.Dynamite.Taxonomy
             }
 
             // Check if the ItemAdding exists in the collection.
-            bool hasItemAdding = this._eventReceiverHelper.EventReceiverDefinitionExist(eventReceivers, SPEventReceiverType.ItemAdding, ASSEMBLYFULLNAME, CLASSFULLNAME);
+            bool hasItemAdding = this._eventReceiverHelper.EventReceiverDefinitionExist(eventReceivers, SPEventReceiverType.ItemAdding, AssemblyFullName, ClassFullName);
             if (!hasItemAdding)
             {
                 // Add the ItemAdding event receiver.
-                eventReceivers.Add(SPEventReceiverType.ItemAdding, ASSEMBLYFULLNAME, CLASSFULLNAME);
+                eventReceivers.Add(SPEventReceiverType.ItemAdding, AssemblyFullName, ClassFullName);
             }
 
             // Check if the ItemUpdating exists in the collection.
-            bool hasItemUpdating = this._eventReceiverHelper.EventReceiverDefinitionExist(eventReceivers, SPEventReceiverType.ItemUpdating, ASSEMBLYFULLNAME, CLASSFULLNAME);
+            bool hasItemUpdating = this._eventReceiverHelper.EventReceiverDefinitionExist(eventReceivers, SPEventReceiverType.ItemUpdating, AssemblyFullName, ClassFullName);
             if (!hasItemUpdating)
             {
                 // Add the ItemUpdating event receiver.
-                eventReceivers.Add(SPEventReceiverType.ItemUpdating, ASSEMBLYFULLNAME, CLASSFULLNAME);
+                eventReceivers.Add(SPEventReceiverType.ItemUpdating, AssemblyFullName, ClassFullName);
             }
         }
 
@@ -261,11 +257,14 @@ namespace GSoft.Dynamite.Taxonomy
             }
         }
 
+        /// <summary>
         /// Gets the term group by name.
         /// </summary>
         /// <param name="termStore">The term store.</param>
         /// <param name="groupName">Name of the group.</param>
-        /// <returns>The term group.</returns>
+        /// <returns>
+        /// The term group.
+        /// </returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public Group GetTermGroupByName(TermStore termStore, string groupName)
         {

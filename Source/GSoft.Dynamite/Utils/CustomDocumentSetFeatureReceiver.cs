@@ -345,7 +345,7 @@ namespace GSoft.Dynamite.Utils
             }
 
             byte[] buffer =
-                File.ReadAllBytes(SPUtility.GetGenericSetupPath(@"Template\Features\DocumentSet\docsethomepage.aspx"));
+                File.ReadAllBytes(SPUtility.GetVersionedGenericSetupPath(@"Template\Features\DocumentSet\docsethomepage.aspx", 0));
             SPFolder resourceFolder = contentType.ResourceFolder;
             return resourceFolder.Files.Add(this.DocumentSetWelcomePage, buffer, true);
         }
