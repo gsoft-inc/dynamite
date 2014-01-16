@@ -107,6 +107,9 @@
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
+    <Compile Include="Caching\Entities\CacheVariationLabel.cs" />
+    <Compile Include="Caching\Entities\ICacheVariationLabel.cs" />
+    <Compile Include="Caching\Entities\CacheKeyValuePair.cs" />
     <Compile Include="Caching\SessionCacheHelper.cs" />
     <Compile Include="Caching\AppCacheHelper.cs" />
     <Compile Include="Caching\IAppCacheHelper.cs" />

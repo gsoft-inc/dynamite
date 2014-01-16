@@ -35,6 +35,25 @@ namespace GSoft.Dynamite.Caching
         T Get<T>(Func<T> func, ICacheKey key, int expirationInSeconds, int currentUserLcid) where T : class;
 
         /// <summary>
+        /// Sets the specified key.
+        /// </summary>
+        /// <typeparam name="T">Generic type to cache.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="expirationInSeconds">The expiration in seconds.</param>
+        void Set<T>(ICacheKey key, T value, int expirationInSeconds) where T : class;
+
+        /// <summary>
+        /// Sets the specified key.
+        /// </summary>
+        /// <typeparam name="T">Generic type to cache.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="expirationInSeconds">The expiration in seconds.</param>
+        /// <param name="currentUserLcid">Language code for the current request</param>
+        void Set<T>(ICacheKey key, T value, int expirationInSeconds, int currentUserLcid) where T : class;
+
+        /// <summary>
         /// Clear all cached information
         /// </summary>
         /// <param name="keyPrefix">The key prefix.</param>

@@ -62,6 +62,34 @@ namespace GSoft.Dynamite.Caching
         }
 
         /// <summary>
+        /// Sets the specified key.
+        /// </summary>
+        /// <typeparam name="T">Generic type to cache.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="expirationInSeconds">The expiration in seconds.</param>
+        public void Set<T>(ICacheKey key, T value, int expirationInSeconds) where T : class
+        {
+            this.Set(key, value, expirationInSeconds, CultureInfo.CurrentUICulture.LCID);
+        }
+
+        /// <summary>
+        /// Sets the specified key.
+        /// </summary>
+        /// <typeparam name="T">Generic type to cache.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="expirationInSeconds">The expiration in seconds.</param>
+        /// <param name="currentUserLcid">Language code for the current request</param>
+        public void Set<T>(ICacheKey key, T value, int expirationInSeconds, int currentUserLcid) where T : class
+        {
+            // Define the cache key based on the user's current language
+            var expiration = DateTime.Now.AddSeconds(expirationInSeconds);
+            var cacheKey = currentUserLcid == Language.French.Culture.LCID ? key.InFrench : key.InEnglish;
+            this.SetCacheValue(cacheKey, value, expiration);
+        }
+
+        /// <summary>
         /// Clear all cached information
         /// </summary>
         /// <param name="keyPrefix">The key prefix.</param>
@@ -93,6 +121,27 @@ namespace GSoft.Dynamite.Caching
             }
         }
 
+        private void SetCacheValue<T>(string cacheKey, T cacheValue, DateTime expiration) where T : class
+        {
+            if (cacheValue != null)
+            {
+                // Add item to cache 
+                // Note: Use insert to replace existing item if found
+                HttpRuntime.Cache.Insert(
+                    cacheKey,
+                    cacheValue,
+                    null,
+                    expiration,
+                    Cache.NoSlidingExpiration,
+                    CacheItemPriority.Normal,
+                    null);
+            }
+            else
+            {
+                this._logger.Warn("Trying to cache null value for key '{0}'", cacheKey);
+            }
+        }
+
         private T GetFromCache<T>(Func<T> func, string cacheKey, DateTime expiration) where T : class
         {
             var cachedValue = HttpRuntime.Cache.Get(cacheKey) as T;
@@ -100,19 +149,7 @@ namespace GSoft.Dynamite.Caching
             {
                 this._logger.Info("Not found in app cache. Caching value(s) for key '{0}'", cacheKey);
                 cachedValue = func.Invoke();
-
-                if (cachedValue != null)
-                {
-                    // Add item to cache
-                    HttpRuntime.Cache.Add(
-                        cacheKey,
-                        cachedValue,
-                        null,
-                        expiration,
-                        Cache.NoSlidingExpiration,
-                        CacheItemPriority.Normal,
-                        null);
-                }
+                this.SetCacheValue(cacheKey, cachedValue, expiration);
             }
 
             return Cloner.BinaryClone(cachedValue);

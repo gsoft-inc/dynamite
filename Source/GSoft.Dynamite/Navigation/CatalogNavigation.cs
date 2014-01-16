@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Web;
+using System.Web.Caching;
+using GSoft.Dynamite.Caching.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
@@ -116,6 +118,19 @@ namespace GSoft.Dynamite.Navigation
         /// </returns>
         public Uri GetVariationPeerUrl(VariationLabel label)
         {
+            var cacheVariationLabel = new CacheVariationLabel(label);
+            return this.GetVariationPeerUrl(cacheVariationLabel);
+        }
+
+        /// <summary>
+        /// Gets the variation peer URL.
+        /// </summary>
+        /// <param name="label">The variation label (cacheable object).</param>
+        /// <returns>
+        /// The peer URL.
+        /// </returns>
+        public Uri GetVariationPeerUrl(ICacheVariationLabel label)
+        {
             var currentUrl = HttpContext.Current.Request.Url;
             switch (this.Type)
             {
@@ -128,11 +143,11 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerUrl(VariationLabel label, Uri currentUrl)
+        private Uri GetPeerUrl(ICacheVariationLabel label, Uri currentUrl)
         {
             if (currentUrl.LocalPath.StartsWith("/_layouts"))
             {
-                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl, currentUrl.PathAndQuery));
+                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), currentUrl.PathAndQuery));
             }
             else
             {
@@ -155,12 +170,12 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogCategoryUrl(Uri currentUrl, VariationLabel label)
+        private Uri GetPeerCatalogCategoryUrl(Uri currentUrl, ICacheVariationLabel label)
         {
             // Get current navigation term ID
             var termId = TaxonomyNavigationContext.Current.NavigationTerm.Id;
 
-            var labelSiteRelativeUrl = new Uri(label.TopWebUrl).AbsolutePath;
+            var labelSiteRelativeUrl = label.TopWebUrl.AbsolutePath;
             using (var labelWeb = SPContext.Current.Site.OpenWeb(labelSiteRelativeUrl))
             {
                 // Create view to return all navigation terms
@@ -194,7 +209,7 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogItemUrl(Uri currentUrl, VariationLabel label)
+        private Uri GetPeerCatalogItemUrl(Uri currentUrl, ICacheVariationLabel label)
         {
             this.ValidateProperties("GetPeerCatalogItemUrl");
 
