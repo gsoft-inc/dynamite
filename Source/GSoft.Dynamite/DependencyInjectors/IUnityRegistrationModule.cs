@@ -1,7 +1,7 @@
-﻿using Microsoft.Practices.Unity;
-
-namespace GSoft.Dynamite.Unity
+﻿namespace GSoft.Dynamite.DependencyInjectors
 {
+    using Microsoft.Practices.Unity;
+
     /// <summary>
     /// Interface for type binding modules
     /// </summary>

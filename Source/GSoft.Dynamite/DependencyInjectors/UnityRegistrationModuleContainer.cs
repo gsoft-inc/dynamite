@@ -2,6 +2,8 @@
 
 namespace GSoft.Dynamite.Unity
 {
+    using GSoft.Dynamite.DependencyInjectors;
+
     /// <summary>
     /// Modularized Unity container
     /// </summary>

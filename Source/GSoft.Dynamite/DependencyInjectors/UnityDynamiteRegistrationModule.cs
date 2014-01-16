@@ -7,6 +7,9 @@ using Microsoft.Practices.Unity;
 
 namespace GSoft.Dynamite.Unity
 {
+    using GSoft.Dynamite.DependencyInjectors;
+    using GSoft.Dynamite.TimerJobs;
+
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
@@ -88,6 +91,9 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<ContentOrganizerHelper>();
             container.RegisterType<DateHelper>();
             container.RegisterType<UserHelper>();
+
+            // Experts
+            container.RegisterType<ITimerJobExpert, TimerJobExpert>();
         }
     }
 }
