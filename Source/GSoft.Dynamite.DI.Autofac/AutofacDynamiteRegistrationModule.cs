@@ -4,14 +4,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace GSoft.Dynamite.DependencyInjectors
+namespace GSoft.Dynamite.DI.Autofac
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
-    using Autofac;
+    using global::Autofac;
 
     using GSoft.Dynamite.Binding;
     using GSoft.Dynamite.Logging;
@@ -23,7 +18,7 @@ namespace GSoft.Dynamite.DependencyInjectors
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
-    public class DynamiteRegistrationModule : Module
+    public class AutofacDynamiteRegistrationModule : Module
     {
         /// <summary>
         /// The application name
@@ -34,9 +29,9 @@ namespace GSoft.Dynamite.DependencyInjectors
         private readonly string[] defaultResourceFileNames;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DynamiteRegistrationModule"/> class.
+        /// Initializes a new instance of the <see cref="AutofacDynamiteRegistrationModule"/> class.
         /// </summary>
-        public DynamiteRegistrationModule()
+        public AutofacDynamiteRegistrationModule()
         {
             this.logCategoryName = AppName;
             this.defaultResourceFileNames = new string[] { AppName, AppName + ".News", AppName + ".ConfigurationValues", AppName + ".ReusableContent", AppName + ".Navigation", AppName + ".ProvinceToBU" };
@@ -48,7 +43,7 @@ namespace GSoft.Dynamite.DependencyInjectors
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public DynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public AutofacDynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
         {
             this.logCategoryName = logCategoryName;
             this.defaultResourceFileNames = new string[] { defaultResourceFileName };
@@ -60,7 +55,7 @@ namespace GSoft.Dynamite.DependencyInjectors
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
-        public DynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
+        public AutofacDynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
         {
             this.logCategoryName = logCategoryName;
             this.defaultResourceFileNames = defaultResourceFileNames;

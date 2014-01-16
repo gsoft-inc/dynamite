@@ -39,10 +39,6 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.1.9.747, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\Autofac.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Office.Policy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
@@ -50,12 +46,6 @@
     <Reference Include="Microsoft.Office.Server.Search, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -115,8 +105,6 @@
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
-    <Compile Include="DependencyInjectors\AutofacDynamiteRegistrationModule.cs" />
-    <Compile Include="DependencyInjectors\AutofacRegistrationModule.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
@@ -135,10 +123,6 @@
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
-    <Compile Include="DependencyInjectors\UnityDynamiteRegistrationModule.cs" />
-    <Compile Include="DependencyInjectors\IUnityRegistrationModule.cs" />
-    <Compile Include="DependencyInjectors\UnityPerRequestLifetimeManager.cs" />
-    <Compile Include="DependencyInjectors\UnityRegistrationModuleContainer.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
     <Compile Include="Utils\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />

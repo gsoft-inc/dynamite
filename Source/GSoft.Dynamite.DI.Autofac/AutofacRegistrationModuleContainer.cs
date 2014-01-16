@@ -16,7 +16,7 @@ namespace GSoft.Dynamite.DependencyInjectors
     using Autofac.Core;
 
     /// <summary>
-    /// The RegistrationModuleContainer interface.
+    /// The UnityRegistrationModuleContainer interface.
     /// </summary>
     public interface IRegistrationModuleContainer
     {
@@ -45,17 +45,17 @@ namespace GSoft.Dynamite.DependencyInjectors
     /// Modularized Autofac container
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class RegistrationModuleContainer : IRegistrationModuleContainer
+    public class AutofacRegistrationModuleContainer : IRegistrationModuleContainer
     {
         private readonly IContainer container;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RegistrationModuleContainer"/> class.
+        /// Initializes a new instance of the <see cref="AutofacRegistrationModuleContainer"/> class.
         /// </summary>
         /// <param name="container">
         /// The container.
         /// </param>
-        public RegistrationModuleContainer(IContainer container)
+        public AutofacRegistrationModuleContainer(IContainer container)
         {
             this.container = container;
         }

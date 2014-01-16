@@ -1,13 +1,14 @@
-﻿using System;
-using System.Web;
-using Microsoft.Practices.Unity;
-
-namespace GSoft.Dynamite.Unity
+﻿namespace GSoft.Dynamite.DI.Unity
 {
+    using System;
+    using System.Web;
+
+    using Microsoft.Practices.Unity;
+
     /// <summary>
     /// Pre-request lifetime manager. Only one instance of the class is used per HttpRequest.
     /// </summary>
-    public class PerRequestLifetimeManager : LifetimeManager, IDisposable
+    public class UnityPerRequestLifetimeManager : LifetimeManager, IDisposable
     {
         private readonly object key = new object();
 
