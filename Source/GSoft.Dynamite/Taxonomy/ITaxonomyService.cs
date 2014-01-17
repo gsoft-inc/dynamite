@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
@@ -86,6 +87,14 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termLabel">The default label of the term</param>
         /// <returns>The term or null if not found</returns>
         Term GetTermForLabel(SPSite site, string termSetName, string termLabel);
+
+        /// <summary>
+        /// Gets the term for identifier.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The term</returns>
+        Term GetTermForId(SPSite site, Guid id);
 
         /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store
