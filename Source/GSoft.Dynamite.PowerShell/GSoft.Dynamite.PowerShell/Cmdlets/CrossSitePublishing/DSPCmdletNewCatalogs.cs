@@ -273,13 +273,15 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 var isOpen = bool.Parse(segment.Attribute("IsOpen").Value);
                 var termSetGroupName = segment.Attribute("TermSetGroupName").Value;
                 var termSetName = segment.Attribute("TermSetName").Value;
+                var termSubsetName = segment.Attribute("TermSubsetName").Value;
              
                 // Create the column in the list
                 var taxonomyField = this._listHelper.CreateListTaxonomyField(list, internalName, displayName, description, group, isMultiple, isOpen);
 
-                // Assign the termSet to the field
-                this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, string.Empty);
-                                       
+                // Assign the termSet to the field with an anchor term if specified
+                this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, termSubsetName);
+   
+                    
                 this.WriteVerbose("TaxonomyField " + internalName + " successfully created!");
             }
         }
