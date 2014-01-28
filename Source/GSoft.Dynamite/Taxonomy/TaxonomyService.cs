@@ -6,7 +6,6 @@ using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
-
 namespace GSoft.Dynamite.Taxonomy
 {
     /// <summary>
@@ -142,6 +141,18 @@ namespace GSoft.Dynamite.Taxonomy
             TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
             return GetTermForLabelInternal(termStore, siteCollectionGroup, termSet, termLabel);
+        }
+
+        /// <summary>
+        /// Gets the term for identifier.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The term</returns>
+        public Term GetTermForId(SPSite site, Guid id)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            return session.GetTerm(id);
         }
 
         #endregion

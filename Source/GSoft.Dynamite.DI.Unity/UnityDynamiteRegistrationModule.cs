@@ -1,19 +1,21 @@
-﻿using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.Repositories;
-using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.Utils;
-using Microsoft.Practices.Unity;
-
-namespace GSoft.Dynamite.Unity
+﻿namespace GSoft.Dynamite.DI.Unity
 {
+    using GSoft.Dynamite.Binding;
+    using GSoft.Dynamite.Logging;
+    using GSoft.Dynamite.Repositories;
+    using GSoft.Dynamite.Taxonomy;
+    using GSoft.Dynamite.TimerJobs;
+    using GSoft.Dynamite.Utils;
+
+    using Microsoft.Practices.Unity;
+
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
-    public class DynamiteRegistrationModule : IRegistrationModule
+    public class UnityDynamiteUnityIRegistrationModule : UnityIRegistrationModule
     {
-        private readonly string _logCategoryName;
-        private readonly string[] _defaultResourceFileNames;
+        private readonly string logCategoryName;
+        private readonly string[] defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
@@ -21,10 +23,10 @@ namespace GSoft.Dynamite.Unity
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public DynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public UnityDynamiteUnityIRegistrationModule(string logCategoryName, string defaultResourceFileName)
         {
-            this._logCategoryName = logCategoryName;
-            this._defaultResourceFileNames = new string[] { defaultResourceFileName };
+            this.logCategoryName = logCategoryName;
+            this.defaultResourceFileNames = new string[] { defaultResourceFileName };
         }
 
         /// <summary>
@@ -33,10 +35,10 @@ namespace GSoft.Dynamite.Unity
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
-        public DynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
+        public UnityDynamiteUnityIRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
         {
-            this._logCategoryName = logCategoryName;
-            this._defaultResourceFileNames = defaultResourceFileNames;
+            this.logCategoryName = logCategoryName;
+            this.defaultResourceFileNames = defaultResourceFileNames;
         }
 
         /// <summary>
@@ -47,11 +49,11 @@ namespace GSoft.Dynamite.Unity
         {
 #if DEBUG
             // Logger with debug output
-            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, true);
+            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, true);
             container.RegisterInstance<ILogger>(logger);
 #else
             // Logger without debug output
-            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, false);
+            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);
             container.RegisterInstance<ILogger>(logger);
 #endif
 
@@ -70,7 +72,7 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<ListLocator>();
 
             // Utilities
-            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileNames));
+            container.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
 
             container.RegisterType<ContentTypeHelper>();
             container.RegisterType<EventReceiverHelper>();
@@ -85,6 +87,12 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<RegionalSettingsHelper>();
             container.RegisterType<CustomActionHelper>();
             container.RegisterType<WebConfigModificationHelper>();
+            container.RegisterType<ContentOrganizerHelper>();
+            container.RegisterType<DateHelper>();
+            container.RegisterType<UserHelper>();
+
+            // Experts
+            container.RegisterType<ITimerJobExpert, TimerJobExpert>();
         }
     }
 }

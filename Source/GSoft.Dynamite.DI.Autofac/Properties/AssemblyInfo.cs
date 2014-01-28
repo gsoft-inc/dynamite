@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GSoft.Dynamite")]
+[assembly: AssemblyTitle("GSoft.Dynamite.DI.Autofac")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GSoft.Dynamite")]
-[assembly: AssemblyCopyright("Copyright © GSoft 2013")]
+[assembly: AssemblyProduct("GSoft.Dynamite.DI.Autofac")]
+[assembly: AssemblyCopyright("Copyright ©  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,4 +20,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d377829a-3b91-4ac9-8569-694ee8f48fb7")]
+[assembly: Guid("fd412db1-caea-499d-8280-88ccf5c5c19a")]

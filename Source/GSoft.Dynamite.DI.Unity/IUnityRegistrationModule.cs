@@ -1,11 +1,11 @@
-﻿using Microsoft.Practices.Unity;
-
-namespace GSoft.Dynamite.Unity
+﻿namespace GSoft.Dynamite.DI.Unity
 {
+    using Microsoft.Practices.Unity;
+
     /// <summary>
     /// Interface for type binding modules
     /// </summary>
-    public interface IRegistrationModule
+    public interface UnityIRegistrationModule
     {
         /// <summary>
         /// Registers the module's type bindings on the container

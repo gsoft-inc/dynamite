@@ -39,15 +39,13 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Policy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Server.Search, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation">
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity">
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -70,6 +68,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
     <Compile Include="Binding\Converters\ImageValueConverter.cs" />
@@ -124,14 +125,13 @@
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Unity\DynamiteRegistrationModule.cs" />
-    <Compile Include="Unity\IRegistrationModule.cs" />
-    <Compile Include="Unity\PerRequestLifetimeManager.cs" />
-    <Compile Include="Unity\RegistrationModuleContainer.cs" />
+    <Compile Include="TimerJobs\TimerJobExpert.cs" />
+    <Compile Include="Utils\ContentOrganizerHelper.cs" />
     <Compile Include="Utils\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
+    <Compile Include="Utils\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Utils\FieldHelper.cs" />
@@ -146,6 +146,7 @@
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\Unsafe.cs" />
+    <Compile Include="Utils\UserHelper.cs" />
     <Compile Include="Utils\WebConfigModificationHelper.cs" />
     <Compile Include="Utils\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

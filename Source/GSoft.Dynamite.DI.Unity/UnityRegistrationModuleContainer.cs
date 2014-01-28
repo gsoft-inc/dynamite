@@ -1,16 +1,16 @@
-﻿using Microsoft.Practices.Unity;
-
-namespace GSoft.Dynamite.Unity
+﻿namespace GSoft.Dynamite.DI.Unity
 {
+    using Microsoft.Practices.Unity;
+
     /// <summary>
     /// Modularized Unity container
     /// </summary>
-    public class RegistrationModuleContainer : UnityContainer
+    public class UnityRegistrationModuleContainer : UnityContainer
     {
         /// <summary>
         /// Creates an empty registration module container
         /// </summary>
-        public RegistrationModuleContainer() : base()
+        public UnityRegistrationModuleContainer() : base()
         {
         }
 
@@ -19,10 +19,10 @@ namespace GSoft.Dynamite.Unity
         /// of the input modules
         /// </summary>
         /// <param name="modules">Type binding modules for the application</param>
-        public RegistrationModuleContainer(params IRegistrationModule[] modules)
+        public UnityRegistrationModuleContainer(params UnityIRegistrationModule[] modules)
             : this()
         {
-            foreach (IRegistrationModule module in modules)
+            foreach (UnityIRegistrationModule module in modules)
             {
                 module.Register(this);
             }            
