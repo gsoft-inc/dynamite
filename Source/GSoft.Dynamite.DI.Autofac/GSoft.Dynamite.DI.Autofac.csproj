@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="AutofacRegistrationModuleContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

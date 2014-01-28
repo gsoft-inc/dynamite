@@ -53,7 +53,7 @@
             container.RegisterInstance<ILogger>(logger);
 #else
             // Logger without debug output
-            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, false);
+            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);
             container.RegisterInstance<ILogger>(logger);
 #endif
 
