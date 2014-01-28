@@ -65,7 +65,7 @@ namespace GSoft.Dynamite.Schemas
         /// <returns>A string that represents the XML schema.</returns>
         public override string ToString()
         {
-            return this.FieldSchema.ToString();
+            return this.ToXElement().ToString();
         }
     }
 }
