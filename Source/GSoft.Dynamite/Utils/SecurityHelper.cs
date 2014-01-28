@@ -230,7 +230,7 @@ namespace GSoft.Dynamite.Utils
                 return false;
             }
 
-            return SPContext.Current.ListItem == null ||
+            return SPContext.Current.ListItem != null &&
                 SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems);
         }
 
