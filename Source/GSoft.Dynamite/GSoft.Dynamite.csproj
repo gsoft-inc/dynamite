@@ -122,6 +122,7 @@
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
+    <Compile Include="Utils\DisabledItemEventsScope.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Utils\FieldHelper.cs" />
     <Compile Include="Utils\FieldInfo.cs" />
