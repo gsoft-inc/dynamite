@@ -6,6 +6,7 @@ using System.Threading;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using System.Reflection;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -255,6 +256,31 @@ namespace GSoft.Dynamite.Utils
             var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
 
             return field;
+        }
+
+
+        /// <summary>
+        /// Enable or disable ratings on a SPList
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="ratingType">The rating type. Can be "Likes" or "Ratings" </param>
+        /// <param name="ratingStatus">True to enable. False to disable.</param>
+        public void SetRatings(SPList list, string ratingType, bool ratingStatus)
+        {
+            Assembly assembly = Assembly.Load("Microsoft.SharePoint.Portal, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
+            Type reputationHelper = assembly.GetType("Microsoft.SharePoint.Portal.ReputationHelper");
+
+            MethodInfo enableMethod = reputationHelper.GetMethod("EnableReputation", BindingFlags.Static | BindingFlags.NonPublic);
+            MethodInfo disableMethod = reputationHelper.GetMethod("DisableReputation", BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (ratingStatus && !string.IsNullOrEmpty(ratingType))
+            {
+                enableMethod.Invoke(null, new Object[] { list, ratingType, false });
+            }
+            else
+            {
+                disableMethod.Invoke(null, new Object[] { list });
+            }
         }
     }
 }

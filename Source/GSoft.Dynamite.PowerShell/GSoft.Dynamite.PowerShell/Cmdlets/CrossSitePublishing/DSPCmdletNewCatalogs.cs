@@ -71,6 +71,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                     foreach (var catalogNode in catalogNodes)
                     {
+                        
                         var catalogUrl = catalogNode.Attribute("RootFolderUrl").Value;
                         var catalogName = catalogNode.Attribute("DisplayName").Value;
                         var catalogDescription = catalogNode.Attribute("Description").Value;
@@ -80,6 +81,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
                         var overwrite = bool.Parse(catalogNode.Attribute("Overwrite").Value);
                         var removeDefaultContentType = bool.Parse(catalogNode.Attribute("RemoveDefaultContentType").Value);
+
+                        var enableRatings = bool.Parse(catalogNode.Attribute("EnableRatings").Value);
+                        string ratingType = string.Empty;
+                        if(enableRatings)
+                        {
+                            ratingType = catalogNode.Attribute("RatingType").Value;
+                        }
+
 
                         // Get content types
                         var contentTypes = from contentType in catalogNode.Descendants("ContentTypes").Descendants("ContentType")
@@ -171,6 +180,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                             // Set the list as catalog with navigation term
                             this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
                         }
+
+                        // Enable ratings
+                        this.WriteWarning("Set '" + ratingType + "' ratings for " + catalogName + " to " + enableRatings.ToString());
+                        this._listHelper.SetRatings(list, ratingType, enableRatings);
 
                         // Write object to the pipeline
                         this.WriteObject(catalog, true);
