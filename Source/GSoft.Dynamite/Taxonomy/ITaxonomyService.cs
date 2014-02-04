@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using System;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -142,9 +142,12 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from source term to root term in the term set
         /// </summary>
         /// <param name="site">The current site collection.</param>
-        /// <param name="termSetId">Ther term set id.</param>
+        /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
-        /// <returns>List of terms.</returns>
-        IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId);
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false);
     }
 }

@@ -219,6 +219,49 @@ namespace GSoft.Dynamite.Taxonomy
             return GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
+        /// <summary>
+        /// Get all parent terms from a source term to root term in the term set.
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        public IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        {
+            IList<Term> termHierarchy = new List<Term>();
+
+            var session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            // Always interact with the term sets in the term store's default language
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            var rootTermReached = false;
+
+            // Get the original term
+            var term = termStore.GetTerm(termSetId, termId);
+
+            while (term != null && !rootTermReached)
+            {
+                termHierarchy.Add(term);
+                if (term.Parent != null)
+                {
+                    term = termStore.GetTerm(termSetId, term.Parent.Id);
+                }
+                else
+                {
+                    rootTermReached = true;
+                }
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+            return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
+        }
+
         private static TaxonomyValue GetTaxonomyValue(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
             Term term = GetTerm(termStore, termStoreGroupName, termSetName, termLabel);
@@ -386,44 +429,6 @@ namespace GSoft.Dynamite.Taxonomy
             }
 
             return termsList;
-        }
-
-        /// <summary>
-        /// Get all parent terms from source term to root term in the term set
-        /// </summary>
-        /// <param name="site">The current site collection.</param>
-        /// <param name="termSetId">Ther term set id.</param>
-        /// <param name="termId">The term.</param>
-        /// <returns>List of terms.</returns>
-        public IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId)
-        {
-            IList<Term> termHierarchy = new List<Term>();
-
-            var session = new TaxonomySession(site);
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
-
-            // Always interact with the term sets in the term store's default language
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = termStore.DefaultLanguage;
-
-            var rootTermReached = false;
-
-            // Get the original term
-            var term = termStore.GetTerm(termSetId, termId);
-
-            while (term != null && !rootTermReached)
-            {
-                termHierarchy.Add(term);
-                term = termStore.GetTerm(termSetId, term.Parent.Id);
-
-                if (term.Parent == null)
-                {
-                    rootTermReached = true;
-                    termHierarchy.Add(term);
-                }
-            }
-
-            return termHierarchy;
         }
     }
 }

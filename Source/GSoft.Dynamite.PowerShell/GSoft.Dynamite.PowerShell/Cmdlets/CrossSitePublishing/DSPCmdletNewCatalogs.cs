@@ -280,8 +280,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                 // Assign the termSet to the field with an anchor term if specified
                 this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, termSubsetName);
-   
-                    
                 this.WriteVerbose("TaxonomyField " + internalName + " successfully created!");
             }
         }
