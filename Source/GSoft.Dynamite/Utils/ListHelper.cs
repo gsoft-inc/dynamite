@@ -196,7 +196,7 @@ namespace GSoft.Dynamite.Utils
 
                 // Get the new field - Be careful, return the display name    
                 var field = list.Fields.GetFieldByInternalName(fieldInternalName);
-                field.Title = genericField.FieldDisplayName;
+                field.Title = fieldDisplayName;
                 field.Description = fieldDescription;
                 field.Update(true);
 
@@ -238,7 +238,7 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
-        /// Create a text field
+        /// Create a text field in the list
         /// </summary>
         /// <param name="list">The list.</param>
         /// <param name="fieldInternalName">The Field internal name.</param>
@@ -253,6 +253,27 @@ namespace GSoft.Dynamite.Utils
         {
             // Create the schema 
             var textFieldSchema = new TextFieldSchema { IsMultiLine = false };
+            var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
+
+            return field;
+        }
+
+        /// <summary>
+        /// Create a guid field in the list
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="fieldInternalName">The Field internal name.</param>
+        /// <param name="fieldDisplayName">The field display name.</param>
+        /// <param name="fieldDescription">The field description.</param>
+        /// <param name="fieldGroup">The field group.</param>
+        /// <param name="isMultiLines">if set to <c>true</c> [is multi lines].</param>
+        /// <returns>
+        /// The newly created field.
+        /// </returns>
+        public SPField CreateGuidField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
+        {
+            // Create the schema 
+            var textFieldSchema = new GuidFieldSchema();
             var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
 
             return field;

@@ -138,6 +138,7 @@
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
     <Compile Include="Schemas\GenericFieldSchema.cs" />
+    <Compile Include="Schemas\GuidFieldSchema.cs" />
     <Compile Include="Schemas\TaxonomyFieldSchema.cs" />
     <Compile Include="Schemas\TextFieldSchema.cs" />
     <Compile Include="SPUrl.cs" />
