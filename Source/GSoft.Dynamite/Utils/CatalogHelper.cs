@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Logging;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -13,6 +14,17 @@ namespace GSoft.Dynamite.Utils
     /// </summary>
     public class CatalogHelper
     {
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// Default constructor with dependency injection
+        /// </summary>
+        /// <param name="logger">The logger</param>
+        public CatalogHelper(ILogger logger)
+        {
+            this._logger = logger;
+        }
+
         /// <summary>
         /// Set a SharePoint as a product catalog without navigation term associated
         /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
@@ -22,6 +34,8 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The SharePoint list configured as a catalog.</returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields)
         {
+            this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
+
             // Add properties for catalog publishing on the root folder
             list.IndexedRootFolderPropertyKeys.Add("PublishingCatalogSettings");
             list.IndexedRootFolderPropertyKeys.Add("IsPublishingCatalog");
@@ -66,6 +80,8 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The SharePoint list configured as a catalog.</returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap)
         {
+            this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
+
             var catalogList = this.SetListAsCatalog(list, availableFields);
             var rootFolder = catalogList.RootFolder;
 

@@ -11,12 +11,24 @@ using Microsoft.SharePoint.Publishing;
 namespace GSoft.Dynamite.Utils
 {
     using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Logging;
 
     /// <summary>
     /// Variations helper class.
     /// </summary>
     public class VariationsHelper
     {
+        private readonly ILogger _logger;
+
+        /// <summary>
+        /// Default constructor with dependency injection
+        /// </summary>
+        /// <param name="logger">The logger</param>
+        public VariationsHelper(ILogger logger)
+        {
+            this._logger = logger;
+        }
+
         /// <summary>
         /// Determines whether [the specified web] [is current web source label].
         /// </summary>
@@ -44,6 +56,8 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public ReadOnlyCollection<VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
+            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
+
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(web.ServerRelativeUrl + "/Variation Labels/Allitems.aspx");
             var list = new List<VariationLabel>();
@@ -73,6 +87,8 @@ namespace GSoft.Dynamite.Utils
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public void SyncList(SPList listToSync, string labelToSync)
         {
+            this._logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
+
             var sourceWeb = listToSync.ParentWeb;
             Guid sourceListGuid = listToSync.ID;
 
@@ -133,6 +149,8 @@ namespace GSoft.Dynamite.Utils
         /// <param name="labelToSync">Source label to sync</param>
         public void SyncWeb(SPWeb web, string labelToSync)
         {
+            this._logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
+
             var publishingAssembly = Assembly.LoadFrom("C:\\Program Files\\Common Files\\Microsoft Shared\\Web Server Extensions\\15\\ISAPI\\Microsoft.SharePoint.Publishing.dll");
             var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
             var cachedVariationSettings = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.CachedVariationSettings");
