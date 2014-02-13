@@ -2,11 +2,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using System.Reflection;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -259,14 +259,13 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
-        /// Create a guid field in the list
+        /// Create a GUID field in the list
         /// </summary>
         /// <param name="list">The list.</param>
         /// <param name="fieldInternalName">The Field internal name.</param>
         /// <param name="fieldDisplayName">The field display name.</param>
         /// <param name="fieldDescription">The field description.</param>
         /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiLines">if set to <c>true</c> [is multi lines].</param>
         /// <returns>
         /// The newly created field.
         /// </returns>
@@ -278,7 +277,6 @@ namespace GSoft.Dynamite.Utils
 
             return field;
         }
-
 
         /// <summary>
         /// Enable or disable ratings on a SPList
@@ -296,11 +294,11 @@ namespace GSoft.Dynamite.Utils
 
             if (ratingStatus && !string.IsNullOrEmpty(ratingType))
             {
-                enableMethod.Invoke(null, new Object[] { list, ratingType, false });
+                enableMethod.Invoke(null, new object[] { list, ratingType, false });
             }
             else
             {
-                disableMethod.Invoke(null, new Object[] { list });
+                disableMethod.Invoke(null, new object[] { list });
             }
         }
     }

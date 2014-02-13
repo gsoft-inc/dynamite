@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using GSoft.Dynamite.Logging;
 
 namespace GSoft.Dynamite.Utils
 {

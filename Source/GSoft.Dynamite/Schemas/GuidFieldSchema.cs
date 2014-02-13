@@ -7,6 +7,9 @@ using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Schemas
 {
+    /// <summary>
+    /// Represents a GUID field schema
+    /// </summary>
     public class GuidFieldSchema : GenericFieldSchema
     {
         /// <summary>

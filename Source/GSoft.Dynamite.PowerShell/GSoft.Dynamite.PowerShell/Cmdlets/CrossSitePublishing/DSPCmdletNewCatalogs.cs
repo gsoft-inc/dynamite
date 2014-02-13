@@ -70,8 +70,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     var catalogNodes = from catalogNode in webNode.Descendants("Catalog") select catalogNode;
 
                     foreach (var catalogNode in catalogNodes)
-                    {
-                        
+                    {                        
                         var catalogUrl = catalogNode.Attribute("RootFolderUrl").Value;
                         var catalogName = catalogNode.Attribute("DisplayName").Value;
                         var catalogDescription = catalogNode.Attribute("Description").Value;
@@ -84,11 +83,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         var enableRatings = bool.Parse(catalogNode.Attribute("EnableRatings").Value);
                         string ratingType = string.Empty;
-                        if(enableRatings)
+                        if (enableRatings)
                         {
                             ratingType = catalogNode.Attribute("RatingType").Value;
                         }
-
 
                         // Get content types
                         var contentTypes = from contentType in catalogNode.Descendants("ContentTypes").Descendants("ContentType")
