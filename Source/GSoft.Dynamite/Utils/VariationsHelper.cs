@@ -7,6 +7,7 @@ using System.Web;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Publishing;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -59,7 +60,7 @@ using GSoft.Dynamite.Logging;
             this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
 
             var web = site.RootWeb;
-            var variationLabelsList = web.GetList(web.ServerRelativeUrl + "/Variation Labels/Allitems.aspx");
+            var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
             var list = new List<VariationLabel>();
             var query = new SPQuery
             {
