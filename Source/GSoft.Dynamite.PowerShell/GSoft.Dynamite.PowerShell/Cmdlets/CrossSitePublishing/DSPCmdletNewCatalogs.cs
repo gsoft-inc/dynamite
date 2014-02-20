@@ -55,6 +55,27 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             var xml = this.InputFile.Read();
             this._configurationFile = xml.ToXDocument();
 
+            this.ProcessCatalogs(this._configurationFile);
+  
+            base.EndProcessing();
+            
+        }
+
+        /// <summary>
+        /// Resolve Dependencies for helpers
+        /// </summary>
+        private void ResolveDependencies()
+        {
+            this._listHelper = PowerShellContainer.Current.Resolve<ListHelper>();
+            this._catalogHelper = PowerShellContainer.Current.Resolve<CatalogHelper>();
+            this._taxonomyHelper = PowerShellContainer.Current.Resolve<TaxonomyHelper>();
+        }
+
+        /// <summary>
+        /// Catalog creation logic
+        /// </summary>
+        private void ProcessCatalogs(XDocument configFile)
+        {
             // Get all webs nodes
             var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
 
@@ -112,6 +133,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var defaultsTextFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TextField")
                                                 select defaultValue;
 
+                        // Get Fields Display settings
+                        var fieldDisplay = from field in catalogNode.Descendants("Display").Descendants("Field")
+                                            select field;
+
                         // Set current culture to be able to set the "Title" of the list
                         Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
@@ -159,6 +184,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         // Set default values for Text Fields
                         this.SetTextFieldDefaults(defaultsTextFields, list);
 
+                        // Set Display Settings
+                        this.SetDisplaySettings(fieldDisplay, list);
+
                         // Set versioning settings
                         if (!string.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
                         {
@@ -188,19 +216,39 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     }   
                 }
             }
-
-            base.EndProcessing();
         }
 
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
+        private void SetDisplaySettings(IEnumerable<XElement> fieldCollection, SPList list)
         {
-            this._listHelper = PowerShellContainer.Current.Resolve<ListHelper>();
-            this._catalogHelper = PowerShellContainer.Current.Resolve<CatalogHelper>();
-            this._taxonomyHelper = PowerShellContainer.Current.Resolve<TaxonomyHelper>();
+             // Add segments to the list
+            foreach (XElement field in fieldCollection)
+            {
+                var internalName = field.Attribute("InternalName").Value;
+                var showInDisplayForm = string.IsNullOrEmpty(field.Attribute("ShowInDisplayForm").Value) ? true :  bool.Parse(field.Attribute("ShowInDisplayForm").Value);
+                var showInEditForm = string.IsNullOrEmpty(field.Attribute("ShowInEditForm").Value) ? true :  bool.Parse(field.Attribute("ShowInEditForm").Value);
+                var showInListSettings = string.IsNullOrEmpty(field.Attribute("ShowInListSettings").Value) ? true :  bool.Parse(field.Attribute("ShowInListSettings").Value);
+                var showInNewForm = string.IsNullOrEmpty(field.Attribute("ShowInNewForm").Value) ? true :  bool.Parse(field.Attribute("ShowInNewForm").Value);
+                var showInVersionHistory = string.IsNullOrEmpty(field.Attribute("ShowInVersionHistory").Value) ? true :  bool.Parse(field.Attribute("ShowInVersionHistory").Value);
+                var showInViewForms =string.IsNullOrEmpty(field.Attribute("ShowInVersionHistory").Value) ? true :  bool.Parse(field.Attribute("ShowInVersionHistory").Value);
+             
+                var listfield = list.Fields.GetFieldByInternalName(internalName);
+                if (listfield != null)
+                {
+                    listfield.ShowInDisplayForm = showInDisplayForm;
+                    listfield.ShowInDisplayForm = showInEditForm;
+                    listfield.ShowInDisplayForm = showInListSettings;
+                    listfield.ShowInDisplayForm = showInNewForm;
+                    listfield.ShowInDisplayForm = showInVersionHistory;
+                    listfield.ShowInDisplayForm = showInViewForms;
+
+                    listfield.Update();
+                }
+            }
+
+            list.Update();
         }
+
 
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
         private SPList EnsureList(SPWeb web, string listUrl, string displayName, string listDescription, SPListTemplate listTemplate)
