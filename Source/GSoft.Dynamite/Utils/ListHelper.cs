@@ -300,6 +300,8 @@ namespace GSoft.Dynamite.Utils
             {
                 disableMethod.Invoke(null, new object[] { list });
             }
+
+            list.Update();
         }
     }
 }
