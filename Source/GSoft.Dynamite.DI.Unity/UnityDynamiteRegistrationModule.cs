@@ -8,6 +8,7 @@
     using GSoft.Dynamite.Utils;
 
     using Microsoft.Practices.Unity;
+    using GSoft.Dynamite.Binding.Converters;
 
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
@@ -59,8 +60,13 @@
 
             // Binding
             var builder = new EntitySchemaBuilder<SharePointEntitySchema>();
-            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(builder, logger));
-            container.RegisterInstance<ISharePointEntityBinder>(binder);
+            var cachedBuilder = new CachedSchemaBuilder(builder, logger);
+            container.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
+            container.RegisterType<TaxonomyValueConverter>();
+            container.RegisterType<TaxonomyValueCollectionConverter>();
+
+            // Singleton entity binder
+            container.RegisterType<ISharePointEntityBinder, SharePointEntityBinder>(new ContainerControlledLifetimeManager());
 
             // Taxonomy
             container.RegisterType<ITaxonomyService, TaxonomyService>();

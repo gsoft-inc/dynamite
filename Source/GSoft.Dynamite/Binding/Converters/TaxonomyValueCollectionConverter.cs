@@ -1,6 +1,10 @@
 ﻿using System.Linq;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Taxonomy;
+using Microsoft.SharePoint;
+using System;
+using System.Collections.Generic;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
@@ -9,6 +13,17 @@ namespace GSoft.Dynamite.Binding.Converters
     /// </summary>
     public class TaxonomyValueCollectionConverter : SharePointListItemValueConverter
     {
+        ITaxonomyService taxonomyService;
+
+        /// <summary>
+        /// Converter constructor with dependency injection
+        /// </summary>
+        /// <param name="taxonomyService">Taxonomy service utility</param>
+        public TaxonomyValueCollectionConverter(ITaxonomyService taxonomyService)
+        {
+            this.taxonomyService = taxonomyService;
+        }
+
         #region IConverter Members
 
         /// <summary>
@@ -21,17 +36,50 @@ namespace GSoft.Dynamite.Binding.Converters
         /// </returns>
         public override object Convert(object value, SharePointListItemConversionArguments arguments)
         {
-            var taxonomyValues = value as TaxonomyFieldValueCollection;
-            if (taxonomyValues == null)
+            TaxonomyValueCollection convertedValues = null;
+
+            var taxonomyFieldValueCollection = value as TaxonomyFieldValueCollection;
+            if (taxonomyFieldValueCollection == null)
             {
                 var stringValue = value as string;
                 if (!string.IsNullOrEmpty(stringValue))
                 {
-                    taxonomyValues = new TaxonomyFieldValueCollection(stringValue);
+                    taxonomyFieldValueCollection = new TaxonomyFieldValueCollection(stringValue);
                 }
             }
 
-            return taxonomyValues != null ? new TaxonomyValueCollection(taxonomyValues) : null;
+            if (taxonomyFieldValueCollection != null)
+            {
+                if (SPContext.Current != null)
+                {
+                    // Resolve the Term from the term store, because we want all Labels and we want to
+                    // create the TaxonomyValue object with a label in the correct LCID (we want one with
+                    // LCID = CurrentUICUlture.LCID
+                    var underLyingTerms = new List<Term>();
+                    foreach (TaxonomyFieldValue taxonomyFieldValue in taxonomyFieldValueCollection)
+                    {
+                        if (!string.IsNullOrEmpty(taxonomyFieldValue.TermGuid))
+                        {
+                            var foundTerm = this.taxonomyService.GetTermForId(SPContext.Current.Site, new Guid(taxonomyFieldValue.TermGuid));
+
+                            if (foundTerm != null)
+                            {
+                                underLyingTerms.Add(foundTerm);
+                            }
+                        }
+                    }
+
+                    convertedValues = new TaxonomyValueCollection(underLyingTerms);
+                }
+                else
+                {
+                    // We don't have access to a SPContext (needed to use the TaxonomyService), so we need to 
+                    // fall back on the non-UICulture-respecting TaxonomyValueCollection constructor
+                    convertedValues = new TaxonomyValueCollection(taxonomyFieldValueCollection);
+                }
+            }
+
+            return convertedValues;
         }
 
         /// <summary>

@@ -14,6 +14,7 @@ namespace GSoft.Dynamite.DI.Autofac
     using GSoft.Dynamite.Taxonomy;
     using GSoft.Dynamite.TimerJobs;
     using GSoft.Dynamite.Utils;
+    using GSoft.Dynamite.Binding.Converters;
 
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
@@ -81,8 +82,13 @@ namespace GSoft.Dynamite.DI.Autofac
 
             // Binding
             var entitySchemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
-            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(entitySchemaBuilder, logger));
-            builder.RegisterInstance<ISharePointEntityBinder>(binder);
+            var cachedBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
+            builder.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
+            builder.RegisterType<TaxonomyValueConverter>();
+            builder.RegisterType<TaxonomyValueCollectionConverter>();
+
+            // Singleton entity binder
+            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();
 
             // Taxonomy
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();

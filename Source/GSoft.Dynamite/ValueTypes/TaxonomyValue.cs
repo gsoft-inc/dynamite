@@ -22,6 +22,7 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
+        /// <remarks>This constructor will not ensure the label respect the CurrentUICulture</remarks>
         /// <param name="taxonomyValue">The taxonomy value.</param>
         public TaxonomyValue(TaxonomyFieldValue taxonomyValue)
         {
@@ -55,7 +56,17 @@ namespace GSoft.Dynamite.ValueTypes
             this.Id = term.Id;
 
             // Respect the current user's MUI language selection
-            this.Label = term.GetDefaultLabel(CultureInfo.CurrentUICulture.LCID);
+            string currentUiLabel = term.GetDefaultLabel(CultureInfo.CurrentUICulture.LCID);
+
+            if (!string.IsNullOrEmpty(currentUiLabel))
+            {
+                this.Label = currentUiLabel;
+            }
+            else if (term.Labels.Count > 0)
+            {
+                // if no label exists in the current UI language, just fall back on the first of the bunch 
+                this.Label = term.Labels[0].Value;
+            }
             
             this.CustomSortPosition = GetCustomSortOrderFromParent(term);
         }

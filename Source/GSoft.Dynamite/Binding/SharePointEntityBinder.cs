@@ -18,6 +18,9 @@ namespace GSoft.Dynamite.Binding
 
         private readonly IEntitySchemaBuilder _entitySchemaBuilder;
 
+        private readonly TaxonomyValueConverter _taxonomyValueConverter;
+        private readonly TaxonomyValueCollectionConverter _taxonomyValueCollectionConverter;
+
         #endregion
 
         #region Constructors
@@ -25,20 +28,15 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
         /// </summary>
-        public SharePointEntityBinder()
-            : this(new EntitySchemaBuilder<SharePointEntitySchema>())
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
-        /// </summary>
         /// <param name="entitySchemaBuilder">The entity schema builder.</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "The types must be registred in the constructor.")]
-        public SharePointEntityBinder(IEntitySchemaBuilder entitySchemaBuilder)
+        public SharePointEntityBinder(IEntitySchemaBuilder entitySchemaBuilder, TaxonomyValueConverter taxonomyValueConverter, TaxonomyValueCollectionConverter taxonomyValueCollectionConverter)
         {
             this._entitySchemaBuilder = entitySchemaBuilder;
             this._entityBinder = new EntityBinder(entitySchemaBuilder);
+
+            this._taxonomyValueConverter = taxonomyValueConverter;
+            this._taxonomyValueCollectionConverter = taxonomyValueCollectionConverter;
 
             this.RegisterTypeConverters();
         }
@@ -119,8 +117,8 @@ namespace GSoft.Dynamite.Binding
             this._entitySchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this._entitySchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
             this._entitySchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), new TaxonomyValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), new TaxonomyValueCollectionConverter());
+            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this._taxonomyValueConverter);
+            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this._taxonomyValueCollectionConverter);
             this._entitySchemaBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
         }
 
