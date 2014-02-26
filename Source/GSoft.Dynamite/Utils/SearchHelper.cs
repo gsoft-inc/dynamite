@@ -109,17 +109,17 @@ namespace GSoft.Dynamite.Utils
         /// Gets the result source by name using the default application name:'Search Service Application'.
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="application">The application.</param>
+        /// <param name="site">The site collection.</param>
         /// <param name="owner">The owner.</param>
         /// <returns>
         /// The corresponding result source.
         /// </returns>
-        public SourceRecord GetResultSourceByName(string resultSourceName, SearchServiceApplication application, SearchObjectLevel owner)
+        public SourceRecord GetResultSourceByName(string resultSourceName, SPSite site, SearchObjectLevel owner)
         {
-            var settingsProxy = SPFarm.Local.ServiceProxies.GetValue<SearchQueryAndSiteSettingsServiceProxy>();
-            var searchProxy =
-                settingsProxy.ApplicationProxies.GetValue<SearchServiceApplicationProxy>(application.Name);
             var serviceApplicationOwner = new SearchObjectOwner(owner);
+
+            var context = SPServiceContext.GetContext(site);
+            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
 
             return searchProxy.GetResultSourceByName(resultSourceName, serviceApplicationOwner);
         }

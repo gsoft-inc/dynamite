@@ -215,8 +215,7 @@ namespace GSoft.Dynamite.Navigation
 
             var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title), UriKind.Relative);
 
-            var searchApplication = this._searchHelper.GetDefaultSearchServiceApplication(SPContext.Current.Site);
-            var searchResultSource = this._searchHelper.GetResultSourceByName(LocalSharePointResultsSourceName, searchApplication, SearchObjectLevel.Ssa);
+            var searchResultSource = this._searchHelper.GetResultSourceByName(LocalSharePointResultsSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
 
             var labelLocalAgnosticLanguage = label.Language.Split('-').First();
             var query = new KeywordQuery(SPContext.Current.Web)
