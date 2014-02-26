@@ -40,10 +40,10 @@ namespace GSoft.Dynamite.Utils
         public string GenerateWebPartHtml(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart)
         {
             Guid storageKey = this.AddWebPartToZone(item, webPart, "wpz", 0);
-            string richContentEmbed = @"<div class='ms-rtestate-read ms-rte-wpbox'>
-                      <div class='ms-rtestate-notify ms-rtestate-read {0}' id='div_{0}'></div>
-                      <div id='vid_{0}' style='display:none'></div>
-                  </div>";
+            string richContentEmbed = "<div class=\"ms-rtestate-read ms-rte-wpbox\" contenteditable=\"false\">" +
+                      "<div class=\"ms-rtestate-notify ms-rtestate-read {0}\" id=\"div_{0}\"></div>" +
+                      "<div id=\"vid_{0}\" style=\"display:none\"></div>" +
+                  "</div>";
 
             return string.Format(CultureInfo.InvariantCulture, richContentEmbed, storageKey.ToString());
         }

@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Microsoft.SharePoint;
+using System.IO;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Utils
 {
@@ -193,31 +195,44 @@ namespace GSoft.Dynamite.Utils
                  select list).FirstOrDefault();
         }
 
-        private SPList TryGetList(SPWeb web, string nameOrResourceString)
+        private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
             // first try finding the list by name, simple
-            var list = web.Lists.TryGetList(nameOrResourceString);
+            var list = web.Lists.TryGetList(titleOrUrlOrResourceString);
 
             if (list == null)
             {
-                // then, try to handle the name as a resource key string
-                string[] resourceStringSplit = nameOrResourceString.Split(',');
-                string nameFromResourceString = string.Empty;
-
-                if (resourceStringSplit.Length > 1)
+                try
                 {
-                    // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
-                    nameFromResourceString = this._resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
+                    // second, try to find the list by its web-relative URL
+                    list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, titleOrUrlOrResourceString));
                 }
-                else
+                catch (FileNotFoundException)
                 {
-                    // let's try to find a resource with that string directly as key
-                    nameFromResourceString = this._resourceLocator.Find(nameOrResourceString, web.UICulture.LCID);
-                }                    
-                    
-                if (!string.IsNullOrEmpty(nameFromResourceString))
+                    // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                }
+
+                if (list == null)
                 {
-                    list = web.Lists.TryGetList(nameFromResourceString);
+                    // finally, try to handle the name as a resource key string
+                    string[] resourceStringSplit = titleOrUrlOrResourceString.Split(',');
+                    string nameFromResourceString = string.Empty;
+
+                    if (resourceStringSplit.Length > 1)
+                    {
+                        // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
+                        nameFromResourceString = this._resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
+                    }
+                    else
+                    {
+                        // let's try to find a resource with that string directly as key
+                        nameFromResourceString = this._resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
+                    }
+
+                    if (!string.IsNullOrEmpty(nameFromResourceString))
+                    {
+                        list = web.Lists.TryGetList(nameFromResourceString);
+                    }
                 }
             }
 
