@@ -50,8 +50,39 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 TaxonomySession session = new TaxonomySession(web.Site);
                 TermStore termStore = session.TermStores[termStoreName];
-                TaxonomyField field = (TaxonomyField)web.Fields[fieldId];
-                AssignTermSetToSiteColumn(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
+                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+
+                AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, termStoreGroupName, termSetName, termSubsetName);
+            }
+        }
+
+        private void AssignTermSetToAllListUsagesOfSiteColumn(SPSite site, TermStore termStore, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName)
+        {
+            var listFieldsToUpdate = new List<TaxonomyField>();
+
+            foreach (SPWeb oneWeb in site.AllWebs)
+            {
+                foreach (SPList oneList in oneWeb.Lists)
+                {
+                    foreach (SPField oneField in oneList.Fields)
+                    {
+                        if (oneField.Id == fieldId)
+                        {
+                            if (oneField is TaxonomyField)
+                            {
+                                listFieldsToUpdate.Add((TaxonomyField)oneField);
+                                
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Can't update the fields while iterating over their parent collection, so gotta do it after
+            foreach (TaxonomyField taxFieldToReconnect in listFieldsToUpdate)
+            {
+                AssignTermSetToTaxonomyField(termStore, taxFieldToReconnect, termStoreGroupName, termSetName, termSubsetName);
             }
         }
 
@@ -71,8 +102,10 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 TaxonomySession session = new TaxonomySession(web.Site);
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
-                TaxonomyField field = (TaxonomyField)web.Fields[fieldId];
-                AssignTermSetToSiteColumn(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
+                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+
+                AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, termStoreGroupName, termSetName, termSubsetName);
             }
         }
 
@@ -93,8 +126,10 @@ namespace GSoft.Dynamite.Taxonomy
                 TaxonomySession session = new TaxonomySession(web.Site);
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
                 Group siteCollectionGroup = termStore.GetSiteCollectionGroup(web.Site);
-                TaxonomyField field = (TaxonomyField)web.Fields[fieldId];
-                AssignTermSetToSiteColumn(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
+                TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
+                AssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
+
+                AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, siteCollectionGroup.Name, termSetName, termSubsetName);
             }
         }
 
@@ -311,7 +346,7 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         #region Private Methods
-        private static void AssignTermSetToSiteColumn(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
+        private static void AssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
         {
             int originalWorkingLanguage = termStore.WorkingLanguage;
             termStore.WorkingLanguage = Language.English.Culture.LCID;
