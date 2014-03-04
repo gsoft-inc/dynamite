@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Resources;
 using System.Web;
+using GSoft.Dynamite.Structures;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Utils
@@ -34,6 +35,16 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Finds the specified resource.
+        /// </summary>
+        /// <param name="resource">The resource value configuration.</param>
+        /// <returns>The resource value in the current UI language.</returns>
+        public string Find(ResourceValue resource)
+        {
+            return this.Find(resource.File, resource.Key, CultureInfo.CurrentUICulture);
+        }
+
+        /// <summary>
         /// Retrieves the resource object specified by the key and language
         /// </summary>
         /// <param name="resourceKey">The resource key</param>
@@ -42,6 +53,17 @@ namespace GSoft.Dynamite.Utils
         public string Find(string resourceKey, int lcid)
         {
             return this.Find(this._defaultResourceFileName, resourceKey, new CultureInfo(lcid));
+        }
+
+        /// <summary>
+        /// Finds the specified resource.
+        /// </summary>
+        /// <param name="resource">The resource value configuration.</param>
+        /// <param name="lcid">The LCID.</param>
+        /// <returns>The resource in the specified language.</returns>
+        public string Find(ResourceValue resource, int lcid)
+        {
+            return this.Find(resource.File, resource.Key, new CultureInfo(lcid));
         }
 
         /// <summary>

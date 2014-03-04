@@ -219,13 +219,11 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The newly created field.</returns>
         public SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen)
         {
-            // Dont'use CreateNewField method because of its doesn't generate the Field ID
-            // TaxonomyField field = list.Fields.CreateNewField("TaxonomyFieldType", fieldInternalName) as TaxonomyField;
-
             // Create the schema 
             var taxonomySchema = new TaxonomyFieldSchema();
             taxonomySchema.IsMultiple = false;
 
+            // Dont'use CreateNewField method because of its doesn't generate the Field ID
             var field = this.CreateListField(list, taxonomySchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup) as TaxonomyField;
 
             field.Open = isOpen;
