@@ -75,8 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlets\CrossSitePublishing\Entities\CatalogSettings.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\Catalog.cs" />
-    <Compile Include="Cmdlets\CrossSitePublishing\Entities\CatalogConfiguration.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\ContentType.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogConnection.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\DSPCmdletNewCatalogs.cs" />
