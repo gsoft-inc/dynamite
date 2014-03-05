@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Threading;
 using System.Xml.Linq;
+using System.Xml.Serialization;
+using GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
@@ -13,7 +13,6 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -33,7 +32,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         private ListHelper _listHelper;
         private CatalogHelper _catalogHelper;
         private TaxonomyHelper _taxonomyHelper;
-        private XDocument _configurationFile;
+        private XmlSerializer _serializer;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -50,15 +49,19 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// </summary>
         protected override void EndProcessing()
         {
+            // Resolve Unity dependencies
             this.ResolveDependencies();
 
-            var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            // Initialize XML serializer
+            this._serializer = new XmlSerializer(typeof(Catalog));
 
-            this.ProcessCatalogs(this._configurationFile);
+            // Process XML
+            var xml = this.InputFile.Read();
+            var configFile = xml.ToXDocument();
+            this.ProcessCatalogs(configFile);
   
+            // End cmdlet processing
             base.EndProcessing();
-            
         }
 
         /// <summary>
@@ -74,195 +77,163 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// Catalog creation logic
         /// </summary>
+        /// <param name="configFile">The configuration file.</param>
         private void ProcessCatalogs(XDocument configFile)
         {
             // Get all webs nodes
-            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
-
+            var webNodes = from webNode in configFile.Descendants("Web") select webNode;
             foreach (var webNode in webNodes)
             {
+                // For each web, create and configure the catalogs
                 var webUrl = webNode.Attribute("Url").Value;
-
                 using (var site = new SPSite(webUrl))
                 {
                     var web = site.OpenWeb();
 
-                    // Get all catalogs nodes
-                    var catalogNodes = from catalogNode in webNode.Descendants("Catalog") select catalogNode;
+                    // Get all catalogs configurations
+                    var catalogConfigurations = from catalogNode in webNode.Descendants("Catalog") 
+                                                select (Catalog)this._serializer.Deserialize(catalogNode.CreateReader());
 
-                    foreach (var catalogNode in catalogNodes)
+                    foreach (var catalogConfiguration in catalogConfigurations)
                     {                        
-                        var catalogUrl = catalogNode.Attribute("RootFolderUrl").Value;
-                        var catalogName = catalogNode.Attribute("DisplayName").Value;
-                        var catalogDescription = catalogNode.Attribute("Description").Value;
-                        var listTemplateId = int.Parse(catalogNode.Attribute("ListTemplateId").Value);
-
-                        var listTemplate = web.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType)listTemplateId);
-                        var taxonomyFieldMap = catalogNode.Attribute("TaxonomyFieldMap").Value;
-                        var overwrite = bool.Parse(catalogNode.Attribute("Overwrite").Value);
-                        var removeDefaultContentType = bool.Parse(catalogNode.Attribute("RemoveDefaultContentType").Value);
-
-                        var enableRatings = bool.Parse(catalogNode.Attribute("EnableRatings").Value);
-                        string ratingType = string.Empty;
-                        if (enableRatings)
-                        {
-                            ratingType = catalogNode.Attribute("RatingType").Value;
-                        }
-
-                        // Get content types
-                        var contentTypes = from contentType in catalogNode.Descendants("ContentTypes").Descendants("ContentType")
-                                           select contentType;
-
-                        // Get availables fields
-                        var availableFields = from contentType in catalogNode.Descendants("ManagedProperties").Descendants("Property")
-                                              select contentType.Attribute("Name").Value;
-
-                        // Get TaxonomyFields segments
-                        var taxonomyFieldSegments = from segment in catalogNode.Descendants("Segments").Descendants("TaxonomyField")
-                                       select segment;
-
-                        // Get TextFields segments
-                        var textFieldSegments = from segment in catalogNode.Descendants("Segments").Descendants("TextField")
-                                               select segment;
-
-                        // Get defaults for taxonomy Fields
-                        var defaultsTaxonomyFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TaxonomyField")
-                                       select defaultValue;
-
-                        // Get defaults for text fields
-                        var defaultsTextFields = from defaultValue in catalogNode.Descendants("Defaults").Descendants("TextField")
-                                                select defaultValue;
-
-                        // Get Fields Display settings
-                        var fieldDisplay = from field in catalogNode.Descendants("Display").Descendants("Field")
-                                            select field;
-
                         // Set current culture to be able to set the "Title" of the list
                         Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
                         // Create the list if doesn't exists
-                        var list = this._listHelper.GetListByRootFolderUrl(web, catalogUrl);
-                       
-                        if (list == null)
-                        {
-                            list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);
-                        }
-                        else
-                        {
-                            this.WriteWarning("Catalog " + catalogName + " is already exists");
-
-                            // If the Overwrite paramter is set to true, celete and recreate the catalog
-                            if (overwrite)
-                            {
-                                this.WriteWarning("Overwrite is set to true, recreating the list " + catalogName);
-
-                                list.Delete();
-                                list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);                               
-                            }
-                            else
-                            {
-                                // Get the existing list
-                                list = this.EnsureList(web, catalogUrl, catalogName, catalogDescription, listTemplate);     
-                            }                              
-                        }
-
-                        // Create return object
-                        var catalog = new Catalog() { Name = list.Title, Id = list.ID, ParentWebUrl = list.ParentWeb.Url, RootFolder = list.ParentWebUrl + "/" + list.RootFolder };
+                        var list = this.EnsureCatalogList(web, catalogConfiguration);
 
                         // Add content types to the list
-                        this.CreateContentTypes(contentTypes, list, removeDefaultContentType);
+                        this.CreateContentTypes(list, catalogConfiguration);
 
-                        // Add Taxonomy Fields Segments
-                        this.CreateTaxonomyFieldSegments(taxonomyFieldSegments, list);
+                        // Add Fields Segments
+                        this.CreateSegments(list, catalogConfiguration);
 
-                        // Add Text Fields Segments
-                        this.CreateTextFieldSegments(textFieldSegments, list);
-
-                        // Set default values for Taxonomy Fields
-                        this.SetTaxonomyDefaults(defaultsTaxonomyFields, list);
-
-                        // Set default values for Text Fields
-                        this.SetTextFieldDefaults(defaultsTextFields, list);
+                        // Set default values for Fields
+                        this.SetDefaultValues(list, catalogConfiguration);
 
                         // Set Display Settings
-                        this.SetDisplaySettings(fieldDisplay, list);
+                        this.SetDisplaySettings(list, catalogConfiguration);
 
                         // Set versioning settings
-                        if (!string.IsNullOrEmpty(catalogNode.Attribute("DraftVisibilityType").Value))
+                        if (catalogConfiguration.HasDraftVisibilityType)
                         {
-                            var draftVisibilityType = (DraftVisibilityType)Enum.Parse(typeof(DraftVisibilityType), catalogNode.Attribute("DraftVisibilityType").Value, true);
                             list.EnableModeration = true;
-                            list.DraftVersionVisibility = draftVisibilityType;
+                            list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(
+                                typeof(DraftVisibilityType),
+                                catalogConfiguration.DraftVisibilityType);
+
                             list.Update();
                         }
 
-                        if (string.IsNullOrEmpty(taxonomyFieldMap))
+                        if (string.IsNullOrEmpty(catalogConfiguration.TaxonomyFieldMap))
                         {
                             // Set the list as catalog without navigation
-                            this._catalogHelper.SetListAsCatalog(list, availableFields);
+                            this._catalogHelper.SetListAsCatalog(list, catalogConfiguration.ManagedProperties.Select(x => x.Name));
                         }
                         else
                         {
                             // Set the list as catalog with navigation term
-                            this._catalogHelper.SetListAsCatalog(list, availableFields, taxonomyFieldMap);
+                            this._catalogHelper.SetListAsCatalog(list, catalogConfiguration.ManagedProperties.Select(x => x.Name), catalogConfiguration.TaxonomyFieldMap);
                         }
 
-                        // Enable ratings
-                        this.WriteWarning("Set '" + ratingType + "' ratings for " + catalogName + " to " + enableRatings.ToString());
-                        this._listHelper.SetRatings(list, ratingType, enableRatings);
+                        if (catalogConfiguration.EnableRatings)
+                        {
+                            // Enable ratings
+                            this.WriteWarning("Set '" + catalogConfiguration.RatingType + "' ratings for " + catalogConfiguration.DisplayName + " to " + true);
+                            this._listHelper.SetRatings(list, catalogConfiguration.RatingType, true); 
+                        }
+                        else
+                        {
+                            // Disable ratings
+                            this.WriteWarning("Set ratings for " + catalogConfiguration.DisplayName + " to " + false);
+                            this._listHelper.SetRatings(list, catalogConfiguration.RatingType, false); 
+                        }
 
-                        // Write object to the pipeline
-                        this.WriteObject(catalog, true);
+                        // Create return object
+                        var catalogSettings = new CatalogSettings()
+                        {
+                            Name = list.Title,
+                            Id = list.ID,
+                            ParentWebUrl = list.ParentWeb.Url,
+                            RootFolder = list.ParentWebUrl + "/" + list.RootFolder
+                        };
+
+                        this.WriteObject(catalogSettings, true);
                     }   
                 }
             }
         }
 
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private void SetDisplaySettings(IEnumerable<XElement> fieldCollection, SPList list)
+        private SPList EnsureCatalogList(SPWeb web, Catalog catalogConfiguration)
         {
-             // Add segments to the list
-            foreach (XElement field in fieldCollection)
-            {
-                var internalName = field.Attribute("InternalName").Value;
-                var showInDisplayForm = string.IsNullOrEmpty(field.Attribute("ShowInDisplayForm").Value) ? true :  bool.Parse(field.Attribute("ShowInDisplayForm").Value);
-                var showInEditForm = string.IsNullOrEmpty(field.Attribute("ShowInEditForm").Value) ? true :  bool.Parse(field.Attribute("ShowInEditForm").Value);
-                var showInListSettings = string.IsNullOrEmpty(field.Attribute("ShowInListSettings").Value) ? true :  bool.Parse(field.Attribute("ShowInListSettings").Value);
-                var showInNewForm = string.IsNullOrEmpty(field.Attribute("ShowInNewForm").Value) ? true :  bool.Parse(field.Attribute("ShowInNewForm").Value);
-                var showInVersionHistory = string.IsNullOrEmpty(field.Attribute("ShowInVersionHistory").Value) ? true :  bool.Parse(field.Attribute("ShowInVersionHistory").Value);
-                var showInViewForms =string.IsNullOrEmpty(field.Attribute("ShowInVersionHistory").Value) ? true :  bool.Parse(field.Attribute("ShowInVersionHistory").Value);
-             
-                var listfield = list.Fields.GetFieldByInternalName(internalName);
-                if (listfield != null)
-                {
-                    listfield.ShowInDisplayForm = showInDisplayForm;
-                    listfield.ShowInDisplayForm = showInEditForm;
-                    listfield.ShowInDisplayForm = showInListSettings;
-                    listfield.ShowInDisplayForm = showInNewForm;
-                    listfield.ShowInDisplayForm = showInVersionHistory;
-                    listfield.ShowInDisplayForm = showInViewForms;
+            var list = this._listHelper.GetListByRootFolderUrl(web, catalogConfiguration.RootFolderUrl);
 
-                    listfield.Update();
+            if (list == null)
+            {
+                list = this.EnsureList(web, catalogConfiguration);
+            }
+            else
+            {
+                this.WriteWarning("Catalog " + catalogConfiguration.DisplayName + " already exists");
+
+                // If the Overwrite paramter is set to true, celete and recreate the catalog
+                if (catalogConfiguration.Overwrite)
+                {
+                    this.WriteWarning("Overwrite is set to true, recreating the list " + catalogConfiguration.DisplayName);
+
+                    list.Delete();
+                    list = this.EnsureList(web, catalogConfiguration);
+                }
+                else
+                {
+                    // Get the existing list
+                    list = this.EnsureList(web, catalogConfiguration);
                 }
             }
 
-            list.Update();
+            return list;
         }
 
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
+        private void SetDisplaySettings(SPList list, Catalog catalogConfiguration)
+        {
+            if (catalogConfiguration.FieldDisplaySettings != null)
+            {
+                // Add segments to the list
+                foreach (var field in catalogConfiguration.FieldDisplaySettings)
+                {
+                    var listfield = list.Fields.GetFieldByInternalName(field.InternalName);
+                    if (listfield != null)
+                    {
+                        listfield.ShowInDisplayForm = field.ShowInDisplayForm;
+                        listfield.ShowInEditForm = field.ShowInEditForm;
+                        listfield.ShowInListSettings = field.ShowInListSettings;
+                        listfield.ShowInNewForm = field.ShowInNewForm;
+                        listfield.ShowInVersionHistory = field.ShowInVersionHistory;
+                        listfield.ShowInViewForms = field.ShowInViewForm;
+
+                        listfield.Update();
+                    }
+                }
+
+                list.Update(); 
+            }
+        }
 
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private SPList EnsureList(SPWeb web, string listUrl, string displayName, string listDescription, SPListTemplate listTemplate)
+        private SPList EnsureList(SPWeb web, Catalog catalogConfiguration)
         {
-            var list = this._listHelper.GetListByRootFolderUrl(web, listUrl);
+            var list = this._listHelper.GetListByRootFolderUrl(web, catalogConfiguration.RootFolderUrl);
                 
             if (list == null)
             {
                 // Create new list
-                var id = web.Lists.Add(listUrl, listDescription, listTemplate);
+                var listTemplate = web.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType)catalogConfiguration.ListTemplateId);
+                var id = web.Lists.Add(catalogConfiguration.RootFolderUrl, catalogConfiguration.Description, listTemplate);
                 list = web.Lists[id];
             }
 
-            list.Title = displayName;
+            list.Title = catalogConfiguration.DisplayName;
             list.ContentTypesEnabled = true;
             list.Update(true);
 
@@ -270,9 +241,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         }
 
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private void CreateContentTypes(IEnumerable<XElement> contentTypesCollection, SPList list, bool removeDefaultContentType)
+        private void CreateContentTypes(SPList list, Catalog catalogConfiguration)
         {
-            if (removeDefaultContentType)
+            if (catalogConfiguration.RemoveDefaultContentType)
             {
                 // If content type is direct child of item, remove it
                 var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
@@ -283,9 +254,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
 
             // Add content type to the list if doesn't exist
-            foreach (XElement contentType in contentTypesCollection)
+            foreach (var contentType in catalogConfiguration.ContentTypes)
             {
-                var contentTypeId = new SPContentTypeId(contentType.Attribute("ID").Value);
+                var contentTypeId = new SPContentTypeId(contentType.Id);
 
                 var ct = list.ParentWeb.AvailableContentTypes[contentTypeId];
 
@@ -310,145 +281,64 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             list.Update();
         }
 
-        /// <summary>
-        /// Create TaxonomyFields segments
-        /// </summary>
-        /// <param name="segmentsCollection">
-        /// The segments collection.
-        /// </param>
-        /// <param name="list">
-        /// List to configure.
-        /// </param>
-        private void CreateTaxonomyFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
+        private void CreateSegments(SPList list, Catalog catalogConfiguration)
         {
             // Add segments to the list
-            foreach (XElement segment in segmentsCollection)
+            foreach (var segment in catalogConfiguration.Segments)
             {
-                var internalName = segment.Attribute("InternalName").Value;
-                var displayName = segment.Attribute("DisplayName").Value;
-                var description = segment.Attribute("Description").Value;
-                var group = segment.Attribute("Group").Value;
-                var isMultiple = bool.Parse(segment.Attribute("IsMultiple").Value);
-                var isOpen = bool.Parse(segment.Attribute("IsOpen").Value);
-                var termSetGroupName = segment.Attribute("TermSetGroupName").Value;
-                var termSetName = segment.Attribute("TermSetName").Value;
-                var termSubsetName = segment.Attribute("TermSubsetName").Value;
-             
-                // Create the column in the list
-                var taxonomyField = this._listHelper.CreateListTaxonomyField(list, internalName, displayName, description, group, isMultiple, isOpen);
-
-                // Assign the termSet to the field with an anchor term if specified
-                this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, termSetGroupName, termSetName, termSubsetName);
-                this.WriteVerbose("TaxonomyField " + internalName + " successfully created!");
-            }
-        }
-
-        /// <summary>
-        /// Create TextField segments
-        /// </summary>
-        /// <param name="segmentsCollection">
-        /// The segments collection.
-        /// </param>
-        /// <param name="list">
-        /// List to configure.
-        /// </param>
-        private void CreateTextFieldSegments(IEnumerable<XElement> segmentsCollection, SPList list)
-        {
-            // Add segments to the list
-            foreach (XElement segment in segmentsCollection)
-            {
-                var internalName = segment.Attribute("InternalName").Value;
-                var displayName = segment.Attribute("DisplayName").Value;
-                var description = segment.Attribute("Description").Value;
-                var group = segment.Attribute("Group").Value;
-                var isMultiple = bool.Parse(segment.Attribute("IsMultiline").Value);
-                
-                // Create the column in the list
-                var textField = this._listHelper.CreateTextField(list, internalName, displayName, description, group, isMultiple);
-                     
-                this.WriteVerbose("TextField " + internalName + " successfully created!");
-            }
-        }
-
-        /// <summary>
-        /// Set default values for taxonomy fields
-        /// </summary>
-        /// <param name="defaultsCollection">
-        /// Defaults values.
-        /// </param>
-        /// <param name="list">
-        /// The list to configure.
-        /// </param>
-        private void SetTaxonomyDefaults(IEnumerable<XElement> defaultsCollection, SPList list)
-        {
-            // Add segments to the list
-            foreach (XElement defaultValue in defaultsCollection)
-            {
-                var internalName = defaultValue.Attribute("InternalName").Value;
-                var termGroup = defaultValue.Attribute("TermSetGroupName").Value;
-                var termSet = defaultValue.Attribute("TermSetName").Value;
-
-                var field = list.Fields.GetFieldByInternalName(internalName);
-
-                if (field.GetType() == typeof(TaxonomyField))
+                if (segment is TaxonomyField)
                 {
-                    var terms = new Collection<string>();
+                    var taxonomySegment = segment as TaxonomyField;
 
-                    // Get terms
-                    foreach (var term in defaultValue.Descendants("Value"))
-                    {
-                        terms.Add(term.Value);
-                    }
+                    // Create the column in the list
+                    var taxonomyField = this._listHelper.CreateListTaxonomyField(list, taxonomySegment.InternalName, taxonomySegment.DisplayName, taxonomySegment.Description, segment.Group, taxonomySegment.IsMultiple, taxonomySegment.IsOpen);
 
-                    if (((TaxonomyField)field).AllowMultipleValues)
+                    // Assign the termSet to the field with an anchor term if specified
+                    this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
+                    this.WriteVerbose("TaxonomyField " + segment.InternalName + " successfully created!"); 
+                }
+                else if (segment is TextField)
+                {
+                    var textSegment = segment as TextField;
+
+                    // Create the column in the list
+                    this._listHelper.CreateTextField(list, segment.InternalName, segment.DisplayName, segment.Description, segment.Group, textSegment.IsMultiline);
+                    this.WriteVerbose("TextField " + segment.InternalName + " successfully created!");
+                }
+            }
+        }
+
+        private void SetDefaultValues(SPList list, Catalog catalogConfiguration)
+        {
+            // Add segments to the list
+            foreach (var defaultValue in catalogConfiguration.Defaults)
+            {
+                var field = list.Fields.GetFieldByInternalName(defaultValue.InternalName);
+                if (field.GetType() == typeof(Microsoft.SharePoint.Taxonomy.TaxonomyField) && (defaultValue is TaxonomyField))
+                {
+                    var taxonomyDefaultValue = defaultValue as TaxonomyField;
+                    if (((Microsoft.SharePoint.Taxonomy.TaxonomyField)field).AllowMultipleValues)
                     {
-                        this._taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, termGroup, termSet, terms.ToArray<string>());
+                        this._taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values);
                     }
                     else
                     {
-                        this._taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, termGroup, termSet, terms.ToArray<string>().First());
+                        this._taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
                     }
                 }
                 else
                 {
-                    this.WriteWarning("Field " + internalName + " is not a TaxonomyField");
+                    this.WriteWarning("Field " + defaultValue.InternalName + " is not a TaxonomyField");
                 }
-            }
-        }
-
-        /// <summary>
-        /// Set default values for text fields
-        /// </summary>
-        /// <param name="defaultsCollection">
-        /// Defaults values.
-        /// </param>
-        /// <param name="list">
-        /// The list to configure.
-        /// </param>
-        private void SetTextFieldDefaults(IEnumerable<XElement> defaultsCollection, SPList list)
-        {
-            // Add segments to the list
-            foreach (XElement defaultValue in defaultsCollection)
-            {
-                var internalName = defaultValue.Attribute("InternalName").Value;
-                var field = list.Fields.GetFieldByInternalName(internalName);
 
                 if (field.GetType() == typeof(SPFieldText))
                 {
-                    if (defaultValue.Descendants("Value").Count() > 1)
-                    {
-                       this.WriteWarning("There is more than one default value for " + internalName + " SPField. Please specify  an unique value.");
-                    }
-                    else
-                    {
-                        var val = defaultValue.Descendants("Value").Single().Value;
-                        field.DefaultValue = val;
-                        field.Update();
-                    }                
+                    field.DefaultValue = defaultValue.Values.FirstOrDefault();
+                    field.Update();
                 }
                 else
                 {
-                   this.WriteWarning("Field " + internalName + " is not a SPField");
+                    this.WriteWarning("Field " + defaultValue.InternalName + " is not a SPField");
                 }
             }
         }

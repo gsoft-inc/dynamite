@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
+namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
 {
     /// <summary>
     /// Object to pass to the pipeline
     /// </summary>
-    public class Catalog
+    public class CatalogSettings
     {
         /// <summary>
         /// Gets or sets the name.
