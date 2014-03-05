@@ -91,63 +91,66 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     var web = site.OpenWeb();
 
                     // Get all catalogs configurations
-                    var catalogConfigurations = from catalogNode in webNode.Descendants("Catalog") 
+                    var catalogs = from catalogNode in webNode.Descendants("Catalog") 
                                                 select (Catalog)this._serializer.Deserialize(catalogNode.CreateReader());
 
-                    foreach (var catalogConfiguration in catalogConfigurations)
+                    foreach (var catalog in catalogs)
                     {                        
                         // Set current culture to be able to set the "Title" of the list
                         Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
                         // Create the list if doesn't exists
-                        var list = this.EnsureCatalogList(web, catalogConfiguration);
+                        var list = this.EnsureCatalogList(web, catalog);
 
                         // Add content types to the list
-                        this.CreateContentTypes(list, catalogConfiguration);
+                        this.CreateContentTypes(list, catalog);
 
                         // Add Fields Segments
-                        this.CreateSegments(list, catalogConfiguration);
+                        this.CreateSegments(list, catalog);
 
                         // Set default values for Fields
-                        this.SetDefaultValues(list, catalogConfiguration);
+                        this.SetDefaultValues(list, catalog);
 
                         // Set Display Settings
-                        this.SetDisplaySettings(list, catalogConfiguration);
+                        this.SetDisplaySettings(list, catalog);
 
                         // Set versioning settings
-                        if (catalogConfiguration.HasDraftVisibilityType)
+                        if (catalog.HasDraftVisibilityType)
                         {
                             list.EnableModeration = true;
                             list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(
                                 typeof(DraftVisibilityType),
-                                catalogConfiguration.DraftVisibilityType);
+                                catalog.DraftVisibilityType);
 
                             list.Update();
                         }
 
-                        if (string.IsNullOrEmpty(catalogConfiguration.TaxonomyFieldMap))
+                        if (string.IsNullOrEmpty(catalog.TaxonomyFieldMap))
                         {
                             // Set the list as catalog without navigation
-                            this._catalogHelper.SetListAsCatalog(list, catalogConfiguration.ManagedProperties.Select(x => x.Name));
+                            this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
                         }
                         else
                         {
                             // Set the list as catalog with navigation term
-                            this._catalogHelper.SetListAsCatalog(list, catalogConfiguration.ManagedProperties.Select(x => x.Name), catalogConfiguration.TaxonomyFieldMap);
+                            this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
                         }
 
-                        if (catalogConfiguration.EnableRatings)
+                        if (catalog.EnableRatings)
                         {
                             // Enable ratings
-                            this.WriteWarning("Set '" + catalogConfiguration.RatingType + "' ratings for " + catalogConfiguration.DisplayName + " to " + true);
-                            this._listHelper.SetRatings(list, catalogConfiguration.RatingType, true); 
+                            this.WriteWarning("Set '" + catalog.RatingType + "' ratings for " + catalog.DisplayName + " to " + true);
+                            this._listHelper.SetRatings(list, catalog.RatingType, true); 
                         }
                         else
                         {
                             // Disable ratings
-                            this.WriteWarning("Set ratings for " + catalogConfiguration.DisplayName + " to " + false);
-                            this._listHelper.SetRatings(list, catalogConfiguration.RatingType, false); 
+                            this.WriteWarning("Set ratings for " + catalog.DisplayName + " to " + false);
+                            this._listHelper.SetRatings(list, catalog.RatingType, false); 
                         }
+
+                        // Set list Write Security
+                        this.SetWriteSecurity(list, catalog);
 
                         // Create return object
                         var catalogSettings = new CatalogSettings()
@@ -164,43 +167,42 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
         }
 
-        private SPList EnsureCatalogList(SPWeb web, Catalog catalogConfiguration)
+        private SPList EnsureCatalogList(SPWeb web, Catalog catalog)
         {
-            var list = this._listHelper.GetListByRootFolderUrl(web, catalogConfiguration.RootFolderUrl);
+            var list = this._listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
 
             if (list == null)
             {
-                list = this.EnsureList(web, catalogConfiguration);
+                list = this.EnsureList(web, catalog);
             }
             else
             {
-                this.WriteWarning("Catalog " + catalogConfiguration.DisplayName + " already exists");
+                this.WriteWarning("Catalog " + catalog.DisplayName + " already exists");
 
                 // If the Overwrite paramter is set to true, celete and recreate the catalog
-                if (catalogConfiguration.Overwrite)
+                if (catalog.Overwrite)
                 {
-                    this.WriteWarning("Overwrite is set to true, recreating the list " + catalogConfiguration.DisplayName);
+                    this.WriteWarning("Overwrite is set to true, recreating the list " + catalog.DisplayName);
 
                     list.Delete();
-                    list = this.EnsureList(web, catalogConfiguration);
+                    list = this.EnsureList(web, catalog);
                 }
                 else
                 {
                     // Get the existing list
-                    list = this.EnsureList(web, catalogConfiguration);
+                    list = this.EnsureList(web, catalog);
                 }
             }
 
             return list;
         }
 
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private void SetDisplaySettings(SPList list, Catalog catalogConfiguration)
+        private void SetDisplaySettings(SPList list, Catalog catalog)
         {
-            if (catalogConfiguration.FieldDisplaySettings != null)
+            if (catalog.FieldDisplaySettings != null)
             {
                 // Add segments to the list
-                foreach (var field in catalogConfiguration.FieldDisplaySettings)
+                foreach (var field in catalog.FieldDisplaySettings)
                 {
                     var listfield = list.Fields.GetFieldByInternalName(field.InternalName);
                     if (listfield != null)
@@ -220,30 +222,28 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
         }
 
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private SPList EnsureList(SPWeb web, Catalog catalogConfiguration)
+        private SPList EnsureList(SPWeb web, Catalog catalog)
         {
-            var list = this._listHelper.GetListByRootFolderUrl(web, catalogConfiguration.RootFolderUrl);
+            var list = this._listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
                 
             if (list == null)
             {
                 // Create new list
-                var listTemplate = web.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType)catalogConfiguration.ListTemplateId);
-                var id = web.Lists.Add(catalogConfiguration.RootFolderUrl, catalogConfiguration.Description, listTemplate);
+                var listTemplate = web.ListTemplates.Cast<SPListTemplate>().Single(x => x.Type == (SPListTemplateType)catalog.ListTemplateId);
+                var id = web.Lists.Add(catalog.RootFolderUrl, catalog.Description, listTemplate);
                 list = web.Lists[id];
             }
 
-            list.Title = catalogConfiguration.DisplayName;
+            list.Title = catalog.DisplayName;
             list.ContentTypesEnabled = true;
             list.Update(true);
 
             return list;
         }
 
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "Private method.")]
-        private void CreateContentTypes(SPList list, Catalog catalogConfiguration)
+        private void CreateContentTypes(SPList list, Catalog catalog)
         {
-            if (catalogConfiguration.RemoveDefaultContentType)
+            if (catalog.RemoveDefaultContentType)
             {
                 // If content type is direct child of item, remove it
                 var itemContentTypeId = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
@@ -254,7 +254,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
 
             // Add content type to the list if doesn't exist
-            foreach (var contentType in catalogConfiguration.ContentTypes)
+            foreach (var contentType in catalog.ContentTypes)
             {
                 var contentTypeId = new SPContentTypeId(contentType.Id);
 
@@ -281,10 +281,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             list.Update();
         }
 
-        private void CreateSegments(SPList list, Catalog catalogConfiguration)
+        private void CreateSegments(SPList list, Catalog catalog)
         {
             // Add segments to the list
-            foreach (var segment in catalogConfiguration.Segments)
+            foreach (var segment in catalog.Segments)
             {
                 if (segment is TaxonomyField)
                 {
@@ -308,10 +308,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
         }
 
-        private void SetDefaultValues(SPList list, Catalog catalogConfiguration)
+        private void SetDefaultValues(SPList list, Catalog catalog)
         {
             // Add segments to the list
-            foreach (var defaultValue in catalogConfiguration.Defaults)
+            foreach (var defaultValue in catalog.Defaults)
             {
                 var field = list.Fields.GetFieldByInternalName(defaultValue.InternalName);
                 if (field.GetType() == typeof(Microsoft.SharePoint.Taxonomy.TaxonomyField) && (defaultValue is TaxonomyField))
@@ -326,20 +326,26 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         this._taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
                     }
                 }
-                else
-                {
-                    this.WriteWarning("Field " + defaultValue.InternalName + " is not a TaxonomyField");
-                }
-
-                if (field.GetType() == typeof(SPFieldText))
+                else if (field.GetType() == typeof(SPFieldText))
                 {
                     field.DefaultValue = defaultValue.Values.FirstOrDefault();
                     field.Update();
                 }
                 else
                 {
-                    this.WriteWarning("Field " + defaultValue.InternalName + " is not a SPField");
+                    this.WriteWarning(string.Format(CultureInfo.InvariantCulture, "Field '{0}' of type '{1}' cannot be found.", defaultValue.InternalName, defaultValue.GetType().Name));
                 }
+            }
+        }
+
+        private void SetWriteSecurity(SPList list, Catalog catalog)
+        {
+            // Allowed values are 1, 2 or 4
+            // http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.splist.writesecurity(v=office.15).aspx
+            if (catalog.WriteSecurity == 1 || catalog.WriteSecurity == 2 || catalog.WriteSecurity == 4)
+            {
+                list.WriteSecurity = catalog.WriteSecurity;
+                list.Update(); 
             }
         }
     }

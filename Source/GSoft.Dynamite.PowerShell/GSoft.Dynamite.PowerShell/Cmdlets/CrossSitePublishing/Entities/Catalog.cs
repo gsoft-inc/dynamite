@@ -107,6 +107,18 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         public string RatingType { get; set; }
 
         /// <summary>
+        /// Gets or sets the write security.
+        /// 1 — All users can modify all items.
+        /// 2 — Users can modify only items that they create.
+        /// 4 — Users cannot modify any list item.
+        /// </summary>
+        /// <value>
+        /// The write security.
+        /// </value>
+        [XmlAttribute]
+        public int WriteSecurity { get; set; }
+
+        /// <summary>
         /// Gets or sets the content types.
         /// </summary>
         /// <value>
@@ -121,7 +133,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         /// <value>
         /// The managed properties.
         /// </value>
-        [XmlArray]
+        [XmlArray, XmlArrayItem("Property")]
         public ManagedProperty[] ManagedProperties { get; set; }
 
         /// <summary>
