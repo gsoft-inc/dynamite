@@ -61,6 +61,17 @@ namespace GSoft.Dynamite.DependencyInjectors
         }
 
         /// <summary>
+        /// Exposes the inner Autofac container instance
+        /// </summary>
+        public IContainer AutofacContainerInstance
+        {
+            get
+            {
+                return this.container;
+            }
+        }
+
+        /// <summary>
         /// Resolves the registered implementation for the specified type
         /// </summary>
         /// <remarks>
@@ -83,7 +94,7 @@ namespace GSoft.Dynamite.DependencyInjectors
         /// <returns>The implementation of the type specified</returns>
         public T Resolve<T>(string name)
         {
-            return this.container.Resolve<T>(name);
+            return this.container.ResolveNamed<T>(name);
         }
     }
 }
