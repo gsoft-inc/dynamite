@@ -102,7 +102,7 @@ namespace GSoft.Dynamite.Utils
                 // List already exists, check for correct template
                 if (list.BaseTemplate != templateType)
                 {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, template.Type));
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, templateType));
                 }
             }
             else
