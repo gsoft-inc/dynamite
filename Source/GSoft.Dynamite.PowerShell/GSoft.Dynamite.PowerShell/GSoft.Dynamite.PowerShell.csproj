@@ -87,6 +87,9 @@
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\BaseField.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\TextField.cs" />
     <Compile Include="Cmdlets\Navigation\DSPCmdletSetManagedNavigation.cs" />
+    <Compile Include="Cmdlets\Renditions\DSPCmdletRemoveImageRenditions.cs" />
+    <Compile Include="Cmdlets\Renditions\DSPCmdletAddImageRenditions.cs" />
+    <Compile Include="Cmdlets\Renditions\Entities\ImageRenditionDefinition.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
     <Compile Include="Cmdlets\Variations\DSPCmdletSyncList.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Unity\PowerShellContainer.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
