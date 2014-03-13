@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Globalization
 {
     /// <summary>
     /// SharePoint Date Helper Class

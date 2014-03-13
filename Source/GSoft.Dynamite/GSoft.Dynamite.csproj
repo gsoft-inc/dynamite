@@ -114,6 +114,7 @@
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
     <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Setup\IPageInfo.cs" />
     <Compile Include="Setup\ITaxonomyInfo.cs" />
     <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\PageCreator.cs" />
     <Compile Include="Setup\PageInfo.cs" />
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
@@ -157,7 +159,7 @@
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="Utils\DateHelper.cs" />
+    <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
