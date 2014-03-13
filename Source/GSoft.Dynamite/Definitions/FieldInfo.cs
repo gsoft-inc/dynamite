@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Defines the field info structure.

@@ -1,6 +1,6 @@
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.ValueTypes
+namespace GSoft.Dynamite.Globalization
 {
     /// <summary>
     /// Regional settings entity.

@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Utils
+﻿namespace GSoft.Dynamite.MasterPages
 {
     /// <summary>
     /// Used to add CSS classes to the body of the document

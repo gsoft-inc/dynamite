@@ -1,22 +1,16 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="VariationExpert.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
-namespace GSoft.Dynamite.Variations
+using GSoft.Dynamite;
+
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing;
+
+namespace GSoft.Dynamite.Globalization.Variations
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text;
-
-    using GSoft.Dynamite;
-
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Publishing;
-
     /// <summary>
     /// The variation expert.
     /// </summary>

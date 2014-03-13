@@ -5,7 +5,7 @@ using System.Threading;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.WebConfig
 {
     /// <summary>
     /// Helper class to add, clean, remove WebConfig modifications programmatically

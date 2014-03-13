@@ -2,7 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.MasterPages
 {
     /// <summary>
     /// Provides utility methods for creating a setup for a custom master page within SharePoint.

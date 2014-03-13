@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Globalization
 {
     /// <summary>
     /// A helper class for dealing with the Multilanguage UI.

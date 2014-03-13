@@ -5,7 +5,7 @@ using GSoft.Dynamite.Utils;
 
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Setup
+namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Encapsulates Content Type metadata and structure information

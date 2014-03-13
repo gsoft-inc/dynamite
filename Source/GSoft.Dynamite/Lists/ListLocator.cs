@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
-using GSoft.Dynamite.Logging;
-using System;
 
-namespace GSoft.Dynamite.Repositories
+namespace GSoft.Dynamite.Lists
 {
     /// <summary>
     /// Utility to find lists

@@ -8,7 +8,14 @@ using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.Variations;
+using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Security;
+using GSoft.Dynamite.WebParts;
+using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.WebConfig;
+using GSoft.Dynamite.Globalization.Variations;
 
 namespace GSoft.Dynamite.DI.Autofac
 {
@@ -97,7 +104,7 @@ namespace GSoft.Dynamite.DI.Autofac
             // Utilities
             builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
 
-            builder.RegisterType<ContentTypeHelper>();
+            builder.RegisterType<ContentTypeBuilder>();
             builder.RegisterType<EventReceiverHelper>();
             builder.RegisterType<FieldHelper>();
             builder.RegisterType<ListHelper>();

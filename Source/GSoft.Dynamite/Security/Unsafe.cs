@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Security
 {
     /// <summary>
     /// Class to be able to automatically allow unsafe update and reset the value with

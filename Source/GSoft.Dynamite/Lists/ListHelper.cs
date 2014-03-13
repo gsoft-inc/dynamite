@@ -5,25 +5,27 @@ using System.Linq;
 using Microsoft.SharePoint;
 using System.IO;
 using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Lists
 {
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
     public class ListHelper
     {
-        private ContentTypeHelper _contentTypeHelper;
-        private IResourceLocator _resourceLocator;
+        private ContentTypeBuilder contentTypeBuilder;
+        private IResourceLocator resourceLocator;
 
         /// <summary>
         /// Creates a list helper
         /// </summary>
-        /// <param name="contentTypeHelper">A content type helper</param>
-        public ListHelper(ContentTypeHelper contentTypeHelper, IResourceLocator resourceLocator)
+        /// <param name="contentTypeBuilder">A content type helper</param>
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, IResourceLocator resourceLocator)
         {
-            this._contentTypeHelper = contentTypeHelper;
-            this._resourceLocator = resourceLocator;
+            this.contentTypeBuilder = contentTypeBuilder;
+            this.resourceLocator = resourceLocator;
         }
 
         /// <summary>
@@ -170,7 +172,7 @@ namespace GSoft.Dynamite.Utils
                 list.Update(true);
             }
 
-            this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType.Id, contentType.Name);
+            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType.Id, contentType.Name);
             list.Update(true);
         }
 
@@ -221,12 +223,12 @@ namespace GSoft.Dynamite.Utils
                     if (resourceStringSplit.Length > 1)
                     {
                         // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
-                        nameFromResourceString = this._resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
+                        nameFromResourceString = this.resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
                     }
                     else
                     {
                         // let's try to find a resource with that string directly as key
-                        nameFromResourceString = this._resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
+                        nameFromResourceString = this.resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
                     }
 
                     if (!string.IsNullOrEmpty(nameFromResourceString))

@@ -8,7 +8,7 @@ using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Helper class for managing SP Fields.

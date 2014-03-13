@@ -5,7 +5,7 @@ using System.Xml;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.WebParts
 {
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff

@@ -4,7 +4,7 @@ using System.Globalization;
 using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Globalization
 {
     /// <summary>
     /// Helps in setting custom regional settings for users as they switch MUI.

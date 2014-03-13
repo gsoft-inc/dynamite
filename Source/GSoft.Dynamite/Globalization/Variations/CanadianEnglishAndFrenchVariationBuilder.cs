@@ -6,7 +6,7 @@ using System.Threading;
 using GSoft.Dynamite.TimerJobs;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Variations
+namespace GSoft.Dynamite.Globalization.Variations
 {
     /// <summary>
     /// A variation builder that creates one Canadian English-culture source variation label

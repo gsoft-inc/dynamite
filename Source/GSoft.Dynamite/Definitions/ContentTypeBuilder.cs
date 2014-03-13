@@ -5,12 +5,12 @@ using System.Globalization;
 using System.Linq;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeHelper
+    public class ContentTypeBuilder
     {
         /// <summary>
         /// Ensures the SPContentType is in the collection. If not, it will be created and added.

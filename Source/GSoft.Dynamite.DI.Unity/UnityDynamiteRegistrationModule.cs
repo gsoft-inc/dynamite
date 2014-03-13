@@ -1,13 +1,20 @@
 ﻿using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.MasterPages;
 using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.Variations;
+using GSoft.Dynamite.WebConfig;
+using GSoft.Dynamite.WebParts;
 using Microsoft.Practices.Unity;
 
 namespace GSoft.Dynamite.DI.Unity
@@ -95,7 +102,7 @@ namespace GSoft.Dynamite.DI.Unity
             // Utilities
             container.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
 
-            container.RegisterType<ContentTypeHelper>();
+            container.RegisterType<ContentTypeBuilder>();
             container.RegisterType<EventReceiverHelper>();
             container.RegisterType<FieldHelper>();
             container.RegisterType<ListHelper>();

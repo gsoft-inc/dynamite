@@ -1,4 +1,5 @@
 using Microsoft.SharePoint;
+using GSoft.Dynamite.Globalization;
 
 namespace GSoft.Dynamite.ValueTypes
 {

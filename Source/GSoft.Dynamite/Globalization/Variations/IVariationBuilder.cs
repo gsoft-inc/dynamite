@@ -1,7 +1,7 @@
-﻿namespace GSoft.Dynamite.Variations
-{
-    using Microsoft.SharePoint;
+﻿using Microsoft.SharePoint;
 
+namespace GSoft.Dynamite.Globalization.Variations
+{
     /// <summary>
     /// The contract for any variations builder
     /// </summary>

@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Variations
+﻿namespace GSoft.Dynamite.Globalization.Variations
 {
     /// <summary>
     /// The creation mode.

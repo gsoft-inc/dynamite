@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Globalization
 {
     /// <summary>
     /// Abstraction for localization service

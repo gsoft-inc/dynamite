@@ -4,9 +4,8 @@ using System.Linq;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Security
 {
-
     /// <summary>
     /// SharePoint User Helper Class
     /// </summary>

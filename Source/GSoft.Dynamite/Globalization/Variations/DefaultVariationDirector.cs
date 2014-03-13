@@ -1,6 +1,6 @@
 ﻿using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Variations
+namespace GSoft.Dynamite.Globalization.Variations
 {
     /// <summary>
     /// The variation director knows the order of calls to get Variations up and running
