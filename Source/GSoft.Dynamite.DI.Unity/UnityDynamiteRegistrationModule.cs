@@ -1,15 +1,17 @@
-﻿namespace GSoft.Dynamite.DI.Unity
+﻿using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Setup;
+using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.TimerJobs;
+using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.Variations;
+using Microsoft.Practices.Unity;
+
+namespace GSoft.Dynamite.DI.Unity
 {
-    using GSoft.Dynamite.Binding;
-    using GSoft.Dynamite.Logging;
-    using GSoft.Dynamite.Repositories;
-    using GSoft.Dynamite.Taxonomy;
-    using GSoft.Dynamite.TimerJobs;
-    using GSoft.Dynamite.Utils;
-
-    using Microsoft.Practices.Unity;
-    using GSoft.Dynamite.Binding.Converters;
-
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
@@ -68,6 +70,15 @@
             // Singleton entity binder
             container.RegisterType<ISharePointEntityBinder, SharePointEntityBinder>(new ContainerControlledLifetimeManager());
 
+            // Setup
+            container.RegisterType<IFieldValueInfo, FieldValueInfo>();
+            container.RegisterType<IFolderInfo, FolderInfo>();
+            container.RegisterType<IPageInfo, PageInfo>();
+            container.RegisterType<ITaxonomyInfo, TaxonomyInfo>();
+            container.RegisterType<ITaxonomyMultiInfo, TaxonomyMultiInfo>();
+
+            container.RegisterType<IFolderMaker, FolderMaker>();
+
             // Taxonomy
             container.RegisterType<ITaxonomyService, TaxonomyService>();
             container.RegisterType<TaxonomyService>();
@@ -76,6 +87,10 @@
             // Repositories
             container.RegisterType<FolderRepository>();
             container.RegisterType<ListLocator>();
+            container.RegisterType<IQueryHelper, QueryHelper>();
+
+            // Cache
+            container.RegisterType<ICacheHelper, CacheHelper>();
 
             // Utilities
             container.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
@@ -96,6 +111,12 @@
             container.RegisterType<ContentOrganizerHelper>();
             container.RegisterType<DateHelper>();
             container.RegisterType<UserHelper>();
+            container.RegisterType<IExtraMasterPageBodyCssClasses, ExtraMasterPageBodyCssClasses>();
+
+            // Variations (with default en-CA as source + fr-CA as destination implementation)
+            container.RegisterType<IVariationDirector, DefaultVariationDirector>();
+            container.RegisterType<IVariationBuilder, CanadianEnglishAndFrenchVariationBuilder>();
+            container.RegisterType<IVariationExpert, VariationExpert>();
 
             // Experts
             container.RegisterType<ITimerJobExpert, TimerJobExpert>();

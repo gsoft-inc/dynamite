@@ -1,42 +1,24 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="AutofacDynamiteRegistrationModule.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using global::Autofac;
+using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Setup;
+using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.TimerJobs;
+using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.Variations;
 
 namespace GSoft.Dynamite.DI.Autofac
 {
-    using global::Autofac;
-
-    using GSoft.Dynamite.Binding;
-    using GSoft.Dynamite.Logging;
-    using GSoft.Dynamite.Repositories;
-    using GSoft.Dynamite.Taxonomy;
-    using GSoft.Dynamite.TimerJobs;
-    using GSoft.Dynamite.Utils;
-    using GSoft.Dynamite.Binding.Converters;
-
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
     public class AutofacDynamiteRegistrationModule : Module
     {
-        /// <summary>
-        /// The application name
-        /// </summary>
-        private const string AppName = "IFC.IntactNet";
-
         private readonly string logCategoryName;
         private readonly string[] defaultResourceFileNames;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AutofacDynamiteRegistrationModule"/> class.
-        /// </summary>
-        public AutofacDynamiteRegistrationModule()
-        {
-            this.logCategoryName = AppName;
-            this.defaultResourceFileNames = new string[] { AppName, AppName + ".News", AppName + ".ConfigurationValues", AppName + ".ReusableContent", AppName + ".Navigation", AppName + ".ProvinceToBU" };
-        }
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
@@ -90,15 +72,27 @@ namespace GSoft.Dynamite.DI.Autofac
             // Singleton entity binder
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();
 
+            // Setup
+            builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
+            builder.RegisterType<FolderInfo>().As<IFolderInfo>();
+            builder.RegisterType<PageInfo>().As<IPageInfo>();
+            builder.RegisterType<TaxonomyInfo>().As<ITaxonomyInfo>();
+            builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
+
+            builder.RegisterType<FolderMaker>().As<IFolderMaker>();
+
             // Taxonomy
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
-
             builder.RegisterType<TaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();
 
             // Repositories
             builder.RegisterType<FolderRepository>();
             builder.RegisterType<ListLocator>();
+            builder.RegisterType<QueryHelper>().As<IQueryHelper>();
+
+            // Cache
+            builder.RegisterType<CacheHelper>().As<ICacheHelper>();
 
             // Utilities
             builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
@@ -108,7 +102,7 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<FieldHelper>();
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListSecurityHelper>();
-            builder.RegisterType<MuiHelper>();
+            builder.RegisterType<MuiHelper>(); 
             builder.RegisterType<SecurityHelper>();
             builder.RegisterType<SearchHelper>();
             builder.RegisterType<WebPartHelper>();
@@ -118,7 +112,13 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<WebConfigModificationHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
             builder.RegisterType<DateHelper>();
-            builder.RegisterType<UserHelper>();
+            builder.RegisterType<UserHelper>(); 
+            builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
+
+            // Variations (with default en-CA as source + fr-CA as destination implementation)
+            builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
+            builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
+            builder.RegisterType<VariationExpert>().As<IVariationExpert>();
 
             // Experts
             builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();

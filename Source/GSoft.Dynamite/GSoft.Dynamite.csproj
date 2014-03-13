@@ -39,6 +39,10 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.DocumentManagement.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Policy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
@@ -71,6 +75,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
     <Compile Include="Binding\Converters\ImageValueConverter.cs" />
@@ -103,6 +108,11 @@
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
+    <Compile Include="Cache\CacheHelper.cs" />
+    <Compile Include="Cache\ICacheHelper.cs" />
+    <Compile Include="Cache\ICacheKey.cs" />
+    <Compile Include="Cache\ParameterizedCacheKey.cs" />
+    <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
@@ -120,7 +130,23 @@
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\IFolderRepository.cs" />
+    <Compile Include="Repositories\IQueryHelper.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
+    <Compile Include="Repositories\QueryHelper.cs" />
+    <Compile Include="Setup\ContentTypeInfo.cs" />
+    <Compile Include="Setup\FieldValueInfo.cs" />
+    <Compile Include="Setup\FolderInfo.cs" />
+    <Compile Include="Setup\FolderMaker.cs" />
+    <Compile Include="Setup\IFieldValueInfo.cs" />
+    <Compile Include="Setup\IFolderInfo.cs" />
+    <Compile Include="Setup\IFolderMaker.cs" />
+    <Compile Include="Setup\IPageInfo.cs" />
+    <Compile Include="Setup\ITaxonomyInfo.cs" />
+    <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\PageInfo.cs" />
+    <Compile Include="Setup\TaxonomyInfo.cs" />
+    <Compile Include="Setup\TaxonomyMultiInfo.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
@@ -134,8 +160,11 @@
     <Compile Include="Utils\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
+    <Compile Include="Utils\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Utils\FieldHelper.cs" />
     <Compile Include="Utils\FieldInfo.cs" />
+    <Compile Include="Utils\GacAssemblyLocator.cs" />
+    <Compile Include="Utils\IExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Utils\IResourceLocator.cs" />
     <Compile Include="Utils\ListHelper.cs" />
     <Compile Include="Utils\ListSecurityHelper.cs" />
@@ -157,6 +186,16 @@
     <Compile Include="ValueTypes\TaxonomyValueCollection.cs" />
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
+    <Compile Include="Variations\DefaultVariationDirector.cs" />
+    <Compile Include="Variations\CanadianEnglishAndFrenchVariationBuilder.cs" />
+    <Compile Include="Variations\IVariationBuilder.cs" />
+    <Compile Include="Variations\IVariationDirector.cs" />
+    <Compile Include="Variations\IVariationExpert.cs" />
+    <Compile Include="Variations\VariationExpert.cs" />
+    <Compile Include="Variations\VariationLabel.cs" />
+    <Compile Include="WebParts\IBaseWebPart.cs" />
+    <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
+    <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\GSoft.Dynamite.snk" />
