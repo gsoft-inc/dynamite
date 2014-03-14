@@ -88,7 +88,7 @@ namespace GSoft.Dynamite.DependencyInjectors
             foreach (var assembly in matchingAssemblies)
             {
                 // Don't register anything from the current DLL (we'll take care registering the Dynamite Registration Module ourselves below)
-                if (assembly.FullName.Contains("GSoft.Dynamite.DI.Autofac"))
+                if (!assembly.FullName.Contains("GSoft.Dynamite.DI.Autofac"))
                 {
                     var types = assembly.GetTypes()
                         .Where(
