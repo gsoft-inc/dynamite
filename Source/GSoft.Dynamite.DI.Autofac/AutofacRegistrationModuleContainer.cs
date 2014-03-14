@@ -108,89 +108,8 @@ namespace GSoft.Dynamite.DependencyInjectors
             containerBuilder.RegisterModule(dynamiteModule);
 
             var containerInstance = new AutofacRegistrationModuleContainer(containerBuilder.Build());
-            containerInstance.AssemblyMatchingPredicate = assemblyNameMatchingPredicate;
 
             return containerInstance;
-        }
-
-        /// <summary>
-        /// Scans the GAC for the first type that implements the specified interface and registers the pair the Container
-        /// </summary>
-        /// <param name="containerToUpdate">The Autofac dependency injection container to update with the new registration</param>
-        /// <param name="interfaceType">Interface type that needs an implementation to register</param>
-        public static void ScanAssembliesForInterfaceImplementationAndRegisterFirstMatch(Func<string, bool> assemblyNameMatchingPredicate, AutofacRegistrationModuleContainer containerToUpdate, Type interfaceType)
-        {
-            ScanAssembliesForInterfaceImplementationAndRegisterFirstMatch(assemblyNameMatchingPredicate, containerToUpdate, new List<Type>() { interfaceType });
-        }
-
-        /// <summary>
-        /// Scans the GAC for the first types that implements the specified interfaces and registers the pairs the Container
-        /// </summary>
-        /// <param name="containerToUpdate">The Autofac dependency injection container to update with the new registrations</param>
-        /// <param name="interfaceTypes">Interface types that each need an implementation to register</param>
-        public static void ScanAssembliesForInterfaceImplementationAndRegisterFirstMatch(Func<string, bool> assemblyNameMatchingPredicate, AutofacRegistrationModuleContainer containerToUpdate, IList<Type> interfaceTypes)
-        {
-            if (interfaceTypes == null)
-            {
-                throw new ArgumentNullException("interfaceTypes");
-            }
-
-            // Accumulate (Interface, Implementation) pairs so that we can register them all at once at the end
-            var typePairsToRegister = new Dictionary<Type, Type>();
-
-            foreach (var interfaceType in interfaceTypes)
-            {
-                bool foundImplementation = false;
-
-                if (!interfaceType.IsInterface)
-                {
-                    throw new ArgumentException(string.Format("Specified Type {0} should be an interface.", interfaceType));
-                }
-
-                var assemblyLocator = new GacAssemblyLocator();
-                var logger = containerToUpdate.Resolve<ILogger>();
-
-                var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string>() { AssemblyFolder }, assemblyNameMatchingPredicate);
-
-                foreach (var assembly in matchingAssemblies)
-                {
-                    var types = assembly.GetTypes().Where(myType => myType.IsClass && interfaceType.IsAssignableFrom(myType)).ToList();
-
-                    if (types.Count > 1)
-                    {
-                        logger.Warn("More than one type found that implements the interface {0}. First one ({1}) will be used.", interfaceType, types.First());
-                    }
-
-                    if (types.Count > 0)
-                    {
-                        typePairsToRegister.Add(interfaceType, types.First());
-                        foundImplementation = true;
-
-                        // Don't look any further for this specific interface
-                        break;
-                    }
-                }
-
-                if (!foundImplementation)
-                {
-                    logger.Error("Failed to find any type that implements {0} in AppDomain GAC_MSIL assemblies.", interfaceType);
-                }
-            }
-
-            if (typePairsToRegister.Count > 0)
-            {
-                var autofacInnerContainer = containerToUpdate.InnerAutofacContainerInstance;
-                var containerBuilder = new ContainerBuilder();
-
-                foreach (var interfaceType in typePairsToRegister.Keys)
-                {
-                    // The first type we find that implements the interface is chosen automatically
-                    var implementationType = typePairsToRegister[interfaceType];
-                    containerBuilder.RegisterType(implementationType).As(interfaceType);
-                }
-
-                containerBuilder.Update(autofacInnerContainer);
-            }
         }
 
         /// <summary>
@@ -202,15 +121,6 @@ namespace GSoft.Dynamite.DependencyInjectors
             {
                 return this.container;
             }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Func<string, bool> AssemblyMatchingPredicate
-        {
-            get;
-            set;
         }
 
         /// <summary>
