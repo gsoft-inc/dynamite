@@ -1,22 +1,19 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="AutofacRegistrationModule.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using Autofac;
+using Autofac.Core;
+using GSoft.Dynamite.DI.Autofac;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Utils;
 
 namespace GSoft.Dynamite.DependencyInjectors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Text;
-
-    using Autofac;
-    using Autofac.Core;
-
     /// <summary>
-    /// The UnityRegistrationModuleContainer interface.
+    /// The general RegistrationModuleContainer interface.
     /// </summary>
     public interface IRegistrationModuleContainer
     {
@@ -47,6 +44,9 @@ namespace GSoft.Dynamite.DependencyInjectors
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class AutofacRegistrationModuleContainer : IRegistrationModuleContainer
     {
+        private const string AutofacType = "Autofac.Module";
+        private const string AssemblyFolder = "GAC_MSIL";
+
         private readonly IContainer container;
 
         /// <summary>
@@ -61,9 +61,61 @@ namespace GSoft.Dynamite.DependencyInjectors
         }
 
         /// <summary>
+        /// Creates a new Autofac container with the Dynamite registration module
+        /// pre-configured. Also scans the GAC to retrieve any DLL matching the 
+        /// specified predicate and auto-register any Autofac registration module
+        /// found within.
+        /// </summary>
+        /// <param name="assemblyNameMatchingPredicate"></param>
+        /// <param name="logCategoryName">Logging category name with which the Dynamite <see cref="TraceLogger"/> will log to the Unified Logging System</param>
+        /// <param name="defaultResourceFileNames">Namespaces for the various resource files needed by the parent Application so that Dynamite's <see cref="IResourceLocator"/> knows where to hunt for resources</param>
+        /// <returns></returns>
+        public static AutofacRegistrationModuleContainer ScanGacForAutofacModulesAndCreateContainer(Func<string, bool> assemblyNameMatchingPredicate, string logCategoryName, string[] defaultResourceFileNames)
+        {
+            var containerBuilder = new ContainerBuilder();
+
+            var assemblyLocator = new GacAssemblyLocator();
+
+            var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string>() { AssemblyFolder }, assemblyNameMatchingPredicate);
+
+            var abstractType = RetrieveAutofacAbstractModuleType(AppDomain.CurrentDomain.GetAssemblies(), AutofacType);
+
+            if (abstractType == null)
+            {
+                throw new ArgumentNullException(string.Format("Abstract Type {0} not found in current assemblies.", AutofacType));
+            }
+
+            foreach (var assembly in matchingAssemblies)
+            {
+                // Don't register anything from the current DLL (we'll take care registering the Dynamite Registration Module ourselves below)
+                if (!assembly.FullName.Contains("GSoft.Dynamite.DI.Autofac"))
+                {
+                    var types = assembly.GetTypes()
+                        .Where(
+                            myType =>
+                            myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(abstractType));
+
+                    foreach (Type type in types)
+                    {
+                        var module = assembly.CreateInstance(type.FullName);
+                        containerBuilder.RegisterModule((IModule)module);
+                    }
+                }
+            }
+           
+            // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves)
+            var dynamiteModule = new AutofacDynamiteRegistrationModule(logCategoryName, defaultResourceFileNames);
+            containerBuilder.RegisterModule(dynamiteModule);
+
+            var containerInstance = new AutofacRegistrationModuleContainer(containerBuilder.Build());
+
+            return containerInstance;
+        }
+
+        /// <summary>
         /// Exposes the inner Autofac container instance
         /// </summary>
-        public IContainer AutofacContainerInstance
+        public IContainer InnerAutofacContainerInstance
         {
             get
             {
@@ -95,6 +147,27 @@ namespace GSoft.Dynamite.DependencyInjectors
         public T Resolve<T>(string name)
         {
             return this.container.ResolveNamed<T>(name);
+        }
+
+        private static Type RetrieveAutofacAbstractModuleType(IEnumerable<Assembly> assemblies, string autofacType)
+        {
+            Type abstractType = null;
+            foreach (var assembly in assemblies)
+            {
+                var type = assembly.GetType(autofacType);
+
+                if (type == null)
+                {
+                    continue;
+                }
+                else
+                {
+                    abstractType = type;
+                    break;
+                }
+            }
+
+            return abstractType;
         }
     }
 }
