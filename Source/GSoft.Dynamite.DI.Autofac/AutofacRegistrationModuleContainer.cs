@@ -173,7 +173,7 @@ namespace GSoft.Dynamite.DependencyInjectors
 
                 if (!foundImplementation)
                 {
-                    logger.Warn("Failed to find any type that implements {0} in AppDomain GAC_MSIL assemblies.", interfaceType);
+                    logger.Error("Failed to find any type that implements {0} in AppDomain GAC_MSIL assemblies.", interfaceType);
                 }
             }
 

@@ -17,11 +17,24 @@ namespace GSoft.Dynamite.Setup
     /// </summary>
     public class TaxonomyMultiInfo : FieldValueInfo, ITaxonomyMultiInfo
     {
+        private Collection<Term> terms = new Collection<Term>();
+
         /// <summary>
         /// Sets the value of the default taxonomy field in the list item to the properties of the Term object in the default language of the TermStore object.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Okay")]
-        public Collection<Term> Terms { get; set; }
+        public Collection<Term> Terms
+        {
+            get
+            {
+                return this.terms;
+            }
+
+            set
+            {
+                this.terms = value;
+            }
+        }
 
         /// <summary>
         /// Applies the on item.
