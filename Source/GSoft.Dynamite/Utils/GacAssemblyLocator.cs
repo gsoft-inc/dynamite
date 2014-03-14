@@ -18,19 +18,43 @@ namespace GSoft.Dynamite.Utils
         private const string FolderPath = @"c:\windows\assembly";
 
         /// <summary>
-        /// The get assemblies.
+        /// Returns assemblies found in the c:\windows\assembly directory
         /// </summary>
+        /// <remarks>
+        /// This method will match Assemblies from any version
+        /// </remarks>
         /// <param name="gacFolders">
         /// The gac Folders.
         /// </param>
         /// <param name="assemblyNameCondition">
-        /// The assembly name condition.
+        /// A function to filter assembly names with (as string comparison)
         /// </param>
         /// <returns>
         /// The <see cref="IList"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition)
+        {
+            return this.GetAssemblies(gacFolders, assemblyNameCondition, null);
+        }
+
+        /// <summary>
+        /// Returns assemblies found in the c:\windows\assembly directory
+        /// </summary>
+        /// <param name="gacFolders">
+        /// The gac Folders.
+        /// </param>
+        /// <param name="assemblyNameCondition">
+        /// A function to filter assembly names with (as string comparison)
+        /// </param>
+        /// <param name="assemblyVersionCondition">
+        /// A function to filter assembly version with (as string comparison)
+        /// </param>
+        /// <returns>
+        /// The <see cref="IList"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        public IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition)
         {
             var assemblyList = new List<Assembly>();
 
@@ -45,7 +69,7 @@ namespace GSoft.Dynamite.Utils
 
                         foreach (string assemblyFolder in assemblyFolders)
                         {
-                            this.ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyList);
+                            this.ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
                         }
                     }
                 }
@@ -58,13 +82,26 @@ namespace GSoft.Dynamite.Utils
             return assemblyList;
         }
 
-        private void ProcessFile(string file, IList<Assembly> assemblyList)
+        private void ProcessFile(string file, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
         {
             try
             {
                 Assembly a = Assembly.LoadFile(file);
 
-                assemblyList.Add(a);
+                if (assemblyVersionCondition != null)
+                {
+                    if (assemblyVersionCondition(a.FullName))
+                    {
+                        assemblyList.Add(a);
+                    }
+                }
+                else
+                {
+                    // If no condition is specified, accept DLLs from all versions
+                    assemblyList.Add(a);
+                }
+
+
             }
             catch (Exception)
             {
@@ -74,17 +111,17 @@ namespace GSoft.Dynamite.Utils
             }
         }
 
-        private void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, IList<Assembly> assemblyList)
+        private void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
         {
             // apply condition here
             foreach (string file in Directory.GetFiles(folder).Where(assemblyNameCondition))
             {
-                this.ProcessFile(file, assemblyList);
+                this.ProcessFile(file, assemblyVersionCondition, assemblyList);
             }
 
             foreach (string subFolder in Directory.GetDirectories(folder))
             {
-                this.ProcessFolder(subFolder, assemblyNameCondition, assemblyList);
+                this.ProcessFolder(subFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
             }
         }
     }
