@@ -98,7 +98,10 @@ namespace GSoft.Dynamite.DependencyInjectors
             containerBuilder.RegisterModule(dynamiteModule);
 
             var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyNameMatchingPredicate, assemblyVersionMatchingPredicate);
-            containerBuilder.RegisterAssemblyModules(matchingAssemblies.ToArray());
+
+            var filteredMatchingAssemblies = matchingAssemblies.Where(x => !x.FullName.Contains("GSoft.Dynamite.DI.Autofac"));
+
+            containerBuilder.RegisterAssemblyModules(filteredMatchingAssemblies.ToArray());
 
             var containerInstance = new AutofacRegistrationModuleContainer(containerBuilder.Build());
 
