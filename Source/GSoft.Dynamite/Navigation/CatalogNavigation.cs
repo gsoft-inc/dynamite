@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
@@ -162,9 +165,20 @@ namespace GSoft.Dynamite.Navigation
                     this._logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
                                         Using label web URL with path and query strings as navigation URL.");
 
+                    // Keep query string (except source)
+                    var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
+                    queryCollection.Remove("Source");
+
                     // Construct peer URL with top web URL + path + query.
                     var topWebUrl = new Uri(label.TopWebUrl + "/");
-                    var pathAndQuerySegments = topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length));
+                    var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
+
+                    // If any query string, add to segments
+                    if (queryCollection.HasKeys())
+                    {
+                        pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
+                    }
+
                     return new Uri(topWebUrl, string.Join(string.Empty, pathAndQuerySegments));
                 }
             }

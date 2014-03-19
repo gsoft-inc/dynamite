@@ -293,6 +293,13 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     // Create the column in the list
                     var taxonomyField = this._listHelper.CreateListTaxonomyField(list, taxonomySegment.InternalName, taxonomySegment.DisplayName, taxonomySegment.Description, segment.Group, taxonomySegment.IsMultiple, taxonomySegment.IsOpen);
 
+                    // Set required if true
+                    if (taxonomySegment.IsRequired)
+                    {
+                        taxonomyField.Required = true;
+                        taxonomyField.Update();
+                    }
+
                     // Assign the termSet to the field with an anchor term if specified
                     this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
                     this.WriteVerbose("TaxonomyField " + segment.InternalName + " successfully created!"); 
@@ -302,7 +309,15 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     var textSegment = segment as TextField;
 
                     // Create the column in the list
-                    this._listHelper.CreateTextField(list, segment.InternalName, segment.DisplayName, segment.Description, segment.Group, textSegment.IsMultiline);
+                    var textField = this._listHelper.CreateTextField(list, segment.InternalName, segment.DisplayName, segment.Description, segment.Group, textSegment.IsMultiline);
+
+                    // Set required if true
+                    if (textSegment.IsRequired)
+                    {
+                        textField.Required = true;
+                        textField.Update();
+                    }
+
                     this.WriteVerbose("TextField " + segment.InternalName + " successfully created!");
                 }
             }

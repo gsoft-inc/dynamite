@@ -35,6 +35,15 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether [is required].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [is required]; otherwise, <c>false</c>.
+        /// </value>
+        [XmlAttribute("Required")]
+        public bool IsRequired { get; set; }
+
+        /// <summary>
         /// Gets or sets the group.
         /// </summary>
         /// <value>
