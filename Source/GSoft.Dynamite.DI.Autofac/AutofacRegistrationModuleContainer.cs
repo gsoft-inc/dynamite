@@ -12,6 +12,8 @@ using GSoft.Dynamite.Utils;
 
 namespace GSoft.Dynamite.DependencyInjectors
 {
+    using GSoft.Dynamite.Definitions;
+
     /// <summary>
     /// The general RegistrationModuleContainer interface.
     /// </summary>
@@ -91,29 +93,12 @@ namespace GSoft.Dynamite.DependencyInjectors
 
             var assemblyLocator = new GacAssemblyLocator();
 
-            var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string>() { AssemblyFolder }, assemblyNameMatchingPredicate, assemblyVersionMatchingPredicate);
-
-            foreach (var assembly in matchingAssemblies)
-            {
-                // Don't register anything from the current DLL (we'll take care registering the Dynamite Registration Module ourselves below)
-                if (!assembly.FullName.Contains("GSoft.Dynamite.DI.Autofac"))
-                {
-                    var types = assembly.GetTypes()
-                        .Where(
-                            myType =>
-                            myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(Autofac.Module)));
-
-                    foreach (Type type in types)
-                    {
-                        var module = assembly.CreateInstance(type.FullName);
-                        containerBuilder.RegisterModule((IModule)module);
-                    }
-                }
-            }
-           
             // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves)
             var dynamiteModule = new AutofacDynamiteRegistrationModule(logCategoryName, defaultResourceFileNames);
             containerBuilder.RegisterModule(dynamiteModule);
+
+            var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyNameMatchingPredicate, assemblyVersionMatchingPredicate);
+            containerBuilder.RegisterAssemblyModules(matchingAssemblies.ToArray());
 
             var containerInstance = new AutofacRegistrationModuleContainer(containerBuilder.Build());
 
