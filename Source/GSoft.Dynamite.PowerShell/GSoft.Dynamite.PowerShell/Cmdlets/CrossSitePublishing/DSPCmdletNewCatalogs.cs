@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -16,8 +17,6 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
-    using System.Diagnostics.CodeAnalysis;
-
     /// <summary>
     /// Cmdlet for catalogs creation
     /// </summary>
@@ -88,80 +87,81 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 var webUrl = webNode.Attribute("Url").Value;
                 using (var site = new SPSite(webUrl))
                 {
-                    var web = site.OpenWeb();
+                    using (var web = site.OpenWeb())
+                    {
+                        // Get all catalogs configurations
+                        var catalogs = from catalogNode in webNode.Descendants("Catalog")
+                                       select (Catalog)this._serializer.Deserialize(catalogNode.CreateReader());
 
-                    // Get all catalogs configurations
-                    var catalogs = from catalogNode in webNode.Descendants("Catalog") 
-                                                select (Catalog)this._serializer.Deserialize(catalogNode.CreateReader());
-
-                    foreach (var catalog in catalogs)
-                    {                        
-                        // Set current culture to be able to set the "Title" of the list
-                        Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
-
-                        // Create the list if doesn't exists
-                        var list = this.EnsureCatalogList(web, catalog);
-
-                        // Add content types to the list
-                        this.CreateContentTypes(list, catalog);
-
-                        // Add Fields Segments
-                        this.CreateSegments(list, catalog);
-
-                        // Set default values for Fields
-                        this.SetDefaultValues(list, catalog);
-
-                        // Set Display Settings
-                        this.SetDisplaySettings(list, catalog);
-
-                        // Set versioning settings
-                        if (catalog.HasDraftVisibilityType)
+                        foreach (var catalog in catalogs)
                         {
-                            list.EnableModeration = true;
-                            list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(
-                                typeof(DraftVisibilityType),
-                                catalog.DraftVisibilityType);
+                            // Set current culture to be able to set the "Title" of the list
+                            Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
-                            list.Update();
+                            // Create the list if doesn't exists
+                            var list = this.EnsureCatalogList(web, catalog);
+
+                            // Add content types to the list
+                            this.CreateContentTypes(list, catalog);
+
+                            // Add Fields Segments
+                            this.CreateSegments(list, catalog);
+
+                            // Set default values for Fields
+                            this.SetDefaultValues(list, catalog);
+
+                            // Set Display Settings
+                            this.SetDisplaySettings(list, catalog);
+
+                            // Set versioning settings
+                            if (catalog.HasDraftVisibilityType)
+                            {
+                                list.EnableModeration = true;
+                                list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(
+                                    typeof(DraftVisibilityType),
+                                    catalog.DraftVisibilityType);
+
+                                list.Update();
+                            }
+
+                            if (string.IsNullOrEmpty(catalog.TaxonomyFieldMap))
+                            {
+                                // Set the list as catalog without navigation
+                                this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                            }
+                            else
+                            {
+                                // Set the list as catalog with navigation term
+                                this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
+                            }
+
+                            if (catalog.EnableRatings)
+                            {
+                                // Enable ratings
+                                this.WriteWarning("Set '" + catalog.RatingType + "' ratings for " + catalog.DisplayName + " to " + true);
+                                this._listHelper.SetRatings(list, catalog.RatingType, true);
+                            }
+                            else
+                            {
+                                // Disable ratings
+                                this.WriteWarning("Set ratings for " + catalog.DisplayName + " to " + false);
+                                this._listHelper.SetRatings(list, catalog.RatingType, false);
+                            }
+
+                            // Set list Write Security
+                            this.SetWriteSecurity(list, catalog);
+
+                            // Create return object
+                            var catalogSettings = new CatalogSettings()
+                            {
+                                Name = list.Title,
+                                Id = list.ID,
+                                ParentWebUrl = list.ParentWeb.Url,
+                                RootFolder = list.ParentWebUrl + "/" + list.RootFolder
+                            };
+
+                            this.WriteObject(catalogSettings, true);
                         }
-
-                        if (string.IsNullOrEmpty(catalog.TaxonomyFieldMap))
-                        {
-                            // Set the list as catalog without navigation
-                            this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
-                        }
-                        else
-                        {
-                            // Set the list as catalog with navigation term
-                            this._catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
-                        }
-
-                        if (catalog.EnableRatings)
-                        {
-                            // Enable ratings
-                            this.WriteWarning("Set '" + catalog.RatingType + "' ratings for " + catalog.DisplayName + " to " + true);
-                            this._listHelper.SetRatings(list, catalog.RatingType, true); 
-                        }
-                        else
-                        {
-                            // Disable ratings
-                            this.WriteWarning("Set ratings for " + catalog.DisplayName + " to " + false);
-                            this._listHelper.SetRatings(list, catalog.RatingType, false); 
-                        }
-
-                        // Set list Write Security
-                        this.SetWriteSecurity(list, catalog);
-
-                        // Create return object
-                        var catalogSettings = new CatalogSettings()
-                        {
-                            Name = list.Title,
-                            Id = list.ID,
-                            ParentWebUrl = list.ParentWeb.Url,
-                            RootFolder = list.ParentWebUrl + "/" + list.RootFolder
-                        };
-
-                        this.WriteObject(catalogSettings, true);
                     }   
                 }
             }

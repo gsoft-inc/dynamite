@@ -75,6 +75,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cmdlets\Configuration\DSPCmdletNewPropertyBagValue.cs" />
+    <Compile Include="Cmdlets\Configuration\Entities\PropertyBagValue.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\CatalogSettings.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\Catalog.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\ContentType.cs" />
