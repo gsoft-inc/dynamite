@@ -47,6 +47,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Server.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.Office.Server.UserProfiles.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
@@ -94,6 +98,10 @@
     <Compile Include="Cmdlets\Renditions\Entities\ImageRenditionDefinition.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
+    <Compile Include="Cmdlets\UserProfile\DSPCmdletSetUserProfilePropertySettings.cs" />
+    <Compile Include="Cmdlets\UserProfile\Entities\DisplaySettings.cs" />
+    <Compile Include="Cmdlets\UserProfile\Entities\GeneralSettings.cs" />
+    <Compile Include="Cmdlets\UserProfile\Entities\UserProfileProperty.cs" />
     <Compile Include="Cmdlets\Variations\DSPCmdletSyncList.cs" />
     <Compile Include="Cmdlets\Variations\DSPCmdletSyncWeb.cs" />
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
