@@ -1,4 +1,4 @@
-﻿// Core Javascript file for GSoft.Dynamite.Client
+﻿// Core Javascript file for GSoft.Dynamite
 
 // Chrome-JS intermitted crash fix (otherwise the ribbon breaks in Chrome 9 times out of 10)
 if (window.chrome) {
@@ -37,7 +37,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
 
 // GSoft.Dynamite Client namespace root
-window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
+window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
 
 // ====================
@@ -48,7 +48,7 @@ window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
     Core.initialize = function (params) {
 
     };
-} (GSoft.Dynamite.Client.Core = GSoft.Dynamite.Client.Core || {}, jq110));
+} (GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
 
 // ====================
 // Resources module
@@ -118,7 +118,7 @@ window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
         }
 
         function formatScriptResxLink(resourceFileName) {
-            return GSoft.Dynamite.Client.Utils.CurrentWebUrl + "/_layouts/scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
+            return GSoft.Dynamite.Utils.CurrentWebUrl + "/_layouts/scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
         }
 
         function currentCulture() {
@@ -132,7 +132,7 @@ window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
         return Res;
     }
 
-    (GSoft.Dynamite.Client.Res = GSoft.Dynamite.Client.Res || {}, jq110));
+    (GSoft.Dynamite.Res = GSoft.Dynamite.Res || {}, jq110));
 
     // ====================
     // Edit-mode Metadata Panel module
@@ -213,7 +213,7 @@ window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
         };
 
         return MetadataPanel;
-    }(GSoft.Dynamite.Client.MetadataPanel = GSoft.Dynamite.Client.MetadataPanel || {}, jq110));
+    }(GSoft.Dynamite.MetadataPanel = GSoft.Dynamite.MetadataPanel || {}, jq110));
 
     // ====================
     // Utils module
@@ -255,16 +255,16 @@ window.GSoft.Dynamite.Client = window.GSoft.Dynamite.Client || {};
         };
 
         function addLinkToSiteActions() {
-            GSoft.Dynamite.Client.Res.ensureResThenExecute(["GSoft.Dynamite.Client"], function() {
+            GSoft.Dynamite.Res.ensureResThenExecute(["GSoft.Dynamite"], function() {
                 var newLink = $('<div class="parent-folder-link"><a title="'
-                    + GSoft.Dynamite.Client.Res["GSoft.Dynamite.Client"].siteAction_OpenParentFolder
+                    + GSoft.Dynamite.Res["GSoft.Dynamite"].siteAction_OpenParentFolder
                     + '" href="' + Utils.ParentFolderUrl
                     + '"><img /></a></div>');
                 var img = newLink.find("img");
-                img.attr("src", "/_layouts/GSoft.Dynamite.Client/Img/icon_open_parent.png");
+                img.attr("src", "/_layouts/GSoft.Dynamite/Img/icon_open_parent.png");
                 $(".ms-siteactionscontainer .s4-breadcrumb-anchor").after(newLink);
             });
         };
-    }(GSoft.Dynamite.Client.Utils = GSoft.Dynamite.Client.Utils || {}, jq110));
+    }(GSoft.Dynamite.Utils = GSoft.Dynamite.Utils || {}, jq110));
 
 

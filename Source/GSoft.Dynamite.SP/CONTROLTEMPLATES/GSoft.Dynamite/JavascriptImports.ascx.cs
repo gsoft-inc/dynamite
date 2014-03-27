@@ -3,7 +3,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 
-namespace GSoft.Dynamite.Client.CONTROLTEMPLATES.GSoft.Dynamite.Client
+namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
     using System.Web;
 

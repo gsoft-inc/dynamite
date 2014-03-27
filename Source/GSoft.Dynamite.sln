@@ -19,7 +19,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Unity", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Autofac", "GSoft.Dynamite.DI.Autofac\GSoft.Dynamite.DI.Autofac.csproj", "{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Client", "GSoft.Dynamite.Client\GSoft.Dynamite.Client.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", "{965F7147-7674-4FA1-BE48-F8EEF1FD8F08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code", "Code", "{AC446A77-76B7-4201-B431-89CDCC57E6E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.SP", "GSoft.Dynamite.SP\GSoft.Dynamite.SP.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,5 +52,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D} = {965F7147-7674-4FA1-BE48-F8EEF1FD8F08}
+		{72576E04-75B4-4EAF-AF1E-7482355FC8C1} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
+		{7FA32E92-9037-4626-93AB-5E98C30A9C52} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
+		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
 	EndGlobalSection
 EndGlobal

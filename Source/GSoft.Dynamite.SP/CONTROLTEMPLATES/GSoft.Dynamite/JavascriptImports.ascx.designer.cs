@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GSoft.Dynamite.Client.CONTROLTEMPLATES.GSoft.Dynamite.Client {
+namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite {
     
     
     public partial class JavascriptImports {

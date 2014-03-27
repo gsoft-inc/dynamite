@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" solutionId="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" resetWebServer="false" name="GSoft.Dynamite.Client" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" solutionId="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" resetWebServer="false" name="GSoft.Dynamite" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <features>
     <featureReference itemId="1505bd90-16f1-47d4-a99a-6007e090ca32" />
   </features>
