@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="DynamiteJavascriptImports" Path="DynamiteJavascriptImports" Url="Style Library">
+  </Module>
+  <Control Id="AdditionalPageHead" Sequence="0" ControlSrc="~/_controltemplates/GSoft.Dynamite.Client/JavascriptImports.ascx"></Control>
+</Elements>

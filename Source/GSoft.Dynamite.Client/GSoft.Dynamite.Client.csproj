@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GSoft.Dynamite.Client</RootNamespace>
+    <AssemblyName>GSoft.Dynamite.Client</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SandboxedSolution>False</SandboxedSolution>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.SharePoint" />
+    <Reference Include="Microsoft.SharePoint.Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite.Client\JavascriptImports.ascx.cs">
+      <DependentUpon>JavascriptImports.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite.Client\JavascriptImports.ascx.designer.cs">
+      <DependentUpon>JavascriptImports.ascx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
+    <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
+    </None>
+    <None Include="Features\Javascript Imports\Javascript Imports.feature">
+      <FeatureId>{1505bd90-16f1-47d4-a99a-6007e090ca32}</FeatureId>
+    </None>
+    <None Include="DynamiteJavascriptImports\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{720cb6d9-4c7a-4ed4-a8ff-e3c297dd0c74}</SharePointProjectItemId>
+    </None>
+    <None Include="Layouts\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{ff112f9f-2429-46c2-a407-771ef33b1d94}</SharePointProjectItemId>
+    </None>
+    <None Include="Package\Package.package">
+      <PackageId>{d40e8563-ecc4-4066-8f26-2d8e0f8e8a28}</PackageId>
+    </None>
+    <None Include="Package\Package.Template.xml">
+      <DependentUpon>Package.package</DependentUpon>
+    </None>
+    <None Include="Resources\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{01a6a883-104e-4560-8f3a-516fb755f156}</SharePointProjectItemId>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite.Client\JavascriptImports.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Features\Javascript Imports\Javascript Imports.Template.xml">
+      <DependentUpon>Javascript Imports.feature</DependentUpon>
+    </Content>
+    <Content Include="DynamiteJavascriptImports\Elements.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Layouts\GSoft.Dynamite.Client\GSoft.Dynamite.Client.Knockout.BindindHandlers.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\GSoft.Dynamite.Client.Knockout.Extensions.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\GSoft.Dynamite.Client.Core.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Img\icon_open_parent.png" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\jquery-1.10.2.min.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\jquery-noconflict.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\jquery.html5-placeholder-shim.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\knockout-3.0.0.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\moment-with-langs.min.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Client\Lib\underscore-min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\GSoft.Dynamite.Client.en-US.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite.DI.Autofac\GSoft.Dynamite.DI.Autofac.csproj">
+      <Project>{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}</Project>
+      <Name>GSoft.Dynamite.DI.Autofac</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\GSoft.Dynamite.Client.fr-FR.resx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" />
+</Project>

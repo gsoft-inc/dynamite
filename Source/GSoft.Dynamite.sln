@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Unity", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Autofac", "GSoft.Dynamite.DI.Autofac\GSoft.Dynamite.DI.Autofac.csproj", "{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Client", "GSoft.Dynamite.Client\GSoft.Dynamite.Client.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,12 @@ Global
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
