@@ -10,6 +10,8 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
     using global::GSoft.Dynamite.Logging;
 
     using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Utilities;
+    using Microsoft.SharePoint.WebControls;
 
     public partial class JavascriptImports : UserControl
     {
@@ -51,6 +53,33 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
                     this.ParentFolderUrlLiteral.Text = string.Format(ListRootFolderUrlFormat, listUrl, SPContext.Current.File.ParentFolder.ServerRelativeUrl);
                 }
             }
-         }
+
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryPlaceHolderShim);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryNoConflictScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockOutScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.MomentScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.UnderscoreScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutBindingHandlersScriptLink);
+            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutExtensionsScriptLink);
+        }
+
+        private void MakeBrowserCacheSafeOrRemoveIfMissing(ScriptLink scriptLink)
+        {
+            try
+            {
+                // These are optional module, so trying to build these browser-cache-safe URLs may explode if the modules are missing
+                scriptLink.Name = SPUtility.MakeBrowserCacheSafeLayoutsUrl(scriptLink.Name, false);
+            }
+            catch (SPException)
+            {
+                // Script not found, remove from page
+                scriptLink.Parent.Controls.Remove(scriptLink);
+
+                // Current.Resolve<ILogger>().Info("Failed to find script in layouts folder. Removing script link from page: " + scriptLink.Name);
+            }
+        }
     }
 }

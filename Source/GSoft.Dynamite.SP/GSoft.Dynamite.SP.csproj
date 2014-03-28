@@ -92,7 +92,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx" />
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
     <Content Include="Features\Javascript Imports\Javascript Imports.Template.xml">
       <DependentUpon>Javascript Imports.feature</DependentUpon>
     </Content>
