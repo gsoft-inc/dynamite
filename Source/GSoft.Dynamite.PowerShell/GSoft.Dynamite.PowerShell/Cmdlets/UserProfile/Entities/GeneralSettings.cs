@@ -87,5 +87,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile.Entities
         /// </value>
         [XmlAttribute]
         public int Length { get; set; }
+
+        /// <summary>
+        /// Gets or sets the order.
+        /// </summary>
+        /// <value>
+        /// The order.
+        /// </value>
+        [XmlAttribute]
+        public int Order { get; set; }
     }
 }
