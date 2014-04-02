@@ -1,42 +1,31 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="AutofacDynamiteRegistrationModule.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using global::Autofac;
+using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Setup;
+using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.TimerJobs;
+using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Security;
+using GSoft.Dynamite.WebParts;
+using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.WebConfig;
+using GSoft.Dynamite.Globalization.Variations;
 
 namespace GSoft.Dynamite.DI.Autofac
 {
-    using global::Autofac;
-
-    using GSoft.Dynamite.Binding;
-    using GSoft.Dynamite.Logging;
-    using GSoft.Dynamite.Repositories;
-    using GSoft.Dynamite.Taxonomy;
-    using GSoft.Dynamite.TimerJobs;
-    using GSoft.Dynamite.Utils;
-    using GSoft.Dynamite.Binding.Converters;
-
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
     public class AutofacDynamiteRegistrationModule : Module
     {
-        /// <summary>
-        /// The application name
-        /// </summary>
-        private const string AppName = "IFC.IntactNet";
-
         private readonly string logCategoryName;
         private readonly string[] defaultResourceFileNames;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AutofacDynamiteRegistrationModule"/> class.
-        /// </summary>
-        public AutofacDynamiteRegistrationModule()
-        {
-            this.logCategoryName = AppName;
-            this.defaultResourceFileNames = new string[] { AppName, AppName + ".News", AppName + ".ConfigurationValues", AppName + ".ReusableContent", AppName + ".Navigation", AppName + ".ProvinceToBU" };
-        }
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
@@ -70,13 +59,12 @@ namespace GSoft.Dynamite.DI.Autofac
         /// </param>
         protected override void Load(ContainerBuilder builder)
         {
+            // Logging
 #if DEBUG
-            // Logger with debug output
-            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, true);
+            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, true);     // Logger with debug output
             builder.RegisterInstance<ILogger>(logger);
 #else
-            // Logger without debug output
-            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);
+            var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);    // Logger without debug output
             builder.RegisterInstance<ILogger>(logger);
 #endif
 
@@ -87,41 +75,71 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
 
-            // Singleton entity binder
-            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();
+            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();  // Singleton entity binder
 
-            // Taxonomy
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
+            // Cache
+            builder.RegisterType<CacheHelper>().As<ICacheHelper>();
 
-            builder.RegisterType<TaxonomyService>();
-            builder.RegisterType<TaxonomyHelper>();
+            // Definitions
+            builder.RegisterType<ContentTypeBuilder>();
+            builder.RegisterType<FieldHelper>();
+
+            // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
+            builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
+            builder.RegisterType<MuiHelper>();
+            builder.RegisterType<DateHelper>();
+            builder.RegisterType<RegionalSettingsHelper>();
+
+            builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
+            builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
+            builder.RegisterType<VariationExpert>().As<IVariationExpert>();
+
+            // Lists
+            builder.RegisterType<ListHelper>();
+            builder.RegisterType<ListLocator>();
+            builder.RegisterType<ListSecurityHelper>();
+
+            // MasterPages
+            builder.RegisterType<MasterPageHelper>();
+            builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
 
             // Repositories
             builder.RegisterType<FolderRepository>();
-            builder.RegisterType<ListLocator>();
+            builder.RegisterType<QueryHelper>().As<IQueryHelper>();
 
-            // Utilities
-            builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
-
-            builder.RegisterType<ContentTypeHelper>();
-            builder.RegisterType<EventReceiverHelper>();
-            builder.RegisterType<FieldHelper>();
-            builder.RegisterType<ListHelper>();
-            builder.RegisterType<ListSecurityHelper>();
-            builder.RegisterType<MuiHelper>();
+            // Security
             builder.RegisterType<SecurityHelper>();
-            builder.RegisterType<SearchHelper>();
-            builder.RegisterType<WebPartHelper>();
-            builder.RegisterType<MasterPageHelper>();
-            builder.RegisterType<RegionalSettingsHelper>();
-            builder.RegisterType<CustomActionHelper>();
-            builder.RegisterType<WebConfigModificationHelper>();
-            builder.RegisterType<ContentOrganizerHelper>();
-            builder.RegisterType<DateHelper>();
-            builder.RegisterType<UserHelper>();
+            builder.RegisterType<UserHelper>(); 
 
-            // Experts
+            // Setup
+            builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
+            builder.RegisterType<FolderInfo>().As<IFolderInfo>();
+            builder.RegisterType<PageInfo>().As<IPageInfo>();
+            builder.RegisterType<TaxonomyInfo>().As<ITaxonomyInfo>();
+            builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
+
+            builder.RegisterType<FolderMaker>().As<IFolderMaker>();
+            builder.RegisterType<PageCreator>();
+
+            // Taxonomy
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
+            builder.RegisterType<TaxonomyService>();
+            builder.RegisterType<TaxonomyHelper>();
+
+            // Timer Jobs
             builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
+            
+            // Utils
+            builder.RegisterType<EventReceiverHelper>();
+            builder.RegisterType<SearchHelper>();
+            builder.RegisterType<CustomActionHelper>();
+            builder.RegisterType<ContentOrganizerHelper>();
+
+            // Web config
+            builder.RegisterType<WebConfigModificationHelper>();
+
+            // Web Parts
+            builder.RegisterType<WebPartHelper>();
         }
     }
 }

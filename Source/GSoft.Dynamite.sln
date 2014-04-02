@@ -15,11 +15,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{325B61
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite", "GSoft.Dynamite\GSoft.Dynamite.csproj", "{72576E04-75B4-4EAF-AF1E-7482355FC8C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.ServiceLocator", "GSoft.Dynamite.ServiceLocator\GSoft.Dynamite.ServiceLocator.csproj", "{F0BE8AF5-CFD7-46DB-82B7-7DA7C91EB4F7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Unity", "GSoft.Dynamite.DI.Unity\GSoft.Dynamite.DI.Unity.csproj", "{7FA32E92-9037-4626-93AB-5E98C30A9C52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.DI.Autofac", "GSoft.Dynamite.DI.Autofac\GSoft.Dynamite.DI.Autofac.csproj", "{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", "{965F7147-7674-4FA1-BE48-F8EEF1FD8F08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code", "Code", "{AC446A77-76B7-4201-B431-89CDCC57E6E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.SP", "GSoft.Dynamite.SP\GSoft.Dynamite.SP.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +35,6 @@ Global
 		{72576E04-75B4-4EAF-AF1E-7482355FC8C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72576E04-75B4-4EAF-AF1E-7482355FC8C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72576E04-75B4-4EAF-AF1E-7482355FC8C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F0BE8AF5-CFD7-46DB-82B7-7DA7C91EB4F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F0BE8AF5-CFD7-46DB-82B7-7DA7C91EB4F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F0BE8AF5-CFD7-46DB-82B7-7DA7C91EB4F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F0BE8AF5-CFD7-46DB-82B7-7DA7C91EB4F7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7FA32E92-9037-4626-93AB-5E98C30A9C52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7FA32E92-9037-4626-93AB-5E98C30A9C52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FA32E92-9037-4626-93AB-5E98C30A9C52}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -43,8 +43,20 @@ Global
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D} = {965F7147-7674-4FA1-BE48-F8EEF1FD8F08}
+		{72576E04-75B4-4EAF-AF1E-7482355FC8C1} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
+		{7FA32E92-9037-4626-93AB-5E98C30A9C52} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
+		{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
 	EndGlobalSection
 EndGlobal

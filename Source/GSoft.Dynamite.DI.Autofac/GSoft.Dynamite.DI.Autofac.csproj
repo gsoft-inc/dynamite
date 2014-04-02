@@ -38,15 +38,16 @@
     <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.1.9.747, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="GSoft.Dynamite, Version=0.5.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5, processorArchitecture=MSIL">
+      <HintPath>..\GSoft.Dynamite\bin\Release\GSoft.Dynamite.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -57,12 +58,6 @@
     <Compile Include="AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="AutofacRegistrationModuleContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
-      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
-      <Name>GSoft.Dynamite</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">

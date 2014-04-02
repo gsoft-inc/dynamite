@@ -39,6 +39,10 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.DocumentManagement.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Policy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
@@ -71,6 +75,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
     <Compile Include="Binding\Converters\ImageValueConverter.cs" />
@@ -103,7 +108,13 @@
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
+    <Compile Include="Cache\CacheHelper.cs" />
+    <Compile Include="Cache\ICacheHelper.cs" />
+    <Compile Include="Cache\ICacheKey.cs" />
+    <Compile Include="Cache\ParameterizedCacheKey.cs" />
+    <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
@@ -111,7 +122,7 @@
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
-    <Compile Include="Language.cs" />
+    <Compile Include="Globalization\Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
@@ -120,43 +131,73 @@
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\IFolderRepository.cs" />
-    <Compile Include="Repositories\ListLocator.cs" />
+    <Compile Include="Repositories\IQueryHelper.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Lists\ListLocator.cs" />
+    <Compile Include="Repositories\QueryHelper.cs" />
+    <Compile Include="Definitions\ContentTypeInfo.cs" />
+    <Compile Include="Setup\FieldValueInfo.cs" />
+    <Compile Include="Setup\FolderInfo.cs" />
+    <Compile Include="Setup\FolderMaker.cs" />
+    <Compile Include="Setup\IFieldValueInfo.cs" />
+    <Compile Include="Setup\IFolderInfo.cs" />
+    <Compile Include="Setup\IFolderMaker.cs" />
+    <Compile Include="Setup\IPageInfo.cs" />
+    <Compile Include="Setup\ITaxonomyInfo.cs" />
+    <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\PageCreator.cs" />
+    <Compile Include="Setup\PageInfo.cs" />
+    <Compile Include="Setup\TaxonomyInfo.cs" />
+    <Compile Include="Setup\TaxonomyMultiInfo.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
-    <Compile Include="Utils\ContentTypeHelper.cs" />
+    <Compile Include="Definitions\ContentTypeBuilder.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="Utils\DateHelper.cs" />
+    <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
-    <Compile Include="Utils\FieldHelper.cs" />
-    <Compile Include="Utils\FieldInfo.cs" />
-    <Compile Include="Utils\IResourceLocator.cs" />
-    <Compile Include="Utils\ListHelper.cs" />
-    <Compile Include="Utils\ListSecurityHelper.cs" />
-    <Compile Include="Utils\MasterPageHelper.cs" />
-    <Compile Include="Utils\MuiHelper.cs" />
-    <Compile Include="Utils\RegionalSettingsHelper.cs" />
-    <Compile Include="Utils\ResourceLocator.cs" />
+    <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
+    <Compile Include="Definitions\FieldHelper.cs" />
+    <Compile Include="Definitions\FieldInfo.cs" />
+    <Compile Include="Utils\GacAssemblyLocator.cs" />
+    <Compile Include="MasterPages\IExtraMasterPageBodyCssClasses.cs" />
+    <Compile Include="Globalization\IResourceLocator.cs" />
+    <Compile Include="Lists\ListHelper.cs" />
+    <Compile Include="Lists\ListSecurityHelper.cs" />
+    <Compile Include="MasterPages\MasterPageHelper.cs" />
+    <Compile Include="Globalization\MuiHelper.cs" />
+    <Compile Include="Globalization\RegionalSettingsHelper.cs" />
+    <Compile Include="Globalization\ResourceLocator.cs" />
     <Compile Include="Utils\SearchHelper.cs" />
-    <Compile Include="Utils\SecurityHelper.cs" />
-    <Compile Include="Utils\Unsafe.cs" />
-    <Compile Include="Utils\UserHelper.cs" />
-    <Compile Include="Utils\WebConfigModificationHelper.cs" />
-    <Compile Include="Utils\WebPartHelper.cs" />
+    <Compile Include="Security\SecurityHelper.cs" />
+    <Compile Include="Security\Unsafe.cs" />
+    <Compile Include="Security\UserHelper.cs" />
+    <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
+    <Compile Include="WebParts\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />
     <Compile Include="ValueTypes\PrincipalValue.cs" />
-    <Compile Include="ValueTypes\RegionalSettings.cs" />
+    <Compile Include="Globalization\RegionalSettings.cs" />
     <Compile Include="ValueTypes\TaxonomyValue.cs" />
     <Compile Include="ValueTypes\TaxonomyValueCollection.cs" />
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
+    <Compile Include="Globalization\Variations\DefaultVariationDirector.cs" />
+    <Compile Include="Globalization\Variations\CanadianEnglishAndFrenchVariationBuilder.cs" />
+    <Compile Include="Globalization\Variations\IVariationBuilder.cs" />
+    <Compile Include="Globalization\Variations\IVariationDirector.cs" />
+    <Compile Include="Globalization\Variations\IVariationExpert.cs" />
+    <Compile Include="Globalization\Variations\VariationExpert.cs" />
+    <Compile Include="Globalization\Variations\VariationLabel.cs" />
+    <Compile Include="WebParts\IBaseWebPart.cs" />
+    <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
+    <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\GSoft.Dynamite.snk" />
