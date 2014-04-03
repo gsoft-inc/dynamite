@@ -24,12 +24,13 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
     public class DSPCmdletSetUserProfilePropertySettings : Cmdlet
     {
         private XmlSerializer _serializer;
-
         private UserProfileConfigManager _profileConfigManager;
         private ProfilePropertyManager _profilePropertyManager;
         private CorePropertyManager _corePropertyManager;
         private ProfileTypePropertyManager _profileTypePropertyManager;
         private ProfileSubtypeManager _profileSubTypeManager;
+        private ProfileSubtypePropertyManager _profileSubTypePropertyManager;
+        private bool _orderHasChanged;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -106,6 +107,15 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
                                 profileSubtypeProperty,
                                 profilePropertyConfigXmlNode,
                                 profilePropertyConfig); 
+
+                            // Change display order
+                            if (profilePropertyConfig.GeneralSettings.Order > 0)
+                            {
+                                this._profileSubTypePropertyManager.SetDisplayOrderByPropertyName(
+                                    profilePropertyConfig.GeneralSettings.Name,
+                                    profilePropertyConfig.GeneralSettings.Order);
+                                this._orderHasChanged = true;
+                            } 
                         }
                         else if (hideOtherProperties)
                         {
@@ -131,6 +141,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
                             }
                         }
                     }
+
+                    if (this._orderHasChanged)
+                    {
+                        this._profileSubTypePropertyManager.CommitDisplayOrder(); 
+                    }
                 }
             }
         }
@@ -143,6 +158,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
             this._corePropertyManager = this._profilePropertyManager.GetCoreProperties();
             this._profileTypePropertyManager = this._profilePropertyManager.GetProfileTypeProperties(ProfileType.User);
             this._profileSubTypeManager = ProfileSubtypeManager.Get(serviceContext);
+            this._profileSubTypePropertyManager =
+                this._profilePropertyManager.GetProfileSubtypeProperties(
+                    ProfileSubtypeManager.GetDefaultProfileName(ProfileType.User));
         }
 
         private void ConfigureCoreProperty(CoreProperty coreProperty, UserProfileProperty profilePropertyConfig)
