@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Office.Server.Search.Administration;
@@ -162,6 +163,24 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Get a result source object by name
+        /// </summary>
+        /// <param name="ssa">The search service application</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level">The search object level</param>
+        /// <param name="contextWeb">The web context</param>
+        /// <returns>The source object</returns>
+        public Source GetResultSourceByName(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
+        {
+            var federationManager = new FederationManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+
+            return resultSource;
+        }
+
+        /// <summary>
         /// Ensure a search result source
         /// </summary>
         /// <param name="ssa">The search service application.</param>
@@ -246,6 +265,123 @@ namespace GSoft.Dynamite.Utils
             {
                 federationManager.RemoveSource(resultSource);
             }           
+        }
+
+        /// <summary>
+        /// Creates a query rule object for the search level.
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="level">The search level object.</param>
+        /// <param name="contextWeb">The SPWeb context.</param>
+        /// <param name="displayName">The display name.</param>
+        /// <param name="isActive">True if the query is active. False otherwise.</param>
+        /// <param name="startDate">The query rule publishing start date.</param>
+        /// <param name="endDate">The query rule publishing end date.</param>
+        /// <returns>The new query rule object.</returns>
+        public QueryRule CreateQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName, bool isActive, DateTime? startDate, DateTime? endDate)
+        {
+            var queryRuleManager = new QueryRuleManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            // Build the SearchObjectFilter
+            var searchObjectFilter = new SearchObjectFilter(searchOwner);
+
+            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
+
+            return rules.CreateQueryRule(displayName, startDate, endDate, isActive);
+        }
+
+        /// <summary>
+        /// Delete all query rules corresponding to the display name
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="level">The search level.</param>
+        /// <param name="contextWeb">The SPWeb context.</param>
+        /// <param name="displayName">The query rule name.</param>
+        public void DeleteQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
+        {
+            // Get all query rules for this level
+            var rules = this.GetQueryRules(ssa, level, contextWeb);
+
+            var queryRuleCollection = new List<QueryRule>();
+
+            if (rules.Contains(displayName))
+            {
+                queryRuleCollection = rules[displayName].ToList();
+            }
+
+            if (queryRuleCollection.Count >0)
+            {
+                foreach (var queryRule in queryRuleCollection)
+                {
+                    rules.RemoveQueryRule(queryRule);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get all query rules matching the display name in the search level
+        /// </summary>
+        /// <param name="ssa">The search service.</param>
+        /// <param name="level">The search level.</param>
+        /// <param name="contextWeb">The SPWeb context.</param>
+        /// <param name="displayName">The query rule display name.</param>
+        /// <returns>A list of query rules</returns>
+        public List<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
+        {
+            var queryRules = new List<QueryRule>();
+
+            // Get all query rules for this level
+            var rules = this.GetQueryRules(ssa, level, contextWeb);
+
+            if (rules.Contains(displayName))
+            {
+                queryRules = rules[displayName].ToList();
+            }
+
+            return queryRules;
+        }
+
+        /// <summary>
+        /// Create a change query action for a Query Rule
+        /// </summary>
+        /// <param name="rule">The query rule object</param>
+        /// <param name="queryTemplate">The search query template in KQL format</param>
+        /// <param name="resultSourceId">The search result source Id</param>
+        public void CreateChangeQueryAction(QueryRule rule, string queryTemplate, Guid resultSourceId)
+        {
+            var queryAction = (ChangeQueryAction)rule.CreateQueryAction(QueryActionType.ChangeQuery);
+
+            if (!string.IsNullOrEmpty(queryTemplate))
+            {
+                queryAction.QueryTransform.QueryTemplate = queryTemplate;
+            }
+
+            queryAction.QueryTransform.SourceId = resultSourceId;
+           
+            rule.Update();
+        }
+
+        /// <summary>
+        /// Get all query rules for a search level.
+        /// </summary>
+        /// <param name="ssa">The search service.</param>
+        /// <param name="level">The search object level.</param>
+        /// <param name="contextWeb">The SPWeb context.</param>
+        /// <returns>A query rule collection.</returns>
+        private QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
+        {
+            QueryRuleCollection queryRules = null;
+
+            var queryRuleManager = new QueryRuleManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            // Build the SearchObjectFilter
+            var searchObjectFilter = new SearchObjectFilter(searchOwner);
+
+            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
+
+            return rules;
         }
     }
 }

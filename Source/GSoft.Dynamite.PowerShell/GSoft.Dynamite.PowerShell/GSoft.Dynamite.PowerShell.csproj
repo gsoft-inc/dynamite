@@ -96,6 +96,8 @@
     <Compile Include="Cmdlets\Renditions\DSPCmdletRemoveImageRenditions.cs" />
     <Compile Include="Cmdlets\Renditions\DSPCmdletAddImageRenditions.cs" />
     <Compile Include="Cmdlets\Renditions\Entities\ImageRenditionDefinition.cs" />
+    <Compile Include="Cmdlets\Search\DSPCmdletRemoveQueryRules.cs" />
+    <Compile Include="Cmdlets\Search\DSPCmdletNewQueryRules.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletNewResultSources.cs" />
     <Compile Include="Cmdlets\Search\DSPCmdletRemoveResultSources.cs" />
     <Compile Include="Cmdlets\UserProfile\DSPCmdletSetUserProfilePropertySettings.cs" />
