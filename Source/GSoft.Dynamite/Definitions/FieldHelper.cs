@@ -55,14 +55,50 @@ namespace GSoft.Dynamite.Definitions
 
             this._logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
             
-            // Get the field and the list.
-            SPFieldLookup lookupField = web.Fields[fieldId] as SPFieldLookup;
-            SPList lookupList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
+            // Get the field.
+            SPFieldLookup lookupField = null;
+            if (web.Fields.Contains(fieldId))
+            {
+                lookupField = web.Fields[fieldId] as SPFieldLookup;
+            }
 
             if (lookupField == null)
             {
                 throw new ArgumentException("Unable to find the lookup field.", "fieldId");
             }
+
+            // Get the list
+            SPList lookupList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
+
+            // Configure the lookup field.
+            this.SetLookupToList(lookupField, lookupList);
+
+            this._logger.Info("End method 'SetLookupToList'.");
+        }
+
+        /// <summary>
+        /// Sets the lookup to a list.
+        /// </summary>
+        /// <param name="lookupField">The lookup field.</param>
+        /// <param name="lookupList">The lookup list.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// The parameter 'lookupField' cannot be null.;lookupField
+        /// or
+        /// The parameter 'lookupList' cannot be null.;lookupList
+        /// </exception>
+        public void SetLookupToList(SPFieldLookup lookupField, SPList lookupList)
+        {
+            if (lookupField == null)
+            {
+                throw new ArgumentNullException("The parameter 'lookupField' cannot be null.", "lookupField");
+            }
+
+            if (lookupList == null)
+            {
+                throw new ArgumentNullException("The parameter 'lookupList' cannot be null.", "lookupList");
+            }
+
+            this._logger.Info("Start method 'SetLookupToList' for field with id '{0}'", lookupField.Id);
 
             // Get the fields schema xml.
             XDocument fieldSchema = XDocument.Parse(lookupField.SchemaXml);
