@@ -10,7 +10,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Utils
-{  
+{
     /// <summary>
     /// Search service utilities
     /// </summary>
@@ -32,7 +32,7 @@ namespace GSoft.Dynamite.Utils
 
             // see if there is an existing scope
             Scope scope = remoteScopes.GetScopesForSite(new Uri(site.Url)).Cast<Scope>().FirstOrDefault(s => s.Name == scopeName);
-            
+
             // only add if the scope doesn't exist already
             if (scope == null)
             {
@@ -147,7 +147,7 @@ namespace GSoft.Dynamite.Utils
 
             if (resultSource != null && overwrite)
             {
-                  federationManager.RemoveSource(resultSource);              
+                federationManager.RemoveSource(resultSource);
             }
 
             if (resultSource == null || overwrite)
@@ -158,7 +158,7 @@ namespace GSoft.Dynamite.Utils
                 resultSource.CreateQueryTransform(properties, query);
                 resultSource.Commit();
             }
-            
+
             return resultSource;
         }
 
@@ -264,7 +264,7 @@ namespace GSoft.Dynamite.Utils
             if (resultSource != null)
             {
                 federationManager.RemoveSource(resultSource);
-            }           
+            }
         }
 
         /// <summary>
@@ -310,7 +310,7 @@ namespace GSoft.Dynamite.Utils
                 queryRuleCollection = rules[displayName].ToList();
             }
 
-            if (queryRuleCollection.Count >0)
+            if (queryRuleCollection.Count > 0)
             {
                 foreach (var queryRule in queryRuleCollection)
                 {
@@ -358,7 +358,7 @@ namespace GSoft.Dynamite.Utils
             }
 
             queryAction.QueryTransform.SourceId = resultSourceId;
-           
+
             rule.Update();
         }
 
@@ -371,17 +371,10 @@ namespace GSoft.Dynamite.Utils
         /// <returns>A query rule collection.</returns>
         private QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
         {
-            QueryRuleCollection queryRules = null;
-
             var queryRuleManager = new QueryRuleManager(ssa);
             var searchOwner = new SearchObjectOwner(level, contextWeb);
 
-            // Build the SearchObjectFilter
-            var searchObjectFilter = new SearchObjectFilter(searchOwner);
-
-            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
-
-            return rules;
+            return queryRuleManager.GetQueryRules(new SearchObjectFilter(searchOwner));
         }
     }
 }

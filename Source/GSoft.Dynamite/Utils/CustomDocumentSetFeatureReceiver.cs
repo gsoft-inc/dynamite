@@ -259,7 +259,7 @@ namespace GSoft.Dynamite.Utils
             AddEventHandler(
                 contentType,
                 "DocumentSet ItemUpdated",
-                "Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
+                "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
                 "Microsoft.Office.DocumentManagement.DocumentSets.DocumentSetEventReceiver",
                 SPEventReceiverType.ItemUpdated,
                 100,
@@ -268,7 +268,7 @@ namespace GSoft.Dynamite.Utils
             AddEventHandler(
                 contentType,
                 "DocumentSet ItemAdded",
-                "Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
+                "Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c",
                 "Microsoft.Office.DocumentManagement.DocumentSets.DocumentSetItemsEventReceiver",
                 SPEventReceiverType.ItemAdded,
                 100,

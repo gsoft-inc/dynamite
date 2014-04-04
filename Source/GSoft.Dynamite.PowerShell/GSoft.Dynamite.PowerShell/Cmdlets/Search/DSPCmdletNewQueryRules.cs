@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using System.Security.Cryptography;
 using System.Xml.Linq;
-
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
-
 using Microsoft.Office.Server.Search.Administration;
-using Microsoft.Office.Server.Search.Query;
-using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 {
@@ -130,7 +124,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                             {
                                 // Retrieve term by Id
                                 var guid = Guid.Parse(termId);
-                                term = this._taxonomyService.GetTermByGuid(site, termGroup, termSet, guid);
+                                term = this._taxonomyService.GetTermForId(site, termGroup, termSet, guid);
                             }
 
                             if (term != null)

@@ -29,6 +29,17 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
+        /// <param name="termsCollection">The taxonomy values.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
+        public TaxonomyValueCollection(IList<Term> termsCollection) :
+            this(new TaxonomyValueCollection(termsCollection.Select(term => new TaxonomyValue(term)).ToList()))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// </summary>
+        /// <remarks>This constructor will not ensure that the labels respect the CurrentUICulture</remarks>
         /// <param name="taxonomyFieldValueCollection">The taxonomy values.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
         public TaxonomyValueCollection(TaxonomyFieldValueCollection taxonomyFieldValueCollection) :

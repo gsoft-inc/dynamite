@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C1331000-30AE-4B02-B048-D634A4511FF6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GSoft.Dynamite.Examples.Parts</RootNamespace>
+    <AssemblyName>GSoft.Dynamite.Examples.Parts</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SandboxedSolution>False</SandboxedSolution>
+    <ActiveDeploymentConfiguration>No Activation</ActiveDeploymentConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SharePoint.Security, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\Microsoft.SharePoint.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.SharePoint" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx.cs">
+      <DependentUpon>ProjectScripts.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx.designer.cs">
+      <DependentUpon>ProjectScripts.ascx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx.cs">
+      <DependentUpon>ScriptDependencies.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx.designer.cs">
+      <DependentUpon>ScriptDependencies.ascx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebParts\BasicWall\BasicWallUserControl.ascx.cs">
+      <DependentUpon>BasicWallUserControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebParts\BasicWall\BasicWallUserControl.ascx.designer.cs">
+      <DependentUpon>BasicWallUserControl.ascx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WebParts\BasicWall\BasicWallWebPart.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
+    <None Include="ControlTemplates\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{b7533567-d541-4fc9-8f74-01fb32c21112}</SharePointProjectItemId>
+    </None>
+    <None Include="Features\Basic Wall\Basic Wall.feature">
+      <FeatureId>{8f7ccbdc-3fa9-4340-954b-6fc62ab6f1c5}</FeatureId>
+    </None>
+    <None Include="Features\Client Scripts\Client Scripts.feature">
+      <FeatureId>{b6b8d3e5-f64c-40c5-b432-385e19cdbddb}</FeatureId>
+    </None>
+    <None Include="Layouts\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{a5a189be-25f1-4abf-8926-2a5b19f6e42c}</SharePointProjectItemId>
+    </None>
+    <None Include="Modules\CustomizableScript\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{b28f99c3-e0c8-4e19-9b4c-588689619582}</SharePointProjectItemId>
+    </None>
+    <None Include="Modules\ScriptLinks\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{75dd738c-b059-41f9-84b6-ee780fe5f965}</SharePointProjectItemId>
+    </None>
+    <None Include="Package\Package.package">
+      <PackageId>{cdebd1f2-a77e-4924-b788-6d8b25856ffa}</PackageId>
+    </None>
+    <None Include="Package\Package.Template.xml">
+      <DependentUpon>Package.package</DependentUpon>
+    </None>
+    <None Include="WebParts\BasicWall\BasicWall.webpart" />
+    <None Include="WebParts\BasicWall\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{283c1835-44b6-4246-aaa1-2d03c6a5ff34}</SharePointProjectItemId>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ControlTemplates\GSoft.Dynamite.Examples\ProjectScripts.ascx" />
+    <Content Include="ControlTemplates\GSoft.Dynamite.Examples\ScriptDependencies.ascx" />
+    <Content Include="Features\Basic Wall\Basic Wall.Template.xml">
+      <DependentUpon>Basic Wall.feature</DependentUpon>
+    </Content>
+    <Content Include="Features\Client Scripts\Client Scripts.Template.xml">
+      <DependentUpon>Client Scripts.feature</DependentUpon>
+    </Content>
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\GSoft.Dynamite.Examples.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\jquery-no-conflict.js" />
+    <Content Include="Layouts\GSoft.Dynamite.Examples\Js\lib\jquery-1.7.1.min.js" />
+    <Content Include="Modules\CustomizableScript\GSoft.Dynamite.Examples.Custom.js" />
+    <Content Include="Modules\CustomizableScript\Elements.xml" />
+    <Content Include="Modules\ScriptLinks\Elements.xml" />
+    <Content Include="WebParts\BasicWall\BasicWallUserControl.ascx" />
+    <Content Include="WebParts\BasicWall\Elements.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite.Examples.Core\GSoft.Dynamite.Examples.csproj">
+      <Project>{44eb811c-783e-483b-92b1-8037a994d7da}</Project>
+      <Name>GSoft.Dynamite.Examples</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{72576e04-75b4-4eaf-af1e-7482355fc8c1}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />
+</Project>

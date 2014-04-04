@@ -4,6 +4,9 @@
 #Not ignore Nuget.exe for packages restore
 !NuGet.exe
 
+#Fakes generated folders
+FakesAssemblies/
+
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
 [Oo]bj/
