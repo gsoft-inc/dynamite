@@ -37,7 +37,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\Shared\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation">
@@ -66,15 +66,15 @@
     <Compile Include="UnityRegistrationModuleContainer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
-      <Link>GSoft.Dynamite.snk</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
       <Name>GSoft.Dynamite</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Shared\GSoft.Dynamite.snk">
+      <Link>Properties\GSoft.Dynamite.snk</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

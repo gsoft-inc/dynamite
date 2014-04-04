@@ -229,9 +229,10 @@
     <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="Properties\GSoft.Dynamite.snk" />
+    <None Include="..\..\Shared\GSoft.Dynamite.snk">
+      <Link>Properties\GSoft.Dynamite.snk</Link>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
