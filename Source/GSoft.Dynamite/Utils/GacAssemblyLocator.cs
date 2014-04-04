@@ -100,13 +100,10 @@ namespace GSoft.Dynamite.Utils
                     // If no condition is specified, accept DLLs from all versions
                     assemblyList.Add(a);
                 }
-
-
             }
             catch (Exception)
             {
-                /* do nothing, just log a warning */
-
+                // do nothing, just log a warning
                 // this.logger.Warn(string.Format("{0} : {1}", err.Message, err.StackTrace));
             }
         }

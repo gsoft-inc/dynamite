@@ -2,20 +2,22 @@
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Caching;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.Lists;
-using GSoft.Dynamite.Globalization;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Security;
-using GSoft.Dynamite.WebParts;
-using GSoft.Dynamite.MasterPages;
 using GSoft.Dynamite.WebConfig;
-using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.WebParts;
 
 namespace GSoft.Dynamite.DI.Autofac
 {
@@ -94,6 +96,9 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
 
+            // TODO: Consolidate with VariationExpert
+            builder.RegisterType<VariationsHelper>();
+
             // Lists
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
@@ -140,6 +145,13 @@ namespace GSoft.Dynamite.DI.Autofac
 
             // Web Parts
             builder.RegisterType<WebPartHelper>();
+
+            // Navigation
+            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+
+            // TODO: Caching - Obsolete helpers
+            builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
+            builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
         }
     }
 }

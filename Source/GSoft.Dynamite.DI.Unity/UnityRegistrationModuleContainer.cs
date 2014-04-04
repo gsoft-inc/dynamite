@@ -19,10 +19,10 @@
         /// of the input modules
         /// </summary>
         /// <param name="modules">Type binding modules for the application</param>
-        public UnityRegistrationModuleContainer(params UnityIRegistrationModule[] modules)
+        public UnityRegistrationModuleContainer(params IUnityRegistrationModule[] modules)
             : this()
         {
-            foreach (UnityIRegistrationModule module in modules)
+            foreach (IUnityRegistrationModule module in modules)
             {
                 module.Register(this);
             }            

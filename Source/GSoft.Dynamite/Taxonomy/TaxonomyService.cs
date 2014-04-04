@@ -160,8 +160,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="site">The Site.</param>
         /// <param name="termSetName">The name of the term set containing the term</param>
-        /// <param name="id">The Guid of the term to get.</param>
-        /// <returns></returns>
+        /// <param name="id">The GUID of the term to get.</param>
+        /// <returns>The term</returns>
         public Term GetTermForId(SPSite site, string termSetName, Guid id)
         {
             TaxonomySession session = new TaxonomySession(site);
@@ -179,7 +179,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="site">The Site.</param>
         /// <param name="termStoreGroupName">The Group Name in the term store</param>
         /// <param name="termSetName">The name of the term set containing the term</param>
-        /// <param name="id">The Guid of the term to get.</param>
+        /// <param name="id">The GUID of the term to get.</param>
         /// <returns>The term</returns>
         public Term GetTermForId(SPSite site, string termStoreGroupName, string termSetName, Guid id)
         {
@@ -421,16 +421,7 @@ namespace GSoft.Dynamite.Taxonomy
 
         #endregion
 
-        #region Private utility methods
-
-        private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
-        {
-            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
-            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
-
-            return GetTaxonomyValueForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
-        }
-
+        #region GetTermPathFromRootToTerm
         /// <summary>
         /// Get all parent terms from a source term to root term in the term set.
         /// </summary>
@@ -472,6 +463,17 @@ namespace GSoft.Dynamite.Taxonomy
 
             termStore.WorkingLanguage = originalWorkingLanguage;
             return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
+        }
+        #endregion GetTermPathFromRootToTerm
+
+        #region Private utility methods
+
+        private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
+        {
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return GetTaxonomyValueForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
         }
         
         private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)

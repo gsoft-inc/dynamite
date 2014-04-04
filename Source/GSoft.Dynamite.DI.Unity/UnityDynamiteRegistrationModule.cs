@@ -1,12 +1,14 @@
 ﻿using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Setup;
@@ -22,7 +24,7 @@ namespace GSoft.Dynamite.DI.Unity
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
-    public class UnityDynamiteUnityIRegistrationModule : UnityIRegistrationModule
+    public class UnityDynamiteUnityIRegistrationModule : IUnityRegistrationModule
     {
         private readonly string logCategoryName;
         private readonly string[] defaultResourceFileNames;
@@ -72,8 +74,7 @@ namespace GSoft.Dynamite.DI.Unity
             container.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
             container.RegisterType<TaxonomyValueConverter>();
             container.RegisterType<TaxonomyValueCollectionConverter>();
-
-            container.RegisterType<ISharePointEntityBinder, SharePointEntityBinder>(new ContainerControlledLifetimeManager());      // Singleton entity binder
+            container.RegisterType<ISharePointEntityBinder, SharePointEntityBinder>(new ContainerControlledLifetimeManager());
 
             // Cache
             container.RegisterType<ICacheHelper, CacheHelper>();
@@ -81,7 +82,6 @@ namespace GSoft.Dynamite.DI.Unity
             // Definitions
             container.RegisterType<ContentTypeBuilder>();
             container.RegisterType<FieldHelper>();
-
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             container.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
@@ -92,6 +92,9 @@ namespace GSoft.Dynamite.DI.Unity
             container.RegisterType<IVariationDirector, DefaultVariationDirector>();
             container.RegisterType<IVariationBuilder, CanadianEnglishAndFrenchVariationBuilder>();
             container.RegisterType<IVariationExpert, VariationExpert>();
+
+            // TODO: Consolidate with VariationExpert
+            container.RegisterType<VariationsHelper>();
 
             // Lists
             container.RegisterType<ListHelper>();
@@ -139,6 +142,13 @@ namespace GSoft.Dynamite.DI.Unity
 
             // Web Parts
             container.RegisterType<WebPartHelper>();
+
+            // Navigation
+            container.RegisterType<ICatalogNavigation, CatalogNavigation>();
+
+            // TODO: Caching - Obsolete helpers
+            container.RegisterType<IAppCacheHelper, AppCacheHelper>();
+            container.RegisterType<ISessionCacheHelper, SessionCacheHelper>();
         }
     }
 }

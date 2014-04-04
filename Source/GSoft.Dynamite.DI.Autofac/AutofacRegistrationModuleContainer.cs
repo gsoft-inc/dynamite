@@ -63,15 +63,26 @@ namespace GSoft.Dynamite.DependencyInjectors
         }
 
         /// <summary>
+        /// Exposes the inner Autofac container instance
+        /// </summary>
+        public IContainer InnerAutofacContainerInstance
+        {
+            get
+            {
+                return this.container;
+            }
+        }
+
+        /// <summary>
         /// Creates a new Autofac container with the Dynamite registration module
         /// pre-configured. Also scans the GAC to retrieve any DLL matching the 
         /// specified predicate and auto-register any Autofac registration module
         /// found within.
         /// </summary>
-        /// <param name="assemblyNameMatchingPredicate"></param>
+        /// <param name="assemblyNameMatchingPredicate">Predicate to matcch the name</param>
         /// <param name="logCategoryName">Logging category name with which the Dynamite <see cref="TraceLogger"/> will log to the Unified Logging System</param>
         /// <param name="defaultResourceFileNames">Namespaces for the various resource files needed by the parent Application so that Dynamite's <see cref="IResourceLocator"/> knows where to hunt for resources</param>
-        /// <returns></returns>
+        /// <returns>A container</returns>
         public static AutofacRegistrationModuleContainer ScanGacForAutofacModulesAndCreateContainer(Func<string, bool> assemblyNameMatchingPredicate, string logCategoryName, string[] defaultResourceFileNames)
         {
             return ScanGacForAutofacModulesAndCreateContainer(assemblyNameMatchingPredicate, null, logCategoryName, defaultResourceFileNames);
@@ -83,14 +94,14 @@ namespace GSoft.Dynamite.DependencyInjectors
         /// specified predicate and auto-register any Autofac registration module
         /// found within.
         /// </summary>
-        /// <param name="assemblyNameMatchingPredicate"></param>
+        /// <param name="assemblyNameMatchingPredicate">Predicate to matcch the name</param>
+        /// <param name="assemblyVersionMatchingPredicate">Predicate to match the version</param>
         /// <param name="logCategoryName">Logging category name with which the Dynamite <see cref="TraceLogger"/> will log to the Unified Logging System</param>
         /// <param name="defaultResourceFileNames">Namespaces for the various resource files needed by the parent Application so that Dynamite's <see cref="IResourceLocator"/> knows where to hunt for resources</param>
-        /// <returns></returns>
+        /// <returns>A container</returns>
         public static AutofacRegistrationModuleContainer ScanGacForAutofacModulesAndCreateContainer(Func<string, bool> assemblyNameMatchingPredicate, Func<string, bool> assemblyVersionMatchingPredicate, string logCategoryName, string[] defaultResourceFileNames)
         {
             var containerBuilder = new ContainerBuilder();
-
             var assemblyLocator = new GacAssemblyLocator();
 
             // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves)
@@ -98,25 +109,10 @@ namespace GSoft.Dynamite.DependencyInjectors
             containerBuilder.RegisterModule(dynamiteModule);
 
             var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyNameMatchingPredicate, assemblyVersionMatchingPredicate);
-
             var filteredMatchingAssemblies = matchingAssemblies.Where(x => !x.FullName.Contains("GSoft.Dynamite.DI.Autofac"));
 
             containerBuilder.RegisterAssemblyModules(filteredMatchingAssemblies.ToArray());
-
-            var containerInstance = new AutofacRegistrationModuleContainer(containerBuilder.Build());
-
-            return containerInstance;
-        }
-
-        /// <summary>
-        /// Exposes the inner Autofac container instance
-        /// </summary>
-        public IContainer InnerAutofacContainerInstance
-        {
-            get
-            {
-                return this.container;
-            }
+            return new AutofacRegistrationModuleContainer(containerBuilder.Build());
         }
 
         /// <summary>

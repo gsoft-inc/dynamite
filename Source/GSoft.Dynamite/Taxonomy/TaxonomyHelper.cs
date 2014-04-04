@@ -198,9 +198,9 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="web">Web to look for</param>
         /// <param name="fieldName">Field to search</param>
+        /// <param name="termGroup">The term group</param>
         /// <param name="termSet">The term set</param>
         /// <param name="termLabel">The term label</param>
-        /// <param name="termGroup">The term group</param>
         /// <returns>The validated string.</returns>
         public string GetTaxonomyFieldValueValidatedString(SPWeb web, string fieldName, string termGroup, string termSet, string termLabel)
         {
@@ -404,7 +404,6 @@ namespace GSoft.Dynamite.Taxonomy
                             if (oneField is TaxonomyField)
                             {
                                 listFieldsToUpdate.Add((TaxonomyField)oneField);
-
                             }
                         }
                     }

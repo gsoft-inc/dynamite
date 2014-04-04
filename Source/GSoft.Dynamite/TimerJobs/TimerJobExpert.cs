@@ -101,7 +101,7 @@ namespace GSoft.Dynamite.TimerJobs
         /// If jobName is not found, exception is thrown
         /// </exception>
         /// <returns>
-        /// The jobid<see cref="Guid"/>.
+        /// The job id<see cref="Guid"/>.
         /// </returns>
         public Guid StartJob(SPSite site, string jobName)
         {

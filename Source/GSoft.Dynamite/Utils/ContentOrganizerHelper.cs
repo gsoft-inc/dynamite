@@ -93,7 +93,7 @@ namespace GSoft.Dynamite.Utils
         public void CreateCustomRouter(SPWeb web, string routerName, string routerAssemblyName, string routerClassName)
         {
              var contentOrganizer = new EcmDocumentRoutingWeb(web);
-             DeleteCustomRouter(web, routerName);
+             this.DeleteCustomRouter(web, routerName);
              contentOrganizer.AddCustomRouter(routerName, routerAssemblyName, routerClassName);
         }
 

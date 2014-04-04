@@ -5,7 +5,7 @@
     /// <summary>
     /// Interface for type binding modules
     /// </summary>
-    public interface UnityIRegistrationModule
+    public interface IUnityRegistrationModule
     {
         /// <summary>
         /// Registers the module's type bindings on the container
