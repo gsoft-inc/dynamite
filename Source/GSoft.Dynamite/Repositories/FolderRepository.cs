@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint;
@@ -9,7 +8,7 @@ namespace GSoft.Dynamite.Repositories
     /// <summary>
     /// Class to interact with folders
     /// </summary>
-    public class FolderRepository
+    public class FolderRepository : IFolderRepository
     {
         /// <summary>
         /// Constructor for <see cref="FolderRepository"/>
@@ -34,7 +33,6 @@ namespace GSoft.Dynamite.Repositories
         /// <param name="web">Explicitly specify the SPWeb</param>
         /// <param name="folderId">the Id of the folder</param>
         /// <returns>The folder or throw an exception if not found</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public SPFolder GetFolderByIdForWeb(SPWeb web, int folderId)
         {
             SPListItem item = web.GetPagesLibrary().GetItemById(folderId);

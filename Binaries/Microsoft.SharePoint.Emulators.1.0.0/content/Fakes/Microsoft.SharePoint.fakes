@@ -1,0 +1,60 @@
+<Fakes xmlns="http://schemas.microsoft.com/fakes/2011/" Diagnostic="true">
+  <Assembly Name="Microsoft.SharePoint" Version="14.0.0.0"/>
+  <StubGeneration>
+    <Clear/>
+  </StubGeneration>
+  <ShimGeneration>
+    <Clear/>
+    <Add FullName="Microsoft.SharePoint.SPBaseCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPContentType!"/>
+    <Add FullName="Microsoft.SharePoint.SPContentTypeCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPContext!"/>
+    <Add FullName="Microsoft.SharePoint.SPEventPropertiesBase!"/>
+    <Add FullName="Microsoft.SharePoint.SPFeature!"/>
+    <Add FullName="Microsoft.SharePoint.SPFeatureReceiverProperties!"/>
+    <Add FullName="Microsoft.SharePoint.SPFeatureProperty!"/>
+    <Add FullName="Microsoft.SharePoint.SPFeaturePropertyCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPFeatureCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPField!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldIndex!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldIndexCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldLink!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldLinkCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPFieldUrlValue!"/>
+    <Add FullName="Microsoft.SharePoint.SPFile!"/>
+    <Add FullName="Microsoft.SharePoint.SPFileCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPFolder!"/>
+    <Add FullName="Microsoft.SharePoint.SPFolderCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPItem!"/>    
+    <Add FullName="Microsoft.SharePoint.SPItemEventDataCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPItemEventProperties!"/>
+    <Add FullName="Microsoft.SharePoint.SPList!"/>
+    <Add FullName="Microsoft.SharePoint.SPListCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPListEventProperties!"/>
+    <Add FullName="Microsoft.SharePoint.SPListItem!"/>
+    <Add FullName="Microsoft.SharePoint.SPListItemCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPQuery!"/>
+    <Add FullName="Microsoft.SharePoint.SPRoleAssignment!"/>
+    <Add FullName="Microsoft.SharePoint.SPRoleAssignmentCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPSecurableObject!"/>
+    <Add FullName="Microsoft.SharePoint.SPSecurity!"/>
+    <Add FullName="Microsoft.SharePoint.SPSite!"/>
+    <Add FullName="Microsoft.SharePoint.SPUser!"/>
+    <Add FullName="Microsoft.SharePoint.SPUserCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPView!"/>
+    <Add FullName="Microsoft.SharePoint.SPViewCollection!"/>
+    <Add FullName="Microsoft.SharePoint.SPViewContext!"/>
+    <Add FullName="Microsoft.SharePoint.SPWeb!"/>
+    <Add FullName="Microsoft.SharePoint.SPWebCollection!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPAutoSerializingObject!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPFarm!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPPersistedObject!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPPersistedUpgradableObject!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPSiteCollection!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPWebApplication!"/>
+    <Add FullName="Microsoft.SharePoint.Administration.SPWebConfigModification!"/>
+    <Add FullName="Microsoft.SharePoint.Utilities.SPPropertyBag!"/>
+    <Add FullName="Microsoft.SharePoint.WebControls.SPControl!"/>
+  </ShimGeneration>
+</Fakes>

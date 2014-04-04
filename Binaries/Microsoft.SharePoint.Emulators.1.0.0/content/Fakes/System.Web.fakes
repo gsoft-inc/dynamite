@@ -1,0 +1,12 @@
+<Fakes xmlns="http://schemas.microsoft.com/fakes/2011/" Diagnostic="true">
+  <Assembly Name="System.Web" Version="2.0.0.0"/>
+  <StubGeneration>
+    <Clear/>
+  </StubGeneration>
+  <ShimGeneration>
+    <Clear/>
+    <Add FullName="System.Web.HttpContext!"/>
+    <Add FullName="System.Web.HttpResponse!"/>
+    <Add FullName="System.Web.HttpRequest!"/>
+  </ShimGeneration>
+</Fakes>
