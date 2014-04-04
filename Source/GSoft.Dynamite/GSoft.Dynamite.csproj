@@ -36,10 +36,16 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\Shared\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Binaries\SharePoint\Microsoft.Office.Server.Search.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -48,6 +54,7 @@
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -100,23 +107,44 @@
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
+    <Compile Include="Caching\Entities\CacheValue.cs" />
+    <Compile Include="Caching\Entities\CacheVariationLabel.cs" />
+    <Compile Include="Caching\Entities\ICacheValue.cs" />
+    <Compile Include="Caching\Entities\ICacheVariationLabel.cs" />
+    <Compile Include="Caching\Entities\CacheKeyValuePair.cs" />
+    <Compile Include="Caching\SessionCacheHelper.cs" />
+    <Compile Include="Caching\AppCacheHelper.cs" />
+    <Compile Include="Caching\IAppCacheHelper.cs" />
+    <Compile Include="Caching\ISessionCacheHelper.cs" />
+    <Compile Include="Caching\ICacheKey.cs" />
+    <Compile Include="Caching\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
     <Compile Include="Logging\TraceLoggerFactory.cs" />
+    <Compile Include="Navigation\CatalogNavigation.cs" />
+    <Compile Include="Navigation\CatalogNavigationType.cs" />
+    <Compile Include="Navigation\ICatalogNavigation.cs" />
+    <Compile Include="Navigation\ManagedNavigationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\ListLocator.cs" />
+    <Compile Include="Schemas\GenericFieldSchema.cs" />
+    <Compile Include="Schemas\GuidFieldSchema.cs" />
+    <Compile Include="Schemas\TaxonomyFieldSchema.cs" />
+    <Compile Include="Schemas\TextFieldSchema.cs" />
     <Compile Include="SPUrl.cs" />
+    <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
@@ -124,11 +152,17 @@
     <Compile Include="Unity\IRegistrationModule.cs" />
     <Compile Include="Unity\PerRequestLifetimeManager.cs" />
     <Compile Include="Unity\RegistrationModuleContainer.cs" />
+    <Compile Include="Utils\CatalogHelper.cs" />
+    <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Utils\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
+    <Compile Include="Utils\DialogLayoutsPageBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\DisabledItemEventsScope.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Utils\FieldHelper.cs" />
     <Compile Include="Utils\FieldInfo.cs" />
@@ -137,11 +171,13 @@
     <Compile Include="Utils\ListSecurityHelper.cs" />
     <Compile Include="Utils\MasterPageHelper.cs" />
     <Compile Include="Utils\MuiHelper.cs" />
+    <Compile Include="Utils\NavigationHelper.cs" />
     <Compile Include="Utils\RegionalSettingsHelper.cs" />
     <Compile Include="Utils\ResourceLocator.cs" />
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Utils\SecurityHelper.cs" />
     <Compile Include="Utils\Unsafe.cs" />
+    <Compile Include="Utils\VariationsHelper.cs" />
     <Compile Include="Utils\WebConfigModificationHelper.cs" />
     <Compile Include="Utils\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
@@ -153,8 +189,11 @@
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Structures\" />
+    <None Include="..\..\Shared\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

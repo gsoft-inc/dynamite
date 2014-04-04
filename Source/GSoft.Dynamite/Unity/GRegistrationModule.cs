@@ -1,5 +1,7 @@
 ﻿using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
@@ -33,9 +35,19 @@ namespace GSoft.Dynamite.Unity
         /// <param name="container">The container on which to register type bindings</param>
         public void Register(IUnityContainer container)
         {
+#if DEBUG
+            // Logger with debug output
+            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, true);
+            container.RegisterInstance<ILogger>(logger);
+#else
+            // Logger without debug output
+            var logger = new TraceLogger(this._logCategoryName, this._logCategoryName, false);
+            container.RegisterInstance<ILogger>(logger);
+#endif
+
             // Binding
             var builder = new EntitySchemaBuilder<SharePointEntitySchema>();
-            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(builder));
+            var binder = new SharePointEntityBinder(new CachedSchemaBuilder(builder, logger));
             container.RegisterInstance<ISharePointEntityBinder>(binder);
 
             // Taxonomy
@@ -43,19 +55,20 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<TaxonomyService>();
             container.RegisterType<TaxonomyHelper>();
 
+            // Navigation
+            container.RegisterType<ICatalogNavigation, CatalogNavigation>();
+
+            // Caching
+            container.RegisterType<IAppCacheHelper, AppCacheHelper>();
+            container.RegisterType<ISessionCacheHelper, SessionCacheHelper>();
+
             // Repositories
             container.RegisterType<FolderRepository>();
             container.RegisterType<ListLocator>();
 
             // Utilities
             container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileName));
-#if DEBUG
-            // Logger with debug output
-            container.RegisterInstance<ILogger>(new TraceLogger(this._logCategoryName, this._logCategoryName, true));
-#else
-            // Logger without debug output
-            container.RegisterInstance<ILogger>(new TraceLogger(this._logCategoryName, this._logCategoryName, false));
-#endif
+
             container.RegisterType<ContentTypeHelper>();
             container.RegisterType<EventReceiverHelper>();
             container.RegisterType<FieldHelper>();
@@ -69,6 +82,8 @@ namespace GSoft.Dynamite.Unity
             container.RegisterType<RegionalSettingsHelper>();
             container.RegisterType<CustomActionHelper>();
             container.RegisterType<WebConfigModificationHelper>();
+            container.RegisterType<VariationsHelper>();
+            container.RegisterType<NavigationHelper>();
         }
     }
 }

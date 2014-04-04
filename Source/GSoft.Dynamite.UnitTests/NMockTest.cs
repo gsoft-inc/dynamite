@@ -9,7 +9,7 @@ using System;
 using NMock;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NMockTests
+namespace GSoft.Dynamite.UnitTests
 {
 	[TestClass]
 	public class SampleTest

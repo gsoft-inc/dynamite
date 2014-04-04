@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Utils
@@ -244,6 +245,74 @@ namespace GSoft.Dynamite.Utils
             }
 
             return fields;
+        }
+
+        /// <summary>
+        /// Adds the event receiver definition to the content type.
+        /// </summary>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="type">The receiver type.</param>
+        /// <param name="assemblyName">Name of the assembly.</param>
+        /// <param name="className">Name of the class.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className)
+        {
+            var classType = Type.GetType(string.Format(CultureInfo.InvariantCulture, "{0}, {1}", className, assemblyName));
+            if (classType != null)
+            {
+                var assembly = Assembly.GetAssembly(classType);
+                this.AddEventReceiverDefinition(contentType, type, assembly, className);
+            }
+        }
+
+        /// <summary>
+        /// Adds the event receiver definition to the content type.
+        /// </summary>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="type">The receiver type.</param>
+        /// <param name="assembly">The assembly.</param>
+        /// <param name="className">Name of the class.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className)
+        {
+            var isAlreadyDefined = contentType.EventReceivers.Cast<SPEventReceiverDefinition>()
+                .Any(x => (x.Class == className) && (x.Type == type));
+
+            // If definition isn't already defined, add it to the content type
+            if (!isAlreadyDefined)
+            {
+                var eventReceiverDefinition = contentType.EventReceivers.Add();
+                eventReceiverDefinition.Type = type;
+                eventReceiverDefinition.Assembly = assembly.FullName;
+                eventReceiverDefinition.Class = className;
+                eventReceiverDefinition.Update(); 
+                contentType.Update(true);
+            }
+        }
+
+        /// <summary>
+        /// Reorders fields in the content type according to index position.
+        /// </summary>
+        /// <param name="contentType">Type of the content.</param>
+        /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<FieldInfo> orderedFields)
+        {
+            var fieldInternalNames = contentType.FieldLinks.Cast<SPFieldLink>().Where(x => !x.Hidden).Select(x => x.Name).ToList();
+
+            foreach (var orderedField in orderedFields)
+            {
+                fieldInternalNames.Remove(orderedField.InternalName);
+            }
+
+            var orderedFieldsArray = orderedFields.ToArray();
+            for (var i = 0; i < orderedFieldsArray.Length; i++)
+            {
+                fieldInternalNames.Insert(i, orderedFieldsArray[i].InternalName);
+            }
+
+            contentType.FieldLinks.Reorder(fieldInternalNames.ToArray());
+            contentType.Update();
         }
 
         #region Private methods

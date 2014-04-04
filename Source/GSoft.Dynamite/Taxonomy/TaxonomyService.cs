@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
@@ -10,7 +12,18 @@ namespace GSoft.Dynamite.Taxonomy
     /// Helper class for interacting with the Managed Metadata Service
     /// </summary>
     public class TaxonomyService : ITaxonomyService
-    {       
+    {
+        private readonly ILogger _log;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaxonomyService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public TaxonomyService(ILogger logger)
+        {
+            this._log = logger;
+        }
+
         /// <summary>
         /// Retrieves a TaxonomyValue corresponding to a term label within a desired term store
         /// </summary>
@@ -62,6 +75,22 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Retrieves terms corresponding to a GUID
+        /// </summary>
+        /// <param name="site">The current site.</param>
+        /// <param name="termSetName">The term set name.</param>
+        /// <param name="termGuid">The term Guid.</param>
+        /// <param name="termStoreGroupName">The term strore group name.</param>
+        /// <returns>A term collection.</returns>
+        public Term GetTermByGuid(SPSite site, string termStoreGroupName, string termSetName, Guid termGuid)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            return GetTerm(termStore, termStoreGroupName, termSetName, termGuid);
+        }
+
+        /// <summary>
         /// Retrieves a Term corresponding to a term label within the default term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -90,7 +119,7 @@ namespace GSoft.Dynamite.Taxonomy
         {
             TaxonomySession session = new TaxonomySession(site);
             TermStore termStore = session.TermStores[termStoreName];
-            
+
             return GetTaxonomyValues(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
@@ -105,7 +134,7 @@ namespace GSoft.Dynamite.Taxonomy
         public IList<TaxonomyValue> GetTaxonomyValuesForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName)
         {
             TaxonomySession session = new TaxonomySession(site);
-            TermStore termStore = session.TermStores[termStoreName];    
+            TermStore termStore = session.TermStores[termStoreName];
 
             return GetTaxonomyValues(termStore, termStoreGroupName, termSetName);
         }
@@ -206,6 +235,49 @@ namespace GSoft.Dynamite.Taxonomy
             return GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
         }
 
+        /// <summary>
+        /// Get all parent terms from a source term to root term in the term set.
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        public IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        {
+            IList<Term> termHierarchy = new List<Term>();
+
+            var session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            // Always interact with the term sets in the term store's default language
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            var rootTermReached = false;
+
+            // Get the original term
+            var term = termStore.GetTerm(termSetId, termId);
+
+            while (term != null && !rootTermReached)
+            {
+                termHierarchy.Add(term);
+                if (term.Parent != null)
+                {
+                    term = termStore.GetTerm(termSetId, term.Parent.Id);
+                }
+                else
+                {
+                    rootTermReached = true;
+                }
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+            return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
+        }
+
         private static TaxonomyValue GetTaxonomyValue(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
             Term term = GetTerm(termStore, termStoreGroupName, termSetName, termLabel);
@@ -229,9 +301,9 @@ namespace GSoft.Dynamite.Taxonomy
                 // More than one hit, we'd prefer a root term
                 term = terms.FirstOrDefault(maybeRootTerm => maybeRootTerm.IsRoot);
             }
-            
+
             // A root term was not found, let's just use the first one we find
-            if (term == null) 
+            if (term == null)
             {
                 term = terms.FirstOrDefault();
             }
@@ -244,7 +316,7 @@ namespace GSoft.Dynamite.Taxonomy
             IList<Term> terms = GetTerms(termStore, termStoreGroupName, termSetName, termLabel);
             return terms.Select(term => new TaxonomyValue(term)).ToList();
         }
-        
+
         private static IList<TaxonomyValue> GetTaxonomyValues(TermStore termStore, string termStoreGroupName, string termSetName)
         {
             IList<TaxonomyValue> termsList = new List<TaxonomyValue>();
@@ -258,14 +330,91 @@ namespace GSoft.Dynamite.Taxonomy
             return termsList;
         }
 
+        private static Term GetTerm(TermStore termStore, string termStoreGroupName, string termSetName, Guid termGuid)
+        {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (string.IsNullOrEmpty(termStoreGroupName))
+            {
+                throw new ArgumentNullException("termStoreGroupName");
+            }
+
+            if (string.IsNullOrEmpty(termSetName))
+            {
+                throw new ArgumentNullException("termSetName");
+            }
+
+            if (termGuid == null)
+            {
+                throw new ArgumentNullException("termGuid");
+            }
+
+            Group group = termStore.Groups[termStoreGroupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
+            }
+
+            TermSet termSet = group.TermSets[termSetName];
+
+            if (termSet == null)
+            {
+                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
+            }
+
+            Term term = termSet.GetTerm(termGuid);
+
+            if (term == null)
+            {
+                throw new ArgumentException("Could not find term with guid " + termGuid + " in term set " + termSetName + " from group " + termStoreGroupName);
+            }
+
+            return term;
+        }
+
         private static IList<Term> GetTerms(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (string.IsNullOrEmpty(termStoreGroupName))
+            {
+                throw new ArgumentNullException("termStoreGroupName");
+            }
+
+            if (string.IsNullOrEmpty(termSetName))
+            {
+                throw new ArgumentNullException("termSetName");
+            }
+
+            if (string.IsNullOrEmpty(termLabel))
+            {
+                throw new ArgumentNullException("termLabel");
+            }
+
             // Always interact with the term sets in the term store's default language
             int originalWorkingLanguage = termStore.WorkingLanguage;
             termStore.WorkingLanguage = termStore.DefaultLanguage;
 
             Group group = termStore.Groups[termStoreGroupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
+            }
+
             TermSet termSet = group.TermSets[termSetName];
+
+            if (termSet == null)
+            {
+                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
+            }
 
             termStore.WorkingLanguage = originalWorkingLanguage;
 
@@ -289,11 +438,31 @@ namespace GSoft.Dynamite.Taxonomy
                 }
             }
 
+            if (termCollection == null || termCollection.Count == 0)
+            {
+                throw new ArgumentException("Could not find term with label " + termLabel + " in term set " + termSetName + " from group " + termStoreGroupName);
+            }
+
             return termCollection.Cast<Term>().ToList();
         }
 
         private static IList<Term> GetTerms(TermStore termStore, string termStoreGroupName, string termSetName)
         {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (string.IsNullOrEmpty(termStoreGroupName))
+            {
+                throw new ArgumentNullException("termStoreGroupName");
+            }
+
+            if (string.IsNullOrEmpty(termSetName))
+            {
+                throw new ArgumentNullException("termSetName");
+            }
+
             IList<Term> termsList = new List<Term>();
 
             // Always interact with the term sets in the term store's default language
@@ -301,8 +470,19 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = termStore.DefaultLanguage;
 
             Group group = termStore.Groups[termStoreGroupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
+            }
+
             TermSet termSet = group.TermSets[termSetName];
-            
+
+            if (termSet == null)
+            {
+                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
+            }
+
             termStore.WorkingLanguage = originalWorkingLanguage;
 
             if (termSet.Terms.Count() > 0)
