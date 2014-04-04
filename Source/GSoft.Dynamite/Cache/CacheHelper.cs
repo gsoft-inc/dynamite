@@ -95,13 +95,12 @@ namespace GSoft.Dynamite.Cache
 
             int clearCount = 0;
 
-            if (SPContext.Current.Web.CurrentUser != null
-                && SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.FullMask))
+            if (SPContext.Current.Web.CurrentUser != null && SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.FullMask))
             {
                 HttpRuntime.Cache.Cast<DictionaryEntry>()
                     .Where(entry => entry.Key.ToString().StartsWith(SimpleCacheKey.Prefix, StringComparison.OrdinalIgnoreCase))
                     .Select(entry => entry.Key.ToString()).ToList()
-                    .ForEach(key => 
+                    .ForEach(key =>
                         {
                             clearCount++;
                             HttpRuntime.Cache.Remove(key);

@@ -20,6 +20,7 @@ namespace GSoft.Dynamite.Lists
         /// Creates a list finder
         /// </summary>
         /// <param name="resources">The resource locator</param>
+        /// <param name="logger">The Logger</param>
         public ListLocator(IResourceLocator resources, ILogger logger)
         {
             this._resources = resources;

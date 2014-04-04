@@ -97,6 +97,25 @@ namespace GSoft.Dynamite.Taxonomy
         Term GetTermForId(SPSite site, Guid id);
 
         /// <summary>
+        /// Gets the term for identifier within site collection specific term store group.
+        /// </summary>
+        /// <param name="site">The Site.</param>
+        /// <param name="termSetName">The name of the term set containing the term</param>
+        /// <param name="id">The GUID of the term to get.</param>
+        /// <returns>The term found</returns>
+        Term GetTermForId(SPSite site, string termSetName, Guid id);
+
+        /// <summary>
+        /// Gets the term for identifier
+        /// </summary>
+        /// <param name="site">The Site.</param>
+        /// <param name="termStoreGroupName">The Group Name in the term store</param>
+        /// <param name="termSetName">The name of the term set containing the term</param>
+        /// <param name="id">The GUID of the term to get.</param>
+        /// <returns>The term</returns>
+        Term GetTermForId(SPSite site, string termStoreGroupName, string termSetName, Guid id);
+
+        /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -225,8 +244,9 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false);
-		
+        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false);
+
+        /// <summary>
         /// Retrieves all Terms corresponding to a term set in the default term store from the site collection's reserved group
         /// </summary>
         /// <remarks>

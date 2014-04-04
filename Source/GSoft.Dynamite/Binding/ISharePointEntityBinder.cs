@@ -7,7 +7,6 @@ namespace GSoft.Dynamite.Binding
     /// <summary>
     /// The binder for SharePoint entities.
     /// </summary>
-    [CLSCompliant(false)]
     public interface ISharePointEntityBinder
     {
         #region Methods

@@ -9,6 +9,7 @@ namespace GSoft.Dynamite.Caching
     /// <summary>
     /// General-purpose application cache
     /// </summary>
+    [Obsolete]
     public class SessionCacheHelper : ISessionCacheHelper
     {
         private readonly ILogger _logger;

@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Globalization
         /// Creates a new resource locator which will default to the provided
         /// resource file name.
         /// </summary>
-        /// <param name="defaultApplicationResourceFileNames">The current application's default/global resource file names</param>
+        /// <param name="defaultApplicationResourceFileName">The current application's default/global resource file names</param>
         public ResourceLocator(string defaultApplicationResourceFileName)
         {
             this._defaultResourceFileNames = new string[] { defaultApplicationResourceFileName };
@@ -49,6 +49,7 @@ namespace GSoft.Dynamite.Globalization
         /// </summary>
         /// <param name="resource">The resource value configuration.</param>
         /// <returns>The resource value in the current UI language.</returns>
+        [Obsolete("See ResourceValue class")]
         public string Find(ResourceValue resource)
         {
             return this.Find(resource.File, resource.Key, CultureInfo.CurrentUICulture);
@@ -85,6 +86,7 @@ namespace GSoft.Dynamite.Globalization
         /// <param name="resource">The resource value configuration.</param>
         /// <param name="lcid">The LCID.</param>
         /// <returns>The resource in the specified language.</returns>
+        [Obsolete("See ResourceValue class")]
         public string Find(ResourceValue resource, int lcid)
         {
             return this.Find(resource.File, resource.Key, new CultureInfo(lcid));

@@ -107,22 +107,6 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Retrieves terms corresponding to a GUID
-        /// </summary>
-        /// <param name="site">The current site.</param>
-        /// <param name="termSetName">The term set name.</param>
-        /// <param name="termGuid">The term Guid.</param>
-        /// <param name="termStoreGroupName">The term strore group name.</param>
-        /// <returns>A term collection.</returns>
-        public Term GetTermByGuid(SPSite site, string termStoreGroupName, string termSetName, Guid termGuid)
-        {
-            TaxonomySession session = new TaxonomySession(site);
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
-
-            return GetTerm(termStore, termStoreGroupName, termSetName, termGuid);
-        }
-
-        /// <summary>
         /// Retrieves a Term corresponding to a term label within the default term store
         /// </summary>
         /// <param name="site">The current site</param>
@@ -169,6 +153,43 @@ namespace GSoft.Dynamite.Taxonomy
         {
             TaxonomySession session = new TaxonomySession(site);
             return session.GetTerm(id);
+        }
+
+        /// <summary>
+        /// Gets the term for identifier within site collection specific term store group.
+        /// </summary>
+        /// <param name="site">The Site.</param>
+        /// <param name="termSetName">The name of the term set containing the term</param>
+        /// <param name="id">The Guid of the term to get.</param>
+        /// <returns></returns>
+        public Term GetTermForId(SPSite site, string termSetName, Guid id)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            Group termStoreGroup = termStore.GetSiteCollectionGroup(site);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return termSet.GetTerm(id);
+        }
+
+        /// <summary>
+        /// Gets the term for identifier
+        /// </summary>
+        /// <param name="site">The Site.</param>
+        /// <param name="termStoreGroupName">The Group Name in the term store</param>
+        /// <param name="termSetName">The name of the term set containing the term</param>
+        /// <param name="id">The Guid of the term to get.</param>
+        /// <returns>The term</returns>
+        public Term GetTermForId(SPSite site, string termStoreGroupName, string termSetName, Guid id)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+            TermStore termStore = session.DefaultSiteCollectionTermStore;
+
+            Group termStoreGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
+            TermSet termSet = GetTermSetFromGroup(termStore, termStoreGroup, termSetName);
+
+            return termSet.GetTerm(id);
         }
 
         #endregion
@@ -420,7 +441,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermSetHierarchyForTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
         {
             IList<Term> termHierarchy = new List<Term>();
 
@@ -452,7 +473,7 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = originalWorkingLanguage;
             return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
         }
-		
+        
         private static TaxonomyValue GetTaxonomyValueForLabelInternal(TermStore termStore, Group termStoreGroup, TermSet termSet, string termLabel)
         {
             Term term = GetTermForLabelInternal(termStore, termStoreGroup, termSet, termLabel);
@@ -529,93 +550,12 @@ namespace GSoft.Dynamite.Taxonomy
             return termsList;
         }
 
-        private static Term GetTerm(TermStore termStore, string termStoreGroupName, string termSetName, Guid termGuid)
-        {
-            if (termStore == null)
-            {
-                throw new ArgumentNullException("termStore");
-            }
-
-            if (string.IsNullOrEmpty(termStoreGroupName))
-            {
-                throw new ArgumentNullException("termStoreGroupName");
-            }
-
-            if (string.IsNullOrEmpty(termSetName))
-            {
-                throw new ArgumentNullException("termSetName");
-            }
-
-            if (termGuid == null)
-            {
-                throw new ArgumentNullException("termGuid");
-            }
-
-            Group group = termStore.Groups[termStoreGroupName];
-
-            if (group == null)
-            {
-                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
-            }
-
-            TermSet termSet = group.TermSets[termSetName];
-
-            if (termSet == null)
-            {
-                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
-            }
-
-            Term term = termSet.GetTerm(termGuid);
-
-            if (term == null)
-            {
-                throw new ArgumentException("Could not find term with guid " + termGuid + " in term set " + termSetName + " from group " + termStoreGroupName);
-            }
-
-            return term;
-        }
-
         private static IList<Term> GetTermsForLabelInternal(TermStore termStore, string termStoreGroupName, string termSetName, string termLabel)
         {
             if (termStore == null)
             {
                 throw new ArgumentNullException("termStore");
             }
-
-            if (string.IsNullOrEmpty(termStoreGroupName))
-            {
-                throw new ArgumentNullException("termStoreGroupName");
-            }
-
-            if (string.IsNullOrEmpty(termSetName))
-            {
-                throw new ArgumentNullException("termSetName");
-            }
-
-            if (string.IsNullOrEmpty(termLabel))
-            {
-                throw new ArgumentNullException("termLabel");
-            }
-
-            // Always interact with the term sets in the term store's default language
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = termStore.DefaultLanguage;
-
-            Group group = termStore.Groups[termStoreGroupName];
-
-            if (group == null)
-            {
-                throw new ArgumentException("Could not find term store group with name " + termStoreGroupName);
-            }
-
-            TermSet termSet = group.TermSets[termSetName];
-
-            if (termSet == null)
-            {
-                throw new ArgumentException("Could not find term set with name " + termStoreGroupName + " in group " + termStoreGroupName);
-            }
-
-            termStore.WorkingLanguage = originalWorkingLanguage;
 
             if (string.IsNullOrEmpty(termStoreGroupName))
             {

@@ -13,7 +13,6 @@ namespace GSoft.Dynamite.Globalization
     /// Also assumes that InitializeWebDefaultRegionalSettings is called during
     /// the setup phase of the site to change the web's regional settings to en-CA.
     /// </summary>
-    [CLSCompliant(false)]
     public class RegionalSettingsHelper
     {
         /// <summary>

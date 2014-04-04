@@ -5,6 +5,7 @@ namespace GSoft.Dynamite.Caching.Entities
     /// <summary>
     /// Cache variation label interface.
     /// </summary>
+    [Obsolete]
     public interface ICacheVariationLabel
     {
         /// <summary>

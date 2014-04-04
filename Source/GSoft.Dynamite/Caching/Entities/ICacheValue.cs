@@ -1,3 +1,5 @@
+using System;
+
 namespace GSoft.Dynamite.Caching.Entities
 {
     /// <summary>
@@ -5,6 +7,7 @@ namespace GSoft.Dynamite.Caching.Entities
     /// </summary>
     /// <typeparam name="T">The cached object type.</typeparam>
     // ReSharper disable once TypeParameterCanBeVariant
+    [Obsolete]
     public interface ICacheValue<T>
     {
         /// <summary>

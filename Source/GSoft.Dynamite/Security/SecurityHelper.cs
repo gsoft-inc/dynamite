@@ -176,20 +176,16 @@ namespace GSoft.Dynamite.Security
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
         public bool IsCurrentUserVisitor()
         {
-            var currentWeb = SPContext.Current.Web;
-            var currentUser = currentWeb.CurrentUser;
-            bool returnValue;
-
             // Is an Anonymous user
-            if (currentUser == null)
+            if (SPContext.Current.Web.CurrentUser == null)
             {
                 return true;
             }
 
             bool isReadOnlyOnCurrentListItem = (SPContext.Current.ListItem == null) || (SPContext.Current.ListItem != null
                                  && !SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems));
-            return SPContext.Current.Web.AssociatedVisitorGroup != null 
-                && SPContext.Current.Web.AssociatedVisitorGroup.ContainsCurrentUser 
+            return SPContext.Current.Web.AssociatedVisitorGroup != null
+                && SPContext.Current.Web.AssociatedVisitorGroup.ContainsCurrentUser
                 && isReadOnlyOnCurrentListItem
                 && !this.IsCurrentUserOwner()
                 && !this.IsCurrentUserApprover()
@@ -327,7 +323,6 @@ namespace GSoft.Dynamite.Security
                 throw new ArgumentException("No RoleDefinition found for the name " + roleDefinitionName);
             }
         }
-
 
         private static void EnsureBrokenRoleInheritance(SPSecurableObject target)
         {

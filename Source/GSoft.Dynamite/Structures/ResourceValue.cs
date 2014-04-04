@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace GSoft.Dynamite.Structures
@@ -6,6 +7,7 @@ namespace GSoft.Dynamite.Structures
     /// <summary>
     /// A resource value.
     /// </summary>
+    [Obsolete("Initialize ResourceLocator with all filenames so we don't have to specify the file for each key")]
     [SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "No need to override equality operator.")]
     public struct ResourceValue
     {

@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GSoft.Dynamite.DI.Unity</RootNamespace>
     <AssemblyName>GSoft.Dynamite.DI.Unity</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -64,15 +66,15 @@
     <Compile Include="UnityRegistrationModuleContainer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
-      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
-      <Name>GSoft.Dynamite</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
       <Link>GSoft.Dynamite.snk</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

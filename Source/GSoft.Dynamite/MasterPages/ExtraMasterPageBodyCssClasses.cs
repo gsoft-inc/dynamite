@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Web;
-using GSoft.Dynamite;
-
+using GSoft.Dynamite.Security;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebControls;
-using GSoft.Dynamite.Security;
 
 namespace GSoft.Dynamite.MasterPages
 {

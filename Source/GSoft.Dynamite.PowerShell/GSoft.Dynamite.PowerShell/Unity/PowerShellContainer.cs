@@ -1,5 +1,4 @@
-﻿using GSoft.Dynamite.Unity;
-
+﻿using GSoft.Dynamite.DI.Unity;
 using Microsoft.Practices.Unity;
 
 namespace GSoft.Dynamite.PowerShell.Unity
@@ -12,7 +11,7 @@ namespace GSoft.Dynamite.PowerShell.Unity
         /// <summary>
         /// The application name
         /// </summary>
-        private const string AppName = "G.Dynamite.PowerShell";
+        private const string AppName = "GSoft.Dynamite.PowerShell";
 
         /// <summary>
         /// The lock
@@ -39,8 +38,8 @@ namespace GSoft.Dynamite.PowerShell.Unity
                         if (instance == null)
                         {
                             // Bootstrap: the container takes care of registering all of its component modules
-                            instance = new RegistrationModuleContainer(
-                                new GRegistrationModule(AppName, AppName + ".Global"));
+                            instance = new UnityRegistrationModuleContainer(
+                                new UnityDynamiteUnityIRegistrationModule(AppName, AppName + ".Global"));
                         }
                     }
                 }

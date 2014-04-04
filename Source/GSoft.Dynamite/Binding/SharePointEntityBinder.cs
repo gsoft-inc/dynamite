@@ -9,17 +9,14 @@ namespace GSoft.Dynamite.Binding
     /// <summary>
     /// The default entity binder for SharePoint.
     /// </summary>
-    [CLSCompliant(false)]
     public class SharePointEntityBinder : ISharePointEntityBinder
     {
         #region Fields
 
-        private readonly IEntityBinder _entityBinder;
-
-        private readonly IEntitySchemaBuilder _entitySchemaBuilder;
-
-        private readonly TaxonomyValueConverter _taxonomyValueConverter;
-        private readonly TaxonomyValueCollectionConverter _taxonomyValueCollectionConverter;
+        private readonly IEntityBinder entityBinder;
+        private readonly IEntitySchemaBuilder entitySchemaBuilder;
+        private readonly TaxonomyValueConverter taxonomyValueConverter;
+        private readonly TaxonomyValueCollectionConverter taxonomyValueCollectionConverter;
 
         #endregion
 
@@ -29,15 +26,15 @@ namespace GSoft.Dynamite.Binding
         /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
         /// </summary>
         /// <param name="entitySchemaBuilder">The entity schema builder.</param>
+        /// <param name="taxonomyValueConverter">The taxonomy value converter</param>
+        /// <param name="taxonomyValueCollectionConverter">The Taxonomy value collection converter</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "The types must be registred in the constructor.")]
         public SharePointEntityBinder(IEntitySchemaBuilder entitySchemaBuilder, TaxonomyValueConverter taxonomyValueConverter, TaxonomyValueCollectionConverter taxonomyValueCollectionConverter)
         {
-            this._entitySchemaBuilder = entitySchemaBuilder;
-            this._entityBinder = new EntityBinder(entitySchemaBuilder);
-
-            this._taxonomyValueConverter = taxonomyValueConverter;
-            this._taxonomyValueCollectionConverter = taxonomyValueCollectionConverter;
-
+            this.entitySchemaBuilder = entitySchemaBuilder;
+            this.entityBinder = new EntityBinder(entitySchemaBuilder);
+            this.taxonomyValueConverter = taxonomyValueConverter;
+            this.taxonomyValueCollectionConverter = taxonomyValueCollectionConverter;
             this.RegisterTypeConverters();
         }
 
@@ -53,7 +50,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void FromEntity<T>(T entity, SPListItem listItem)
         {
-            this._entityBinder.FromEntity(entity, new ListItemValuesAdapter(listItem));
+            this.entityBinder.FromEntity(entity, new ListItemValuesAdapter(listItem));
         }
 
         /// <summary>
@@ -66,7 +63,7 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         public T Get<T>(SPListItem listItem) where T : new()
         {
-            return this._entityBinder.Get<T>(new ListItemValuesAdapter(listItem));
+            return this.entityBinder.Get<T>(new ListItemValuesAdapter(listItem));
         }
 
         /// <summary>
@@ -79,7 +76,7 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         public T Get<T>(SPListItemVersion listItemVersion) where T : new()
         {
-            return this._entityBinder.Get<T>(new ListItemVersionValuesAdapter(listItemVersion));
+            return this.entityBinder.Get<T>(new ListItemVersionValuesAdapter(listItemVersion));
         }
 
         /// <summary>
@@ -90,7 +87,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void ToEntity<T>(T entity, SPListItem listItem)
         {
-            this._entityBinder.ToEntity(entity, new ListItemValuesAdapter(listItem));
+            this.entityBinder.ToEntity(entity, new ListItemValuesAdapter(listItem));
         }
 
         /// <summary>
@@ -101,7 +98,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItemVersion">The list item version.</param>
         public void ToEntity<T>(T entity, SPListItemVersion listItemVersion)
         {
-            this._entityBinder.ToEntity(entity, new ListItemVersionValuesAdapter(listItemVersion));
+            this.entityBinder.ToEntity(entity, new ListItemVersionValuesAdapter(listItemVersion));
         }
 
         #endregion
@@ -113,13 +110,13 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         protected internal virtual void RegisterTypeConverters()
         {
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this._taxonomyValueConverter);
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this._taxonomyValueCollectionConverter);
-            this._entitySchemaBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this.taxonomyValueConverter);
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionConverter);
+            this.entitySchemaBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
         }
 
         #endregion

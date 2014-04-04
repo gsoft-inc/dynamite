@@ -3,6 +3,9 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Repositories
 {
+    /// <summary>
+    /// The Folder Repository Interface
+    /// </summary>
     public interface IFolderRepository
     {
         /// <summary>

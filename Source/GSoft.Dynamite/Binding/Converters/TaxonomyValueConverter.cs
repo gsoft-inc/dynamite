@@ -1,8 +1,8 @@
-﻿using GSoft.Dynamite.ValueTypes;
-using Microsoft.SharePoint.Taxonomy;
+﻿using System;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
-using System;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.Binding.Converters
     /// </summary>
     public class TaxonomyValueConverter : SharePointListItemValueConverter
     {
-        ITaxonomyService taxonomyService;
+        private ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Converter constructor with dependency injection

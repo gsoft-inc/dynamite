@@ -6,6 +6,7 @@ namespace GSoft.Dynamite.Caching
     /// <summary>
     /// General-purpose cache that applies to visitors only
     /// </summary>
+    [Obsolete]
     public interface IAppCacheHelper
     {
         /// <summary>

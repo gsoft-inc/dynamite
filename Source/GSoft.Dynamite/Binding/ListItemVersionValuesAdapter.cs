@@ -10,7 +10,6 @@ namespace GSoft.Dynamite.Binding
     /// <summary>
     /// An adapter class to convert a SPListItemVersion to an IDictionary&lt;string, object&gt;.
     /// </summary>
-    [CLSCompliant(false)]
     [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Adding Dictionnary would be harder to understand.")]
     public class ListItemVersionValuesAdapter : IDictionary<string, object>, ISharePointListItemValues
     {

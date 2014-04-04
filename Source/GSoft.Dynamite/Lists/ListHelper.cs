@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using System.IO;
 using Microsoft.SharePoint.Utilities;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Globalization;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -19,19 +19,20 @@ namespace GSoft.Dynamite.Lists
     /// </summary>
     public class ListHelper
     {
-        private ContentTypeBuilder contentTypeBuilder;
-        private IResourceLocator resourceLocator;
-		private readonly FieldHelper fieldHelper;
-		
+        private readonly ContentTypeBuilder contentTypeBuilder;
+        private readonly IResourceLocator resourceLocator;
+        private readonly FieldHelper fieldHelper;
+
         /// <summary>
         /// Creates a list helper
         /// </summary>
-        /// <param name="contentTypeHelper">A content type helper</param>
+        /// <param name="contentTypeBuilder">A content type helper</param>
         /// <param name="fieldHelper">The field helper.</param>
-        public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper)
+        /// <param name="resourceLocator">The resource locator</param>
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, ResourceLocator resourceLocator)
         {
-            this.fieldHelper = fieldHelper;
             this.contentTypeBuilder = contentTypeBuilder;
+            this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
         }
 
@@ -84,41 +85,6 @@ namespace GSoft.Dynamite.Lists
 
                 list = web.Lists[id];
             }
-            
-            return list;
-        }
-
-
-        /// <summary>
-        /// Creates the list or returns the existing one.
-        /// </summary>
-        /// <remarks>The list name and description will not be translated</remarks>
-        /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
-        /// <param name="web">The current web</param>
-        /// <param name="name">The name of the list</param>
-        /// <param name="description">The description of the list</param>
-        /// <param name="template">The desired list template type to use to instantiate the list</param>
-        /// <returns>The new list or the existing list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
-        {
-            var list = this.TryGetList(web, name);
-
-            if (list != null)
-            {
-                // List already exists, check for correct template
-                if (list.BaseTemplate != templateType)
-                {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, templateType));
-                }
-            }
-            else
-            {
-                // Create new list
-                var id = web.Lists.Add(name, description, templateType);
-
-                list = web.Lists[id];
-            }
 
             return list;
         }
@@ -136,7 +102,7 @@ namespace GSoft.Dynamite.Lists
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
         {
-            var list = web.Lists.TryGetList(name);
+            var list = this.TryGetList(web, name);
 
             if (list != null)
             {
@@ -252,7 +218,7 @@ namespace GSoft.Dynamite.Lists
         /// </returns>
         public SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
-			// TODO: Make this EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
+            // TODO: Make this EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
             genericField.FieldName = fieldInternalName;
 
             // Here is a trick: We have to pass the internal name as display name and set the display name after creation
@@ -261,10 +227,10 @@ namespace GSoft.Dynamite.Lists
             genericField.FieldStaticName = fieldInternalName;
             genericField.FieldGroup = fieldGroup;
 
-            var fieldName = this._fieldHelper.AddField(list.Fields, genericField.ToXElement());
+            var fieldName = this.fieldHelper.AddField(list.Fields, genericField.ToXElement());
 
             if (!string.IsNullOrEmpty(fieldName))
-            {            
+            {
                 // When you set title, need to be in the same Culture as Current web Culture 
                 // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
                 Thread.CurrentThread.CurrentUICulture =
@@ -279,7 +245,7 @@ namespace GSoft.Dynamite.Lists
                 list.Update();
             }
 
-            return list.Fields.GetFieldByInternalName(fieldInternalName); 
+            return list.Fields.GetFieldByInternalName(fieldInternalName);
         }
 
         /// <summary>
@@ -295,11 +261,12 @@ namespace GSoft.Dynamite.Lists
         /// <returns>The newly created field.</returns>
         public SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen)
         {
-			// TODO: Combine this with EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
-			// To support all this, make FieldInfo more complete to document all field metadata (instead of polluting ListHelper)
-			
+            // TODO: Combine this with EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
+            // To support all this, make FieldInfo more complete to document all field metadata (instead of polluting ListHelper)
+
             // Create the schema 
-            var taxonomySchema = new TaxonomyFieldSchema();		// TODO: inject this properly through Registration on Container
+            // TODO: inject this properly through Registration on Container
+            var taxonomySchema = new TaxonomyFieldSchema();
             taxonomySchema.IsMultiple = false;
 
             // Dont'use CreateNewField method because of its doesn't generate the Field ID
@@ -328,9 +295,9 @@ namespace GSoft.Dynamite.Lists
         /// </returns>
         public SPField CreateTextField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiLines)
         {
-			// TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
-			// these concepts with ContentTypeHelper...
-		
+            // TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
+            // these concepts with ContentTypeHelper...
+
             // Create the schema 
             var textFieldSchema = new TextFieldSchema { IsMultiLine = false };
             var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
@@ -351,9 +318,9 @@ namespace GSoft.Dynamite.Lists
         /// </returns>
         public SPField CreateGuidField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
-			// TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
-			// these concepts with ContentTypeHelper...
-			
+            // TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
+            // these concepts with ContentTypeHelper...
+
             // Create the schema 
             var textFieldSchema = new GuidFieldSchema();
             var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
@@ -385,8 +352,8 @@ namespace GSoft.Dynamite.Lists
             }
 
             list.Update();
-		}	
-			
+        }
+
         private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
             // first try finding the list by name, simple

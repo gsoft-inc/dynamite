@@ -371,17 +371,10 @@ namespace GSoft.Dynamite.Utils
         /// <returns>A query rule collection.</returns>
         private QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
         {
-            QueryRuleCollection queryRules = null;
-
             var queryRuleManager = new QueryRuleManager(ssa);
             var searchOwner = new SearchObjectOwner(level, contextWeb);
 
-            // Build the SearchObjectFilter
-            var searchObjectFilter = new SearchObjectFilter(searchOwner);
-
-            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
-
-            return rules;
+            return queryRuleManager.GetQueryRules(new SearchObjectFilter(searchOwner));
         }
     }
 }
