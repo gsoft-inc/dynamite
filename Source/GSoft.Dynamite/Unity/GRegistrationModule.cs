@@ -65,6 +65,7 @@ namespace GSoft.Dynamite.Unity
             // Repositories
             container.RegisterType<FolderRepository>();
             container.RegisterType<ListLocator>();
+            container.RegisterType<IComposedLookRepository, ComposedLookRepository>();
 
             // Utilities
             container.RegisterInstance<IResourceLocator>(new ResourceLocator(this._defaultResourceFileName));
