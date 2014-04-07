@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="ef503c26-cd5a-4f63-995d-8dbac2da9da3" solutionId="ef503c26-cd5a-4f63-995d-8dbac2da9da3" resetWebServer="false" name="GSoft.Dynamite.Examples.Definitions" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="7756ec31-0c81-4d28-b059-66a081ec566f" />
+    <featureReference itemId="83a07486-932c-46ec-ac21-3e2323ef6623" />
+    <featureReference itemId="69e2a258-ad07-444e-b57a-b8f205180544" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="046ff652-fd99-4ed4-9ad6-8becd83f0e13" />
+  </projectItems>
+</package>

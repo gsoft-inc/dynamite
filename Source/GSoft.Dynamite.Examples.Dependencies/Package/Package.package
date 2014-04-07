@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="325ffdae-c13e-488f-8677-488f3c391199" solutionId="325ffdae-c13e-488f-8677-488f3c391199" resetWebServer="false" name="GSoft.Dynamite.Examples.Dependencies" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <assemblies>
+    <customAssembly location="Example\v1.0\ThirdPartyDependency.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Example\v1.0\ThirdPartyDependency.dll" />
+    <customAssembly location="Example\v1.1\ThirdPartyDependency.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Example\v1.1\ThirdPartyDependency.dll" />
+    <customAssembly location="Unity\v2.1\Microsoft.Practices.Unity.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll" />
+    <customAssembly location="Unity\v2.1\Microsoft.Practices.ServiceLocation.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll" />
+    <customAssembly location="Unity\v2.1\Microsoft.Practices.Unity.Configuration.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.Configuration.dll" />
+    <projectOutputAssembly location="GSoft.Dynamite.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\GSoft.Dynamite\GSoft.Dynamite.csproj" />
+    <customAssembly location="JohnHolliday.Caml.Net.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\..\Binaries\JohnHolliday.Caml.Net.dll" />
+  </assemblies>
+</package>

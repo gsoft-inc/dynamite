@@ -1,12 +1,10 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
-
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
-using GSoft.Dynamite.Utils;
-
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
 
@@ -20,9 +18,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletRemoveCatalogs : Cmdlet
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
         private ListHelper _listHelper;
 
         private XDocument _configurationFile;

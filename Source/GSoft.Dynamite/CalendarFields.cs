@@ -1,5 +1,5 @@
 ﻿using System;
-using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.Definitions;
 
 namespace GSoft.Dynamite
 {

@@ -1,8 +1,11 @@
-﻿namespace GSoft.Dynamite.Caching
+﻿using System;
+
+namespace GSoft.Dynamite.Caching
 {
     /// <summary>
     /// Simple cache key
     /// </summary>
+    [Obsolete]
     public class SimpleCacheKey : ICacheKey
     {
         /// <summary>

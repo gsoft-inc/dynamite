@@ -7,7 +7,6 @@ namespace GSoft.Dynamite.Extensions
     /// Extensions for SPSite and SPWeb that elevate privileges.
     /// Props to <c>http://solutionizing.net/2009/01/06/elegant-spsite-elevation/</c>
     /// </summary>
-    [CLSCompliant(false)]
     public static class ElevationExtensions
     {
         /// <summary>

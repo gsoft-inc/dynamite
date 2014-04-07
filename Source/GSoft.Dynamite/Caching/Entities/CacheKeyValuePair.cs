@@ -8,6 +8,7 @@ namespace GSoft.Dynamite.Caching.Entities
     /// <typeparam name="TK">Key type.</typeparam>
     /// <typeparam name="TV">Value type.</typeparam>
     [Serializable]
+    [Obsolete]
     public struct CacheKeyValuePair<TK, TV>
     {
         /// <summary>
