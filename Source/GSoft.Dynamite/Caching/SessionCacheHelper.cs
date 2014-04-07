@@ -69,7 +69,7 @@ namespace GSoft.Dynamite.Caching
         /// Clear all cached information
         /// </summary>
         /// <param name="conditionFunc">The conditional function to clear the cache.</param>
-        /// <exception cref="System.InvalidOperationException">Can't clear cache if you don't have ApproveItems permission.</exception>
+        /// <exception cref="System.InvalidOperationException">Can't clear session cache because condition is not met.</exception>
         public void ClearCache(Func<bool> conditionFunc)
         {
             this._logger.Info("ClearCache: Clearing session cache.");
