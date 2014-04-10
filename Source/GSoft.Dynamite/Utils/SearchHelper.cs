@@ -310,7 +310,7 @@ namespace GSoft.Dynamite.Utils
                 queryRuleCollection = rules[displayName].ToList();
             }
 
-            if (queryRuleCollection.Count >0)
+            if (queryRuleCollection.Count > 0)
             {
                 foreach (var queryRule in queryRuleCollection)
                 {
@@ -359,6 +359,43 @@ namespace GSoft.Dynamite.Utils
 
             queryAction.QueryTransform.SourceId = resultSourceId;
            
+            rule.Update();
+        }
+
+        /// <summary>
+        /// Create a result block query action for a Query Rule
+        /// </summary>
+        /// <param name="rule">The query rule object</param>
+        /// <param name="blockTitle">The result block Title</param>
+        /// <param name="queryTemplate">The search query template in KQL format</param>
+        /// <param name="resultSourceId">The search result source Id</param>
+        /// <param name="routingLabel">A routing label for a content search WebPart</param>
+        /// <param name="numberOfItems">The number of result to retrieve</param>
+        public void CreateResultBlockAction(QueryRule rule, string blockTitle, string queryTemplate, Guid resultSourceId, string routingLabel, string numberOfItems)
+        {
+            var queryAction = (CreateResultBlockAction)rule.CreateQueryAction(QueryActionType.CreateResultBlock);
+
+            queryAction.ResultTitle.DefaultLanguageString = blockTitle;
+
+            if (!string.IsNullOrEmpty(queryTemplate))
+            {
+                queryAction.QueryTransform.QueryTemplate = queryTemplate;
+            }
+
+            queryAction.QueryTransform.SourceId = resultSourceId;
+
+            if (!string.IsNullOrEmpty(routingLabel))
+            {
+                queryAction.ResultTableType = routingLabel;
+            }
+
+            if (!string.IsNullOrEmpty(numberOfItems))
+            {
+                queryAction.QueryTransform.OverrideProperties = new QueryTransformProperties();
+                queryAction.QueryTransform.OverrideProperties["RowLimit"] = int.Parse(numberOfItems);
+                queryAction.QueryTransform.OverrideProperties["TotalRowsExactMinimum"] = int.Parse(numberOfItems);
+            }
+
             rule.Update();
         }
 

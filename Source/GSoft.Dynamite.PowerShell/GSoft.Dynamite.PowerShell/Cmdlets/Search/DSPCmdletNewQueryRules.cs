@@ -193,6 +193,34 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         }
                     }
 
+                    // Process Result Block Actions
+                    var resultBLockActions = queryRuleNode.Descendants("QueryActions").Single().Descendants("ResultBlockActions").Descendants("Action");
+                    if (resultBLockActions != null)
+                    {
+                        var actions = from resultBlockQueryAction in resultBLockActions select resultBlockQueryAction;
+                        foreach (var action in actions)
+                        {
+                            var blockTitle = action.Descendants("BlockTitle").Single().Value;
+                            var sourceName = action.Descendants("SourceName").Single().Value;
+                            var source = this._searchHelper.GetResultSourceByName(searchServiceApp, sourceName, searchObjectLevel, web);
+
+                            var routingLabel = action.Descendants("RountingLabel").Single() != null ? action.Descendants("RountingLabel").Single().Value : null;
+                            var numberOfItems = action.Descendants("NumberOfItems").Single() != null ? action.Descendants("NumberOfItems").Single().Value : null;
+
+                            var queryTemplate = action.Descendants("QueryTemplate").Single().Value;
+
+                            if (source != null)
+                            {
+                                // Add the action
+                                this._searchHelper.CreateResultBlockAction(queryRule, blockTitle, queryTemplate, source.Id, routingLabel, numberOfItems);
+                            }
+                            else
+                            {
+                                this.WriteWarning("The specified source' " + sourceName + "' for the change query action doesn't exists");
+                            }
+                        }
+                    }
+
                     web.Dispose();
                     site.Dispose();
                 }
