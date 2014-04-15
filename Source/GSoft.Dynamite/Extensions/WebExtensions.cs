@@ -1,4 +1,5 @@
-﻿using Microsoft.SharePoint;
+﻿using System.Linq;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Extensions
@@ -17,6 +18,19 @@ namespace GSoft.Dynamite.Extensions
         public static SPList GetPagesLibrary(this SPWeb web)
         {
             return web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.GetLocalizedString("$Resources:List_Pages_UrlName", "osrvcore", web.Language)));
+        }
+
+        /// <summary>
+        /// Gets the custom list template with the specified name.
+        /// </summary>
+        /// <param name="web">The SharePoint web.</param>
+        /// <param name="name">The list template name.</param>
+        /// <returns>An SPListTemplate or null if nothing is found.</returns>
+        public static SPListTemplate GetCustomListTemplate(this SPWeb web, string name)
+        {
+            var listTemplates = web.Site.GetCustomListTemplates(web);
+            var listTemplate = (from SPListTemplate template in listTemplates where template.Name == name select template).FirstOrDefault();
+            return listTemplate;
         }
     }
 }
