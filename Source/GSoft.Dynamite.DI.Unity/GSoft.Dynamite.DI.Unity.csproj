@@ -38,6 +38,9 @@
     <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GSoft.Dynamite, Version=0.6.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5, processorArchitecture=MSIL">
+      <HintPath>..\GSoft.Dynamite\bin\Release\GSoft.Dynamite.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -62,12 +65,6 @@
     <Compile Include="UnityDynamiteRegistrationModule.cs" />
     <Compile Include="UnityPerRequestLifetimeManager.cs" />
     <Compile Include="UnityRegistrationModuleContainer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
-      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
-      <Name>GSoft.Dynamite</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
