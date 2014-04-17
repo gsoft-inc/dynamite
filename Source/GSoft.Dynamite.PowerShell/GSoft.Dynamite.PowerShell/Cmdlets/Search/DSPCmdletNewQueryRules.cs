@@ -223,6 +223,32 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 
                     web.Dispose();
                     site.Dispose();
+
+                    // Prcoess Promoted Link Action
+                    var promotedResultActions = queryRuleNode.Descendants("QueryActions").Single().Descendants("PromotedResultActions").Descendants("Action");
+                    if (promotedResultActions != null)
+                    {
+                        var actions = from promoetedResultQueryAction in promotedResultActions select promoetedResultQueryAction;
+                        foreach (var action in actions)
+                        {
+                            var linkTitle = action.Descendants("LinkTitle").Single() != null ? action.Descendants("LinkTitle").Single().Value : "NoName";
+                            var linkUrl = action.Descendants("LinkUrl").Single().Value;
+                            var linkDescription = action.Descendants("LinkDescription").Single() != null ? action.Descendants("LinkDescription").Single().Value : string.Empty;
+
+                            var isVisualBestBet = action.Descendants("IsVisualBestBet").Single() != null && bool.Parse(action.Descendants("IsVisualBestBet").Single().Value);
+                            var deleteIfUnused = action.Descendants("DeleteIfUnused").Single() != null && bool.Parse(action.Descendants("DeleteIfUnused").Single().Value);
+
+                            if (!string.IsNullOrEmpty(linkUrl))
+                            {
+                                var url = new Uri(linkUrl);
+                                // Add the action
+                                var bestBet = this._searchHelper.EnsureBestBet(searchServiceApp, searchObjectLevel, web, linkTitle,
+                                    url, linkDescription, isVisualBestBet, deleteIfUnused);
+
+                                this._searchHelper.CreatePromotedResultAction(queryRule,bestBet.Id);
+                            }
+                        }
+                    }
                 }
             }
 
