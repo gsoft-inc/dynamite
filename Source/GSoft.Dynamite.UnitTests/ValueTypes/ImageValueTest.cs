@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.SharePoint.Publishing.Fields;
-using Microsoft.SharePoint.Emulators;
+﻿using GSoft.Dynamite.ValueTypes;
 using Microsoft.QualityTools.Testing.Emulators;
-using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint.Emulators;
+using Microsoft.SharePoint.Publishing.Fields;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.ValueTypes
 {

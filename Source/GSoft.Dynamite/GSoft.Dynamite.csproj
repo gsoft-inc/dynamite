@@ -126,6 +126,8 @@
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
     <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
+    <Compile Include="Catalogs\CatalogBuilder.cs" />
+    <Compile Include="Catalogs\Catalog.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Globalization\Language.cs" />
+    <Compile Include="Lists\WriteSecurityOptions.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
@@ -173,6 +176,10 @@
     <Compile Include="Setup\PageInfo.cs" />
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
+    <Compile Include="SiteColumns\SiteColumnBase.cs" />
+    <Compile Include="SiteColumns\SiteColumnField.cs" />
+    <Compile Include="SiteColumns\TaxoField.cs" />
+    <Compile Include="SiteColumns\TextField.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />

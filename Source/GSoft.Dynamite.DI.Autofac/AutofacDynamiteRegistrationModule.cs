@@ -3,6 +3,7 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caching;
+using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
@@ -103,6 +104,9 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
             builder.RegisterType<ListSecurityHelper>();
+
+            // Catalogs
+            builder.RegisterType<CatalogBuilder>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>();

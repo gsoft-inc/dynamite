@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Schemas;
@@ -29,7 +30,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="contentTypeBuilder">A content type helper</param>
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, ResourceLocator resourceLocator)
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
@@ -121,6 +122,19 @@ namespace GSoft.Dynamite.Lists
             }
 
             return list;
+        }
+
+        /// <summary>
+        /// Creates the list or returns the existing one.
+        /// </summary>
+        /// <remarks>The list name and description will not be translated</remarks>
+        /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
+        /// <param name="web">The current web</param>
+        /// <param name="catalog">The Catalog to create</param>
+        /// <returns>The new list or the existing list</returns>
+        public SPList EnsureList(SPWeb web, Catalog catalog)
+        {
+            return this.EnsureList(web, catalog.RootFolderUrl, catalog.Description, catalog.ListTemplate);
         }
 
         /// <summary>
@@ -351,6 +365,17 @@ namespace GSoft.Dynamite.Lists
                 disableMethod.Invoke(null, new object[] { list });
             }
 
+            list.Update();
+        }
+
+        /// <summary>
+        ///  Set WriteSecurity on a SPList
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="option">The Write Security option</param>
+        public void SetWriteSecurity(SPList list, WriteSecurityOptions option)
+        {
+            list.WriteSecurity = (int)option;
             list.Update();
         }
 

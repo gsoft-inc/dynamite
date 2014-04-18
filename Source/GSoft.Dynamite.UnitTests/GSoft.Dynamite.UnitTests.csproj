@@ -97,12 +97,6 @@
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
-      <Project>{72576e04-75b4-4eaf-af1e-7482355fc8c1}</Project>
-      <Name>GSoft.Dynamite</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
     <Fakes Include="Fakes\System.fakes">
       <SubType>Designer</SubType>
@@ -110,6 +104,12 @@
     <Fakes Include="Fakes\System.Web.fakes" />
     <Fakes Include="Fakes\mscorlib.fakes" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
