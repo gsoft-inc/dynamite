@@ -2,50 +2,60 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.SharePoint;
+using GSoft.Dynamite.Utils;
 
 namespace GSoft.Dynamite.Taxonomy
 {
-    internal class TaxonomySessionManager
+    public class TaxonomySessionManager : ITaxonomySessionManager
     {
         private Dictionary<Guid, TaxonomySession> taxonomySessions = new Dictionary<Guid,TaxonomySession>();
+        private static readonly NamedReaderWriterLocker<Guid> NamedLocker = new NamedReaderWriterLocker<Guid>();
 
-        private int taxCreationCount = 0;
-        private Guid requestIdentifier = Guid.NewGuid();
-        private GSoft.Dynamite.Logging.ILogger log;
-
-        public TaxonomySessionManager(GSoft.Dynamite.Logging.ILogger logger)
+        public TaxonomySession GetSession(SPSite site)
         {
-            this.log = logger;
+            var session = NamedLocker.RunWithReadLock(site.ID, () =>
+            {
+                if (!this.taxonomySessions.ContainsKey(site.ID))
+                {
+                    // Create the Session because it does not yet exist.
+                    var newSession = NamedLocker.RunWithWriteLock<TaxonomySession>(site.ID, () =>
+                    {
+                        var taxonomySession = new TaxonomySession(site, true);
+                        this.taxonomySessions.Add(site.ID, taxonomySession);
+
+                        return taxonomySession;
+                    });
+
+                    return newSession;
+                }
+
+                // Return the existing Session
+                return this.taxonomySessions[site.ID];
+            });
+
+            return session;
         }
 
-        private void LogTaxCreation()
+        public TaxonomySession RefreshTaxonomySessionCache(SPSite site)
         {
-            this.taxCreationCount++;
-            this.log.Error("Eddy: Create Taxonomy Session! count: " + this.taxCreationCount + " Request: " + this.requestIdentifier);
-        }
-
-        internal TaxonomySession GetSession(SPSite site)
-        {
-            if (!this.taxonomySessions.ContainsKey(site.ID))
+            // Create a new Taxonomy Session with the cache cleared
+            var newSession = NamedLocker.RunWithWriteLock<TaxonomySession>(site.ID, () =>
             {
-                this.LogTaxCreation();
-                this.taxonomySessions.Add(site.ID, new TaxonomySession(site, true));
-            }
+                var taxonomySession = new TaxonomySession(site, true);
 
-            this.log.Error("Eddy: Return Taxonomy Session. Request: " + this.requestIdentifier);
-            return this.taxonomySessions[site.ID];
-        }
+                if (this.taxonomySessions.ContainsKey(site.ID))
+                {
+                    this.taxonomySessions[site.ID] = taxonomySession;
+                }
+                else
+                {
+                    this.taxonomySessions.Add(site.ID, taxonomySession);
+                }
 
-        internal void RefreshTaxonomySerssionCache(SPSite site)
-        {
-            if (this.taxonomySessions.ContainsKey(site.ID))
-            {
-                this.taxonomySessions[site.ID] = new TaxonomySession(site, true);
-            }
-            else
-            {
-                var newSession = new TaxonomySession(site, true);
-            }
+                return taxonomySession;
+            });
+
+            return newSession;
         }
     }
 }
