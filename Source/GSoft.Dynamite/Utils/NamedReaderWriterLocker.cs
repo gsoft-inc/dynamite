@@ -124,6 +124,27 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Runs the with upgradeable read lock.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="body">The body.</param>
+        /// <returns></returns>
+        public TResult RunWithUpgradeableReadLock<TResult>(T key, Func<TResult> body)
+        {
+            var lockSlim = this.GetLock(key);
+            try
+            {
+                lockSlim.EnterUpgradeableReadLock();
+                return body();
+            }
+            finally
+            {
+                lockSlim.ExitUpgradeableReadLock();
+            }
+        }
+
+        /// <summary>
         /// The run with write lock.
         /// </summary>
         /// <param name="name">

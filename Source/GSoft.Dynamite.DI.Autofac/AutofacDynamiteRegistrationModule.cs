@@ -122,7 +122,7 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<TaxonomySessionManager>().As<ITaxonomySessionManager>();
+            builder.RegisterType<TaxonomySessionManager>().As<ITaxonomySessionManager>().SingleInstance();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
             builder.RegisterType<TaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();

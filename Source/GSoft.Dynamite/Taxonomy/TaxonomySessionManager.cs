@@ -13,17 +13,25 @@ namespace GSoft.Dynamite.Taxonomy
 
         public TaxonomySession GetSession(SPSite site)
         {
-            var session = NamedLocker.RunWithReadLock(site.ID, () =>
+            var session = NamedLocker.RunWithUpgradeableReadLock(site.ID, () =>
             {
                 if (!this.taxonomySessions.ContainsKey(site.ID))
                 {
                     // Create the Session because it does not yet exist.
                     var newSession = NamedLocker.RunWithWriteLock<TaxonomySession>(site.ID, () =>
                     {
-                        var taxonomySession = new TaxonomySession(site, true);
-                        this.taxonomySessions.Add(site.ID, taxonomySession);
+                        // Double check for thread concurency
+                        if (!this.taxonomySessions.ContainsKey(site.ID))
+                        {
+                            var taxonomySession = new TaxonomySession(site, true);
+                            this.taxonomySessions.Add(site.ID, taxonomySession);
 
-                        return taxonomySession;
+                            return taxonomySession;
+                        }
+                        else
+                        {
+                            return this.taxonomySessions[site.ID];
+                        }
                     });
 
                     return newSession;
@@ -41,6 +49,8 @@ namespace GSoft.Dynamite.Taxonomy
             // Create a new Taxonomy Session with the cache cleared
             var newSession = NamedLocker.RunWithWriteLock<TaxonomySession>(site.ID, () =>
             {
+                // This Session will be created and assigned for each thread that passes here.
+                // A todo would be to check the creation time of the last Taxonomy session was updated in the collection. (a better way must exist...)
                 var taxonomySession = new TaxonomySession(site, true);
 
                 if (this.taxonomySessions.ContainsKey(site.ID))
