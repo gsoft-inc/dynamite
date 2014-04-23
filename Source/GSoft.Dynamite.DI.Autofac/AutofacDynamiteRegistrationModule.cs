@@ -19,6 +19,8 @@ using GSoft.Dynamite.Globalization.Variations;
 
 namespace GSoft.Dynamite.DI.Autofac
 {
+    using GSoft.Dynamite.Serializers;
+
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
@@ -111,6 +113,9 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<SecurityHelper>();
             builder.RegisterType<UserHelper>(); 
 
+            // Serializers
+            builder.RegisterType<Serializer>().As<ISerializer>().SingleInstance();
+
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
             builder.RegisterType<FolderInfo>().As<IFolderInfo>();
@@ -122,7 +127,8 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
+            builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("implementor");
+            builder.RegisterDecorator<ITaxonomyService>((c, inner) => new CachedTaxonomyService(inner), fromKey: "implementor");
             builder.RegisterType<TaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();
 

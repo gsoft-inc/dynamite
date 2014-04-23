@@ -3,6 +3,8 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Linq;
+
     /// <summary>
     /// Extensions to the basic functionality of ISharePointEntityBinder
     /// </summary>
@@ -18,10 +20,10 @@ namespace GSoft.Dynamite.Binding
         public static IList<T> Get<T>(this ISharePointEntityBinder entityBinder, SPListItemCollection listItems) where T : new()
         {
             var returnList = new List<T>();
-
-            foreach (SPListItem item in listItems)
+            
+            for (var i = 0; i < listItems.Count; i++)
             {
-                returnList.Add(entityBinder.Get<T>(item));
+                returnList.Add(entityBinder.Get<T>(listItems[i]));
             }
 
             return returnList;
