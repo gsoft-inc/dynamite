@@ -150,11 +150,12 @@
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
     <Compile Include="SPUrl.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
-    <Compile Include="Taxonomy\ITaxonomySessionManager.cs" />
+    <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Taxonomy\TaxonomySessionManager.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
     <Compile Include="Definitions\ContentTypeBuilder.cs" />

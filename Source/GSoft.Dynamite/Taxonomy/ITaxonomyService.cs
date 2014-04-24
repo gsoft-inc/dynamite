@@ -97,6 +97,15 @@ namespace GSoft.Dynamite.Taxonomy
         Term GetTermForId(SPSite site, Guid id);
 
         /// <summary>
+        /// Gets the term for identifier.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The specific term</returns>
+        Term GetTermForId(SPSite site, string termStoreName, Guid id);
+
+        /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store
         /// </summary>
         /// <param name="site">The current site</param>
