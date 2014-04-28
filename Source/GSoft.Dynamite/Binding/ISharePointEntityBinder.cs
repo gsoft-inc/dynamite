@@ -4,6 +4,8 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Data;
+
     /// <summary>
     /// The binder for SharePoint entities.
     /// </summary>
@@ -30,6 +32,17 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
         T Get<T>(SPListItem listItem) where T : new();
+
+        /// <summary>
+        /// Creates an entity of the specified type and fills it using the values.
+        /// </summary>
+        /// <typeparam name="T">The type of the entity.</typeparam>
+        /// <param name="dataRow">The data row.</param>
+        /// <returns>
+        /// The newly created and filled entity.
+        /// </returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
+        T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web) where T : new();
 
         /// <summary>
         /// Creates an entity of the specified type and fills it using the values.

@@ -24,6 +24,10 @@ namespace GSoft.Dynamite.Taxonomy
 
         private readonly Dictionary<Guid, Term> termDictionaryByGuid = new Dictionary<Guid, Term>();
 
+        private readonly Dictionary<string, IList<Term>> termsDictionaryBytermSetNameTermLabel = new Dictionary<string, IList<Term>>();
+
+        private readonly Dictionary<string, Term> termDictionaryBytermSetNameTermLabel = new Dictionary<string, Term>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CachedTaxonomyService"/> class.
         /// </summary>
@@ -130,7 +134,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// </returns>
         public Term GetTermForLabel(SPSite site, string termStoreName, string termStoreGroupName, string termSetName, string termLabel)
         {
-            return this.decorated.GetTermForLabel(site, termStoreName, termStoreGroupName, termSetName, termLabel);
+            Term term;
+            var key = string.Format("{0}|{1}|{2}|{3}", termStoreName, termStoreGroupName, termSetName, termLabel);
+            if (this.termDictionaryBytermSetNameTermLabel.TryGetValue(key, out term))
+            {
+                return term;
+            }
+
+            term = this.decorated.GetTermForLabel(site, termStoreName, termStoreGroupName, termSetName, termLabel);
+            this.termDictionaryBytermSetNameTermLabel.Add(key, term);
+
+            return term;
         }
 
         /// <summary>
@@ -153,7 +167,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// </returns>
         public Term GetTermForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            return this.decorated.GetTermForLabel(site, termStoreGroupName, termSetName, termLabel);
+            Term term;
+            var key = string.Format("{0}|{1}|{2}", termStoreGroupName, termSetName, termLabel);
+            if (this.termDictionaryBytermSetNameTermLabel.TryGetValue(key, out term))
+            {
+                return term;
+            }
+
+            term = this.decorated.GetTermForLabel(site, termStoreGroupName, termSetName, termLabel);
+            this.termDictionaryBytermSetNameTermLabel.Add(key, term);
+
+            return term;
         }
 
         /// <summary>
@@ -173,7 +197,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// </returns>
         public Term GetTermForLabel(SPSite site, string termSetName, string termLabel)
         {
-            return this.decorated.GetTermForLabel(site, termSetName, termLabel);
+            Term term;
+            var key = string.Format("{0}|{1}", termSetName, termLabel);
+            if (this.termDictionaryBytermSetNameTermLabel.TryGetValue(key, out term))
+            {
+                return term;
+            }
+
+            term = this.decorated.GetTermForLabel(site, termSetName, termLabel);
+            this.termDictionaryBytermSetNameTermLabel.Add(key, term);
+
+            return term;
         }
 
         /// <summary>
@@ -309,7 +343,17 @@ namespace GSoft.Dynamite.Taxonomy
             string termSetName,
             string termLabel)
         {
-            return this.decorated.GetTermsForLabel(site, termStoreName, termStoreGroupName, termSetName, termLabel);
+            IList<Term> terms;
+            var key = string.Format("{0}|{1}|{2}|{3}", termStoreName, termStoreGroupName, termSetName, termLabel);
+            if (this.termsDictionaryBytermSetNameTermLabel.TryGetValue(key, out terms))
+            {
+                return terms;
+            }
+
+            terms = this.decorated.GetTermsForLabel(site, termStoreName, termStoreGroupName, termSetName, termLabel);
+            this.termsDictionaryBytermSetNameTermLabel.Add(key, terms);
+
+            return terms;
         }
 
         /// <summary>
@@ -332,7 +376,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// </returns>
         public IList<Term> GetTermsForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            return this.decorated.GetTermsForLabel(site, termStoreGroupName, termSetName, termLabel);
+            IList<Term> terms;
+            var key = string.Format("{0}|{1}|{2}", termStoreGroupName, termSetName, termLabel);
+            if (this.termsDictionaryBytermSetNameTermLabel.TryGetValue(key, out terms))
+            {
+                return terms;
+            }
+
+            terms = this.decorated.GetTermsForLabel(site, termStoreGroupName, termSetName, termLabel);
+            this.termsDictionaryBytermSetNameTermLabel.Add(key, terms);
+
+            return terms;
         }
 
         /// <summary>
@@ -352,7 +406,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// </returns>
         public IList<Term> GetTermsForLabel(SPSite site, string termSetName, string termLabel)
         {
-            return this.decorated.GetTermsForLabel(site, termSetName, termLabel);
+            IList<Term> terms;
+            var key = string.Format("{0}|{1}", termSetName, termLabel);
+            if (this.termsDictionaryBytermSetNameTermLabel.TryGetValue(key, out terms))
+            {
+                return terms;
+            }
+
+            terms = this.decorated.GetTermsForLabel(site, termSetName, termLabel);
+            this.termsDictionaryBytermSetNameTermLabel.Add(key, terms);
+
+            return terms;
         }
 
         /// <summary>

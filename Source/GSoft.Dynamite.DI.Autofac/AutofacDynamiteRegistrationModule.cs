@@ -71,12 +71,15 @@ namespace GSoft.Dynamite.DI.Autofac
 #endif
 
             // Binding
-            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
+            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
             var cachedBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
+
+            builder.RegisterType<SharePointDataRowEntitySchema>();
             builder.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
+            builder.RegisterType<TaxonomyValueDataRowConverter>();
+            builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
-
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();  // Singleton entity binder
 
             // Cache
