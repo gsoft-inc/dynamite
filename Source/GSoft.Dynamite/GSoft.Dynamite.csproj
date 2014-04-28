@@ -169,10 +169,12 @@
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
     <Compile Include="SPUrl.cs" />
-    <Compile Include="Taxonomy\CachedTaxonomyService.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
+    <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
     <Compile Include="Definitions\ContentTypeBuilder.cs" />
@@ -194,6 +196,7 @@
     <Compile Include="Globalization\MuiHelper.cs" />
     <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
+    <Compile Include="Utils\NamedReaderWriterLocker.cs" />
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Security\Unsafe.cs" />

@@ -130,8 +130,8 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("implementor");
-            builder.RegisterDecorator<ITaxonomyService>((c, inner) => new CachedTaxonomyService(inner), fromKey: "implementor");
+            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
             builder.RegisterType<TaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();
 
