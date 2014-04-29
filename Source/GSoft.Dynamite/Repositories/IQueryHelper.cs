@@ -2,6 +2,7 @@
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using System;
 
 namespace GSoft.Dynamite.Repositories
 {
@@ -16,6 +17,14 @@ namespace GSoft.Dynamite.Repositories
         /// <value>The now in CAML.</value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of static members discouraged in favor of non-static public member for more consistency with dependency injection")]
         string NowInCAML { get; }
+        
+        /// <summary>
+        /// Returns a string corresponding the the ViewFields attribute of a SPQuery
+        /// with all the properties of a particular Entity
+        /// </summary>
+        /// <param name="entityType">The type of the entity</param>
+        /// <returns>A string representing the list of view fields</returns>
+        string ViewFieldsForEntityType(Type entityType);
 
         /// <summary>
         /// Trimming utility for rich text content returned from SPQueries
