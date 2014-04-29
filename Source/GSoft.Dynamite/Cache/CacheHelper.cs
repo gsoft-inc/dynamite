@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
-using GSoft.Dynamite;
+
 using GSoft.Dynamite.Logging;
 
 using Microsoft.SharePoint;
@@ -117,29 +117,27 @@ namespace GSoft.Dynamite.Cache
             return clearCount;
         }
 
-        private T GetFromCache<T>(Func<T> repoCamlQuery, string cacheKey, DateTime expiration) where T : class
+        private T GetFromCache<T>(Func<T> repoCamlQuery, string cacheKey, DateTime expiration) where T : class 
         {
-            T cachedValue = HttpRuntime.Cache.Get(cacheKey) as T;
+            var cachedValue = HttpRuntime.Cache.Get(cacheKey) as CacheItemWrapper<T>;
+
             if (cachedValue == null)
             {
                 this.log.Info("Caching value(s) for key = " + cacheKey);
-                cachedValue = repoCamlQuery.Invoke();
-
-                if (cachedValue != null)
-                {
-                    // Add item to cache
-                    HttpRuntime.Cache.Add(
-                        cacheKey,
-                        cachedValue,
-                        null,
-                        expiration,
-                        System.Web.Caching.Cache.NoSlidingExpiration,
-                        CacheItemPriority.Normal,
-                        null);
-                }
+                cachedValue = new CacheItemWrapper<T>(repoCamlQuery.Invoke());
+                
+                // Add item to cache
+                HttpRuntime.Cache.Add(
+                    cacheKey,
+                    cachedValue,
+                    null,
+                    expiration,
+                    System.Web.Caching.Cache.NoSlidingExpiration,
+                    CacheItemPriority.Normal,
+                    null);
             }
-
-            return cachedValue;
+            
+            return cachedValue.Item;
         }
     }
 }

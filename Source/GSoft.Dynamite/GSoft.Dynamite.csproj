@@ -126,6 +126,7 @@
     <Compile Include="Binding\Converters\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
     <Compile Include="Cache\CacheHelper.cs" />
+    <Compile Include="Cache\CacheItemWrapper.cs" />
     <Compile Include="Cache\ICacheHelper.cs" />
     <Compile Include="Cache\ICacheKey.cs" />
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
