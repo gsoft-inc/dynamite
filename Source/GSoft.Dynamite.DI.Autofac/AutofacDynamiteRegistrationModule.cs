@@ -117,7 +117,7 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<UserHelper>(); 
 
             // Serializers
-            builder.RegisterType<Serializer>().As<ISerializer>().SingleInstance();
+            builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();

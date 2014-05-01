@@ -12,5 +12,18 @@ namespace GSoft.Dynamite.Serializers
         /// The serialized string
         /// </returns>
         string Serialize(object obj);
+
+        /// <summary>
+        /// The deserialize.
+        /// </summary>
+        /// <param name="json">
+        /// The json.
+        /// </param>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="T"/> The object type to cast to.
+        /// </returns>
+        T Deserialize<T>(string json);
     }
 }
