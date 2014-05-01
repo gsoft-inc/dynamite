@@ -38,7 +38,7 @@
     <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GSoft.Dynamite, Version=0.6.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5, processorArchitecture=MSIL">
+    <Reference Include="GSoft.Dynamite, Version=0.7.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5, processorArchitecture=MSIL">
       <HintPath>..\GSoft.Dynamite\bin\Release\GSoft.Dynamite.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">

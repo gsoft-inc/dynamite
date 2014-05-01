@@ -121,6 +121,7 @@ namespace GSoft.Dynamite.DI.Unity
             container.RegisterType<PageCreator>();
 
             // Taxonomy
+            container.RegisterType<ISiteTaxonomyCacheManager, SiteTaxonomyCacheManager>();
             container.RegisterType<ITaxonomyService, TaxonomyService>();
             container.RegisterType<TaxonomyService>();
             container.RegisterType<TaxonomyHelper>();

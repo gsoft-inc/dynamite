@@ -4,6 +4,8 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
+    using System;
+
     /// <summary>
     /// The converter for principals.
     /// </summary>
@@ -22,6 +24,12 @@ namespace GSoft.Dynamite.Binding.Converters
         public object Convert(object value, ConversionArguments arguments)
         {
             var principal = value as SPPrincipal;
+
+            if (value == DBNull.Value)
+            {
+                return null;
+            }
+
             return principal != null ? new PrincipalValue(principal) : null;
         }
 
