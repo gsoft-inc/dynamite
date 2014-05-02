@@ -46,8 +46,7 @@
       <HintPath>..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="fastjson">
-      <HintPath>..\packages\fastJSON.2.1.0.0\lib\net35\fastjson.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Binaries\fastjson.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -171,6 +170,7 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
     <Compile Include="Setup\FieldValueInfo.cs" />
     <Compile Include="Setup\FolderInfo.cs" />
     <Compile Include="Setup\FolderMaker.cs" />
@@ -240,7 +240,6 @@
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
   <ItemGroup />
@@ -248,11 +247,4 @@
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
 </Project>
