@@ -41,6 +41,10 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="fastjson">
       <HintPath>..\packages\fastJSON.2.1.0.0\lib\net35\fastjson.dll</HintPath>
       <Private>False</Private>
@@ -70,8 +74,9 @@
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Binaries\Json.Net\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ServiceStack.Text, Version=3.9.60.0, Culture=neutral, PublicKeyToken=fb3de3fad47af15c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -90,6 +95,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AppContainer.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
@@ -145,6 +151,7 @@
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
+    <Compile Include="Globalization\IResourceLocatorConfig.cs" />
     <Compile Include="Globalization\Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
@@ -211,6 +218,7 @@
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
+    <Compile Include="AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />

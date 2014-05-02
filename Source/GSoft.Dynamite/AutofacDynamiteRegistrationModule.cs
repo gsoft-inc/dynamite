@@ -26,7 +26,6 @@ namespace GSoft.Dynamite
     public class AutofacDynamiteRegistrationModule : Module
     {
         private readonly string logCategoryName;
-        private readonly string[] defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
@@ -34,22 +33,9 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public AutofacDynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public AutofacDynamiteRegistrationModule(string logCategoryName)
         {
             this.logCategoryName = logCategoryName;
-            this.defaultResourceFileNames = new string[] { defaultResourceFileName };
-        }
-
-        /// <summary>
-        /// Creates a new registration module to prepare dependency injection
-        /// for GSoft.Dynamite components
-        /// </summary>
-        /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
-        /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
-        public AutofacDynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
-        {
-            this.logCategoryName = logCategoryName;
-            this.defaultResourceFileNames = defaultResourceFileNames;
         }
 
         /// <summary>
@@ -89,7 +75,7 @@ namespace GSoft.Dynamite
             builder.RegisterType<FieldHelper>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
-            builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
+            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
             builder.RegisterType<MuiHelper>();
             builder.RegisterType<DateHelper>();
             builder.RegisterType<RegionalSettingsHelper>();
