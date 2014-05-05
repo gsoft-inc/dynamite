@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Taxonomy
             this.SiteId = site.ID;
 
             // Does not refresh sharepoint internal cache by default.
-            this.TaxonomySession = new TaxonomySession(site);
+            this.TaxonomySession = new TaxonomySession(site, true);
 
             if (!string.IsNullOrEmpty(termStoreName))
             {

@@ -42,8 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="fastjson">
-      <HintPath>..\packages\fastJSON.2.1.0.0\lib\net35\fastjson.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\fastJSON.2.1.1.0\lib\net35\fastjson.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
