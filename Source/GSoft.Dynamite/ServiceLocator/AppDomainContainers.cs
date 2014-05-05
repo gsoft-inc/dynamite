@@ -26,32 +26,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// Only the GAC_MSIL folder of the .NET 3.5 GAC (c:\windows\assembly)
     /// is scanned.
     /// </remarks>
-    /// <example>
-    /// How to share all instances registered with InstancePerLiftetimeScope throughout
-    /// the current request (requires the <see cref="DynamiteAutofacHttpModule"/>):
-    /// <![CDATA[ 
-    /// var myPerRequestCache = AppContainers.CurrentRequest.Resolve<ISomePerRequestCache>();
-    /// ]]>
-    /// 
-    /// Similarly, object sharing scoped to a site collection:
-    /// <![CDATA[ 
-    /// var userService = AppContainer.CurrentSite.Resolve<IUserService>();
-    /// ]]>
-    /// 
-    /// Using Dynamite utilities from a feature event receiver:
-    /// <![CDATA[ 
-    /// using (var childScope = AppContainer.Current.BeginLifetimeScope())
-    /// {
-    ///     var logger = childScope.Resolve<ILogger>();
-    ///     var taxonomyService = childScope.Resolve<ITaxonomyService>();
-    ///     
-    ///     var currentSite = properties.Feature.Parent as SPSite;
-    ///     taxonomyService.GetTermForId(currentSite, Guid.NewsGuid());
-    ///     logger.Info("Tough luck!");
-    /// }
-    /// ]]>
-    /// </example>
-    public static class AppDomainContainers
+    internal static class AppDomainContainers
     {
         private const string AssemblyFolder = "GAC_MSIL";
 
@@ -63,35 +38,13 @@ namespace GSoft.Dynamite.ServiceLocator
         /// </summary>
         private static readonly IDictionary<string, IContainer> appDomainContainers = new Dictionary<string, IContainer>();
 
-        private static readonly object ChildScopesLockObject = new object();
-        
-        /// <summary>
-        /// Shared dictionary of container child scopes, sandboxed child containers that are meant to live as
-        /// long as their parent root container
-        /// </summary>
-        private static readonly IDictionary<string, ILifetimeScope> uniqueChildScopes = new Dictionary<string, ILifetimeScope>();
-
         /// <summary>
         /// Returns a service locator instance for the entire application (i.e. throughout 
         /// the current AppDomain). Acts as root Container for all other child lifetime
         /// scopes. Hosts all singletons that are registered as SingleInstance().
-        /// Use CurrentRequest, CurrentSite or CurrentWeb lifetime scope instead when in HTTP 
-        /// request context (see remarks).
         /// Whenever applicable, prefer creating a child lifetime scope instead of resolving 
         /// directly for this root Container instance.
         /// </summary>
-        /// <remarks>
-        /// - The first access to this singleton after a IIS app pool recycle will cause
-        ///   the assembly scanning and dependency injection bootstrapping.  
-        /// - Requires the <see cref="DynamiteAutofacHttpModule"/>: Prefer using the 
-        ///   CurrentRequest property instead of Current, especially when resolving a tree of 
-        ///   dependencies that involves IDisposable objects. The CurrentRequest lifetime scope 
-        ///   serves as a per-HTTP-request deletion boundary for such resources and allows 
-        ///   object sharing throughout the entire request. 
-        /// - Use the .InstancePerLiftetimeScope() or .InstancePerRequest() lifetime
-        ///   registrations along with AppContainer.Current.BeginLifetimeScope() instead
-        ///   of calling Resolve directly on this property.
-        /// </remarks>
         /// <param name="appRootNamespace">The key of the current app</param>
         public static IContainer CurrentContainer(string appRootNamespace)
         {
@@ -143,122 +96,6 @@ namespace GSoft.Dynamite.ServiceLocator
             }
 
             return appDomainContainers[appRootNamespace];
-        }
-
-        /// <summary>
-        /// The current site scope.
-        /// </summary>
-        /// <param name="appRootNamespace">
-        /// The app root namespace.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ILifetimeScope"/>.
-        /// </returns>
-        public static ILifetimeScope CurrentSiteScope(string appRootNamespace)
-        {
-            return CurrentSiteScope(appRootNamespace, null);
-        }
-
-        /// <summary>
-        /// The current site scope.
-        /// </summary>
-        /// <param name="appRootNamespace">
-        /// The app root namespace.
-        /// </param>
-        /// <param name="assemblyFileNameMatcher">
-        /// The assembly file name matcher.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ILifetimeScope"/>.
-        /// </returns>
-        public static ILifetimeScope CurrentSiteScope(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
-        {
-            ThrowExceptionIfNotSPContext(appRootNamespace);
-
-            var currentSiteKey = SPContext.Current.Site.ID.ToString();
-            return EnsureUndisposableScopeForTagInContainer(appRootNamespace, assemblyFileNameMatcher, currentSiteKey);
-        }
-
-        /// <summary>
-        /// The current web scope.
-        /// </summary>
-        /// <param name="appRootNamespace">
-        /// The app root namespace.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ILifetimeScope"/>.
-        /// </returns>
-        public static ILifetimeScope CurrentWebScope(string appRootNamespace)
-        {
-            return CurrentWebScope(appRootNamespace, null);
-        }
-
-        /// <summary>
-        /// The current web scope.
-        /// </summary>
-        /// <param name="appRootNamespace">
-        /// The app root namespace.
-        /// </param>
-        /// <param name="assemblyFileNameMatcher">
-        /// The assembly file name matcher.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ILifetimeScope"/>.
-        /// </returns>
-        public static ILifetimeScope CurrentWebScope(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
-        {
-            ThrowExceptionIfNotSPContext(appRootNamespace);
-
-            var currentWebKey = SPContext.Current.Web.ID.ToString();
-            return EnsureUndisposableScopeForTagInContainer(appRootNamespace, assemblyFileNameMatcher, currentWebKey);
-        }        
-
-        private static void ThrowExceptionIfNotSPContext(string appRootNamespace)
-        {
-            if (SPContext.Current == null)
-            {
-                throw new InvalidOperationException(
-                    "Can't access current site lifetime scope for container " + appRootNamespace + " because not in a SharePoint web request context. "
-                    + "Instead, to force a sharing boundary for classes registered as InstancePerLifetimeScope, create your own lifetime scope with using(var childScope = YourRootContainer.Current.BeginLifetimeScope()) {}.");
-            }
-        }
-
-        private static ILifetimeScope EnsureUndisposableScopeForTagInContainer(string containerKey, Func<string, bool> assemblyFileNameMatcher, string scopeTag)
-        {
-            ILifetimeScope ensuredScope = null;
-
-            var container = CurrentContainer(containerKey, assemblyFileNameMatcher);
-            var fullKey = containerKey + "-" + scopeTag;
-
-            // Don't bother locking if the instance is already created
-            if (uniqueChildScopes.ContainsKey(fullKey))
-            {
-                // Return the already-initialized container right away
-                ensuredScope = uniqueChildScopes[fullKey];
-            }
-            else
-            {
-                // Only one scope should be registered at a time, to be on the safe side
-                lock (ChildScopesLockObject)
-                {
-                    // Just in case, check again (because the assignment could have happened before we took hold of lock)
-                    if (uniqueChildScopes.ContainsKey(fullKey))
-                    {
-                        ensuredScope = uniqueChildScopes[fullKey];
-                    }
-                    else
-                    {
-                        // This scope will never be disposed, i.e. it will life as long as the parent
-                        // container, provided no one calls Dispose on it.
-                        // The scope only meant to sandbox InstancePerLifetimeScope-registered objects
-                        // to be shared only within a boundary uniquely identified by the key.
-                        ensuredScope = container.BeginLifetimeScope(fullKey);
-                        uniqueChildScopes[fullKey] = ensuredScope;
-                    }
-                }
-            }
-
-            return ensuredScope;
         }
 
         private static IContainer ScanGacForAutofacModulesAndCreateContainer(string appRootNamespace, Func<string, bool> assemblyFileNameMatchingPredicate)
