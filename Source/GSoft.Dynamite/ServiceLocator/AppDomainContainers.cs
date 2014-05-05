@@ -4,18 +4,18 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace GSoft.Dynamite
+namespace GSoft.Dynamite.ServiceLocator
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
+
     using Autofac;
+
     using GSoft.Dynamite.Utils;
-    using System.Reflection;
-    using Microsoft.SharePoint.Utilities;
+
     using Microsoft.SharePoint;
-    using System.Web;
+    using Microsoft.SharePoint.Utilities;
 
     /// <summary>
     /// Maintains AppDomain-wide root containers that automatically scan 
@@ -98,6 +98,18 @@ namespace GSoft.Dynamite
             return CurrentContainer(appRootNamespace, null);
         }
 
+        /// <summary>
+        /// The current container.
+        /// </summary>
+        /// <param name="appRootNamespace">
+        /// The app root namespace.
+        /// </param>
+        /// <param name="assemblyFileNameMatcher">
+        /// The assembly file name matcher.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IContainer"/>.
+        /// </returns>
         public static IContainer CurrentContainer(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
         {
             // Don't bother locking if the instance is already created
@@ -133,11 +145,32 @@ namespace GSoft.Dynamite
             return appDomainContainers[appRootNamespace];
         }
 
+        /// <summary>
+        /// The current site scope.
+        /// </summary>
+        /// <param name="appRootNamespace">
+        /// The app root namespace.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILifetimeScope"/>.
+        /// </returns>
         public static ILifetimeScope CurrentSiteScope(string appRootNamespace)
         {
             return CurrentSiteScope(appRootNamespace, null);
         }
 
+        /// <summary>
+        /// The current site scope.
+        /// </summary>
+        /// <param name="appRootNamespace">
+        /// The app root namespace.
+        /// </param>
+        /// <param name="assemblyFileNameMatcher">
+        /// The assembly file name matcher.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILifetimeScope"/>.
+        /// </returns>
         public static ILifetimeScope CurrentSiteScope(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
         {
             ThrowExceptionIfNotSPContext(appRootNamespace);
@@ -146,11 +179,32 @@ namespace GSoft.Dynamite
             return EnsureUndisposableScopeForTagInContainer(appRootNamespace, assemblyFileNameMatcher, currentSiteKey);
         }
 
+        /// <summary>
+        /// The current web scope.
+        /// </summary>
+        /// <param name="appRootNamespace">
+        /// The app root namespace.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILifetimeScope"/>.
+        /// </returns>
         public static ILifetimeScope CurrentWebScope(string appRootNamespace)
         {
             return CurrentWebScope(appRootNamespace, null);
         }
 
+        /// <summary>
+        /// The current web scope.
+        /// </summary>
+        /// <param name="appRootNamespace">
+        /// The app root namespace.
+        /// </param>
+        /// <param name="assemblyFileNameMatcher">
+        /// The assembly file name matcher.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILifetimeScope"/>.
+        /// </returns>
         public static ILifetimeScope CurrentWebScope(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
         {
             ThrowExceptionIfNotSPContext(appRootNamespace);

@@ -1,25 +1,26 @@
-﻿using global::Autofac;
-using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Binding.Converters;
-using GSoft.Dynamite.Cache;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Globalization;
-using GSoft.Dynamite.Globalization.Variations;
-using GSoft.Dynamite.Lists;
-using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.MasterPages;
-using GSoft.Dynamite.Repositories;
-using GSoft.Dynamite.Security;
-using GSoft.Dynamite.Serializers;
-using GSoft.Dynamite.Setup;
-using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.TimerJobs;
-using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.WebConfig;
-using GSoft.Dynamite.WebParts;
-
-namespace GSoft.Dynamite
+﻿namespace GSoft.Dynamite.ServiceLocator
 {
+    using Autofac;
+
+    using GSoft.Dynamite.Binding;
+    using GSoft.Dynamite.Binding.Converters;
+    using GSoft.Dynamite.Cache;
+    using GSoft.Dynamite.Definitions;
+    using GSoft.Dynamite.Globalization;
+    using GSoft.Dynamite.Globalization.Variations;
+    using GSoft.Dynamite.Lists;
+    using GSoft.Dynamite.Logging;
+    using GSoft.Dynamite.MasterPages;
+    using GSoft.Dynamite.Repositories;
+    using GSoft.Dynamite.Security;
+    using GSoft.Dynamite.Serializers;
+    using GSoft.Dynamite.Setup;
+    using GSoft.Dynamite.Taxonomy;
+    using GSoft.Dynamite.TimerJobs;
+    using GSoft.Dynamite.Utils;
+    using GSoft.Dynamite.WebConfig;
+    using GSoft.Dynamite.WebParts;
+
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>

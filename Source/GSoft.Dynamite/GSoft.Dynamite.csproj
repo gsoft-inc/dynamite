@@ -94,7 +94,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AppDomainContainers.cs" />
+    <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
@@ -147,7 +147,7 @@
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
-    <Compile Include="ContainerAndScopesProxy.cs" />
+    <Compile Include="ServiceLocator\ContainerScopeProvider.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
@@ -171,7 +171,7 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
-    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\IContainerScopeProvider.cs" />
     <Compile Include="Setup\FieldValueInfo.cs" />
     <Compile Include="Setup\FolderInfo.cs" />
     <Compile Include="Setup\FolderMaker.cs" />
@@ -219,7 +219,7 @@
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
-    <Compile Include="AutofacDynamiteRegistrationModule.cs" />
+    <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />
