@@ -90,8 +90,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 }
 
                 // The automatic GAC-scanner factory method will properly configure the injection of Dynamite 
-                // utilities and will find and register all injection modules in the GAC DLLs that match 
-                // "IFC.IntactNet" and "Core" in their namespace.
+                // utilities and will find and register all injection modules in the GAC DLLs whose file name match.
                 appDomainContainers[appRootNamespace] = ScanGacForAutofacModulesAndCreateContainer(appRootNamespace, assemblyFileNameMatcher);
             }
 

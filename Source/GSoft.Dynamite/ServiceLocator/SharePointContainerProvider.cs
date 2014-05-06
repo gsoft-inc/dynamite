@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Autofac;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ServiceLocator
 {  
@@ -34,12 +35,13 @@ namespace GSoft.Dynamite.ServiceLocator
     /// 
     /// Using Dynamite utilities from a feature event receiver:
     /// <![CDATA[ 
-    /// using (var childScope = provider.Current.BeginLifetimeScope())
+    /// var currentSite = properties.Feature.Parent as SPSite;
+    /// 
+    /// using (var siteScope = provider.EnsureSiteScope(currentSite))
     /// {
-    ///     var logger = childScope.Resolve<ILogger>();
-    ///     var taxonomyService = childScope.Resolve<ITaxonomyService>();
+    ///     var logger = siteScope.Resolve<ILogger>();
+    ///     var taxonomyService = siteScope.Resolve<ITaxonomyService>();
     ///     
-    ///     var currentSite = properties.Feature.Parent as SPSite;
     ///     taxonomyService.GetTermForId(currentSite, Guid.NewsGuid());
     ///     logger.Info("Tough luck!");
     /// }
@@ -47,8 +49,8 @@ namespace GSoft.Dynamite.ServiceLocator
     /// </example>
     public class SharePointContainerProvider : NamespaceFilteredContainerProvider, ISharePointContainerProvider
     {
-        private readonly ILifetimeScopeProvider siteLifetimeScopeProvider;
-        private readonly ILifetimeScopeProvider webLifetimeScopeProvider;
+        private readonly SPSiteLifetimeScopeProvider siteLifetimeScopeProvider;
+        private readonly SPWebLifetimeScopeProvider webLifetimeScopeProvider;
         private readonly ILifetimeScopeProvider requestLifetimeScopeProvider;
 
         /// <summary>
@@ -88,6 +90,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// Should be a direct child scope of the global application container.
         /// This scope should not be disposed manually: it is meant to live as long
         /// as its parent.
+        /// Do not use outside typical HTTP request context (use EnsureSiteScope instead).
         /// </summary>
         public ILifetimeScope CurrentSite
         {
@@ -106,6 +109,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// Should be a direct child scope of the CurrentSite lifetime scope.
         /// This scope should not be disposed manually: it is meant to live as long
         /// as its parent.
+        /// Do not use outside typical HTTP request context (use EnsureWebScope instead).
         /// </summary>
         public ILifetimeScope CurrentWeb
         {
@@ -113,7 +117,6 @@ namespace GSoft.Dynamite.ServiceLocator
             {
                 return this.webLifetimeScopeProvider.LifetimeScope;
             }
-
         }
 
         /// <summary>
@@ -135,6 +138,46 @@ namespace GSoft.Dynamite.ServiceLocator
             { 
                 return this.requestLifetimeScopeProvider.LifetimeScope;
             }
+        }
+
+        /// <summary>
+        /// Either creates a new lifetime scope from the specified site or
+        /// returns the existing one.
+        /// Don't dispose this scope instance, as it could be reused by others.
+        /// Allows for the usage of InstancePerSite even when outside of 
+        /// a typical HTTP request context (for example, use EnsureSiteScope
+        /// from a FeatureActivated even receiver run from Powershell.exe to
+        /// reuse objects across many event receivers triggered by the same process).
+        /// In typical HTTP request context, use CurrentSite property instead.
+        /// </summary>
+        /// <param name="site">The current site to use in retreiving or creating the scope</param>
+        /// <returns>
+        /// The site-collection-specific lifetime scope (a child container of 
+        /// the root application one)
+        /// </returns>
+        public ILifetimeScope EnsureSiteScope(SPSite site)
+        {
+            return this.siteLifetimeScopeProvider.EnsureSiteScope(site);
+        }
+
+        /// <summary>
+        /// Either creates a new lifetime scope from the specified web or
+        /// returns the existing one.
+        /// Don't dispose this scope instance, as it could be reused by others.
+        /// Allows for the usage of InstancePerWeb even when outside of 
+        /// a typical http request context (for example, use EnsureSiteScope
+        /// from a FeatureActivated even receiver run from Powershell.exe to
+        /// reuse objects across many event receivers triggered by the same process).
+        /// In typical HTTP request context, use CurrentWeb property instead.
+        /// </summary>
+        /// <param name="web">The current web to use in retreiving or creating the scope</param>
+        /// <returns>
+        /// The web-specific lifetime scope (a child container of 
+        /// the root application one)
+        /// </returns>
+        public ILifetimeScope EnsureWebScope(SPWeb web)
+        {
+            return this.webLifetimeScopeProvider.EnsureWebScope(web);
         }
     }
 }

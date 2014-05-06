@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <returns>
         /// The <see cref="ILifetimeScope"/>.
         /// </returns>
-        ILifetimeScope GetChildLifeTimeScope(
+        ILifetimeScope GetChildLifetimeScope(
             ILifetimeScope parentScope,
             string scopeKindTag,
             string childScopeKey);
@@ -54,7 +54,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <param name="parentScope">The current parent container.</param>
         /// <param name="childScopeKey">A key to uniquely identify this scope within the container.</param>
         /// <returns>The child scope for the uniquely identified resource</returns>
-        public ILifetimeScope GetChildLifeTimeScope(ILifetimeScope parentScope, string scopeKindTag, string childScopeKey)
+        public ILifetimeScope GetChildLifetimeScope(ILifetimeScope parentScope, string scopeKindTag, string childScopeKey)
         {
             ILifetimeScope ensuredScope = null;
 

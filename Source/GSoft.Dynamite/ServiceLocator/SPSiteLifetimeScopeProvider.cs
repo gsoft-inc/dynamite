@@ -33,13 +33,19 @@ namespace GSoft.Dynamite.ServiceLocator
                 // Throw exception if not in SPContext
                 this.ThrowExceptionIfNotSPContext();
 
-                // Parent scope of SPSite scope is the Root application container
-                var parentScope = this.ContainerProvider.Current;
-                var scopeKindTag = SPLifetimeTag.Site;
-                var childScopePerSiteContainerUniqueKey = scopeKindTag + SPContext.Current.Site.ID;
-
-                return this.ChildScopeFactory.GetChildLifeTimeScope(parentScope, scopeKindTag, childScopePerSiteContainerUniqueKey);
+                return this.EnsureSiteScopeInternal(SPContext.Current.Site);
             }
+        }
+
+        /// <summary>
+        /// Ensure the creation of a site-collection-specific lifetime scope (or reuse an existing one).
+        /// Don't dispose this instance, as it is meant to live as long as the root app container.
+        /// </summary>
+        /// <param name="site">The current site collection</param>
+        /// <returns>The current site-collection-specific lifetime scope</returns>
+        public ILifetimeScope EnsureSiteScope(SPSite site)
+        {
+            return this.EnsureSiteScopeInternal(site);
         }
 
         /// <summary>
@@ -50,6 +56,16 @@ namespace GSoft.Dynamite.ServiceLocator
         public override void EndLifetimeScope()
         {
             // Nothing to dispose, SPSite scope should live as long as the root application container
+        }
+
+        private ILifetimeScope EnsureSiteScopeInternal(SPSite site)
+        {
+            // Parent scope of SPSite scope is the Root application container
+            var parentScope = this.ContainerProvider.Current;
+            var scopeKindTag = SPLifetimeTag.Site;
+            var childScopePerSiteContainerUniqueKey = scopeKindTag + site.ID;
+
+            return this.ChildScopeFactory.GetChildLifetimeScope(parentScope, scopeKindTag, childScopePerSiteContainerUniqueKey);
         }
     }
 }
