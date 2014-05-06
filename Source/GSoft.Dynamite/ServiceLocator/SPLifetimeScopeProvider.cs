@@ -10,19 +10,19 @@
     using Microsoft.SharePoint;
 
     /// <summary>
-    /// Base classe for all type of SharePoint Life time scopes.
+    /// Base class for all type of SharePoint Life time scopes.
     /// </summary>
     public abstract class SPLifetimeScopeProvider : ILifetimeScopeProvider
     {
         /// <summary>
-        /// The SharePoint container provider.
-        /// </summary>
-        protected readonly ISharePointContainerProvider containerProvider;
-
-        /// <summary>
         /// The child scope factory.
         /// </summary>
-        internal readonly ChildScopeFactory childScopeFactory;
+        internal readonly ChildScopeFactory ChildScopeFactory;
+
+        /// <summary>
+        /// The SharePoint container provider.
+        /// </summary>
+        protected readonly ISharePointContainerProvider ContainerProvider;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SPLifetimeScopeProvider"/> class.
@@ -30,15 +30,32 @@
         /// <param name="containerProvider">
         /// The container provider.
         /// </param>
-        /// <param name="childScopeFactory">
-        /// The child scope factory.
-        /// </param>
-        protected SPLifetimeScopeProvider(
-            ISharePointContainerProvider containerProvider)
+        protected SPLifetimeScopeProvider(ISharePointContainerProvider containerProvider)
         {
-            this.containerProvider = containerProvider;
-            this.childScopeFactory = new ChildScopeFactory();
+            this.ContainerProvider = containerProvider;
+            this.ChildScopeFactory = new ChildScopeFactory();
         }
+
+        /// <summary>
+        /// Gets the lifetime scope abstract property.
+        /// </summary>
+        public abstract ILifetimeScope LifetimeScope { get; }
+
+        /// <summary>
+        /// Gets the application container.
+        /// </summary>
+        public IContainer ApplicationContainer
+        {
+            get
+            {
+                return this.ContainerProvider.Current;
+            }
+        }
+
+        /// <summary>
+        /// The end lifetime scope abstract method.
+        /// </summary>
+        public abstract void EndLifetimeScope();
 
         /// <summary>
         /// The throw exception if no SPContext exists.
@@ -51,24 +68,9 @@
             if (SPContext.Current == null)
             {
                 throw new InvalidOperationException(
-                    "Can't access current a child lifetime scope for container " + this.containerProvider.ContainerKey + " because not in a SharePoint web request context. "
+                    "Can't access current a child lifetime scope for container " + this.ContainerProvider.ContainerKey + " because not in a SharePoint web request context. "
                     + "Instead, to force a sharing boundary for classes registered as InstancePerLifetimeScope, create your own lifetime scope with using(var childScope = YourRootContainer.Current.BeginLifetimeScope()) {}.");
             }
         }
-
-        /// <summary>
-        /// Gets the application container.
-        /// </summary>
-        public IContainer ApplicationContainer
-        {
-            get
-            {
-                return this.containerProvider.Current; 
-            }
-        }
-
-        public abstract ILifetimeScope LifetimeScope { get; }
-
-        public abstract void EndLifetimeScope();
     }
 }

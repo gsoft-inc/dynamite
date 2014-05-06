@@ -27,7 +27,7 @@ namespace GSoft.Dynamite.ServiceLocator
     }
 
     /// <summary>
-    /// Helps to maintain long-lived child containers that depend on the current SPContext
+    /// Helps to maintain long-lived child containers
     /// </summary>
     internal class ChildScopeFactory : IChildScopeFactory
     {

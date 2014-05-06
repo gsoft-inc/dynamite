@@ -34,10 +34,10 @@ namespace GSoft.Dynamite.ServiceLocator
                 this.ThrowExceptionIfNotSPContext();
 
                 // Parent scope of SPSite scope is the Root application container
-                var parentScope = this.containerProvider.Current;
+                var parentScope = this.ContainerProvider.Current;
                 var childScopePerSiteContainerUniqueKey = SPLifetime.Site + SPContext.Current.Site.ID;
 
-                return this.childScopeFactory.GetChildLifeTimeScope(parentScope, childScopePerSiteContainerUniqueKey);
+                return this.ChildScopeFactory.GetChildLifeTimeScope(parentScope, childScopePerSiteContainerUniqueKey);
             }
         }
 
