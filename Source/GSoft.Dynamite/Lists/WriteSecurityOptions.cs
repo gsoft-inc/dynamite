@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GSoft.Dynamite.Lists
 {
     /// <summary>
-    /// Enumeration
+    /// Enumeration Security Options
     /// </summary>
     public enum WriteSecurityOptions
     {

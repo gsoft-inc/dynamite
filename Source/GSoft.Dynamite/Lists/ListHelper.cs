@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -8,10 +9,12 @@ using System.Threading;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
+using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -23,6 +26,7 @@ namespace GSoft.Dynamite.Lists
         private readonly ContentTypeBuilder contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
         private readonly FieldHelper fieldHelper;
+        private readonly ILogger logger;
 
         /// <summary>
         /// Creates a list helper
@@ -30,11 +34,13 @@ namespace GSoft.Dynamite.Lists
         /// <param name="contentTypeBuilder">A content type helper</param>
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator)
+        /// <param name="logger">The logger</param>
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -378,6 +384,61 @@ namespace GSoft.Dynamite.Lists
             list.WriteSecurity = (int)option;
             list.Update();
         }
+
+        #region List View
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="catalog">the current catalog</param>
+        /// <param name="fields">the collection of fields</param>
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
+        {
+            var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
+            this.AddFieldsToDefaultView(web, list, fields);
+        }
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="list">the current list</param>
+        /// <param name="fields">the collection of fields</param>
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
+        {
+            // get the default view of the list
+            var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
+            var fieldCollection = defaulView.ViewFields;
+
+            foreach (FieldInfo field in fields)
+            {
+                if (list.Fields.Contains(field.ID))
+                {
+                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                }
+                else
+                {
+                    this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                }
+            }
+
+            defaulView.Update();
+        }
+
+        /// <summary>
+        /// Ensure the field in the view
+        /// </summary>
+        /// <param name="fieldCollection">the collection of fields</param>
+        /// <param name="field">the current field</param>
+        public void EnsureFieldInView(SPViewFieldCollection fieldCollection, SPField field)
+        {
+            if (!fieldCollection.Exists(field.InternalName))
+            {
+                fieldCollection.Add(field.InternalName);
+            }
+        }
+        #endregion
 
         private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
