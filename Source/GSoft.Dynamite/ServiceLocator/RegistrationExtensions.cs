@@ -9,7 +9,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class RegistrationExtensions
+    public static class RegistrationExtensions
     {
         /// <summary>
         /// Share one instance of the component within the context of a single

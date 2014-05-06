@@ -50,7 +50,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// A unique string to distinguish the provided container
         /// from all other containers in the current AppDomain.
         /// </summary>
-        public string ContainerUniqueKey 
+        public string ContainerKey 
         {
             get
             {

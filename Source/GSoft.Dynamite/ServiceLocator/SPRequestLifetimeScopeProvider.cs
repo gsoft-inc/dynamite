@@ -8,50 +8,30 @@ using System.Web;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
+    using Autofac.Core;
+
     /// <summary>
     /// Lifetime scope provider the help share state at the HTTP request level
     /// </summary>
-    public class SPRequestLifetimeScopeProvider : ILifetimeScopeProvider
+    public class SPRequestLifetimeScopeProvider : SPLifetimeScopeProvider
     {
-        private readonly ISharePointContainerProvider containerProvider;
-
         /// <summary>
         /// Create a new per-HTTP-request lifetime scope so that state can be shared
         /// across a whole SPRequest.
         /// </summary>
         /// <param name="containerProvider">The current container provider</param>
         public SPRequestLifetimeScopeProvider(ISharePointContainerProvider containerProvider)
-        {
-            this.containerProvider = containerProvider;
-
+            : base(containerProvider)
+        { 
             // Subscribe our scope provider instance so that it gets notified by the HttpModule whenever the 
             // current HTTP request ends.
-            SPRequestLifetimeHttpModule.AddRequestLifetimeScopeProvider(containerProvider.ContainerUniqueKey, this);
-        }
-
-        private string ScopeKeyInRequestCache
-        {
-            get
-            {
-                return this.containerProvider.ContainerUniqueKey + SPLifetimeTag.Request;
-            }
-        }
-
-        /// <summary>
-        /// The global root container
-        /// </summary>
-        public IContainer ApplicationContainer
-        {
-            get 
-            { 
-                return this.containerProvider.Current; 
-            }
+            RequestLifetimeHttpModule.AddRequestLifetimeScopeProvider(containerProvider.ContainerKey, this);
         }
 
         /// <summary>
         /// Creates a new scope or returns an existing scope
         /// </summary>
-        public ILifetimeScope LifetimeScope
+        public override ILifetimeScope LifetimeScope
         {
             get 
             {
@@ -62,7 +42,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 {
                     // Tag the child container with the "spRequest" key, so that it can be recognized
                     // for sharing across InstancePerRequest objects
-                    scope = this.containerProvider.CurrentWeb.BeginLifetimeScope(SPLifetimeTag.Request);
+                    scope = this.ContainerProvider.CurrentWeb.BeginLifetimeScope(SPLifetimeTag.Request);
                     HttpContext.Current.Items[this.ScopeKeyInRequestCache] = scope;
                 }
                 else
@@ -75,10 +55,18 @@ namespace GSoft.Dynamite.ServiceLocator
             }
         }
 
+        private string ScopeKeyInRequestCache
+        {
+            get
+            {
+                return this.ContainerProvider.ContainerKey + SPLifetimeTag.Request;
+            }
+        }
+
         /// <summary>
         /// Disposes the current HTTP request's lifetime scope and all its children.
         /// </summary>
-        public void EndLifetimeScope()
+        public override void EndLifetimeScope()
         {
             var currentHttpRequestCacheContents = HttpContext.Current.Items[this.ScopeKeyInRequestCache];
 

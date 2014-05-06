@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// Autofac-related HttpModule that takes care of disposing per-request lifetimes
     /// at the end of each HTTP request.
     /// </summary>
-    public class SPRequestLifetimeHttpModule : IHttpModule
+    public class RequestLifetimeHttpModule : IHttpModule
     {
         private static IDictionary<string, ILifetimeScopeProvider> allLifetimeScopeProviders = new Dictionary<string, ILifetimeScopeProvider>();
 

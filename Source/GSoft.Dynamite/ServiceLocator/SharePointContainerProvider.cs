@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// </remarks>
     /// <example>
     /// How to share all instances registered with InstancePerLiftetimeScope throughout
-    /// the current request (requires the <see cref="SPRequestLifetimeHttpModule"/> to
+    /// the current request (requires the <see cref="RequestLifetimeHttpModule"/> to
     /// be deployed to your web.config):
     /// <![CDATA[ 
     /// var myPerRequestCache = provider.CurrentRequest.Resolve<ISomePerRequestCache>();

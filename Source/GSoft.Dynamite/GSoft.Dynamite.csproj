@@ -171,11 +171,12 @@
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
     <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
-    <Compile Include="ServiceLocator\SPRequestLifetimeHttpModule.cs" />
+    <Compile Include="ServiceLocator\RequestLifetimeHttpModule.cs" />
     <Compile Include="ServiceLocator\SPRequestLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\SPWebLifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\SPLifetimeTag.cs" />
-    <Compile Include="ServiceLocator\SPNoDisposalLifetimeScopeHelper.cs" />
+    <Compile Include="ServiceLocator\ChildScopeFactory.cs" />
     <Compile Include="ServiceLocator\SharePointContainerProvider.cs" />
     <Compile Include="ServiceLocator\ILifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\ISharePointContainerProvider.cs" />
