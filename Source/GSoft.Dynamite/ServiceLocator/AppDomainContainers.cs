@@ -100,7 +100,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
         private static IContainer ScanGacForAutofacModulesAndCreateContainer(string appRootNamespace, Func<string, bool> assemblyFileNameMatchingPredicate)
         {
-            using (new SPMonitoredScope("Dynamite - Bootstrapping dependency injection container and scanning GAC for Modules."))
+            using (new SPMonitoredScope("Dynamite - Bootstrapping dependency injection container " + appRootNamespace + " and scanning GAC for Modules."))
             {
                 var containerBuilder = new ContainerBuilder();
                 var assemblyLocator = new GacAssemblyLocator();

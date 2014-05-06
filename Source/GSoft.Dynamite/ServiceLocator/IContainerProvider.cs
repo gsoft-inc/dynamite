@@ -1,17 +1,11 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="IContainerProvider.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Autofac;
 
 namespace GSoft.Dynamite.ServiceLocator
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Autofac;
-
+{   
     /// <summary>
     /// Interface for the retrieval of Autofac dependency injection containers
     /// </summary>

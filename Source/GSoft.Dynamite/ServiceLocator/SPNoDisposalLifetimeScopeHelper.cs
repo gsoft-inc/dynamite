@@ -45,7 +45,6 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             ILifetimeScope ensuredScope = null;
 
-            var fullScopeKindTag = this.containerProvider.ContainerUniqueKey + "-" + scopeKindTag;
             var childScopeUniqueKey = this.containerProvider.ContainerUniqueKey + "-" + childScopePerContainerUniqueKey;
 
             // Don't bother locking if the instance is already created
@@ -70,7 +69,7 @@ namespace GSoft.Dynamite.ServiceLocator
                         // container, provided no one calls Dispose on it.
                         // The newly created scope is meant to sandbox InstancePerLifetimeScope-registered objects
                         // so that they get shared only within a boundary uniquely identified by the key.
-                        ensuredScope = parentScope.BeginLifetimeScope(fullScopeKindTag);
+                        ensuredScope = parentScope.BeginLifetimeScope(scopeKindTag);
                         uniqueChildScopes[childScopeUniqueKey] = ensuredScope;
                     }
                 }

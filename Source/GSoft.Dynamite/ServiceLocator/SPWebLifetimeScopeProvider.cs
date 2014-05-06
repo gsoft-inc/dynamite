@@ -46,8 +46,8 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 // Parent scope of SPSite scope is the current Site-collection-specific lifetime scope
                 var parentScope = this.containerProvider.CurrentSite;
-                var scopeKindTag = SPLifetime.Web;
-                var childScopePerContainerUniqueKey = SPLifetime.Web + SPContext.Current.Web.ID;
+                var scopeKindTag = SPLifetimeTag.Web;
+                var childScopePerContainerUniqueKey = SPLifetimeTag.Web + SPContext.Current.Web.ID;
 
                 return this.noDisposalLifetimeScopeHelper.EnsureUndisposableScopeForTagInContainer(parentScope, scopeKindTag, childScopePerContainerUniqueKey);
             }

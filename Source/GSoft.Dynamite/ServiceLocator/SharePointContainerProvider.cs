@@ -1,17 +1,11 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="NamespaceFilteredContainerProvider.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Autofac;
 
 namespace GSoft.Dynamite.ServiceLocator
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Autofac;
-
+{  
     /// <summary>
     /// A SharePoint-specific Autofac container provider implementation, which is meant 
     /// to provide your application with a Container that automatically scans the GAC

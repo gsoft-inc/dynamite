@@ -50,8 +50,8 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 // Parent scope of SPSite scope is the Root application container
                 var parentScope = this.containerProvider.Current;
-                var scopeKindTag = SPLifetime.Site;
-                var childScopePerContainerUniqueKey = SPLifetime.Site + SPContext.Current.Site.ID;
+                var scopeKindTag = SPLifetimeTag.Site;
+                var childScopePerContainerUniqueKey = SPLifetimeTag.Site + SPContext.Current.Site.ID;
 
                 return this.noDisposalLifetimeScopeHelper.EnsureUndisposableScopeForTagInContainer(parentScope, scopeKindTag, childScopePerContainerUniqueKey);
             }

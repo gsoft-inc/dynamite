@@ -33,7 +33,7 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             get
             {
-                return this.containerProvider.ContainerUniqueKey + SPLifetime.Request;
+                return this.containerProvider.ContainerUniqueKey + SPLifetimeTag.Request;
             }
         }
 
@@ -62,7 +62,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 {
                     // Tag the child container with the "spRequest" key, so that it can be recognized
                     // for sharing across InstancePerRequest objects
-                    scope = this.containerProvider.CurrentWeb.BeginLifetimeScope(SPLifetime.Request);
+                    scope = this.containerProvider.CurrentWeb.BeginLifetimeScope(SPLifetimeTag.Request);
                     HttpContext.Current.Items[this.ScopeKeyInRequestCache] = scope;
                 }
                 else
