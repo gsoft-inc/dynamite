@@ -172,9 +172,10 @@
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
     <Compile Include="ServiceLocator\SPRequestLifetimeHttpModule.cs" />
     <Compile Include="ServiceLocator\SPRequestLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\SPWebLifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\SPLifetime.cs" />
-    <Compile Include="ServiceLocator\SPNoDisposalLifetimeScopeHelper.cs" />
+    <Compile Include="ServiceLocator\SPChildScopeFactory.cs" />
     <Compile Include="ServiceLocator\SharePointContainerProvider.cs" />
     <Compile Include="ServiceLocator\ILifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\ISharePointContainerProvider.cs" />

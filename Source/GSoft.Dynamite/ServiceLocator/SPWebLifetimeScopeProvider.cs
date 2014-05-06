@@ -10,26 +10,17 @@ namespace GSoft.Dynamite.ServiceLocator
     /// <summary>
     /// Lifetime scope provider the help share state at the SPWeb-level
     /// </summary>
-    public class SPWebLifetimeScopeProvider : ILifetimeScopeProvider
+    public class SPWebLifetimeScopeProvider : SPLifetimeScopeProvider
     {
-        private readonly ISharePointContainerProvider containerProvider;
-        private readonly SPNoDisposalLifetimeScopeHelper noDisposalLifetimeScopeHelper;
-
-        public SPWebLifetimeScopeProvider(ISharePointContainerProvider containerProvider)
-        {
-            this.containerProvider = containerProvider;
-            this.noDisposalLifetimeScopeHelper = new SPNoDisposalLifetimeScopeHelper(this.containerProvider);
-        }
-
         /// <summary>
-        /// The global root container
+        /// Initializes a new instance of the <see cref="SPWebLifetimeScopeProvider"/> class.
         /// </summary>
-        public IContainer ApplicationContainer
+        /// <param name="containerProvider">
+        /// The container provider.
+        /// </param>
+        public SPWebLifetimeScopeProvider(ISharePointContainerProvider containerProvider)
+            : base(containerProvider)
         {
-            get 
-            { 
-                return this.containerProvider.Current; 
-            }
         }
 
         /// <summary>
@@ -37,19 +28,18 @@ namespace GSoft.Dynamite.ServiceLocator
         /// The parent scope of the new SPWeb-bound scope should be the current SPSite's
         /// own lifetime scope.
         /// </summary>
-        public ILifetimeScope LifetimeScope
+        public override ILifetimeScope LifetimeScope
         {
             get 
             {
                 // Throw exception if not in SPContext
-                this.noDisposalLifetimeScopeHelper.ThrowExceptionIfNotSPContext();
+                this.ThrowExceptionIfNotSPContext();
 
                 // Parent scope of SPSite scope is the current Site-collection-specific lifetime scope
                 var parentScope = this.containerProvider.CurrentSite;
-                var scopeKindTag = SPLifetime.Web;
-                var childScopePerContainerUniqueKey = SPLifetime.Web + SPContext.Current.Web.ID;
+                var childContainerKey = SPLifetime.Web + SPContext.Current.Web.ID;
 
-                return this.noDisposalLifetimeScopeHelper.EnsureUndisposableScopeForTagInContainer(parentScope, scopeKindTag, childScopePerContainerUniqueKey);
+                return this.childScopeFactory.GetChildLifeTimeScope(parentScope, childContainerKey);
             }
         }
 
@@ -58,7 +48,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// as long as their parent SPSite scope, which in turn lives as long as the
         /// application container.
         /// </summary>
-        public void EndLifetimeScope()
+        public override void EndLifetimeScope()
         {
             // Nothing to dispose, SPWeb scope should live as long as the root application container
         }

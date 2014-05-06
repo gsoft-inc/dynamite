@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// A unique string to distinguish the provided container
         /// from all other containers in the current AppDomain.
         /// </summary>
-        string ContainerUniqueKey { get; }
+        string ContainerKey { get; }
 
         /// <summary>
         /// Returns the current global application-wide container.

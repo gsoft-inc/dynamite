@@ -26,14 +26,14 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Subscribe our scope provider instance so that it gets notified by the HttpModule whenever the 
             // current HTTP request ends.
-            SPRequestLifetimeHttpModule.AddRequestLifetimeScopeProvider(containerProvider.ContainerUniqueKey, this);
+            SPRequestLifetimeHttpModule.AddRequestLifetimeScopeProvider(containerProvider.ContainerKey, this);
         }
 
         private string ScopeKeyInRequestCache
         {
             get
             {
-                return this.containerProvider.ContainerUniqueKey + SPLifetime.Request;
+                return this.containerProvider.ContainerKey + SPLifetime.Request;
             }
         }
 
