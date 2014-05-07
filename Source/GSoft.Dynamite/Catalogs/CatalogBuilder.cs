@@ -9,7 +9,9 @@ using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.SiteColumns;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Taxonomy;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Catalogs
 {
@@ -153,19 +155,22 @@ namespace GSoft.Dynamite.Catalogs
             }
 
             // Add All Content Types
-            foreach (var contentTypeId in catalog.ContentTypeIds)
+            if (catalog.ContentTypeIds != null)
             {
-                this.listHelper.AddContentType(list, contentTypeId);
+                foreach (var contentTypeId in catalog.ContentTypeIds)
+                {
+                    this.listHelper.AddContentType(list, contentTypeId);
+                }
             }
 
             // Add Fields Segments
             this.CreateSegments(list, catalog.Segments);
 
             // Set default values for Fields
-            this.SetDefaultValues(list, catalog.FieldDisplaySettings);
+            this.SetDefaultValues(list, catalog.DefaultValues);
 
             // Set Display Settings
-            this.SetDisplaySettings(list, catalog.DefaultValues);
+            this.SetDisplaySettings(list, catalog.FieldDisplaySettings);
 
             // Set versioning settings
             if (catalog.HasDraftVisibilityType)
@@ -176,13 +181,72 @@ namespace GSoft.Dynamite.Catalogs
             }
 
             // Set the list as catalog with navigation term
-            this.SetListAsCatalog(list, catalog.ManagedProperties, catalog.TaxonomyFieldMap);
+            if (catalog.ManagedProperties != null && catalog.ManagedProperties.Any())
+            {
+                this.SetListAsCatalog(list, catalog.ManagedProperties, catalog.TaxonomyFieldMap);
+            }
 
             // Enable or disable ratings
             this.listHelper.SetRatings(list, catalog.RatingType, catalog.EnableRatings);
 
             // Set SecurityOption
             this.listHelper.SetWriteSecurity(list, catalog.WriteSecurity);
+
+        }
+
+        /// <summary>
+        /// Method to get a CatalogConnectionSettings from the site
+        /// </summary>
+        /// <param name="site">The SPSite to get the connection from</param>
+        /// <param name="serverRelativeUrl">The server relative url where the catalog belong</param>
+        /// <param name="catalogRootUrl">The root url of the catalog.</param>
+        /// <returns>A catalogConnectionSettings object</returns>
+        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string serverRelativeUrl, string catalogRootUrl)
+        {
+            string listToken = "lists";
+            string catalogPath = string.Empty;
+            var tokens = catalogRootUrl.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            if (tokens.Any() && tokens.First() != listToken)
+            {
+                tokens.Insert(0, listToken);
+            }
+
+            return PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(serverRelativeUrl, string.Join("/", tokens)));
+        }
+
+        /// <summary>
+        /// Method to create a catalog connection
+        /// </summary>
+        /// <param name="site">The site where to create the connection</param>
+        /// <param name="catalogConnectionSettings">The catalog connection settings to create</param>
+        /// <param name="overwriteIfExist">if true and existing, the connection will be deleted then recreated</param>
+        public void CreateCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings, bool overwriteIfExist)
+        {
+            var catalogManager = new CatalogConnectionManager(site);
+
+            // If catalog connection exist
+            if (catalogManager.Contains(catalogConnectionSettings.CatalogUrl))
+            {
+                if (overwriteIfExist)
+                {
+                    // Delete the existing connection
+                    this.logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                    catalogManager.DeleteCatalogConnection(catalogConnectionSettings.CatalogUrl);
+                    catalogManager.Update();
+
+                    // Add connection to the catalog manager
+                    this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                    catalogManager.AddCatalogConnection(catalogConnectionSettings);
+                    catalogManager.Update();
+                }
+            }
+            else
+            {
+                this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                catalogManager.AddCatalogConnection(catalogConnectionSettings);
+                catalogManager.Update();
+            }
 
         }
 
@@ -226,7 +290,7 @@ namespace GSoft.Dynamite.Catalogs
 
                         this.logger.Info("TextField " + segment.InternalName + " successfully created!");
                     }
-                } 
+                }
             }
         }
 
@@ -258,7 +322,7 @@ namespace GSoft.Dynamite.Catalogs
                     {
                         this.logger.Warn(string.Format(CultureInfo.InvariantCulture, "Field '{0}' of type '{1}' cannot be found.", defaultValue.InternalName, defaultValue.GetType().Name));
                     }
-                } 
+                }
             }
         }
 
