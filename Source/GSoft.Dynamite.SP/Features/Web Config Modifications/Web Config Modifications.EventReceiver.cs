@@ -6,6 +6,7 @@ using Microsoft.SharePoint.Security;
 using GSoft.Dynamite.WebConfig;
 using System.Collections.ObjectModel;
 using Microsoft.SharePoint.Administration;
+using GSoft.Dynamite.ServiceLocator;
 
 namespace GSoft.Dynamite.Features.WebConfig_Modifications
 {
@@ -15,7 +16,6 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
     /// <remarks>
     /// The GUID attached to this class may be used during packaging and should not be modified.
     /// </remarks>
-
     [Guid("fecdfc2c-bb05-43fa-9357-a25df41584ed")]
     public class WebConfig_ModificationsEventReceiver : SPFeatureReceiver
     {
@@ -87,7 +87,7 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
                         Sequence = 0,
 
                         // The XML to insert as child node, make sure that used names match the Name selector
-                        Value = @"<add name=""RequestLifetimeHttpModule"" type=""GSoft.Dynamite.ServiceLocator.RequestLifetimeHttpModule, GSoft.Dynamite, Version=0.7.0.0, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5"" />"
+                        Value = "<add name=\"RequestLifetimeHttpModule\" type=\"" + typeof(RequestLifetimeHttpModule).AssemblyQualifiedName + "\" />"
                     };
             }
         }
