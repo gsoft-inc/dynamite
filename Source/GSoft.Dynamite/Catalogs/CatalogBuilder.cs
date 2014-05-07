@@ -191,7 +191,6 @@ namespace GSoft.Dynamite.Catalogs
 
             // Set SecurityOption
             this.listHelper.SetWriteSecurity(list, catalog.WriteSecurity);
-
         }
 
         /// <summary>
