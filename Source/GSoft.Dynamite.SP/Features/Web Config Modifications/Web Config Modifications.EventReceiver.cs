@@ -30,14 +30,12 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
         public override void FeatureActivated(SPFeatureReceiverProperties properties)
         {
             var webConfigModificationHelper = new WebConfigModificationHelper();
-            var parent = properties.Feature.Parent as SPSite;
+            var parent = properties.Feature.Parent as SPWebApplication;
             if (parent != null)
             {
-                var web = parent.RootWeb;
-
                 // Apply Web.config modifications
                 webConfigModificationHelper.AddAndCleanWebConfigModification(
-                    web, 
+                    parent, 
                     new Collection<SPWebConfigModification>() 
                     { 
                         this.AutofacRequestHttpModuleWebConfigModification 
@@ -54,12 +52,12 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
         public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
         {
             var webConfigModificationHelper = new WebConfigModificationHelper();
-            var parent = properties.Feature.Parent as SPSite;
+            var parent = properties.Feature.Parent as SPWebApplication;
             if (parent != null)
             {
                 // Remove any changes by owner
                 webConfigModificationHelper.RemoveExistingModificationsFromOwner(
-                    parent.WebApplication, 
+                    parent, 
                     RequestLifetimeWebConfigModificationOwner);
             }
         }
@@ -82,7 +80,7 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
                         Type = SPWebConfigModification.SPWebConfigModificationType.EnsureChildNode,
 
                         // The XPath to the location of the parent node in web.config
-                        Path = "configuration/system.web/httpModules",
+                        Path = "configuration/system.webServer/modules",
 
                         // Sequence is important if there are multiple equal nodes that
                         // can't be identified with an XPath expression

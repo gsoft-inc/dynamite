@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GSoft.Dynamite.Utils;
 
 using Microsoft.SharePoint;
+using GSoft.Dynamite.Logging;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -15,6 +16,14 @@ namespace GSoft.Dynamite.Taxonomy
         private static readonly NamedReaderWriterLocker<Guid> NamedLocker = new NamedReaderWriterLocker<Guid>();
 
         private readonly Dictionary<Guid, SiteTaxonomyCache> taxonomyCaches = new Dictionary<Guid, SiteTaxonomyCache>();
+        private readonly ILogger log;
+
+        public SiteTaxonomyCacheManager(ILogger log)
+        {
+            this.log = log;
+
+            this.log.Info("Creating new SiteTaxonomyCacheManager");
+        }
 
         /// <summary>
         /// The get site taxonomy cache.
@@ -45,6 +54,8 @@ namespace GSoft.Dynamite.Taxonomy
                                         if (!this.taxonomyCaches.ContainsKey(site.ID))
                                         {
                                             var newTaxCache = new SiteTaxonomyCache(site, termStoreName);
+
+                                            this.log.Info("SiteTaxonomyCacheManager: Adding site taxonomy cache for site collection " + site.Url);
                                             this.taxonomyCaches.Add(site.ID, newTaxCache);
 
                                             return newTaxCache;

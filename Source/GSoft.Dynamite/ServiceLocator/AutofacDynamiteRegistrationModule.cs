@@ -66,7 +66,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
-            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();  // Singleton entity binder
+            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
@@ -116,9 +116,8 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
-            builder.RegisterType<TaxonomyService>();
+            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>().SingleInstance();
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>().InstancePerSite();
             builder.RegisterType<TaxonomyHelper>();
 
             // Timer Jobs

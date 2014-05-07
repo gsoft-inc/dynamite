@@ -67,7 +67,7 @@ namespace GSoft.Dynamite.ServiceLocator
         private ILifetimeScope EnsureWebScopeInternal(SPWeb web)
         {
             // Parent scope of SPWeb scope is the current Site-collection-specific lifetime scope
-            var parentScope = this.ContainerProvider.CurrentSite;
+            var parentScope = this.ContainerProvider.EnsureSiteScope(web.Site);
             var scopeKindTag = SPLifetimeTag.Web;
             var childContainerKey = scopeKindTag + web.ID;
 
