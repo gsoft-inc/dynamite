@@ -385,6 +385,20 @@ namespace GSoft.Dynamite.Lists
             list.Update();
         }
 
+        /// <summary>
+        /// Method to remove the Item Content Type from the List
+        /// </summary>
+        /// <param name="list">The current List</param>
+        public void RemoveItemContentType(SPList list)
+        {
+            // If content type is direct child of item, remove it
+            var bestMatchItem = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
+            if (bestMatchItem.Parent == SPBuiltInContentTypeId.Item)
+            {
+                list.ContentTypes.Delete(bestMatchItem);
+            }
+        }
+
         #region List View
 
         /// <summary>

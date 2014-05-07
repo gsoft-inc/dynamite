@@ -147,11 +147,7 @@ namespace GSoft.Dynamite.Catalogs
             if (catalog.RemoveDefaultContentType)
             {
                 // If content type is direct child of item, remove it
-                var bestMatchItem = list.ContentTypes.BestMatch(SPBuiltInContentTypeId.Item);
-                if (bestMatchItem.Parent == SPBuiltInContentTypeId.Item)
-                {
-                    list.ContentTypes.Delete(bestMatchItem);
-                }
+                this.listHelper.RemoveItemContentType(list);
             }
 
             // Add All Content Types
@@ -246,7 +242,6 @@ namespace GSoft.Dynamite.Catalogs
                 catalogManager.AddCatalogConnection(catalogConnectionSettings);
                 catalogManager.Update();
             }
-
         }
 
         private void CreateSegments(SPList list, IList<SiteColumnField> segments)
