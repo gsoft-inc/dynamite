@@ -16,10 +16,10 @@ namespace GSoft.Dynamite.WebConfig
         /// Method to add one or multiple WebConfig modifications
         /// NOTE: There should not have 2 modifications with the same Owner.
         /// </summary>
-        /// <param name="web">The current Web</param>
+        /// <param name="web">The current Web Application</param>
         /// <param name="webConfigModificationCollection">The collection of WebConfig modifications to remove-and-add</param>
         /// <remarks>All SPWebConfigModification Owner should be UNIQUE !</remarks>
-        public void AddAndCleanWebConfigModification(SPWeb web, Collection<SPWebConfigModification> webConfigModificationCollection)
+        public void AddAndCleanWebConfigModification(SPWebApplication webApp, Collection<SPWebConfigModification> webConfigModificationCollection)
         {
             // Verify emptyness
             if (webConfigModificationCollection == null || !webConfigModificationCollection.Any())
@@ -27,7 +27,7 @@ namespace GSoft.Dynamite.WebConfig
                 throw new ArgumentNullException("webConfigModificationCollection");
             }
 
-            SPWebApplication webApplication = SPWebService.ContentService.WebApplications[web.Site.WebApplication.Id];
+            SPWebApplication webApplication = SPWebService.ContentService.WebApplications[webApp.Id];
 
             // Start by cleaning up any existing modification for all owners
             foreach (var owner in webConfigModificationCollection.Select(modif => modif.Owner).Distinct())

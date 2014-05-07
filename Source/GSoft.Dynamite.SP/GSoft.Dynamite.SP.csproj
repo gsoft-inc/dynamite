@@ -63,6 +63,9 @@
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.designer.cs">
       <DependentUpon>JavascriptImports.ascx.cs</DependentUpon>
     </Compile>
+    <Compile Include="Features\Web Config Modifications\Web Config Modifications.EventReceiver.cs">
+      <DependentUpon>Web Config Modifications.feature</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,6 +74,9 @@
     </None>
     <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
+    </None>
+    <None Include="Features\Web Config Modifications\Web Config Modifications.feature">
+      <FeatureId>{3e6c6a28-0bee-4166-95f4-849754b5be7d}</FeatureId>
     </None>
     <None Include="Features\Javascript Imports\Javascript Imports.feature">
       <FeatureId>{1505bd90-16f1-47d4-a99a-6007e090ca32}</FeatureId>
@@ -95,6 +101,9 @@
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
+    <Content Include="Features\Web Config Modifications\Web Config Modifications.Template.xml">
+      <DependentUpon>Web Config Modifications.feature</DependentUpon>
+    </Content>
     <Content Include="Features\Javascript Imports\Javascript Imports.Template.xml">
       <DependentUpon>Javascript Imports.feature</DependentUpon>
     </Content>
@@ -117,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\GSoft.Dynamite.fr-FR.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" />
