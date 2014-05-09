@@ -41,9 +41,12 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="fastjson">
-      <HintPath>..\packages\fastJSON.2.1.0.0\lib\net35\fastjson.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Binaries\fastjson.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -70,8 +73,9 @@
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Binaries\Json.Net\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ServiceStack.Text, Version=3.9.60.0, Culture=neutral, PublicKeyToken=fb3de3fad47af15c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -90,6 +94,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
@@ -145,6 +150,7 @@
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
+    <Compile Include="Globalization\IResourceLocatorConfig.cs" />
     <Compile Include="Globalization\Language.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
@@ -164,6 +170,21 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
+    <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />
+    <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
+    <Compile Include="ServiceLocator\RequestLifetimeHttpModule.cs" />
+    <Compile Include="ServiceLocator\SPRequestLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\SPWebLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\SPLifetimeTag.cs" />
+    <Compile Include="ServiceLocator\ChildScopeFactory.cs" />
+    <Compile Include="ServiceLocator\SharePointContainerProvider.cs" />
+    <Compile Include="ServiceLocator\ILifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\ISharePointContainerProvider.cs" />
+    <Compile Include="ServiceLocator\IContainerProvider.cs" />
+    <Compile Include="ServiceLocator\NamespaceFilteredContainerProvider.cs" />
+    <Compile Include="ServiceLocator\SPSiteLifetimeScopeProvider.cs" />
     <Compile Include="Setup\FieldValueInfo.cs" />
     <Compile Include="Setup\FolderInfo.cs" />
     <Compile Include="Setup\FolderMaker.cs" />
@@ -211,6 +232,7 @@
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
+    <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />
@@ -232,7 +254,6 @@
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
   <ItemGroup />
@@ -240,11 +261,4 @@
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
 </Project>
