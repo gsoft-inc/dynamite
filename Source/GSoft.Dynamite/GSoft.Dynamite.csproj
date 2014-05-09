@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0A3EB4A1-3004-4F23-B046-6EF2E20F53A4}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GSoft.Dynamite</RootNamespace>
     <AssemblyName>GSoft.Dynamite</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,7 +30,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -47,34 +48,35 @@
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Policy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Binaries\SharePoint\Microsoft.SharePoint.Publishing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Binaries\SharePoint\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
     <Compile Include="Binding\Converters\ImageValueConverter.cs" />
@@ -118,15 +120,25 @@
     <Compile Include="Caching\ISessionCacheHelper.cs" />
     <Compile Include="Caching\ICacheKey.cs" />
     <Compile Include="Caching\SimpleCacheKey.cs" />
+    <Compile Include="Cache\CacheHelper.cs" />
+    <Compile Include="Cache\ICacheHelper.cs" />
+    <Compile Include="Cache\ICacheKey.cs" />
+    <Compile Include="Cache\ParameterizedCacheKey.cs" />
+    <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
+    <Compile Include="Catalogs\CatalogBuilder.cs" />
+    <Compile Include="Catalogs\Catalog.cs" />
+    <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
     <Compile Include="Collections\OrderedCollection.cs" />
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
-    <Compile Include="Language.cs" />
+    <Compile Include="Globalization\Language.cs" />
+    <Compile Include="Lists\WriteSecurityOptions.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerFactory.cs" />
     <Compile Include="Logging\TraceLogger.cs" />
@@ -138,73 +150,103 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublishingFields.cs" />
     <Compile Include="Repositories\ComposedLookRepository.cs" />
-    <Compile Include="Repositories\Entities\BaseEntity.cs" />
     <Compile Include="Repositories\Entities\ComposedLook.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\IComposedLookRepository.cs" />
-    <Compile Include="Repositories\ListLocator.cs" />
     <Compile Include="Schemas\GenericFieldSchema.cs" />
     <Compile Include="Schemas\GuidFieldSchema.cs" />
     <Compile Include="Schemas\TaxonomyFieldSchema.cs" />
     <Compile Include="Schemas\TextFieldSchema.cs" />
+    <Compile Include="Repositories\IFolderRepository.cs" />
+    <Compile Include="Repositories\IQueryHelper.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Lists\ListLocator.cs" />
+    <Compile Include="Repositories\QueryHelper.cs" />
+    <Compile Include="Definitions\ContentTypeInfo.cs" />
+    <Compile Include="Setup\FieldValueInfo.cs" />
+    <Compile Include="Setup\FolderInfo.cs" />
+    <Compile Include="Setup\FolderMaker.cs" />
+    <Compile Include="Setup\IFieldValueInfo.cs" />
+    <Compile Include="Setup\IFolderInfo.cs" />
+    <Compile Include="Setup\IFolderMaker.cs" />
+    <Compile Include="Setup\IPageInfo.cs" />
+    <Compile Include="Setup\ITaxonomyInfo.cs" />
+    <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\PageCreator.cs" />
+    <Compile Include="Setup\PageInfo.cs" />
+    <Compile Include="Setup\TaxonomyInfo.cs" />
+    <Compile Include="Setup\TaxonomyMultiInfo.cs" />
+    <Compile Include="SiteColumns\SiteColumnBase.cs" />
+    <Compile Include="SiteColumns\SiteColumnField.cs" />
+    <Compile Include="SiteColumns\TaxoField.cs" />
+    <Compile Include="SiteColumns\TextField.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Unity\GRegistrationModule.cs" />
-    <Compile Include="Unity\IRegistrationModule.cs" />
-    <Compile Include="Unity\PerRequestLifetimeManager.cs" />
-    <Compile Include="Unity\RegistrationModuleContainer.cs" />
     <Compile Include="Utils\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
-    <Compile Include="Utils\ContentTypeHelper.cs" />
+    <Compile Include="TimerJobs\TimerJobExpert.cs" />
+    <Compile Include="Utils\ContentOrganizerHelper.cs" />
+    <Compile Include="Definitions\ContentTypeBuilder.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
+    <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Utils\DialogLayoutsPageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
-    <Compile Include="Utils\FieldHelper.cs" />
-    <Compile Include="Utils\FieldInfo.cs" />
-    <Compile Include="Utils\IResourceLocator.cs" />
-    <Compile Include="Utils\ListHelper.cs" />
-    <Compile Include="Utils\ListSecurityHelper.cs" />
-    <Compile Include="Utils\MasterPageHelper.cs" />
-    <Compile Include="Utils\MuiHelper.cs" />
     <Compile Include="Utils\NavigationHelper.cs" />
-    <Compile Include="Utils\RegionalSettingsHelper.cs" />
-    <Compile Include="Utils\ResourceLocator.cs" />
-    <Compile Include="Utils\SearchHelper.cs" />
-    <Compile Include="Utils\SecurityHelper.cs" />
-    <Compile Include="Utils\Unsafe.cs" />
     <Compile Include="Utils\VariationsHelper.cs" />
-    <Compile Include="Utils\WebConfigModificationHelper.cs" />
-    <Compile Include="Utils\WebPartHelper.cs" />
+    <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
+    <Compile Include="Definitions\FieldHelper.cs" />
+    <Compile Include="Definitions\FieldInfo.cs" />
+    <Compile Include="Utils\GacAssemblyLocator.cs" />
+    <Compile Include="MasterPages\IExtraMasterPageBodyCssClasses.cs" />
+    <Compile Include="Globalization\IResourceLocator.cs" />
+    <Compile Include="Lists\ListHelper.cs" />
+    <Compile Include="Lists\ListSecurityHelper.cs" />
+    <Compile Include="MasterPages\MasterPageHelper.cs" />
+    <Compile Include="Globalization\MuiHelper.cs" />
+    <Compile Include="Globalization\RegionalSettingsHelper.cs" />
+    <Compile Include="Globalization\ResourceLocator.cs" />
+    <Compile Include="Utils\SearchHelper.cs" />
+    <Compile Include="Security\SecurityHelper.cs" />
+    <Compile Include="Security\Unsafe.cs" />
+    <Compile Include="Security\UserHelper.cs" />
+    <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
+    <Compile Include="WebParts\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />
     <Compile Include="ValueTypes\PrincipalValue.cs" />
-    <Compile Include="ValueTypes\RegionalSettings.cs" />
+    <Compile Include="Globalization\RegionalSettings.cs" />
     <Compile Include="ValueTypes\TaxonomyValue.cs" />
     <Compile Include="ValueTypes\TaxonomyValueCollection.cs" />
     <Compile Include="ValueTypes\UrlValue.cs" />
     <Compile Include="ValueTypes\UserValue.cs" />
+    <Compile Include="Globalization\Variations\DefaultVariationDirector.cs" />
+    <Compile Include="Globalization\Variations\CanadianEnglishAndFrenchVariationBuilder.cs" />
+    <Compile Include="Globalization\Variations\IVariationBuilder.cs" />
+    <Compile Include="Globalization\Variations\IVariationDirector.cs" />
+    <Compile Include="Globalization\Variations\IVariationExpert.cs" />
+    <Compile Include="Globalization\Variations\VariationExpert.cs" />
+    <Compile Include="Globalization\Variations\VariationLabel.cs" />
+    <Compile Include="WebParts\IBaseWebPart.cs" />
+    <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
+    <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="..\..\Shared\GSoft.Dynamite.snk">
-      <Link>GSoft.Dynamite.snk</Link>
+      <Link>Properties\GSoft.Dynamite.snk</Link>
     </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
 </Project>

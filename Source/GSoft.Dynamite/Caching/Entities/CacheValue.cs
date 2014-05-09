@@ -7,6 +7,7 @@ namespace GSoft.Dynamite.Caching.Entities
     /// </summary>
     /// <typeparam name="T">The cached object type.</typeparam>
     [Serializable]
+    [Obsolete]
     public class CacheValue<T> : ICacheValue<T>
     {
         private readonly T _value;

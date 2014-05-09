@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B8CD31AB-3EB4-4B83-83A9-74679E197EC8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GSoft.Dynamite.Examples.Definitions</RootNamespace>
+    <AssemblyName>GSoft.Dynamite.Examples.Definitions</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BB1F664B-9266-4fd6-B973-E1E44974B511};{14822709-B5A1-4724-98CA-57A101D1B079};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SandboxedSolution>False</SandboxedSolution>
+    <ActiveDeploymentConfiguration>No Activation</ActiveDeploymentConfiguration>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.Unity">
+      <HintPath>..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.SharePoint" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Features\Wall Content Types\Wall Content Types.EventReceiver.cs">
+      <DependentUpon>Wall Content Types.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\Wall Lists Code\Wall Lists Code.EventReceiver.cs">
+      <DependentUpon>Wall Lists Code.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\GSoft.Dynamite\Properties\GSoft.Dynamite.snk">
+      <Link>GSoft.Dynamite.snk</Link>
+    </None>
+    <None Include="Features\Wall Content Types\Wall Content Types.feature">
+      <FeatureId>{69e2a258-ad07-444e-b57a-b8f205180544}</FeatureId>
+    </None>
+    <None Include="Features\Wall Lists Code\Wall Lists Code.feature">
+      <FeatureId>{83a07486-932c-46ec-ac21-3e2323ef6623}</FeatureId>
+    </None>
+    <None Include="Features\Wall Lists\Wall Lists.feature">
+      <FeatureId>{7756ec31-0c81-4d28-b059-66a081ec566f}</FeatureId>
+    </None>
+    <None Include="ListDefinitions\WallPostsDefinition\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{6ac58daa-ba7a-4e52-ac61-d841f7ad5d1d}</SharePointProjectItemId>
+    </None>
+    <None Include="ListDefinitions\WallRepliesDefinition\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{2f24618e-f095-4d32-a705-50a0228747f7}</SharePointProjectItemId>
+    </None>
+    <None Include="ListInstances\WallPostsCode\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{db84012f-0c1b-415c-943f-de5b81b41189}</SharePointProjectItemId>
+    </None>
+    <None Include="ListInstances\WallPosts\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{f19bcf0b-bace-4c99-9af4-6feaea73a9d7}</SharePointProjectItemId>
+    </None>
+    <None Include="ListInstances\WallRepliesCode\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{dbab8349-6a82-415b-8fa6-434b3a036f9a}</SharePointProjectItemId>
+    </None>
+    <None Include="ListInstances\WallReplies\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{b19d81bf-5abd-4a56-aa5f-533af8dd2348}</SharePointProjectItemId>
+    </None>
+    <None Include="Package\Package.package">
+      <PackageId>{ef503c26-cd5a-4f63-995d-8dbac2da9da3}</PackageId>
+    </None>
+    <None Include="Package\Package.Template.xml">
+      <DependentUpon>Package.package</DependentUpon>
+    </None>
+    <None Include="SiteColumns\WallFields\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{046ff652-fd99-4ed4-9ad6-8becd83f0e13}</SharePointProjectItemId>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Features\Wall Content Types\Wall Content Types.Template.xml">
+      <DependentUpon>Wall Content Types.feature</DependentUpon>
+    </Content>
+    <Content Include="Features\Wall Lists Code\Wall Lists Code.Template.xml">
+      <DependentUpon>Wall Lists Code.feature</DependentUpon>
+    </Content>
+    <Content Include="Features\Wall Lists\Wall Lists.Template.xml">
+      <DependentUpon>Wall Lists.feature</DependentUpon>
+    </Content>
+    <Content Include="ListDefinitions\WallPostsDefinition\Elements.xml" />
+    <Content Include="ListDefinitions\WallPostsDefinition\Schema.xml" />
+    <Content Include="ListDefinitions\WallRepliesDefinition\Elements.xml" />
+    <Content Include="ListDefinitions\WallRepliesDefinition\Schema.xml" />
+    <Content Include="ListInstances\WallPostsCode\Elements.xml" />
+    <Content Include="ListInstances\WallPosts\Elements.xml" />
+    <Content Include="ListInstances\WallRepliesCode\Elements.xml" />
+    <Content Include="ListInstances\WallReplies\Elements.xml" />
+    <Content Include="SiteColumns\WallFields\Elements.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SiteDefinitions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GSoft.Dynamite.Examples.Core\GSoft.Dynamite.Examples.csproj">
+      <Project>{44eb811c-783e-483b-92b1-8037a994d7da}</Project>
+      <Name>GSoft.Dynamite.Examples</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <Project>{72576e04-75b4-4eaf-af1e-7482355fc8c1}</Project>
+      <Name>GSoft.Dynamite</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />
+</Project>

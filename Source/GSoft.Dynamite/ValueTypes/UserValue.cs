@@ -1,3 +1,4 @@
+using GSoft.Dynamite.Globalization;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes

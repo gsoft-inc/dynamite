@@ -12,9 +12,10 @@ namespace GSoft.Dynamite.Caching
     /// <summary>
     /// General-purpose application cache
     /// </summary>
+    [Obsolete]
     public class AppCacheHelper : IAppCacheHelper
     {
-        private readonly ILogger _logger;
+        private readonly ILogger logger;
 
         /// <summary>
         /// Creates a cache helper
@@ -22,7 +23,7 @@ namespace GSoft.Dynamite.Caching
         /// <param name="logger">The logger</param>
         public AppCacheHelper(ILogger logger)
         {
-            this._logger = logger;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace GSoft.Dynamite.Caching
             var cacheKey = currentUserLcid == Language.French.Culture.LCID ? key.InFrench : key.InEnglish;
 
             // Note that caching is only possible if we currently have a valid HttpContext.
-            this._logger.Info("Getting app cache value(s) for key '{0}'.", cacheKey);
+            this.logger.Info("Getting app cache value(s) for key '{0}'.", cacheKey);
             return HttpContext.Current != null ? this.GetFromCache<T>(func, cacheKey, expiration) : func.Invoke();
         }
 
@@ -106,7 +107,7 @@ namespace GSoft.Dynamite.Caching
         /// <exception cref="System.InvalidOperationException">Can't clear cache if you don't have ApproveItems permission.</exception>
         public void ClearCache(string keyPrefix, Func<bool> conditionFunc)
         {
-            this._logger.Info("Clearing app cache.");
+            this.logger.Info("Clearing app cache.");
 
             if (conditionFunc.Invoke())
             {
@@ -132,13 +133,13 @@ namespace GSoft.Dynamite.Caching
                     cacheValue,
                     null,
                     expiration,
-                    Cache.NoSlidingExpiration,
+                    System.Web.Caching.Cache.NoSlidingExpiration,
                     CacheItemPriority.Normal,
                     null);
             }
             else
             {
-                this._logger.Warn("Trying to cache null value for key '{0}'", cacheKey);
+                this.logger.Warn("Trying to cache null value for key '{0}'", cacheKey);
             }
         }
 
@@ -147,7 +148,7 @@ namespace GSoft.Dynamite.Caching
             var cachedValue = HttpRuntime.Cache.Get(cacheKey) as T;
             if (cachedValue == null)
             {
-                this._logger.Info("Not found in app cache. Caching value(s) for key '{0}'", cacheKey);
+                this.logger.Info("Not found in app cache. Caching value(s) for key '{0}'", cacheKey);
                 cachedValue = func.Invoke();
                 this.SetCacheValue(cacheKey, cachedValue, expiration);
             }

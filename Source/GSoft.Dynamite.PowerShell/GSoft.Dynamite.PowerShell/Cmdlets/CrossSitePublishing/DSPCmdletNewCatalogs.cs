@@ -6,6 +6,7 @@ using System.Management.Automation;
 using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;

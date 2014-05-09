@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <ListInstance Title="$Resources:GSoft.Dynamite.Examples.Global,List_WallReplies;"
+                OnQuickLaunch="TRUE"
+                TemplateType="7771"
+                Url="Lists/WallReplies"
+                Description="$Resources:GSoft.Dynamite.Examples.Global,List_WallRepliesDescription;">
+  </ListInstance>
+</Elements>

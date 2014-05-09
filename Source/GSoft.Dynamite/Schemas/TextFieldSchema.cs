@@ -54,7 +54,8 @@ namespace GSoft.Dynamite.Schemas
                 new XAttribute("StaticName", this.FieldStaticName),
                 new XAttribute("DisplayName", this.FieldDisplayName),
                 new XAttribute("Description", this.FieldDescription),
-                new XAttribute("Group", this.FieldGroup));
+                new XAttribute("Group", this.FieldGroup),
+                new XAttribute("ShowInListSettings", "TRUE"));
 
             return this.FieldSchema;
         }

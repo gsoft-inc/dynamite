@@ -6,6 +6,7 @@ namespace GSoft.Dynamite.Caching.Entities
     /// <summary>
     /// Variation label class that is serializable for caching purposes.
     /// </summary>
+    [Obsolete]
     [Serializable]
     public class CacheVariationLabel : ICacheVariationLabel
     {
