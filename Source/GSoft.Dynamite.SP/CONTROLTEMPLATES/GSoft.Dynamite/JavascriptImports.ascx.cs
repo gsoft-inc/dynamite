@@ -1,18 +1,14 @@
 ﻿using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
+using Microsoft.SharePoint.WebControls;
 
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
-    using System.Web;
-
-    using global::GSoft.Dynamite.Logging;
-
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Utilities;
-    using Microsoft.SharePoint.WebControls;
-
     public partial class JavascriptImports : UserControl
     {
         /// <summary>

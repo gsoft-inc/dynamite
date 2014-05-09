@@ -1,23 +1,25 @@
-﻿using System;
-using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.ValueTypes;
-using Microsoft.SharePoint;
+﻿using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint.Taxonomy;
+using GSoft.Dynamite.Taxonomy;
+using Microsoft.SharePoint;
+using System;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
+    using System.Linq;
+
     /// <summary>
     /// The converter for taxonomy fields.
     /// </summary>
-    public class TaxonomyValueConverter : SharePointListItemValueConverter
+    public class TaxonomyValueDataRowConverter : DataRowValueConverter
     {
-        private ITaxonomyService taxonomyService;
+        ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Converter constructor with dependency injection
         /// </summary>
         /// <param name="taxonomyService">Taxonomy service utility</param>
-        public TaxonomyValueConverter(ITaxonomyService taxonomyService)
+        public TaxonomyValueDataRowConverter(ITaxonomyService taxonomyService)
         {
             this.taxonomyService = taxonomyService;
         }
@@ -32,14 +34,14 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <returns>
         /// The converted value.
         /// </returns>
-        public override object Convert(object value, SharePointListItemConversionArguments arguments)
+        public override object Convert(object value, DataRowConversionArguments arguments)
         {
-            TaxonomyValue convertedValue = null;
-
-            if (value == DBNull.Value)
+            if (value == System.DBNull.Value)
             {
                 return null;
             }
+
+            TaxonomyValue convertedValue = null;
 
             var taxonomyFieldValue = value as TaxonomyFieldValue;
 
@@ -48,7 +50,18 @@ namespace GSoft.Dynamite.Binding.Converters
                 var stringValue = value as string;
                 if (!string.IsNullOrEmpty(stringValue))
                 {
-                    taxonomyFieldValue = new TaxonomyFieldValue(stringValue);
+                    var fieldObject = arguments.FieldCollection.Cast<SPField>()
+                        .FirstOrDefault(f => f.InternalName == arguments.ValueKey);
+
+                    if (fieldObject != null)
+                    {
+                        taxonomyFieldValue = new TaxonomyFieldValue(fieldObject);
+                        taxonomyFieldValue.PopulateFromLabelGuidPair(stringValue);
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
 
@@ -85,15 +98,20 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <returns>
         /// The converted value.
         /// </returns>
-        public override object ConvertBack(object value, SharePointListItemConversionArguments arguments)
+        public override object ConvertBack(object value, DataRowConversionArguments arguments)
         {
+            if (value == DBNull.Value)
+            {
+                return null;
+            }
+
             var term = value as TaxonomyValue;
             TaxonomyFieldValue newTaxonomyFieldValue = null;
 
-            TaxonomyField taxonomyField = (TaxonomyField)arguments.ListItem.Fields.GetField(arguments.ValueKey);
+            TaxonomyField taxonomyField = (TaxonomyField)arguments.FieldCollection.GetField(arguments.ValueKey);
             newTaxonomyFieldValue = new TaxonomyFieldValue(taxonomyField);
 
-            var noteField = arguments.ListItem.Fields[taxonomyField.TextField];
+            var noteField = arguments.FieldCollection[taxonomyField.TextField];
 
             if (term != null)
             {

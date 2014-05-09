@@ -3,13 +3,16 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Data;
+    using System.Linq;
+
     /// <summary>
     /// Extensions to the basic functionality of ISharePointEntityBinder
     /// </summary>
     public static class SharePointEntityBinderExtensions
     {
         /// <summary>
-        /// Extension method to convert a SPListItemCollection to a list of entities
+        /// Extension method to convert a SPListItemCollection to a list of entitiseQ
         /// </summary>
         /// <typeparam name="T">The type of entities to return</typeparam>
         /// <param name="entityBinder">Client to the extension method</param>
@@ -19,11 +22,17 @@ namespace GSoft.Dynamite.Binding
         {
             var returnList = new List<T>();
 
-            foreach (SPListItem item in listItems)
+            if (listItems.Count > 0)
             {
-                returnList.Add(entityBinder.Get<T>(item));
-            }
+                var table = listItems.GetDataTable();
+                var rows = table.AsEnumerable();
 
+                foreach (var dataRow in rows)
+                {
+                    returnList.Add(entityBinder.Get<T>(dataRow, listItems.Fields, listItems.List.ParentWeb));
+                }
+            }
+          
             return returnList;
         }
     }
