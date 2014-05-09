@@ -1,18 +1,14 @@
-﻿using global::Autofac;
+﻿using Autofac;
+
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
-using GSoft.Dynamite.Caching;
-using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
-using GSoft.Dynamite.Navigation;
-using GSoft.Dynamite.Repositories;
-using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
@@ -23,15 +19,14 @@ using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
 
-namespace GSoft.Dynamite
-{
+namespace GSoft.Dynamite.ServiceLocator
+{   
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
     public class AutofacDynamiteRegistrationModule : Module
     {
         private readonly string logCategoryName;
-        private readonly string[] defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
@@ -39,22 +34,9 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
         /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
-        public AutofacDynamiteRegistrationModule(string logCategoryName, string defaultResourceFileName)
+        public AutofacDynamiteRegistrationModule(string logCategoryName)
         {
             this.logCategoryName = logCategoryName;
-            this.defaultResourceFileNames = new string[] { defaultResourceFileName };
-        }
-
-        /// <summary>
-        /// Creates a new registration module to prepare dependency injection
-        /// for GSoft.Dynamite components
-        /// </summary>
-        /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
-        /// <param name="defaultResourceFileNames">The default resource file names when interacting with IResourceLocator</param>
-        public AutofacDynamiteRegistrationModule(string logCategoryName, string[] defaultResourceFileNames)
-        {
-            this.logCategoryName = logCategoryName;
-            this.defaultResourceFileNames = defaultResourceFileNames;
         }
 
         /// <summary>
@@ -84,7 +66,7 @@ namespace GSoft.Dynamite
             builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
-            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();  // Singleton entity binder
+            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
@@ -94,7 +76,7 @@ namespace GSoft.Dynamite
             builder.RegisterType<FieldHelper>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
-            builder.RegisterInstance<IResourceLocator>(new ResourceLocator(this.defaultResourceFileNames));
+            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
             builder.RegisterType<MuiHelper>();
             builder.RegisterType<DateHelper>();
             builder.RegisterType<RegionalSettingsHelper>();
@@ -103,16 +85,10 @@ namespace GSoft.Dynamite
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
 
-            // TODO: Consolidate with VariationExpert
-            builder.RegisterType<VariationsHelper>();
-
             // Lists
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
             builder.RegisterType<ListSecurityHelper>();
-
-            // Catalogs
-            builder.RegisterType<CatalogBuilder>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>();
@@ -140,9 +116,8 @@ namespace GSoft.Dynamite
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
-            builder.RegisterType<TaxonomyService>();
+            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>().SingleInstance();
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>().InstancePerSite();
             builder.RegisterType<TaxonomyHelper>();
 
             // Timer Jobs
@@ -159,13 +134,6 @@ namespace GSoft.Dynamite
 
             // Web Parts
             builder.RegisterType<WebPartHelper>();
-
-            // Navigation
-            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
-
-            // TODO: Caching - Obsolete helpers
-            builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
-            builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
         }
     }
 }
