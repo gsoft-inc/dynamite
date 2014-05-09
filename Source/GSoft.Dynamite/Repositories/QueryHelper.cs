@@ -8,6 +8,8 @@ using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
+using System.Reflection;
+using GSoft.Dynamite.Binding;
 
 namespace GSoft.Dynamite.Repositories
 {
@@ -41,6 +43,32 @@ namespace GSoft.Dynamite.Repositories
             {
                 return "<Value Type=\"DateTime\" IncludeTimeValue=\"TRUE\">" + SPUtility.CreateISO8601DateTimeFromSystemDateTime(DateTime.Now) + "</Value>";
             }
+        }
+
+        /// <summary>
+        /// Returns a string corresponding the the ViewFields attribute of a SPQuery
+        /// with all the properties of a particular Entity
+        /// </summary>
+        /// <param name="entityType">The type of the entity</param>
+        /// <returns>A string representing the list of view fields</returns>
+        public string ViewFieldsForEntityType(Type entityType)
+        {
+            string viewFieldsString = string.Empty;
+            PropertyInfo[] propertyInfos = entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo info in propertyInfos)
+            {
+                var customAttributes = info.GetCustomAttributes(typeof(PropertyAttribute), false);
+                var propertyDetails = customAttributes.OfType<PropertyAttribute>().FirstOrDefault();
+
+                if (propertyDetails != null)
+                {
+                    var fieldInternalName = !string.IsNullOrEmpty(propertyDetails.PropertyName) ? propertyDetails.PropertyName : info.Name;
+                    viewFieldsString += string.Format(CultureInfo.InvariantCulture, "<FieldRef Name='{0}' />", fieldInternalName);
+                }
+            }
+
+            return viewFieldsString;
         }
 
         /// <summary>

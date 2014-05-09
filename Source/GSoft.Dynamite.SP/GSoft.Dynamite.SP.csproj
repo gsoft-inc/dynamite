@@ -124,16 +124,6 @@
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GSoft.Dynamite.DI.Autofac\GSoft.Dynamite.DI.Autofac.csproj">
-      <Project>{FCBDB7FA-3664-4F6E-8C1F-38CE44872B79}</Project>
-      <Name>GSoft.Dynamite.DI.Autofac</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
-      <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
-      <Name>GSoft.Dynamite</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Resources\GSoft.Dynamite.fr-FR.resx" />
   </ItemGroup>
   <PropertyGroup>

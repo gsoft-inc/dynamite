@@ -1,3 +1,4 @@
+using System.Globalization;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 
@@ -6,9 +7,9 @@ namespace GSoft.Dynamite.Binding.Converters
     using System;
 
     /// <summary>
-    /// A converter for the Lookup type.
+    /// The conversion class for a User.
     /// </summary>
-    public class LookupValueConverter : IConverter
+    public class UserValueDataRowConverter : DataRowValueConverter
     {
         #region IConverter Members
 
@@ -20,25 +21,19 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <returns>
         /// The converted value.
         /// </returns>
-        public object Convert(object value, ConversionArguments arguments)
+        public override object Convert(object value, DataRowConversionArguments arguments)
         {
-            var lookupValue = value as SPFieldLookupValue;
-
             if (value == DBNull.Value)
             {
                 return null;
             }
 
-            if (lookupValue == null)
-            {
-                var stringValue = value as string;
-                if (!string.IsNullOrEmpty(stringValue))
-                {
-                    lookupValue = new SPFieldLookupValue(stringValue);
-                }
-            }
+            UserValue userValue = null;
+            var sharepointUserValue = new SPFieldUserValue(arguments.Web, value as string);
+            var principal = sharepointUserValue.User;
+            userValue = principal != null ? new UserValue(principal) : null;
 
-            return lookupValue != null ? new LookupValue(lookupValue) : null;
+            return userValue;            
         }
 
         /// <summary>
@@ -49,11 +44,12 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <returns>
         /// The converted value.
         /// </returns>
-        public object ConvertBack(object value, ConversionArguments arguments)
+        public override object ConvertBack(object value, DataRowConversionArguments arguments)
         {
-            var lookup = value as LookupValue;
-
-            return lookup != null ? new SPFieldLookupValue(lookup.Id, lookup.Value) : null;
+            var principal = value as UserValue;
+            return principal != null
+                ? string.Format(CultureInfo.InvariantCulture, "{0};#{1}", principal.Id, (principal.DisplayName ?? string.Empty).Replace(";", ";;"))
+                : null;
         }
 
         #endregion

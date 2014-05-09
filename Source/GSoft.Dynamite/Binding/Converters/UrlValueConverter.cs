@@ -3,6 +3,8 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
+    using System;
+
     /// <summary>
     /// Conversion class for URL values.
     /// </summary>
@@ -20,6 +22,11 @@ namespace GSoft.Dynamite.Binding.Converters
         /// </returns>
         public object Convert(object value, ConversionArguments arguments)
         {
+            if (value == DBNull.Value)
+            {
+                return null;
+            }
+
             var urlValue = value as SPFieldUrlValue;
             if (urlValue == null)
             {

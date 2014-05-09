@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+﻿using System.Linq;
 using System.Web;
 using GSoft.Dynamite.Repositories.Entities;
 using Microsoft.SharePoint;
@@ -53,7 +54,19 @@ namespace GSoft.Dynamite.Extensions
                 }
             }
         }
-
+        
+		/// Gets the custom list template with the specified name.
+        /// </summary>
+        /// <param name="web">The SharePoint web.</param>
+        /// <param name="name">The list template name.</param>
+        /// <returns>An SPListTemplate or null if nothing is found.</returns>
+        public static SPListTemplate GetCustomListTemplate(this SPWeb web, string name)
+        {
+            var listTemplates = web.Site.GetCustomListTemplates(web);
+            var listTemplate = (from SPListTemplate template in listTemplates where template.Name == name select template).FirstOrDefault();
+            return listTemplate;
+        }
+		
         private static void UpdateCurrentComposedLookItem(SPWeb web, ComposedLook composedLook)
         {
             var catalog = web.GetCatalog(SPListTemplateType.DesignCatalog);
@@ -81,6 +94,6 @@ namespace GSoft.Dynamite.Extensions
             item[BuiltInFields.ImageUrlName] = composedLook.ImagePath == null ? string.Empty : HttpUtility.UrlDecode(new Uri(composedLook.ImagePath.Url).AbsolutePath);
             item[BuiltInFields.FontSchemeUrlName] = HttpUtility.UrlDecode(new Uri(composedLook.FontSchemePath.Url).AbsolutePath);
             item.Update();
-        }
+		}
     }
 }

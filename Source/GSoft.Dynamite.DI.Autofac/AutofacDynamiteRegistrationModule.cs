@@ -13,6 +13,9 @@ using GSoft.Dynamite.MasterPages;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
+using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Security;
+using GSoft.Dynamite.Serializers;
 using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
@@ -72,12 +75,15 @@ namespace GSoft.Dynamite.DI.Autofac
 #endif
 
             // Binding
-            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
+            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
             var cachedBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
+
+            builder.RegisterType<SharePointDataRowEntitySchema>();
             builder.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
+            builder.RegisterType<TaxonomyValueDataRowConverter>();
+            builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
-
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().SingleInstance();  // Singleton entity binder
 
             // Cache
@@ -120,6 +126,9 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<SecurityHelper>();
             builder.RegisterType<UserHelper>(); 
 
+            // Serializers
+            builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
+
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
             builder.RegisterType<FolderInfo>().As<IFolderInfo>();
@@ -131,6 +140,7 @@ namespace GSoft.Dynamite.DI.Autofac
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
+            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
             builder.RegisterType<TaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();
