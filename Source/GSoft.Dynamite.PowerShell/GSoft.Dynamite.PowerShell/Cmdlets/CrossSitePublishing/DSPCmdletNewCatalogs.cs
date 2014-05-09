@@ -115,7 +115,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                             this.SetDisplaySettings(list, catalog);
 
                             // Set versioning settings
-                            if (catalog.HasDraftVisibilityType)
+                            if (!string.IsNullOrEmpty(catalog.DraftVisibilityType))
                             {
                                 list.EnableModeration = true;
                                 list.DraftVersionVisibility = (DraftVisibilityType)Enum.Parse(

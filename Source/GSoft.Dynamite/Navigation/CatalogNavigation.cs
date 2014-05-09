@@ -210,7 +210,17 @@ namespace GSoft.Dynamite.Navigation
                         termId,
                         navigationTerm.Title);
 
-                    return new Uri(navigationTerm.GetResolvedDisplayUrl(string.Empty), UriKind.Relative);
+                    var queryString = string.Empty;
+
+                    // Check if some search keywords are present
+                    var searchKeywords = HttpUtility.ParseQueryString(currentUrl.Query).Get("k");
+
+                    if (!string.IsNullOrEmpty(searchKeywords))
+                    {
+                        queryString = "?k=" + HttpUtility.UrlEncode(searchKeywords);
+                    }
+
+                    return new Uri(navigationTerm.GetResolvedDisplayUrl(queryString), UriKind.Relative);
                 }
                 else
                 {
