@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System;
+
     /// <summary>
     /// A converter that simply returns the value.
     /// </summary>
@@ -29,6 +31,26 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         public object Convert(object value, ConversionArguments arguments)
         {
+            if (value == DBNull.Value || value == null)
+            {
+                return null;
+            }
+
+            if (arguments.PropertyType == typeof(bool))
+            {
+                // If the value comes from a datarow, it may in 0/1 format.
+                // Otherwise, just let the straight conversion take place.
+                if (value.ToString() == "0")
+                {
+                    return false;
+                } 
+                else if (value.ToString() == "1")
+                {
+                    return true;
+                }
+            }
+
+            // Okay now we really do a straight conversion
             return value;
         }
 

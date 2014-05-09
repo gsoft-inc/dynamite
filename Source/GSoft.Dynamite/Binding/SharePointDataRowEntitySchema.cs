@@ -1,20 +1,16 @@
-﻿
-
-using System.Collections.Generic;
-
-using GSoft.Dynamite.Binding;
+﻿using System.Collections.Generic;
 using GSoft.Dynamite.Binding.Converters;
-
-using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
-    using System.Linq;
+    using System.Web.UI.WebControls;
+
+    using Microsoft.SharePoint;
 
     /// <summary>
     /// A schema for SharePoint entities.
     /// </summary>
-    public class SharePointEntitySchema : EntitySchema
+    public class SharePointDataRowEntitySchema : EntitySchema
     {
         /// <summary>
         /// Creates the conversion arguments.
@@ -25,8 +21,8 @@ namespace GSoft.Dynamite.Binding
         /// <param name="values">
         /// The values.
         /// </param>
-        /// <param name="fieldCollection">
-        /// The field Collection.
+        /// <param name="itemCollection">
+        /// The item Collection.
         /// </param>
         /// <param name="web">
         /// The web.
@@ -36,10 +32,11 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         protected internal override ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
         {
-            var listItemValues = values as ISharePointListItemValues;
+            var listItemValues = values as IDataRowValues;
+            
             if (listItemValues != null)
             {
-                return new SharePointListItemConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey, listItemValues.ListItem, values);
+                return new DataRowConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey, listItemValues.DataRow, fieldCollection, web, values);
             }
             else
             {

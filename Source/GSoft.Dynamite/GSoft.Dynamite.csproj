@@ -12,6 +12,8 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,8 +47,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL"/>
+    <Reference Include="fastjson">
+      <HintPath>..\packages\fastJSON.2.1.0.0\lib\net35\fastjson.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -64,11 +68,20 @@
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\Json.Net\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=3.9.60.0, Culture=neutral, PublicKeyToken=fb3de3fad47af15c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\ServiceStack.Text\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -79,6 +92,12 @@
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
+    <Compile Include="Binding\Converters\TaxonomyValueDataRowConverter.cs" />
+    <Compile Include="Binding\Converters\TaxonomyValueCollectionDataRowConverter.cs" />
+    <Compile Include="Binding\Converters\ProjectedLookupValueDataRowConverter.cs" />
+    <Compile Include="Binding\Converters\UserValueDataRowConverter.cs" />
+    <Compile Include="Binding\Converters\DataRowConversionArguments.cs" />
+    <Compile Include="Binding\Converters\DataRowValueConverter.cs" />
     <Compile Include="Binding\Converters\ImageValueConverter.cs" />
     <Compile Include="Binding\Converters\LookupValueConverter.cs" />
     <Compile Include="Binding\Converters\PrincipalValueConverter.cs" />
@@ -89,13 +108,14 @@
     <Compile Include="Binding\Converters\TaxonomyValueConverter.cs" />
     <Compile Include="Binding\Converters\UrlValueConverter.cs" />
     <Compile Include="Binding\Converters\UserValueConverter.cs" />
-    <Compile Include="Binding\EntityBinder.cs" />
+    <Compile Include="Binding\SharePointDataRowEntitySchema.cs" />
+    <Compile Include="Binding\IDataRowValues.cs" />
+    <Compile Include="Binding\DataRowValuesAdapter.cs" />
     <Compile Include="Binding\EntityBindingDetail.cs" />
     <Compile Include="Binding\EntitySchema.cs" />
     <Compile Include="Binding\EntitySchemaBuilder.cs" />
     <Compile Include="Binding\Enums.cs" />
     <Compile Include="Binding\IConverter.cs" />
-    <Compile Include="Binding\IEntityBinder.cs" />
     <Compile Include="Binding\IEntitySchema.cs" />
     <Compile Include="Binding\IEntitySchemaBuilder.cs" />
     <Compile Include="Binding\ISharePointEntityBinder.cs" />
@@ -107,7 +127,7 @@
     <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="Binding\SharePointEntityBinderExtensions.cs" />
     <Compile Include="Binding\SharePointEntitySchema.cs" />
-    <Compile Include="Binding\StraightConverter.cs" />
+    <Compile Include="Binding\Converters\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />
     <Compile Include="Caching\Entities\CacheValue.cs" />
     <Compile Include="Caching\Entities\CacheVariationLabel.cs" />
@@ -121,6 +141,7 @@
     <Compile Include="Caching\ICacheKey.cs" />
     <Compile Include="Caching\SimpleCacheKey.cs" />
     <Compile Include="Cache\CacheHelper.cs" />
+    <Compile Include="Cache\CacheItemWrapper.cs" />
     <Compile Include="Cache\ICacheHelper.cs" />
     <Compile Include="Cache\ICacheKey.cs" />
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
@@ -163,6 +184,11 @@
     <Compile Include="Lists\ListLocator.cs" />
     <Compile Include="Repositories\QueryHelper.cs" />
     <Compile Include="Definitions\ContentTypeInfo.cs" />
+    <Compile Include="Serializers\ISerializer.cs" />
+    <Compile Include="Serializers\JavascriptSerializer.cs" />
+    <Compile Include="Serializers\JsonNetSerializer.cs" />
+    <Compile Include="Serializers\FastJsonSerializer.cs" />
+    <Compile Include="Serializers\ServiceStackSerializer.cs" />
     <Compile Include="Setup\FieldValueInfo.cs" />
     <Compile Include="Setup\FolderInfo.cs" />
     <Compile Include="Setup\FolderMaker.cs" />
@@ -182,11 +208,14 @@
     <Compile Include="SiteColumns\TextField.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
+    <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
     <Compile Include="Utils\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
+    <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
     <Compile Include="Definitions\ContentTypeBuilder.cs" />
@@ -214,6 +243,7 @@
     <Compile Include="Globalization\MuiHelper.cs" />
     <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
+    <Compile Include="Utils\NamedReaderWriterLocker.cs" />
     <Compile Include="Utils\SearchHelper.cs" />
     <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Security\Unsafe.cs" />
@@ -243,10 +273,18 @@
     <None Include="..\..\Shared\GSoft.Dynamite.snk">
       <Link>Properties\GSoft.Dynamite.snk</Link>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
 </Project>

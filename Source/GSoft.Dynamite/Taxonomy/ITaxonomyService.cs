@@ -96,6 +96,14 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term</returns>
         Term GetTermForId(SPSite site, Guid id);
 
+		/// Gets the term for identifier.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="id">The identifier.</param>
+        /// <returns>The specific term</returns>
+        Term GetTermForId(SPSite site, string termStoreName, Guid id);
+		
         /// <summary>
         /// Gets the term for identifier within site collection specific term store group.
         /// </summary>
@@ -103,7 +111,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termSetName">The name of the term set containing the term</param>
         /// <param name="id">The GUID of the term to get.</param>
         /// <returns>The term found</returns>
-        Term GetTermForId(SPSite site, string termSetName, Guid id);
+        Term GetTermForIdInTermSet(SPSite site, string termSetName, Guid id);
 
         /// <summary>
         /// Gets the term for identifier
@@ -113,7 +121,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termSetName">The name of the term set containing the term</param>
         /// <param name="id">The GUID of the term to get.</param>
         /// <returns>The term</returns>
-        Term GetTermForId(SPSite site, string termStoreGroupName, string termSetName, Guid id);
+        Term GetTermForIdInTermSet(SPSite site, string termStoreGroupName, string termSetName, Guid id);
 
         /// <summary>
         /// Retrieves all TaxonomyValues corresponding to a term label within a desired term store

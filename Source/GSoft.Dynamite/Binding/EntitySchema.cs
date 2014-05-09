@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace GSoft.Dynamite.Binding
 {
+    using Microsoft.SharePoint;
+
     /// <summary>
     /// The schema for an entity.
     /// </summary>
@@ -10,7 +12,10 @@ namespace GSoft.Dynamite.Binding
     {
         #region Fields
 
-        private readonly LinkedList<EntityBindingDetail> _bindingDetails = new LinkedList<EntityBindingDetail>();
+        /// <summary>
+        /// The binding details.
+        /// </summary>
+        protected readonly LinkedList<EntityBindingDetail> BindingDetails = new LinkedList<EntityBindingDetail>();
 
         #endregion
 
@@ -19,14 +24,24 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Fills the values from the entity properties.
         /// </summary>
-        /// <param name="sourceEntity">The source entity.</param>
-        /// <param name="values">The values.</param>
-        public void FromEntity(object sourceEntity, IDictionary<string, object> values)
+        /// <param name="sourceEntity">
+        /// The source entity.
+        /// </param>
+        /// <param name="values">
+        /// The values.
+        /// </param>
+        /// <param name="fieldCollection">
+        /// The field Collection.
+        /// </param>
+        /// <param name="web">
+        /// The web.
+        /// </param>
+        public void FromEntity(object sourceEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
         {
-            foreach (var binding in this._bindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))
+            foreach (var binding in this.BindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))
             {
                 var value = binding.EntityProperty.GetValue(sourceEntity, null);
-                value = binding.Converter.ConvertBack(value, this.GetConversionArguments(binding, values));
+                value = binding.Converter.ConvertBack(value, this.GetConversionArguments(binding, values, fieldCollection, web));
                 values[binding.ValueKey] = value;
             }
         }
@@ -34,11 +49,21 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Fills the entity from the values.
         /// </summary>
-        /// <param name="targetEntity">The target entity.</param>
-        /// <param name="values">The values.</param>
-        public void ToEntity(object targetEntity, IDictionary<string, object> values)
+        /// <param name="targetEntity">
+        /// The target entity.
+        /// </param>
+        /// <param name="values">
+        /// The values.
+        /// </param>
+        /// <param name="fieldCollection">
+        /// The field Collection.
+        /// </param>
+        /// <param name="web">
+        /// The web.
+        /// </param>
+        public virtual void ToEntity(object targetEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
         {
-            foreach (var binding in this._bindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
+            foreach (var binding in this.BindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
             {
                 object value;
                 if (!values.TryGetValue(binding.ValueKey, out value))
@@ -46,7 +71,7 @@ namespace GSoft.Dynamite.Binding
                     value = null;
                 }
 
-                value = binding.Converter.Convert(value, this.GetConversionArguments(binding, values));
+                value = binding.Converter.Convert(value, this.GetConversionArguments(binding, values, fieldCollection, web));
                 binding.EntityProperty.SetValue(targetEntity, value, null);
             }
         }
@@ -61,7 +86,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="bindingDetail">The binding detail.</param>
         /// <param name="values">The values.</param>
         /// <returns>The conversion arguments.</returns>
-        protected internal virtual ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values)
+        protected internal virtual ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
         {
             return new ConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey);
         }
@@ -72,7 +97,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="detail">The detail.</param>
         protected internal void AddProperty(EntityBindingDetail detail)
         {
-            this._bindingDetails.AddLast(detail);
+            this.BindingDetails.AddLast(detail);
         }
 
         #endregion

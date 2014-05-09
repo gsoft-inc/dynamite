@@ -3,6 +3,8 @@ using Microsoft.SharePoint.Publishing.Fields;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
+    using System;
+
     /// <summary>
     /// Conversion class for image values.
     /// </summary>
@@ -21,6 +23,12 @@ namespace GSoft.Dynamite.Binding.Converters
         public object Convert(object value, ConversionArguments arguments)
         {
             var imageValue = value as ImageFieldValue;
+
+            if (value == DBNull.Value)
+            {
+                return null;
+            }
+
             if (imageValue == null)
             {
                 var stringValue = value as string;
