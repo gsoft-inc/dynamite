@@ -71,15 +71,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         public bool RemoveDefaultContentType { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [has draft visibility type].
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if [has draft visibility type]; otherwise, <c>false</c>.
-        /// </value>
-        [XmlAttribute]
-        public bool HasDraftVisibilityType { get; set; }
-
-        /// <summary>
         /// Gets or sets the type of the draft visibility.
         /// </summary>
         /// <value>

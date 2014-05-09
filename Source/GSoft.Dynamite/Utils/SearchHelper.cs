@@ -292,6 +292,41 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Ensure a search best bet
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="level">The search object level.</param>
+        /// <param name="contextWeb">The SPWeb context.</param>
+        /// <param name="title">The title of the best bet.</param>
+        /// <param name="url">The url of the best bet.</param>
+        /// <param name="description">The description of the best bet.</param>
+        /// <param name="isVisualBestBet">True if it is a visual best bet. False otherwise.</param>
+        /// <param name="deleteIfUnused">True if must be deleted if unused. False otherwise.</param>
+        /// <returns>The best bet object.</returns>
+        public Microsoft.Office.Server.Search.Query.Rules.BestBet EnsureBestBet(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string title, Uri url, string description, bool isVisualBestBet, bool deleteIfUnused)
+        {
+            Microsoft.Office.Server.Search.Query.Rules.BestBet bestBet = null;
+            var queryRuleManager = new QueryRuleManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            // Build the SearchObjectFilter
+            var searchObjectFilter = new SearchObjectFilter(searchOwner);
+
+            var bestBets = queryRuleManager.GetBestBets(searchObjectFilter);
+
+            if (!bestBets.Contains(url))
+            {
+               bestBet = bestBets.CreateBestBet(title, url, description, isVisualBestBet, deleteIfUnused);
+            }
+            else
+            {
+                bestBet = bestBets[url];
+            }
+            
+            return bestBet;
+        }
+
+        /// <summary>
         /// Delete all query rules corresponding to the display name
         /// </summary>
         /// <param name="ssa">The search service application.</param>
@@ -310,7 +345,7 @@ namespace GSoft.Dynamite.Utils
                 queryRuleCollection = rules[displayName].ToList();
             }
 
-            if (queryRuleCollection.Count >0)
+            if (queryRuleCollection.Count > 0)
             {
                 foreach (var queryRule in queryRuleCollection)
                 {
@@ -359,6 +394,57 @@ namespace GSoft.Dynamite.Utils
 
             queryAction.QueryTransform.SourceId = resultSourceId;
            
+            rule.Update();
+        }
+
+        /// <summary>
+        /// Create a result block query action for a Query Rule
+        /// </summary>
+        /// <param name="rule">The query rule object</param>
+        /// <param name="blockTitle">The result block Title</param>
+        /// <param name="queryTemplate">The search query template in KQL format</param>
+        /// <param name="resultSourceId">The search result source Id</param>
+        /// <param name="routingLabel">A routing label for a content search WebPart</param>
+        /// <param name="numberOfItems">The number of result to retrieve</param>
+        public void CreateResultBlockAction(QueryRule rule, string blockTitle, string queryTemplate, Guid resultSourceId, string routingLabel, string numberOfItems)
+        {
+            var queryAction = (CreateResultBlockAction)rule.CreateQueryAction(QueryActionType.CreateResultBlock);
+
+            queryAction.ResultTitle.DefaultLanguageString = blockTitle;
+
+            if (!string.IsNullOrEmpty(queryTemplate))
+            {
+                queryAction.QueryTransform.QueryTemplate = queryTemplate;
+            }
+
+            queryAction.QueryTransform.SourceId = resultSourceId;
+
+            if (!string.IsNullOrEmpty(routingLabel))
+            {
+                queryAction.ResultTableType = routingLabel;
+            }
+
+            if (!string.IsNullOrEmpty(numberOfItems))
+            {
+                queryAction.QueryTransform.OverrideProperties = new QueryTransformProperties();
+                queryAction.QueryTransform.OverrideProperties["RowLimit"] = int.Parse(numberOfItems);
+                queryAction.QueryTransform.OverrideProperties["TotalRowsExactMinimum"] = int.Parse(numberOfItems);
+            }
+
+            rule.Update();
+        }
+
+        /// <summary>
+        /// Create a promoted link action for a a query rule
+        /// </summary>
+        /// <param name="rule">The query rule object</param>
+        /// <param name="bestBetId">The bestBetIds</param>
+        public void CreatePromotedResultAction(QueryRule rule, Guid bestBetId)
+        {          
+            var queryAction = (AssignBestBetsAction)rule.CreateQueryAction(QueryActionType.AssignBestBet);
+
+            queryAction.BestBetIds.Add(bestBetId);
+
             rule.Update();
         }
 

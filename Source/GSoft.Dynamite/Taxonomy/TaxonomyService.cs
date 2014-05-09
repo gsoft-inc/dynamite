@@ -78,9 +78,9 @@ namespace GSoft.Dynamite.Taxonomy
         /// Retrieves terms corresponding to a GUID
         /// </summary>
         /// <param name="site">The current site.</param>
+        /// <param name="termStoreGroupName">The term store group name.</param>
         /// <param name="termSetName">The term set name.</param>
-        /// <param name="termGuid">The term Guid.</param>
-        /// <param name="termStoreGroupName">The term strore group name.</param>
+        /// <param name="termGuid">The term GUID.</param>
         /// <returns>A term collection.</returns>
         public Term GetTermByGuid(SPSite site, string termStoreGroupName, string termSetName, Guid termGuid)
         {
