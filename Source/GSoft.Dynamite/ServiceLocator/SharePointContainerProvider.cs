@@ -54,7 +54,7 @@ namespace GSoft.Dynamite.ServiceLocator
         private readonly ILifetimeScopeProvider requestLifetimeScopeProvider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContainerScopeProvider"/> class.
+        /// Initializes a new instance of the <see cref="SharePointContainerProvider"/> class.
         /// </summary>
         /// <param name="appRootNamespace">
         /// The app root namespace.
@@ -64,7 +64,7 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContainerScopeProvider"/> class.
+        /// Initializes a new instance of the <see cref="SharePointContainerProvider"/> class.
         /// </summary>
         /// <param name="appRootNamespace">
         /// The app root namespace.

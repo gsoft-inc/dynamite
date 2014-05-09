@@ -170,6 +170,8 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
+    <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
     <Compile Include="ServiceLocator\RequestLifetimeHttpModule.cs" />
     <Compile Include="ServiceLocator\SPRequestLifetimeScopeProvider.cs" />
