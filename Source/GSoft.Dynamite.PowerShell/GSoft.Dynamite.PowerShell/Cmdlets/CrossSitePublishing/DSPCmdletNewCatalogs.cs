@@ -14,6 +14,7 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Navigation;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -150,6 +151,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                             // Set list Write Security
                             this.SetWriteSecurity(list, catalog);
+
+                            // Set Navigation settings
+                            this.SetNavigationSettings(list,catalog);
 
                             // Create return object
                             var catalogSettings = new CatalogSettings()
@@ -361,6 +365,27 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             {
                 list.WriteSecurity = catalog.WriteSecurity;
                 list.Update(); 
+            }
+        }
+
+        private void SetNavigationSettings(SPList list, Catalog catalog)
+        {
+            if (catalog.AddToQuickLaunch)
+            {
+                var web = list.ParentWeb;
+
+                // Check for an existing link to the list.
+                var listNode = web.Navigation.GetNodeByUrl(list.DefaultViewUrl);
+
+                // No link, so create one.
+                if (listNode == null)
+                {
+                    // Create the node.
+                    listNode = new SPNavigationNode(list.Title, list.DefaultViewUrl);
+
+                    // Add it to Quick Launch.
+                    web.Navigation.AddToQuickLaunch(listNode, SPQuickLaunchHeading.Lists);
+                }
             }
         }
     }
