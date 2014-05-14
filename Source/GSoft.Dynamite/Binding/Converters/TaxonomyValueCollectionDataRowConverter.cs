@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using GSoft.Dynamite.ValueTypes;
-using Microsoft.SharePoint.Taxonomy;
-using GSoft.Dynamite.Taxonomy;
-using Microsoft.SharePoint;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
@@ -13,7 +13,7 @@ namespace GSoft.Dynamite.Binding.Converters
     /// </summary>
     public class TaxonomyValueCollectionDataRowConverter : DataRowValueConverter
     {
-        ITaxonomyService taxonomyService;
+        private ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Converter constructor with dependency injection

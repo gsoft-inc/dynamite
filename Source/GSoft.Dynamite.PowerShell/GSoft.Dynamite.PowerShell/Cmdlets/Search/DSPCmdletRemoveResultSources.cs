@@ -2,14 +2,12 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
-
+using Autofac;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
-
 using Microsoft.Office.Server.Search.Administration;
-using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
@@ -22,12 +20,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletRemoveResultSources : Cmdlet
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
-        private SearchHelper _searchHelper;
-
-        private XDocument _configurationFile;
+        private XDocument configurationFile;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -35,10 +28,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <value>
         /// The input file.
         /// </value>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, 
-            HelpMessage =
-                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", 
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
@@ -47,14 +37,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// </summary>
         protected override void EndProcessing()
         {
-            this.ResolveDependencies();
-
             var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            this.configurationFile = xml.ToXDocument();
 
-            var serviceApplicationName = this._configurationFile.Root.Attribute("SearchServiceApplication").Value;
-            var searchServiceApp = this._searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
-            var sourceNodes = from sourceNode in this._configurationFile.Descendants("Source") select sourceNode;
+            var serviceApplicationName = this.configurationFile.Root.Attribute("SearchServiceApplication").Value;
+            var sourceNodes = from sourceNode in this.configurationFile.Descendants("Source") select sourceNode;
 
             foreach (var sourceNode in sourceNodes)
             {
@@ -64,29 +51,27 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                 var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
                 var contextWeb = sourceNode.Attribute("ContextWeb").Value;
 
-                var site = new SPSite(contextWeb);
-                var web = site.OpenWeb(contextWeb);
-
-                var doProcess = ShouldContinue("Are you sure?", "Delete all result sources");
-                if (doProcess)
+                using (var site = new SPSite(contextWeb))
                 {
-                    this.WriteWarning("Deleting result source:" + sourceName);
-                    this._searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, web);
-                }
+                    using (var web = site.OpenWeb(contextWeb))
+                    {
+                        using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                        {
+                            var searchHelper = childScope.Resolve<SearchHelper>();
 
-                web.Dispose();
-                site.Dispose();
+                            var doProcess = ShouldContinue("Are you sure?", "Delete all result sources");
+                            if (doProcess)
+                            {
+                                this.WriteWarning("Deleting result source:" + sourceName);
+                                var searchServiceApp = searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
+                                searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, web);
+                            }
+                        }
+                    }
+                }
             }
 
             base.EndProcessing();
-        }
-
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
-        {
-            this._searchHelper = PowerShellContainer.Current.Resolve<SearchHelper>();
         }
     }
 }

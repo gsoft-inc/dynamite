@@ -13,7 +13,7 @@ using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
-using Microsoft.Practices.Unity;
+using Autofac;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
@@ -27,14 +27,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletremoveQueryRules : Cmdlet
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
-        private SearchHelper _searchHelper;
-
-        private TaxonomyService _taxonomyService;
-
-        private XDocument _configurationFile;
+        private XDocument configurationFile;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -42,10 +35,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <value>
         /// The input file.
         /// </value>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, 
-            HelpMessage =
-                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", 
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
@@ -54,55 +44,44 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// </summary>
         protected override void EndProcessing()
         {
-            this.ResolveDependencies();
-
             var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            this.configurationFile = xml.ToXDocument();
 
-            var rootNode = this._configurationFile.Root;
+            var rootNode = this.configurationFile.Root;
             if (rootNode != null)
             {
                 var serviceApplicationName = rootNode.Attribute("SearchServiceApplication").Value;
-
-                // Get the default search service application
-                var searchServiceApp = this._searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
-
-                var queryRuleNodes = from sourceNode in this._configurationFile.Descendants("QueryRule") select sourceNode;
+                var queryRuleNodes = from sourceNode in this.configurationFile.Descendants("QueryRule") select sourceNode;
 
                 foreach (var queryRuleNode in queryRuleNodes)
                 {
                     var displayName = queryRuleNode.Attribute("DisplayName").Value;
                     var objectLevelAsString = queryRuleNode.Attribute("SearchObjectLevel").Value;
-
                     var searchObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
                     var contextWeb = queryRuleNode.Attribute("ContextWeb").Value;
 
-                    var site = new SPSite(contextWeb);
-                    var web = site.OpenWeb(contextWeb);
-
-                    var queryRules = this._searchHelper.GetQueryRulesByName(searchServiceApp, searchObjectLevel, web, displayName);
-
-                    if (queryRules.Count > 0)
+                    using (var site = new SPSite(contextWeb))
                     {
-                            this.WriteWarning("Deleting query rule:" + displayName);
-                            this._searchHelper.DeleteQueryRule(searchServiceApp, searchObjectLevel, web, displayName);                      
-                    }
+                        using (var web = site.OpenWeb(contextWeb))
+                        {
+                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                            {
+                                var searchHelper = childScope.Resolve<SearchHelper>();
+                                var searchServiceApp = searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
+                                var queryRules = searchHelper.GetQueryRulesByName(searchServiceApp, searchObjectLevel, web, displayName);
 
-                    web.Dispose();
-                    site.Dispose();
+                                if (queryRules.Any())
+                                {
+                                    this.WriteWarning("Deleting query rule:" + displayName);
+                                    searchHelper.DeleteQueryRule(searchServiceApp, searchObjectLevel, web, displayName);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
             base.EndProcessing();
-        }
-
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
-        {
-            this._searchHelper = PowerShellContainer.Current.Resolve<SearchHelper>();
-            this._taxonomyService = PowerShellContainer.Current.Resolve<TaxonomyService>();
         }
     }
 }

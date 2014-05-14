@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Utils
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class GacAssemblyLocator
     {
-        private const string FolderPath = @"c:\windows\assembly";
+        private const string FolderPath = @"C:\Windows\Microsoft.NET\assembly\";
 
         /// <summary>
         /// Returns assemblies found in the c:\windows\assembly directory

@@ -2,15 +2,13 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
-
+using Autofac;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
-
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
-using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
@@ -23,14 +21,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletNewResultSources : Cmdlet
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
-        private SearchHelper _searchHelper;
-
-        private XDocument _configurationFile;
-
-        private bool _overwrite;
+        private XDocument configurationFile;
+        private bool overwrite;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -38,10 +30,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <value>
         /// The input file.
         /// </value>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, 
-            HelpMessage =
-                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", 
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
@@ -56,12 +45,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         {
             get
             {
-                return this._overwrite;
+                return this.overwrite;
             }
 
             set
             {
-                this._overwrite = value;
+                this.overwrite = value;
             }
         }
 
@@ -70,79 +59,73 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// </summary>
         protected override void EndProcessing()
         {
-            this.ResolveDependencies();
-
             var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            this.configurationFile = xml.ToXDocument();
 
-            var serviceApplicationName = this._configurationFile.Root.Attribute("SearchServiceApplication").Value;
-            var searchServiceApp = this._searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
-            var sourceNodes = from sourceNode in this._configurationFile.Descendants("Source") select sourceNode;
+            var serviceApplicationName = this.configurationFile.Root.Attribute("SearchServiceApplication").Value;
+            var sourceNodes = from sourceNode in this.configurationFile.Descendants("Source") select sourceNode;
 
             foreach (var sourceNode in sourceNodes)
             {
-                var sourceName = sourceNode.Attribute("Name").Value;
-                var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
-
-                var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
                 var contextWeb = sourceNode.Attribute("ContextWeb").Value;
 
-                var site = new SPSite(contextWeb);
-                var web = site.OpenWeb(contextWeb);
-
-                if (this.Overwrite)
+                using (var site = new SPSite(contextWeb))
                 {
-                    this.WriteWarning("Overwrite specified. Deleting and recreating result source:" + sourceName);
-                    this._searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, web);
-                }
-                else
-                {
-                    this.WriteWarning("Creating result source:" + sourceName);
-                }
+                    using (var childScope = PowerShellContainer.BeginWebLifetimeScope(site.RootWeb))
+                    {
+                        var searchHelper = childScope.Resolve<SearchHelper>();
 
-                var sortDirectionAsString = sourceNode.Attribute("SortDirection").Value;
-                var sortField = sourceNode.Attribute("SortField").Value;
+                        var searchServiceApp = searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
 
-                var query = sourceNode.Descendants("Query").Single().Value;
+                        var sourceName = sourceNode.Attribute("Name").Value;
+                        var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
 
-                if (!string.IsNullOrEmpty(sortDirectionAsString) && !string.IsNullOrEmpty(sortField))
-                {
-                    var sortDirection = (SortDirection)Enum.Parse(typeof(SortDirection), sortDirectionAsString);
-                    this._searchHelper.EnsureResultSource(
-                        searchServiceApp, 
-                        sourceName, 
-                        sortObjectLevel, 
-                        web, 
-                        query, 
-                        sortField, 
-                        sortDirection, 
-                        this.Overwrite);
+                        var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
+
+                        if (this.Overwrite)
+                        {
+                            this.WriteWarning("Overwrite specified. Deleting and recreating result source:" + sourceName);
+                            searchHelper.DeleteResultSource(searchServiceApp, sourceName, sortObjectLevel, site.RootWeb);
+                        }
+                        else
+                        {
+                            this.WriteWarning("Creating result source:" + sourceName);
+                        }
+
+                        var sortDirectionAsString = sourceNode.Attribute("SortDirection").Value;
+                        var sortField = sourceNode.Attribute("SortField").Value;
+
+                        var query = sourceNode.Descendants("Query").Single().Value;
+
+                        if (!string.IsNullOrEmpty(sortDirectionAsString) && !string.IsNullOrEmpty(sortField))
+                        {
+                            var sortDirection = (SortDirection)Enum.Parse(typeof(SortDirection), sortDirectionAsString);
+                            searchHelper.EnsureResultSource(
+                                searchServiceApp,
+                                sourceName,
+                                sortObjectLevel,
+                                site.RootWeb,
+                                query,
+                                sortField,
+                                sortDirection,
+                                this.Overwrite);
+                        }
+                        else
+                        {
+                            searchHelper.EnsureResultSource(
+                                searchServiceApp,
+                                sourceName,
+                                sortObjectLevel,
+                                site.RootWeb,
+                                query,
+                                null,
+                                this.Overwrite);
+                        }
+                    }
                 }
-                else
-                {
-                    this._searchHelper.EnsureResultSource(
-                        searchServiceApp, 
-                        sourceName, 
-                        sortObjectLevel, 
-                        web, 
-                        query, 
-                        null,
-                        this.Overwrite);
-                }
-
-                web.Dispose();
-                site.Dispose();
             }
 
             base.EndProcessing();
-        }
-
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
-        {
-            this._searchHelper = PowerShellContainer.Current.Resolve<SearchHelper>();
         }
     }
 }

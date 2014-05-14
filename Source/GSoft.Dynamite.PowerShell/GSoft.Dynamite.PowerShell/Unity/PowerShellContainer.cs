@@ -1,5 +1,6 @@
-﻿using GSoft.Dynamite.DI.Unity;
-using Microsoft.Practices.Unity;
+﻿using Autofac;
+using GSoft.Dynamite.ServiceLocator;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Unity
 {
@@ -14,38 +15,39 @@ namespace GSoft.Dynamite.PowerShell.Unity
         private const string AppName = "GSoft.Dynamite.PowerShell";
 
         /// <summary>
-        /// The lock
+        /// The Service locator to scan the GAC with the specific AppName
         /// </summary>
-        private static object SyncRoot = new object();
-
-        /// <summary>
-        /// The singleton instance
-        /// </summary>
-        private static IUnityContainer instance;
+        private static ISharePointServiceLocator serviceLocator = new SharePointServiceLocator(AppName);
 
         /// <summary>
         /// Dependency injection container instance
         /// </summary>
-        public static IUnityContainer Current
+        public static ILifetimeScope Current
         {
             get
             {
-                if (instance == null)
-                {
-                    // The injection should be bootstrapped only once
-                    lock (SyncRoot)
-                    {
-                        if (instance == null)
-                        {
-                            // Bootstrap: the container takes care of registering all of its component modules
-                            instance = new UnityRegistrationModuleContainer(
-                                new UnityDynamiteUnityIRegistrationModule(AppName, AppName + ".Global"));
-                        }
-                    }
-                }
-
-                return instance;
+                return serviceLocator.Current;
             }
+        }
+
+        /// <summary>
+        /// Method to create a new LifeTime scope used for the lifetime of the container objects within a feature event
+        /// </summary>
+        /// <param name="feature">The feature that define the scope</param>
+        /// <returns>A LifeTimeScope</returns>
+        public static ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
+        {
+            return serviceLocator.BeginFeatureLifetimeScope(feature);
+        }
+
+        /// <summary>
+        /// Method to create a new LifeTime scope used for the lifetime of the container objects within a web
+        /// </summary>
+        /// <param name="feature">The web that define the scope</param>
+        /// <returns>A LifeTimeScope</returns>
+        public static ILifetimeScope BeginWebLifetimeScope(SPWeb web)
+        {
+            return serviceLocator.BeginWebLifetimeScope(web);
         }
     }
 }

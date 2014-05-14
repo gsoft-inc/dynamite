@@ -43,6 +43,10 @@
     <AssemblyOriginatorKeyFile>..\..\..\Shared\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -51,11 +55,6 @@
     <Reference Include="Microsoft.Office.Server.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.Office.Server.UserProfiles.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Binaries\Microsoft Unity\Microsoft.Practices.Unity.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.PowerShell, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
@@ -116,10 +115,6 @@
     <Compile Include="Unity\PowerShellContainer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\GSoft.Dynamite.DI.Unity\GSoft.Dynamite.DI.Unity.csproj">
-      <Project>{7fa32e92-9037-4626-93ab-5e98c30a9c52}</Project>
-      <Name>GSoft.Dynamite.DI.Unity</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
       <Name>GSoft.Dynamite</Name>
