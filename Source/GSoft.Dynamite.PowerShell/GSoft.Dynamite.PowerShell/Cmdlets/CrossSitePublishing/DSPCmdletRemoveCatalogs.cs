@@ -5,7 +5,7 @@ using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
-using Microsoft.Practices.Unity;
+using Autofac;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
@@ -18,16 +18,12 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletRemoveCatalogs : Cmdlet
     {
-        private ListHelper _listHelper;
-
-        private XDocument _configurationFile;
+        private XDocument configurationFile;
 
         /// <summary>
         /// Gets or sets the input file.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, 
-            HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.", 
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the terms to import or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
@@ -36,13 +32,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// </summary>
         protected override void EndProcessing()
         {
-            this.ResolveDependencies();
-
             var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            this.configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
+            var webNodes = from webNode in this.configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {
@@ -63,19 +57,24 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         if (isContinue)
                         {
-                            // Create the list if doesn't exists
-                            var list = this._listHelper.GetListByRootFolderUrl(web, catalogUrl);
-
-                            if (list != null)
+                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
                             {
-                                this.WriteWarning("Delete the list " + catalogUrl);
+                                var listHelper = childScope.Resolve<ListHelper>();
 
-                                // Delete the list
-                                list.Delete();
-                            }
-                            else
-                            {
-                                this.WriteWarning("No list with the name " + catalogUrl);
+                                // Create the list if doesn't exists
+                                var list = listHelper.GetListByRootFolderUrl(web, catalogUrl);
+
+                                if (list != null)
+                                {
+                                    this.WriteWarning("Delete the list " + catalogUrl);
+
+                                    // Delete the list
+                                    list.Delete();
+                                }
+                                else
+                                {
+                                    this.WriteWarning("No list with the name " + catalogUrl);
+                                }
                             }
                         }
                     }
@@ -83,14 +82,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             }
 
             base.EndProcessing();
-        }
-
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
-        {
-            this._listHelper = PowerShellContainer.Current.Resolve<ListHelper>();
         }
     }
 }

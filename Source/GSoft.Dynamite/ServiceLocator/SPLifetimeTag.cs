@@ -7,7 +7,7 @@ using Autofac.Core.Lifetime;
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
-    /// Constants used to tag lifetime scopes within SharePoint Autofac web applications.
+    /// Constants used to tag lifetime scopes within SharePoint <c>Autofac</c> web applications.
     /// </summary>
     public class SPLifetimeTag
     {

@@ -1,8 +1,8 @@
 ﻿using Autofac;
-
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
@@ -37,7 +37,7 @@ namespace GSoft.Dynamite.ServiceLocator
         public AutofacDynamiteRegistrationModule(string logCategoryName)
         {
             this.logCategoryName = logCategoryName;
-        }
+            }
 
         /// <summary>
         /// Registers the modules type bindings
@@ -84,11 +84,13 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
+            builder.RegisterType<VariationHelper>();
 
             // Lists
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
             builder.RegisterType<ListSecurityHelper>();
+            builder.RegisterType<CatalogBuilder>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>();
@@ -128,6 +130,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<SearchHelper>();
             builder.RegisterType<CustomActionHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
+            builder.RegisterType<NavigationHelper>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();

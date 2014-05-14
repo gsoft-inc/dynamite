@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
+using Autofac;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
-using Microsoft.Practices.Unity;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
@@ -20,19 +20,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
     // ReSharper disable once InconsistentNaming
     public class DSPCmdletSetManagedNavigation : Cmdlet
     {
-        /// <summary>
-        /// Dynamite Helpers
-        /// </summary>
-        private NavigationHelper _navigationHelper;
-
-        private XDocument _configurationFile;
+        private XDocument configurationFile;
 
         /// <summary>
         /// Gets or sets the input file.
         /// </summary>
-        [Parameter(Mandatory = true, 
-            ValueFromPipeline = true, 
-            HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.", 
+        [Parameter(Mandatory = true,
+            ValueFromPipeline = true,
+            HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.",
             Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
@@ -42,12 +37,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
         /// </summary>
         protected override void EndProcessing()
         {
-            this.ResolveDependencies();
             var xml = this.InputFile.Read();
-            this._configurationFile = xml.ToXDocument();
+            this.configurationFile = xml.ToXDocument();
 
             // Get all webs nodes
-            var webNodes = from webNode in this._configurationFile.Descendants("Web") select webNode;
+            var webNodes = from webNode in this.configurationFile.Descendants("Web") select webNode;
 
             foreach (var webNode in webNodes)
             {
@@ -60,22 +54,18 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
                         var managedNavigationNode = webNode.Descendants("ManagedNavigation").SingleOrDefault();
                         if (managedNavigationNode != null)
                         {
-                            var settings = new ManagedNavigationSettings(managedNavigationNode);
-                            this._navigationHelper.SetWebNavigationSettings(web, settings);
+                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                            {
+                                var settings = new ManagedNavigationSettings(managedNavigationNode);
+                                var navigationHelper = childScope.Resolve<NavigationHelper>();
+                                navigationHelper.SetWebNavigationSettings(web, settings);
+                            }
                         }
                     }
                 }
             }
 
             base.EndProcessing();
-        }
-
-        /// <summary>
-        /// Resolve Dependencies for helpers
-        /// </summary>
-        private void ResolveDependencies()
-        {
-            this._navigationHelper = PowerShellContainer.Current.Resolve<NavigationHelper>();
         }
     }
 }

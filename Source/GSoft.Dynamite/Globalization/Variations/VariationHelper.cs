@@ -4,30 +4,31 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Web;
+using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Globalization.Variations
 {
-    using System.Diagnostics.CodeAnalysis;
-using GSoft.Dynamite.Logging;
-
     /// <summary>
-    /// Variations helper class.
+    /// Helper from a old codebase. Must be merge with Expert and/or Builder
+    /// We use the 2 sync method in the PowerShell assembly.
     /// </summary>
-    public class VariationsHelper
+    [Obsolete]
+    public class VariationHelper
     {
-        private readonly ILogger _logger;
+        private readonly ILogger logger;
+        private readonly string publishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
-        public VariationsHelper(ILogger logger)
+        public VariationHelper(ILogger logger)
         {
-            this._logger = logger;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -37,7 +38,7 @@ using GSoft.Dynamite.Logging;
         /// <returns>A boolean value which indicates if the current web is the source variation label.</returns>
         public bool IsCurrentWebSourceLabel(SPWeb web)
         {
-            var sourceLabel = Variations.GetLabels(web.Site).FirstOrDefault(x => x.IsSource);
+            var sourceLabel = Microsoft.SharePoint.Publishing.Variations.GetLabels(web.Site).FirstOrDefault(x => x.IsSource);
             if (sourceLabel != null)
             {
                 // Compare absolute URL values
@@ -54,14 +55,13 @@ using GSoft.Dynamite.Logging;
         /// <param name="site">The site.</param>
         /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
         /// <returns>A collection of unique label.</returns>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public ReadOnlyCollection<VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
+        public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
-            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
+            this.logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
 
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
-            var list = new List<VariationLabel>();
+            var list = new List<Microsoft.SharePoint.Publishing.VariationLabel>();
             var query = new SPQuery
             {
                 Query = "<Where><Eq><FieldRef Name='Title'/><Value Type='Text'>" + labelToSync + "</Value></Eq></Where><OrderBy><FieldRef Name=\"Title\" Ascending=\"TRUE\"></FieldRef></OrderBy>"
@@ -77,7 +77,7 @@ using GSoft.Dynamite.Logging;
                 list.Add(varLbl);
             }
 
-            return new ReadOnlyCollection<VariationLabel>(list);
+            return new ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel>(list);
         }
 
         /// <summary>
@@ -85,10 +85,9 @@ using GSoft.Dynamite.Logging;
         /// </summary>
         /// <param name="listToSync">The source SPList instance to sync.</param>
         /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public void SyncList(SPList listToSync, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
+            this.logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
 
             var sourceWeb = listToSync.ParentWeb;
             Guid sourceListGuid = listToSync.ID;
@@ -105,7 +104,7 @@ using GSoft.Dynamite.Logging;
                     {
                         var list = elevatedWeb.Lists[sourceListGuid];
 
-                        var publishingAssembly = Assembly.LoadFrom("C:\\Program Files\\Common Files\\Microsoft Shared\\Web Server Extensions\\15\\ISAPI\\Microsoft.SharePoint.Publishing.dll");
+                        var publishingAssembly = Assembly.LoadFrom(this.publishingAssemblyPath);
                         var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
                         var multiLingualResourceList = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.MultiLingualResourceList");
 
@@ -150,9 +149,9 @@ using GSoft.Dynamite.Logging;
         /// <param name="labelToSync">Source label to sync</param>
         public void SyncWeb(SPWeb web, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
+            this.logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
 
-            var publishingAssembly = Assembly.LoadFrom("C:\\Program Files\\Common Files\\Microsoft Shared\\Web Server Extensions\\15\\ISAPI\\Microsoft.SharePoint.Publishing.dll");
+            var publishingAssembly = Assembly.LoadFrom(this.publishingAssemblyPath);
             var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
             var cachedVariationSettings = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.CachedVariationSettings");
 
