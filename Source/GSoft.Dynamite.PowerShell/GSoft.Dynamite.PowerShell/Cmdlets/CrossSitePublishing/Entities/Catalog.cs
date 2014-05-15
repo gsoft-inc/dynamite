@@ -65,7 +65,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         /// Gets or sets a value indicating whether the list must appear in quick launch navigation
         /// </summary>
         /// <value>
-        ///   <c>true</c> if must added to quick laucnh; otherwise, <c>false</c>.
+        ///   <c>true</c> if must added to quick launch; otherwise, <c>false</c>.
         /// </value>
         [XmlAttribute]
         public bool AddToQuickLaunch { get; set; }

@@ -153,7 +153,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                             this.SetWriteSecurity(list, catalog);
 
                             // Set Navigation settings
-                            this.SetNavigationSettings(list,catalog);
+                            this.SetNavigationSettings(list, catalog);
 
                             // Create return object
                             var catalogSettings = new CatalogSettings()
@@ -305,7 +305,16 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     }
 
                     // Assign the termSet to the field with an anchor term if specified
-                    this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
+                    if (taxonomySegment.TermSubsetId != null)
+                    {
+                        var termId = new Guid(taxonomySegment.TermSubsetId);
+                        this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, termId);
+                    }
+                    else
+                    {
+                        this._taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
+                    }
+
                     this.WriteVerbose("TaxonomyField " + segment.InternalName + " successfully created!"); 
                 }
                 else if (segment is TextField)

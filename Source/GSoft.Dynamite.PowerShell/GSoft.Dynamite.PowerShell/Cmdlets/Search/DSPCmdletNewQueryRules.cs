@@ -241,11 +241,19 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                             if (!string.IsNullOrEmpty(linkUrl))
                             {
                                 var url = new Uri(linkUrl);
-                                // Add the action
-                                var bestBet = this._searchHelper.EnsureBestBet(searchServiceApp, searchObjectLevel, web, linkTitle,
-                                    url, linkDescription, isVisualBestBet, deleteIfUnused);
 
-                                this._searchHelper.CreatePromotedResultAction(queryRule,bestBet.Id);
+                                // Add the action
+                                var bestBet = this._searchHelper.EnsureBestBet(
+                                    searchServiceApp, 
+                                    searchObjectLevel, 
+                                    web, 
+                                    linkTitle,
+                                    url, 
+                                    linkDescription, 
+                                    isVisualBestBet, 
+                                    deleteIfUnused);
+
+                                this._searchHelper.CreatePromotedResultAction(queryRule, bestBet.Id);
                             }
                         }
                     }
