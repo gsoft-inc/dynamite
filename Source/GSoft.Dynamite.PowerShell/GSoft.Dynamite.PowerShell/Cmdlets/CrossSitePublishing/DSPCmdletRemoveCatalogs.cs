@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
+using Autofac;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
-using Autofac;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing

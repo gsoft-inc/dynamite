@@ -1,17 +1,11 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="NamedReaderWriterLocker.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace GSoft.Dynamite.Utils
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading;
-    
     /// <summary>
     /// The named reader writer locker.
     /// </summary>
@@ -19,7 +13,6 @@ namespace GSoft.Dynamite.Utils
     public class NamedReaderWriterLocker<T>
     {
         private readonly Dictionary<T, ReaderWriterLockSlim> lockDict = new Dictionary<T, ReaderWriterLockSlim>();
-
         private object locker = new object();
 
         /// <summary>
@@ -33,10 +26,14 @@ namespace GSoft.Dynamite.Utils
         /// </returns>
         public ReaderWriterLockSlim GetLock(T key)
         {
-            lock(locker){
-                if(this.lockDict.ContainsKey(key)){
+            lock (this.locker)
+            {
+                if (this.lockDict.ContainsKey(key))
+                {
                     return this.lockDict[key];
-                }else{
+                }
+                else
+                {
                     var lockSlim = new ReaderWriterLockSlim();
                     this.lockDict.Add(key, lockSlim);
                     return lockSlim;
@@ -175,9 +172,10 @@ namespace GSoft.Dynamite.Utils
         /// </param>
         public void RemoveLock(T key)
         {
-            ReaderWriterLockSlim o;
-            if(this.lockDict.ContainsKey(key))
+            if (this.lockDict.ContainsKey(key))
+            {
                 this.lockDict.Remove(key);
+            }
         }
     }
 }

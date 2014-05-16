@@ -5,7 +5,7 @@ using System.Text;
 using Autofac.Builder;
 
 namespace GSoft.Dynamite.ServiceLocator
-{   
+{
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
@@ -24,7 +24,10 @@ namespace GSoft.Dynamite.ServiceLocator
             InstancePerSite<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration)
         {
-            if (registration == null) throw new ArgumentNullException("registration");
+            if (registration == null)
+            {
+                throw new ArgumentNullException("registration");
+            }
 
             return registration.InstancePerMatchingLifetimeScope(SPLifetimeTag.Site);
         }
@@ -42,7 +45,10 @@ namespace GSoft.Dynamite.ServiceLocator
             InstancePerWeb<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration)
         {
-            if (registration == null) throw new ArgumentNullException("registration");
+            if (registration == null)
+            {
+                throw new ArgumentNullException("registration");
+            }
 
             return registration.InstancePerMatchingLifetimeScope(SPLifetimeTag.Web);
         }
@@ -60,7 +66,10 @@ namespace GSoft.Dynamite.ServiceLocator
             InstancePerRequest<TLimit, TActivatorData, TStyle>(
                 this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration)
         {
-            if (registration == null) throw new ArgumentNullException("registration");
+            if (registration == null)
+            {
+                throw new ArgumentNullException("registration");
+            }
 
             return registration.InstancePerMatchingLifetimeScope(SPLifetimeTag.Request);
         }

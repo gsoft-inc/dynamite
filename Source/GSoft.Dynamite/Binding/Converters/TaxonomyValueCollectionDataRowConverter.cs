@@ -31,9 +31,7 @@ namespace GSoft.Dynamite.Binding.Converters
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="arguments">The arguments.</param>
-        /// <returns>
-        /// The converted value.
-        /// </returns>
+        /// <returns>The converted value.</returns>
         public override object Convert(object value, DataRowConversionArguments arguments)
         {
             TaxonomyValueCollection convertedValues = null;
@@ -49,9 +47,7 @@ namespace GSoft.Dynamite.Binding.Converters
                 var stringValue = value as string;
                 if (!string.IsNullOrEmpty(stringValue))
                 {
-
-                    var fieldObject = arguments.FieldCollection.Cast<SPField>()
-                        .FirstOrDefault(f => f.InternalName == arguments.ValueKey);
+                    var fieldObject = arguments.FieldCollection.Cast<SPField>().FirstOrDefault(f => f.InternalName == arguments.ValueKey);
 
                     if (fieldObject != null)
                     {

@@ -1,16 +1,9 @@
-﻿
-
-using System.Collections.Generic;
-
-using GSoft.Dynamite.Binding;
+﻿using System.Collections.Generic;
 using GSoft.Dynamite.Binding.Converters;
-
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
-    using System.Linq;
-
     /// <summary>
     /// A schema for SharePoint entities.
     /// </summary>

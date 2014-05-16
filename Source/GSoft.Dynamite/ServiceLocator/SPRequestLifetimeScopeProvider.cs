@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Web;
 using Autofac;
-using Microsoft.SharePoint;
-using System.Web;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
-    using Autofac.Core;
-
     /// <summary>
     /// Lifetime scope provider the help share state at the HTTP request level
     /// </summary>

@@ -69,7 +69,7 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
                 // These are optional module, so trying to build these browser-cache-safe URLs may explode if the modules are missing
                 scriptLink.Name = SPUtility.MakeBrowserCacheSafeLayoutsUrl(scriptLink.Name, false);
             }
-            catch (SPException ex)
+            catch (SPException)
             {
                 // Script not found, remove from page
                 scriptLink.Parent.Controls.Remove(scriptLink);
