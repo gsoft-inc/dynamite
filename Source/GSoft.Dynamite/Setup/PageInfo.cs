@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Setup
         /// English label for the item
         /// </summary>
         public string Name { get; set; }
-
+        
         /// <summary>
         /// The page layout's content type id
         /// </summary>
