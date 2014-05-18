@@ -1,4 +1,4 @@
-Dynamite-2010
+Dynamite
 =============
 
-C# toolkit to help you build maintainable SharePoint 2010 farm solutions (fork of GSoft-SharePoint/Dynamite)
+C# toolkit to help you build maintainable SharePoint 2013 farm solutions
