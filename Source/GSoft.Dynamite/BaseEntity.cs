@@ -25,5 +25,5 @@ namespace GSoft.Dynamite
         /// </summary>
         [Property(BindingType = BindingType.ReadOnly)]
         public DateTime Created { get; set; }
-    }
+    } 
 }
