@@ -48,6 +48,17 @@ namespace GSoft.Dynamite.ServiceLocator
         ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature);
 
         /// <summary>
+        /// Creates a new child lifetime scope under the scope of the specified web
+        /// (allowing you to inject InstancePerSite and InstancePerWeb objects).
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
+        /// Prefer usage of this method versus resolving manually from the Current property.
+        /// </summary>
+        /// <param name="feature">The current web from which we are requesting a child lifetime scope</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        ILifetimeScope BeginWebLifetimeScope(SPWeb web);
+
+        /// <summary>
         /// Autowires the dependencies of a UI control using the current HTTP-request-bound
         /// lifetime scope.
         /// Prefer usage of this method versus resolving manually from the Current property.

@@ -94,6 +94,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
@@ -170,6 +171,11 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
+    <Compile Include="ServiceLocator\ISharePointServiceLocatorAccessor.cs" />
     <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
