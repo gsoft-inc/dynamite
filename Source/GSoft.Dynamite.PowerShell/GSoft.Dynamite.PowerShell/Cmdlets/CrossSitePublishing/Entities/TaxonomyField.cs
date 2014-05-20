@@ -51,5 +51,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         /// </value>
         [XmlAttribute]
         public string TermSubsetName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the term subset identifier.
+        /// </summary>
+        /// <value>
+        /// The term subset identifier.
+        /// </value>
+        [XmlAttribute]
+        public string TermSubsetId { get; set; }
     }
 }
