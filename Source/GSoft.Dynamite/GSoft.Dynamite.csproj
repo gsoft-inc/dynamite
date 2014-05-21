@@ -65,6 +65,7 @@
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.Portal, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -199,6 +200,7 @@
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
+    <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
