@@ -112,7 +112,11 @@
     <Compile Include="Extensions\XmlDocumentExtensions.cs" />
     <Compile Include="PipeBindsObjects\XmlDocumentPipeBind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Unity\PowerShellContainer.cs" />
+    <Compile Include="ServiceLocator\PowerShellContainer.cs" />
+    <Compile Include="ServiceLocator\PowerShellRegistrationModule.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ServiceLocator\PowerShellResourceLocationConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GSoft.Dynamite\GSoft.Dynamite.csproj">

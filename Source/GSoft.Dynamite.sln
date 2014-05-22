@@ -20,6 +20,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code", "Code", "{AC446A77-76B7-4201-B431-89CDCC57E6E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.SP", "GSoft.Dynamite.SP\GSoft.Dynamite.SP.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD} = {B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.PowerShell", "GSoft.Dynamite.PowerShell\GSoft.Dynamite.PowerShell\GSoft.Dynamite.PowerShell.csproj", "{B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD}"
 EndProject
