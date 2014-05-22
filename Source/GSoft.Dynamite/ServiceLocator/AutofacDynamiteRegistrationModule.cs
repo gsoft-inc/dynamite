@@ -117,6 +117,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Serializers
             builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
+            builder.RegisterType<XmlHelper>();
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();

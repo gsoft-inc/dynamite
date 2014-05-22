@@ -203,6 +203,7 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="Serializers\XmlHelper.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
