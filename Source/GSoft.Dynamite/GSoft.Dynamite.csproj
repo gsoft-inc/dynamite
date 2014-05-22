@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="MasterPages\Minification.cs" />
+    <Compile Include="Serializers\XmlHelper.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
