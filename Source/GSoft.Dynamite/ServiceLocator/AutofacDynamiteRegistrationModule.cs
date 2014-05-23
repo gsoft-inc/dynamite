@@ -21,6 +21,7 @@ using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
+using Microsoft.Office.Server.Search;
 
 namespace GSoft.Dynamite.ServiceLocator
 {   
@@ -101,6 +102,11 @@ namespace GSoft.Dynamite.ServiceLocator
             // MasterPages
             builder.RegisterType<MasterPageHelper>();
             builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
+
+            //Navigation 
+            builder.RegisterType<NavigationService>();
+            builder.RegisterType<NavigationNode>().As<INavigationNode>();
+            builder.RegisterType<NavigationManagedProperties>();
 
             // Repositories
             builder.RegisterType<FolderRepository>();

@@ -98,6 +98,10 @@
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="MasterPages\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Navigation\INavigationNode.cs" />
+    <Compile Include="Navigation\NavigationManagedProperties.cs" />
+    <Compile Include="Navigation\NavigationNode.cs" />
+    <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
