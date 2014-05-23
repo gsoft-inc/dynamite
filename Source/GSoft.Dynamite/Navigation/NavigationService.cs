@@ -35,83 +35,19 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="catalogNavigation">The catalog navigation.</param>
         /// <param name="sessionCacheHelper">The session cache helper.</param>
         /// <param name="appCacheHelper">The application cache helper.</param>
-        public NavigationService(ILogger logger, NavigationHelper navigationHelper, SearchHelper searchHelper, ICatalogNavigation catalogNavigation, ISessionCacheHelper sessionCacheHelper, IAppCacheHelper appCacheHelper)
+        public NavigationService(ILogger logger, NavigationHelper navigationHelper, SearchHelper searchHelper, ICatalogNavigation catalogNavigation)
         {
             this.logger = logger;
             this.navigationHelper = navigationHelper;
             this.searchHelper = searchHelper;
             this.catalogNavigation = catalogNavigation;
-            this.sessionCacheHelper = sessionCacheHelper;
-            this.appCacheHelper = appCacheHelper;
         }
-
-         /// <summary>
-        /// Gets or sets the application cache expiration in seconds.
-        /// </summary>
-        /// <value>
-        /// The application cache expiration in seconds.
-        /// </value>
-        public int AppCacheExpirationInSeconds { get; set; }
         
         /// <summary>
-        /// Gets all the navigation terms.
+        /// Get the pages tagged with terms across the search service
         /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// /// <param name="properties">Managed properties</param>
-        /// <returns>A navigation node tree.</returns>
-        //public IEnumerable<INavigationNode> GetAllNavigationNodes(SPWeb web, NavigationManagedProperties properties)
-        //{
-        //    try
-        //    {
-        //        // Use the SPMonitored scope to 
-        //        using (new SPMonitoredScope("GSoft.Dynamite.Navigation.NavigationService::GetAllNavigationNodes"))
-        //        {
-        //            // Create view to return all navigation terms
-        //            var view = new NavigationTermSetView(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider)
-        //            {
-        //                ExcludeTermsByProvider = false
-        //            };
-
-        //            IEnumerable<INavigationNode> items, terms, nodes;
-        //            var navigationTermSet =
-        //                TaxonomyNavigation.GetTermSetForWeb(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true).GetWithNewView(view);
-
-        //            using (new SPMonitoredScope("GetNavigationNodeItems"))
-        //            {
-        //                // Get navigation items from search
-        //                items = this.sessionCacheHelper.Get(
-        //                    () => this.GetNavigationNodeItems(properties).ToArray(),
-        //                    AgropurCache.MainMenuSearchItemsKey);
-        //            }
-
-        //            using (new SPMonitoredScope("GetNavigationNodeTerms"))
-        //            {
-        //                // Get navigation terms from taxonomy
-        //                terms = this.appCacheHelper.Get(
-        //                    () => this.GetNavigationNodeTerms(navigationTermSet.Terms),
-        //                    AgropurCache.MainMenuNavigationNodesKey,
-        //                    this.AppCacheExpirationInSeconds);
-        //            }
-
-        //            using (new SPMonitoredScope("MapNavigationNodeTree"))
-        //            {
-        //                // Map navigation terms to node object, including search items
-        //                nodes = this.MapNavigationNodeTree(terms, items);
-        //            }
-
-        //            var nodesArray = nodes as INavigationNode[] ?? nodes.ToArray();
-        //            this.logger.Info("GetAllNavigationNodes: Found {0} navigation nodes in result source '{1}'.", nodesArray.Length, properties.ResultSourceName);
-        //            return nodesArray; 
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        this.logger.Error("GetAllNavigationNodes: {0}", ex.Message);
-        //        throw;
-        //    }
-        //}
-
+        /// <param name="properties">The Managed Properties</param>
+        /// <returns>Navigation node</returns>
         public IEnumerable<INavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
             // Use 'all menu items' result source for search query
@@ -152,6 +88,11 @@ namespace GSoft.Dynamite.Navigation
             return new List<INavigationNode>();
         }
 
+        /// <summary>
+        /// Get all navigation node terms
+        /// </summary>
+        /// <param name="navigationTerms">Navigation terms</param>
+        /// <returns>navigation node terms</returns>
         public IEnumerable<INavigationNode> GetNavigationNodeTerms(IEnumerable<NavigationTerm> navigationTerms)
         {
             var terms = navigationTerms as NavigationTerm[] ?? navigationTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
@@ -172,6 +113,12 @@ namespace GSoft.Dynamite.Navigation
             return nodes;
         }
 
+        /// <summary>
+        /// Map nodes with items
+        /// </summary>
+        /// <param name="navigationTerms">Navigation terms</param>
+        /// <param name="navigationItems">Navigation Items</param>
+        /// <returns>Navigation nodes</returns>
         public IEnumerable<INavigationNode> MapNavigationNodeTree(IEnumerable<INavigationNode> navigationTerms, IEnumerable<INavigationNode> navigationItems)
         {
             // Initialize current navigation term, current navigation branch terms, navigation items and navigation terms
