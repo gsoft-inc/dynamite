@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Catalogs;
@@ -138,7 +139,10 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ContentOrganizerHelper>();
             builder.RegisterType<NavigationHelper>();
             builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+
+            // Branding
             builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
+            builder.RegisterType<DisplayTemplateHelper>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();

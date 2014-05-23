@@ -94,6 +94,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Branding\DisplayTemplateHelper.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="MasterPages\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
