@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using System.Security.Cryptography;
 using System.Xml.Linq;
-
+using Autofac;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
-using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
-
 using Microsoft.Office.Server.Search.Administration;
-using Microsoft.Office.Server.Search.Query;
-using Microsoft.Office.Server.Search.Query.Rules;
-using Autofac;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 {

@@ -67,7 +67,12 @@ namespace GSoft.Dynamite.Binding
         /// <param name="converter">The converter.</param>
         public void RegisterTypeConverter(Type targetType, IConverter converter)
         {
-            this._registeredTypes.Add(targetType, converter);
+            IConverter existing = null;
+            if (!this._registeredTypes.TryGetValue(targetType, out existing))
+            {
+                // Only register converter if it doesn't exist yet
+                this._registeredTypes.Add(targetType, converter);
+            }
         }
 
         /// <summary>

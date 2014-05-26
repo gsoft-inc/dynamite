@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
+using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
 
@@ -12,6 +13,17 @@ namespace GSoft.Dynamite.WebParts
     /// </summary>
     public class WebPartHelper
     {
+        private readonly XmlHelper xmlHelper;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="xmlHelper">Helper for Xml work</param>
+        public WebPartHelper(XmlHelper xmlHelper)
+        {
+            this.xmlHelper = xmlHelper;
+        }
+
         /// <summary>
         /// Method to generate the html code to embed a web part in a Publishing Page Content
         /// </summary>
@@ -130,6 +142,48 @@ namespace GSoft.Dynamite.WebParts
             }
 
             return webPart;
+        }
+
+        /// <summary>
+        /// Method to create a Content Editor Web Part containing a place holder image
+        /// </summary>
+        /// <param name="x">x axis dimension in pixel</param>
+        /// <param name="y">y axis dimension in pixel</param>
+        /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
+        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y)
+        {
+            return this.CreatePlaceHolderWebPart(x, y, string.Empty, string.Empty);
+        }
+
+        /// <summary>
+        /// Method to create a Content Editor Web Part containing a place holder image
+        /// </summary>
+        /// <param name="x">x axis dimension in pixel</param>
+        /// <param name="y">y axis dimension in pixel</param>
+        /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
+        /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
+        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor)
+        {
+            return this.CreatePlaceHolderWebPart(x, y, backgroundColor, string.Empty);
+        }
+
+        /// <summary>
+        /// Method to create a Content Editor Web Part containing a place holder image
+        /// </summary>
+        /// <param name="x">x axis dimension in pixel</param>
+        /// <param name="y">y axis dimension in pixel</param>
+        /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
+        /// <param name="fontColor">Font hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
+        /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
+        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor, string fontColor)
+        {
+            var placeHolderWebPart = new ContentEditorWebPart();
+            placeHolderWebPart.ChromeType = System.Web.UI.WebControls.WebParts.PartChromeType.None;
+
+            string fontColorSlug = !string.IsNullOrEmpty(backgroundColor) && !string.IsNullOrEmpty(fontColor) ? string.Format("/{0}", fontColor) : string.Empty;
+
+            placeHolderWebPart.Content = this.xmlHelper.CreateXmlElementInnerTextFromString(string.Format("<img src=\"http://placehold.it/{0}x{1}/{2}{3}\"/>", x, y, backgroundColor, fontColorSlug));
+            return placeHolderWebPart;
         }
     }
 }

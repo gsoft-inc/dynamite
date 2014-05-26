@@ -16,6 +16,12 @@ namespace GSoft.Dynamite.ServiceLocator
 
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Utilities;
+    using System.Reflection;
+    using Autofac.Core;
+    using Autofac.Builder;
+    using Autofac.Core.Lifetime;
+    using Autofac.Features.Scanning;
+    using GSoft.Dynamite.ServiceLocator.Internal;
 
     /// <summary>
     /// Maintains AppDomain-wide root containers that automatically scan 
@@ -115,7 +121,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 // so that other AutofacDynamiteRegistrationModule instances don't get registered.
                 var filteredMatchingAssemblies = matchingAssemblies.Where(x => !x.FullName.Contains("GSoft.Dynamite,"));
 
-                containerBuilder.RegisterAssemblyModules(filteredMatchingAssemblies.ToArray());
+                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilder, filteredMatchingAssemblies.ToArray());
 
                 return containerBuilder.Build();
             }

@@ -48,7 +48,7 @@ namespace GSoft.Dynamite.Taxonomy
                 TaxonomySession session = new TaxonomySession(web.Site);
                 TermStore termStore = session.TermStores[termStoreName];
                 TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
-                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
                 AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, termStoreGroupName, termSetName, termSubsetName);
             }
         }
@@ -70,7 +70,7 @@ namespace GSoft.Dynamite.Taxonomy
                 TaxonomySession session = new TaxonomySession(web.Site);
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
                 TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
-                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
                 AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, termStoreGroupName, termSetName, termSubsetName);
             }
         }
@@ -92,8 +92,29 @@ namespace GSoft.Dynamite.Taxonomy
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
                 Group siteCollectionGroup = termStore.GetSiteCollectionGroup(web.Site);
                 TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
-                AssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
                 AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, siteCollectionGroup.Name, termSetName, termSubsetName);
+            }
+        }
+
+        /// <summary>
+        /// Assigns a term set to a site column in the default site collection
+        /// term store.
+        /// </summary>
+        /// <param name="web">The web containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termStoreGroupName">The name of the term store group.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        {
+            if (web.Fields.Contains(fieldId))
+            {
+                var session = new TaxonomySession(web.Site);
+                var termStore = session.DefaultSiteCollectionTermStore;
+                var field = (TaxonomyField)web.Fields[fieldId];
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetId);
             }
         }
 
@@ -114,12 +135,33 @@ namespace GSoft.Dynamite.Taxonomy
                 TaxonomySession session = new TaxonomySession(list.ParentWeb.Site);
                 TermStore termStore = session.TermStores[termStoreName];
                 TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
-                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
             }
         }
 
         /// <summary>
         /// Assigns a term set to a list column in the default site collection
+        /// term store.
+        /// </summary>
+        /// <param name="list">The list containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termStoreGroupName">The name of the term store group.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        {
+            if (list.Fields.Contains(fieldId))
+            {
+                var session = new TaxonomySession(list.ParentWeb.Site);
+                var termStore = session.DefaultSiteCollectionTermStore;
+                var field = (TaxonomyField)list.Fields[fieldId];
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetId);
+            }
+        }
+
+        /// <summary>
+        /// Assigns a term set to a site column in the default site collection
         /// term store.
         /// </summary>
         /// <param name="list">The list containing the field.</param>
@@ -135,7 +177,7 @@ namespace GSoft.Dynamite.Taxonomy
                 TaxonomySession session = new TaxonomySession(list.ParentWeb.Site);
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
                 TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
-                AssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
             }
         }
 
@@ -413,11 +455,11 @@ namespace GSoft.Dynamite.Taxonomy
             // Can't update the fields while iterating over their parent collection, so gotta do it after
             foreach (TaxonomyField taxFieldToReconnect in listFieldsToUpdate)
             {
-                AssignTermSetToTaxonomyField(termStore, taxFieldToReconnect, termStoreGroupName, termSetName, termSubsetName);
+                InternalAssignTermSetToTaxonomyField(termStore, taxFieldToReconnect, termStoreGroupName, termSetName, termSubsetName);
             }
         }
 
-        private static void AssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
+        private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
         {
             int originalWorkingLanguage = termStore.WorkingLanguage;
             termStore.WorkingLanguage = Language.English.Culture.LCID;
@@ -446,6 +488,25 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = originalWorkingLanguage;
         }
 
+        private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        {
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+
+            Group group = termStore.Groups[termStoreGroupName];
+            TermSet termSet = group.TermSets[termSetName];
+
+            // Connect to MMS
+            field.SspId = termSet.TermStore.Id;
+            field.TermSetId = termSet.Id;
+            field.TargetTemplate = string.Empty;
+
+            // Select a sub node of the termset to limit selection
+            field.AnchorId = Guid.Empty != termSubsetId ? termSubsetId : Guid.Empty;
+            field.Update();
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+        }
         #endregion
     }
 }

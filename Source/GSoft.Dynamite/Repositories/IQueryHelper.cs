@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using GSoft.Dynamite.ValueTypes;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
-using System;
 
 namespace GSoft.Dynamite.Repositories
 {
@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Repositories
         /// Gets the now in CAML.
         /// </summary>
         /// <value>The now in CAML.</value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of static members discouraged in favor of non-static public member for more consistency with dependency injection")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of static members discouraged in favor of non-static public member for more consistency with dependency injection")]
         string NowInCAML { get; }
         
         /// <summary>
@@ -31,7 +31,7 @@ namespace GSoft.Dynamite.Repositories
         /// </summary>
         /// <param name="toTrim">The content to trim</param>
         /// <returns>The trimmed string</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of static members discouraged in favor of non-static public member for more consistency with dependency injection")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of static members discouraged in favor of non-static public member for more consistency with dependency injection")]
         string TrimIfNotNullOrEmpty(string toTrim);
 
         /// <summary>

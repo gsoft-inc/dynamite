@@ -228,7 +228,18 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                         if (!string.IsNullOrEmpty(linkUrl))
                                         {
                                             var url = new Uri(linkUrl);
-                                            var bestBet = searchHelper.EnsureBestBet(searchServiceApp, searchObjectLevel, web, linkTitle, url, linkDescription, isVisualBestBet, deleteIfUnused);
+                                            
+                                            // Add the action
+                                            var bestBet = searchHelper.EnsureBestBet(
+                                                searchServiceApp, 
+                                                searchObjectLevel, 
+                                                web, 
+                                                linkTitle, 
+                                                url, 
+                                                linkDescription, 
+                                                isVisualBestBet, 
+                                                deleteIfUnused);
+
                                             searchHelper.CreatePromotedResultAction(queryRule, bestBet.Id);
                                         }
                                     }

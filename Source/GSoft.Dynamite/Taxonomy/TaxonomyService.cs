@@ -21,7 +21,6 @@ namespace GSoft.Dynamite.Taxonomy
         private ILogger log;
         private ISiteTaxonomyCacheManager taxManager;
 
-        private int taxCreationCount = 0;
         private Guid requestIdentifier = Guid.NewGuid();
 
         /// <summary>
@@ -158,7 +157,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term</returns>
         public Term GetTermForId(SPSite site, Guid id)
         {
-            return GetTermForId(site, null, id);
+            return this.GetTermForId(site, null, id);
         }
 
         /// <summary>

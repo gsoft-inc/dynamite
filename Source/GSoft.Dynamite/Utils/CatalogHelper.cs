@@ -31,8 +31,25 @@ namespace GSoft.Dynamite.Utils
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
-        /// <returns>The SharePoint list configured as a catalog.</returns>
+        /// <returns>
+        /// The SharePoint list configured as a catalog.
+        /// </returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields)
+        {
+            return this.SetListAsCatalog(list, availableFields, false);
+        }
+
+        /// <summary>
+        /// Set a SharePoint as a product catalog without navigation term associated
+        /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
+        /// </summary>
+        /// <param name="list">The SharePoint list.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
+        /// <returns>
+        /// The SharePoint list configured as a catalog.
+        /// </returns>
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, bool activateAnonymousAccess)
         {
             this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
@@ -40,14 +57,17 @@ namespace GSoft.Dynamite.Utils
             list.IndexedRootFolderPropertyKeys.Add("PublishingCatalogSettings");
             list.IndexedRootFolderPropertyKeys.Add("IsPublishingCatalog");
 
-            // Allow anonymous access on the parentWeb
-            list.ParentWeb.FirstUniqueAncestorWeb.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessWebLists;
+            if (activateAnonymousAccess)
+            {
+                // Allow anonymous access on the parentWeb
+                list.ParentWeb.FirstUniqueAncestorWeb.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessWebLists;
 
-            // Break list inheritance for anonymous access
-            list.BreakRoleInheritance(true, false);
+                // Break list inheritance for anonymous access
+                list.BreakRoleInheritance(true, false);
 
-            // Allow anonymous access on the list
-            list.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessList;
+                // Allow anonymous access on the list
+                list.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessList; 
+            }
 
             var fieldList = new Collection<string>();
 
@@ -80,9 +100,24 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The SharePoint list configured as a catalog.</returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap)
         {
+            return this.SetListAsCatalog(list, availableFields, taxonomyFieldMap, false);
+        }
+
+        /// <summary>
+        /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
+        /// </summary>
+        /// <param name="list">The SharePoint list.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
+        /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
+        /// <returns>
+        /// The SharePoint list configured as a catalog.
+        /// </returns>
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap, bool activateAnonymousAccess)
+        {
             this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
-            var catalogList = this.SetListAsCatalog(list, availableFields);
+            var catalogList = this.SetListAsCatalog(list, availableFields, activateAnonymousAccess);
             var rootFolder = catalogList.RootFolder;
 
             // Set current culture to be able to get the "Title" of the list

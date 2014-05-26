@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
@@ -9,6 +11,7 @@ using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
@@ -18,6 +21,7 @@ using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
+using Microsoft.Office.Server.Search;
 
 namespace GSoft.Dynamite.ServiceLocator
 {   
@@ -70,6 +74,8 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
+            builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
+            builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
 
             // Definitions
             builder.RegisterType<ContentTypeBuilder>();
@@ -77,6 +83,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
+            builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
             builder.RegisterType<MuiHelper>();
             builder.RegisterType<DateHelper>();
             builder.RegisterType<RegionalSettingsHelper>();
@@ -96,6 +103,11 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<MasterPageHelper>();
             builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
 
+            //Navigation 
+            builder.RegisterType<NavigationService>();
+            builder.RegisterType<NavigationNode>().As<INavigationNode>();
+            builder.RegisterType<NavigationManagedProperties>();
+
             // Repositories
             builder.RegisterType<FolderRepository>();
             builder.RegisterType<QueryHelper>().As<IQueryHelper>();
@@ -106,6 +118,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Serializers
             builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
+            builder.RegisterType<XmlHelper>();
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
@@ -131,6 +144,11 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<CustomActionHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
             builder.RegisterType<NavigationHelper>();
+            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+
+            // Branding
+            builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
+            builder.RegisterType<DisplayTemplateHelper>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();

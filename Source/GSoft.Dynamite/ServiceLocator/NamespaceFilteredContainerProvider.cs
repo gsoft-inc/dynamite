@@ -67,7 +67,7 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             get
             {
-                return AppDomainContainers.CurrentContainer(appRootNamespace, assemblyFileNameMatcher);
+                return AppDomainContainers.CurrentContainer(this.appRootNamespace, this.assemblyFileNameMatcher);
             }
         }
     }

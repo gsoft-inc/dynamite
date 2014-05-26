@@ -15,6 +15,7 @@ using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Navigation;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -134,6 +135,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                                 // Set list Write Security
                                 this.SetWriteSecurity(list, catalog);
+
+                                // Set Navigation settings
+                                this.SetNavigationSettings(list, catalog);
 
                                 // Create return object
                                 var catalogSettings = new CatalogSettings()
@@ -303,8 +307,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         }
 
                         // Assign the termSet to the field with an anchor term if specified
-                        taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
-                        this.WriteVerbose("TaxonomyField " + segment.InternalName + " successfully created!");
+                        if (taxonomySegment.TermSubsetId != null)
+                        {
+                            var termId = new Guid(taxonomySegment.TermSubsetId);
+                            taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, termId);
+                        }
+                        else
+                        {
+                            taxonomyHelper.AssignTermSetToListColumn(list, taxonomyField.Id, taxonomySegment.TermSetGroupName, taxonomySegment.TermSetName, taxonomySegment.TermSubsetName);
+                        }
+
+                        this.WriteVerbose("TaxonomyField " + segment.InternalName + " successfully created!"); 
                     }
                     else if (segment is TextField)
                     {
@@ -312,7 +325,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         // Create the column in the list
                         var textField = listHelper.CreateTextField(list, segment.InternalName, segment.DisplayName, segment.Description, segment.Group, textSegment.IsMultiline);
-
+                        
                         // Set required if true
                         if (textSegment.IsRequired)
                         {
@@ -369,6 +382,27 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             {
                 list.WriteSecurity = catalog.WriteSecurity;
                 list.Update();
+            }
+        }
+
+        private void SetNavigationSettings(SPList list, Catalog catalog)
+        {
+            if (catalog.AddToQuickLaunch)
+            {
+                var web = list.ParentWeb;
+
+                // Check for an existing link to the list.
+                var listNode = web.Navigation.GetNodeByUrl(list.DefaultViewUrl);
+
+                // No link, so create one.
+                if (listNode == null)
+                {
+                    // Create the node.
+                    listNode = new SPNavigationNode(list.Title, list.DefaultViewUrl);
+
+                    // Add it to Quick Launch.
+                    web.Navigation.AddToQuickLaunch(listNode, SPQuickLaunchHeading.Lists);
+                }
             }
         }
     }

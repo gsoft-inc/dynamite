@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using GSoft.Dynamite.Utils;
-
-using Microsoft.SharePoint;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -16,13 +14,17 @@ namespace GSoft.Dynamite.Taxonomy
         private static readonly NamedReaderWriterLocker<Guid> NamedLocker = new NamedReaderWriterLocker<Guid>();
 
         private readonly Dictionary<Guid, SiteTaxonomyCache> taxonomyCaches = new Dictionary<Guid, SiteTaxonomyCache>();
-        private readonly ILogger log;
+        private readonly ILogger logger;
 
-        public SiteTaxonomyCacheManager(ILogger log)
+        /// <summary>
+        /// Constructor with dependencies injection
+        /// </summary>
+        /// <param name="logger">The logger</param>
+        public SiteTaxonomyCacheManager(ILogger logger)
         {
-            this.log = log;
+            this.logger = logger;
 
-            this.log.Info("Creating new SiteTaxonomyCacheManager");
+            this.logger.Info("Creating new SiteTaxonomyCacheManager");
         }
 
         /// <summary>
@@ -42,32 +44,32 @@ namespace GSoft.Dynamite.Taxonomy
             return NamedLocker.RunWithUpgradeableReadLock(
                 site.ID,
                 () =>
+                {
+                    // Create the Site Taxonomy Cache because it does not yet exist.
+                    if (!this.taxonomyCaches.ContainsKey(site.ID))
                     {
-                        // Create the Site Taxonomy Cache because it does not yet exist.
-                        if (!this.taxonomyCaches.ContainsKey(site.ID))
-                        {
-                            return NamedLocker.RunWithWriteLock(
-                                site.ID,
-                                () =>
-                                    {
-                                        // Double check for thread concurency
-                                        if (!this.taxonomyCaches.ContainsKey(site.ID))
-                                        {
-                                            var newTaxCache = new SiteTaxonomyCache(site, termStoreName);
+                        return NamedLocker.RunWithWriteLock(
+                            site.ID,
+                            () =>
+                            {
+                                // Double check for thread concurency
+                                if (!this.taxonomyCaches.ContainsKey(site.ID))
+                                {
+                                    var newTaxCache = new SiteTaxonomyCache(site, termStoreName);
 
-                                            this.log.Info("SiteTaxonomyCacheManager: Adding site taxonomy cache for site collection " + site.Url);
-                                            this.taxonomyCaches.Add(site.ID, newTaxCache);
+                                    this.logger.Info("SiteTaxonomyCacheManager: Adding site taxonomy cache for site collection " + site.Url);
+                                    this.taxonomyCaches.Add(site.ID, newTaxCache);
 
-                                            return newTaxCache;
-                                        }
-                        
-                                        return this.taxonomyCaches[site.ID];
-                                    });
-                        }
+                                    return newTaxCache;
+                                }
 
-                // Return the existing Session
-                return this.taxonomyCaches[site.ID];
-            });
+                                return this.taxonomyCaches[site.ID];
+                            });
+                    }
+
+                    // Return the existing Session
+                    return this.taxonomyCaches[site.ID];
+                });
         }
     }
 }

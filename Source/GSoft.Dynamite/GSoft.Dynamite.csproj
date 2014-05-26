@@ -65,6 +65,7 @@
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.Portal, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -93,7 +94,14 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Branding\DisplayTemplateHelper.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
+    <Compile Include="MasterPages\Minification.cs" />
+    <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Navigation\INavigationNode.cs" />
+    <Compile Include="Navigation\NavigationManagedProperties.cs" />
+    <Compile Include="Navigation\NavigationNode.cs" />
+    <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
@@ -196,6 +204,13 @@
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="Serializers\XmlHelper.cs" />
+    <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
+    <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
+    <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
+    <Compile Include="ServiceLocator\ISharePointServiceLocatorAccessor.cs" />
     <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
@@ -269,6 +284,7 @@
     <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
+    <Compile Include="Utils\VersionContext.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />

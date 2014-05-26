@@ -356,7 +356,9 @@ namespace GSoft.Dynamite.Lists
         /// <param name="ratingStatus">True to enable. False to disable.</param>
         public void SetRatings(SPList list, string ratingType, bool ratingStatus)
         {
-            Assembly assembly = Assembly.Load("Microsoft.SharePoint.Portal, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c");
+            //Retrieve assembly from a puplib class
+            Assembly assembly = typeof(Microsoft.SharePoint.Portal.RatingsSettingsPage).Assembly;
+            //  Get ReputationHelper type
             Type reputationHelper = assembly.GetType("Microsoft.SharePoint.Portal.ReputationHelper");
 
             MethodInfo enableMethod = reputationHelper.GetMethod("EnableReputation", BindingFlags.Static | BindingFlags.NonPublic);

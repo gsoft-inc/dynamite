@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
-    using System.Data;
-
     /// <summary>
     /// The arguments for a SharePoint conversion.
     /// </summary>
@@ -14,24 +13,12 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePointListItemConversionArguments"/> class.
         /// </summary>
-        /// <param name="propertyName">
-        /// Name of the property.
-        /// </param>
-        /// <param name="propertyType">
-        /// Type of the property.
-        /// </param>
-        /// <param name="valueKey">
-        /// The value key.
-        /// </param>
-        /// <param name="dataRow">
-        /// The data row.
-        /// </param>
-        /// <param name="listItemCollection">
-        /// The list Item Collection.
-        /// </param>
-        /// <param name="fieldValues">
-        /// The full dictionary of values being converted
-        /// </param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="propertyType">Type of the property.</param>
+        /// <param name="valueKey">The value key.</param>
+        /// <param name="dataRow">The data row.</param>
+        /// <param name="listItemCollection">The list Item Collection.</param>
+        /// <param name="fieldValues">The full dictionary of values being converted</param>
         public DataRowConversionArguments(string propertyName, Type propertyType, string valueKey, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web, IDictionary<string, object> fieldValues)
             : base(propertyName, propertyType, valueKey)
         {

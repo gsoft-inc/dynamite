@@ -1,18 +1,9 @@
-﻿
-// -----------------------------------------------------------------------
-// <copyright file="SPRequestLifetimeHttpModule.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Web;
-
     /// <summary>
     /// Autofac-related HttpModule that takes care of disposing per-request lifetimes
     /// at the end of each HTTP request.
@@ -38,6 +29,11 @@ namespace GSoft.Dynamite.ServiceLocator
         {
         }
 
+        /// <summary>
+        /// Add a new Lifetime scope provider.
+        /// </summary>
+        /// <param name="uniqueContainerKey">The unique container key</param>
+        /// <param name="requestLifetimeScopeProvider">The provider to add in the dictionary</param>
         public static void AddRequestLifetimeScopeProvider(string uniqueContainerKey, SPRequestLifetimeScopeProvider requestLifetimeScopeProvider)
         {
             if (string.IsNullOrEmpty(uniqueContainerKey))
@@ -54,7 +50,12 @@ namespace GSoft.Dynamite.ServiceLocator
             allLifetimeScopeProviders[uniqueContainerKey] = requestLifetimeScopeProvider;
         }
 
-        static void OnEndRequest(object sender, EventArgs e)
+        /// <summary>
+        /// Event handler to end a Lifetime scope at the end of a http request
+        /// </summary>
+        /// <param name="sender">The event sender</param>
+        /// <param name="e">Arguments related to the event</param>
+        public static void OnEndRequest(object sender, EventArgs e)
         {
             foreach (ILifetimeScopeProvider provider in allLifetimeScopeProviders.Values)
             {
