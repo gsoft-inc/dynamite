@@ -278,7 +278,7 @@ namespace GSoft.Dynamite.Security
                     assignments.RoleDefinitionBindings.Add(roleToAdd);
                     target.RoleAssignments.Add(assignments);
                 }
-                else
+                else if (!assignments.RoleDefinitionBindings.Cast<SPRoleDefinition>().Any(x => x.Id.Equals(roleToAdd.Id)))
                 {
                     assignments.RoleDefinitionBindings.Add(roleToAdd);
                     assignments.Update();
