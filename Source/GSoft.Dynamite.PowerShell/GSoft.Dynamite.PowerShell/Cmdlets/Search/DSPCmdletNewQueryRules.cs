@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                     var contextWeb = queryRuleNode.Attribute("ContextWeb").Value;
                     using (var site = new SPSite(contextWeb))
                     {
-                        using (var web = site.OpenWeb(contextWeb))
+                        using (var web = site.OpenWeb())
                         {
                             using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
                             {
