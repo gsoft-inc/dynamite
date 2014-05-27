@@ -8,6 +8,7 @@ using GSoft.Dynamite.PowerShell.Cmdlets.Configuration.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
 {
@@ -17,7 +18,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
     [Cmdlet(VerbsCommon.Add, "DSPPropertyBagValue")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewPropertyBagValue : Cmdlet
+    public class DSPCmdletAddPropertyBagValue : SPCmdlet
     {
         private XmlSerializer _serializer;
         
@@ -34,7 +35,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
             this._serializer = new XmlSerializer(typeof(PropertyBagValue));
@@ -65,13 +66,13 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
                             {
                                 this.WriteWarning(
                                     string.Format(
-                                    CultureInfo.InvariantCulture, 
-                                    "Overwriting property bag '{0}' with value '{1}' to web '{2}'", 
-                                    propertyBagValue.Key, 
+                                    CultureInfo.InvariantCulture,
+                                    "Overwriting property bag '{0}' with value '{1}' to web '{2}'",
+                                    propertyBagValue.Key,
                                     propertyBagValue.Value,
                                     webUrl));
 
-                                web.AllProperties[propertyBagValue.Key] = propertyBagValue.Value; 
+                                web.AllProperties[propertyBagValue.Key] = propertyBagValue.Value;
                             }
                             else if (!web.AllProperties.ContainsKey(propertyBagValue.Key))
                             {
