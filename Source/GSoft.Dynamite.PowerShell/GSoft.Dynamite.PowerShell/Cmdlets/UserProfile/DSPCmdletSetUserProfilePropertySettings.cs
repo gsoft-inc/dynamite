@@ -12,6 +12,7 @@ using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using Microsoft.Office.Server.UserProfiles;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
 {
@@ -21,7 +22,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
     [Cmdlet(VerbsCommon.Set, "DSPUserProfilePropertySettings")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletSetUserProfilePropertySettings : Cmdlet
+    public class DSPCmdletSetUserProfilePropertySettings : SPCmdlet
     {
         private XmlSerializer _serializer;
         private UserProfileConfigManager _profileConfigManager;
@@ -45,7 +46,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
             this._serializer = new XmlSerializer(typeof(UserProfileProperty));

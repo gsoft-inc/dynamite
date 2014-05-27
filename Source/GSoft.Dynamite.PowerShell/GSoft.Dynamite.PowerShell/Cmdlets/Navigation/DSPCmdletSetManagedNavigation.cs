@@ -9,6 +9,7 @@ using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
 {
@@ -18,7 +19,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
     [Cmdlet(VerbsCommon.Set, "DSPManagedNavigation")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletSetManagedNavigation : Cmdlet
+    public class DSPCmdletSetManagedNavigation : SPCmdlet
     {
         private XDocument configurationFile;
 
@@ -35,7 +36,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this.configurationFile = xml.ToXDocument();
@@ -65,7 +66,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

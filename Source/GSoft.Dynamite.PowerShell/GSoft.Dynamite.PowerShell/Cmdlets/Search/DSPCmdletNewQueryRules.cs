@@ -10,6 +10,7 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
@@ -20,7 +21,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     [Cmdlet(VerbsCommon.New, "DSPQueryRules")]
 
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewQueryRules : Cmdlet
+    public class DSPCmdletNewQueryRules : SPCmdlet
     {
         private XDocument configurationFile;
 
@@ -40,7 +41,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <summary>
         /// Ends the processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this.configurationFile = xml.ToXDocument();
@@ -250,7 +251,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

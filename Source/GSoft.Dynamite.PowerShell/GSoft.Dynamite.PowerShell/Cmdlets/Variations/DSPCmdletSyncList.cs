@@ -5,6 +5,7 @@ using Autofac;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.PowerShell.Unity;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 {
@@ -13,7 +14,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
     /// </summary>
     [Cmdlet("Sync", "DSPList")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class DSPCmdletSyncList : Cmdlet
+    public class DSPCmdletSyncList : SPCmdlet
     {
         /// <summary>
         /// Gets or sets the source web.
@@ -36,7 +37,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Get the list
             var list = this.SourceWeb.Lists[this.SourceListGuid];
@@ -50,7 +51,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
                 } 
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

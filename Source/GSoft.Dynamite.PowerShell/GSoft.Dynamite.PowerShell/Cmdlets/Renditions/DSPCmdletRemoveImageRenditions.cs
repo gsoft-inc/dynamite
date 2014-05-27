@@ -7,6 +7,7 @@ using System.Xml.Serialization;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 using Microsoft.SharePoint.Publishing;
 using ImageRendition = GSoft.Dynamite.PowerShell.Cmdlets.Renditions.Entities.ImageRenditionDefinition;
 
@@ -18,7 +19,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
     [Cmdlet(VerbsCommon.Remove, "DSPImageRenditions")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletRemoveImageRenditions : Cmdlet
+    public class DSPCmdletRemoveImageRenditions : SPCmdlet
     {
         private XmlSerializer _serializer;
         
@@ -35,7 +36,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
             this._serializer = new XmlSerializer(typeof(ImageRendition));
@@ -98,7 +99,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

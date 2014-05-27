@@ -133,8 +133,9 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-min.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="POWERSHELL\Help\GSoft.Dynamite.PowerShell.dll-help.xml" />
-    <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml" />
+    <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +150,9 @@
       <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
       <Name>GSoft.Dynamite</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="POWERSHELL\Help\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />

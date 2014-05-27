@@ -4,6 +4,7 @@ using Autofac;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.PowerShell.Unity;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 {
@@ -12,7 +13,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
     /// </summary>
     [Cmdlet("Sync", "DSPWeb")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class DSPCmdletSyncWeb : Cmdlet
+    public class DSPCmdletSyncWeb : SPCmdlet
     {
         /// <summary>
         /// Gets or sets the source web.
@@ -29,7 +30,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             this.WriteWarning("Sync SPWeb " + this.SourceWeb.Url + " to the " + this.LabelToSync.ToUpper() + " variation label...");
 
@@ -39,7 +40,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
                 variationHelper.SyncWeb(this.SourceWeb, this.LabelToSync);
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

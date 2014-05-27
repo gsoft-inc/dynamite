@@ -16,6 +16,7 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -25,7 +26,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     [Cmdlet(VerbsCommon.New, "DSPCatalogs")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewCatalogs : Cmdlet
+    public class DSPCmdletNewCatalogs : SPCmdlet
     {
         private XmlSerializer serializer;
 
@@ -39,7 +40,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
             this.serializer = new XmlSerializer(typeof(Catalog));
@@ -50,7 +51,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             this.ProcessCatalogs(configFile);
 
             // End cmdlet processing
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
 
         /// <summary>

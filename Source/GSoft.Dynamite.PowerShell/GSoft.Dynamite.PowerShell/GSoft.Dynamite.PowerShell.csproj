@@ -82,7 +82,7 @@
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Cmdlets\Configuration\DSPCmdletNewPropertyBagValue.cs" />
+    <Compile Include="Cmdlets\Configuration\DSPCmdletAddPropertyBagValue.cs" />
     <Compile Include="Cmdlets\Configuration\Entities\PropertyBagValue.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\CatalogSettings.cs" />
     <Compile Include="Cmdlets\CrossSitePublishing\Entities\Catalog.cs" />
