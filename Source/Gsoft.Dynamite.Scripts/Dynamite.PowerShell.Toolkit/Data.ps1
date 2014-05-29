@@ -197,7 +197,7 @@ function Add-ListContent
         $ListConfig.ContentType | ForEach-Object {
 
         $contentType = $_
-        $folders = @{"TextFields" = $_.TextFields.SampleFolder ; "ImageFields" = $_.ImageFields.SampleFolder ; "TaxonomyFields" = $_.TaxonomyFields.SampleFolder ; "HTMLFields" = $_.HTMLFields.SampleFolder; "UserFields" = $_.UserFields.SampleFolder }
+        $folders = @{"TextFields" = $_.TextFields.SampleFolder ; "URLFields" = $_.URLFields.SampleFolder; "ImageFields" = $_.ImageFields.SampleFolder ; "TaxonomyFields" = $_.TaxonomyFields.SampleFolder ; "HTMLFields" = $_.HTMLFields.SampleFolder; "UserFields" = $_.UserFields.SampleFolder }
 
         # If overwrite, replace all list items content for the content type
         if($Overwrite)
@@ -293,6 +293,16 @@ function Process-Fields
         $ContentType.HTMLFields.Field | ForEach-Object {
         	Foreach ($htmlFieldFolder in $folders["HTMLFields"]) {        
             	Process-HTMLField $SPListItem $htmlFieldFolder $_
+			}
+        }  
+    }
+	
+	# URL Fields
+    if($ContentType.URLFields -ne $null)
+    {
+        $ContentType.URLFields.Field | ForEach-Object {
+            Foreach ($urlFieldFolder in $folders["URLFields"]) {	        
+            	Process-TextField $SPListItem $urlFieldFolder $_ 
 			}
         }  
     }
@@ -404,7 +414,7 @@ function Process-TextField
         # Get a random string value
         $randomText = Get-Content $textFieldFile.FullName | Get-Random -Count 1
 
-        $SPListItem[$fieldName] = $randomText
+        $SPListItem[$fieldName] = "$($randomText)"
     }
 }
 
