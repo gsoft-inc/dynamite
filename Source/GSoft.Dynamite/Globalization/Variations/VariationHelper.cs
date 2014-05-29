@@ -49,6 +49,18 @@ namespace GSoft.Dynamite.Globalization.Variations
         }
 
         /// <summary>
+        /// Determines if variations are enabled on a site.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>A boolean value which indicates if the current site has variations enabled.</returns>
+        public bool IsVariationsEnabled(SPSite site)
+        {
+            bool isEnabled = Microsoft.SharePoint.Publishing.Variations.GetLabels(site).Count > 0;
+
+            return isEnabled;
+        }
+
+        /// <summary>
         /// Get the variations labels for the site collection.
         /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
