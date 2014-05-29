@@ -131,6 +131,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">The result source name</param>
         /// <param name="level">The search object level.</param>
+        /// <param name="searchProvider">The search provider for the result source.</param>
         /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
         /// <param name="properties">Query properties.</param>
@@ -138,7 +139,7 @@ namespace GSoft.Dynamite.Utils
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite)
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite)
         {
             var federationManager = new FederationManager(ssa);
             var searchOwner = new SearchObjectOwner(level, contextWeb);
@@ -154,7 +155,7 @@ namespace GSoft.Dynamite.Utils
             {
                 resultSource = federationManager.CreateSource(searchOwner);
                 resultSource.Name = resultSourceName;
-                resultSource.ProviderId = federationManager.ListProviders()["Local SharePoint Provider"].Id;
+                resultSource.ProviderId = federationManager.ListProviders()[searchProvider].Id;
                 resultSource.CreateQueryTransform(properties, query);
                 resultSource.Commit();
             }
@@ -186,6 +187,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">The result source name</param>
         /// <param name="level">The search object level.</param>
+        /// <param name="searchProvider">The search provider for this result source.</param>
         /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
         /// <param name="sortField">Internal name of the sort field.</param>
@@ -194,7 +196,7 @@ namespace GSoft.Dynamite.Utils
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider,SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
         {
             var sortCollection = new SortCollection();
             sortCollection.Add(sortField, direction);
@@ -202,7 +204,7 @@ namespace GSoft.Dynamite.Utils
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortCollection;
 
-            return this.EnsureResultSource(ssa, resultSourceName, level, contextWeb, query, queryProperties, overwrite);
+            return this.EnsureResultSource(ssa, resultSourceName, level, searchProvider, contextWeb, query, queryProperties, overwrite);
         }
 
         /// <summary>

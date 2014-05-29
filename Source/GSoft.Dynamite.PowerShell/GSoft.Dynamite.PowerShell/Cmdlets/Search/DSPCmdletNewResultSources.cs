@@ -81,6 +81,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         var sourceName = sourceNode.Attribute("Name").Value;
                         var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
 
+                        // Get the search provider . Default is Local SharePoint Provider
+                        var searchProvider = (sourceNode.Attribute("SearchProvider") == null)
+                            ? "Local SharePoint Provider" : sourceNode.Attribute("SearchProvider").Value;
+
                         var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
 
                         if (this.Overwrite)
@@ -105,6 +109,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 searchServiceApp,
                                 sourceName,
                                 sortObjectLevel,
+                                searchProvider,
                                 site.RootWeb,
                                 query,
                                 sortField,
@@ -117,6 +122,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 searchServiceApp,
                                 sourceName,
                                 sortObjectLevel,
+                                searchProvider,
                                 site.RootWeb,
                                 query,
                                 null,
