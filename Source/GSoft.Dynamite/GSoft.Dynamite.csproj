@@ -96,7 +96,7 @@
     </Compile>
     <Compile Include="Branding\DisplayTemplateHelper.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
-    <Compile Include="Lists\Entities\PublishingLink.cs" />
+    <Compile Include="Lists\Entities\PublishedLink.cs" />
     <Compile Include="MasterPages\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Navigation\INavigationNode.cs" />

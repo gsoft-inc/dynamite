@@ -467,15 +467,15 @@ namespace GSoft.Dynamite.Lists
         /// Method to create if not exist the publishing link in a Publishing link list of the site
         /// </summary>
         /// <param name="site">The current Site to create the publishing link.</param>
-        /// <param name="publishingLink">The publishing link to create</param>
-        public void EnsurePublishedLinks(SPSite site, PublishingLink publishingLink)
+        /// <param name="publishedLink">The publishing link to create</param>
+        public void EnsurePublishedLinks(SPSite site, PublishedLink publishedLink)
         {
-            var publishingLinksList = this.TryGetList(site.RootWeb, "/PublishingLinks");
+            var publishedLinksList = this.TryGetList(site.RootWeb, "/PublishedLinks");
 
-            if (publishingLinksList != null && !publishingLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishingLink.Title))
+            if (publishedLinksList != null && !publishedLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishedLink.Title))
             {
-                var item = publishingLinksList.Items.Add();
-                this.binder.FromEntity(publishingLink, item);
+                var item = publishedLinksList.Items.Add();
+                this.binder.FromEntity(publishedLink, item);
 
                 item.Update();
             }

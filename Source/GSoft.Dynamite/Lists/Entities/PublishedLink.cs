@@ -9,14 +9,14 @@ using GSoft.Dynamite.ValueTypes;
 namespace GSoft.Dynamite.Lists.Entities
 {
     /// <summary>
-    /// Element in a PublishingLinks list
+    /// Element in a PublishedLinks list
     /// </summary>
-    public class PublishingLink : BaseEntity
+    public class PublishedLink : BaseEntity
     {
         /// <summary>
         /// Default constructor
         /// </summary>
-        public PublishingLink()
+        public PublishedLink()
         {
             // Init fields
             this.PublishedLinksPath = new UrlValue();
@@ -29,7 +29,7 @@ namespace GSoft.Dynamite.Lists.Entities
         /// <param name="description">The description of the published link</param>
         /// <param name="url">The url of the link</param>
         /// <param name="urlDescription">The description of the url</param>
-        public PublishingLink(string title, string description, string url, string urlDescription)
+        public PublishedLink(string title, string description, string url, string urlDescription)
             : this()
         {
             this.Title = title;
