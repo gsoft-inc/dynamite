@@ -199,6 +199,11 @@ namespace GSoft.Dynamite
         /// </summary>
         public const string CompanyName = "Company";
 
+        /// <summary>
+        /// PublishingLinks list : the url of the publishing link
+        /// </summary>
+        public const string PublishedLinksUrlName = "PublishedLinksURL";
+
         #endregion
 
         #region FieldInfo

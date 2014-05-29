@@ -6,9 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
@@ -27,6 +29,7 @@ namespace GSoft.Dynamite.Lists
         private readonly IResourceLocator resourceLocator;
         private readonly FieldHelper fieldHelper;
         private readonly ILogger logger;
+        private readonly ISharePointEntityBinder binder;
 
         /// <summary>
         /// Creates a list helper
@@ -35,12 +38,14 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger)
+        /// <param name="binder">The entity binder</param>
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
+            this.binder = binder;
         }
 
         /// <summary>
@@ -356,9 +361,10 @@ namespace GSoft.Dynamite.Lists
         /// <param name="ratingStatus">True to enable. False to disable.</param>
         public void SetRatings(SPList list, string ratingType, bool ratingStatus)
         {
-            //Retrieve assembly from a puplib class
+            // Retrieve assembly from a puplib class
             Assembly assembly = typeof(Microsoft.SharePoint.Portal.RatingsSettingsPage).Assembly;
-            //  Get ReputationHelper type
+            
+            // Get ReputationHelper type
             Type reputationHelper = assembly.GetType("Microsoft.SharePoint.Portal.ReputationHelper");
 
             MethodInfo enableMethod = reputationHelper.GetMethod("EnableReputation", BindingFlags.Static | BindingFlags.NonPublic);
@@ -455,6 +461,27 @@ namespace GSoft.Dynamite.Lists
             }
         }
         #endregion
+
+        #region PublishedLinks
+        /// <summary>
+        /// Method to create if not exist the publishing link in a Publishing link list of the site
+        /// </summary>
+        /// <param name="site">The current Site to create the publishing link.</param>
+        /// <param name="publishingLink">The publishing link to create</param>
+        public void EnsurePublishedLinks(SPSite site, PublishingLink publishingLink)
+        {
+            var publishingLinksList = this.TryGetList(site.RootWeb, "/PublishingLinks");
+
+            if (publishingLinksList != null && !publishingLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishingLink.Title))
+            {
+                var item = publishingLinksList.Items.Add();
+                this.binder.FromEntity(publishingLink, item);
+
+                item.Update();
+            }
+        }
+
+        #endregion PublishedLinks
 
         private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
