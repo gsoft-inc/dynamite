@@ -148,7 +148,7 @@ function Add-DSPSampleContent
 	)
 	
 	$Config = [xml](Get-Content $XmlPath)
-	
+
     if(($ImagesUploadWebUrl -ne $null) -and ($ImagesUploadLibraryName -ne $null))
     {
         Set-Variable -Name "UploadWeb" -Value $ImagesUploadWebUrl -Scope script
@@ -156,25 +156,35 @@ function Add-DSPSampleContent
         Set-Variable -Name "CustomImageLibrary" -value $true -Scope script
     }
 
-    # Process all Term Groups
-	$Config.Configuration.Web | ForEach-Object {
+    $WebAppUrl = $Config.Configuration.WebApplication
+    $WebApplication = Get-SPWebApplication -Identity $WebAppUrl
+
+    if($WebApplication)
+    {
+        # Process all Term Groups
+	    $Config.Configuration.Web | ForEach-Object {
 	
-		$web = Get-SPWeb -Identity $_.Url
-		$webServerRelativeUrl = $web.ServerRelativeUrl
+		    $web = Get-SPWeb -Identity $_.Url
+		    $webServerRelativeUrl = $web.ServerRelativeUrl
        
-        $_.List | ForEach-Object {
+            $_.List | ForEach-Object {
 
-            $listUrl = $webServerRelativeUrl + $_.WebRelativeUrl
-            $list = $web.GetList($listUrl)
+                $listUrl = $webServerRelativeUrl + $_.WebRelativeUrl
+                $list = $web.GetList($listUrl)
 
-            Add-ListContent $list $_ $Overwrite $SyncVariations
-        }   
+                Add-ListContent $list $_ $Overwrite $SyncVariations
+            }   
+	    }
 
         if($SyncVariations)
         {
             Start-ListItemPropagation $web.Site.WebApplication
         }
-	}
+    }
+    else
+    {
+        Write-Warning "Web Application $WebAppUrl not found!"
+    }
 }
 
 function Add-ListContent

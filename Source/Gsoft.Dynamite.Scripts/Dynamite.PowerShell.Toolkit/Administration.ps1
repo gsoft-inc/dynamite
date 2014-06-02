@@ -93,10 +93,11 @@ function Wait-SPTimerJob()
         $JobLastRunTime = $job.LastRunTime
         Write-Verbose "Waiting to finish job $JobFullName last run on $JobLastRunTime"
         
-        while ($job.LastRunTime -eq $JobLastRunTime) 
+        while ((Get-SPTimerJob $job.Id).LastRunTime -eq $JobLastRunTime) 
         {
             Start-Sleep -Seconds 2
         }
+
         Write-Verbose  "Finished waiting for job.."
     }
 }
