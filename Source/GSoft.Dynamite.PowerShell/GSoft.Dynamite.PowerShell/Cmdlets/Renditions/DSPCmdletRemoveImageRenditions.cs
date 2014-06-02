@@ -1,15 +1,17 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
 using System.Xml.Serialization;
+using Autofac;
+using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
+using GSoft.Dynamite.PowerShell.Unity;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.PowerShell;
 using Microsoft.SharePoint.Publishing;
-using ImageRendition = GSoft.Dynamite.PowerShell.Cmdlets.Renditions.Entities.ImageRenditionDefinition;
+using PSImageRendition = GSoft.Dynamite.PowerShell.Cmdlets.Renditions.Entities.ImageRenditionDefinition;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
 {
@@ -39,7 +41,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
         protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
-            this._serializer = new XmlSerializer(typeof(ImageRendition));
+            this._serializer = new XmlSerializer(typeof(PSImageRendition));
 
             var xml = this.InputFile.Read();
             var configurationXml = xml.ToXDocument();
@@ -54,21 +56,25 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Removing image renditions on site '{0}'", siteUrl));
                 using (var site = new SPSite(siteUrl))
                 {
-                    // Get all image rendition definitions
-                    var renditionDefinitions = from rendition in siteNode.Descendants("ImageRendition")
-                                               select (ImageRendition)this._serializer.Deserialize(rendition.CreateReader());
-
-                    var renditionCollection = SiteImageRenditions.GetRenditions(site);
-                    foreach (var renditionDefinition in renditionDefinitions)
+                    using (var childScope = PowerShellContainer.BeginSiteLifetimeScope(site))
                     {
-                        var definition = renditionDefinition;
-                        var rendition = renditionCollection.FirstOrDefault(
-                            x => x.Name.Equals(definition.Name, StringComparison.OrdinalIgnoreCase) &&
-                                        (x.Width == definition.Width) &&
-                                        (x.Height == definition.Height));
+                        var imageRenditionHelper = childScope.Resolve<ImageRenditionHelper>();
 
-                        if (rendition != null)
+                        // Get all image existingImageRendition definitions
+                        var renditionDefinitions = from rendition in siteNode.Descendants("ImageRendition")
+                                                   select (PSImageRendition)this._serializer.Deserialize(rendition.CreateReader());
+
+                        foreach (var renditionDefinition in renditionDefinitions)
                         {
+                            imageRenditionHelper.RemoveImageRendition(
+                               site,
+                               new ImageRendition()
+                               {
+                                   Name = renditionDefinition.Name,
+                                   Height = renditionDefinition.Height,
+                                   Width = renditionDefinition.Width
+                               });
+
                             // Write verbose information
                             this.WriteVerbose(
                                 string.Format(
@@ -77,25 +83,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                                 renditionDefinition.Name,
                                 renditionDefinition.Width,
                                 renditionDefinition.Height));
-
-                            renditionCollection.Remove(rendition);
-                        }
-                        else
-                        {
-                            // Write warning information
-                            this.WriteWarning(
-                                string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Could not find image rendition '{0}' with width '{1}' and height '{2}'",
-                                renditionDefinition.Name,
-                                renditionDefinition.Width,
-                                renditionDefinition.Height));
                         }
                     }
-
-                    // Write verbose information
-                    this.WriteVerbose("Updating image rendition collection");
-                    renditionCollection.Update();
                 }
             }
 

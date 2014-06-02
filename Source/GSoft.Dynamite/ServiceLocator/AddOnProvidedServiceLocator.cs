@@ -131,6 +131,36 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// Creates a new child lifetime scope under the scope of the specified web
+        /// (allowing you to inject InstancePerSite and InstancePerWeb objects).
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
+        /// Prefer usage of this method versus resolving manually from the Current property.
+        /// </summary>
+        /// <param name="feature">The current web from which we are requesting a child lifetime scope</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginSiteLifetimeScope(SPSite site)
+        {
+            ILifetimeScope newSiteChildScope = null;
+
+            if (site == null)
+            {
+                // Can't use an AddOnProvidedServiceLocator this way outside a SPSite context (e.g. no SPFarm or SPWebApp scoped feature will work)
+                throw new ArgumentNullException("site");
+            }
+            else
+            {
+                this.EnsureServiceLocatorAccessorForCurrentSiteContext(site);
+
+                // We are dealing with a SPSite or SPWeb-scoped feature.
+                // Always return a web scope (even for Site-scoped features - as being in a site-scoped feature means you are in the RootWeb context)
+                newSiteChildScope = this.locatorAccessor.ServiceLocatorInstance.BeginSiteLifetimeScope(site);
+            }
+
+            return newSiteChildScope;
+        }
+
+        /// <summary>
         /// Autowires the dependencies of a UI control using the current HTTP-request-bound
         /// lifetime scope.
         /// Prefer usage of this method versus resolving indididual dependencies from the 

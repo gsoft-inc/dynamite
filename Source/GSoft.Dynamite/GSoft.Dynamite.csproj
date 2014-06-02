@@ -95,6 +95,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Branding\DisplayTemplateHelper.cs" />
+    <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
     <Compile Include="MasterPages\Minification.cs" />

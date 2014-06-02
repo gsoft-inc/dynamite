@@ -3,7 +3,7 @@
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions.Entities
 {
     /// <summary>
-    /// Image rendition.
+    /// Image existingImageRendition.
     /// </summary>
     [XmlRoot("ImageRendition")]
     public class ImageRenditionDefinition
