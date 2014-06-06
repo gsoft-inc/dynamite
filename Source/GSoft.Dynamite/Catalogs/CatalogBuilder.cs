@@ -143,6 +143,10 @@ namespace GSoft.Dynamite.Catalogs
             // Create the list if doesn't exists
             var list = this.listHelper.EnsureList(web, catalog);
 
+            // Rename List
+            list.Title = catalog.DisplayName;
+            list.Update();
+
             // Remove Item Content Type
             if (catalog.RemoveDefaultContentType)
             {
