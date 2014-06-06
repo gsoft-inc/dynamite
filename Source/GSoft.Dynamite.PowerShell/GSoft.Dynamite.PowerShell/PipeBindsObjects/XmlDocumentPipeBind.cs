@@ -1,12 +1,10 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Xml;
-
 using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
 {
-    using System.Diagnostics.CodeAnalysis;
-
     /// <summary>
     /// Original class from Gary Lapointe Cmdlets
     /// http://blog.falchionconsulting.com/index.php/downloads/
@@ -14,7 +12,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class XmlDocumentPipeBind : SPCmdletPipeBind<XmlDocument>
     {
-        private string _xml;
+        private string xml;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlDocumentPipeBind"/> class.
@@ -25,7 +23,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
         public XmlDocumentPipeBind(XmlDocument instance)
             : base(instance)
         {
-            this._xml = instance.OuterXml;
+            this.xml = instance.OuterXml;
         }
 
         /// <summary>
@@ -39,16 +37,16 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
         /// </exception>
         public XmlDocumentPipeBind(string inputString)
         {
-            var xml = new XmlDocument();
+            var xmlDocument = new XmlDocument();
             try
             {
                 if (File.Exists(inputString))
                 {
-                    xml.Load(inputString);
+                    xmlDocument.Load(inputString);
                 }
                 else
                 {
-                    xml.LoadXml(inputString);
+                    xmlDocument.LoadXml(inputString);
                 }
             }
             catch
@@ -56,7 +54,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
                 throw new SPCmdletPipeBindException("The input string is not a valid XML file.");
             }
 
-            this._xml = xml.OuterXml;
+            this.xml = xmlDocument.OuterXml;
         }
 
         /// <summary>
@@ -67,9 +65,10 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
         /// </returns>
         public override XmlDocument Read()
         {
-            var xml = new XmlDocument();
-            xml.LoadXml(this._xml);
-            return xml;
+            var xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(this.xml);
+
+            return xmlDocument;
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace GSoft.Dynamite.PowerShell.PipeBindsObjects
         /// </param>
         protected override void Discover(XmlDocument instance)
         {
-            this._xml = instance.OuterXml;
+            this.xml = instance.OuterXml;
         }
     }
 }

@@ -9,6 +9,9 @@ using Microsoft.SharePoint.WebControls;
 
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
+    /// <summary>
+    /// User control to add the import of JavaScript libraries
+    /// </summary>
     public partial class JavascriptImports : UserControl
     {
         /// <summary>
@@ -16,6 +19,11 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         /// </summary>
         public const string ListRootFolderUrlFormat = "{0}/Forms/AllItems.aspx?RootFolder={1}";
 
+        /// <summary>
+        /// Event receiver of the page load event
+        /// </summary>
+        /// <param name="sender">Object who send the event</param>
+        /// <param name="e">event arguments</param>
         protected void Page_Load(object sender, EventArgs e)
         {
             this.CurrentWebUrlLiteral.Text = SPContext.Current.Web.Url;

@@ -16,7 +16,7 @@ namespace GSoft.Dynamite.WebConfig
         /// Method to add one or multiple WebConfig modifications
         /// NOTE: There should not have 2 modifications with the same Owner.
         /// </summary>
-        /// <param name="web">The current Web Application</param>
+        /// <param name="webApp">The current Web Application</param>
         /// <param name="webConfigModificationCollection">The collection of WebConfig modifications to remove-and-add</param>
         /// <remarks>All SPWebConfigModification Owner should be UNIQUE !</remarks>
         public void AddAndCleanWebConfigModification(SPWebApplication webApp, Collection<SPWebConfigModification> webConfigModificationCollection)

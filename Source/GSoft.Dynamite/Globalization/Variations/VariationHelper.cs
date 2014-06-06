@@ -65,7 +65,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
         /// <param name="site">The site.</param>
-        /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
+        /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
@@ -96,7 +96,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// Sync a SPList for a target label
         /// </summary>
         /// <param name="listToSync">The source SPList instance to sync.</param>
-        /// <param name="labelToSync">The label name to Sync. eg. "en" or "fr".</param>
+        /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         public void SyncList(SPList listToSync, string labelToSync)
         {
             this.logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);

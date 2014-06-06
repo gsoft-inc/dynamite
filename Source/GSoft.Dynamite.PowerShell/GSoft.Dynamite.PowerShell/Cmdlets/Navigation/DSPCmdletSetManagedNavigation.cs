@@ -26,10 +26,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
         /// <summary>
         /// Gets or sets the input file.
         /// </summary>
-        [Parameter(Mandatory = true,
-            ValueFromPipeline = true,
-            HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.",
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the navigation configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 

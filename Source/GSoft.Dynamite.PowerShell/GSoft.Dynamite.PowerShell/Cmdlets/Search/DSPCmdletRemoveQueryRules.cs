@@ -17,8 +17,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Creates result sources in the search service application
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "DSPQueryRules")]
-
-    // ReSharper disable once InconsistentNaming
     public class DSPCmdletremoveQueryRules : SPCmdlet
     {
         private XDocument configurationFile;

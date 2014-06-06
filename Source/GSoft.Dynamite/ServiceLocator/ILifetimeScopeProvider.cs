@@ -7,7 +7,7 @@ using Autofac;
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
-    /// Interface for the retrieval of Autofac dependency injection lifetime scopes
+    /// Interface for the retrieval of <c>Autofac</c> dependency injection lifetime scopes
     /// </summary>
     public interface ILifetimeScopeProvider
     {

@@ -17,7 +17,8 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <param name="propertyType">Type of the property.</param>
         /// <param name="valueKey">The value key.</param>
         /// <param name="dataRow">The data row.</param>
-        /// <param name="listItemCollection">The list Item Collection.</param>
+        /// <param name="fieldCollection">The field Collection.</param>
+        /// <param name="web">The current web</param>
         /// <param name="fieldValues">The full dictionary of values being converted</param>
         public DataRowConversionArguments(string propertyName, Type propertyType, string valueKey, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web, IDictionary<string, object> fieldValues)
             : base(propertyName, propertyType, valueKey)

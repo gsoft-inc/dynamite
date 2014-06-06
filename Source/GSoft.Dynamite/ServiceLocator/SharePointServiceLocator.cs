@@ -37,8 +37,8 @@ namespace GSoft.Dynamite.ServiceLocator
         /// The app root namespace.
         /// </param>
         /// <param name="assemblyFileNameMatcher">
-        /// The assembly file name matcher (will be used instead of the appRootNamespace to
-        /// match assembly names in the GAC). The appRootNamespace still acts as the provided
+        /// The assembly file name matcher (will be used instead of the AppRootNamespace to
+        /// match assembly names in the GAC). The AppRootNamespace still acts as the provided
         /// container's unique key among all the other containers that live in the AppDomain.
         /// </param>
         public SharePointServiceLocator(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)

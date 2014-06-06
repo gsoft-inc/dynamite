@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Globalization
         /// Creates a new resource locator which will default to the provided
         /// resource file name.
         /// </summary>
-        /// <param name="defaultApplicationResourceFileNames">The current application's default/global resource file names</param>
+        /// <param name="resourceFileConfig">The current application's default/global resource file names</param>
         public ResourceLocator(IResourceLocatorConfig resourceFileConfig)
         {
             this._defaultResourceFileNames = resourceFileConfig.ResourceFileKeys;

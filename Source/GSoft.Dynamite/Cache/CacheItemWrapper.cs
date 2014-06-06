@@ -3,8 +3,7 @@
     /// <summary>
     /// The cache item wrapper.
     /// </summary>
-    /// <typeparam name="T">
-    /// </typeparam>
+    /// <typeparam name="T">The object to cache.</typeparam>
     public class CacheItemWrapper<T> where T : class
     {
         /// <summary>

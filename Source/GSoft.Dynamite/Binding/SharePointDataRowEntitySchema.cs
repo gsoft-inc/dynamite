@@ -15,18 +15,10 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Creates the conversion arguments.
         /// </summary>
-        /// <param name="bindingDetail">
-        /// The binding detail.
-        /// </param>
-        /// <param name="values">
-        /// The values.
-        /// </param>
-        /// <param name="itemCollection">
-        /// The item Collection.
-        /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
+        /// <param name="bindingDetail">The binding detail.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="fieldCollection">The item Collection.</param>
+        /// <param name="web">The web.</param>
         /// <returns>
         /// The conversion arguments.
         /// </returns>

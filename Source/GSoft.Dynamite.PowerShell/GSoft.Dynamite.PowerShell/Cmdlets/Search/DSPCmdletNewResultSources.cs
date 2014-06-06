@@ -18,8 +18,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Creates result sources in the search service application
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPResultSources")]
-
-    // ReSharper disable once InconsistentNaming
     public class DSPCmdletNewResultSources : SPCmdlet
     {
         private XDocument configurationFile;
@@ -82,8 +80,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
 
                         // Get the search provider . Default is Local SharePoint Provider
-                        var searchProvider = (sourceNode.Attribute("SearchProvider") == null)
-                            ? "Local SharePoint Provider" : sourceNode.Attribute("SearchProvider").Value;
+                        var searchProvider = (sourceNode.Attribute("SearchProvider") == null) ? "Local SharePoint Provider" : sourceNode.Attribute("SearchProvider").Value;
 
                         var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
 

@@ -50,7 +50,6 @@ namespace GSoft.Dynamite.PowerShell.Unity
             return serviceLocator.BeginWebLifetimeScope(web);
         }
 
-
         /// <summary>
         /// Method to create a new LifeTime scope used for the lifetime of the container objects within a site
         /// </summary>

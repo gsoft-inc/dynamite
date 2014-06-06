@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Binding
     public static class SharePointEntityBinderExtensions
     {
         /// <summary>
-        /// Extension method to convert a SPListItemCollection to a list of entitiseQ
+        /// Extension method to convert a SPListItemCollection to a list of entities
         /// </summary>
         /// <typeparam name="T">The type of entities to return</typeparam>
         /// <param name="entityBinder">Client to the extension method</param>

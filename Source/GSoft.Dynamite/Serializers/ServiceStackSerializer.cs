@@ -25,7 +25,7 @@
         /// The deserialize method.
         /// </summary>
         /// <param name="json">
-        /// The json to deserialize.
+        /// The JSON to deserialize.
         /// </param>
         /// <typeparam name="T">
         /// The type to deserialize

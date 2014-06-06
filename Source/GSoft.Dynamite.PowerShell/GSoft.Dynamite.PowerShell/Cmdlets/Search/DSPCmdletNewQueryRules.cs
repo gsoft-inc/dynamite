@@ -19,8 +19,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Creates result sources in the search service application
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPQueryRules")]
-
-    // ReSharper disable once InconsistentNaming
     public class DSPCmdletNewQueryRules : SPCmdlet
     {
         private XDocument configurationFile;
@@ -31,10 +29,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <value>
         /// The input file.
         /// </value>
-        [Parameter(Mandatory = true, ValueFromPipeline = true,
-            HelpMessage =
-                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.",
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
@@ -229,16 +224,16 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                         if (!string.IsNullOrEmpty(linkUrl))
                                         {
                                             var url = new Uri(linkUrl);
-                                            
+
                                             // Add the action
                                             var bestBet = searchHelper.EnsureBestBet(
-                                                searchServiceApp, 
-                                                searchObjectLevel, 
-                                                web, 
-                                                linkTitle, 
-                                                url, 
-                                                linkDescription, 
-                                                isVisualBestBet, 
+                                                searchServiceApp,
+                                                searchObjectLevel,
+                                                web,
+                                                linkTitle,
+                                                url,
+                                                linkDescription,
+                                                isVisualBestBet,
                                                 deleteIfUnused);
 
                                             searchHelper.CreatePromotedResultAction(queryRule, bestBet.Id);

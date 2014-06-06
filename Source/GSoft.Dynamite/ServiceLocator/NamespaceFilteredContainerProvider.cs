@@ -1,23 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Autofac;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
-    /// Basic Autofac container provider that will automatically scan the GAC for
-    /// assemblies that match the provider's appRootNamespace (or, alternatively,
-    /// those that match the provider's assemblyFileMatcher).
-    /// All Autoface registration modules found in those assemblies will be loaded
+    /// Basic <c>Autofac</c> container provider that will automatically scan the GAC for
+    /// assemblies that match the provider's AppRootNamespace (or, alternatively,
+    /// those that match the provider's AssemblyFileMatcher).
+    /// All <c>Autofac</c> registration modules found in those assemblies will be loaded
     /// in the provided container when Current is accessed for the first time after
-    /// an application pool recyle.
+    /// an application pool recycle.
     /// </summary>
     public class NamespaceFilteredContainerProvider : IContainerProvider
     {
-        protected readonly string appRootNamespace;
-        protected readonly Func<string, bool> assemblyFileNameMatcher;
+        /// <summary>
+        /// The App Root namespace
+        /// </summary>
+        protected readonly string AppRootNamespace;
+
+        /// <summary>
+        /// The Assembly file matcher
+        /// </summary>
+        protected readonly Func<string, bool> AssemblyFileNameMatcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContainerScopeProvider"/> class.
@@ -36,14 +40,14 @@ namespace GSoft.Dynamite.ServiceLocator
         /// The app root namespace.
         /// </param>
         /// <param name="assemblyFileNameMatcher">
-        /// The assembly file name matcher (will be used instead of the appRootNamespace to
-        /// match assembly names in the GAC). The appRootNamespace still acts as the provided
+        /// The assembly file name matcher (will be used instead of the AppRootNamespace to
+        /// match assembly names in the GAC). The AppRootNamespace still acts as the provided
         /// container's unique key among all the other containers that live in the AppDomain.
         /// </param>
         public NamespaceFilteredContainerProvider(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
         {
-            this.appRootNamespace = appRootNamespace;
-            this.assemblyFileNameMatcher = assemblyFileNameMatcher;
+            this.AppRootNamespace = appRootNamespace;
+            this.AssemblyFileNameMatcher = assemblyFileNameMatcher;
         }
         
         /// <summary>
@@ -54,7 +58,7 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             get
             {
-                return this.appRootNamespace;
+                return this.AppRootNamespace;
             }
         }
 
@@ -67,7 +71,7 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             get
             {
-                return AppDomainContainers.CurrentContainer(this.appRootNamespace, this.assemblyFileNameMatcher);
+                return AppDomainContainers.CurrentContainer(this.AppRootNamespace, this.AssemblyFileNameMatcher);
             }
         }
     }

@@ -17,8 +17,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Removes Search Result Sources configuration
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "DSPResultSources")]
-
-    // ReSharper disable once InconsistentNaming
     public class DSPCmdletRemoveResultSources : SPCmdlet
     {
         private XDocument configurationFile;

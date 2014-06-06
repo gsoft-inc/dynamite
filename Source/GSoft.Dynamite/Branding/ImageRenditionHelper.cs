@@ -62,7 +62,7 @@ namespace GSoft.Dynamite.Branding
         }
 
         /// <summary>
-        /// Method to remove an image matchingRenditions if is exsit
+        /// Method to remove an image matchingRenditions if is exist
         /// </summary>
         /// <param name="site">The current site</param>
         /// <param name="imageRendition">The image matchingRenditions to remove</param>
@@ -89,7 +89,7 @@ namespace GSoft.Dynamite.Branding
         }
 
         /// <summary>
-        /// Method to remove an image matchingRenditions if is exsit
+        /// Method to remove an image matchingRenditions if is exist
         /// </summary>
         /// <param name="site">The current site</param>
         /// <param name="containsPattern">Pattern to match to remove Image Rendition</param>

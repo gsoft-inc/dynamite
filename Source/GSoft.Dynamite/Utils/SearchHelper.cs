@@ -196,7 +196,7 @@ namespace GSoft.Dynamite.Utils
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider,SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
         {
             var sortCollection = new SortCollection();
             sortCollection.Add(sortField, direction);
@@ -318,13 +318,13 @@ namespace GSoft.Dynamite.Utils
 
             if (!bestBets.Contains(url))
             {
-               bestBet = bestBets.CreateBestBet(title, url, description, isVisualBestBet, deleteIfUnused);
+                bestBet = bestBets.CreateBestBet(title, url, description, isVisualBestBet, deleteIfUnused);
             }
             else
             {
                 bestBet = bestBets[url];
             }
-            
+
             return bestBet;
         }
 
@@ -442,7 +442,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="rule">The query rule object</param>
         /// <param name="bestBetId">The bestBetIds</param>
         public void CreatePromotedResultAction(QueryRule rule, Guid bestBetId)
-        {          
+        {
             var queryAction = (AssignBestBetsAction)rule.CreateQueryAction(QueryActionType.AssignBestBet);
 
             queryAction.BestBetIds.Add(bestBetId);

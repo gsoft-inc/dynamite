@@ -89,14 +89,18 @@ namespace GSoft.Dynamite.Setup
             PublishingPage newPage = null;
             bool userHavePermissions = false;
 
-            //get the root folder if no folder is specified
+            // get the root folder if no folder is specified
             var folder = folderId == int.MinValue ? web.GetPagesLibrary().RootFolder : this.folderRepository.GetFolderByIdForWeb(web, folderId);
 
-            //if spfolder is root folder, check permissions at library level
+            // if spfolder is root folder, check permissions at library level
             if (folder.Item == null)
+            {
                 userHavePermissions = folder.DocumentLibrary.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
             else
+            {
                 userHavePermissions = folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
 
             if (userHavePermissions)
             {

@@ -34,7 +34,10 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
         /// </summary>
-        /// <param name="entitySchemaBuilder">The entity schema builder.</param>
+        /// <param name="logger">The logger</param>
+        /// <param name="entitySchemaDataRowBuilder">Entity schema data builder</param>
+        /// <param name="taxonomyValueDataRowConverter">Data row converter</param>
+        /// <param name="taxonomyValueCollectionDataRowConverter">Taxonomy collection data row converter</param>
         /// <param name="taxonomyValueConverter">The taxonomy value converter</param>
         /// <param name="taxonomyValueCollectionConverter">The Taxonomy value collection converter</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "The types must be registred in the constructor.")]
@@ -108,7 +111,9 @@ namespace GSoft.Dynamite.Binding
         /// Creates an entity of the specified type and fills it using the values.
         /// </summary>
         /// <typeparam name="T">The type of the entity.</typeparam>
-        /// <param name="listItemVersion">The list item version.</param>
+        /// <param name="dataRow">The data row.</param>
+        /// <param name="fieldCollection">The collection of field to get</param>
+        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>

@@ -6,6 +6,13 @@
     public class NavigationManagedProperties
     {
         /// <summary>
+        /// Public constructor
+        /// </summary>
+        public NavigationManagedProperties()
+        {
+        }
+
+        /// <summary>
         /// The title
         /// </summary>
         public string Title { get; set; }
@@ -29,12 +36,5 @@
         /// The result source name
         /// </summary>
         public string ResultSourceName { get; set; }
-
-        /// <summary>
-        /// Public constructor
-        /// </summary>
-        public NavigationManagedProperties()
-        {
-        }
     }
 }
