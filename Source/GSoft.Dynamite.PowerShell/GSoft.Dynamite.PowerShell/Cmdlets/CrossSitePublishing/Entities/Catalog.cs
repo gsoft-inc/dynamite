@@ -52,7 +52,6 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         [XmlAttribute]
         public string TaxonomyFieldMap { get; set; }
 
-
         /// <summary>
         /// Gets or sets a value indicating whether [enable anonymous].
         /// </summary>

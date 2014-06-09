@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.MasterPages
         /// </summary>
         /// <param name="site">The current Site</param>
         /// <param name="serverRelativeCssUrl">The server relative CSS URL.</param>
-        /// <param name="afterCss">To put the css registration after this script</param>
+        /// <param name="afterCss">To put the CSS registration after this script</param>
         /// <returns>A CSS registration control.</returns>
         public static CssRegistration GenerateCssRegistration(SPSite site, string serverRelativeCssUrl, string afterCss)
         {
@@ -71,7 +71,7 @@ namespace GSoft.Dynamite.MasterPages
         /// <param name="serverRelativeUrl">The server relative url</param>
         /// <param name="serverRelativeCssUrl">The server relative CSS URL.</param>
         /// <param name="useVersionTag">Boolean to override the use of a version tag. It's easier to break into JavaScript if the version doesn't change on every load.</param>
-        /// <param name="afterCss">To put the css registration after this script</param>
+        /// <param name="afterCss">To put the CSS registration after this script</param>
         /// <returns>A CSS registration control.</returns>
         public static CssRegistration GenerateCssRegistration(string serverRelativeUrl, string serverRelativeCssUrl, bool useVersionTag, string afterCss)
         {
