@@ -113,12 +113,26 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                 if (string.IsNullOrEmpty(catalog.TaxonomyFieldMap))
                                 {
                                     // Set the list as catalog without navigation
-                                    catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                                    if (catalog.EnableAnonymous)
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), true);
+                                    }
+                                    else
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                                    }
                                 }
                                 else
                                 {
                                     // Set the list as catalog with navigation term
-                                    catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
+                                    if (catalog.EnableAnonymous)
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap, true); 
+                                    }
+                                    else
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
+                                    }
                                 }
 
                                 if (catalog.EnableRatings)
