@@ -102,6 +102,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
 
                     webApplication.Properties.Add(propertyBagValue.Key, propertyBagValue.Value);
                 }
+
+                webApplication.Update();
             }
         }
 
