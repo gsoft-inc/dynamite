@@ -17,6 +17,19 @@ namespace GSoft.Dynamite.Definitions
         {
             this.InternalName = internalName;
             this.ID = id;
+            this.IsRequired = null;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FieldStruct" /> struct.
+        /// </summary>
+        /// <param name="internalName">The field internal Name.</param>
+        /// <param name="id">The field id.</param>
+        /// <param name="isRequired">If the field is required in the ContentType</param>
+        public FieldInfo(string internalName, Guid id, bool isRequired)
+            : this(internalName, id)
+        {
+            this.IsRequired = isRequired;
         }
 
         /// <summary>
@@ -34,6 +47,15 @@ namespace GSoft.Dynamite.Definitions
         /// The id of the field.
         /// </value>
         public Guid ID { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the is required value.
+        /// This is to set the requirement on the ContentType FieldLink. If it's null, it will use the default value of the SiteColumn.
+        /// </summary>
+        /// <value>
+        /// The is required value of the field.
+        /// </value>
+        public bool? IsRequired { get; private set; }
 
         /// <summary>
         /// ==s the specified left.
