@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -8,6 +9,7 @@ using GSoft.Dynamite.PowerShell.Cmdlets.Configuration.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
@@ -48,61 +50,114 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
 
         private void ProcessPropertyBagValues(XDocument configFile)
         {
+            // Get all web application nodes
+            var webApplicationNodes = configFile.Descendants("WebApplication").Select(x => x);
+            foreach (var webApplicationNode in webApplicationNodes)
+            {
+                // For each web application, create and configure the property bag values
+                this.SetWebApplicationPropertyBagValue(webApplicationNode);
+            }
+
             // Get all site nodes
             var webNodes = configFile.Descendants("Web").Select(x => x);
             foreach (var webNode in webNodes)
             {
                 // For each site, create and configure the property bag values
-                var webUrl = webNode.Attribute("Url").Value;
-                using (var site = new SPSite(webUrl))
+                this.SetWebPropertyBagValue(webNode);
+            }
+        }
+
+        private void SetWebApplicationPropertyBagValue(XElement webApplicationNode)
+        {
+            var webApplicationUrl = webApplicationNode.Attribute("Url").Value;
+            var webApplication = SPWebApplication.Lookup(new Uri(webApplicationUrl));
+            var propertyBagValues =
+                webApplicationNode.Descendants("PropertyBagValue")
+                    .Select(x => (PropertyBagValue)this._serializer.Deserialize(x.CreateReader()));
+
+            foreach (var propertyBagValue in propertyBagValues)
+            {
+                // Add value to root web property bag
+                if (webApplication.Properties.ContainsKey(propertyBagValue.Key) && propertyBagValue.Overwrite)
                 {
-                    using (var web = site.OpenWeb())
+                    this.WriteWarning(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Overwriting property bag '{0}' with value '{1}' to web application '{2}'",
+                            propertyBagValue.Key,
+                            propertyBagValue.Value,
+                            webApplicationUrl));
+
+                    webApplication.Properties[propertyBagValue.Key] = propertyBagValue.Value;
+                }
+                else if (!webApplication.Properties.ContainsKey(propertyBagValue.Key))
+                {
+                    this.WriteVerbose(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Adding property bag '{0}' with value '{1}' to web application '{2}'",
+                            propertyBagValue.Key,
+                            propertyBagValue.Value,
+                            webApplicationUrl));
+
+                    webApplication.Properties.Add(propertyBagValue.Key, propertyBagValue.Value);
+                }
+            }
+        }
+
+        private void SetWebPropertyBagValue(XElement webNode)
+        {
+            var webUrl = webNode.Attribute("Url").Value;
+            using (var site = new SPSite(webUrl))
+            {
+                using (var web = site.OpenWeb())
+                {
+                    var propertyBagValues =
+                        webNode.Descendants("PropertyBagValue")
+                            .Select(x => (PropertyBagValue)this._serializer.Deserialize(x.CreateReader()));
+                    foreach (var propertyBagValue in propertyBagValues)
                     {
-                        var propertyBagValues = webNode.Descendants("PropertyBagValue").Select(x => (PropertyBagValue)this._serializer.Deserialize(x.CreateReader()));
-                        foreach (var propertyBagValue in propertyBagValues)
+                        // Add value to root web property bag
+                        if (web.AllProperties.ContainsKey(propertyBagValue.Key) && propertyBagValue.Overwrite)
                         {
-                            // Add value to root web property bag
-                            if (web.AllProperties.ContainsKey(propertyBagValue.Key) && propertyBagValue.Overwrite)
-                            {
-                                this.WriteWarning(
-                                    string.Format(
+                            this.WriteWarning(
+                                string.Format(
                                     CultureInfo.InvariantCulture,
                                     "Overwriting property bag '{0}' with value '{1}' to web '{2}'",
                                     propertyBagValue.Key,
                                     propertyBagValue.Value,
                                     webUrl));
 
-                                web.AllProperties[propertyBagValue.Key] = propertyBagValue.Value;
-                            }
-                            else if (!web.AllProperties.ContainsKey(propertyBagValue.Key))
-                            {
-                                this.WriteVerbose(
-                                    string.Format(
+                            web.AllProperties[propertyBagValue.Key] = propertyBagValue.Value;
+                        }
+                        else if (!web.AllProperties.ContainsKey(propertyBagValue.Key))
+                        {
+                            this.WriteVerbose(
+                                string.Format(
                                     CultureInfo.InvariantCulture,
                                     "Adding property bag '{0}' with value '{1}' to web '{2}'",
                                     propertyBagValue.Key,
                                     propertyBagValue.Value,
                                     webUrl));
 
-                                web.AllProperties.Add(propertyBagValue.Key, propertyBagValue.Value);
-                            }
+                            web.AllProperties.Add(propertyBagValue.Key, propertyBagValue.Value);
+                        }
 
-                            // Add property bag key to indexed property keys
-                            if (!web.IndexedPropertyKeys.Contains(propertyBagValue.Key) && propertyBagValue.Indexed)
-                            {
-                                this.WriteVerbose(
-                                    string.Format(
+                        // Add property bag key to indexed property keys
+                        if (!web.IndexedPropertyKeys.Contains(propertyBagValue.Key) && propertyBagValue.Indexed)
+                        {
+                            this.WriteVerbose(
+                                string.Format(
                                     CultureInfo.InvariantCulture,
                                     "Setting property bag '{0}' to be indexable by search on web '{1}'",
                                     propertyBagValue.Key,
                                     webUrl));
 
-                                web.IndexedPropertyKeys.Add(propertyBagValue.Key);
-                            }
+                            web.IndexedPropertyKeys.Add(propertyBagValue.Key);
                         }
-
-                        web.Update();
                     }
+
+                    web.Update();
                 }
             }
         }
