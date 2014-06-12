@@ -1,4 +1,5 @@
 ﻿using System;
+using GSoft.Dynamite.Binding;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -17,7 +18,7 @@ namespace GSoft.Dynamite.Definitions
         {
             this.InternalName = internalName;
             this.ID = id;
-            this.IsRequired = null;
+            this.RequiredType = RequiredTypes.Inherit;
         }
 
         /// <summary>
@@ -25,11 +26,11 @@ namespace GSoft.Dynamite.Definitions
         /// </summary>
         /// <param name="internalName">The field internal Name.</param>
         /// <param name="id">The field id.</param>
-        /// <param name="isRequired">If the field is required in the ContentType</param>
-        public FieldInfo(string internalName, Guid id, bool isRequired)
+        /// <param name="requiredType">If the field is required in the ContentType</param>
+        public FieldInfo(string internalName, Guid id, RequiredTypes requiredType)
             : this(internalName, id)
         {
-            this.IsRequired = isRequired;
+            this.RequiredType = requiredType;
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace GSoft.Dynamite.Definitions
         /// <value>
         /// The is required value of the field.
         /// </value>
-        public bool? IsRequired { get; private set; }
+        public RequiredTypes RequiredType { get; private set; }
 
         /// <summary>
         /// ==s the specified left.
