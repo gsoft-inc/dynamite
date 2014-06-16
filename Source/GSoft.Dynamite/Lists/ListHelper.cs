@@ -363,7 +363,7 @@ namespace GSoft.Dynamite.Lists
         {
             // Retrieve assembly from a puplib class
             Assembly assembly = typeof(Microsoft.SharePoint.Portal.RatingsSettingsPage).Assembly;
-            
+
             // Get ReputationHelper type
             Type reputationHelper = assembly.GetType("Microsoft.SharePoint.Portal.ReputationHelper");
 
@@ -391,6 +391,23 @@ namespace GSoft.Dynamite.Lists
         {
             list.WriteSecurity = (int)option;
             list.Update();
+        }
+
+        /// <summary>
+        /// Enforce the unique value(s) for a list field. In case the field is reused in the site collection, we can make that change on the list scope.
+        /// </summary>
+        /// <param name="list">The list who owns the field</param>
+        /// <param name="field">The field to enforce</param>
+        public void EnforceUniqueValuesToField(SPList list, FieldInfo field)
+        {
+            var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
+
+            if (listField != null)
+            {
+                listField.EnforceUniqueValues = true;
+                listField.Indexed = true;
+                listField.Update(); 
+            }
         }
 
         /// <summary>

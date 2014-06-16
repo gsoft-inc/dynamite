@@ -135,7 +135,8 @@ namespace GSoft.Dynamite.Catalogs
         /// </summary>
         /// <param name="web">The current web</param>
         /// <param name="catalog">The catalog definition</param>
-        public void ProcessCatalog(SPWeb web, Catalog catalog)
+        /// <returns>The newly created list</returns>
+        public SPList ProcessCatalog(SPWeb web, Catalog catalog)
         {
             // Set current culture to be able to set the "Title" of the list
             Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
@@ -191,6 +192,8 @@ namespace GSoft.Dynamite.Catalogs
 
             // Set SecurityOption
             this.listHelper.SetWriteSecurity(list, catalog.WriteSecurity);
+
+            return list;
         }
 
         /// <summary>
