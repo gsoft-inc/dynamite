@@ -143,6 +143,16 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
             return this;
         }
 
+        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerMatchingLifetimeScope(params object[] lifetimeScopeTag)
+        {
+            foreach (var tag in lifetimeScopeTag)
+            {
+                this.InstancePerMatchingLifetimeScope(tag);
+            }
+
+            return this;
+        }
+
         /// <summary>
         /// Configure the component so that every dependent component or call to Resolve()
         /// within a ILifetimeScope tagged with the provided tag value gets the same, shared instance.
@@ -410,12 +420,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// </summary>
         /// <param name="wiringFlags">Set wiring options such as circular dependency wiring support.</param>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
-        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> PropertiesAutowired(PropertyWiringFlags wiringFlags)
+        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> PropertiesAutowired(PropertyWiringOptions wiringFlags)
         {
             var injector = new AutowiringPropertyInjector();
 
-            var allowCircularDependencies = 0 != (int)(wiringFlags & PropertyWiringFlags.AllowCircularDependencies);
-            var preserveSetValues = 0 != (int)(wiringFlags & PropertyWiringFlags.PreserveSetValues);
+            var allowCircularDependencies = 0 != (int)(wiringFlags & PropertyWiringOptions.AllowCircularDependencies);
+            var preserveSetValues = 0 != (int)(wiringFlags & PropertyWiringOptions.PreserveSetValues);
 
             if (allowCircularDependencies)
             {
