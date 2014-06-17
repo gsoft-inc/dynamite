@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace GSoft.Dynamite.Utils
 {
+    using System.Diagnostics;
+    using System.Reflection;
+
     /// <summary>
     /// Small utility to return a version string to append to files. In debug, we want a new version every time,
     /// in release, we use the assembly version.
