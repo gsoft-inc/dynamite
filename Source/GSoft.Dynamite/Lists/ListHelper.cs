@@ -222,11 +222,7 @@ namespace GSoft.Dynamite.Lists
         /// </returns>
         public SPList GetListByRootFolderUrl(SPWeb web, string listRootFolderUrl)
         {
-            return
-
-                (from SPList list in web.Lists
-                 where list.RootFolder.Name.Equals(listRootFolderUrl, StringComparison.Ordinal)
-                 select list).FirstOrDefault();
+            return web.Lists.Cast<SPList>().Where(list => list.RootFolder.Name.ToLowerInvariant() == listRootFolderUrl.ToLowerInvariant()).FirstOrDefault();
         }
 
         /// <summary>
@@ -400,13 +396,16 @@ namespace GSoft.Dynamite.Lists
         /// <param name="field">The field to enforce</param>
         public void EnforceUniqueValuesToField(SPList list, FieldInfo field)
         {
-            var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
-
-            if (listField != null)
+            if (list != null && field != null)
             {
-                listField.EnforceUniqueValues = true;
-                listField.Indexed = true;
-                listField.Update(); 
+                var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
+
+                if (listField != null)
+                {
+                    listField.EnforceUniqueValues = true;
+                    listField.Indexed = true;
+                    listField.Update();
+                }
             }
         }
 
@@ -446,23 +445,26 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fields">the collection of fields</param>
         public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
         {
-            // get the default view of the list
-            var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
-            var fieldCollection = defaulView.ViewFields;
-
-            foreach (FieldInfo field in fields)
+            if (list != null && fields != null && fields.Any())
             {
-                if (list.Fields.Contains(field.ID))
-                {
-                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
-                }
-                else
-                {
-                    this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
-                }
-            }
+                // get the default view of the list
+                var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
+                var fieldCollection = defaulView.ViewFields;
 
-            defaulView.Update();
+                foreach (FieldInfo field in fields)
+                {
+                    if (list.Fields.Contains(field.ID))
+                    {
+                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                    }
+                    else
+                    {
+                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                    }
+                }
+
+                defaulView.Update();
+            }
         }
 
         /// <summary>
@@ -515,6 +517,19 @@ namespace GSoft.Dynamite.Lists
                 catch (FileNotFoundException)
                 {
                     // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                }
+
+                if (list == null && !titleOrUrlOrResourceString.Contains("Lists"))
+                {
+                    try
+                    {
+                        // third, try to find the list by its Lists-relative URL by adding Lists if its missing
+                        list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.ConcatUrls("Lists", titleOrUrlOrResourceString)));
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                    }
                 }
 
                 if (list == null)
