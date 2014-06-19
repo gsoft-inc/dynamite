@@ -98,6 +98,7 @@
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
+    <Compile Include="Lists\IListLocator.cs" />
     <Compile Include="MasterPages\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Navigation\INavigationNode.cs" />
