@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.Lists
     /// <summary>
     /// Utility to find lists
     /// </summary>
-    public class ListLocator
+    public class ListLocator : IListLocator
     {
         private IResourceLocator _resources;
         private ILogger _logger;
