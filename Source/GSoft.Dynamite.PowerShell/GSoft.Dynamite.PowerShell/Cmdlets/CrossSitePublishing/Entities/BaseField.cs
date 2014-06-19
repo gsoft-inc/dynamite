@@ -5,7 +5,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
     /// <summary>
     /// Base field definition.
     /// </summary>
-    public abstract class BaseField
+    public class BaseField
     {
         /// <summary>
         /// Gets or sets the name of the internal.

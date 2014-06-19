@@ -171,5 +171,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities
         /// </value>
         [XmlArray, XmlArrayItem("Field")]
         public BaseField[] FieldDisplaySettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the default view fields.
+        /// </summary>
+        /// <value>
+        /// The default view fields.
+        /// </value>
+        [XmlArray, XmlArrayItem("Field")]
+        public BaseField[] DefaultViewFields { get; set; }
     }
 }
