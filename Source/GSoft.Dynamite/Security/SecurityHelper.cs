@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.SharePoint;
+using GSoft.Dynamite.Extensions;
 
 namespace GSoft.Dynamite.Security
 {
@@ -178,7 +179,6 @@ namespace GSoft.Dynamite.Security
         {
             var currentWeb = SPContext.Current.Web;
             var currentUser = currentWeb.CurrentUser;
-            bool returnValue;
 
             // Is an Anonymous user
             if (currentUser == null)
@@ -188,12 +188,10 @@ namespace GSoft.Dynamite.Security
 
             bool isReadOnlyOnCurrentListItem = (SPContext.Current.ListItem == null) || (SPContext.Current.ListItem != null
                                  && !SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.EditListItems));
-            return SPContext.Current.Web.AssociatedVisitorGroup != null 
-                && SPContext.Current.Web.AssociatedVisitorGroup.ContainsCurrentUser 
-                && isReadOnlyOnCurrentListItem
-                && !this.IsCurrentUserOwner()
-                && !this.IsCurrentUserApprover()
-                && !this.IsCurrentUserMember();
+            return isReadOnlyOnCurrentListItem
+                && !this.DoesCurrentUserHaveFullControl()
+                && !this.CanCurrentUserApprove()
+                && !this.CanCurrentUserContribute();
         }
 
         /// <summary>
@@ -201,7 +199,7 @@ namespace GSoft.Dynamite.Security
         /// </summary>
         /// <returns>True of part of site's associated member group, false otherwise.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
-        public bool IsCurrentUserMember()
+        public bool CanCurrentUserContribute()
         {
             // Is an Anonymous user
             if (SPContext.Current.Web.CurrentUser == null)
@@ -209,12 +207,12 @@ namespace GSoft.Dynamite.Security
                 return false;
             }
 
-            if (SPContext.Current.Web.AssociatedMemberGroup != null)
-            {
-                return SPContext.Current.Web.AssociatedMemberGroup.ContainsCurrentUser;
-            }
-
-            return false;
+            // Check the current list item, then the current folder.
+            // Somewhat weird, but we assume also that if you have the perms on the Pages
+            // library, then you should be granted those permissions throughout.
+            return this.DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.AddListItems)
+                || this.DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.AddListItems)
+                || this.DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.AddListItems);
         }
 
         /// <summary>
@@ -222,7 +220,7 @@ namespace GSoft.Dynamite.Security
         /// </summary>
         /// <returns>True of part of site's associated owners group, false otherwise.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
-        public bool IsCurrentUserApprover()
+        public bool CanCurrentUserApprove()
         {
             // Is an Anonymous user
             if (SPContext.Current.Web.CurrentUser == null)
@@ -230,8 +228,12 @@ namespace GSoft.Dynamite.Security
                 return false;
             }
 
-            return SPContext.Current.ListItem != null &&
-                SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, SPBasePermissions.ApproveItems);
+            // Check the current list item, then the current folder.
+            // Somewhat weird, but we assume also that if you have the perms on the Pages
+            // library, then you should be granted those permissions throughout.
+            return this.DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.ApproveItems)
+                || this.DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.ApproveItems)
+                || this.DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.ApproveItems);
         }
 
         /// <summary>
@@ -239,20 +241,15 @@ namespace GSoft.Dynamite.Security
         /// </summary>
         /// <returns>True is member of visitor's group and can't edit current list item, false otherwise.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Dependency-injected classes should expose non-static members only for consistency.")]
-        public bool IsCurrentUserOwner()
+        public bool DoesCurrentUserHaveFullControl()
         {
             // Is an Anonymous user
             if (SPContext.Current.Web.CurrentUser == null)
             {
                 return false;
             }
-
-            if (SPContext.Current.Web.AssociatedOwnerGroup != null)
-            {
-                return SPContext.Current.Web.AssociatedOwnerGroup.ContainsCurrentUser;
-            }
-
-            return false;
+            
+            return SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.FullMask);
         }
 
         /// <summary>
@@ -328,13 +325,55 @@ namespace GSoft.Dynamite.Security
             }
         }
 
-
         private static void EnsureBrokenRoleInheritance(SPSecurableObject target)
         {
             if (!target.HasUniqueRoleAssignments)
             {
                 target.BreakRoleInheritance(true, false);
             }
+        }
+
+        private bool DoesUserHavePermissionOnPagesLibrary(SPBasePermissions permissionsMask)
+        {
+            bool hasPermissions = false;
+
+            var pagesLibrary = SPContext.Current.Web.GetPagesLibrary();
+            if (pagesLibrary != null)
+            {
+                hasPermissions = pagesLibrary.DoesUserHavePermissions(permissionsMask);
+            }
+
+            return hasPermissions;
+        }
+
+        private bool DoesUserHavePermissionOnCurrentListItem(SPBasePermissions permissionsMask)
+        {
+            return SPContext.Current.ListItem != null
+                && SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, permissionsMask);
+        }
+
+        private bool DoesUserHavePermissionOnCurrentFolder(SPBasePermissions permissionsMask)
+        {
+            bool hasPermissionsOnCurrentRootFolderUrl = false;
+
+            if (!string.IsNullOrEmpty(SPContext.Current.RootFolderUrl))
+            {
+                SPFolder currentRootFolder = SPContext.Current.Web.GetFolder(SPContext.Current.RootFolderUrl);
+
+                if (currentRootFolder != null
+                    && currentRootFolder.Item != null
+                    && currentRootFolder.Item.DoesUserHavePermissions(permissionsMask))
+                {
+                    hasPermissionsOnCurrentRootFolderUrl = true;
+                }
+            }
+
+            return hasPermissionsOnCurrentRootFolderUrl
+                || (SPContext.Current.ListItem != null
+                    && SPContext.Current.File != null
+                    && SPContext.Current.File.ParentFolder != null
+                    && SPContext.Current.File.ParentFolder.Item != null
+                    && SPContext.Current.File.ParentFolder.Item.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, permissionsMask));
         }
     }
 }

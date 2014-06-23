@@ -173,19 +173,17 @@ namespace GSoft.Dynamite.MasterPages
                         extraClasses += "visitor ";
                     }
                     
-                    if (this.securityHelper.IsCurrentUserMember())
+                    if (this.securityHelper.CanCurrentUserContribute())
                     {
                         extraClasses += "member ";
                     }
                     
-                    if (this.securityHelper.IsCurrentUserApprover())
+                    if (this.securityHelper.CanCurrentUserApprove())
                     {
                         extraClasses += "approver ";
                     }
                         
-                    if (this.securityHelper.IsCurrentUserOwner()
-                        || (SPContext.Current.Web != null
-                            && SPContext.Current.Web.DoesUserHavePermissions(SPBasePermissions.FullMask)))
+                    if (this.securityHelper.DoesCurrentUserHaveFullControl())
                     {
                         extraClasses += "owner ";
                     }
