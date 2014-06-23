@@ -142,7 +142,6 @@
     <Compile Include="Binding\ProjectedPropertyAttribute.cs" />
     <Compile Include="Binding\PropertyAttribute.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
-    <Compile Include="Binding\SharePointEntityBinderExtensions.cs" />
     <Compile Include="Binding\SharePointEntitySchema.cs" />
     <Compile Include="Binding\Converters\StraightConverter.cs" />
     <Compile Include="BuiltInFields.cs" />

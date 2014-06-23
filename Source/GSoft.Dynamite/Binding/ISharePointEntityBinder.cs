@@ -4,6 +4,7 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Collections.Generic;
     using System.Data;
 
     /// <summary>
@@ -55,6 +56,19 @@ namespace GSoft.Dynamite.Binding
         /// </returns>
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
         T Get<T>(SPListItemVersion listItemVersion) where T : new();
+
+        /// <summary>
+        /// The get.
+        /// </summary>
+        /// <param name="listItems">
+        /// The list items.
+        /// </param>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="IList"/>.
+        /// </returns>
+        IList<T> Get<T>(SPListItemCollection listItems) where T : new();
 
         /// <summary>
         /// Fills the entity with values taken from the values collection.

@@ -6,6 +6,7 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Collections.Generic;
     using System.Data;
 
     using GSoft.Dynamite.Logging;
@@ -105,6 +106,35 @@ namespace GSoft.Dynamite.Binding
             this.ToEntity(entity, listItemVersion);
 
             return entity;
+        }
+
+        /// <summary>
+        /// The get.
+        /// </summary>
+        /// <param name="listItems">
+        /// The list items.
+        /// </param>
+        /// <typeparam name="T"> The type of object to return
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="IList"/>.
+        /// </returns>
+        public IList<T> Get<T>(SPListItemCollection listItems) where T : new()
+        {
+            var returnList = new List<T>();
+
+            if (listItems.Count > 0)
+            {
+                var table = listItems.GetDataTable();
+                var rows = table.AsEnumerable();
+
+                foreach (var dataRow in rows)
+                {
+                    returnList.Add(this.Get<T>(dataRow, listItems.Fields, listItems.List.ParentWeb));
+                }
+            }
+
+            return returnList;
         }
 
         /// <summary>
