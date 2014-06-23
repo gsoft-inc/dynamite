@@ -13,6 +13,9 @@ namespace GSoft.Dynamite.Cache
         // keep one cached discriminator per user, per site (not threadsafe, but no worries)
         private static IDictionary<string, string> userSiteGroupDiscriminators = new Dictionary<string, string>();
 
+        private string englishKey = string.Empty;
+        private string frenchKey = string.Empty;
+
         /// <summary>
         /// The prefix of the keep to identify the Dynamite cache keys in the HttpCache.
         /// </summary>
@@ -34,20 +37,33 @@ namespace GSoft.Dynamite.Cache
         /// <param name="frenchKey">French key</param>
         public SimpleCacheKey(string englishKey, string frenchKey)
         {
-            var groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
-            this.InEnglish = SimpleCacheKey.Prefix + groupDiscrimitator + englishKey;
-            this.InFrench = SimpleCacheKey.Prefix + groupDiscrimitator + frenchKey;
+            this.englishKey = englishKey;
+            this.frenchKey = frenchKey;
         }
 
         /// <summary>
-        /// Get english key
+        /// Get english key (only members of the same set of groups will share a key)
         /// </summary>
-        public string InEnglish { get; private set; }
+        public string InEnglish 
+        {
+            get
+            {
+                var groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
+                return SimpleCacheKey.Prefix + groupDiscrimitator + englishKey;
+            }
+        }
 
         /// <summary>
-        /// Get french key
+        /// Get french key (only members of the same set of groups will share a key)
         /// </summary>
-        public string InFrench { get; private set; }
+        public string InFrench 
+        {
+            get
+            {
+                var groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
+                return SimpleCacheKey.Prefix + groupDiscrimitator + frenchKey;
+            }
+        }
 
         private static string BuildSecurityGroupDiscriminatorPrefix()
         {
