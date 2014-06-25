@@ -144,7 +144,11 @@ function Enable-DSPBlobCache {
 	
 	# Update, and apply
 	$WebApp.Update()
-	$WebApp.Parent.ApplyWebConfigModifications()
+	
+	# Added a 5 second sleep period for multiple server farms
+	Write-Host "Waiting for web config modifications to propagate..."
+	Start-Sleep -s 5
+	$WebApp.WebService.ApplyWebConfigModifications()
 } 
 
 <#
@@ -212,5 +216,9 @@ function Disable-DSPBlobCache {
 	}
 		
 	$WebApp.Update()
-	$WebApp.Parent.ApplyWebConfigModifications()
+	
+	# Added a 5 second sleep period for multiple server farms
+	Write-Host "Waiting for web config modifications to propagate..."
+	Start-Sleep -s 5
+	$WebApp.WebService.ApplyWebConfigModifications()
 } 

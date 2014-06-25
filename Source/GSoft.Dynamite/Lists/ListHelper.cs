@@ -433,8 +433,20 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fields">the collection of fields</param>
         public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
         {
+            this.AddFieldsToDefaultView(web, catalog, fields, false);
+        }
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="catalog">the current catalog</param>
+        /// <param name="fields">the collection of fields</param>
+        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        {
             var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
-            this.AddFieldsToDefaultView(web, list, fields);
+            this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
         }
 
         /// <summary>
@@ -445,13 +457,39 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fields">the collection of fields</param>
         public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
         {
-            if (list != null && fields != null && fields.Any())
-            {
-                // get the default view of the list
-                var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
-                var fieldCollection = defaulView.ViewFields;
+            this.AddFieldsToDefaultView(web, list, fields, false);
+        }
 
-                foreach (FieldInfo field in fields)
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="list">the current list</param>
+        /// <param name="fields">the collection of fields</param>
+        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        {
+            // get the default view of the list
+            var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
+            var fieldCollection = defaulView.ViewFields;
+
+            // Remove default view fields
+            if (removeExistingViewFields)
+            {
+                fieldCollection.DeleteAll();
+            }
+
+            foreach (FieldInfo field in fields)
+            {
+                if (list.Fields.Contains(field.ID))
+                {
+                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                }
+                else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
+                {
+                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName));
+                }
+                else
                 {
                     if (list.Fields.Contains(field.ID))
                     {
