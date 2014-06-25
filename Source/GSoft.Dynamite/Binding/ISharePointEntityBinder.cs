@@ -60,11 +60,8 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// The get.
         /// </summary>
-        /// <param name="listItems">
-        /// The list items.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
+        /// <param name="listItems">The list items.</param>
+        /// <typeparam name="T">The object type to get back</typeparam>
         /// <returns>
         /// The <see cref="IList"/>.
         /// </returns>

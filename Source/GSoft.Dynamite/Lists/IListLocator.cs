@@ -1,9 +1,11 @@
-﻿namespace GSoft.Dynamite.Lists
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.SharePoint;
+
+namespace GSoft.Dynamite.Lists
 {
-    using System.Diagnostics.CodeAnalysis;
-
-    using Microsoft.SharePoint;
-
+    /// <summary>
+    /// List locator is a helper to help find a SPList object.
+    /// </summary>
     public interface IListLocator
     {
         /// <summary>
