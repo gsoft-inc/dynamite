@@ -63,8 +63,24 @@ namespace GSoft.Dynamite.Repositories
 
                 if (propertyDetails != null)
                 {
+                    
                     var fieldInternalName = !string.IsNullOrEmpty(propertyDetails.PropertyName) ? propertyDetails.PropertyName : info.Name;
-                    viewFieldsString += string.Format(CultureInfo.InvariantCulture, "<FieldRef Name='{0}' />", fieldInternalName);
+
+                    if (!propertyDetails.IsLookupId)
+                    {
+                        viewFieldsString += string.Format(
+                            CultureInfo.InvariantCulture,
+                            "<FieldRef Name='{0}' />",
+                            fieldInternalName);
+                    }
+                    else
+                    {
+                        viewFieldsString += string.Format(
+                            CultureInfo.InvariantCulture,
+                            "<FieldRef Name='{0}' {1}/>",
+                            fieldInternalName,
+                            "LookupId='true'");
+                    }
                 }
             }
 
