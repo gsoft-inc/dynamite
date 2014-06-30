@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.Binding.Converters
             }
             else
             {
-                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}  StackTrace: ", stringValue, Environment.StackTrace));
+                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}  StackTrace: {1}", stringValue, Environment.StackTrace));
               
                 lookupValue = new SPFieldLookupValue(stringValue);    
             }
