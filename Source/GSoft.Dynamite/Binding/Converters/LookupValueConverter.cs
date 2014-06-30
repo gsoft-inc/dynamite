@@ -4,6 +4,7 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.Binding.Converters
 {
     using System;
+    using System.Diagnostics;
 
     using GSoft.Dynamite.Logging;
 
@@ -60,7 +61,8 @@ namespace GSoft.Dynamite.Binding.Converters
             }
             else
             {
-                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}", stringValue));
+                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}  StackTrace: ", stringValue, Environment.StackTrace));
+              
                 lookupValue = new SPFieldLookupValue(stringValue);    
             }
 
