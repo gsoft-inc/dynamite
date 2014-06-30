@@ -29,16 +29,30 @@ namespace GSoft.Dynamite.Binding.Converters
                 return null;
             }
 
-            if (lookupValue == null)
+            if (lookupValue != null)
             {
-                var stringValue = value as string;
-                if (!string.IsNullOrEmpty(stringValue))
-                {
-                    lookupValue = new SPFieldLookupValue(stringValue);
-                }
+                return new LookupValue(lookupValue);
             }
 
-            return lookupValue != null ? new LookupValue(lookupValue) : null;
+            var stringValue = value as string;
+
+            // Check if ;# split key is in string, if so, create SPFieldLookupValue with Id
+            if (string.IsNullOrEmpty(stringValue))
+            {
+                return null;
+            }
+
+            if (stringValue.Contains(";#"))
+            {
+                var values = stringValue.Split(new[] { ";#" }, StringSplitOptions.RemoveEmptyEntries);
+                lookupValue = new SPFieldLookupValue(System.Convert.ToInt32(values[0]), values[1]);
+            }
+            else
+            {
+                lookupValue = new SPFieldLookupValue(stringValue);    
+            }
+
+            return new LookupValue(lookupValue);
         }
 
         /// <summary>
