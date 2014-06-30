@@ -5,11 +5,22 @@ namespace GSoft.Dynamite.Binding.Converters
 {
     using System;
 
+    using GSoft.Dynamite.Logging;
+
     /// <summary>
     /// A converter for the Lookup type.
     /// </summary>
     public class LookupValueConverter : IConverter
     {
+        private readonly ILogger logger;
+
+        /// <summary>Initializes a new instance of the <see cref="LookupValueConverter"/> class.</summary>
+        /// <param name="logger">The logger.</param>
+        public LookupValueConverter(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         #region IConverter Members
 
         /// <summary>
@@ -49,6 +60,7 @@ namespace GSoft.Dynamite.Binding.Converters
             }
             else
             {
+                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}", stringValue));
                 lookupValue = new SPFieldLookupValue(stringValue);    
             }
 

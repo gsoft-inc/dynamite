@@ -18,6 +18,8 @@ namespace GSoft.Dynamite.Binding
     {
         #region Fields
 
+        private readonly ILogger logger;
+
         private readonly IEntitySchemaBuilder entitySchemaDataRowBuilder;
 
         private readonly IEntitySchemaBuilder entityListItemSchemaBuilder;
@@ -48,7 +50,8 @@ namespace GSoft.Dynamite.Binding
             var schemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
              var cachedBuilder = new CachedSchemaBuilder(schemaBuilder, logger);
 
-             this.entitySchemaDataRowBuilder = entitySchemaDataRowBuilder;
+            this.logger = logger;
+            this.entitySchemaDataRowBuilder = entitySchemaDataRowBuilder;
             this.entityListItemSchemaBuilder = cachedBuilder;
 
             this.taxonomyValueConverter = taxonomyValueConverter;
@@ -210,7 +213,7 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         protected internal virtual void RegisterTypeConverters()
         {
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
+            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueDataRowConverter());
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
@@ -218,7 +221,7 @@ namespace GSoft.Dynamite.Binding
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionDataRowConverter);
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
 
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
+            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
