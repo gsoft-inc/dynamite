@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Globalization
     /// </summary>
     public class ResourceLocator : IResourceLocator
     {
-        private string[] _defaultResourceFileNames;
+        private readonly string[] _defaultResourceFileNames;
 
         /// <summary>
         /// Creates a new resource locator which will default to the provided
