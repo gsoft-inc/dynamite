@@ -8,6 +8,7 @@ using System.Web.Caching;
 using GSoft.Dynamite.Logging;
 
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Cache
 {
