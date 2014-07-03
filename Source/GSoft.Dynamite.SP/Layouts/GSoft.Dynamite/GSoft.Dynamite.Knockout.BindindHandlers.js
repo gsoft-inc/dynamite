@@ -7,6 +7,11 @@
         init: function (element, valueAccessor) {
             var placeholderValue = valueAccessor();
             ko.applyBindingsToNode(element, { attr: { placeholder: placeholderValue} });
+
+            // gotta re-apply shim during screen resize
+            g_workspaceResizedHandlers.push(function () {
+                $.placeholder.shim();
+            });
         },
         update: function (element, valueAccessor) {
             $.placeholder.shim();

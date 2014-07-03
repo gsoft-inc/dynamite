@@ -12,7 +12,9 @@ namespace GSoft.Dynamite.Binding
     {
         #region Fields
 
-        private readonly string _propertyName;
+        private readonly string propertyName;
+
+        private readonly bool isLookupId;
 
         #endregion
 
@@ -23,6 +25,7 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         public PropertyAttribute()
         {
+            this.isLookupId = false;
         }
 
         /// <summary>
@@ -31,7 +34,17 @@ namespace GSoft.Dynamite.Binding
         /// <param name="propertyName">Name of the property.</param>
         public PropertyAttribute(string propertyName)
         {
-            this._propertyName = propertyName;
+            this.propertyName = propertyName;
+            this.isLookupId = false;
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="PropertyAttribute"/> class.</summary>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <param name="isLookupId">The is Lookup.</param>
+        public PropertyAttribute(string propertyName, bool isLookupId)
+        {
+            this.propertyName = propertyName;
+            this.isLookupId = isLookupId;
         }
 
         #endregion
@@ -50,7 +63,7 @@ namespace GSoft.Dynamite.Binding
         {
             get
             {
-                return this._propertyName;
+                return this.propertyName;
             }
         }
 
@@ -58,6 +71,15 @@ namespace GSoft.Dynamite.Binding
         /// Gets or sets the type of the binding. By default, a binding is Bidirectional.
         /// </summary>
         public virtual BindingType BindingType { get; set; }
+
+        /// <summary>Gets a value indicating whether is lookup.</summary>
+        public bool IsLookupId
+        {
+            get
+            {
+                return this.isLookupId;
+            }
+        }
 
         #endregion
 

@@ -6,9 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
@@ -27,6 +29,7 @@ namespace GSoft.Dynamite.Lists
         private readonly IResourceLocator resourceLocator;
         private readonly FieldHelper fieldHelper;
         private readonly ILogger logger;
+        private readonly ISharePointEntityBinder binder;
 
         /// <summary>
         /// Creates a list helper
@@ -35,12 +38,14 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger)
+        /// <param name="binder">The entity binder</param>
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
+            this.binder = binder;
         }
 
         /// <summary>
@@ -217,11 +222,7 @@ namespace GSoft.Dynamite.Lists
         /// </returns>
         public SPList GetListByRootFolderUrl(SPWeb web, string listRootFolderUrl)
         {
-            return
-
-                (from SPList list in web.Lists
-                 where list.RootFolder.Name.Equals(listRootFolderUrl, StringComparison.Ordinal)
-                 select list).FirstOrDefault();
+            return web.Lists.Cast<SPList>().Where(list => list.RootFolder.Name.ToLowerInvariant() == listRootFolderUrl.ToLowerInvariant()).FirstOrDefault();
         }
 
         /// <summary>
@@ -356,9 +357,10 @@ namespace GSoft.Dynamite.Lists
         /// <param name="ratingStatus">True to enable. False to disable.</param>
         public void SetRatings(SPList list, string ratingType, bool ratingStatus)
         {
-            //Retrieve assembly from a puplib class
+            // Retrieve assembly from a puplib class
             Assembly assembly = typeof(Microsoft.SharePoint.Portal.RatingsSettingsPage).Assembly;
-            //  Get ReputationHelper type
+
+            // Get ReputationHelper type
             Type reputationHelper = assembly.GetType("Microsoft.SharePoint.Portal.ReputationHelper");
 
             MethodInfo enableMethod = reputationHelper.GetMethod("EnableReputation", BindingFlags.Static | BindingFlags.NonPublic);
@@ -388,6 +390,26 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
+        /// Enforce the unique value(s) for a list field. In case the field is reused in the site collection, we can make that change on the list scope.
+        /// </summary>
+        /// <param name="list">The list who owns the field</param>
+        /// <param name="field">The field to enforce</param>
+        public void EnforceUniqueValuesToField(SPList list, FieldInfo field)
+        {
+            if (list != null && field != null)
+            {
+                var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
+
+                if (listField != null)
+                {
+                    listField.EnforceUniqueValues = true;
+                    listField.Indexed = true;
+                    listField.Update();
+                }
+            }
+        }
+
+        /// <summary>
         /// Method to remove the Item Content Type from the List
         /// </summary>
         /// <param name="list">The current List</param>
@@ -411,8 +433,20 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fields">the collection of fields</param>
         public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
         {
+            this.AddFieldsToDefaultView(web, catalog, fields, false);
+        }
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="catalog">the current catalog</param>
+        /// <param name="fields">the collection of fields</param>
+        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        {
             var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
-            this.AddFieldsToDefaultView(web, list, fields);
+            this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
         }
 
         /// <summary>
@@ -423,9 +457,27 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fields">the collection of fields</param>
         public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
         {
+            this.AddFieldsToDefaultView(web, list, fields, false);
+        }
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="list">the current list</param>
+        /// <param name="fields">the collection of fields</param>
+        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        {
             // get the default view of the list
             var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
             var fieldCollection = defaulView.ViewFields;
+
+            // Remove default view fields
+            if (removeExistingViewFields)
+            {
+                fieldCollection.DeleteAll();
+            }
 
             foreach (FieldInfo field in fields)
             {
@@ -433,13 +485,24 @@ namespace GSoft.Dynamite.Lists
                 {
                     this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
                 }
+                else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
+                {
+                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName));
+                }
                 else
                 {
-                    this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                    if (list.Fields.Contains(field.ID))
+                    {
+                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                    }
+                    else
+                    {
+                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                    }
                 }
-            }
 
-            defaulView.Update();
+                defaulView.Update();
+            }
         }
 
         /// <summary>
@@ -456,6 +519,27 @@ namespace GSoft.Dynamite.Lists
         }
         #endregion
 
+        #region PublishedLinks
+        /// <summary>
+        /// Method to create if not exist the publishing link in a Publishing link list of the site
+        /// </summary>
+        /// <param name="site">The current Site to create the publishing link.</param>
+        /// <param name="publishedLink">The publishing link to create</param>
+        public void EnsurePublishedLinks(SPSite site, PublishedLink publishedLink)
+        {
+            var publishedLinksList = this.TryGetList(site.RootWeb, "/PublishedLinks");
+
+            if (publishedLinksList != null && !publishedLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishedLink.Title))
+            {
+                var item = publishedLinksList.Items.Add();
+                this.binder.FromEntity(publishedLink, item);
+
+                item.Update();
+            }
+        }
+
+        #endregion PublishedLinks
+
         private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
             // first try finding the list by name, simple
@@ -471,6 +555,19 @@ namespace GSoft.Dynamite.Lists
                 catch (FileNotFoundException)
                 {
                     // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                }
+
+                if (list == null && !titleOrUrlOrResourceString.Contains("Lists"))
+                {
+                    try
+                    {
+                        // third, try to find the list by its Lists-relative URL by adding Lists if its missing
+                        list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.ConcatUrls("Lists", titleOrUrlOrResourceString)));
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                    }
                 }
 
                 if (list == null)

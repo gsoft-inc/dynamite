@@ -24,11 +24,8 @@
         /// <summary>
         /// The deserialize.
         /// </summary>
-        /// <param name="json">
-        /// The json.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
+        /// <param name="json">The <c>json</c>.</param>
+        /// <typeparam name="T">The object to deserialize to</typeparam>
         /// <returns>
         /// The <see cref="T"/>The object type to cast to.
         /// </returns>

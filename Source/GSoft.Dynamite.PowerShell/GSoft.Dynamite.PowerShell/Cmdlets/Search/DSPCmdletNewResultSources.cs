@@ -10,6 +10,7 @@ using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 {
@@ -17,9 +18,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Creates result sources in the search service application
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPResultSources")]
-
-    // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewResultSources : Cmdlet
+    public class DSPCmdletNewResultSources : SPCmdlet
     {
         private XDocument configurationFile;
         private bool overwrite;
@@ -57,7 +56,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <summary>
         /// Ends the processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this.configurationFile = xml.ToXDocument();
@@ -79,6 +78,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 
                         var sourceName = sourceNode.Attribute("Name").Value;
                         var objectLevelAsString = sourceNode.Attribute("SearchObjectLevel").Value;
+
+                        // Get the search provider . Default is Local SharePoint Provider
+                        var searchProvider = (sourceNode.Attribute("SearchProvider") == null) ? "Local SharePoint Provider" : sourceNode.Attribute("SearchProvider").Value;
 
                         var sortObjectLevel = (SearchObjectLevel)Enum.Parse(typeof(SearchObjectLevel), objectLevelAsString);
 
@@ -104,6 +106,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 searchServiceApp,
                                 sourceName,
                                 sortObjectLevel,
+                                searchProvider,
                                 site.RootWeb,
                                 query,
                                 sortField,
@@ -116,6 +119,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 searchServiceApp,
                                 sourceName,
                                 sortObjectLevel,
+                                searchProvider,
                                 site.RootWeb,
                                 query,
                                 null,
@@ -125,7 +129,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

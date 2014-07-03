@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace GSoft.Dynamite.PowerShell.Extensions
 {
     /// <summary>
-    /// The xml document extensions.
+    /// The xmlDocument document extensions.
     /// </summary>
     public static class XmlDocumentExtensions
     {

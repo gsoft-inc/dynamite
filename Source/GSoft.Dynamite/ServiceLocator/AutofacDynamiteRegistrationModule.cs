@@ -24,7 +24,7 @@ using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
 
 namespace GSoft.Dynamite.ServiceLocator
-{   
+{
     /// <summary>
     /// Container registrations for GSoft.G.SharePoint components
     /// </summary>
@@ -37,11 +37,10 @@ namespace GSoft.Dynamite.ServiceLocator
         /// for GSoft.Dynamite components
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
-        /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
         public AutofacDynamiteRegistrationModule(string logCategoryName)
         {
             this.logCategoryName = logCategoryName;
-            }
+        }
 
         /// <summary>
         /// Registers the modules type bindings
@@ -96,6 +95,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Lists
             builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
+            builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>();
             builder.RegisterType<CatalogBuilder>();
 
@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<MasterPageHelper>();
             builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
 
-            //Navigation 
+            // Navigation 
             builder.RegisterType<NavigationService>();
             builder.RegisterType<NavigationNode>().As<INavigationNode>();
             builder.RegisterType<NavigationManagedProperties>();
@@ -114,7 +114,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Security
             builder.RegisterType<SecurityHelper>();
-            builder.RegisterType<UserHelper>(); 
+            builder.RegisterType<UserHelper>();
 
             // Serializers
             builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
@@ -137,7 +137,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Timer Jobs
             builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
-            
+
             // Utils
             builder.RegisterType<EventReceiverHelper>();
             builder.RegisterType<SearchHelper>();
@@ -149,6 +149,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Branding
             builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
             builder.RegisterType<DisplayTemplateHelper>();
+            builder.RegisterType<ImageRenditionHelper>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();

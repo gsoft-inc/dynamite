@@ -1,61 +1,89 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="AutofacBackportRegistrationBuilder.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using Autofac;
+using Autofac.Builder;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
 
 namespace GSoft.Dynamite.ServiceLocator.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using Autofac.Builder;
-    using Autofac.Core;
-    using System.ComponentModel;
-    using Autofac.Core.Lifetime;
-    using Autofac;
-
     /// <summary>
-    /// Internal Autofac copied here to backport an assembly scanning fix
+    /// Internal <c>Autofac</c> copied here to back port an assembly scanning fix
     /// </summary>
-    /// <typeparam name="TLimit"></typeparam>
-    /// <typeparam name="TActivatorData"></typeparam>
-    /// <typeparam name="TRegistrationStyle"></typeparam>
+    /// <typeparam name="TLimit">The limit</typeparam>
+    /// <typeparam name="TActivatorData">The activator data</typeparam>
+    /// <typeparam name="TRegistrationStyle">The registration style</typeparam>
     internal class RegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> : IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle>, IHideObjectMembers
     {
-        readonly TActivatorData _activatorData;
-        readonly TRegistrationStyle _registrationStyle;
-        readonly RegistrationData _registrationData;
+        private readonly TActivatorData activatorData;
+        private readonly TRegistrationStyle registrationStyle;
+        private readonly RegistrationData registrationData;
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="defaultService">The default service</param>
+        /// <param name="activatorData">The activator data</param>
+        /// <param name="style">The registration style</param>
         public RegistrationBuilder(Service defaultService, TActivatorData activatorData, TRegistrationStyle style)
         {
-            if (defaultService == null) throw new ArgumentNullException("defaultService");
-            if ((object)activatorData == null) throw new ArgumentNullException("activatorData");
-            if ((object)style == null) throw new ArgumentNullException("style");
+            if (defaultService == null)
+            {
+                throw new ArgumentNullException("defaultService");
+            }
 
-            _activatorData = activatorData;
-            _registrationStyle = style;
-            _registrationData = new RegistrationData(defaultService);
+            if ((object)activatorData == null)
+            {
+                throw new ArgumentNullException("activatorData");
+            }
+
+            if ((object)style == null)
+            {
+                throw new ArgumentNullException("style");
+            }
+
+            this.activatorData = activatorData;
+            this.registrationStyle = style;
+            this.registrationData = new RegistrationData(defaultService);
         }
 
         /// <summary>
         /// The activator data.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public TActivatorData ActivatorData { get { return _activatorData; } }
+        public TActivatorData ActivatorData
+        {
+            get
+            {
+                return this.activatorData;
+            }
+        }
 
         /// <summary>
         /// The registration style.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public TRegistrationStyle RegistrationStyle { get { return _registrationStyle; } }
+        public TRegistrationStyle RegistrationStyle
+        {
+            get
+            {
+                return this.registrationStyle;
+            }
+        }
 
         /// <summary>
         /// The registration data.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public RegistrationData RegistrationData { get { return _registrationData; } }
+        public RegistrationData RegistrationData
+        {
+            get
+            {
+                return this.registrationData;
+            }
+        }
 
         /// <summary>
         /// Configure the component so that instances are never disposed by the container.
@@ -63,7 +91,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> ExternallyOwned()
         {
-            RegistrationData.Ownership = InstanceOwnership.ExternallyOwned;
+            this.RegistrationData.Ownership = InstanceOwnership.ExternallyOwned;
             return this;
         }
 
@@ -74,7 +102,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> OwnedByLifetimeScope()
         {
-            RegistrationData.Ownership = InstanceOwnership.OwnedByLifetimeScope;
+            this.RegistrationData.Ownership = InstanceOwnership.OwnedByLifetimeScope;
             return this;
         }
 
@@ -85,8 +113,8 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerDependency()
         {
-            RegistrationData.Sharing = InstanceSharing.None;
-            RegistrationData.Lifetime = new CurrentScopeLifetime();
+            this.RegistrationData.Sharing = InstanceSharing.None;
+            this.RegistrationData.Lifetime = new CurrentScopeLifetime();
             return this;
         }
 
@@ -97,8 +125,8 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> SingleInstance()
         {
-            RegistrationData.Sharing = InstanceSharing.Shared;
-            RegistrationData.Lifetime = new RootScopeLifetime();
+            this.RegistrationData.Sharing = InstanceSharing.Shared;
+            this.RegistrationData.Lifetime = new RootScopeLifetime();
             return this;
         }
 
@@ -110,8 +138,18 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerLifetimeScope()
         {
-            RegistrationData.Sharing = InstanceSharing.Shared;
-            RegistrationData.Lifetime = new CurrentScopeLifetime();
+            this.RegistrationData.Sharing = InstanceSharing.Shared;
+            this.RegistrationData.Lifetime = new CurrentScopeLifetime();
+            return this;
+        }
+
+        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerMatchingLifetimeScope(params object[] lifetimeScopeTag)
+        {
+            foreach (var tag in lifetimeScopeTag)
+            {
+                this.InstancePerMatchingLifetimeScope(tag);
+            }
+
             return this;
         }
 
@@ -126,9 +164,13 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerMatchingLifetimeScope(object lifetimeScopeTag)
         {
-            if (lifetimeScopeTag == null) throw new ArgumentNullException("lifetimeScopeTag");
-            RegistrationData.Sharing = InstanceSharing.Shared;
-            RegistrationData.Lifetime = new MatchingScopeLifetime(lifetimeScopeTag);
+            if (lifetimeScopeTag == null)
+            {
+                throw new ArgumentNullException("lifetimeScopeTag");
+            }
+
+            this.RegistrationData.Sharing = InstanceSharing.Shared;
+            this.RegistrationData.Lifetime = new MatchingScopeLifetime(lifetimeScopeTag);
             return this;
         }
 
@@ -143,7 +185,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerOwned<TService>()
         {
-            return InstancePerOwned(typeof(TService));
+            return this.InstancePerOwned(typeof(TService));
         }
 
         /// <summary>
@@ -157,7 +199,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerOwned(Type serviceType)
         {
-            return InstancePerMatchingLifetimeScope(new TypedService(serviceType));
+            return this.InstancePerMatchingLifetimeScope(new TypedService(serviceType));
         }
 
         /// <summary>
@@ -172,7 +214,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerOwned<TService>(object serviceKey)
         {
-            return InstancePerOwned(serviceKey, typeof(TService));
+            return this.InstancePerOwned(serviceKey, typeof(TService));
         }
 
         /// <summary>
@@ -187,7 +229,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> InstancePerOwned(object serviceKey, Type serviceType)
         {
-            return InstancePerMatchingLifetimeScope(new KeyedService(serviceKey, serviceType));
+            return this.InstancePerMatchingLifetimeScope(new KeyedService(serviceKey, serviceType));
         }
 
         /// <summary>
@@ -198,32 +240,32 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> As<TService>()
         {
-            return As(new TypedService(typeof(TService)));
+            return this.As(new TypedService(typeof(TService)));
         }
 
         /// <summary>
         /// Configure the services that the component will provide. The generic parameter(s) to As()
         /// will be exposed as TypedService instances.
         /// </summary>
-        /// <typeparam name="TService1">Service type.</typeparam>
-        /// <typeparam name="TService2">Service type.</typeparam>
+        /// <typeparam name="TService1">Service type number 1.</typeparam>
+        /// <typeparam name="TService2">Service type number 2.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> As<TService1, TService2>()
         {
-            return As(new TypedService(typeof(TService1)), new TypedService(typeof(TService2)));
+            return this.As(new TypedService(typeof(TService1)), new TypedService(typeof(TService2)));
         }
 
         /// <summary>
         /// Configure the services that the component will provide. The generic parameter(s) to As()
         /// will be exposed as TypedService instances.
         /// </summary>
-        /// <typeparam name="TService1">Service type.</typeparam>
-        /// <typeparam name="TService2">Service type.</typeparam>
-        /// <typeparam name="TService3">Service type.</typeparam>
+        /// <typeparam name="TService1">Service type number 1.</typeparam>
+        /// <typeparam name="TService2">Service type number 2.</typeparam>
+        /// <typeparam name="TService3">Service type number 3.</typeparam>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> As<TService1, TService2, TService3>()
         {
-            return As(new TypedService(typeof(TService1)), new TypedService(typeof(TService2)), new TypedService(typeof(TService3)));
+            return this.As(new TypedService(typeof(TService1)), new TypedService(typeof(TService2)), new TypedService(typeof(TService3)));
         }
 
         /// <summary>
@@ -233,11 +275,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> As(params Type[] services)
         {
-            return As(services.Select(t =>
-                t.FullName != null
-                ? new TypedService(t)
-                : new TypedService(t.GetGenericTypeDefinition()))
-                .Cast<Service>().ToArray());
+            return this.As(services.Select(t => t.FullName != null ? new TypedService(t) : new TypedService(t.GetGenericTypeDefinition())).Cast<Service>().ToArray());
         }
 
         /// <summary>
@@ -247,9 +285,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> As(params Service[] services)
         {
-            if (services == null) throw new ArgumentNullException("services");
+            if (services == null)
+            {
+                throw new ArgumentNullException("services");
+            }
 
-            RegistrationData.AddServices(services);
+            this.RegistrationData.AddServices(services);
 
             return this;
         }
@@ -262,10 +303,17 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> Named(string serviceName, Type serviceType)
         {
-            if (serviceName == null) throw new ArgumentNullException("serviceName");
-            if (serviceType == null) throw new ArgumentNullException("serviceType");
+            if (serviceName == null)
+            {
+                throw new ArgumentNullException("serviceName");
+            }
 
-            return As(new KeyedService(serviceName, serviceType));
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            return this.As(new KeyedService(serviceName, serviceType));
         }
 
         /// <summary>
@@ -276,7 +324,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> Named<TService>(string serviceName)
         {
-            return Named(serviceName, typeof(TService));
+            return this.Named(serviceName, typeof(TService));
         }
 
         /// <summary>
@@ -287,10 +335,17 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> Keyed(object serviceKey, Type serviceType)
         {
-            if (serviceKey == null) throw new ArgumentNullException("serviceKey");
-            if (serviceType == null) throw new ArgumentNullException("serviceType");
+            if (serviceKey == null)
+            {
+                throw new ArgumentNullException("serviceKey");
+            }
 
-            return As(new KeyedService(serviceKey, serviceType));
+            if (serviceType == null)
+            {
+                throw new ArgumentNullException("serviceType");
+            }
+
+            return this.As(new KeyedService(serviceKey, serviceType));
         }
 
         /// <summary>
@@ -301,7 +356,7 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> Keyed<TService>(object serviceKey)
         {
-            return Keyed(serviceKey, typeof(TService));
+            return this.Keyed(serviceKey, typeof(TService));
         }
 
         /// <summary>
@@ -312,8 +367,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> OnPreparing(Action<PreparingEventArgs> handler)
         {
-            if (handler == null) throw new ArgumentNullException("handler");
-            RegistrationData.PreparingHandlers.Add((s, e) => handler(e));
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
+            this.RegistrationData.PreparingHandlers.Add((s, e) => handler(e));
             return this;
         }
 
@@ -324,8 +383,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> OnActivating(Action<IActivatingEventArgs<TLimit>> handler)
         {
-            if (handler == null) throw new ArgumentNullException("handler");
-            RegistrationData.ActivatingHandlers.Add((s, e) =>
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
+            this.RegistrationData.ActivatingHandlers.Add((s, e) =>
             {
                 var args = new ActivatingEventArgs<TLimit>(e.Context, e.Component, e.Parameters, (TLimit)e.Instance);
                 handler(args);
@@ -341,8 +404,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> OnActivated(Action<IActivatedEventArgs<TLimit>> handler)
         {
-            if (handler == null) throw new ArgumentNullException("handler");
-            RegistrationData.ActivatedHandlers.Add(
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
+            this.RegistrationData.ActivatedHandlers.Add(
                 (s, e) => handler(new ActivatedEventArgs<TLimit>(e.Context, e.Component, e.Parameters, (TLimit)e.Instance)));
             return this;
         }
@@ -353,17 +420,21 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// </summary>
         /// <param name="wiringFlags">Set wiring options such as circular dependency wiring support.</param>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
-        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> PropertiesAutowired(PropertyWiringFlags wiringFlags)
+        public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> PropertiesAutowired(PropertyWiringOptions wiringFlags)
         {
             var injector = new AutowiringPropertyInjector();
 
-            var allowCircularDependencies = 0 != (int)(wiringFlags & PropertyWiringFlags.AllowCircularDependencies);
-            var preserveSetValues = 0 != (int)(wiringFlags & PropertyWiringFlags.PreserveSetValues);
+            var allowCircularDependencies = 0 != (int)(wiringFlags & PropertyWiringOptions.AllowCircularDependencies);
+            var preserveSetValues = 0 != (int)(wiringFlags & PropertyWiringOptions.PreserveSetValues);
 
             if (allowCircularDependencies)
-                RegistrationData.ActivatedHandlers.Add((s, e) => injector.InjectProperties(e.Context, e.Instance, !preserveSetValues));
+            {
+                this.RegistrationData.ActivatedHandlers.Add((s, e) => injector.InjectProperties(e.Context, e.Instance, !preserveSetValues));
+            }
             else
-                RegistrationData.ActivatingHandlers.Add((s, e) => injector.InjectProperties(e.Context, e.Instance, !preserveSetValues));
+            {
+                this.RegistrationData.ActivatingHandlers.Add((s, e) => injector.InjectProperties(e.Context, e.Instance, !preserveSetValues));
+            }
 
             return this;
         }
@@ -376,9 +447,12 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> WithMetadata(string key, object value)
         {
-            if (key == null) throw new ArgumentNullException("key");
+            if (key == null)
+            {
+                throw new ArgumentNullException("key");
+            }
 
-            RegistrationData.Metadata.Add(key, value);
+            this.RegistrationData.Metadata.Add(key, value);
 
             return this;
         }
@@ -390,10 +464,15 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> WithMetadata(IEnumerable<KeyValuePair<string, object>> properties)
         {
-            if (properties == null) throw new ArgumentNullException("properties");
+            if (properties == null)
+            {
+                throw new ArgumentNullException("properties");
+            }
 
             foreach (var prop in properties)
-                WithMetadata(prop.Key, prop.Value);
+            {
+                this.WithMetadata(prop.Key, prop.Value);
+            }
 
             return this;
         }
@@ -401,8 +480,8 @@ namespace GSoft.Dynamite.ServiceLocator.Internal
         /// <summary>
         /// Associates data with the component.
         /// </summary>
-        /// <typeparam name="TMetadata">A type with properties whose names correspond to the
-        /// property names to configure.</typeparam>
+        /// <typeparam name="TMetadata">A type with properties whose names correspond to the property names to configure.</typeparam>
+        /// <param name="configurationAction">The configuration action</param>
         /// <returns>A registration builder allowing further configuration of the component.</returns>
         public IRegistrationBuilder<TLimit, TActivatorData, TRegistrationStyle> WithMetadata<TMetadata>(Action<MetadataConfiguration<TMetadata>> configurationAction)
         {

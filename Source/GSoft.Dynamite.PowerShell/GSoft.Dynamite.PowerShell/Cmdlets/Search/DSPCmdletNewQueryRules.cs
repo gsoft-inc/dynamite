@@ -10,6 +10,7 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
@@ -18,9 +19,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
     /// Creates result sources in the search service application
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPQueryRules")]
-
-    // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewQueryRules : Cmdlet
+    public class DSPCmdletNewQueryRules : SPCmdlet
     {
         private XDocument configurationFile;
 
@@ -30,17 +29,14 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
         /// <value>
         /// The input file.
         /// </value>
-        [Parameter(Mandatory = true, ValueFromPipeline = true,
-            HelpMessage =
-                "The path to the file containing the result sources configuration or an XmlDocument object or XML string.",
-            Position = 1)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The path to the file containing the result sources configuration or an XmlDocument object or XML string.", Position = 1)]
         [Alias("Xml")]
         public XmlDocumentPipeBind InputFile { get; set; }
 
         /// <summary>
         /// Ends the processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this.configurationFile = xml.ToXDocument();
@@ -57,7 +53,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                     var contextWeb = queryRuleNode.Attribute("ContextWeb").Value;
                     using (var site = new SPSite(contextWeb))
                     {
-                        using (var web = site.OpenWeb(contextWeb))
+                        using (var web = site.OpenWeb())
                         {
                             using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
                             {
@@ -228,16 +224,16 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                         if (!string.IsNullOrEmpty(linkUrl))
                                         {
                                             var url = new Uri(linkUrl);
-                                            
+
                                             // Add the action
                                             var bestBet = searchHelper.EnsureBestBet(
-                                                searchServiceApp, 
-                                                searchObjectLevel, 
-                                                web, 
-                                                linkTitle, 
-                                                url, 
-                                                linkDescription, 
-                                                isVisualBestBet, 
+                                                searchServiceApp,
+                                                searchObjectLevel,
+                                                web,
+                                                linkTitle,
+                                                url,
+                                                linkDescription,
+                                                isVisualBestBet,
                                                 deleteIfUnused);
 
                                             searchHelper.CreatePromotedResultAction(queryRule, bestBet.Id);
@@ -250,7 +246,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

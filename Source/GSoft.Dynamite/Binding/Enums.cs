@@ -20,4 +20,25 @@
         /// </summary>
         WriteOnly,
     }
+
+    /// <summary>
+    /// The Requirement status of a field
+    /// </summary>
+    public enum RequiredTypes
+    {
+        /// <summary>
+        /// Inherit its value from the Field Definition
+        /// </summary>
+        Inherit,
+
+        /// <summary>
+        /// The FieldLink in the Content type is required
+        /// </summary>
+        Required,
+
+        /// <summary>
+        /// The FieldLink in the Content Type is not required
+        /// </summary>
+        NotRequired
+    }
 }

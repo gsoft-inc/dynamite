@@ -18,6 +18,16 @@ namespace GSoft.Dynamite
         public const string TitleName = "Title";
 
         /// <summary>
+        /// Linked to item with edit menu
+        /// </summary>
+        public const string TitleLinkName = "LinkTitle";
+
+        /// <summary>
+        /// Linked to item with no edit menu
+        /// </summary>
+        public const string TitleLinkNoMenuName = "LinkTitleNoMenu";
+
+        /// <summary>
         /// FileRef (i.e. File Url) field internal name
         /// </summary>
         public const string FileRefName = "FileRef";
@@ -199,6 +209,11 @@ namespace GSoft.Dynamite
         /// </summary>
         public const string CompanyName = "Company";
 
+        /// <summary>
+        /// PublishingLinks list : the url of the publishing link
+        /// </summary>
+        public const string PublishedLinksUrlName = "PublishedLinksURL";
+
         #endregion
 
         #region FieldInfo
@@ -207,6 +222,16 @@ namespace GSoft.Dynamite
         /// Title field info
         /// </summary>
         public static readonly FieldInfo Title = new FieldInfo(TitleName, SPBuiltInFieldId.Title);
+
+        /// <summary>
+        /// Title linked to item with edit menu
+        /// </summary>
+        public static readonly FieldInfo TitleLink = new FieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle);
+
+        /// <summary>
+        /// Title linked to item with no edit menu
+        /// </summary>
+        public static readonly FieldInfo TitleLinkNoMenu = new FieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu);
 
         /// <summary>
         /// FileRef (i.e. File Url) field info

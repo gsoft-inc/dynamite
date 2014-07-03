@@ -45,13 +45,13 @@ namespace GSoft.Dynamite.ServiceLocator
         private readonly IDictionary<string, ILifetimeScope> childScopes = new Dictionary<string, ILifetimeScope>();
 
         /// <summary>
+        /// Creates a new child scope or returns an existing child scope.
+        /// </summary>
+        /// <param name="parentScope">The current parent container.</param>
         /// <param name="scopeKindTag">
         /// A tag to identify this kind of scope so it can be reused to share objects 
         /// through fancy registration extensions (e.g. InstancePerSPSite, InstancePerSPWeb)
         /// </param>
-        /// Creates a new child scope or returns an existing child scope.
-        /// </summary>
-        /// <param name="parentScope">The current parent container.</param>
         /// <param name="childScopeKey">A key to uniquely identify this scope within the container.</param>
         /// <returns>The child scope for the uniquely identified resource</returns>
         public ILifetimeScope GetChildLifetimeScope(ILifetimeScope parentScope, string scopeKindTag, string childScopeKey)

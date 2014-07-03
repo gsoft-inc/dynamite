@@ -8,10 +8,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.UserProfile.Entities
     public class DisplaySettings
     {
         /// <summary>
-        /// Gets or sets a value indicating whether [is event log].
+        /// Gets or sets a value indicating whether [is event logger].
         /// </summary>
         /// <value>
-        ///   <c>true</c> if [is event log]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [is event logger]; otherwise, <c>false</c>.
         /// </value>
         [XmlAttribute]
         public bool IsEventLog { get; set; }

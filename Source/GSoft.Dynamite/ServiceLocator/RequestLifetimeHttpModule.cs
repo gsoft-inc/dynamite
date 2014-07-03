@@ -5,7 +5,7 @@ using System.Web;
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
-    /// Autofac-related HttpModule that takes care of disposing per-request lifetimes
+    /// <c>Autofac-related</c> HttpModule that takes care of disposing per-request lifetimes
     /// at the end of each HTTP request.
     /// </summary>
     public class RequestLifetimeHttpModule : IHttpModule

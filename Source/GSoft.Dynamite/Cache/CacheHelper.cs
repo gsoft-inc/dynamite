@@ -8,6 +8,7 @@ using System.Web.Caching;
 using GSoft.Dynamite.Logging;
 
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Cache
 {
@@ -16,15 +17,15 @@ namespace GSoft.Dynamite.Cache
     /// </summary>
     public class CacheHelper : ICacheHelper
     {
-        private ILogger log;
+        private ILogger logger;
 
         /// <summary>
         /// Creates a cache helper
         /// </summary>
-        /// <param name="log">The logger</param>
-        public CacheHelper(ILogger log)
+        /// <param name="logger">The logger</param>
+        public CacheHelper(ILogger logger)
         {
-            this.log = log;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace GSoft.Dynamite.Cache
         /// <returns>The number of keys cleared from cache</returns>
         public int ClearCache()
         {
-            this.log.Info("Clearing Dynamite CacheHelper cached items.");
+            this.logger.Info("Clearing Dynamite CacheHelper cached items.");
 
             int clearCount = 0;
 
@@ -106,7 +107,7 @@ namespace GSoft.Dynamite.Cache
                             HttpRuntime.Cache.Remove(key);
                         });
 
-                this.log.Info("Cleared {0} keys form HttpCache.", clearCount);
+                this.logger.Info("Cleared {0} keys form HttpCache.", clearCount);
             }
             else
             {
@@ -122,7 +123,7 @@ namespace GSoft.Dynamite.Cache
 
             if (cachedValue == null)
             {
-                this.log.Info("Caching value(s) for key = " + cacheKey);
+                this.logger.Info("Caching value(s) for key = " + cacheKey);
                 cachedValue = new CacheItemWrapper<T>(repoCamlQuery.Invoke());
                 
                 // Add item to cache

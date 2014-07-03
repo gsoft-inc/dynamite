@@ -61,9 +61,6 @@
     <Reference Include="Microsoft.SharePoint.Security" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
       <DependentUpon>JavascriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -101,6 +98,9 @@
     <None Include="Package\Package.Template.xml">
       <DependentUpon>Package.package</DependentUpon>
     </None>
+    <None Include="POWERSHELL\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{597673a7-c184-4d62-806f-c6999181f8c5}</SharePointProjectItemId>
+    </None>
     <None Include="Resources\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{01a6a883-104e-4560-8f3a-516fb755f156}</SharePointProjectItemId>
     </None>
@@ -130,6 +130,9 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-min.js" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +147,9 @@
       <Project>{72576E04-75B4-4EAF-AF1E-7482355FC8C1}</Project>
       <Name>GSoft.Dynamite</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="POWERSHELL\Help\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />

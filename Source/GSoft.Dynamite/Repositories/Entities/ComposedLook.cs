@@ -1,4 +1,5 @@
-﻿using GSoft.Dynamite.Binding;
+﻿using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
@@ -10,6 +11,8 @@ namespace GSoft.Dynamite.Repositories.Entities
     /// </summary>
     public class ComposedLook : BaseEntity
     {
+        private const int DefaultDisplayOrder = 100;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ComposedLook"/> class.
         /// </summary>
@@ -22,24 +25,60 @@ namespace GSoft.Dynamite.Repositories.Entities
         /// </summary>
         /// <param name="web">The web.</param>
         /// <param name="name">The name.</param>
-        /// <param name="masterPagePath">The master page path.</param>
-        /// <param name="themePath">The theme path.</param>
-        /// <param name="imagePath">The image path.</param>
-        /// <param name="fontSchemePath">The font scheme path.</param>
-        /// <param name="displayOrder">The display order.</param>
-        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath, string imagePath = "", string fontSchemePath = "", int displayOrder = 100)
+        /// <param name="masterPagePath">The web relative master page URL path (ex: /_catalogs/masterpage/custom.master).</param>
+        /// <param name="themePath">The web relative theme URL path (ex: /_catalogs/theme/15/custom.spcolor).</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "SharePoint specific terminology accepted.")]
+        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath)
         {
             // Init fields
-            this.FontSchemePath = new UrlValue();
-            this.ThemePath = new UrlValue();
-            this.ImagePath = new UrlValue();
-            this.MasterPagePath = new UrlValue();
             this.Name = name;
+            this.MasterPagePath = GetServerRelativeUrlValue(web, masterPagePath);
+            this.ThemePath = GetServerRelativeUrlValue(web, themePath);
+            this.FontSchemePath = new UrlValue() { Url = string.Empty };
+            this.ImagePath = new UrlValue() { Url = string.Empty };
+            this.DisplayOrder = DefaultDisplayOrder;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComposedLook" /> class and appends the web's server relative url.
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="masterPagePath">The web relative master page URL path (ex: /_catalogs/masterpage/custom.master).</param>
+        /// <param name="themePath">The web relative theme URL path (ex: /_catalogs/theme/15/custom.spcolor).</param>
+        /// <param name="fontSchemePath">The web relative font scheme URL path (ex: /_catalogs/theme/15/custom.spfont).</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "SharePoint specific terminology accepted.")]
+        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath, string fontSchemePath)
+        {
+            // Init fields
+            this.Name = name;
+            this.MasterPagePath = GetServerRelativeUrlValue(web, masterPagePath);
+            this.ThemePath = GetServerRelativeUrlValue(web, themePath);
+            this.FontSchemePath = GetServerRelativeUrlValue(web, fontSchemePath);
+            this.ImagePath = new UrlValue() { Url = string.Empty };
+            this.DisplayOrder = DefaultDisplayOrder;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ComposedLook" /> class and appends the web's server relative url.
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="masterPagePath">The web relative master page URL path (ex: /_catalogs/masterpage/custom.master).</param>
+        /// <param name="themePath">The web relative theme URL path (ex: /_catalogs/theme/15/custom.spcolor).</param>
+        /// <param name="imagePath">The web relative image URL path (ex: /_layouts/15/images/custom.jpg).</param>
+        /// <param name="fontSchemePath">The web relative font scheme URL path (ex: /_catalogs/theme/15/custom.spfont).</param>
+        /// <param name="displayOrder">The display order in the list.</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "SharePoint specific terminology accepted.")]
+        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath, string imagePath = "", string fontSchemePath = "", int displayOrder = DefaultDisplayOrder)
+        {
+            // Init fields
+            this.Name = name;
+            this.MasterPagePath = GetServerRelativeUrlValue(web, masterPagePath);
+            this.ThemePath = GetServerRelativeUrlValue(web, themePath);
+            this.ImagePath = new UrlValue() { Url = imagePath };
+            this.FontSchemePath = GetServerRelativeUrlValue(web, fontSchemePath);
             this.DisplayOrder = displayOrder;
-            this.MasterPagePath.Url = !string.IsNullOrEmpty(masterPagePath) ? SPUtility.ConcatUrls(web.ServerRelativeUrl, masterPagePath) : masterPagePath;
-            this.ImagePath.Url = imagePath;
-            this.ThemePath.Url = !string.IsNullOrEmpty(themePath) ? SPUtility.ConcatUrls(web.Site.ServerRelativeUrl, themePath) : themePath;
-            this.FontSchemePath.Url = !string.IsNullOrEmpty(fontSchemePath) ? SPUtility.ConcatUrls(web.Site.ServerRelativeUrl, fontSchemePath) : fontSchemePath;
         }
 
         /// <summary>
@@ -95,5 +134,11 @@ namespace GSoft.Dynamite.Repositories.Entities
         /// </value>
         [Property(BuiltInFields.FontSchemeUrlName)]
         public UrlValue FontSchemePath { get; set; }
+
+        private static UrlValue GetServerRelativeUrlValue(SPWeb web, string webRelativeUrl)
+        {
+            var url = !string.IsNullOrEmpty(webRelativeUrl) ? SPUtility.ConcatUrls(web.ServerRelativeUrl, webRelativeUrl) : string.Empty;
+            return new UrlValue() { Url = url };
+        }
     }
 }

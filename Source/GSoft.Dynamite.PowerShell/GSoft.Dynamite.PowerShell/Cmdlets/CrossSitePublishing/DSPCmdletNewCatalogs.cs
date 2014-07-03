@@ -16,6 +16,8 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
+using Microsoft.SharePoint.PowerShell;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -25,9 +27,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     [Cmdlet(VerbsCommon.New, "DSPCatalogs")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletNewCatalogs : Cmdlet
+    public class DSPCmdletNewCatalogs : SPCmdlet
     {
-        private XmlSerializer serializer;
+        private XmlSerializer _serializer;
 
         /// <summary>
         /// Gets or sets the input file.
@@ -39,10 +41,10 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             // Initialize XML serializer
-            this.serializer = new XmlSerializer(typeof(Catalog));
+            this._serializer = new XmlSerializer(typeof(Catalog));
 
             // Process XML
             var xml = this.InputFile.Read();
@@ -50,7 +52,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
             this.ProcessCatalogs(configFile);
 
             // End cmdlet processing
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                             // Get all catalogs configurations
                             var catalogs = from catalogNode in webNode.Descendants("Catalog")
-                                           select (Catalog)this.serializer.Deserialize(catalogNode.CreateReader());
+                                           select (Catalog)this._serializer.Deserialize(catalogNode.CreateReader());
 
                             foreach (var catalog in catalogs)
                             {
@@ -98,6 +100,20 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                 // Set Display Settings
                                 this.SetDisplaySettings(list, catalog);
 
+                                // Set the default view fields
+                                if (catalog.DefaultViewFields != null)
+                                {
+                                    var fieldInfos = catalog.DefaultViewFields
+                                        .Where(x => !string.IsNullOrEmpty(x.InternalName))
+                                        .Select(x => new Definitions.FieldInfo(x.InternalName, Guid.Empty))
+                                        .ToArray();
+
+                                    listHelper.AddFieldsToDefaultView(list.ParentWeb, list, fieldInfos, true); 
+                                }
+
+                                // Update the reference to the list object
+                                list = listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
+
                                 // Set versioning settings
                                 if (!string.IsNullOrEmpty(catalog.DraftVisibilityType))
                                 {
@@ -112,12 +128,26 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                 if (string.IsNullOrEmpty(catalog.TaxonomyFieldMap))
                                 {
                                     // Set the list as catalog without navigation
-                                    catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                                    if (catalog.EnableAnonymous)
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), true);
+                                    }
+                                    else
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                                    }
                                 }
                                 else
                                 {
                                     // Set the list as catalog with navigation term
-                                    catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
+                                    if (catalog.EnableAnonymous)
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap, true); 
+                                    }
+                                    else
+                                    {
+                                        catalogHelper.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap);
+                                    }
                                 }
 
                                 if (catalog.EnableRatings)

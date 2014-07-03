@@ -6,6 +6,7 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
+    using System.Collections.Generic;
     using System.Data;
 
     using GSoft.Dynamite.Logging;
@@ -16,6 +17,8 @@ namespace GSoft.Dynamite.Binding
     public class SharePointEntityBinder : ISharePointEntityBinder
     {
         #region Fields
+
+        private readonly ILogger logger;
 
         private readonly IEntitySchemaBuilder entitySchemaDataRowBuilder;
 
@@ -34,7 +37,10 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
         /// </summary>
-        /// <param name="entitySchemaBuilder">The entity schema builder.</param>
+        /// <param name="logger">The logger</param>
+        /// <param name="entitySchemaDataRowBuilder">Entity schema data builder</param>
+        /// <param name="taxonomyValueDataRowConverter">Data row converter</param>
+        /// <param name="taxonomyValueCollectionDataRowConverter">Taxonomy collection data row converter</param>
         /// <param name="taxonomyValueConverter">The taxonomy value converter</param>
         /// <param name="taxonomyValueCollectionConverter">The Taxonomy value collection converter</param>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "The types must be registred in the constructor.")]
@@ -44,7 +50,8 @@ namespace GSoft.Dynamite.Binding
             var schemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
              var cachedBuilder = new CachedSchemaBuilder(schemaBuilder, logger);
 
-             this.entitySchemaDataRowBuilder = entitySchemaDataRowBuilder;
+            this.logger = logger;
+            this.entitySchemaDataRowBuilder = entitySchemaDataRowBuilder;
             this.entityListItemSchemaBuilder = cachedBuilder;
 
             this.taxonomyValueConverter = taxonomyValueConverter;
@@ -105,10 +112,41 @@ namespace GSoft.Dynamite.Binding
         }
 
         /// <summary>
+        /// The get.
+        /// </summary>
+        /// <param name="listItems">
+        /// The list items.
+        /// </param>
+        /// <typeparam name="T"> The type of object to return
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="IList"/>.
+        /// </returns>
+        public IList<T> Get<T>(SPListItemCollection listItems) where T : new()
+        {
+            var returnList = new List<T>();
+
+            if (listItems.Count > 0)
+            {
+                var table = listItems.GetDataTable();
+                var rows = table.AsEnumerable();
+
+                foreach (var dataRow in rows)
+                {
+                    returnList.Add(this.Get<T>(dataRow, listItems.Fields, listItems.List.ParentWeb));
+                }
+            }
+
+            return returnList;
+        }
+
+        /// <summary>
         /// Creates an entity of the specified type and fills it using the values.
         /// </summary>
         /// <typeparam name="T">The type of the entity.</typeparam>
-        /// <param name="listItemVersion">The list item version.</param>
+        /// <param name="dataRow">The data row.</param>
+        /// <param name="fieldCollection">The collection of field to get</param>
+        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>
@@ -175,7 +213,7 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         protected internal virtual void RegisterTypeConverters()
         {
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
+            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueDataRowConverter());
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
@@ -183,7 +221,7 @@ namespace GSoft.Dynamite.Binding
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionDataRowConverter);
             this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
 
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter());
+            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());

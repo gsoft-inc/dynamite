@@ -9,9 +9,11 @@ using GSoft.Dynamite.Utils;
 
 namespace GSoft.Dynamite.PowerShell.ServiceLocator
 {
+    /// <summary>
+    /// The PowerShell registration module. We register the different type we need to use with the dependency injection engine
+    /// </summary>
     public class PowerShellRegistrationModule : Module
     {
-        
         /// <summary>
         /// Registers the module's type bindings on the container
         /// </summary>

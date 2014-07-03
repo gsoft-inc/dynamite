@@ -1,32 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.UI;
 using Autofac;
-using Microsoft.SharePoint;
 using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
-    // Special service locator which scans the GAC for DLLs that match the 
-    // *.ServiceLocator.dll pattern for a ISharePointServiceLocatorAccessor
-    // to which it will delegate container provider duties.
+    /// Special service locator which scans the GAC for DLLs that match the 
+    /// *.ServiceLocator.<c>dll</c> pattern for a ISharePointServiceLocatorAccessor
+    /// to which it will delegate container provider duties.
     /// </summary>
     public class AddOnProvidedServiceLocator : ISharePointServiceLocator
     {
+        /// <summary>
+        /// Constant for the KeyServiceLocator Assembly name
+        /// </summary>
+        public const string KeyServiceLocatorAssemblyName = "ServiceLocatorAssemblyName";
+
         private ISharePointServiceLocatorAccessor locatorAccessor;
         private object lockObject = new object();
-
-        public const string KeyServiceLocatorAssemblyName = "ServiceLocatorAssemblyName";
 
         /// <summary>
         /// Exposes the most-nested currently available lifetime scope.
         /// In an HTTP-request context, will return a shared per-request
         /// scope (allowing you to inject InstancePerSite, InstancePerWeb
-        /// and IntancePerRequest-registered objects).
+        /// and InstancePerRequest-registered objects).
         /// Outside an HTTP-request context, will return the root application
         /// container itself (preventing you from injecting InstancePerSite,
         /// InstancePerWeb or InstancePerRequest objects).
@@ -60,7 +62,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// InstancePerSite, InstancePerWeb or InstancePerRequest objects).
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
+        /// Prefer usage of this method versus resolving individual dependencies from the 
         /// ISharePointServiceLocator.Current property.
         /// </summary>
         /// <param name="feature">The current feature that is requesting a child lifetime scope</param>
@@ -107,7 +109,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// a using block).
         /// Prefer usage of this method versus resolving manually from the Current property.
         /// </summary>
-        /// <param name="feature">The current web from which we are requesting a child lifetime scope</param>
+        /// <param name="web">The current web from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public ILifetimeScope BeginWebLifetimeScope(SPWeb web)
         {
@@ -131,9 +133,39 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
-        /// Autowires the dependencies of a UI control using the current HTTP-request-bound
+        /// Creates a new child lifetime scope under the scope of the specified web
+        /// (allowing you to inject InstancePerSite and InstancePerWeb objects).
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
+        /// Prefer usage of this method versus resolving manually from the Current property.
+        /// </summary>
+        /// <param name="site">The current web from which we are requesting a child lifetime scope</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginSiteLifetimeScope(SPSite site)
+        {
+            ILifetimeScope newSiteChildScope = null;
+
+            if (site == null)
+            {
+                // Can't use an AddOnProvidedServiceLocator this way outside a SPSite context (e.g. no SPFarm or SPWebApp scoped feature will work)
+                throw new ArgumentNullException("site");
+            }
+            else
+            {
+                this.EnsureServiceLocatorAccessorForCurrentSiteContext(site);
+
+                // We are dealing with a SPSite or SPWeb-scoped feature.
+                // Always return a web scope (even for Site-scoped features - as being in a site-scoped feature means you are in the RootWeb context)
+                newSiteChildScope = this.locatorAccessor.ServiceLocatorInstance.BeginSiteLifetimeScope(site);
+            }
+
+            return newSiteChildScope;
+        }
+
+        /// <summary>
+        /// <c>Autowires</c> the dependencies of a UI control using the current HTTP-request-bound
         /// lifetime scope.
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
+        /// Prefer usage of this method versus resolving individual dependencies from the 
         /// ISharePointServiceLocator.Current property.
         /// </summary>
         /// <param name="target">The UI control which has properties to be injected</param>
@@ -143,9 +175,9 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
-        /// Autowires the dependencies of a HttpHandler using the current HTTP-request-bound
+        /// <c>Autowires</c> the dependencies of a HttpHandler using the current HTTP-request-bound
         /// lifetime scope.
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
+        /// Prefer usage of this method versus resolving individual dependencies from the 
         /// ISharePointServiceLocator.Current property.
         /// </summary>
         /// <param name="target">The HttpHandler which has properties to be injected</param>
@@ -156,9 +188,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
         private void EnsureServiceLocatorAccessorForCurrentSiteContext(SPSite site)
         {
-            if (locatorAccessor == null)
+            if (this.locatorAccessor == null)
             {
-                lock (lockObject)
+                lock (this.lockObject)
                 {
                     if (this.locatorAccessor == null)
                     {
@@ -211,7 +243,6 @@ namespace GSoft.Dynamite.ServiceLocator
                         {
                             throw new InvalidOperationException("Failed to find implementation of ISharePointServiceLocatorAccessor for AddOnProvidedServiceLocator. Your *.ServiceLocator.DLL assembly should expose its static container through that interface.");
                         }
-
                     }
                 }
             }

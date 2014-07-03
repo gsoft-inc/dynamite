@@ -85,6 +85,8 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         /// <param name="bindingDetail">The binding detail.</param>
         /// <param name="values">The values.</param>
+        /// <param name="fieldCollection">The collection of fields</param>
+        /// <param name="web">The current web</param>
         /// <returns>The conversion arguments.</returns>
         protected internal virtual ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
         {

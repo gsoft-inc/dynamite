@@ -7,6 +7,7 @@ using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.PowerShell;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -16,7 +17,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
     [Cmdlet(VerbsCommon.Remove, "DSPCatalogs")]
 
     // ReSharper disable once InconsistentNaming
-    public class DSPCmdletRemoveCatalogs : Cmdlet
+    public class DSPCmdletRemoveCatalogs : SPCmdlet
     {
         private XDocument configurationFile;
 
@@ -30,7 +31,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// Ends the processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this.configurationFile = xml.ToXDocument();
@@ -81,7 +82,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
     }
 }

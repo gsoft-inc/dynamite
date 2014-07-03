@@ -1,23 +1,16 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="DataRowValuesAdapter.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
 
 namespace GSoft.Dynamite.Binding
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// An adapter class to convert a SPListItem to an IDictionary&lt;string, object&gt;.
     /// </summary>
-    [CLSCompliant(false)]
     [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix", Justification = "Adding Dictionnary would be harder to understand.")]
     public class DataRowValuesAdapter : IDictionary<string, object>, IDataRowValues
     {

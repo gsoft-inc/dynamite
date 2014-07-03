@@ -10,13 +10,14 @@ using Microsoft.SharePoint.Utilities;
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
     using System.Diagnostics.CodeAnalysis;
+    using Microsoft.SharePoint.PowerShell;
 
     /// <summary>
     /// Cmdlet for creating a catalog connection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "DSPCatalogConnection")]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class DspCmdletNewCatalogConnection : Cmdlet
+    public class DspCmdletNewCatalogConnection : SPCmdlet
     {
         private XDocument _configurationFile;
         private bool _overwrite;
@@ -45,7 +46,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         /// <summary>
         /// The end processing.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void InternalEndProcessing()
         {
             var xml = this.InputFile.Read();
             this._configurationFile = xml.ToXDocument();
@@ -86,7 +87,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 }
             }
 
-            base.EndProcessing();
+            base.InternalEndProcessing();
         }
 
         private static CatalogConnectionSettings GetCatalogConnectionSettingsFromNode(SPWeb web, XElement node)

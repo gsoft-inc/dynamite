@@ -18,9 +18,7 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// The get lock.
         /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
+        /// <param name="key">The key.</param>
         /// <returns>
         /// The <see cref="ReaderWriterLockSlim"/>.
         /// </returns>
@@ -44,14 +42,9 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// The run with read lock.
         /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <param name="body">
-        /// The body.
-        /// </param>
-        /// <typeparam name="TResult">
-        /// </typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="body">The body.</param>
+        /// <typeparam name="TResult">The result to lock</typeparam>
         /// <returns>
         /// The <see cref="TResult"/>.
         /// </returns>
@@ -95,14 +88,9 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// The run with write lock.
         /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <param name="body">
-        /// The body.
-        /// </param>
-        /// <typeparam name="TResult">
-        /// </typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="body">The body.</param>
+        /// <typeparam name="TResult">The type to lock</typeparam>
         /// <returns>
         /// The <see cref="TResult"/>.
         /// </returns>
@@ -126,7 +114,7 @@ namespace GSoft.Dynamite.Utils
         /// <typeparam name="TResult">The type of the result.</typeparam>
         /// <param name="key">The key.</param>
         /// <param name="body">The body.</param>
-        /// <returns></returns>
+        /// <returns>The result of the lock</returns>
         public TResult RunWithUpgradeableReadLock<TResult>(T key, Func<TResult> body)
         {
             var lockSlim = this.GetLock(key);
@@ -144,12 +132,8 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// The run with write lock.
         /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <param name="body">
-        /// The body.
-        /// </param>
+        /// <param name="key">The key.</param>
+        /// <param name="body">The body.</param>
         public void RunWithWriteLock(T key, Action body)
         {
             var lockSlim = this.GetLock(key);
@@ -167,9 +151,7 @@ namespace GSoft.Dynamite.Utils
         /// <summary>
         /// The remove lock.
         /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
+        /// <param name="key">The key.</param>
         public void RemoveLock(T key)
         {
             if (this.lockDict.ContainsKey(key))

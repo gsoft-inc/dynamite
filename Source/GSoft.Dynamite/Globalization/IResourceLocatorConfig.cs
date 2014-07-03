@@ -16,8 +16,8 @@ namespace GSoft.Dynamite.Globalization
         /// Should return the keys representing all the resource files
         /// the <see cref="ResourceLocator"/> should look through to
         /// find resource labels. 
-        /// For example, to reach SomeCompany.AppModule.en-US.resx and 
-        /// SomeCompany.OtherModule.en-US.resx and their fr-FR.rex variants,
+        /// For example, to reach SomeCompany.AppModule.en-US.<c>resx</c> and 
+        /// SomeCompany.OtherModule.en-US.<c>resx</c> and their <c>fr-FR</c>.<c>resx</c> variants,
         /// return ["SomeCompany.AppModule", "SomeCompany.OtherModule"].
         /// </summary>
         /// <returns>The names of the resource files</returns>

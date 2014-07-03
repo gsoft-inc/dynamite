@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using GSoft.Dynamite.Binding;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Definitions
@@ -207,7 +208,7 @@ namespace GSoft.Dynamite.Definitions
             if (field != null)
             {
                 // Add the field to the content type and its children.
-                AddFieldToContentType(contentType, field, true);
+                AddFieldToContentType(contentType, field, true, fieldInfo.RequiredType);
             }
 
             return field;
@@ -236,7 +237,7 @@ namespace GSoft.Dynamite.Definitions
                     fields.Add(field);
 
                     // Then we add it to the content type without updating the content type.
-                    if (AddFieldToContentType(contentType, field, false))
+                    if (AddFieldToContentType(contentType, field, false, fieldInfo.RequiredType))
                     {
                         fieldWasAdded = true;
                     }
@@ -290,7 +291,7 @@ namespace GSoft.Dynamite.Definitions
                 eventReceiverDefinition.Type = type;
                 eventReceiverDefinition.Assembly = assembly.FullName;
                 eventReceiverDefinition.Class = className;
-                eventReceiverDefinition.Update(); 
+                eventReceiverDefinition.Update();
                 contentType.Update(true);
             }
         }
@@ -321,12 +322,27 @@ namespace GSoft.Dynamite.Definitions
         }
 
         #region Private methods
-        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType)
+        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType, RequiredTypes isRequired)
         {
             // Create the field ref.
             SPFieldLink fieldOneLink = new SPFieldLink(field);
             if (contentType.FieldLinks[fieldOneLink.Id] == null)
             {
+                // Set the RequiredType value on the Content Type
+                switch (isRequired)
+                {
+                    case RequiredTypes.Required:
+                        fieldOneLink.Required = true;
+                        break;
+                    case RequiredTypes.NotRequired:
+                        fieldOneLink.Required = false;
+                        break;
+                    case RequiredTypes.Inherit:
+                    default:
+                        // Do nothing, it will inherit from the Field definition
+                        break;
+                }
+
                 // Field is not in the content type so we add it.
                 contentType.FieldLinks.Add(fieldOneLink);
 
@@ -356,7 +372,7 @@ namespace GSoft.Dynamite.Definitions
                     }
                 }
             }
-         
+
             list = null;
             return false;
         }
@@ -373,7 +389,7 @@ namespace GSoft.Dynamite.Definitions
                         web = first.ParentWeb;
                         return true;
                     }
-                }  
+                }
             }
 
             web = null;

@@ -3,7 +3,7 @@
     using System.Web.Script.Serialization;
 
     /// <summary>
-    /// The javascript serializer.
+    /// The JavaScript serializer.
     /// </summary>
     public class JavascriptSerializer : ISerializer
     {
@@ -35,7 +35,7 @@
         /// The deserialize method.
         /// </summary>
         /// <param name="json">
-        /// The json to deserialize.
+        /// The JSON to deserialize.
         /// </param>
         /// <typeparam name="T">
         /// The type to deserialize

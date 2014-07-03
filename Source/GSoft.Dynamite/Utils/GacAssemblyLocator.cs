@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.Utils
             }
             catch (Exception)
             {
-                // do nothing, just log a warning
+                // do nothing, just logger a warning
                 // this.logger.Warn(string.Format("{0} : {1}", err.Message, err.StackTrace));
             }
         }

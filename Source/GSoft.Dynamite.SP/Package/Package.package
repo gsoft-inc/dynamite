@@ -2,6 +2,7 @@
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" solutionId="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" resetWebServer="false" sharePointProductVersion="15.0" name="GSoft.Dynamite" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
     <projectOutputAssembly location="GSoft.Dynamite.PowerShell.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\GSoft.Dynamite.PowerShell\GSoft.Dynamite.PowerShell\GSoft.Dynamite.PowerShell.csproj" />
+    <projectOutputAssembly location="GSoft.Dynamite.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\GSoft.Dynamite\GSoft.Dynamite.csproj" />
   </assemblies>
   <features>
     <featureReference itemId="1505bd90-16f1-47d4-a99a-6007e090ca32" />
@@ -11,5 +12,6 @@
     <projectItemReference itemId="ff112f9f-2429-46c2-a407-771ef33b1d94" />
     <projectItemReference itemId="434adeb6-fd4d-4761-a7cb-91cd790d0a95" />
     <projectItemReference itemId="01a6a883-104e-4560-8f3a-516fb755f156" />
+    <projectItemReference itemId="597673a7-c184-4d62-806f-c6999181f8c5" />
   </projectItems>
 </package>

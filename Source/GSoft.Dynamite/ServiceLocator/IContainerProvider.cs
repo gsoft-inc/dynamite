@@ -7,7 +7,7 @@ using Autofac;
 namespace GSoft.Dynamite.ServiceLocator
 {   
     /// <summary>
-    /// Interface for the retrieval of Autofac dependency injection containers
+    /// Interface for the retrieval of <c>Autofac</c> dependency injection containers
     /// </summary>
     public interface IContainerProvider
     {

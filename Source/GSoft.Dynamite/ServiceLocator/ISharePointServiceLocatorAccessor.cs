@@ -1,21 +1,13 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="ISharePointServiceLocatorAccessor.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
-
-namespace GSoft.Dynamite.ServiceLocator
+﻿namespace GSoft.Dynamite.ServiceLocator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
-    /// TODO: Update summary.
+    /// The locator accessor interface
     /// </summary>
     public interface ISharePointServiceLocatorAccessor
     {
+        /// <summary>
+        /// Service locator instance
+        /// </summary>
         ISharePointServiceLocator ServiceLocatorInstance { get; }
     }
 }

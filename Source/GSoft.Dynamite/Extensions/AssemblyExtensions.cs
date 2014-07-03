@@ -1,11 +1,10 @@
-﻿namespace GSoft.Dynamite.Extensions
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
+namespace GSoft.Dynamite.Extensions
+{
     /// <summary>
     /// Extension methods for <see cref="System.Reflection.Assembly"/>.
     /// </summary>
@@ -13,7 +12,7 @@
     {
         /// <summary>
         /// Safely returns the set of loadable types from an assembly.
-        /// Borrowed (THANKS!!) from Autofac to backport an assembly scanning fix.
+        /// Borrowed (THANKS!!) from <c>Autofac</c> to back port an assembly scanning fix.
         /// </summary>
         /// <param name="assembly">The <see cref="System.Reflection.Assembly"/> from which to load types.</param>
         /// <returns>
@@ -31,6 +30,7 @@
             {
                 throw new ArgumentNullException("assembly");
             }
+
             try
             {
                 return assembly.GetTypes();

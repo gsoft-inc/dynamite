@@ -8,40 +8,36 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.ServiceLocator
 {  
     /// <summary>
-    /// A SharePoint-specific Autofac container provider implementation, which is meant 
+    /// A SharePoint-specific <c>Autofac</c> container provider implementation, which is meant 
     /// to provide your application with a Container that automatically scans the GAC
-    /// (using the appRootNamespace or assemblyFileNameMatcher as assembly filename
+    /// (using the AppRootNamespace or AssemblyFileNameMatcher as assembly filename
     /// filter) and loads the matched assemblies' registration modules.
     /// </summary>
     /// <remarks>
     /// In your application, create and maintain your own <see cref="SharePointContainerProvider"/>
     /// instance to act as Service Locator for your entire application.
-    /// Avoid using the same appRootNamespace with two different provider instances,
+    /// Avoid using the same AppRootNamespace with two different provider instances,
     /// as the same AppDomain-wide inner container instance will be reused in that case
     /// (details in <see cref="AppDomainContainers"/> ).
     /// </remarks>
     /// <example>
-    /// How to share all instances registered with InstancePerLiftetimeScope throughout
+    /// How to share all instances registered with InstancePerLifetimeScope throughout
     /// the current request (requires the <see cref="RequestLifetimeHttpModule"/> to
     /// be deployed to your web.config):
     /// <![CDATA[ 
     /// var myPerRequestCache = provider.CurrentRequest.Resolve<ISomePerRequestCache>();
     /// ]]>
-    /// 
     /// Similarly, object sharing scoped to a site collection:
     /// <![CDATA[ 
     /// var userService = provider.CurrentSite.Resolve<IUserService>();
     /// ]]>
-    /// 
     /// Using Dynamite utilities from a feature event receiver:
     /// <![CDATA[ 
     /// var currentSite = properties.Feature.Parent as SPSite;
-    /// 
     /// using (var siteScope = provider.EnsureSiteScope(currentSite))
     /// {
     ///     var logger = siteScope.Resolve<ILogger>();
     ///     var taxonomyService = siteScope.Resolve<ITaxonomyService>();
-    ///     
     ///     taxonomyService.GetTermForId(currentSite, Guid.NewsGuid());
     ///     logger.Info("Tough luck!");
     /// }
@@ -70,8 +66,8 @@ namespace GSoft.Dynamite.ServiceLocator
         /// The app root namespace.
         /// </param>
         /// <param name="assemblyFileNameMatcher">
-        /// The assembly file name matcher (will be used instead of the appRootNamespace to
-        /// match assembly names in the GAC). The appRootNamespace still acts as the provided
+        /// The assembly file name matcher (will be used instead of the AppRootNamespace to
+        /// match assembly names in the GAC). The AppRootNamespace still acts as the provided
         /// container's unique key among all the other containers that live in the AppDomain.
         /// </param>
         public SharePointContainerProvider(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher) : base(appRootNamespace, assemblyFileNameMatcher)
@@ -146,11 +142,11 @@ namespace GSoft.Dynamite.ServiceLocator
         /// Don't dispose this scope instance, as it could be reused by others.
         /// Allows for the usage of InstancePerSite even when outside of 
         /// a typical HTTP request context (for example, use EnsureSiteScope
-        /// from a FeatureActivated even receiver run from Powershell.exe to
+        /// from a FeatureActivated even receiver run from PowerShell.exe to
         /// reuse objects across many event receivers triggered by the same process).
         /// In typical HTTP request context, use CurrentSite property instead.
         /// </summary>
-        /// <param name="site">The current site to use in retreiving or creating the scope</param>
+        /// <param name="site">The current site to use in retrieving or creating the scope</param>
         /// <returns>
         /// The site-collection-specific lifetime scope (a child container of 
         /// the root application one)
@@ -166,11 +162,11 @@ namespace GSoft.Dynamite.ServiceLocator
         /// Don't dispose this scope instance, as it could be reused by others.
         /// Allows for the usage of InstancePerWeb even when outside of 
         /// a typical http request context (for example, use EnsureSiteScope
-        /// from a FeatureActivated even receiver run from Powershell.exe to
+        /// from a FeatureActivated even receiver run from PowerShell.exe to
         /// reuse objects across many event receivers triggered by the same process).
         /// In typical HTTP request context, use CurrentWeb property instead.
         /// </summary>
-        /// <param name="web">The current web to use in retreiving or creating the scope</param>
+        /// <param name="web">The current web to use in retrieving or creating the scope</param>
         /// <returns>
         /// The web-specific lifetime scope (a child container of 
         /// the root application one)
