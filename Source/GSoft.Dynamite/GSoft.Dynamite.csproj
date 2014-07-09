@@ -41,8 +41,7 @@
     <AssemblyOriginatorKeyFile>Properties\GSoft.Dynamite.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <Private>True</Private>
+    <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.2.6.3.862\lib\NET35\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Autofac.Configuration">
@@ -253,6 +252,7 @@
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
   <ItemGroup />
