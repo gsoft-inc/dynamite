@@ -72,9 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.71.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net35\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -163,7 +163,7 @@
     <Compile Include="Definitions\ContentTypeInfo.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\JavascriptSerializer.cs" />
-    <Compile Include="Serializers\ServiceStackSerializer.cs" />
+    <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />

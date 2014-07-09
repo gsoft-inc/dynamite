@@ -1,12 +1,12 @@
 ﻿namespace GSoft.Dynamite.Serializers
 {
-    using ServiceStack.Text;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// The service stack serializer.
     /// </summary>
-    public class ServiceStackSerializer : ISerializer
-    {
+    public class JsonNetSerializer : ISerializer
+    { 
         /// <summary>
         /// The serialize.
         /// </summary>
@@ -18,7 +18,7 @@
         /// </returns>
         public string Serialize(object obj)
         {
-            return JsonSerializer.SerializeToString(obj);
+            return JsonConvert.SerializeObject(obj);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@
         /// </returns>
         public T Deserialize<T>(string json)
         {
-            return JsonSerializer.DeserializeFromString<T>(json);
+            return JsonConvert.DeserializeObject<T>(json);
         }
     }
 }

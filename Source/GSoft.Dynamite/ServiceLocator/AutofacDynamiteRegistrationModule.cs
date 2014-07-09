@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<UserHelper>(); 
 
             // Serializers
-            builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
+            builder.RegisterType<JsonNetSerializer>().As<ISerializer>().SingleInstance();
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
