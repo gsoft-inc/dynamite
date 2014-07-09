@@ -42,11 +42,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=2.6.3.862, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\Autofac-2.6.3.862-NET35\Autofac.dll</HintPath>
+      <Private>True</Private>
+      <HintPath>..\packages\Autofac.2.6.3.862\lib\NET35\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="fastjson">
-      <HintPath>..\..\Binaries\fastjson.dll</HintPath>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\packages\Autofac.2.6.3.862\lib\NET35\Autofac.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.DocumentManagement, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -72,14 +72,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\Binaries\Json.Net\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="ServiceStack.Text, Version=3.9.71.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.60.0, Culture=neutral, PublicKeyToken=fb3de3fad47af15c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Binaries\ServiceStack.Text\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\packages\ServiceStack.Text.3.9.71\lib\net35\ServiceStack.Text.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -168,8 +163,6 @@
     <Compile Include="Definitions\ContentTypeInfo.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
     <Compile Include="Serializers\JavascriptSerializer.cs" />
-    <Compile Include="Serializers\JsonNetSerializer.cs" />
-    <Compile Include="Serializers\FastJsonSerializer.cs" />
     <Compile Include="Serializers\ServiceStackSerializer.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
@@ -267,4 +260,5 @@
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
