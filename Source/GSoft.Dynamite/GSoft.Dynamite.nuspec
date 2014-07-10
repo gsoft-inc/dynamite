@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/</projectUrl>
+    <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>SharePoint</tags>
+  </metadata>
+  <dependencies>
+    <dependency id="Autofac" version="2.6.3.862" targetFramework="net35" />
+    <dependency id="Newtonsoft.Json" version="6.0.3" targetFramework="net35" />
+  </dependencies>
+</package>
