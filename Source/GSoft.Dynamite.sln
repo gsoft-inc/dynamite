@@ -21,6 +21,32 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code", "Code", "{AC446A77-7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.SP", "GSoft.Dynamite.SP\GSoft.Dynamite.SP.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{81F1B9A8-239C-4C04-9C76-150AE25D0039}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Install-DSPModule.ps1 = Scripts\Install-DSPModule.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit", "Dynamite.PowerShell.Toolkit", "{084E468F-B518-4047-9FA8-F982B85316FE}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1 = Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1 = Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1
+		Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1 = Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1
+		Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Group.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Group.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1 = Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1 = Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Search.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Search.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Security.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Security.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1 = Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\TermDrivenPage.ps1 = Scripts\Dynamite.PowerShell.Toolkit\TermDrivenPage.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Token.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Token.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1
+		Scripts\Dynamite.PowerShell.Toolkit\Web.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Web.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +70,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{72576E04-75B4-4EAF-AF1E-7482355FC8C1} = {AC446A77-76B7-4201-B431-89CDCC57E6E4}
 		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D} = {965F7147-7674-4FA1-BE48-F8EEF1FD8F08}
+		{084E468F-B518-4047-9FA8-F982B85316FE} = {81F1B9A8-239C-4C04-9C76-150AE25D0039}
 	EndGlobalSection
 EndGlobal

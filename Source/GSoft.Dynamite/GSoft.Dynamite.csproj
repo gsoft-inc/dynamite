@@ -252,6 +252,7 @@
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="GSoft.Dynamite.nuspec" />
     <None Include="packages.config" />
     <None Include="Properties\GSoft.Dynamite.snk" />
   </ItemGroup>
