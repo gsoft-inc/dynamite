@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>GSoft.Dynamite</id>
+    <version>0.0.0</version>
+    <title>GSoft.Dynamite</title>
+    <authors>GSoft</authors>
+    <owners>GSoft</owners>
     <licenseUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/</projectUrl>
     <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>C# toolkit to help you build maintainable SharePoint 2010 farm solutions</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>SharePoint</tags>
