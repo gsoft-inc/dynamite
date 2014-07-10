@@ -16,6 +16,7 @@
     <tags>SharePoint</tags>
   </metadata>
   <files>
-	<file src="bin\Release\GSoft.Dynamite.wsp" target="tools" /> 
+	  <file src="bin\Release\GSoft.Dynamite.wsp" target="tools\WSP" />
+    <file src="..\Scripts\*" target="tools\Powershell" />
   </files>
 </package>
