@@ -17,6 +17,7 @@
   </metadata>
   <files>
 	  <file src="bin\Release\GSoft.Dynamite.wsp" target="tools\WSP" />
-    <file src="..\Scripts\*" target="tools\Powershell" />
+    <file src="..\Scripts\*" target="tools\PowerShell" />
+    <file src="..\Scripts\Dynamite.PowerShell.Toolkit\*" target="tools\Powershell\Dynamite.PowerShell.Toolkit" />
   </files>
 </package>
