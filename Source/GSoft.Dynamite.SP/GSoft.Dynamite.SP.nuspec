@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/</projectUrl>
     <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>A SharePoint full-trust solution package (WSP) with Powershell tools to help you deploy the GSoft.Dynamite C# toolkit to your SharePoint 2010 farm</description>
+    <description>A SharePoint full-trust solution package (WSP) with PowerShell tools to help you deploy the GSoft.Dynamite C# toolkit to your SharePoint 2010 farm</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>SharePoint</tags>
