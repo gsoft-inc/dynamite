@@ -121,7 +121,15 @@ namespace GSoft.Dynamite.ServiceLocator
                 // so that other AutofacDynamiteRegistrationModule instances don't get registered.
                 var filteredMatchingAssemblies = matchingAssemblies.Where(x => !x.FullName.Contains("GSoft.Dynamite,"));
 
-                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilder, filteredMatchingAssemblies.ToArray());
+                // Now make sure all Dynamite component modules (i.e. all DLLs that start with GSoft.Dynamite.*) are registered BEFORE
+                // any other modules.
+                // This ensures that "client" modules will be able to override the Container registrations of GSoft.Dynamite.Components modules.
+                var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite."));
+                var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite."));
+
+                var sortedMatchingAssemblies = dynamiteComponentModuleAssemblies.Concat(allTheRest);
+
+                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilder, sortedMatchingAssemblies.ToArray());
 
                 return containerBuilder.Build();
             }
