@@ -9,19 +9,17 @@ namespace GSoft.Dynamite.ServiceLocator
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Autofac;
-
-    using GSoft.Dynamite.Utils;
-
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Utilities;
     using System.Reflection;
-    using Autofac.Core;
+    using Autofac;
     using Autofac.Builder;
+    using Autofac.Core;
     using Autofac.Core.Lifetime;
     using Autofac.Features.Scanning;
+    using GSoft.Dynamite.Logging;
     using GSoft.Dynamite.ServiceLocator.Internal;
+    using GSoft.Dynamite.Utils;
+    using Microsoft.SharePoint;
+    using Microsoft.SharePoint.Utilities;
 
     /// <summary>
     /// Maintains AppDomain-wide root containers that automatically scan 
@@ -131,7 +129,14 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilder, sortedMatchingAssemblies.ToArray());
 
-                return containerBuilder.Build();
+                var container = containerBuilder.Build();
+
+                var logger = container.Resolve<ILogger>();
+                string assemblyNameEnumeration = string.Empty;
+                sortedMatchingAssemblies.Cast<Assembly>().ToList().ForEach(a => assemblyNameEnumeration += a.FullName + ", ");
+                logger.Info("Dependency injection module registration. The following assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + assemblyNameEnumeration);
+
+                return container;
             }
         }
     }
