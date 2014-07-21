@@ -53,9 +53,6 @@
     <Reference Include="Microsoft.SharePoint.Security" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
       <DependentUpon>JavascriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
