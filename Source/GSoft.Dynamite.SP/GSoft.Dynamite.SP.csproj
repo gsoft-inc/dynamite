@@ -53,9 +53,6 @@
     <Reference Include="Microsoft.SharePoint.Security" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
       <DependentUpon>JavascriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -84,6 +81,7 @@
     <None Include="DynamiteJavascriptImports\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{720cb6d9-4c7a-4ed4-a8ff-e3c297dd0c74}</SharePointProjectItemId>
     </None>
+    <None Include="GSoft.Dynamite.SP.nuspec" />
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{ff112f9f-2429-46c2-a407-771ef33b1d94}</SharePointProjectItemId>
     </None>

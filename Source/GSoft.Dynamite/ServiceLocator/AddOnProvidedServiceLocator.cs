@@ -55,9 +55,9 @@ namespace GSoft.Dynamite.ServiceLocator
         /// In a SPSite or SPWeb-scoped feature context, will return a web-specific
         /// lifetime scope (allowing you to inject InstancePerSite and InstancePerWeb
         /// objects).
-        /// In a SPFarm or SPWebApplication feature context, will return a child
-        /// container of the root application container (preventing you from injecting
-        /// InstancePerSite, InstancePerWeb or InstancePerRequest objects).
+        /// In a SPFarm or SPWebApplication feature context, this method will throw
+        /// an excetion of type <see cref="InvalidOperationException"/>. Dynamite components
+        /// must be configured under a specific SPSite's scope.
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
         /// Prefer usage of this method versus resolving indididual dependencies from the 

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>GSoft.Dynamite.SP</id>
+    <version>0.0.0</version>
+    <title>GSoft.Dynamite.SP</title>
+    <authors>GSoft</authors>
+    <owners>GSoft</owners>
+    <licenseUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/GSoft-SharePoint/Dynamite-2010/</projectUrl>
+    <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A SharePoint full-trust solution package (WSP) with PowerShell tools to help you deploy the GSoft.Dynamite C# toolkit to your SharePoint 2010 farm</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>SharePoint</tags>
+  </metadata>
+  <files>
+	  <file src="bin\Release\GSoft.Dynamite.wsp" target="tools" />
+    <file src="..\Scripts\*" target="tools" />
+    <file src="..\Scripts\Dynamite.PowerShell.Toolkit\*" target="tools\Dynamite.PowerShell.Toolkit" />
+  </files>
+</package>

@@ -22,7 +22,7 @@ using GSoft.Dynamite.WebParts;
 namespace GSoft.Dynamite.ServiceLocator
 {   
     /// <summary>
-    /// Container registrations for GSoft.G.SharePoint components
+    /// Container registrations for GSoft.Dynamite core components
     /// </summary>
     public class AutofacDynamiteRegistrationModule : Module
     {
@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<UserHelper>(); 
 
             // Serializers
-            builder.RegisterType<ServiceStackSerializer>().As<ISerializer>().SingleInstance();
+            builder.RegisterType<JsonNetSerializer>().As<ISerializer>().SingleInstance();
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
