@@ -40,18 +40,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.QualityTools.Testing.Emulators">
-      <HintPath>..\..\Binaries\Microsoft.SharePoint.Emulators.1.0.0\lib\net35\Microsoft.QualityTools.Testing.Emulators.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Microsoft.SharePoint.14.0.0.0.Fakes">
       <HintPath>FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Emulators">
-      <HintPath>..\..\Binaries\Microsoft.SharePoint.Emulators.1.0.0\lib\net35\Microsoft.SharePoint.Emulators.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.SharePoint.Publishing, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -74,9 +68,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.2.0.0.0.Fakes">
       <HintPath>FakesAssemblies\System.Web.2.0.0.0.Fakes.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Emulators">
-      <HintPath>..\..\Binaries\Microsoft.SharePoint.Emulators.1.0.0\lib\net35\System.Web.Emulators.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -106,13 +97,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
       <Name>GSoft.Dynamite</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
