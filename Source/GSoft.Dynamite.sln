@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{59F22005-22BB-498C-BE1E-5C0E3BBD989B}"
 	ProjectSection(SolutionItems) = preProject
 		GSoft.Dynamite.UnitTests\NMock3\NMock3 Cheat Sheet.pdf = GSoft.Dynamite.UnitTests\NMock3\NMock3 Cheat Sheet.pdf
@@ -32,28 +30,36 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.UnitTests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{81F1B9A8-239C-4C04-9C76-150AE25D0039}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Install-DSPModule.ps1 = Scripts\Install-DSPModule.ps1
+		GSoft.Dynamite.Scripts\Install-DSPModule.ps1 = GSoft.Dynamite.Scripts\Install-DSPModule.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit", "Dynamite.PowerShell.Toolkit", "{084E468F-B518-4047-9FA8-F982B85316FE}"
 	ProjectSection(SolutionItems) = preProject
-		Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1 = Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1 = Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1
-		Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1 = Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1
-		Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Group.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Group.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1 = Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1 = Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Search.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Search.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Security.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Security.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1 = Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\TermDrivenPage.ps1 = Scripts\Dynamite.PowerShell.Toolkit\TermDrivenPage.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Token.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Token.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1
-		Scripts\Dynamite.PowerShell.Toolkit\Web.ps1 = Scripts\Dynamite.PowerShell.Toolkit\Web.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Administration.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\BlobCache.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\BlobCache.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ContentDatabase.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Data.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Data.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\FacetedSearch.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\FacetedSearch.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Group.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Group.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\List.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\List.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Search.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Search.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Security.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Security.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\SiteCollection.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Solution.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Taxonomy.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\TaxonomyNavigation.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\TaxonomyNavigation.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\TimerJob.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\TimerJob.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Token.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Token.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\UserProfile.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\UserProfile.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Utilities.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Variations.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Variations.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Web.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Web.ps1
+		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1
 	EndProjectSection
 EndProject
 Global
