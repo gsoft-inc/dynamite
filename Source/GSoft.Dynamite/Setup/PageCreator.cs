@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
 using Microsoft.Office.DocumentManagement;
@@ -8,66 +11,123 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Setup
-{   
+{
     /// <summary>
     /// Adds pages to the Pages library
     /// </summary>
     public class PageCreator
     {
-        private FolderRepository _folderRepository;
+        private readonly FolderRepository folderRepository;
+        private readonly ILogger logger;
 
         /// <summary>
         /// PageCreator constructor
         /// </summary>
         /// <param name="folderRepository">Folder repository</param>
-        public PageCreator(FolderRepository folderRepository)
+        /// <param name="logger">the current logger</param>
+        public PageCreator(FolderRepository folderRepository, ILogger logger)
         {
-            this._folderRepository = folderRepository;
+            this.folderRepository = folderRepository;
+            this.logger = logger;
+        }
+
+        /// <summary>
+        /// Create publishing page in Pages Library
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="folderId">the current folder id</param>
+        /// <param name="contentTypeId">the current content type id</param>
+        /// <param name="pageLayoutName">the page layout name</param>
+        /// <param name="pageTitle">the page title</param>
+        /// <param name="pageName">the page name</param>
+        /// <returns>the created publishing page</returns>
+        public PublishingPage Create(SPWeb web, int folderId, SPContentTypeId contentTypeId, string pageLayoutName, string pageTitle, string pageName)
+        {
+            var publishingSite = new PublishingSite(web.Site);
+            var pageLayout = this.GetPageLayout(publishingSite, pageLayoutName, false);
+            var page = new PageInfo()
+            {
+                Name = pageName,
+                ContentTypeId = contentTypeId,
+                PageLayout = pageLayout,
+                Values = new List<IFieldValueInfo>()
+                {
+                    new FieldValueInfo()
+                    {
+                        FieldName = BuiltInFields.Title.InternalName,
+                        Value = pageTitle
+                    }
+                }
+            };
+
+            return this.Create(web, folderId, page);
         }
 
         /// <summary>
         /// Creates a page in the Pages library
         /// </summary>
-        /// <param name="currentWeb">The current web</param>
-        /// <param name="folderId">The folder in which to add the item</param>
-        /// <param name="contentTypeId">Id of Content Type to create</param>
-        /// <param name="pageLayoutName">Name (filename) of Page Layout to apply</param>
-        /// <param name="pageTitle">The human-readable title of the page</param>
-        /// <param name="pageName">The url/name of the page relative to its parent folder</param>
+        /// <param name="web">the current web</param>
+        /// <param name="pageInfo">the pageInfo of the page</param>
         /// <returns>The newly created publishing page</returns>
-        public PublishingPage Create(SPWeb currentWeb, int folderId, SPContentTypeId contentTypeId, string pageLayoutName, string pageTitle, string pageName)
+        public PublishingPage Create(SPWeb web, PageInfo pageInfo)
+        {
+            return this.Create(web, int.MinValue, pageInfo);
+        }
+
+        /// <summary>
+        /// Creates a page in the Pages library
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <param name="folderId">The folder in which to add the item</param>
+        /// <param name="pageInfo">The pageInfo of the page</param>
+        /// <returns>The newly created publishing page</returns>
+        public PublishingPage Create(SPWeb web, int folderId, PageInfo pageInfo)
         {
             PublishingPage newPage = null;
+            bool userHavePermissions = false;
 
-            var folder = this._folderRepository.GetFolderByIdForWeb(currentWeb, folderId);
+            // get the root folder if no folder is specified
+            var folder = folderId == int.MinValue ? web.GetPagesLibrary().RootFolder : this.folderRepository.GetFolderByIdForWeb(web, folderId);
 
-            if (folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems))
+            // if spfolder is root folder, check permissions at library level
+            if (folder.Item == null)
             {
-                using (new Unsafe(currentWeb))
+                userHavePermissions = folder.DocumentLibrary.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
+            else
+            {
+                userHavePermissions = folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
+
+            if (userHavePermissions)
+            {
+                using (new Unsafe(web))
                 {
-                    SPContentType pubPageBaseContentType = currentWeb.AvailableContentTypes[ContentTypeId.ArticlePage];
+                    var requestedContentType = web.AvailableContentTypes[pageInfo.ContentTypeId];
 
-                    var requestedContentType = currentWeb.AvailableContentTypes[contentTypeId];
-                    if (null != requestedContentType && requestedContentType.Id.IsChildOf(pubPageBaseContentType.Id))
+                    if (requestedContentType != null)
                     {
-                        var publishingSite = new PublishingSite(currentWeb.Site);
-                        PageLayoutCollection pageLayoutsForCT = publishingSite.GetPageLayouts(requestedContentType, false);
-
-                        var requestedPageLayout = pageLayoutsForCT.Cast<PageLayout>().FirstOrDefault(layout => layout.Name == pageLayoutName);
-
-                        if (requestedPageLayout != null)
+                        if (pageInfo.PageLayout != null)
                         {
-                            PublishingWeb publishingWeb = PublishingWeb.GetPublishingWeb(currentWeb);
+                            var publishingWeb = PublishingWeb.GetPublishingWeb(web);
 
-                            if (!pageName.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
+                            if (!pageInfo.Name.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
                             {
-                                pageName += ".aspx";
+                                pageInfo.Name += ".aspx";
                             }
 
-                            newPage = publishingWeb.GetPublishingPages().Add(folder.ServerRelativeUrl + "/" + pageName, requestedPageLayout);
-                            newPage.ListItem[BuiltInFields.Title.InternalName] = pageTitle;
+                            newPage = publishingWeb.GetPublishingPages().Add(folder.ServerRelativeUrl + "/" + pageInfo.Name, pageInfo.PageLayout);
                             newPage.ListItem[BuiltInFields.ContentType.InternalName] = requestedContentType.Name;
                             newPage.ListItem[BuiltInFields.ContentTypeId.InternalName] = requestedContentType.Id;
+
+                            if (pageInfo.Values != null)
+                            {
+                                foreach (var field in pageInfo.Values)
+                                {
+                                    newPage.ListItem[field.FieldName] = field.Value;
+                                }
+                            }
+
                             newPage.ListItem.Update();
                         }
                     }
@@ -75,6 +135,18 @@ namespace GSoft.Dynamite.Setup
             }
 
             return newPage;
+        }
+
+        /// <summary>
+        /// Get the page layout
+        /// </summary>
+        /// <param name="publishingSite">the current publishing site</param>
+        /// <param name="pageLayoutName">the page layout name</param>
+        /// <param name="excludeObsolete">exclude obsolete page layout</param>
+        /// <returns>the page layout</returns>
+        public PageLayout GetPageLayout(PublishingSite publishingSite, string pageLayoutName, bool excludeObsolete)
+        {
+            return publishingSite.GetPageLayouts(excludeObsolete).Cast<PageLayout>().FirstOrDefault(pageLayout => pageLayout.Name == pageLayoutName);
         }
 
         /// <summary>
@@ -90,7 +162,7 @@ namespace GSoft.Dynamite.Setup
 
             if (folder.Item != null)
             {
-                MetadataDefaults metadata = new MetadataDefaults(folder.Item.ParentList);
+                var metadata = new MetadataDefaults(folder.Item.ParentList);
 
                 while (string.IsNullOrEmpty(contentTypeId) && folder != null)
                 {
@@ -100,18 +172,6 @@ namespace GSoft.Dynamite.Setup
             }
 
             return contentTypeId;
-        }
-
-        /// <summary>
-        /// Get the page layout
-        /// </summary>
-        /// <param name="publishingSite">the current publishing site</param>
-        /// <param name="pageLayoutName">the page layout name</param>
-        /// <param name="excludeObsolete">exclude obsolete page layout</param>
-        /// <returns>the page layout</returns>
-        public PageLayout GetPageLayout(PublishingSite publishingSite, string pageLayoutName, bool excludeObsolete)
-        {
-            return publishingSite.GetPageLayouts(excludeObsolete).FirstOrDefault(pageLayout => pageLayout.Name == pageLayoutName);
         }
     }
 }
