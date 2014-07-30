@@ -101,5 +101,17 @@ namespace GSoft.Dynamite.Setup
 
             return contentTypeId;
         }
+
+        /// <summary>
+        /// Get the page layout
+        /// </summary>
+        /// <param name="publishingSite">the current publishing site</param>
+        /// <param name="pageLayoutName">the page layout name</param>
+        /// <param name="excludeObsolete">exclude obsolete page layout</param>
+        /// <returns>the page layout</returns>
+        public PageLayout GetPageLayout(PublishingSite publishingSite, string pageLayoutName, bool excludeObsolete)
+        {
+            return publishingSite.GetPageLayouts(excludeObsolete).FirstOrDefault(pageLayout => pageLayout.Name == pageLayoutName);
+        }
     }
 }

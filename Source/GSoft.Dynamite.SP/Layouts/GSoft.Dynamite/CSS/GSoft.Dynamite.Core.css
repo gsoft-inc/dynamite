@@ -1,4 +1,33 @@
-﻿/* Edit mode metadata panel and tabs */
+﻿/* Parent folder link */
+
+.ms-siteactionscontainer .parent-folder-link {
+  margin: 0px 3px 0px 0px;
+  padding: 2px 5px 0px;
+  display: inline-block;
+  text-align: center;
+  border: 1px solid transparent;
+  vertical-align: bottom;
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.ms-siteactionscontainer .parent-folder-link a {
+  cursor: pointer;
+  overflow: hidden;
+}
+.ms-siteactionscontainer .parent-folder-link:hover {
+  border-color: #c9c9c9;
+  background-color: #282828;
+}
+.ms-siteactionscontainer .parent-folder-link img {
+  width: 16px;
+  height: 14px;
+  position: relative;
+  bottom: 1px;
+}
+
+
+/* Edit mode metadata panel and tabs */
 
 .edit-mode-panel {
   margin-bottom: 10px;
