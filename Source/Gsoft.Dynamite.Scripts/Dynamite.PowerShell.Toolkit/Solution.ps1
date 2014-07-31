@@ -21,7 +21,7 @@ function global:Deploy-DSPSolution() {
 		[Parameter(Mandatory=$false, Position=4, ParameterSetName="FileOrDirectory")]
 		[switch]$Force=$false,
 
-		[Parameter(Mandatory=$false, Position=5, ParameterSetName="FileOrDirectory")]
+		[Parameter(Mandatory=$false, Position=5)]
 		[switch]$RemoveOnly=$false
 	)
 	
