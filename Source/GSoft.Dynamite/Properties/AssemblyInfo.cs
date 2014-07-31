@@ -21,5 +21,13 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d377829a-3b91-4ac9-8569-694ee8f48fb7")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+
+// Keep AssemblyVersion info in each project so that the TeamCity assembly version patcher works properly
+// A DLL used as third-party reference in a SharePoint context is easier to patch if its AssemblyVersion
+// never changes (otherwise, runtime assembly resolution will break every time you redeploy and newly
+// version-bumped assembly of the third-party).
+[assembly: AssemblyVersion("15.0.0.0")]
+
+// The AssemblyFileVersion is used to track the current version.
+// The version 0.0.0.0 flags a developement machine-build artifact.
+[assembly: AssemblyFileVersion("0.0.0.0")]
