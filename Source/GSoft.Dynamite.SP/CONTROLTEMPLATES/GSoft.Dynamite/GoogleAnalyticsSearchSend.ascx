@@ -19,7 +19,7 @@
         }
     }
     
-    if (ga != undefined) {
+    if (typeof ga != 'undefined') {
         ajaxNavigate.add_navigate(HashChanged);
     }
 </script>
