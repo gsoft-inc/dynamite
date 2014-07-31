@@ -61,6 +61,20 @@
     <Reference Include="Microsoft.SharePoint.Security" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx.cs">
+      <DependentUpon>GoogleAnalyticsSearchSend.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx.designer.cs">
+      <DependentUpon>GoogleAnalyticsSearchSend.ascx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx.cs">
+      <DependentUpon>GoogleAnalyticsTracking.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx.designer.cs">
+      <DependentUpon>GoogleAnalyticsTracking.ascx.cs</DependentUpon>
+    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
       <DependentUpon>JavascriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -79,6 +93,15 @@
     </None>
     <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
+    </None>
+    <None Include="DynamiteGoogleAnalyticsSearchSend\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{031177f7-6718-4c69-99c4-81ce1a852ab8}</SharePointProjectItemId>
+    </None>
+    <None Include="DynamiteGoogleAnalyticsTracking\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{b2c07b03-3b43-43b6-9380-d0614cd74dc8}</SharePointProjectItemId>
+    </None>
+    <None Include="Features\Google Analytics Tracking\Google Analytics Tracking.feature">
+      <FeatureId>{dad6f710-ef35-479c-a057-55f6e5931656}</FeatureId>
     </None>
     <None Include="Features\Web Config Modifications\Web Config Modifications.feature">
       <FeatureId>{3e6c6a28-0bee-4166-95f4-849754b5be7d}</FeatureId>
@@ -106,8 +129,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx" />
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx" />
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="DynamiteGoogleAnalyticsSearchSend\Elements.xml" />
+    <Content Include="DynamiteGoogleAnalyticsTracking\Elements.xml" />
+    <Content Include="Features\Google Analytics Tracking\Google Analytics Tracking.Template.xml">
+      <DependentUpon>Google Analytics Tracking.feature</DependentUpon>
     </Content>
     <Content Include="Features\Web Config Modifications\Web Config Modifications.Template.xml">
       <DependentUpon>Web Config Modifications.feature</DependentUpon>
@@ -153,5 +183,5 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--<Import Project="$(VSToolsPath)\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="'$(VSToolsPath)' != ''" />-->
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v12.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="true" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v11.0\SharePointTools\Microsoft.VisualStudio.SharePoint.targets" Condition="true" />
 </Project>
