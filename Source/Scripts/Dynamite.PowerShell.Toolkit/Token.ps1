@@ -50,47 +50,35 @@ function Update-DSPTokens {
 		[string]$Path = (Get-Location),
 		
 		[Parameter(Mandatory=$false)]
-		[string]$Domain = (Get-CurrentDomain),
+		[string]$Domain = [System.Net.Dns]::GetHostName(),
 		
 		[Parameter(Mandatory=$false)]
-		[switch]$UseHostName
+		[switch]$UseHostName,
+		
+		[Parameter(Mandatory=$false)]
+		[switch]$UseDomain
 	)
 	
 	if ($UseHostName -eq $true) {
 		$Domain = [System.Net.Dns]::GetHostName()
 	}
 	
+	if ($UseDomain -eq $true) {
+		$Domain = (Get-CurrentDomain)
+	}
+
+	$tokenPath = ""
+		
+	Get-ChildItem -Path $Path -Include "Tokens.$Domain.ps1" -Recurse | foreach {
+		$tokenPath = $_.FullName
+	}
 	
-	$tokenPath = "$Path\Tokens.$Domain.ps1"
-	if(Test-Path $tokenPath) {
-		
-		# Load tokens
-		. $tokenPath
-		$tokens = Get-Variable -Include "DSP_*"
-		
-		# Replace tokens in all .template files.
-		Get-ChildItem -Path $Path -Include "*.template" -Recurse | foreach {
-			Write-Host "Replacing tokens in file '$_'... " -NoNewline
-			
-			try {
-				# Get the contents of the template file.
-				$contents  = Get-Content $_ -Encoding UTF8 -ErrorAction Stop
-				
-				# for each token in our token file, we replace the token in the contents of the file.
-				$tokens | ForEach {
-					$contents = $contents -replace "\[\[$($_.Name)\]\]", $_.Value
-				}
-				
-				# Write the contents with the replaces tokens to a new file overiding any current file.
-				Set-Content -Encoding UTF8 -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
-			} catch {
-				Write-Host "Failed - $_" -ForegroundColor Red
-			}
-			
-			Write-Host "Success!" -ForegroundColor Green
-		}
-	} else {
-		Write-Host "Invalid path for token file '$tokenPath'." -ForegroundColor Red
+	if (Test-Path $tokenPath) {
+		Write-Host "Found token file at : $tokenPath"
+		Execute-TokenFile $Path $tokenPath
+	}
+	else {
+		Write-Host "Didn't found the token file named : Tokens.$Domain.ps1"
 	}
 }
 
@@ -106,5 +94,38 @@ function script:Get-CurrentDomain {
 	} catch {
 		# Fall back on this version in case of error
 		return $env:USERDOMAIN
+	}
+}
+
+function script:Execute-TokenFile {
+	param (
+		$Path,
+		$TokenPath
+	)
+	Write-Host "$TokenPath"
+	# Load tokens
+	. $TokenPath
+	$tokens = Get-Variable -Include "DSP_*"
+	
+	# Replace tokens in all .template files.
+	Get-ChildItem -Path $Path -Include "*.template" -Recurse | foreach {
+		Write-Host "Replacing tokens in file '$_'... " -NoNewline
+		
+		try {
+			# Get the contents of the template file.
+			$contents  = Get-Content $_ -Encoding UTF8 -ErrorAction Stop
+			
+			# for each token in our token file, we replace the token in the contents of the file.
+			$tokens | ForEach {
+				$contents = $contents -replace "\[\[$($_.Name)\]\]", $_.Value
+			}
+			
+			# Write the contents with the replaces tokens to a new file overiding any current file.
+			Set-Content -Encoding UTF8 -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
+		} catch {
+			Write-Host "Failed - $_" -ForegroundColor Red
+		}
+		
+		Write-Host "Success!" -ForegroundColor Green
 	}
 }
