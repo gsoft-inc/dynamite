@@ -9,17 +9,18 @@ using Microsoft.SharePoint.Publishing.Navigation;
 
 namespace GSoft.Dynamite.Navigation
 {
-     /// <summary>
+    /// <summary>
     /// Navigation Node class.
     /// </summary>
     [Serializable]
     public class NavigationNode : INavigationNode
     {
-           /// <summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="NavigationNode"/> class.
         /// </summary>
         public NavigationNode()
         {
+            this.ChildNodes = new List<INavigationNode>();
         }
 
         /// <summary>
@@ -27,6 +28,7 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="term">The navigation term.</param>
         public NavigationNode(NavigationTerm term)
+            : this()
         {
             this.Id = term.Id;
             this.ParentNodeId = (term.Parent != null) ? term.Parent.Id : Guid.Empty;
@@ -40,7 +42,8 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="term">The term.</param>
         /// <param name="currentTerm">The current term.</param>
         /// <param name="currentBranchTerms">The terms in the current branch.</param>
-        public NavigationNode(NavigationTerm term, NavigationTerm currentTerm, IEnumerable<NavigationTerm> currentBranchTerms) : this(term)
+        public NavigationNode(NavigationTerm term, NavigationTerm currentTerm, IEnumerable<NavigationTerm> currentBranchTerms)
+            : this(term)
         {
             this.IsCurrentNode = currentTerm != null && currentTerm.Id.Equals(term.Id);
             this.IsNodeInCurrentBranch = currentBranchTerms.Any(y => y.Id.Equals(term.Id));
@@ -52,6 +55,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="row">The data row from a SharePoint search results table.</param>
         /// <param name="navigationManagedProperty">The navigation managed property.</param>
         public NavigationNode(DataRow row, string navigationManagedProperty)
+            : this()
         {
             this.Title = row["Title"].ToString();
             this.Url = row["Path"].ToString();
