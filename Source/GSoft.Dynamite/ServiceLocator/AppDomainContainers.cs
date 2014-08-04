@@ -1,30 +1,24 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="AppContainer.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Autofac;
+using Autofac.Builder;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
+using Autofac.Features.Scanning;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.ServiceLocator.Internal;
+using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using Autofac;
-    using Autofac.Builder;
-    using Autofac.Core;
-    using Autofac.Core.Lifetime;
-    using Autofac.Features.Scanning;
-    using GSoft.Dynamite.Logging;
-    using GSoft.Dynamite.ServiceLocator.Internal;
-    using GSoft.Dynamite.Utils;
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Utilities;
-
     /// <summary>
     /// Maintains AppDomain-wide root containers that automatically scan 
-    /// the GAC for Autofac dependency injection modules that derive from
-    /// the Module Autofac base class.
+    /// the GAC for <c>Autofac</c> dependency injection modules that derive from
+    /// the Module <c>Autofac</c> base class.
     /// </summary>
     /// <remarks>
     /// Only the GAC_MSIL folder of the .NET 3.5 GAC (c:\windows\assembly)
@@ -33,14 +27,13 @@ namespace GSoft.Dynamite.ServiceLocator
     internal static class AppDomainContainers
     {
         private const string AssemblyFolder = "GAC_MSIL";
-
         private static readonly object ContainersLockObject = new object();
 
         /// <summary>
         /// Dictionary of singleton instances that allows us to refer to the 
         /// application root containers
         /// </summary>
-        private static readonly IDictionary<string, IContainer> appDomainContainers = new Dictionary<string, IContainer>();
+        private static readonly IDictionary<string, IContainer> AppDomainContainersCollection = new Dictionary<string, IContainer>();
 
         /// <summary>
         /// Returns a service locator instance for the entire application (i.e. throughout 
@@ -50,6 +43,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// directly for this root Container instance.
         /// </summary>
         /// <param name="appRootNamespace">The key of the current app</param>
+        /// <returns>The container</returns>
         public static IContainer CurrentContainer(string appRootNamespace)
         {
             return CurrentContainer(appRootNamespace, null);
@@ -70,24 +64,24 @@ namespace GSoft.Dynamite.ServiceLocator
         public static IContainer CurrentContainer(string appRootNamespace, Func<string, bool> assemblyFileNameMatcher)
         {
             // Don't bother locking if the instance is already created
-            if (appDomainContainers.ContainsKey(appRootNamespace))
+            if (AppDomainContainersCollection.ContainsKey(appRootNamespace))
             {
                 // Return the already-initialized container right away
-                return appDomainContainers[appRootNamespace];
+                return AppDomainContainersCollection[appRootNamespace];
             }
 
             // Only one container should be registered at a time, to be on the safe side
             lock (ContainersLockObject)
             {
                 // Just in case, check again (because the assignment could have happened before we took hold of lock)
-                if (appDomainContainers.ContainsKey(appRootNamespace))
+                if (AppDomainContainersCollection.ContainsKey(appRootNamespace))
                 {
-                    return appDomainContainers[appRootNamespace];
+                    return AppDomainContainersCollection[appRootNamespace];
                 }
 
                 // We need to filter what we'll be scanning in the GAC (so we pick and choose the DLLs to load Modules 
                 // from following the given assemblyFileNameMatch, or we simply try and find all DLLs that match the
-                // appRootNamespace).
+                // AppRootNamespace).
                 if (assemblyFileNameMatcher == null)
                 {
                     assemblyFileNameMatcher = (assemblyFileName) => assemblyFileName.Contains(appRootNamespace);
@@ -95,10 +89,10 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 // The automatic GAC-scanner factory method will properly configure the injection of Dynamite 
                 // utilities and will find and register all injection modules in the GAC DLLs whose file name match.
-                appDomainContainers[appRootNamespace] = ScanGacForAutofacModulesAndCreateContainer(appRootNamespace, assemblyFileNameMatcher);
+                AppDomainContainersCollection[appRootNamespace] = ScanGacForAutofacModulesAndCreateContainer(appRootNamespace, assemblyFileNameMatcher);
             }
 
-            return appDomainContainers[appRootNamespace];
+            return AppDomainContainersCollection[appRootNamespace];
         }
 
         private static IContainer ScanGacForAutofacModulesAndCreateContainer(string appRootNamespace, Func<string, bool> assemblyFileNameMatchingPredicate)
@@ -132,7 +126,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 var logger = container.Resolve<ILogger>();
                 string dynamiteAssemblyNameEnumeration = string.Empty;
                 dynamiteComponentModuleAssemblies.Cast<Assembly>().ToList().ForEach(a => dynamiteAssemblyNameEnumeration += a.FullName + ", ");
-                logger.Info("Dependency injection module registration. The following Dynamite component assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + dynamiteAssemblyNameEnumeration);
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Dynamite component assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + dynamiteAssemblyNameEnumeration);
 
                 // 2) Extend the original registrations with any remaining AddOns' registrations
                 var containerBuilderForAddOns = new ContainerBuilder();
@@ -141,13 +135,13 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 string addOnAssemblyNameEnumeration = string.Empty;
                 allTheRest.Cast<Assembly>().ToList().ForEach(a => addOnAssemblyNameEnumeration += a.FullName + ", ");
-                logger.Info("Dependency injection module registration. The following Add-On component assemblies (i.e. extensions to the core Dynamite components) were scanned and any Autofac Module within was registered. The order of registrations was: " + addOnAssemblyNameEnumeration);
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Add-On component assemblies (i.e. extensions to the core Dynamite components) were scanned and any Autofac Module within was registered. The order of registrations was: " + addOnAssemblyNameEnumeration);
 
                 // Log the full component registry for easy debugging through ULS
                 string componentRegistryAsString = string.Empty;
                 var regAndServices = container.ComponentRegistry.Registrations.SelectMany(r => r.Services.OfType<IServiceWithType>(), (r, s) => new { r, s });
                 regAndServices.ToList().ForEach(regAndService => componentRegistryAsString += "[" + regAndService.s.ServiceType.FullName + "->" + regAndService.r.Activator.LimitType.FullName + "], ");
-                logger.Info("Autofac component registry details: " + componentRegistryAsString);
+                logger.Info("Autofac component registry details for container " + appRootNamespace + ": " + componentRegistryAsString);
 
                 return container;
             }
