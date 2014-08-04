@@ -64,11 +64,11 @@ namespace GSoft.Dynamite.Exceptions
             }
             catch (Exception exception)
             {
-                this.LogExceptionAndEmail(exception);
+                this.LogExceptionAndEmail(web, exception);
             }
         }
 
-        private void LogExceptionAndEmail(Exception exception)
+        private void LogExceptionAndEmail(SPWeb web, Exception exception)
         {
             // Id the top-level calling method to flesh out the logger info
             var stackTrace = new StackTrace();
@@ -86,8 +86,7 @@ namespace GSoft.Dynamite.Exceptions
             this.logger.Error(message);
 
             // Email the dev team
-            var currentWeb = SPContext.Current.Web;
-            string devTeamEmail = this.configuration.GetErrorEmailByMostNestedScope(currentWeb);
+            string devTeamEmail = this.configuration.GetErrorEmailByMostNestedScope(web);
 
             if (!string.IsNullOrEmpty(devTeamEmail))
             {
@@ -98,15 +97,20 @@ namespace GSoft.Dynamite.Exceptions
                     errorUrl = HttpContext.Current.Request.Url.AbsoluteUri;
                 }
 
-                SendEmail(currentWeb, devTeamEmail, "[Automatic Error Email] Laval Portal - Error at " + errorUrl, message);
+                SendEmail(web, devTeamEmail, string.Format("[Automatic Error Email] {0} - Error at {1}", web.Title, errorUrl), message);
+            }
+            else
+            {
+                this.logger.Error("[]");
             }
         }
-            
+
         private static void SendEmail(SPWeb web, string emailTo, string emailTitle, string body)
         {
             var headers = new StringDictionary();
             headers.Add("to", emailTo);
             headers.Add("subject", emailTitle);
+
             web.RunAsSystem(elevatedWeb =>
             {
                 SPUtility.SendEmail(elevatedWeb, headers, body);
