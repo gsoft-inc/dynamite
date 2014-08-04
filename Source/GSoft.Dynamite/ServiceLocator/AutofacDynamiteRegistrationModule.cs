@@ -3,6 +3,7 @@
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
+using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
@@ -128,6 +129,10 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<SearchHelper>();
             builder.RegisterType<CustomActionHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
+
+            // CAML query builder and utilities
+            builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
+            builder.RegisterType<CamlUtils>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();
