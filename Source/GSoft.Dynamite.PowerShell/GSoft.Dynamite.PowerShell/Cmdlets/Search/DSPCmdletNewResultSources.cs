@@ -94,14 +94,17 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                             this.WriteWarning("Creating result source:" + sourceName);
                         }
 
-                        var sortDirectionAsString = sourceNode.Attribute("SortDirection").Value;
-                        var sortField = sourceNode.Attribute("SortField").Value;
+                        var sortDirectionsAsString = sourceNode.Attribute("SortDirections").Value;
+                        var sortFields = sourceNode.Attribute("SortFields").Value;
 
                         var query = sourceNode.Descendants("Query").Single().Value;
 
-                        if (!string.IsNullOrEmpty(sortDirectionAsString) && !string.IsNullOrEmpty(sortField))
+                        if (!string.IsNullOrEmpty(sortDirectionsAsString) && !string.IsNullOrEmpty(sortFields))
                         {
-                            var sortDirection = (SortDirection)Enum.Parse(typeof(SortDirection), sortDirectionAsString);
+                            var delimiter = new[] { ',', ';', ' ' };
+                            var fields = sortFields.Split(delimiter,StringSplitOptions.RemoveEmptyEntries);
+                            var directions = sortDirectionsAsString.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(x => (SortDirection)Enum.Parse(typeof(SortDirection), x));
+
                             searchHelper.EnsureResultSource(
                                 searchServiceApp,
                                 sourceName,
@@ -109,8 +112,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 searchProvider,
                                 site.RootWeb,
                                 query,
-                                sortField,
-                                sortDirection,
+                                fields,
+                                directions,
                                 this.Overwrite);
                         }
                         else
