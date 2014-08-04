@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using Microsoft.SharePoint;
+using Autofac;
+using GSoft.Dynamite.Configuration;
 
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
     public partial class GoogleAnalyticsTracking : UserControl
     {
-        private const string PropertyKey = "GSOFT_DYNAMITE_GOOGLE_ANALYTICS_TRACKING_ID";
         /// <summary>
         /// Gets or sets the google analytics identifier.
         /// </summary>
@@ -24,13 +23,10 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected void Page_Load(object sender, EventArgs e)
         {
+            var configuration = DynamiteWspContainerProxy.Current.Resolve<IConfiguration>();
             SPWeb web = SPContext.Current.Site.RootWeb;
-            var allproperties = web.AllProperties;
 
-            if (allproperties.ContainsKey(PropertyKey))
-            {
-                GoogleAnalyticsID = allproperties[PropertyKey].ToString();
-            }
+            this.GoogleAnalyticsID = configuration.GetGoogleAnalyticsIdByMostNestedScope(web);
         }
     }
 }

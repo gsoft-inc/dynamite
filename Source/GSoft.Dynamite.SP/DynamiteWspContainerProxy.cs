@@ -11,7 +11,7 @@ namespace GSoft.Dynamite
 {
     internal class DynamiteWspContainerProxy
     {
-        private ISharePointServiceLocator innerLocator = new AddOnProvidedServiceLocator();
+        private static ISharePointServiceLocator innerLocator = new AddOnProvidedServiceLocator();
         
         /// <summary>
         /// Exposes the most-nested currently available lifetime scope.
@@ -23,7 +23,7 @@ namespace GSoft.Dynamite
         /// InstancePerWeb or InstancePerRequest objects).
         /// Do not dispose this scope, as it will be reused by others.
         /// </summary>
-        public ILifetimeScope Current
+        public static ILifetimeScope Current
         {
             get
             {
@@ -46,7 +46,7 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="feature">The current feature that is requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
+        public static ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
         {
             return innerLocator.BeginFeatureLifetimeScope(feature);
         }
@@ -60,7 +60,7 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="web">The current web from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        ILifetimeScope BeginWebLifetimeScope(SPWeb web)
+        public static ILifetimeScope BeginWebLifetimeScope(SPWeb web)
         {
             return innerLocator.BeginWebLifetimeScope(web);
         }

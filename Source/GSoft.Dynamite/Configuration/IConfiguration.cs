@@ -34,5 +34,16 @@ namespace GSoft.Dynamite.Configuration
         /// Web > Site > WebApplication > Farm
         /// </remarks>
         string GetErrorEmailByMostNestedScope(SPWeb web);
+
+        /// <summary>
+        /// Method to get the google analytics Id
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <returns>the google analytics id</returns>
+        /// <remarks>
+        /// The implementation of this method should check on the most nested scope first than fallback on the next.
+        /// Web > Site > WebApplication > Farm
+        /// </remarks>
+        string GetGoogleAnalyticsIdByMostNestedScope(SPWeb web);
     }
 }

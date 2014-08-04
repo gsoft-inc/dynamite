@@ -13,6 +13,8 @@ namespace GSoft.Dynamite.Configuration
     public class PropertyBagConfiguration : IConfiguration
     {
         private readonly string ErrorEmailKey = "GSOFT_DYNAMITE_ERROR_EMAIL";
+        private readonly string GoogleAnalyticsIdKey = "GSOFT_DYNAMITE_GOOGLE_ANALYTICS_TRACKING_ID";
+
         private PropertyBagHelper propertyBagHelper;
 
         public PropertyBagConfiguration(PropertyBagHelper propertyBagHelper)
@@ -47,6 +49,20 @@ namespace GSoft.Dynamite.Configuration
         public string GetErrorEmailByMostNestedScope(SPWeb web)
         {
             return this.GetByKeyByMostNestedScope(web, this.ErrorEmailKey);
+        }
+
+        /// <summary>
+        /// Method to get the google analytics Id
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <returns>the google analytics id</returns>
+        /// <remarks>
+        /// The implementation of this method should check on the most nested scope first than fallback on the next.
+        /// Web > Site > WebApplication > Farm
+        /// </remarks>
+        public string GetGoogleAnalyticsIdByMostNestedScope(SPWeb web)
+        {
+            return this.GetByKeyByMostNestedScope(web, this.GoogleAnalyticsIdKey);
         }
     }
 }
