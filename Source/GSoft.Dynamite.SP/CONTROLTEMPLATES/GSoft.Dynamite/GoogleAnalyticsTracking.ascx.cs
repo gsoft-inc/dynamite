@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
     public partial class GoogleAnalyticsTracking : UserControl
     {
-        private const string PropertyKey = "GOOGLE_ANALYTICS_TRACKING_ID";
+        private const string PropertyKey = "GSOFT_DYNAMITE_GOOGLE_ANALYTICS_TRACKING_ID";
         /// <summary>
         /// Gets or sets the google analytics identifier.
         /// </summary>
@@ -25,7 +25,6 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         protected void Page_Load(object sender, EventArgs e)
         {
             SPWeb web = SPContext.Current.Site.RootWeb;
-            
             var allproperties = web.AllProperties;
 
             if (allproperties.ContainsKey(PropertyKey))
