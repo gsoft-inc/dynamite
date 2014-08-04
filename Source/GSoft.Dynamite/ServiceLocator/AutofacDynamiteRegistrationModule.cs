@@ -5,7 +5,9 @@ using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Catalogs;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Exceptions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
@@ -76,9 +78,16 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
             builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
 
+            // Configuration 
+            builder.RegisterType<PropertyBagHelper>();
+            builder.RegisterType<IConfiguration>().As<PropertyBagConfiguration>();
+
             // Definitions
             builder.RegisterType<ContentTypeBuilder>();
             builder.RegisterType<FieldHelper>();
+
+            // Exception
+            builder.RegisterType<ICatchAllExceptionHandler>().As<CatchAllExceptionHandler>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 

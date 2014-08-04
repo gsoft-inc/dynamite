@@ -86,6 +86,12 @@
   <ItemGroup>
     <Compile Include="Branding\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
+    <Compile Include="Configuration\PropertyBagConfiguration.cs" />
+    <Compile Include="Configuration\IConfiguration.cs" />
+    <Compile Include="Configuration\PropertyBagHelper.cs" />
+    <Compile Include="Configuration\PropertyBagValue.cs" />
+    <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
+    <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
     <Compile Include="Lists\IListLocator.cs" />
