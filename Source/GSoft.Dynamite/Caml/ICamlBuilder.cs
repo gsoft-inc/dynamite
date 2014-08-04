@@ -119,6 +119,24 @@ namespace GSoft.Dynamite.Caml
         string GreaterThan(string leftCondition, string rightCondition);
 
         /// <summary>
+        /// Creates a CAML query to determine whether [is content type] [the specified content type identifier].
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsContentType(SPContentTypeId contentTypeId);
+
+        /// <summary>
+        /// Creates a CAML query to determine whether [is or inherits content type] [the specified content type identifier].
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsOrInheritsContentType(SPContentTypeId contentTypeId);
+
+        /// <summary>
         /// Creates CAML is null by with the specified field reference.
         /// </summary>
         /// <param name="fieldRefElement">The field reference element.</param>
