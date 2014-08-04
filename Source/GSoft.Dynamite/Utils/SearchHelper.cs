@@ -208,6 +208,34 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Ensure a search result source
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level">The search object level.</param>
+        /// <param name="searchProvider">The search provider for this result source.</param>
+        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
+        /// <param name="query">The search query in KQL format.</param>
+        /// <param name="sortField">Internal name of the sort field.</param>
+        /// <param name="direction">The sort direction.</param>
+        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
+        /// <returns>
+        /// The result source.
+        /// </returns>
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, IEnumerable<string> sortFields, IEnumerable<SortDirection> directions, bool overwrite)
+        {
+            var sortCollection = new SortCollection();
+
+            var fields = sortFields.Select((field, index) => new { Field = field, Direction = directions.ElementAt(index) }).ToList();
+            fields.ForEach(f => sortCollection.Add(f.Field, f.Direction));
+
+            var queryProperties = new QueryTransformProperties();
+            queryProperties["SortList"] = sortCollection;
+
+            return this.EnsureResultSource(ssa, resultSourceName, level, searchProvider, contextWeb, query, queryProperties, overwrite);
+        }
+
+        /// <summary>
         /// Get the service application by its name
         /// </summary>
         /// <param name="appName">Name of the application.</param>
