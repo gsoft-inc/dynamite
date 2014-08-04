@@ -12,7 +12,7 @@ using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
-	
+
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
@@ -126,7 +126,7 @@ namespace GSoft.Dynamite.ServiceLocator
                 var logger = container.Resolve<ILogger>();
                 string dynamiteAssemblyNameEnumeration = string.Empty;
                 dynamiteComponentModuleAssemblies.Cast<Assembly>().ToList().ForEach(a => dynamiteAssemblyNameEnumeration += a.FullName + ", ");
-                logger.Info("Dependency injection module registration. The following Dynamite component assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + dynamiteAssemblyNameEnumeration);
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Dynamite component assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + dynamiteAssemblyNameEnumeration);
 
                 // 2) Extend the original registrations with any remaining AddOns' registrations
                 var containerBuilderForAddOns = new ContainerBuilder();
@@ -135,13 +135,13 @@ namespace GSoft.Dynamite.ServiceLocator
 
                 string addOnAssemblyNameEnumeration = string.Empty;
                 allTheRest.Cast<Assembly>().ToList().ForEach(a => addOnAssemblyNameEnumeration += a.FullName + ", ");
-                logger.Info("Dependency injection module registration. The following Add-On component assemblies (i.e. extensions to the core Dynamite components) were scanned and any Autofac Module within was registered. The order of registrations was: " + addOnAssemblyNameEnumeration);
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Add-On component assemblies (i.e. extensions to the core Dynamite components) were scanned and any Autofac Module within was registered. The order of registrations was: " + addOnAssemblyNameEnumeration);
 
                 // Log the full component registry for easy debugging through ULS
                 string componentRegistryAsString = string.Empty;
                 var regAndServices = container.ComponentRegistry.Registrations.SelectMany(r => r.Services.OfType<IServiceWithType>(), (r, s) => new { r, s });
                 regAndServices.ToList().ForEach(regAndService => componentRegistryAsString += "[" + regAndService.s.ServiceType.FullName + "->" + regAndService.r.Activator.LimitType.FullName + "], ");
-                logger.Info("Autofac component registry details: " + componentRegistryAsString);
+                logger.Info("Autofac component registry details for container " + appRootNamespace + ": " + componentRegistryAsString);
 
                 return container;
             }

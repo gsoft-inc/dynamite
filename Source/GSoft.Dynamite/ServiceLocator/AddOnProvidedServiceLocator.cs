@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// lifetime scope (allowing you to inject InstancePerSite and InstancePerWeb
         /// objects).
         /// In a SPFarm or SPWebApplication feature context, this method will throw
-        /// an excetion of type <see cref="InvalidOperationException"/>. Dynamite components
+        /// an exception of type <see cref="InvalidOperationException"/>. Dynamite components
         /// must be configured under a specific SPSite's scope.
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
@@ -194,54 +194,64 @@ namespace GSoft.Dynamite.ServiceLocator
                 {
                     if (this.locatorAccessor == null)
                     {
-                        // 1) Scan the GAC for any DLL matching the *.ServiceLocator.DLL pattern
-                        var assemblyScanner = new GacAssemblyLocator();
-                        var matchingAssemblies = assemblyScanner.GetAssemblies(new List<string>() { "GAC_MSIL" }, assemblyFileName => assemblyFileName.Contains(".ServiceLocator"));
-
-                        Type accessorType = null;
-
-                        if (matchingAssemblies.Any())
+                        try
                         {
-                            var serviceLocatorAssembly = matchingAssemblies[0];
+                            // 1) Scan the GAC for any DLL matching the *.ServiceLocator.DLL pattern
+                            var assemblyScanner = new GacAssemblyLocator();
+                            var matchingAssemblies = assemblyScanner.GetAssemblies(new List<string>() { "GAC_MSIL" }, assemblyFileName => assemblyFileName.Contains(".ServiceLocator"));
 
-                            if (matchingAssemblies.Count > 1)
+                            Type accessorType = null;
+
+                            if (matchingAssemblies.Any())
                             {
-                                // 2) If more than one service locator is found, gotta use the contextual SPSite object
-                                //    and extract the preferred service locator setting from its property bag.
-                                if (site != null)
-                                {
-                                    using (var rootWeb = site.OpenWeb())
-                                    {
-                                        string serviceLocatorAssemlyName = rootWeb.Properties[KeyServiceLocatorAssemblyName];
+                                var serviceLocatorAssembly = matchingAssemblies[0];
 
-                                        serviceLocatorAssembly = matchingAssemblies.FirstOrDefault(assembly => assembly.FullName.Contains(serviceLocatorAssemlyName));
+                                if (matchingAssemblies.Count > 1)
+                                {
+                                    // 2) If more than one service locator is found, gotta use the contextual SPSite object
+                                    //    and extract the preferred service locator setting from its property bag.
+                                    if (site != null)
+                                    {
+                                        using (var rootWeb = site.OpenWeb())
+                                        {
+                                            string serviceLocatorAssemlyName = rootWeb.Properties[KeyServiceLocatorAssemblyName];
+
+                                            serviceLocatorAssembly = matchingAssemblies.FirstOrDefault(assembly => assembly.FullName.Contains(serviceLocatorAssemlyName));
+                                        }
                                     }
+                                    else
+                                    {
+                                        throw new ArgumentNullException("site");
+                                    }
+                                }
+
+                                if (serviceLocatorAssembly != null)
+                                {
+                                    // Only one matching assembly, find its accessor class
+                                    accessorType = this.FindServiceLocatorAccessorType(serviceLocatorAssembly);
                                 }
                                 else
                                 {
-                                    throw new ArgumentNullException("site");
+                                    throw new InvalidOperationException("Failed to find an assembly matching the *.ServiceLocator.DLL pattern to provide a service locator.");
                                 }
                             }
 
-                            if (serviceLocatorAssembly != null)
+                            if (accessorType != null)
                             {
-                                // Only one matching assembly, find its accessor class
-                                accessorType = this.FindServiceLocatorAccessorType(serviceLocatorAssembly);
+                                // 3) Create the accessor instance
+                                this.locatorAccessor = (ISharePointServiceLocatorAccessor)Activator.CreateInstance(accessorType);
                             }
                             else
                             {
-                                throw new InvalidOperationException("Failed to find an assembly matching the *.ServiceLocator.DLL pattern to provide a service locator.");
+                                throw new InvalidOperationException("Failed to find implementation of ISharePointServiceLocatorAccessor for AddOnProvidedServiceLocator. Your *.ServiceLocator.DLL assembly should expose its static container through that interface.");
                             }
                         }
-
-                        if (accessorType != null)
+                        catch (InvalidOperationException)
                         {
-                            // 3) Create the accessor instance
-                            this.locatorAccessor = (ISharePointServiceLocatorAccessor)Activator.CreateInstance(accessorType);
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException("Failed to find implementation of ISharePointServiceLocatorAccessor for AddOnProvidedServiceLocator. Your *.ServiceLocator.DLL assembly should expose its static container through that interface.");
+                            // Either no assembly in the GAC matches the pattern *.ServiceLocator.DLL pattern, 
+                            // or in the matching assembly that was found, no class implements ISharePointServiceLocatorAccessor.
+                            // In this case, use our default all-available-Dynamite-modules-only service locator
+                            this.locatorAccessor = new FallbackServiceLocator();
                         }
                     }
                 }

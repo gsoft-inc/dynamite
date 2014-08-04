@@ -198,6 +198,7 @@
     <Compile Include="Serializers\XmlHelper.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
+    <Compile Include="ServiceLocator\FallbackServiceLocator.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
