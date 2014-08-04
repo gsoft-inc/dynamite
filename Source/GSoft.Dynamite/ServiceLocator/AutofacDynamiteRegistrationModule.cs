@@ -80,14 +80,14 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Configuration 
             builder.RegisterType<PropertyBagHelper>();
-            builder.RegisterType<IConfiguration>().As<PropertyBagConfiguration>();
+            builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
             // Definitions
             builder.RegisterType<ContentTypeBuilder>();
             builder.RegisterType<FieldHelper>();
 
             // Exception
-            builder.RegisterType<ICatchAllExceptionHandler>().As<CatchAllExceptionHandler>();
+            builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
