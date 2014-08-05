@@ -28,6 +28,11 @@ namespace GSoft.Dynamite
         public const string FileLeafRefName = "FileLeafRef";
 
         /// <summary>
+        /// The URL field internal name
+        /// </summary>
+        public const string UrlName = "URL";
+
+        /// <summary>
         /// ContentType field internal name
         /// </summary>
         public const string ContentTypeName = "ContentType";
@@ -82,6 +87,12 @@ namespace GSoft.Dynamite
         /// ContentTypeId field info
         /// </summary>
         public static readonly FieldInfo ContentTypeId = new FieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
+
+
+        /// <summary>
+        /// URL field info
+        /// </summary>
+        public static readonly FieldInfo Url = new FieldInfo(UrlName, SPBuiltInFieldId.URL);
 
         /// <summary>
         /// TaxCatchAll field info.
