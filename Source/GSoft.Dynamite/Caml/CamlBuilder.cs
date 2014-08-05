@@ -183,6 +183,30 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Creates a CAML query to determine whether [is content type] [the specified content type identifier].
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsContentType(SPContentTypeId contentTypeId)
+        {
+            return this.Equal(this.FieldRef("ContentTypeId"), this.Value("ContentTypeId", contentTypeId.ToString()));
+        }
+
+        /// <summary>
+        /// Creates a CAML query to determine whether [is or inherits content type] [the specified content type identifier].
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsOrInheritsContentType(SPContentTypeId contentTypeId)
+        {
+            return this.BeginsWith(this.FieldRef("ContentTypeId"), this.Value("ContentTypeId", contentTypeId.ToString()));
+        }
+
+        /// <summary>
         /// Creates CAML is null by with the specified field reference.
         /// </summary>
         /// <param name="fieldRefElement">The field reference element.</param>
