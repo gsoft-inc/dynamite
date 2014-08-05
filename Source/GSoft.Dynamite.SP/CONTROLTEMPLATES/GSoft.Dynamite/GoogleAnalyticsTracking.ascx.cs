@@ -3,6 +3,7 @@ using System.Web.UI;
 using Microsoft.SharePoint;
 using Autofac;
 using GSoft.Dynamite.Configuration;
+using Microsoft.SharePoint.WebControls;
 
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
@@ -17,6 +18,14 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         public string GoogleAnalyticsID { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is in display mode.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is in display mode; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsInDisplayMode { get; set; }
+
+        /// <summary>
         /// Handles the Load event of the Page control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -27,6 +36,7 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
             SPWeb web = SPContext.Current.Site.RootWeb;
 
             this.GoogleAnalyticsID = configuration.GetGoogleAnalyticsIdByMostNestedScope(web);
+            this.IsInDisplayMode = SPContext.Current.FormContext.FormMode == SPControlMode.Display;
         }
     }
 }
