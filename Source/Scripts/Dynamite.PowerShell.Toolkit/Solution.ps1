@@ -79,7 +79,9 @@ function global:Deploy-DSPSolution() {
 		Param (
 			[Parameter(Mandatory=$true,ValueFromPipeline=$true)]
 			[Microsoft.SharePoint.PowerShell.SPSolutionPipeBind]$Solution,
-			[bool]$Deploying
+			[bool]$Deploying,
+			[Parameter(Mandatory=$false)]
+			[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind[]]$WebApplications
 		)
 		
 		$prevJobStatus = $null
@@ -112,7 +114,8 @@ function global:Deploy-DSPSolution() {
 			
 			if($spSolution.LastOperationDetails -like "*Use the force*"){
 				Write-Host "Attempting to deploy with the force attribute." -ForegroundColor Yellow
-				DeploySolution $spSolution $true
+				Deploy-WSPSolution -Solution $spSolution -WebApplications $WebApplications -Force:$true
+				break
 			}
 			
 			if ($spSolution.LastOperationResult -like "*Failed*") {
@@ -203,10 +206,14 @@ function global:Deploy-DSPSolution() {
 					$webApp = $_.Read()
 					Write-Host "Installing '$($spSolution.name)' to $($webApp.Url)"
 					$spSolution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$($spSolution.ContainsCasPolicy) -WebApplication $webApp -Confirm:$false -Force:$force
-					Block-SPDeployment -Solution $spSolution -Deploying $true
+					Block-SPDeployment -Solution $spSolution -Deploying $true -WebApplications $WebApplications
 				}
 			}
 		}
+
+        # Restart OWSTIMER to clear DLL cache
+        # Mandatory if you have Feature Receivers
+        Restart-SPTimer
 	}
 	
 	function script:Deploy-WSPSolutionsInQueue {
@@ -230,10 +237,7 @@ function global:Deploy-DSPSolution() {
 				Write-Host "Please remove the solution '$($solution.name)' before deploying it."
 			}
 		}
-		
-        # Restart OWSTIMER to clear DLL cache
-        # Mandatory if you have Feature Receivers
-        Restart-SPTimer
+
 	}
 	
 	function script:Process-SolutionQueue {
