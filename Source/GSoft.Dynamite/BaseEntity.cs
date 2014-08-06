@@ -1,5 +1,6 @@
 ﻿using System;
 using GSoft.Dynamite.Binding;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite
 {
@@ -21,9 +22,18 @@ namespace GSoft.Dynamite
         public string Title { get; set; }
 
         /// <summary>
-        /// Created date
+        /// Created date    
         /// </summary>
         [Property(BindingType = BindingType.ReadOnly)]
         public DateTime Created { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Content Type Id associated
+        /// </summary>
+        /// <value>
+        /// The Content Type Id associated.
+        /// </value>
+        [Property(BuiltInFields.ContentTypeIdName, BindingType = BindingType.ReadOnly)]
+        public SPContentTypeId ContentTypeId { get; set; }
     } 
 }
