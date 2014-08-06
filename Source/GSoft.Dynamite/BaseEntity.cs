@@ -43,6 +43,6 @@ namespace GSoft.Dynamite
         /// The Content Type name associated.
         /// </value>
         [Property(BuiltInFields.ContentTypeName, BindingType = BindingType.ReadOnly)]
-        public SPContentTypeId ContentTypeName { get; set; }
+        public string ContentTypeName { get; set; }
     } 
 }
