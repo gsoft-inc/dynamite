@@ -590,9 +590,27 @@ namespace GSoft.Dynamite.Taxonomy
 
             IList<Term> termsList = new List<Term>();
 
-            if (termSet.Terms.Count() > 0)
+            if (termSet.Terms.Any())
             {
-                termsList = termSet.Terms.Cast<Term>().ToList();
+                // If custom sort order is set, build term list in sorted order
+                var customSortOrder = termSet.CustomSortOrder;
+                if (!string.IsNullOrEmpty(customSortOrder))
+                {
+                    var terms = termSet.Terms.ToList();
+                    var sortedIds = customSortOrder.Split(':').Select(id => new Guid(id)).ToList();
+                    foreach (var sortedId in sortedIds)
+                    {
+                        var sortedTerm = terms.SingleOrDefault(term => term.Id.Equals(sortedId));
+                        if (sortedTerm != null)
+                        {
+                            termsList.Add(sortedTerm);
+                        }
+                    }
+                }
+                else
+                {
+                    termsList = termSet.Terms.ToList();
+                }
             }
 
             return termsList;
