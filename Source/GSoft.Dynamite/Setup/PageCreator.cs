@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.Setup
                 }
             };
 
-            return this.Create(web, folderId, page);
+            return this.CreatePage(web, folderId, page, false);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace GSoft.Dynamite.Setup
         /// <returns>The newly created publishing page</returns>
         public PublishingPage Create(SPWeb web, PageInfo pageInfo)
         {
-            return this.Create(web, int.MinValue, pageInfo);
+            return this.CreatePage(web, int.MinValue, pageInfo, false);
         }
 
         /// <summary>
@@ -86,58 +86,61 @@ namespace GSoft.Dynamite.Setup
         /// <returns>The newly created publishing page</returns>
         public PublishingPage Create(SPWeb web, int folderId, PageInfo pageInfo)
         {
-            PublishingPage newPage = null;
-            bool userHavePermissions = false;
+            return this.CreatePage(web, folderId, pageInfo, false);
+        }
 
-            // get the root folder if no folder is specified
-            var folder = folderId == int.MinValue ? web.GetPagesLibrary().RootFolder : this.folderRepository.GetFolderByIdForWeb(web, folderId);
-
-            // if spfolder is root folder, check permissions at library level
-            if (folder.Item == null)
+        /// <summary>
+        /// Ensure publishing page in Pages Library
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="folderId">the current folder id</param>
+        /// <param name="contentTypeId">the current content type id</param>
+        /// <param name="pageLayoutName">the page layout name</param>
+        /// <param name="pageTitle">the page title</param>
+        /// <param name="pageName">the page name</param>
+        /// <returns>the publishing page</returns>
+        public PublishingPage EnsurePage(SPWeb web, int folderId, SPContentTypeId contentTypeId, string pageLayoutName, string pageTitle, string pageName)
+        {
+            var publishingSite = new PublishingSite(web.Site);
+            var pageLayout = this.GetPageLayout(publishingSite, pageLayoutName, false);
+            var page = new PageInfo()
             {
-                userHavePermissions = folder.DocumentLibrary.DoesUserHavePermissions(SPBasePermissions.AddListItems);
-            }
-            else
-            {
-                userHavePermissions = folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems);
-            }
-
-            if (userHavePermissions)
-            {
-                using (new Unsafe(web))
+                Name = pageName,
+                ContentTypeId = contentTypeId,
+                PageLayout = pageLayout,
+                Values = new List<IFieldValueInfo>()
                 {
-                    var requestedContentType = web.AvailableContentTypes[pageInfo.ContentTypeId];
-
-                    if (requestedContentType != null)
+                    new FieldValueInfo()
                     {
-                        if (pageInfo.PageLayout != null)
-                        {
-                            var publishingWeb = PublishingWeb.GetPublishingWeb(web);
-
-                            if (!pageInfo.Name.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
-                            {
-                                pageInfo.Name += ".aspx";
-                            }
-
-                            newPage = publishingWeb.GetPublishingPages().Add(folder.ServerRelativeUrl + "/" + pageInfo.Name, pageInfo.PageLayout);
-                            newPage.ListItem[BuiltInFields.ContentType.InternalName] = requestedContentType.Name;
-                            newPage.ListItem[BuiltInFields.ContentTypeId.InternalName] = requestedContentType.Id;
-
-                            if (pageInfo.Values != null)
-                            {
-                                foreach (var field in pageInfo.Values)
-                                {
-                                    newPage.ListItem[field.FieldName] = field.Value;
-                                }
-                            }
-
-                            newPage.ListItem.Update();
-                        }
+                        FieldName = BuiltInFields.Title.InternalName,
+                        Value = pageTitle
                     }
                 }
-            }
+            };
+            return this.CreatePage(web, folderId, page, true);
+        }
 
-            return newPage;
+        /// <summary>
+        /// Ensure a page in the Pages library
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="pageInfo">the pageInfo of the page</param>
+        /// <returns>The publishing page</returns>
+        public PublishingPage EnsurePage(SPWeb web, PageInfo pageInfo)
+        {
+            return this.CreatePage(web, int.MinValue, pageInfo, true);
+        }
+
+        /// <summary>
+        /// Ensure a page in the Pages library
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <param name="folderId">The folder in which to add the item</param>
+        /// <param name="pageInfo">The pageInfo of the page</param>
+        /// <returns>The publishing page</returns>
+        public PublishingPage EnsurePage(SPWeb web, int folderId, PageInfo pageInfo)
+        {
+            return this.CreatePage(web, folderId, pageInfo, true);
         }
 
         /// <summary>
@@ -175,6 +178,77 @@ namespace GSoft.Dynamite.Setup
             }
 
             return contentTypeId;
+        }
+
+        private PublishingPage CreatePage(SPWeb web, int folderId, PageInfo pageInfo, bool isEnsure)
+        {
+            PublishingPage newPage = null;
+            bool userHavePermissions = false;
+
+            // get the root folder if no folder is specified
+            var folder = folderId == int.MinValue ? web.GetPagesLibrary().RootFolder : this.folderRepository.GetFolderByIdForWeb(web, folderId);
+
+            // if spfolder is root folder, check permissions at library level
+            if (folder.Item == null)
+            {
+                userHavePermissions = folder.DocumentLibrary.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
+            else
+            {
+                userHavePermissions = folder.Item.DoesUserHavePermissions(SPBasePermissions.AddListItems);
+            }
+
+            if (userHavePermissions)
+            {
+                using (new Unsafe(web))
+                {
+                    var requestedContentType = web.AvailableContentTypes[pageInfo.ContentTypeId];
+
+                    if (requestedContentType != null)
+                    {
+                        if (pageInfo.PageLayout != null)
+                        {
+                            var publishingWeb = PublishingWeb.GetPublishingWeb(web);
+
+                            if (!pageInfo.Name.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
+                            {
+                                pageInfo.Name += ".aspx";
+                            }
+
+                            var pageName = string.Format("{0}/{1}", folder.ServerRelativeUrl, pageInfo.Name);
+
+                            if (isEnsure)
+                            {
+                                var oldPage = publishingWeb.GetPublishingPage(pageName);
+                                if (oldPage != null)
+                                {
+                                    if (oldPage.ListItem.File.CheckOutType != SPFile.SPCheckOutType.Online)
+                                    {
+                                        oldPage.CheckOut();
+                                    }
+                                    return oldPage;
+                                }
+                            }
+
+                            newPage = publishingWeb.GetPublishingPages().Add(pageName, pageInfo.PageLayout);
+                            newPage.ListItem[BuiltInFields.ContentType.InternalName] = requestedContentType.Name;
+                            newPage.ListItem[BuiltInFields.ContentTypeId.InternalName] = requestedContentType.Id;
+
+                            if (pageInfo.Values != null)
+                            {
+                                foreach (var field in pageInfo.Values)
+                                {
+                                    newPage.ListItem[field.FieldName] = field.Value;
+                                }
+                            }
+
+                            newPage.ListItem.Update();
+                        }
+                    }
+                }
+            }
+
+            return newPage;
         }
     }
 }

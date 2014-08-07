@@ -5,6 +5,7 @@ using System.Xml;
 using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
+using System.Linq;
 
 namespace GSoft.Dynamite.WebParts
 {
@@ -110,6 +111,72 @@ namespace GSoft.Dynamite.WebParts
                 {
                     manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
                     storageKey = manager.GetStorageKey(webPart);
+                }
+            }
+
+            return storageKey;
+        }
+
+        /// <summary>
+        /// Method to add a Web Part to a Web Part Zone
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="item">the item to add the web part to</param>
+        /// <param name="webPartName">The web part name to get</param>
+        /// <param name="webPartZoneName">the web part zone to add the web part to</param>
+        /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
+        /// <returns>Return the Storage key of the web part</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public Guid EnsureWebPartToZone(SPWeb web, SPListItem item, string webPartName, string webPartZoneName, int webPartZoneIndex)
+        {
+            Guid storageKey = Guid.Empty;
+
+            using (var manager = item.File.GetLimitedWebPartManager(System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared))
+            {
+                var webPart = this.CreateWebPart(web, webPartName, manager);
+
+                if (webPart != null)
+                {
+                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().FirstOrDefault(wp => wp.Title == webPart.Title);
+                    if (existingWP == null)
+                    {
+                        webPart.ChromeType = System.Web.UI.WebControls.WebParts.PartChromeType.None;
+                        manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
+                    }
+
+                    storageKey = manager.GetStorageKey(existingWP ?? webPart);
+                    webPart.Dispose();
+                }
+            }
+
+            return storageKey;
+        }
+
+        /// <summary>
+        /// Method to ensure a Web Part to a Web Part Zone
+        /// </summary>
+        /// <param name="item">the item to add the web part to</param>
+        /// <param name="webPart">The web part name to get</param>
+        /// <param name="webPartZoneName">the web part zone to add the web part to</param>
+        /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
+        /// <returns>Return the Storage key of the web part</returns>
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public Guid EnsureWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneName, int webPartZoneIndex)
+        {
+            Guid storageKey = Guid.Empty;
+
+            using (var manager = item.File.GetLimitedWebPartManager(System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared))
+            {
+                if (webPart != null)
+                {
+                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().FirstOrDefault(wp => wp.Title == webPart.Title);
+                    if (existingWP == null)
+                    {
+                        manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex); 
+                    }
+
+                    storageKey = manager.GetStorageKey(existingWP ?? webPart);
                 }
             }
 
