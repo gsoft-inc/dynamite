@@ -137,7 +137,9 @@ namespace GSoft.Dynamite.WebParts
 
                 if (webPart != null)
                 {
-                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().FirstOrDefault(wp => wp.Title == webPart.Title);
+                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().
+                        FirstOrDefault(wp => wp.Title == webPart.Title && (manager.GetZoneID(wp) == webPartZoneName));
+
                     if (existingWP == null)
                     {
                         webPart.ChromeType = System.Web.UI.WebControls.WebParts.PartChromeType.None;
@@ -170,7 +172,9 @@ namespace GSoft.Dynamite.WebParts
             {
                 if (webPart != null)
                 {
-                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().FirstOrDefault(wp => wp.Title == webPart.Title);
+                    var existingWP = manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>().
+                        FirstOrDefault(wp => wp.Title == webPart.Title && (manager.GetZoneID(wp) == webPartZoneName));
+
                     if (existingWP == null)
                     {
                         manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex); 
