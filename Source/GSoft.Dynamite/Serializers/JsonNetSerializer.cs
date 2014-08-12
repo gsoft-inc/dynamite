@@ -5,18 +5,8 @@
     /// <summary>
     /// The service stack serializer.
     /// </summary>
-    public class JSonNetSerializer : ISerializer
-    {
-        // private readonly JavaScriptSerializer serializer;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JSonNetSerializer"/> class.
-        /// </summary>
-        public JSonNetSerializer()
-        {
-            // this.serializer = new JsonN();
-        }
-
+    public class JsonNetSerializer : ISerializer
+    { 
         /// <summary>
         /// The serialize.
         /// </summary>

@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Autofac;
+using Autofac.Builder;
+using Autofac.Core;
+using Autofac.Core.Lifetime;
+using Autofac.Features.Scanning;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.ServiceLocator
@@ -92,13 +99,13 @@ namespace GSoft.Dynamite.ServiceLocator
         {
             using (new SPMonitoredScope("Dynamite - Bootstrapping dependency injection container " + appRootNamespace + " and scanning GAC for Modules."))
             {
-                var containerBuilder = new ContainerBuilder();
+                var containerBuilderForDynamiteComponents = new ContainerBuilder();
                 var assemblyLocator = new GacAssemblyLocator();
 
                 // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves).
                 // I.E. each container gets its own DynamiteRegistrationModule components.
                 var dynamiteModule = new AutofacDynamiteRegistrationModule(appRootNamespace);
-                containerBuilder.RegisterModule(dynamiteModule);
+                containerBuilderForDynamiteComponents.RegisterModule(dynamiteModule);
 
                 var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyFileNameMatchingPredicate);
 
@@ -106,9 +113,37 @@ namespace GSoft.Dynamite.ServiceLocator
                 // so that other AutofacDynamiteRegistrationModule instances don't get registered.
                 var filteredMatchingAssemblies = matchingAssemblies.Where(x => !x.FullName.Contains("GSoft.Dynamite,"));
 
-                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilder, filteredMatchingAssemblies.ToArray());
+                // Now make sure all Dynamite component modules (i.e. all DLLs that start with GSoft.Dynamite.*) are registered BEFORE
+                // any other modules.
+                // This ensures that "client" modules will be able to override the Container registrations of GSoft.Dynamite.Components modules.
+                var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite."));
+                var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite."));
 
-                return containerBuilder.Build();
+                // 1) Build the base container with only Dynamite-related components
+                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForDynamiteComponents, dynamiteComponentModuleAssemblies.ToArray());
+                var container = containerBuilderForDynamiteComponents.Build();
+
+                var logger = container.Resolve<ILogger>();
+                string dynamiteAssemblyNameEnumeration = string.Empty;
+                dynamiteComponentModuleAssemblies.Cast<Assembly>().ToList().ForEach(a => dynamiteAssemblyNameEnumeration += a.FullName + ", ");
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Dynamite component assemblies were scanned and any Autofac Module within was registered. The order of registrations was: " + dynamiteAssemblyNameEnumeration);
+
+                // 2) Extend the original registrations with any remaining AddOns' registrations
+                var containerBuilderForAddOns = new ContainerBuilder();
+                AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForAddOns, allTheRest.ToArray());
+                containerBuilderForAddOns.Update(container);
+
+                string addOnAssemblyNameEnumeration = string.Empty;
+                allTheRest.Cast<Assembly>().ToList().ForEach(a => addOnAssemblyNameEnumeration += a.FullName + ", ");
+                logger.Info("Dependency injection module registration for container " + appRootNamespace + ". The following Add-On component assemblies (i.e. extensions to the core Dynamite components) were scanned and any Autofac Module within was registered. The order of registrations was: " + addOnAssemblyNameEnumeration);
+
+                // Log the full component registry for easy debugging through ULS
+                string componentRegistryAsString = string.Empty;
+                var regAndServices = container.ComponentRegistry.Registrations.SelectMany(r => r.Services.OfType<IServiceWithType>(), (r, s) => new { r, s });
+                regAndServices.ToList().ForEach(regAndService => componentRegistryAsString += "[" + regAndService.s.ServiceType.FullName + "->" + regAndService.r.Activator.LimitType.FullName + "], ");
+                logger.Info("Autofac component registry details for container " + appRootNamespace + ": " + componentRegistryAsString);
+
+                return container;
             }
         }
     }

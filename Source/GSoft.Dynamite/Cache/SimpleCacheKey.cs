@@ -13,13 +13,13 @@ namespace GSoft.Dynamite.Cache
         // keep one cached discriminator per user, per site (not threadsafe, but no worries)
         private static IDictionary<string, string> userSiteGroupDiscriminators = new Dictionary<string, string>();
 
-        private string englishKey = string.Empty;
-        private string frenchKey = string.Empty;
-
         /// <summary>
         /// The prefix of the keep to identify the Dynamite cache keys in the HttpCache.
         /// </summary>
         public const string Prefix = "Dynamite-";
+
+        private string englishKey = string.Empty;
+        private string frenchKey = string.Empty;
 
         /// <summary>
         /// Creates a new simple cache key to cache the same items regardless of the current language

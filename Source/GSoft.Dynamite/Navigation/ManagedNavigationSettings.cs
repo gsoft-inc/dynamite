@@ -24,7 +24,6 @@ namespace GSoft.Dynamite.Navigation
         public ManagedNavigationSettings(XElement managedNavigationSettingsXml)
         {
             this.AddNewPagesToNavigation = bool.Parse(managedNavigationSettingsXml.Attribute("AddNewPagesToNavigation").Value);
-            this.CreateFriendlyUrlsForNewsPages = bool.Parse(managedNavigationSettingsXml.Attribute("CreateFriendlyUrlsForNewsPages").Value);
             var termStoreNameAttribute = managedNavigationSettingsXml.Attribute("TermStoreName");
             if (termStoreNameAttribute != null)
             {
@@ -48,14 +47,6 @@ namespace GSoft.Dynamite.Navigation
         /// <c>true</c> if [add new pages to navigation]; otherwise, <c>false</c>.
         /// </value>
         public bool AddNewPagesToNavigation { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to [create friendly URLs for news pages].
-        /// </summary>
-        /// <value>
-        /// <c>true</c> if [create friendly URLs for news pages]; otherwise, <c>false</c>.
-        /// </value>
-        public bool CreateFriendlyUrlsForNewsPages { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the term store.

@@ -107,7 +107,7 @@ namespace GSoft.Dynamite.Navigation
         public bool IsCurrentItem(string itemUrl)
         {
             var queryStrings = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
-            var urlSuffix = queryStrings.Get("UrlSuffix");
+            var urlSuffix = string.Format("/{0}", queryStrings.Get("UrlSuffix"));
 
             return !string.IsNullOrEmpty(urlSuffix) && itemUrl.EndsWith(urlSuffix, StringComparison.InvariantCultureIgnoreCase);
         }
