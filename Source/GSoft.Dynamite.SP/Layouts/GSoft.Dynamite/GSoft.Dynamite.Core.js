@@ -130,7 +130,36 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     }
 
     return Res;
-    } (GSoft.Dynamite.Res = GSoft.Dynamite.Res || {}, jq110));
+} (GSoft.Dynamite.Res = GSoft.Dynamite.Res || {}, jq110));
+
+// ====================
+// File loader module
+// ====================
+(function (fileLoader, $, undefined) {
+
+    // GET files and return deferred object when done.
+    // See http://api.jquery.com/category/deferred-object/ for more information on deferred objects in jQuery.
+    // Usage example: 
+    // GSoft.Dynamite.FileLoader.load("/_layouts/folder/file1.html", "/_layouts/folder/file2.html").done(function(files) { /*Use files here*/});,
+    fileLoader.load = function () {
+
+        // Build promises and resolve them when GET operation is done
+        var promises = [];
+        for (var i = 0; i < (arguments.length) ; i++) {
+            var file = arguments[i];
+            promises.push($.get(file));
+        }
+
+        // If promises were created, return deferred object with promises
+        if (promises.length > 0) {
+            return $.when.apply($, promises);
+        } else {
+
+            // Return empty resolved deferred object
+            return $.when();
+        }
+    };
+}(GSoft.Dynamite.FileLoader = GSoft.Dynamite.FileLoader || {}, jq110));
 
 // ====================
 // Edit-mode Metadata Panel module
