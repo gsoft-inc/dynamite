@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using Autofac;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
@@ -48,14 +49,23 @@ namespace GSoft.Dynamite.ServiceLocator
 
         /// <summary>
         /// Exposes the most-nested currently available lifetime scope.
+        /// 
         /// In an HTTP-request context, will return a shared per-request
         /// scope (allowing you to inject InstancePerSite, InstancePerWeb
-        /// and IntancePerRequest-registered objects).
+        /// and IntancePerRequest-registered objects). Be sure to enable Dynamite's
+        /// feature HttpModule feature: "GSoft.Dynamite.SP_Web Config Modifications" so
+        /// that InstancePerRequest-scoped objects get properly disposed at the end of
+        /// every HttpRequest.
+        /// 
         /// Outside an HTTP-request context, will return the root application
         /// container itself (preventing you from injecting InstancePerSite,
         /// InstancePerWeb or InstancePerRequest objects).
-        /// Do not dispose this scope, as it will be reused by others.
+        /// 
+        /// Do not dispose this scope, as it will be reused by others. Prefer using
+        /// BeginLifetimeScope() within a using block to this method to ensure all
+        /// IDisposable objects you inject get properly disposed.
         /// </summary>
+        [Obsolete("Prefer usage of BeginLifetimeScope() from a using block to ensure proper disposal of all IDisposable objects you injected.")]
         public ILifetimeScope Current
         {
             get 
@@ -75,22 +85,47 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// Creates a new child lifetime scope - a child to the most-nested currently 
+        /// available lifetime scope.
+        /// 
+        /// In an HTTP-request context, will return a child scope to the shared 
+        /// per-request scope (allowing you to inject InstancePerSite, InstancePerWeb
+        /// and InstancePerRequest-registered objects). Be sure to enable Dynamite's
+        /// feature HttpModule feature: "GSoft.Dynamite.SP_Web Config Modifications" so
+        /// that InstancePerRequest-scoped objects get properly disposed at the end of
+        /// every HttpRequest.
+        /// 
+        /// Outside an HTTP-request context, will return the a child of the root application
+        /// container itself (preventing you from injecting InstancePerSite, InstancePerWeb 
+        /// or InstancePerRequest objects).
+        /// 
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
+        /// </summary>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginLifetimeScope()
+        {
+            return this.Current.BeginLifetimeScope();
+        }
+
+        /// <summary>
         /// Creates a new child lifetime scope that is as nested as possible,
         /// depending on the scope of the specified feature.
+        /// 
         /// In a SPSite or SPWeb-scoped feature context, will return a web-specific
         /// lifetime scope (allowing you to inject InstancePerSite and InstancePerWeb
-        /// objects).
+        /// objects - InstancePerRequest scoped objects will be inaccessible).
+        /// 
         /// In a SPFarm or SPWebApplication feature context, will return a child
         /// container of the root application container (preventing you from injecting
         /// InstancePerSite, InstancePerWeb or InstancePerRequest objects).
+        /// 
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
-        /// ISharePointServiceLocator.Current property.
         /// </summary>
-        /// <param name="feature">The current feature that is requesting a child lifetime scope</param>
+        /// <param name="feature">The current feature context from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        public ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
+        public ILifetimeScope BeginLifetimeScope(SPFeature feature)
         {
             ILifetimeScope newChildScopeAsNestedAsPossible = null;
 
@@ -128,40 +163,66 @@ namespace GSoft.Dynamite.ServiceLocator
 
         /// <summary>
         /// Creates a new child lifetime scope under the scope of the specified web
-        /// (allowing you to inject InstancePerSite and InstancePerWeb objects).
+        /// (allowing you to inject InstancePerSite and InstancePerWeb objects - InstancePerRequest
+        /// scoped objects will be inaccessible).
+        /// 
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
-        /// Prefer usage of this method versus resolving manually from the Current property.
         /// </summary>
-        /// <param name="feature">The current web from which we are requesting a child lifetime scope</param>
+        /// <param name="web">The current web from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        public ILifetimeScope BeginWebLifetimeScope(SPWeb web)
+        public ILifetimeScope BeginLifetimeScope(SPWeb web)
         {
             return this.containerProvider.EnsureWebScope(web).BeginLifetimeScope();
         }
 
         /// <summary>
-        /// Autowires the dependencies of a UI control using the current HTTP-request-bound
-        /// lifetime scope.
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
-        /// ISharePointServiceLocator.Current property.
+        /// Creates a new child lifetime scope under the scope of the specified site collection
+        /// (allowing you to inject InstancePerSite objects - InstancePerWeb and InstancePerRequest
+        /// scoped objects will be inaccessible).
+        /// 
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
         /// </summary>
-        /// <param name="target">The UI control which has properties to be injected</param>
-        public void InjectProperties(Control target)
+        /// <param name="site">The current site collection from which we are requesting a child lifetime scope</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginLifetimeScope(SPSite site)
         {
-            this.Current.InjectProperties(target);
+            return this.containerProvider.EnsureSiteScope(site).BeginLifetimeScope();
         }
 
         /// <summary>
-        /// Autowires the dependencies of a HttpHandler using the current HTTP-request-bound
-        /// lifetime scope.
-        /// Prefer usage of this method versus resolving indididual dependencies from the 
-        /// ISharePointServiceLocator.Current property.
+        /// Creates a new child lifetime scope under the root application container (objects
+        /// registered as InstancePerSite, InstancePerWeb or InstancePerRequest will be
+        /// inaccessible).
+        /// 
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
         /// </summary>
-        /// <param name="target">The HttpHandler which has properties to be injected</param>
-        public void InjectProperties(IHttpHandler target)
+        /// <param name="webApplication">The current context's web application</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginLifetimeScope(SPWebApplication webApplication)
         {
-            this.Current.InjectProperties(target);
+            // In this default SharePointServiceLocator implementation, the context's WebApplication gives us no 
+            // useful information. We simply return a child scope of the Root application-wide container.
+            return this.Current.BeginLifetimeScope();
+        }
+
+        /// <summary>
+        /// Creates a new child lifetime scope under the root application container (objects
+        /// registered as InstancePerSite, InstancePerWeb or InstancePerRequest will be
+        /// inaccessible).
+        /// 
+        /// Please dispose this lifetime scope when done (E.G. call this method from
+        /// a using block).
+        /// </summary>
+        /// <param name="site">The current context's farm</param>
+        /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
+        public ILifetimeScope BeginLifetimeScope(SPFarm farm)
+        {
+            // In this default SharePointServiceLocator implementation, the context's SPFarm gives us no 
+            // useful information. We simply return a child scope of the Root application-wide container.
+            return this.Current.BeginLifetimeScope();
         }
     }
 }

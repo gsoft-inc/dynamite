@@ -167,6 +167,7 @@
     <Compile Include="Serializers\JavascriptSerializer.cs" />
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
+    <Compile Include="ServiceLocator\FallbackServiceLocator.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
     <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
