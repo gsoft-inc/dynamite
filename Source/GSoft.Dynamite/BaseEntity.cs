@@ -28,15 +28,6 @@ namespace GSoft.Dynamite
         public DateTime Created { get; set; }
 
         /// <summary>
-        /// Gets or sets the Content Type Id associated
-        /// </summary>
-        /// <value>
-        /// The Content Type Id associated.
-        /// </value>
-        [Property(BuiltInFields.ContentTypeIdName, BindingType = BindingType.ReadOnly)]
-        public SPContentTypeId ContentTypeId { get; set; }
-
-        /// <summary>
         /// Gets or sets the Content Type name associated
         /// </summary>
         /// <value>
