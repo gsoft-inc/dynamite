@@ -20,6 +20,12 @@ namespace GSoft.Dynamite.Definitions
         private string resourceFileName;
 
         /// <summary>
+        /// Default constructore for ContentTypeInfo
+        /// </summary>
+        public ContentTypeInfo()
+        { }
+
+        /// <summary>
         /// Creates a content type metadata encapsulation
         /// </summary>
         /// <param name="contentTypeId">The content type ID</param>
@@ -41,17 +47,17 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// The content type ID
         /// </summary>
-        public SPContentTypeId ContentTypeId { get; private set; }
+        public SPContentTypeId ContentTypeId { get; set; }
 
         /// <summary>
         /// Field description for all of the content type's fields (not including fields from parent content types)
         /// </summary>
-        public IList<FieldInfo> Fields { get; private set; }
+        public IList<FieldInfo> Fields { get; set; }
 
         /// <summary>
         /// Resource key for the content type title
         /// </summary>
-        public string TitleResourceKey { get; private set; }
+        public string TitleResourceKey { get; set; }
 
         /// <summary>
         /// Dollar-formatted resource string inferred from the TitleResourceKey
@@ -67,7 +73,7 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Resource key for the content type description
         /// </summary>
-        public string DescriptionResourceKey { get; private set; }
+        public string DescriptionResourceKey { get; set; }
 
         /// <summary>
         /// Dollar-formatted resource string inferred from the DescriptionResourceKey
@@ -83,7 +89,7 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Resource key for the content type content group
         /// </summary>
-        public string ContentGroupResourceKey { get; private set; }
+        public string ContentGroupResourceKey { get; set; }
 
         /// <summary>
         /// Dollar-formatted resource string inferred from the ContentGroupResourceKey
