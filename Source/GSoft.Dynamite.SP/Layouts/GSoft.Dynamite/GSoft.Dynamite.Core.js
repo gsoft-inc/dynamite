@@ -1,6 +1,8 @@
 ﻿// Core Javascript file for GSoft.Dynamite
 
 // Chrome-JS intermitted crash fix (otherwise the ribbon breaks in Chrome 9 times out of 10)
+// NOTE: Current chrome fix is buggy.  It adds a second link to "my profile" and breaks the Web Part zones.
+/*
 if (window.chrome) {
     window[addEventListener ? 'addEventListener' : 'attachEvent'](addEventListener ? 'load' : 'onload', function () {
         try {
@@ -11,7 +13,7 @@ if (window.chrome) {
             // console.log("Error while forcing execution of _spBodyOnLoadWrapper " + e);
         }
     });
-}
+}*/
 
 moment.lang('fr', {
     longDateFormat: {
