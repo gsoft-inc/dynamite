@@ -579,7 +579,8 @@ namespace GSoft.Dynamite.Lists
                     if (resourceStringSplit.Length > 1)
                     {
                         // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
-                        nameFromResourceString = this.resourceLocator.Find(resourceStringSplit[1], web.UICulture.LCID);
+                        string resourceFileName = resourceStringSplit[0].Replace("$Resources:", string.Empty);
+                        nameFromResourceString = this.resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
                     }
                     else
                     {
