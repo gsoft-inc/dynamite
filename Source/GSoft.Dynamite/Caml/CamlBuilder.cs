@@ -837,6 +837,27 @@ namespace GSoft.Dynamite.Caml
             return this.TermFilter(list, taxonomyFieldInternalName, new List<Term>() { taxonomyTerm }, includeDescendants);
         }
 
+        /// <summary>
+        /// Generates a CAML filter for a Taxonomy Term in a global farm term store group
+        /// </summary>
+        /// <param name="list">The list over which the query will be done</param>
+        /// <param name="taxonomyFieldInternalName">The name of the site column associated with the term set</param>
+        /// <param name="termId">Guid by which to find the term (dupes not supported)</param>
+        /// <param name="includeDescendants">Whether the Term's child terms should be query hits as well</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        public string TermFilter(SPList list, string taxonomyFieldInternalName, Guid termId, bool includeDescendants)
+        {
+            var taxonomyTerm = this._taxonomyService.GetTermForId(list.ParentWeb.Site, termId);
+
+            if (taxonomyTerm == null)
+            {
+                var msg = string.Format(CultureInfo.InvariantCulture, "Unable to find term with ID '{0:B}' in site '{1}' while creating query filter.", termId, list.ParentWeb.Site);
+                throw new ArgumentException(msg);
+            }
+
+            return this.TermFilter(list, taxonomyFieldInternalName, new List<Term>() { taxonomyTerm }, includeDescendants);
+        }
+
         private static string Tag(string tag, string attribute, string attributeValue, string value)
         {
             if (string.IsNullOrEmpty(attribute) || string.IsNullOrEmpty(attributeValue))
