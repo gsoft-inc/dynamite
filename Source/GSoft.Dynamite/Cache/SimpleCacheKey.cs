@@ -1,7 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.SharePoint;
-using System.Collections.Generic;
-using System.Web;
 
 namespace GSoft.Dynamite.Cache
 {
@@ -10,9 +9,6 @@ namespace GSoft.Dynamite.Cache
     /// </summary>
     public class SimpleCacheKey : ICacheKey
     {
-        // keep one cached discriminator per user, per site (not threadsafe, but no worries)
-        private static IDictionary<string, string> userSiteGroupDiscriminators = new Dictionary<string, string>();
-
         /// <summary>
         /// The prefix of the keep to identify the Dynamite cache keys in the HttpCache.
         /// </summary>
@@ -20,13 +16,39 @@ namespace GSoft.Dynamite.Cache
 
         private string englishKey = string.Empty;
         private string frenchKey = string.Empty;
+        private bool discriminateBetweenGroups = true;
+
+        // keep one cached discriminator per user, per site (not threadsafe, but no worries)
+        private static IDictionary<string, string> userSiteGroupDiscriminators = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Creates a new simple cache key to cache the same items regardless of the current language. 
+        /// Will discriminate against the current users SharePoint Groups by adding them to the key as a prefix.
+        /// </summary>
+        /// <param name="keyForBothLanguages">The key to share between both English and French content items</param>
+        public SimpleCacheKey(string keyForBothLanguages)
+            : this(keyForBothLanguages, true)
+        {
+        }
 
         /// <summary>
         /// Creates a new simple cache key to cache the same items regardless of the current language
         /// </summary>
         /// <param name="keyForBothLanguages">The key to share between both English and French content items</param>
-        public SimpleCacheKey(string keyForBothLanguages)
-            : this(keyForBothLanguages, keyForBothLanguages)
+        /// <param name="discriminateBetweenGroups">if set to <c>true</c> add a prefix in the key with the groups the current user belongs to.</param>
+        public SimpleCacheKey(string keyForBothLanguages, bool discriminateBetweenGroups)
+            : this(keyForBothLanguages, keyForBothLanguages, discriminateBetweenGroups)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new simple cache key to cache different items depending on the current language.
+        /// Will discriminate against the current users SharePoint Groups by adding them to the key as a prefix.
+        /// </summary>
+        /// <param name="englishKey">English key</param>
+        /// <param name="frenchKey">French key</param>
+        public SimpleCacheKey(string englishKey, string frenchKey)
+            : this(englishKey, englishKey, true)
         {
         }
 
@@ -35,10 +57,12 @@ namespace GSoft.Dynamite.Cache
         /// </summary>
         /// <param name="englishKey">English key</param>
         /// <param name="frenchKey">French key</param>
-        public SimpleCacheKey(string englishKey, string frenchKey)
+        /// <param name="discriminateBetweenGroups">if set to <c>true</c> add a prefix in the key with the groups the current user belongs to.</param>
+        public SimpleCacheKey(string englishKey, string frenchKey, bool discriminateBetweenGroups)
         {
             this.englishKey = englishKey;
             this.frenchKey = frenchKey;
+            this.discriminateBetweenGroups = discriminateBetweenGroups;
         }
 
         /// <summary>
@@ -48,8 +72,13 @@ namespace GSoft.Dynamite.Cache
         {
             get
             {
-                var groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
-                return SimpleCacheKey.Prefix + groupDiscrimitator + englishKey;
+                var groupDiscrimitator = string.Empty;
+                if (this.discriminateBetweenGroups)
+                {
+                    groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
+                }
+
+                return SimpleCacheKey.Prefix + groupDiscrimitator + this.englishKey;
             }
         }
 
@@ -60,8 +89,13 @@ namespace GSoft.Dynamite.Cache
         {
             get
             {
-                var groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
-                return SimpleCacheKey.Prefix + groupDiscrimitator + frenchKey;
+                var groupDiscrimitator = string.Empty;
+                if (this.discriminateBetweenGroups)
+                {
+                    groupDiscrimitator = BuildSecurityGroupDiscriminatorPrefix();
+                }
+
+                return SimpleCacheKey.Prefix + groupDiscrimitator + this.frenchKey;
             }
         }
 
