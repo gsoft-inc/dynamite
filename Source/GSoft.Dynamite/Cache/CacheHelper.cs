@@ -104,7 +104,7 @@ namespace GSoft.Dynamite.Cache
                     .ForEach(key =>
                         {
                             clearCount++;
-                            HttpRuntime.Cache.Remove(key);
+                            this.ClearCache(key);
                         });
 
                 this.logger.Info("Cleared {0} keys form HttpCache.", clearCount);
@@ -115,6 +115,42 @@ namespace GSoft.Dynamite.Cache
             }
 
             return clearCount;
+        }
+
+        /// <summary>
+        /// Clear the cached information for a specific key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="lcid">The language of the cache. If null (default) is passed the current UI culture is used.</param>
+        public void ClearCache(ICacheKey key, int? lcid = null)
+        {
+            string cacheKey = string.Empty;
+            lcid = lcid ?? CultureInfo.CurrentUICulture.LCID;
+
+            if (lcid.Value == Language.French.Culture.LCID)
+            {
+                cacheKey = key.InFrench;
+            }
+            else
+            {
+                cacheKey = key.InEnglish;
+            }
+
+            this.ClearCache(cacheKey);
+        }
+
+        /// <summary>
+        /// Clear the cached information for a specific key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public void ClearCache(string key)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("key");
+            }
+
+            HttpRuntime.Cache.Remove(key);
         }
 
         private T GetFromCache<T>(Func<T> repoCamlQuery, string cacheKey, DateTime expiration) where T : class 
