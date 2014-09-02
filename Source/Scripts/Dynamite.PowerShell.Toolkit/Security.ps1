@@ -57,10 +57,17 @@ function Set-DSPWebPermissionInheritance() {
 	if ($Break)
 	{	
 		$SPWeb = $Web.Read()
-		$SPWeb.BreakRoleInheritance($true)
-		Write-Verbose ([string]::Format("Role Inheritance was broken for {0}", $SPWeb.Url))
-		$SPWeb.Update()
-		$SPWeb.Dispose()
+		if ($SPWeb.IsRootWeb) 
+		{
+			Write-Verbose ([string]::Format("Cannot break role inheritance for root web {0}", $SPWeb.Url))
+		}
+		else
+		{
+			$SPWeb.BreakRoleInheritance($true)
+			Write-Verbose ([string]::Format("Role Inheritance was broken for {0}", $SPWeb.Url))
+			$SPWeb.Update()
+			$SPWeb.Dispose()
+		}
 	}
 }
 
@@ -120,7 +127,8 @@ function Add-DSPGroupByXml() {
 	{	
 		foreach ($xmlGroup in $Group.Group)
 		{
-			if ((Get-DSPGroup -Web $Web -Group $xmlGroup.Name) -eq $null)
+			$currentGroup = Get-DSPGroup -Web $Web -Group $xmlGroup.Name
+			if ($currentGroup -eq $null)
 			{
 				$currentGroup = New-DSPGroup -Web $Web -GroupName $xmlGroup.Name -OwnerName $xmlGroup.OwnerName -Description $xmlGroup.Description
         		Write-Verbose ([string]::Format("The group {0} was added to the web {1}", $xmlGroup.Name, $Web))
@@ -139,17 +147,19 @@ function Add-DSPGroupByXml() {
 				}
 			}
 			
+			$SPWeb = Get-SPWeb -Identity $Web
+			
 			# Set Associated Group
-			if ($xmlGroup.IsAssociatedOwnerGroup -eq "true")
+			if (($xmlGroup.IsAssociatedOwnerGroup -eq "true") -and ($currentGroup.Name -ne $SPWeb.AssociatedOwnerGroup.Name))
 			{
-				$SPWeb = Get-SPWeb -Identity $Web
+				Write-Verbose "Associating group '$($currentGroup.Name)' as owners to web '$SPWeb'"
 				$SPWeb.AssociatedOwnerGroup = $currentGroup
 				$SPWeb.Update()
 			}
 			
-			if ($xmlGroup.IsAssociatedVisitorGroup -eq "true")
+			if (($xmlGroup.IsAssociatedVisitorGroup -eq "true") -and ($currentGroup.Name -ne $SPWeb.AssociatedVisitorGroup.Name))
 			{
-				$SPWeb = Get-SPWeb -Identity $Web
+				Write-Verbose "Associating group '$($currentGroup.Name)' as visitors to web '$SPWeb'"
 				$SPWeb.AssociatedVisitorGroup = $currentGroup
 				$SPWeb.Update()
 			}
@@ -161,7 +171,7 @@ function Add-DSPGroupByXml() {
 			{
 				foreach ($user in $xmlGroup.Users.User)
 				{
-					Write-Verbose "Adding user '$user' to group '$($xmlGroup.Name)'"
+					Write-Verbose "Adding user '$user' to group '$($xmlGroup.Name)' in web '$($SPWeb.Name)'"
 					$spUser = $SPWeb.EnsureUser($user)
 					Set-SPUser -Identity $spUser -Web $SPWeb -Group $xmlGroup.Name -Verbose:$Verbose
 				}
@@ -171,5 +181,30 @@ function Add-DSPGroupByXml() {
 	else
 	{
 		Write-Verbose "There is no group to add."
+	}
+}
+
+function Set-DSPWebPermissions()
+{
+	[CmdletBinding()] 
+	Param
+	(
+		[Parameter(ParameterSetName="Default", Mandatory=$true, Position=0)]
+		[string]$XmlPath
+	)
+	
+	$Config = [xml](Get-Content $XmlPath)
+	
+	# Process all Term Groups
+	$Config.Configuration.Web | ForEach-Object {
+
+		$web = $_.Name
+
+		# Groups
+		if ($_.Groups -ne $null)
+		{
+			Set-DSPWebPermissionInheritance -Web $web -Break
+			Add-DSPGroupByXml -Web $web -Group $_.Groups
+		}
 	}
 }

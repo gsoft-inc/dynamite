@@ -108,4 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 # Term Driven
 Export-ModuleMember New-DSPTermDrivenPagesSettings
 
+# Security 
+Export-ModuleMember Set-DSPWebPermissions
+
 #endregion
