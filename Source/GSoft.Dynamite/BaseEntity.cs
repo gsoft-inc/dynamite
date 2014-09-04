@@ -28,6 +28,12 @@ namespace GSoft.Dynamite
         public DateTime Created { get; set; }
 
         /// <summary>
+        /// Created date    
+        /// </summary>
+        [Property(BindingType = BindingType.ReadOnly)]
+        public DateTime Modified { get; set; }
+
+        /// <summary>
         /// Gets or sets the Content Type name associated
         /// </summary>
         /// <value>
