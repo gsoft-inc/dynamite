@@ -85,7 +85,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binding\Converters\UrlFieldToStringConverter.cs" />
     <Compile Include="Caml\CamlBuilder.cs" />
     <Compile Include="Caml\CamlConstants.cs" />
     <Compile Include="Caml\CamlEnums.cs" />

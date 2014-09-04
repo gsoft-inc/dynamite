@@ -490,6 +490,16 @@ namespace GSoft.Dynamite.Caml
         /// </summary>
         /// <param name="list">The list over which the query will be done</param>
         /// <param name="taxonomyFieldInternalName">The name of the site column associated with the term set</param>
+        /// <param name="termId">Term identifier to match for</param>
+        /// <param name="includeDescendants">Whether the Term's child terms should be query hits as well</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        string TermFilter(SPList list, string taxonomyFieldInternalName, Guid termId, bool includeDescendants);
+
+        /// <summary>
+        /// Generates a CAML filter for a Taxonomy Term
+        /// </summary>
+        /// <param name="list">The list over which the query will be done</param>
+        /// <param name="taxonomyFieldInternalName">The name of the site column associated with the term set</param>
         /// <param name="terms">List of terms for why we want to match in an OR fashion</param>
         /// <param name="includeDescendants">Whether the Term's child terms should be query hits as well</param>
         /// <returns>A string representation of the CAML query.</returns>

@@ -34,7 +34,6 @@ namespace GSoft.Dynamite.ServiceLocator
         /// for GSoft.Dynamite components
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
-        /// <param name="defaultResourceFileName">The default resource file name when interacting with IResourceLocator</param>
         public AutofacDynamiteRegistrationModule(string logCategoryName)
         {
             this.logCategoryName = logCategoryName;
@@ -117,8 +116,8 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>().SingleInstance();
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>().InstancePerSite();
+            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
             builder.RegisterType<TaxonomyHelper>();
 
             // Timer Jobs

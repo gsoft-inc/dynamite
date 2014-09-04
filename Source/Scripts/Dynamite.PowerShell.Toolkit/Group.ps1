@@ -132,11 +132,11 @@ function Remove-DSPGroup {
 
 <#
 	.Synopsis
-		Use New-GSPGroup to create a SharePoint Group.
+		Use New-DSPGroup to create a SharePoint Group.
 	.Description
 		This function uses the Add() method of a SharePoint RoleAssignments property in an SPWeb to create a SharePoint Group.
 	.Example
-		C:\PS>New-GSPGroup -Web http://intranet -GroupName "Test Group" -OwnerName DOMAIN\User -MemberName DOMAIN\User2 -Description "My Group"
+		C:\PS>New-DSPGroup -Web http://intranet -GroupName "Test Group" -OwnerName DOMAIN\User -MemberName DOMAIN\User2 -Description "My Group"
 		This example creates a group called "Test Group" in the http://intranet site, with a description of "My Group".  The owner is DOMAIN\User and the first member of the group is DOMAIN\User2.
 	.Notes
 		Function taken from : Gary Lapointe <Gary@aptillon.com> <http://blog.falchionconsulting.com/>
@@ -290,7 +290,7 @@ function Set-DSPPermission
 	{
 	  Write-Error ([string]::Concat("The permission level $PermissionLevel was not found in the root ", $spWeb.Site.RootWeb.Title))
 		Write-Warning "Here is the list of the available permission levels :"
-		(Get-GSPPermissionLevel -Web $Web -NameOnly) | foreach { Write-Warning ([string]::Concat(" ", $_.Name)) }
+		(Get-DSPPermissionLevel -Web $Web -NameOnly) | foreach { Write-Warning ([string]::Concat(" ", $_.Name)) }
 	}
 	
 	$spWeb.Update()

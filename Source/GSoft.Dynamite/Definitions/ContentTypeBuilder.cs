@@ -13,6 +13,32 @@ namespace GSoft.Dynamite.Definitions
     public class ContentTypeBuilder
     {
         /// <summary>
+        /// Ensure the content type based on its content type info. 
+        /// Sets the description and Groups resource, adds the fields and calls update.
+        /// </summary>
+        /// <param name="contentTypeCollection">The content type collection.</param>
+        /// <param name="contentTypeInfo">The content type information.</param>
+        /// <returns>
+        /// The created and configured content type.
+        /// </returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, ContentTypeInfo contentTypeInfo)
+        {
+            SPContentType contentType = this.EnsureContentType(
+                contentTypeCollection,
+                contentTypeInfo.ContentTypeId,
+                contentTypeInfo.TitleResourceString);
+
+            this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
+
+            contentType.Description = contentTypeInfo.DescriptionResourceString;
+            contentType.Group = contentTypeInfo.ContentGroupResourceString;
+            contentType.Update();
+
+            return contentType;
+        }
+
+        /// <summary>
         /// Ensures the SPContentType is in the collection. If not, it will be created and added.
         /// </summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
