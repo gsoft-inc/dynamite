@@ -1,147 +1,60 @@
 ﻿using System;
+using System.Data;
+using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
+using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Defines the field info structure.
     /// </summary>
-    public struct FieldInfo : IEquatable<FieldInfo>
+    public class FieldInfo : BaseTypeInfo
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FieldStruct" /> struct.
-        /// </summary>
-        /// <param name="internalName">The field internal Name.</param>
-        /// <param name="id">The field id.</param>
-        public FieldInfo(string internalName, Guid id)
-            : this()
+        #region Properties backing fields
+
+        private string _internalName;
+
+        #endregion
+
+        public FieldInfo() { }
+
+        public FieldInfo(string internalName, Guid Id)
         {
-            this.InternalName = internalName;
-            this.ID = id;
-            this.RequiredType = RequiredTypes.Inherit;
+            this.InternalName = InternalName;
+            this.Id = Id;
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FieldStruct" /> struct.
-        /// </summary>
-        /// <param name="internalName">The field internal Name.</param>
-        /// <param name="id">The field id.</param>
-        /// <param name="requiredType">If the field is required in the ContentType</param>
-        public FieldInfo(string internalName, Guid id, RequiredTypes requiredType)
-            : this(internalName, id)
+        public string InternalName
         {
-            this.RequiredType = requiredType;
-        }
-
-        /// <summary>
-        /// Gets or sets the internal name of the field.
-        /// </summary>
-        /// <value>
-        /// The internal name.
-        /// </value>
-        public string InternalName { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the id of the field.
-        /// </summary>
-        /// <value>
-        /// The id of the field.
-        /// </value>
-        public Guid ID { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the is required value.
-        /// This is to set the requirement on the ContentType FieldLink. If it's null, it will use the default value of the SiteColumn.
-        /// </summary>
-        /// <value>
-        /// The is required value of the field.
-        /// </value>
-        public RequiredTypes RequiredType { get; private set; }
-
-        /// <summary>
-        /// ==s the specified left.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        ///     <c>True</c> if left equals right; otherwise <c>False</c>.
-        /// </returns>
-        public static bool operator ==(FieldInfo left, FieldInfo right)
-        {
-            return left.Equals(right);
-        }
-
-        /// <summary>
-        /// !=s the specified left.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>
-        ///     <c>True</c> if left does not equal right; otherwise <c>False</c>.
-        /// </returns>
-        public static bool operator !=(FieldInfo left, FieldInfo right)
-        {
-            return !left.Equals(right);
-        }
-
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object" /> to compare with this instance.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool Equals(object obj)
-        {
-            if (object.ReferenceEquals(obj, null))
+            get { return _internalName; }
+            set
             {
-                return false;
-            }
+                _internalName = value;
 
-            if (object.ReferenceEquals(this, obj))
-            {
-                return true;
+                // Set the static name identical to the internal name
+                StaticName = value;
             }
-
-            if (this.GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            return this.Equals((FieldInfo)obj);
         }
 
-        /// <summary>
-        /// Returns a hash code for this instance.
-        /// </summary>
-        /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
-        /// </returns>
-        public override int GetHashCode()
+        public Guid Id { get; set; }
+
+        public RequiredTypes RequiredType { get; set; }
+
+        public bool EnforceUniqueValues { get; set; }
+
+        public string StaticName { get; set; }
+
+        public string Type { get; set; }
+
+        public XElement Schema { get; set; }
+
+
+        public virtual XElement ToXElement(){return null;}
+
+        public override string ToString()
         {
-            return this.InternalName.GetHashCode();
-        }
-
-        /// <summary>
-        /// Equals the specified other.
-        /// </summary>
-        /// <param name="other">The other.</param>
-        /// <returns>
-        ///     <c>True</c> if other is equal to this, else <c>False</c>.
-        /// </returns>
-        public bool Equals(FieldInfo other)
-        {
-            if (this.ID != other.ID)
-            {
-                return false;
-            }
-
-            if (this.InternalName != other.InternalName)
-            {
-                return false;
-            }
-
-            return true;
+            return this.ToXElement().ToString();
         }
     }
 }

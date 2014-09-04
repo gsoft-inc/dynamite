@@ -10,6 +10,7 @@ using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Exceptions;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
@@ -83,7 +84,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
             // Definitions
-            builder.RegisterType<ContentTypeBuilder>();
+            builder.RegisterType<ContentTypeHelper>();
             builder.RegisterType<FieldHelper>();
 
             // Exception

@@ -4,11 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for managing SP Fields.
@@ -191,7 +192,7 @@ namespace GSoft.Dynamite.Definitions
         /// <param name="fieldsXml">The field schema XMLs.</param>
         /// <returns>A collection of strings that contain the internal name of the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
-        public IList<string> AddFields(SPFieldCollection fieldCollection, XDocument fieldsXml)
+        public IList<string> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml)
         {
             if (fieldsXml == null)
             {
@@ -210,7 +211,7 @@ namespace GSoft.Dynamite.Definitions
             foreach (XElement field in fields)
             {
                 // Add the field to the collection.
-                string internalname = this.AddField(fieldCollection, field);
+                string internalname = this.EnsureField(fieldCollection, field);
                 if (!string.IsNullOrEmpty(internalname))
                 {
                     internalNames.Add(internalname);
@@ -237,7 +238,7 @@ namespace GSoft.Dynamite.Definitions
         /// fieldXml
         /// </exception>
         /// <exception cref="System.FormatException">Invalid xml.</exception>
-        public string AddField(SPFieldCollection fieldCollection, XElement fieldXml)
+        public string EnsureField(SPFieldCollection fieldCollection, XElement fieldXml)
         {
             if (fieldCollection == null)
             {
@@ -284,6 +285,23 @@ namespace GSoft.Dynamite.Definitions
                 string msg = string.Format(CultureInfo.InvariantCulture, "Unable to create field. Invalid xml. id: '{0}' DisplayName: '{1}' Name: '{2}'", id, displayName, internalName);
                 throw new FormatException(msg);
             }
+        }
+
+        public string EnsureField(SPFieldCollection fieldCollection, FieldInfo fieldInfo)
+        {
+            return this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+        }
+
+        public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<FieldInfo> fieldInfos)
+        {
+            var fieldNames = new List<string>();
+
+            foreach (FieldInfo fieldInfo in fieldInfos)
+            {
+                fieldNames.Add(this.EnsureField(fieldCollection, fieldInfo));
+            }
+
+            return fieldNames;
         }
 
         private static string GetAttributeValue(XElement fieldXml, string key)

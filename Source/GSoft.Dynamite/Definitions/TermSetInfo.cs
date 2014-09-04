@@ -1,4 +1,6 @@
-﻿namespace GSoft.Dynamite.Definitions
+﻿using System.Collections.Generic;
+
+namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Encapsulates Taxonomy Term Set properties
@@ -12,8 +14,8 @@
         {}
 
         /// <summary>
-        /// The name of the Term Set
+        /// Labels by languages (LCID) for the Term Set
         /// </summary>
-        public string Name { get; set; }
+        public IDictionary<int, string> Labels { get; set; }
     }
 }

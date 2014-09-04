@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.SiteColumns;
@@ -136,7 +138,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="web">The current web</param>
         /// <param name="catalog">The catalog definition</param>
         /// <returns>The newly created list</returns>
-        public SPList ProcessCatalog(SPWeb web, Catalog catalog)
+        public SPList ProcessCatalog(SPWeb web, CatalogInfo catalog)
         {
             // Set current culture to be able to set the "Title" of the list
             Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
@@ -145,7 +147,7 @@ namespace GSoft.Dynamite.Catalogs
             var list = this.listHelper.EnsureList(web, catalog);
 
             // Rename List
-            list.Title = catalog.DisplayName;
+           /* list.Title = catalog.DisplayName;
             list.Update();
 
             // Remove Item Content Type
@@ -176,7 +178,7 @@ namespace GSoft.Dynamite.Catalogs
             // Set versioning settings
             if (catalog.HasDraftVisibilityType)
             {
-                list.EnableModeration = true;
+               /* list.EnableModeration = true;
                 list.DraftVersionVisibility = catalog.DraftVisibilityType;
                 list.Update();
             }
@@ -191,65 +193,12 @@ namespace GSoft.Dynamite.Catalogs
             this.listHelper.SetRatings(list, catalog.RatingType, catalog.EnableRatings);
 
             // Set SecurityOption
-            this.listHelper.SetWriteSecurity(list, catalog.WriteSecurity);
+            this.listHelper.SetWriteSecurity(list, catalog.WriteSecurity);*/
 
             return list;
         }
 
-        /// <summary>
-        /// Method to get a CatalogConnectionSettings from the site
-        /// </summary>
-        /// <param name="site">The SPSite to get the connection from</param>
-        /// <param name="serverRelativeUrl">The server relative url where the catalog belong</param>
-        /// <param name="catalogRootUrl">The root url of the catalog.</param>
-        /// <returns>A catalogConnectionSettings object</returns>
-        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string serverRelativeUrl, string catalogRootUrl)
-        {
-            string listToken = "lists";
-            string catalogPath = string.Empty;
-            var tokens = catalogRootUrl.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-            if (tokens.Any() && tokens.First() != listToken)
-            {
-                tokens.Insert(0, listToken);
-            }
-
-            return PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(serverRelativeUrl, string.Join("/", tokens)));
-        }
-
-        /// <summary>
-        /// Method to create a catalog connection
-        /// </summary>
-        /// <param name="site">The site where to create the connection</param>
-        /// <param name="catalogConnectionSettings">The catalog connection settings to create</param>
-        /// <param name="overwriteIfExist">if true and existing, the connection will be deleted then recreated</param>
-        public void CreateCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings, bool overwriteIfExist)
-        {
-            var catalogManager = new CatalogConnectionManager(site);
-
-            // If catalog connection exist
-            if (catalogManager.Contains(catalogConnectionSettings.CatalogUrl))
-            {
-                if (overwriteIfExist)
-                {
-                    // Delete the existing connection
-                    this.logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
-                    catalogManager.DeleteCatalogConnection(catalogConnectionSettings.CatalogUrl);
-                    catalogManager.Update();
-
-                    // Add connection to the catalog manager
-                    this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
-                    catalogManager.AddCatalogConnection(catalogConnectionSettings);
-                    catalogManager.Update();
-                }
-            }
-            else
-            {
-                this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
-                catalogManager.AddCatalogConnection(catalogConnectionSettings);
-                catalogManager.Update();
-            }
-        }
+        
 
         private void CreateSegments(SPList list, IList<SiteColumnField> segments)
         {

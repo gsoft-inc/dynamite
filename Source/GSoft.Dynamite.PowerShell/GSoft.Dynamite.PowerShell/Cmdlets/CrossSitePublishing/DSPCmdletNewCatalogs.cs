@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Autofac;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;

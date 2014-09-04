@@ -139,5 +139,10 @@ namespace GSoft.Dynamite.Globalization
 
             return found;
         }
+
+        public string GetResourceString(string resourceFileName, string resourceKey)
+        {
+            return _defaultResourceFileNames.Contains(resourceFileName) ? string.Format("$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
+        }
     }
 }

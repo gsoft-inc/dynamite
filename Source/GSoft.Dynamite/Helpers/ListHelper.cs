@@ -10,6 +10,7 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Schemas;
@@ -18,14 +19,14 @@ using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 
-namespace GSoft.Dynamite.Lists
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
     public class ListHelper
     {
-        private readonly ContentTypeBuilder contentTypeBuilder;
+        private readonly ContentTypeHelper contentTypeHelper;
         private readonly IResourceLocator resourceLocator;
         private readonly FieldHelper fieldHelper;
         private readonly ILogger logger;
@@ -34,14 +35,14 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// Creates a list helper
         /// </summary>
-        /// <param name="contentTypeBuilder">A content type helper</param>
+        /// <param name="contentTypeHelper">A content type helper</param>
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
+        public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
-            this.contentTypeBuilder = contentTypeBuilder;
+            this.contentTypeHelper = contentTypeHelper;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
@@ -141,11 +142,23 @@ namespace GSoft.Dynamite.Lists
         /// <remarks>The list name and description will not be translated</remarks>
         /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
         /// <param name="web">The current web</param>
-        /// <param name="catalog">The Catalog to create</param>
+        /// <param name="listInfo">The list to create</param>
         /// <returns>The new list or the existing list</returns>
-        public SPList EnsureList(SPWeb web, Catalog catalog)
+        public SPList EnsureList(SPWeb web, ListInfo listInfo)
         {
-            return this.EnsureList(web, catalog.RootFolderUrl, catalog.Description, catalog.ListTemplate);
+            return this.EnsureList(web, listInfo.RootFolderUrl, listInfo.Description, listInfo.ListTemplate);
+        }
+
+        public IEnumerable<SPList> EnsureList(SPWeb web, ICollection<ListInfo> listInfos)
+        {
+            var lists = new List<SPList>();
+
+            foreach (ListInfo list in listInfos)
+            {
+                lists.Add(this.EnsureList(web,list));
+            }
+
+            return lists;
         }
 
         /// <summary>
@@ -155,7 +168,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="contentTypeId">The content type id.</param>
         /// <exception cref="System.ArgumentNullException">Any null parameters.</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">contentTypeId;Content Type not available in the lists parent web.</exception>
-        public void AddContentType(SPList list, SPContentTypeId contentTypeId)
+        public void EnsureContentType(SPList list, SPContentTypeId contentTypeId)
         {
             if (list == null)
             {
@@ -171,7 +184,7 @@ namespace GSoft.Dynamite.Lists
 
             if (contentType != null)
             {
-                this.AddContentType(list, contentType);
+                this.contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
             }
             else
             {
@@ -185,7 +198,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="list">The list.</param>
         /// <param name="contentType">Type of the content.</param>
         /// <exception cref="System.ArgumentNullException">Any null parameter.</exception>
-        public void AddContentType(SPList list, SPContentType contentType)
+        public void EnsureContentType(SPList list, ContentTypeInfo contentType)
         {
             if (list == null)
             {
@@ -204,8 +217,16 @@ namespace GSoft.Dynamite.Lists
                 list.Update(true);
             }
 
-            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType.Id, contentType.Name);
+            this.contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
             list.Update(true);
+        }
+
+        public void EnsureContentType(SPList list, ICollection<ContentTypeInfo> contentTypes)
+        {
+            foreach (ContentTypeInfo contentType in contentTypes)
+            {
+                this.EnsureContentType(list,contentType);
+            }
         }
 
         /// <summary>
@@ -248,7 +269,7 @@ namespace GSoft.Dynamite.Lists
             genericField.FieldStaticName = fieldInternalName;
             genericField.FieldGroup = fieldGroup;
 
-            var fieldName = this.fieldHelper.AddField(list.Fields, genericField.ToXElement());
+            var fieldName = this.fieldHelper.EnsureField(list.Fields, genericField.ToXElement());
 
             if (!string.IsNullOrEmpty(fieldName))
             {
@@ -398,7 +419,7 @@ namespace GSoft.Dynamite.Lists
         {
             if (list != null && field != null)
             {
-                var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
+                var listField = this.fieldHelper.GetFieldById(list.Fields, field.Id);
 
                 if (listField != null)
                 {
@@ -481,9 +502,9 @@ namespace GSoft.Dynamite.Lists
 
             foreach (FieldInfo field in fields)
             {
-                if (list.Fields.Contains(field.ID))
+                if (list.Fields.Contains(field.Id))
                 {
-                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                    this.EnsureFieldInView(fieldCollection, list.Fields[field.Id]);
                 }
                 else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
                 {
@@ -491,13 +512,13 @@ namespace GSoft.Dynamite.Lists
                 }
                 else
                 {
-                    if (list.Fields.Contains(field.ID))
+                    if (list.Fields.Contains(field.Id))
                     {
-                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                        this.EnsureFieldInView(fieldCollection, list.Fields[field.Id]);
                     }
                     else
                     {
-                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.Id, list.Title);
                     }
                 }
 

@@ -66,5 +66,7 @@ namespace GSoft.Dynamite.Globalization
         /// <param name="culture">The desired culture</param>
         /// <returns>The resource in the specified language</returns>
         string Find(string resourceFileName, string resourceKey, CultureInfo culture);
+
+        string GetResourceString(string resourceFileName, string resourceKey);
     }
 }
