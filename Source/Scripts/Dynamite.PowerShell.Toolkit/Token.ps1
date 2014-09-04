@@ -53,6 +53,10 @@ function Update-DSPTokens {
 		[string]$Domain = [System.Net.Dns]::GetHostName(),
 		
 		[Parameter(Mandatory=$false)]
+		[Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding]
+		$Encoding = [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding]::UTF8,
+		
+		[Parameter(Mandatory=$false)]
 		[switch]$UseHostName,
 		
 		[Parameter(Mandatory=$false)]
@@ -68,14 +72,16 @@ function Update-DSPTokens {
 	}
 
 	$tokenPath = ""
-		
-	Get-ChildItem -Path $Path -Include "Tokens.$Domain.ps1" -Recurse | foreach {
+	
+	$Path = Resolve-Path $Path
+	$currentLocation = Get-Location
+	Get-ChildItem -Path $currentLocation -Include "Tokens.$Domain.ps1" -Recurse | foreach {
 		$tokenPath = $_.FullName
 	}
 	
 	if (Test-Path $tokenPath) {
 		Write-Host "Found token file at : $tokenPath"
-		Execute-TokenFile $Path $tokenPath
+		Execute-TokenFile $Path $tokenPath $Encoding
 	}
 	else {
 		Write-Host "Didn't found the token file named : Tokens.$Domain.ps1"
@@ -100,7 +106,8 @@ function script:Get-CurrentDomain {
 function script:Execute-TokenFile {
 	param (
 		$Path,
-		$TokenPath
+		$TokenPath,
+		$Encoding
 	)
 	Write-Host "$TokenPath"
 	# Load tokens
@@ -113,7 +120,7 @@ function script:Execute-TokenFile {
 		
 		try {
 			# Get the contents of the template file.
-			$contents  = Get-Content $_ -Encoding UTF8 -ErrorAction Stop
+			$contents  = Get-Content $_ -Encoding $Encoding -ErrorAction Stop
 			
 			# for each token in our token file, we replace the token in the contents of the file.
 			$tokens | ForEach {
@@ -121,7 +128,7 @@ function script:Execute-TokenFile {
 			}
 			
 			# Write the contents with the replaces tokens to a new file overiding any current file.
-			Set-Content -Encoding UTF8 -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
+			Set-Content -Encoding $Encoding -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
 		} catch {
 			Write-Host "Failed - $_" -ForegroundColor Red
 		}
