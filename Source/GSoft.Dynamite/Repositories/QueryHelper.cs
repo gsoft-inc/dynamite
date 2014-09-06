@@ -68,6 +68,9 @@ namespace GSoft.Dynamite.Repositories
                 }
             }
 
+            // Always fetch CT info
+            viewFieldsString += "<FieldRef Name='ContentTypeId' />";
+
             return viewFieldsString;
         }
 

@@ -21,15 +21,19 @@ function global:Deploy-DSPSolution() {
 		[Parameter(Mandatory=$false, Position=4, ParameterSetName="FileOrDirectory")]
 		[switch]$Force=$false,
 		
-		[Parameter(Mandatory=$false, Position=5, ParameterSetName="FileOrDirectory")]
+		[Parameter(Mandatory=$false, Position=5)]
 		[switch]$RemoveOnly=$false
 	)
 	
 	function script:Get-QueueSolutionDefinition {
 		Param (
 			[Parameter(Mandatory=$true,ValueFromPipeline=$true)]
-			[ValidateScript({$_.Name.ToLower().EndsWith(".wsp")})]
-			[System.IO.FileInfo]$WSPFile,
+			[ValidateScript({$_.ToLower().EndsWith(".wsp")})]
+			[string]$PathToWSPFile,
+			
+			[Parameter(Mandatory=$true)]
+			[ValidateScript({$_.ToLower().EndsWith(".wsp")})]
+			[string]$WSPName,
 			
 			[switch]$UpgradeExisting = $false,
 			
@@ -39,7 +43,8 @@ function global:Deploy-DSPSolution() {
 		)
 		
 		Write-Output @{
-			WSPFile = $WSPFile
+			PathToWSPFile = $PathToWSPFile
+			WSPName = $WSPName
 			UpgradeExisting = $UpgradeExisting
 			WebApplications = $WebApplications
 			Force = $Force
@@ -64,12 +69,8 @@ function global:Deploy-DSPSolution() {
 				$force = $false
 			}
 			
-			$WSPFile = Get-Item $_.Path -ErrorAction SilentlyContinue
-			if($WSPFile -ne $null) {
-				$solutionQueue += Get-QueueSolutionDefinition -WSPFile $WSPFile -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
-			} else {
-				Write-Host "Unable to find file '$($_.Path)'." -ForegroundColor Red
-			}
+			$WSPName = Split-Path $_.Path -Leaf
+			$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $_.Path -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
 		}
 		
 		Write-Output $solutionQueue
@@ -79,6 +80,7 @@ function global:Deploy-DSPSolution() {
 		Param (
 			[Parameter(Mandatory=$true,ValueFromPipeline=$true)]
 			[Microsoft.SharePoint.PowerShell.SPSolutionPipeBind]$Solution,
+			[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind[]]$WebApplications,
 			[bool]$Deploying
 		)
 		
@@ -111,8 +113,8 @@ function global:Deploy-DSPSolution() {
 			}
 			
 			if($spSolution.LastOperationDetails -like "*Use the force*"){
-				Write-Host "Attempting to deploy with the force attribute." -ForegroundColor Yellow
-				DeploySolution $spSolution $true
+				Write-Host "The Force is what gives a Jedi his power! Attempting to deploy with the force attribute." -ForegroundColor Yellow
+				Deploy-WSPSolution $spSolution -WebApplications $WebApplications -Force
 			}
 			
 			if ($spSolution.LastOperationResult -like "*Failed*") {
@@ -163,17 +165,17 @@ function global:Deploy-DSPSolution() {
 		
 		$SolutionQueue | foreach {
 			Write-Host "`n$("-" * 50)" -ForegroundColor Green
-			Write-Host "Working on removing '$($_.WSPFile.Name)'..." -ForegroundColor Cyan
+			Write-Host "Working on removing '$($_.WSPName)'..." -ForegroundColor Cyan
 			Write-Host "$("-" * 50)`n" -ForegroundColor Green
 			
 			if($_.UpgradeExisting) {
-				Write-Host "Skipping the removal of the solution '$($_.WSPFile.Name)' because it will be upgraded instead."
+				Write-Host "Skipping the removal of the solution '$($_.WSPName)' because it will be upgraded instead."
 			} else {
-				$solution = Get-SPSolution $_.WSPFile.Name -ErrorAction SilentlyContinue
+				$solution = Get-SPSolution $_.WSPName -ErrorAction SilentlyContinue
 				if ($solution -ne $null) {
 					Remove-WSPSolution -Solution $solution
 				} else {
-					Write-Host "No solution found in SharePoint with name '$($_.WSPFile.Name)'." -ForegroundColor Yellow
+					Write-Host "No solution found in SharePoint with name '$($_.WSPName)'." -ForegroundColor Yellow
 				}
 			}
 		}
@@ -192,7 +194,7 @@ function global:Deploy-DSPSolution() {
 		if (!$spSolution.ContainsWebApplicationResource) {
 			Write-Host "Installing '$($spSolution.name)' globally."
 			$spSolution | Install-SPSolution -GACDeployment:$($spSolution.ContainsGlobalAssembly) -CASPolicies:$($spSolution.ContainsCasPolicy) -Confirm:$false -Force:$force
-			Block-SPDeployment -Solution $spSolution -Deploying $true
+			Block-SPDeployment -Solution $spSolution -WebApplications $WebApplications -Deploying $true
 		} else {
 			if ($WebApplications -eq $null -or $WebApplications.Length -eq 0) {
 				Write-Host "Installing '$($spSolution.name)' to all Web Applications."
@@ -203,7 +205,7 @@ function global:Deploy-DSPSolution() {
 					$webApp = $_.Read()
 					Write-Host "Installing '$($spSolution.name)' to $($webApp.Url)"
 					$spSolution | Install-SPSolution -GACDeployment:$gac -CASPolicies:$($spSolution.ContainsCasPolicy) -WebApplication $webApp -Confirm:$false -Force:$force
-					Block-SPDeployment -Solution $spSolution -Deploying $true
+					Block-SPDeployment -Solution $spSolution -WebApplications $_ -Deploying $true
 				}
 			}
 		}
@@ -216,18 +218,26 @@ function global:Deploy-DSPSolution() {
 		
 		$SolutionQueue | foreach {
 			Write-Host "`n$("-" * 50)" -ForegroundColor Green
-			Write-Host "Working on deploying '$($_.WSPFile.Name)'..." -ForegroundColor Cyan
+			Write-Host "Working on deploying '$($_.WSPName)'..." -ForegroundColor Cyan
 			Write-Host "$("-" * 50)`n" -ForegroundColor Green
 			
-			$solution = Get-SPSolution $_.WSPFile.Name -ErrorAction SilentlyContinue
-			if($solution -eq $null)	{
-				$solution = Add-SPSolution $_.WSPFile.FullName
-				Deploy-WSPSolution -Solution $solution -WebApplications $_.WebApplications -Force:$_.Force
-			} elseif($_.UpgradeExisting) {
-				Update-SPSolution -Identity $solution -CASPolicies:$($solution.ContainsCasPolicy) -GACDeployment:$($solution.ContainsGlobalAssembly) -LiteralPath $path -Force:$_.Force
-				Block-SPDeployment -Solution $solution -Deploying $true
+			$WSPFile = Get-Item $_.PathToWSPFile -ErrorAction SilentlyContinue
+			if($WSPFile -ne $null) {
+				$pathToWSPFile = $WSPFile.FullName
+				$solution = Get-SPSolution $_.WSPName -ErrorAction SilentlyContinue
+				
+				if($solution -eq $null)	{
+					$solution = Add-SPSolution $pathToWSPFile
+					Deploy-WSPSolution -Solution $solution -WebApplications $_.WebApplications -Force:$_.Force
+				} elseif($_.UpgradeExisting) {
+					Update-SPSolution -Identity $solution -CASPolicies:$($solution.ContainsCasPolicy) -GACDeployment:$($solution.ContainsGlobalAssembly) -LiteralPath $pathToWSPFile -Force:$_.Force
+					Block-SPDeployment -Solution $solution -WebApplications $_.WebApplications -Deploying $true
+				} else {
+					Write-Host "Please remove the solution '$($solution.name)' before deploying it."
+				}
+				
 			} else {
-				Write-Host "Please remove the solution '$($solution.name)' before deploying it."
+				Write-Host "Unable to find file '$($_.PathToWSPFile)'." -ForegroundColor Red
 			}
 		}
 		
@@ -256,6 +266,18 @@ function global:Deploy-DSPSolution() {
 			break
 		}
 		"FileOrDirectory" {
+		
+			if($Identity.ToLower().EndsWith(".wsp")){
+				# A Wsp filename or path
+				
+				$WSPName = Split-Path $Identity -Leaf
+				
+				$solutionQueue = @()
+				$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $Identity -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
+				Process-SolutionQueue -SolutionQueue $solutionQueue
+				break
+			}
+		
 			$item = Get-Item (Resolve-Path $Identity)
 			if ($item -is [System.IO.DirectoryInfo]) {
 				# A directory was provided so iterate through all files in the directory and deploy if the file is a WSP (based on the extension)
@@ -263,23 +285,20 @@ function global:Deploy-DSPSolution() {
 				
 				Get-ChildItem $item | ForEach-Object {
 					if ($_.Name.ToLower().EndsWith(".wsp")) {
-						$solutionQueue += Get-QueueSolutionDefinition -WSPFile $_ -UpgradeExisting:$UpgradeExisting -WebApplication:$WebApplication -Force:$Force
+						$PathToWSPFile = $_.FullName
+						$WSPName = $_.Name
+						
+						$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $PathToWSPFile -WSPName $WSPName -UpgradeExisting:$UpgradeExisting -WebApplication:$WebApplication -Force:$Force
 						Process-SolutionQueue -SolutionQueue $solutionQueue
 					}
 				}
 			} elseif ($item -is [System.IO.FileInfo]) {
-				# A specific file was provided so assume that the file is a WSP if it does not have an XML extension.
 				[string]$name = $item.Name
-
 				if ($name.ToLower().EndsWith(".xml")) {
 					# Deploy the Solutions defined in XML file.
 					$solutionQueue = Parse-XmlConfiguration -Config ([xml](Get-Content $item.FullName))
 					Process-SolutionQueue -SolutionQueue $solutionQueue
-				} else {
-					$solutionQueue = @()
-					$solutionQueue += Get-QueueSolutionDefinition -WSPFile $item -UpgradeExisting:$UpgradeExisting -WebApplication:$WebApplication -Force:$Force
-					Process-SolutionQueue -SolutionQueue $solutionQueue
-				}
+				} 
 			}
 			break
 		}

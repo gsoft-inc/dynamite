@@ -100,12 +100,15 @@ Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPT
 
 
 # Features
-Export-ModuleMember Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures
+Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures
 
 # Managed Paths
 Export-ModuleMember New-DSPManagedPath
 
 # Term Driven
 Export-ModuleMember New-DSPTermDrivenPagesSettings
+
+# Security 
+Export-ModuleMember Set-DSPWebPermissions
 
 #endregion

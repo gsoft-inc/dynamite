@@ -28,6 +28,11 @@ namespace GSoft.Dynamite
         public const string FileLeafRefName = "FileLeafRef";
 
         /// <summary>
+        /// The URL field internal name
+        /// </summary>
+        public const string UrlName = "URL";
+
+        /// <summary>
         /// ContentType field internal name
         /// </summary>
         public const string ContentTypeName = "ContentType";
@@ -36,6 +41,11 @@ namespace GSoft.Dynamite
         /// ContentTypeId field internal name
         /// </summary>
         public const string ContentTypeIdName = "ContentTypeId";
+
+        /// <summary>
+        /// The publishing page content name
+        /// </summary>
+        public const string PublishingPageContentName = "PublishingPageContent";
 
         /// <summary>
         /// TaxCatchAll field name.
@@ -78,6 +88,12 @@ namespace GSoft.Dynamite
         /// </summary>
         public static readonly FieldInfo ContentTypeId = new FieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
 
+
+        /// <summary>
+        /// URL field info
+        /// </summary>
+        public static readonly FieldInfo Url = new FieldInfo(UrlName, SPBuiltInFieldId.URL);
+
         /// <summary>
         /// TaxCatchAll field info.
         /// </summary>
@@ -89,6 +105,11 @@ namespace GSoft.Dynamite
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
         public static readonly FieldInfo TaxCatchAllLabel = new FieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2"));
+
+        /// <summary>
+        /// The publishing page content field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingPageContent = new FieldInfo(PublishingPageContentName, new Guid("f55c4d88-1f2e-4ad9-aaa8-819af4ee7ee8"));
 
         #endregion
     }

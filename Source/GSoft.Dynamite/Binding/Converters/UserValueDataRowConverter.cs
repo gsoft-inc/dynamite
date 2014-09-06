@@ -29,9 +29,19 @@ namespace GSoft.Dynamite.Binding.Converters
             }
 
             UserValue userValue = null;
-            var sharepointUserValue = new SPFieldUserValue(arguments.Web, value as string);
-            var principal = sharepointUserValue.User;
-            userValue = principal != null ? new UserValue(principal) : null;
+
+            try
+            {
+                // TODO: this most definitely doesn't work at all.
+                // Once in datarow value, the SPFieldUserValue ctor can't parse the value correctly
+                var sharepointUserValue = new SPFieldUserValue(arguments.Web, value as string);
+                var principal = sharepointUserValue.User;
+                userValue = principal != null ? new UserValue(principal) : null;
+            }
+            catch (ArgumentException)
+            {
+                // failed to read SPUser value, will return null
+            }
 
             return userValue;            
         }
