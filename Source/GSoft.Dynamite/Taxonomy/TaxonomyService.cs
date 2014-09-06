@@ -32,8 +32,6 @@ namespace GSoft.Dynamite.Taxonomy
         {
             this.log = logger;
             this.taxManager = taxManager;
-
-            this.log.Info("Creating new TaxonomyService instance");
         }
 
         #region GetTaxonomyValueForLabel overloads
