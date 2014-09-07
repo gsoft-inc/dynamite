@@ -45,13 +45,11 @@ namespace GSoft.Dynamite.Taxonomy
 
             string cacheKey = KeyPrefix + site.ID.ToString();
 
-            // Create the Site Taxonomy Cache because it does not yet exist. No need ofr locking because
+            // Create the Site Taxonomy Cache because it does not yet exist. No need for locking because
             // we only cache per-request using the HttpContext cache.
             if (HttpContext.Current.Items[cacheKey] == null)
             {
                 var newTaxCache = new SiteTaxonomyCache(site, termStoreName);
-
-                this.log.Info("PerRequestSiteTaxonomyCacheManager: Adding site taxonomy cache for site collection " + site.Url);
                 HttpContext.Current.Items[cacheKey] = newTaxCache;
             }
 
