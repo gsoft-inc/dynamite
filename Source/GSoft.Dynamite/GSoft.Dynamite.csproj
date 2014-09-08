@@ -91,6 +91,9 @@
     <Compile Include="Caml\CamlUtils.cs" />
     <Compile Include="Caml\ICamlBuilder.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
+    <Compile Include="Monitoring\AggregateTimeTracker.cs" />
+    <Compile Include="Monitoring\IAggregateTimeTracker.cs" />
+    <Compile Include="Monitoring\TimeTrackerScope.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
@@ -200,6 +203,8 @@
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
     <Compile Include="SPUrl.cs" />
+    <Compile Include="Taxonomy\PerRequestSiteTaxonomyCacheManager.cs" />
+    <Compile Include="Taxonomy\MonitoredTaxonomyService.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
