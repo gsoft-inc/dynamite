@@ -11,14 +11,6 @@ namespace GSoft.Dynamite.Caml
     public interface ICamlBuilder
     {
         /// <summary>
-        /// Gets the today value tag.
-        /// </summary>
-        /// <value>
-        /// The today value tag.
-        /// </value>
-        string TodayValue { get; }
-
-        /// <summary>
         /// Creates CAML and with the specified left and right conditions.
         /// </summary>
         /// <param name="leftCondition">The left condition.</param>
@@ -145,7 +137,7 @@ namespace GSoft.Dynamite.Caml
         string IsOrInheritsContentType(SPContentTypeId contentTypeId);
 
         /// <summary>
-        /// Determines whether this instance is published.
+        /// Determines whether [is publishing started] based on today's date.
         /// </summary>
         /// <returns>
         /// A string representation of the CAML query.
@@ -153,7 +145,7 @@ namespace GSoft.Dynamite.Caml
         string IsPublished();
 
         /// <summary>
-        /// Determines whether this instance is published.
+        /// Determines whether this instance is published based on a specified start and end date.
         /// </summary>
         /// <param name="startDateTime">The start date time.</param>
         /// <param name="expirationDateTime">The expiration date time.</param>
@@ -163,7 +155,17 @@ namespace GSoft.Dynamite.Caml
         string IsPublished(DateTime startDateTime, DateTime expirationDateTime);
 
         /// <summary>
-        /// Determines whether [is publishing expired].
+        /// Determines whether this instance is published based on a specified start and end offset.
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublished(int startOffsetDays, int expirationOffsetDays);
+
+        /// <summary>
+        /// Determines whether [is publishing expired] based on today's date.
         /// </summary>
         /// <returns>
         /// A string representation of the CAML query.
@@ -171,7 +173,7 @@ namespace GSoft.Dynamite.Caml
         string IsPublishingExpired();
 
         /// <summary>
-        /// Determines whether [is publishing expired].
+        /// Determines whether [is publishing expired] based on a specified date.
         /// </summary>
         /// <param name="expirationDateTime">The expiration date time.</param>
         /// <returns>
@@ -180,7 +182,16 @@ namespace GSoft.Dynamite.Caml
         string IsPublishingExpired(DateTime expirationDateTime);
 
         /// <summary>
-        /// Determines whether [is publishing started].
+        /// Determines whether [is publishing expired] based on a specified date.
+        /// </summary>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingExpired(int expirationOffsetDays);
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
         /// </summary>
         /// <returns>
         /// A string representation of the CAML query.
@@ -188,13 +199,22 @@ namespace GSoft.Dynamite.Caml
         string IsPublishingStarted();
 
         /// <summary>
-        /// Determines whether [is publishing started].
+        /// Determines whether [is publishing started] based on a specified date.
         /// </summary>
         /// <param name="startDateTime">The start date time.</param>
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
         string IsPublishingStarted(DateTime startDateTime);
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on a specified date.
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingStarted(int startOffsetDays);
 
         /// <summary>
         /// Creates CAML is null by with the specified field reference.
@@ -587,5 +607,22 @@ namespace GSoft.Dynamite.Caml
         /// <param name="includeDescendants">Whether the Term's child terms should be query hits as well</param>
         /// <returns>A string representation of the CAML query.</returns>
         string TermFilter(SPList list, string taxonomyFieldInternalName, string termStoreGroupName, string termSetName, string termLabel, bool includeDescendants);
+
+        /// <summary>
+        /// Returns the today value tag.
+        /// </summary>
+        /// <returns>
+        /// The today value tag.
+        /// </returns>
+        string Today();
+
+        /// <summary>
+        /// Returns the today value tag.
+        /// </summary>
+        /// <param name="offsetDays">The offset, in days.</param>
+        /// <returns>
+        /// The today value tag.
+        /// </returns>
+        string Today(int offsetDays);
     }
 }

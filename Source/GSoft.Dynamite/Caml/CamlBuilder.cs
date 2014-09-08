@@ -23,20 +23,6 @@ namespace GSoft.Dynamite.Caml
         private readonly ILogger _logger;
 
         /// <summary>
-        /// Gets the today value tag.
-        /// </summary>
-        /// <value>
-        /// The today value.
-        /// </value>
-        public string TodayValue
-        {
-            get
-            {
-                return Tag(CamlConstants.Value, CamlConstants.Type, CamlConstants.DateTime, "<Today/>"); 
-            }
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="CamlBuilder" /> class.
         /// </summary>
         /// <param name="taxonomyService">The taxonomy service.</param>
@@ -245,6 +231,19 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Determines whether this instance is published based on a specified start and end offset.
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(int startOffsetDays, int expirationOffsetDays)
+        {
+            return this.And(this.IsPublishingStarted(startOffsetDays), this.IsPublishingExpired(expirationOffsetDays));
+        }
+
+        /// <summary>
         /// Determines whether [is publishing expired].
         /// </summary>
         /// <returns>
@@ -253,8 +252,8 @@ namespace GSoft.Dynamite.Caml
         public string IsPublishingExpired()
         {
             return this.Or(
-                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.TodayValue),
-                this.IsNull(BuiltInFields.PublishingExpirationDateName));
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
         }
 
         /// <summary>
@@ -268,11 +267,25 @@ namespace GSoft.Dynamite.Caml
         {
             return this.Or(
                 this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Value(expirationDateTime)),
-                this.IsNull(BuiltInFields.PublishingExpirationDateName));
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
         }
 
         /// <summary>
-        /// Determines whether [is publishing started].
+        /// Determines whether [is publishing expired] [the specified expiration days offset].
+        /// </summary>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingExpired(int expirationOffsetDays)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today(expirationOffsetDays)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
         /// </summary>
         /// <returns>
         /// A string representation of the CAML query.
@@ -280,8 +293,8 @@ namespace GSoft.Dynamite.Caml
         public string IsPublishingStarted()
         {
             return this.Or(
-                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.TodayValue),
-                this.IsNull(BuiltInFields.PublishingStartDateName));
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
         }
 
         /// <summary>
@@ -295,7 +308,21 @@ namespace GSoft.Dynamite.Caml
         {
             return this.Or(
                 this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Value(startDateTime)),
-                this.IsNull(BuiltInFields.PublishingStartDateName));
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] [the specified start date offset].
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingStarted(int startOffsetDays)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today(startOffsetDays)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
         }
 
         /// <summary>
@@ -948,6 +975,37 @@ namespace GSoft.Dynamite.Caml
             }
 
             return this.TermFilter(list, taxonomyFieldInternalName, new List<Term>() { taxonomyTerm }, includeDescendants);
+        }
+
+        /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <returns>
+        /// The today value.
+        /// </returns>
+        public string Today()
+        {
+            return Tag(
+                CamlConstants.Value, 
+                CamlConstants.Type, 
+                CamlConstants.DateTime, 
+                Tag("Today", string.Empty));
+        }
+
+        /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <param name="offsetDays">The offset days.</param>
+        /// <returns>
+        /// The today value.
+        /// </returns>
+        public string Today(int offsetDays)
+        {
+            return Tag(
+                CamlConstants.Value,
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                Tag("Today", string.Empty, "OffsetDays", offsetDays));
         }
 
         private static string Tag(string tag, string attribute, string attributeValue, string value)
