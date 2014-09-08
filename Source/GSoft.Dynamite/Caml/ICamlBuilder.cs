@@ -170,7 +170,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingExpired();
+        string IsBeforePublishingExpiryDate();
 
         /// <summary>
         /// Determines whether [is publishing expired] based on a specified date.
@@ -179,7 +179,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingExpired(DateTime expirationDateTime);
+        string IsBeforePublishingExpiryDate(DateTime expirationDateTime);
 
         /// <summary>
         /// Determines whether [is publishing expired] based on a specified date.
@@ -188,7 +188,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingExpired(int expirationOffsetDays);
+        string IsBeforePublishingExpiryDate(int expirationOffsetDays);
 
         /// <summary>
         /// Determines whether [is publishing started] based on today's date.
@@ -196,7 +196,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingStarted();
+        string IsAfterPublishingStartDate();
 
         /// <summary>
         /// Determines whether [is publishing started] based on a specified date.
@@ -205,7 +205,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingStarted(DateTime startDateTime);
+        string IsAfterPublishingStartDate(DateTime startDateTime);
 
         /// <summary>
         /// Determines whether [is publishing started] based on a specified date.
@@ -214,7 +214,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        string IsPublishingStarted(int startOffsetDays);
+        string IsAfterPublishingStartDate(int startOffsetDays);
 
         /// <summary>
         /// Creates CAML is null by with the specified field reference.

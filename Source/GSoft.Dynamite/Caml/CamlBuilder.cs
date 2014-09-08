@@ -214,7 +214,7 @@ namespace GSoft.Dynamite.Caml
         /// </returns>
         public string IsPublished()
         {
-            return this.And(this.IsPublishingStarted(), this.IsPublishingExpired());
+            return this.And(this.IsAfterPublishingStartDate(), this.IsBeforePublishingExpiryDate());
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace GSoft.Dynamite.Caml
         /// </returns>
         public string IsPublished(DateTime startDateTime, DateTime expirationDateTime)
         {
-            return this.And(this.IsPublishingStarted(startDateTime), this.IsPublishingExpired(expirationDateTime));
+            return this.And(this.IsAfterPublishingStartDate(startDateTime), this.IsBeforePublishingExpiryDate(expirationDateTime));
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace GSoft.Dynamite.Caml
         /// </returns>
         public string IsPublished(int startOffsetDays, int expirationOffsetDays)
         {
-            return this.And(this.IsPublishingStarted(startOffsetDays), this.IsPublishingExpired(expirationOffsetDays));
+            return this.And(this.IsAfterPublishingStartDate(startOffsetDays), this.IsBeforePublishingExpiryDate(expirationOffsetDays));
         }
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingExpired()
+        public string IsBeforePublishingExpiryDate()
         {
             return this.Or(
                 this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today()),
@@ -263,7 +263,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingExpired(DateTime expirationDateTime)
+        public string IsBeforePublishingExpiryDate(DateTime expirationDateTime)
         {
             return this.Or(
                 this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Value(expirationDateTime)),
@@ -277,7 +277,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingExpired(int expirationOffsetDays)
+        public string IsBeforePublishingExpiryDate(int expirationOffsetDays)
         {
             return this.Or(
                 this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today(expirationOffsetDays)),
@@ -290,7 +290,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingStarted()
+        public string IsAfterPublishingStartDate()
         {
             return this.Or(
                 this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today()),
@@ -304,7 +304,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingStarted(DateTime startDateTime)
+        public string IsAfterPublishingStartDate(DateTime startDateTime)
         {
             return this.Or(
                 this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Value(startDateTime)),
@@ -318,7 +318,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
-        public string IsPublishingStarted(int startOffsetDays)
+        public string IsAfterPublishingStartDate(int startOffsetDays)
         {
             return this.Or(
                 this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today(startOffsetDays)),
