@@ -23,6 +23,20 @@ namespace GSoft.Dynamite.Caml
         private readonly ILogger _logger;
 
         /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <value>
+        /// The today value.
+        /// </value>
+        public string TodayValue
+        {
+            get
+            {
+                return Tag(CamlConstants.Value, CamlConstants.Type, CamlConstants.DateTime, "<Today/>"); 
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CamlBuilder" /> class.
         /// </summary>
         /// <param name="taxonomyService">The taxonomy service.</param>
@@ -204,6 +218,84 @@ namespace GSoft.Dynamite.Caml
         public string IsOrInheritsContentType(SPContentTypeId contentTypeId)
         {
             return this.BeginsWith(this.FieldRef("ContentTypeId"), this.Value("ContentTypeId", contentTypeId.ToString()));
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished()
+        {
+            return this.And(this.IsPublishingStarted(), this.IsPublishingExpired());
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(DateTime startDateTime, DateTime expirationDateTime)
+        {
+            return this.And(this.IsPublishingStarted(startDateTime), this.IsPublishingExpired(expirationDateTime));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingExpired()
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.TodayValue),
+                this.IsNull(BuiltInFields.PublishingExpirationDateName));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingExpired(DateTime expirationDateTime)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Value(expirationDateTime)),
+                this.IsNull(BuiltInFields.PublishingExpirationDateName));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started].
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingStarted()
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.TodayValue),
+                this.IsNull(BuiltInFields.PublishingStartDateName));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started].
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublishingStarted(DateTime startDateTime)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Value(startDateTime)),
+                this.IsNull(BuiltInFields.PublishingStartDateName));
         }
 
         /// <summary>
