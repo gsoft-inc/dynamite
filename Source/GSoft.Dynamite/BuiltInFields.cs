@@ -60,7 +60,7 @@ namespace GSoft.Dynamite
         /// <summary>
         /// The publishing expiration date field name
         /// </summary>
-        public const string PublishingExpirationDateName = " PublishingExpirationDate";
+        public const string PublishingExpirationDateName = "PublishingExpirationDate";
 
         /// <summary>
         /// The publishing contact field name
