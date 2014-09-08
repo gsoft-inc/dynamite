@@ -11,6 +11,14 @@ namespace GSoft.Dynamite.Caml
     public interface ICamlBuilder
     {
         /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <value>
+        /// The today value tag.
+        /// </value>
+        string TodayValue { get; }
+
+        /// <summary>
         /// Creates CAML and with the specified left and right conditions.
         /// </summary>
         /// <param name="leftCondition">The left condition.</param>
@@ -135,6 +143,58 @@ namespace GSoft.Dynamite.Caml
         /// A string representation of the CAML query.
         /// </returns>
         string IsOrInheritsContentType(SPContentTypeId contentTypeId);
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublished();
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublished(DateTime startDateTime, DateTime expirationDateTime);
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingExpired();
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingExpired(DateTime expirationDateTime);
+
+        /// <summary>
+        /// Determines whether [is publishing started].
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingStarted();
+
+        /// <summary>
+        /// Determines whether [is publishing started].
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublishingStarted(DateTime startDateTime);
 
         /// <summary>
         /// Creates CAML is null by with the specified field reference.
