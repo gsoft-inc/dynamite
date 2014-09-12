@@ -23,7 +23,7 @@ namespace GSoft.Dynamite.Globalization
         /// <param name="resourceFileConfigs">All registered implementations for IResourceLocatorConfig</param>
         public ResourceLocator(IEnumerable<IResourceLocatorConfig> resourceFileConfigs)
         {
-            var resourceFiles = new string[]{};
+            var resourceFiles = new string[] { };
             resourceFiles = resourceFileConfigs.Aggregate(resourceFiles, (current, config) => current.Union(config.ResourceFileKeys).ToArray());
 
             this._defaultResourceFileNames = resourceFiles;
@@ -140,9 +140,15 @@ namespace GSoft.Dynamite.Globalization
             return found;
         }
 
+        /// <summary>
+        /// Get the resource string with dollar format
+        /// </summary>
+        /// <param name="resourceFileName">The resource file name</param>
+        /// <param name="resourceKey">The resource key</param>
+        /// <returns>The resource string for the key and filename</returns>
         public string GetResourceString(string resourceFileName, string resourceKey)
         {
-            return _defaultResourceFileNames.Contains(resourceFileName) ? string.Format("$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
+            return this._defaultResourceFileNames.Contains(resourceFileName) ? string.Format("$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
         }
     }
 }

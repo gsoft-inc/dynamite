@@ -1,12 +1,18 @@
-﻿namespace GSoft.Dynamite.Definitions
+﻿using System;
+
+namespace GSoft.Dynamite.Definitions
 {
+    /// <summary>
+    /// Definition of a Taxonomy Term 
+    /// </summary>
     public class TermInfo
     {
         /// <summary>
         /// Default constructor for TermInfo
         /// </summary>
         public TermInfo()
-        {}
+        {           
+        }
 
         /// <summary>
         /// Name of the term
@@ -16,6 +22,6 @@
         /// <summary>
         /// GUID of the term
         /// </summary>
-        public string ID { get; set; }
+        public Guid Id { get; set; }
     }
 }

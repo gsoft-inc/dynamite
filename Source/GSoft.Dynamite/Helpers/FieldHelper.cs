@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
@@ -17,14 +19,17 @@ namespace GSoft.Dynamite.Helpers
     public class FieldHelper
     {
         private readonly ILogger _logger;
+        private readonly TaxonomyHelper _taxonomyHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
-        public FieldHelper(ILogger logger)
+        /// <param name="taxonomyHelper">The taxonomy helper</param>
+        public FieldHelper(ILogger logger, TaxonomyHelper taxonomyHelper)
         {
             this._logger = logger;
+            this._taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -287,11 +292,68 @@ namespace GSoft.Dynamite.Helpers
             }
         }
 
+        /// <summary>
+        /// Ensure a field
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfo">The field info configuration</param>
+        /// <returns>The internal name of the field</returns>
         public string EnsureField(SPFieldCollection fieldCollection, FieldInfo fieldInfo)
         {
-            return this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+            string field;
+
+            if (fieldInfo.GetType() == typeof(TaxonomyFieldInfo))
+            {
+                field = this.EnsureField(fieldCollection, fieldInfo as TaxonomyFieldInfo);
+            }
+            else
+            {
+                field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+            }
+
+            return field;
         }
 
+        /// <summary>
+        /// Ensure a taxonomy field
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfo">The field info configuration</param>
+        /// <returns>The internal name of the field</returns>
+        public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
+        {
+            var field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+
+            // Get the term store default language for term set name
+            var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
+
+            if (fieldInfo.DefaultValue != null)
+            {
+                var defaultValue = fieldInfo.DefaultValue as TaxonomyFieldInfoValue;
+                string termSubsetName = string.Empty;
+                if (defaultValue.TermSubset != null)
+                {
+                    termSubsetName = defaultValue.TermSubset.Name;
+                }
+
+                // Metadata mapping configuration
+                this._taxonomyHelper.AssignTermSetToSiteColumn(
+                            fieldCollection.Web,
+                            fieldInfo.Id,
+                            defaultValue.TermGroup.Name,
+                            defaultValue.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            termSubsetName);
+            }
+
+            return field;
+        }
+
+        /// <summary>
+        /// Ensure a collection of fields
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfos">The field info configuration</param>
+        /// <returns>The internal names of the field</returns>
         public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<FieldInfo> fieldInfos)
         {
             var fieldNames = new List<string>();

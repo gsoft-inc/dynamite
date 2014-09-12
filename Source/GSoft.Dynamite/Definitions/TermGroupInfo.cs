@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -11,7 +12,13 @@ namespace GSoft.Dynamite.Definitions
         /// Default constructor for TermGroupInfo
         /// </summary>
         public TermGroupInfo()
-        {}
+        {           
+        }
+
+        /// <summary>
+        /// Id of the group
+        /// </summary>
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Name of the group
@@ -21,6 +28,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Term Sets for this group
         /// </summary>
-        public IDictionary<string,TermSetInfo> TermSets { get; set; }
+        public IDictionary<string, TermSetInfo> TermSets { get; set; }
     }
 }

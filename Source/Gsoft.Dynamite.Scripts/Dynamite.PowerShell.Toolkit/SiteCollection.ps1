@@ -90,6 +90,12 @@ function New-DSPSiteCollectionRecusiveXml()
 	{
 		New-DSPSiteVariations -Config $Site.Variations -Site $spSite -Verbose:$Verbose
 	}
+
+	# Activate Features 
+	if($Site.Feature -ne $null)
+	{
+		Switch-DSPFeatures $Site $spSite.Url
+	}
 }
 
 <#

@@ -385,11 +385,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var taxonomyDefaultValue = defaultValue as TaxonomyField;
                         if (((Microsoft.SharePoint.Taxonomy.TaxonomyField)field).AllowMultipleValues)
                         {
-                            taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values);
+                            //taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values);
                         }
                         else
                         {
-                            taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
+                            //taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TTermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
                         }
                     }
                     else if (field.GetType() == typeof(SPFieldText))

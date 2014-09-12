@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Threading;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Definitions.Values;
+using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
-namespace GSoft.Dynamite.Taxonomy
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for managing Taxonomy.
@@ -272,13 +278,13 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termLabel">The term label.</param>
         public void SetDefaultTaxonomyValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel)
         {
-            var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
-
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
 
             var termGroup = termStore.Groups[termGroupName];
             var termSet = termGroup.TermSets[termSetName];
+
+            var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroup.Name, termSet.Name, termLabel);
 
             if (term != null)
             {
@@ -301,15 +307,47 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Set a Taxonomy Field value
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="field">The field</param>
+        /// <param name="defaultValue">The taxonomy default value</param>
+        public void SetDefaultTaxonomyValue(
+            SPWeb web, TaxonomyField field, TaxonomyFieldInfoValue defaultValue)
+        {
+            var termGroupName = defaultValue.TermGroup.Name;
+            var termSetName = defaultValue.TermSet.Labels[new CultureInfo((int)web.Language)];
+
+            if (defaultValue.Values != null)
+            {
+                if (defaultValue.Values.Length > 1)
+                {
+                    if (field.AllowMultipleValues)
+                    {
+                        this.SetDefaultTaxonomyMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Name).ToArray());
+                    }
+                }
+                else
+                {
+                    var firstOrDefault = defaultValue.Values.FirstOrDefault();
+                    if (firstOrDefault != null)
+                    {
+                        this.SetDefaultTaxonomyValue(web, field, termGroupName, termSetName, firstOrDefault.Name);
+                    }
+                }
+            }     
+        }
+
+        /// <summary>
         /// Set default value for a multi valued taxonomy site column
         /// </summary>
         /// <param name="web">The web.</param>
         /// <param name="field">The field.</param>
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
-        /// <param name="terms">Term label</param>
+        /// <param name="termLabels">Term label</param>
         public void SetDefaultTaxonomyMultiValue(
-            SPWeb web, SPField field, string termGroupName, string termSetName, string[] terms)
+            SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels)
         {
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
@@ -319,9 +357,9 @@ namespace GSoft.Dynamite.Taxonomy
             var termGroup = termStore.Groups[termGroupName];
             var termSet = termGroup.TermSets[termSetName];
 
-            foreach (var label in terms)
+            foreach (var label in termLabels)
             {
-                var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, label);
+                var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroup.Name, termSet.Name, label);
 
                 if (term != null)
                 {
@@ -430,6 +468,19 @@ namespace GSoft.Dynamite.Taxonomy
             }
         }
 
+        /// <summary>
+        /// Get the default language of the term store
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <returns>The LCID of the default language</returns>
+        public int GetTermStoreDefaultLanguage(SPSite site)
+        {
+            var taxonomySession = new TaxonomySession(site);
+            var termStore = taxonomySession.DefaultSiteCollectionTermStore;
+
+            return termStore.DefaultLanguage;
+        }
+
         #region Private Methods
         private static void AssignTermSetToAllListUsagesOfSiteColumn(SPSite site, TermStore termStore, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName)
         {
@@ -475,7 +526,7 @@ namespace GSoft.Dynamite.Taxonomy
             // Select a sub node of the termset to limit selection
             if (!string.IsNullOrEmpty(termSubsetName))
             {
-                Term term = termStore.GetTerms(termSubsetName, true)[0];
+                Term term = termSet.GetTerms(termSubsetName, true)[0];
                 field.AnchorId = term.Id;
             }
             else

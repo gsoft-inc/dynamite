@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -7,8 +6,8 @@ using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
-using Microsoft.Office.Server.Search.Internal.UI.CentralAdmin;
-using Microsoft.SharePoint;using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
+using Microsoft.SharePoint;
+using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -36,13 +35,40 @@ namespace GSoft.Dynamite.Helpers
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
-            contentType.Description = contentTypeInfo.Description;
+            if (contentTypeInfo.TitleResources != null)
+            {
+                // Set title according to resources
+                foreach (KeyValuePair<CultureInfo, string> title in contentTypeInfo.TitleResources)
+                {
+                    contentType.NameResource.SetValueForUICulture(title.Key, title.Value);
+                }
+            }
+
+            if (contentTypeInfo.DescriptionResources != null)
+            {
+                // Set title according to resources
+                foreach (KeyValuePair<CultureInfo, string> description in contentTypeInfo.DescriptionResources)
+                {
+                    contentType.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
+                }
+            }
+            else
+            {
+                contentType.Description = contentTypeInfo.Description;
+            }
+         
             contentType.Group = contentTypeInfo.Group;
             contentType.Update();
 
             return contentType;
         }
 
+        /// <summary>
+        /// Ensure a list of content type
+        /// </summary>
+        /// <param name="contentTypeCollection">The content type collection</param>
+        /// <param name="contentTypeInfos">The content types information</param>
+        /// <returns>The content types list</returns>
         public IEnumerable<SPContentType> EnsureContentType(SPContentTypeCollection contentTypeCollection, ICollection<ContentTypeInfo> contentTypeInfos)
         {
             var contentTypes = new List<SPContentType>();
@@ -143,6 +169,12 @@ namespace GSoft.Dynamite.Helpers
             return null;
         }
 
+        /// <summary>
+        /// Ensure a single content in a collection
+        /// </summary>
+        /// <param name="collection">The content type collection</param>
+        /// <param name="contentType">The content type info</param>
+        /// <returns>The content type object</returns>
         public SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType)
         {
             return this.EnsureContentType(collection, contentType.Id, contentType.Name);

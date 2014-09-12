@@ -67,6 +67,12 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The resource in the specified language</returns>
         string Find(string resourceFileName, string resourceKey, CultureInfo culture);
 
+        /// <summary>
+        /// Get the resource string with dollar format
+        /// </summary>
+        /// <param name="resourceFileName">The resource file name</param>
+        /// <param name="resourceKey">The resource key</param>
+        /// <returns>The resource string for the key and filename</returns>
         string GetResourceString(string resourceFileName, string resourceKey);
     }
 }

@@ -107,7 +107,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ListLocator>();
             builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>();
-            builder.RegisterType<CatalogBuilder>();
+            builder.RegisterType<CatalogHelper>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>();

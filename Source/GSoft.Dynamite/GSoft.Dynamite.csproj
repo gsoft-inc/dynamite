@@ -50,7 +50,7 @@
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
@@ -100,6 +100,10 @@
     <Compile Include="Definitions\TermInfo.cs" />
     <Compile Include="Definitions\TermSetInfo.cs" />
     <Compile Include="Definitions\TextFieldInfo.cs" />
+    <Compile Include="Definitions\Values\FieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\IFieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\TaxonomyFieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\TextFieldInfoValue.cs" />
     <Compile Include="Definitions\WebInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
@@ -171,7 +175,6 @@
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
     <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
-    <Compile Include="Catalogs\CatalogBuilder.cs" />
     <Compile Include="Catalogs\Catalog.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
@@ -257,9 +260,9 @@
     <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
-    <Compile Include="Taxonomy\TaxonomyHelper.cs" />
+    <Compile Include="Helpers\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Utils\CatalogHelper.cs" />
+    <Compile Include="Helpers\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />

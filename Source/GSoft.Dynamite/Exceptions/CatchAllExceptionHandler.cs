@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GSoft.Dynamite.Configuration;
+using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Logging;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Utilities;
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
-using GSoft.Dynamite.Logging;
-using Microsoft.SharePoint;
-using GSoft.Dynamite.Extensions;
-using Microsoft.SharePoint.Utilities;
-using GSoft.Dynamite.Configuration;
 
 namespace GSoft.Dynamite.Exceptions
 {

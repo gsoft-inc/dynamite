@@ -216,9 +216,9 @@ namespace GSoft.Dynamite.Utils
         /// <param name="searchProvider">The search provider for this result source.</param>
         /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
-        /// <param name="sortField">Internal name of the sort field.</param>
-        /// <param name="direction">The sort direction.</param>
+        /// <param name="directions">The directions</param>
         /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
+        /// <param name="sortFields">The sort fields</param>
         /// <returns>
         /// The result source.
         /// </returns>

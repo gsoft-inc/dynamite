@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
+using GSoft.Dynamite.Binding;
 
 namespace GSoft.Dynamite.Definitions
 {
-    public class TextFieldInfo: FieldInfo
+    /// <summary>
+    /// Definition of a TextField info
+    /// </summary>
+    public class TextFieldInfo : FieldInfo
     {
         private bool _isMultiLine;
 
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public TextFieldInfo()
         {
             // Default Text Field Type
@@ -48,8 +50,13 @@ namespace GSoft.Dynamite.Definitions
 
         #endregion
 
-        public override System.Xml.Linq.XElement ToXElement()
+        /// <summary>
+        /// The XML schema of a Text field as XElement
+        /// </summary>
+        /// <returns>The XML schema of a Text field as XElement</returns>
+        public override XElement ToXElement()
         {
+
             this.Schema = new XElement(
                                         "Field",
                                         new XAttribute("Name", this.InternalName),
@@ -60,6 +67,17 @@ namespace GSoft.Dynamite.Definitions
                                         new XAttribute("Description", this.Description),
                                         new XAttribute("Group", this.Group),
                                         new XAttribute("ShowInListSettings", "TRUE"));
+
+            // Check the Required type
+            if (this.RequiredType == RequiredTypes.Required)
+            {
+                this.Schema.Add(new XAttribute("Required", "TRUE"));
+            }
+
+            if (this.RequiredType == RequiredTypes.NotRequired)
+            {
+                this.Schema.Add(new XAttribute("Required", "FALSE"));
+            }
 
             return this.Schema;
         }

@@ -1,11 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Lists;
+using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Definitions
 {
-    public class ListInfo: BaseTypeInfo
+    /// <summary>
+    /// Definition for a list
+    /// </summary>
+    public class ListInfo : BaseTypeInfo
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public ListInfo()
         {
             // Default value
@@ -94,5 +103,20 @@ namespace GSoft.Dynamite.Definitions
         /// The content types.
         /// </value>
         public ICollection<ContentTypeInfo> ContentTypes { get; set; }
+
+        /// <summary>
+        /// Add the list to quick launch
+        /// </summary>
+        public bool AddToQuickLaunch { get; set; }
+
+        /// <summary>
+        /// The default view fields for the list
+        /// </summary>
+        public ICollection<FieldInfo> DefaultViewFields { get; set; }
+
+        /// <summary>
+        /// Default values for he current list
+        /// </summary>
+        public IDictionary<FieldInfo, IFieldInfoValue> DefaultValues { get; set; }
     }
 }

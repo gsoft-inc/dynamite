@@ -27,6 +27,7 @@ namespace GSoft.Dynamite.Utils
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
+        /// <param name="listHelper">The list helper</param>
         public CatalogHelper(ILogger logger, ListHelper listHelper)
         {
             this._logger = logger;
@@ -38,13 +39,13 @@ namespace GSoft.Dynamite.Utils
         /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties)
         {
-            return this.SetListAsCatalog(list, availableFields, false);
+            return this.SetListAsCatalog(list, availableManagedProperties, false);
         }
 
         /// <summary>
@@ -52,12 +53,12 @@ namespace GSoft.Dynamite.Utils
         /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
         /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, bool activateAnonymousAccess)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, bool activateAnonymousAccess)
         {
             this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
@@ -80,7 +81,7 @@ namespace GSoft.Dynamite.Utils
             var fieldList = new Collection<string>();
 
             // For fields name, you need to pass the internal name of the column directly followed by "OWSTEXT"
-            foreach (var availableField in availableFields)
+            foreach (var availableField in availableManagedProperties)
             {
                 fieldList.Add("\"" + availableField + "\"");
             }
@@ -103,29 +104,29 @@ namespace GSoft.Dynamite.Utils
         /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <returns>The SharePoint list configured as a catalog.</returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, string taxonomyFieldMap)
         {
-            return this.SetListAsCatalog(list, availableFields, taxonomyFieldMap, false);
+            return this.SetListAsCatalog(list, availableManagedProperties, taxonomyFieldMap, false);
         }
 
         /// <summary>
         /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap, bool activateAnonymousAccess)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, string taxonomyFieldMap, bool activateAnonymousAccess)
         {
             this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
-            var catalogList = this.SetListAsCatalog(list, availableFields, activateAnonymousAccess);
+            var catalogList = this.SetListAsCatalog(list, availableManagedProperties, activateAnonymousAccess);
             var rootFolder = catalogList.RootFolder;
 
             // Set current culture to be able to get the "Title" of the list
@@ -162,6 +163,12 @@ namespace GSoft.Dynamite.Utils
             return list;
         }
 
+        /// <summary>
+        /// Ensure a catalog
+        /// </summary>
+        /// <param name="web">The web object</param>
+        /// <param name="catalog">The catalog</param>
+        /// <returns>The list object</returns>
         public SPList EnsureCatalog(SPWeb web, CatalogInfo catalog)
         {
             // Set current culture to be able to set the "Title" of the list
@@ -170,23 +177,57 @@ namespace GSoft.Dynamite.Utils
             // Create the list if doesn't exists
             var list = this._listHelper.EnsureList(web, catalog);
 
-            // Rename List
-            list.Title = catalog.DisplayName;
-            list.Update();
-
-            // Remove Item Content Type
-            if (catalog.RemoveDefaultContentType)
+            if (catalog.TaxonomyFieldMap == null)
             {
-                // If content type is direct child of item, remove it
-                this._listHelper.RemoveItemContentType(list);
+                // Set the list as catalog without navigation
+                if (catalog.IsAnonymous)
+                {
+                    this.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), true);
+                }
+                else
+                {
+                    this.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name));
+                }
             }
+            else
+            {
+                // Set the list as catalog with navigation term
+                if (catalog.IsAnonymous)
+                {
+                    this.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap.InternalName, true);
+                }
+                else
+                {
+                    this.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap.InternalName);
+                }
 
-            // Add All Content Types
-            this._listHelper.EnsureContentType(list, catalog.ContentTypes);
+                // Enforce unique values on the navigation column if neccessary
+                if (catalog.EnforceUniqueNavigationValues)
+                {
+                    var field = list.Fields.GetFieldByInternalName(catalog.TaxonomyFieldMap.InternalName);
+                    if (field != null)
+                    {
+                        // A SPField must be indexed before enforce unique values
+                        field.Indexed = true;
+                        field.Update();
+
+                        field.EnforceUniqueValues = true;
+                        field.Update();
+                        
+                        list.Update();
+                    }
+                }
+            }
 
             return list;
         }
 
+        /// <summary>
+        /// Ensure catalogs in the web
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="catalogs">The catalogs</param>
+        /// <returns>The catalogs list</returns>
         public IEnumerable<SPList> EnsureCatalog(SPWeb web, ICollection<CatalogInfo> catalogs)
         {
             var catalogList = new List<SPList>();

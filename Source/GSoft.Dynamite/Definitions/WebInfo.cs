@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace GSoft.Dynamite.Definitions
 {
+    /// <summary>
+    /// Definition for a web
+    /// </summary>
     public class WebInfo
     {
-        public IList<ListInfo> Lists;
+        /// <summary>
+        /// Lists of the web
+        /// </summary>
+        public IList<ListInfo> Lists { get; set; }
     }
 }

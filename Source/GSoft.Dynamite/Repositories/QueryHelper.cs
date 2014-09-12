@@ -62,8 +62,7 @@ namespace GSoft.Dynamite.Repositories
                 var propertyDetails = customAttributes.OfType<PropertyAttribute>().FirstOrDefault();
 
                 if (propertyDetails != null)
-                {
-                    
+                {                   
                     var fieldInternalName = !string.IsNullOrEmpty(propertyDetails.PropertyName) ? propertyDetails.PropertyName : info.Name;
 
                     if (!propertyDetails.IsLookupId)
