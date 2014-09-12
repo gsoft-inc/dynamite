@@ -161,7 +161,43 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             return $.when();
         }
     };
-}(GSoft.Dynamite.FileLoader = GSoft.Dynamite.FileLoader || {}, jq110));
+} (GSoft.Dynamite.FileLoader = GSoft.Dynamite.FileLoader || {}, jq110));
+
+// ====================
+// Resource loader module
+// ====================
+(function (resLoader, $, undefined) {
+
+    var formatScriptResxLink = function (resourceFileName) {
+        return GSoft.Dynamite.Utils.CurrentWebUrl + 
+            "/_layouts/scriptresx.ashx?culture=" + 
+            GSoft.Dynamite.Utils.getCurrentCulture() + 
+            "&name=" + 
+            resourceFileName;
+    }
+
+    // GET files and return deferred object when done.
+    // See http://api.jquery.com/category/deferred-object/ for more information on deferred objects in jQuery.
+    // Usage example: 
+    // GSoft.Dynamite.ResLoader.load("Company.Intranet", "Company.Intranet.News").done(function(resources) { /*Use here*/});,
+    resLoader.load = function () {
+        var deferred = $.Deferred();
+        var resources = new Array();
+        var files = arguments;
+        for (var i = 0; i < (files.length) ; i++) {
+            var file = files[i];
+            $.getScript(formatScriptResxLink(file)).done(function() {
+                resources.push(window.Res);
+                if (resources.length == files.length) {
+                    deferred.resolve(resources);
+                }
+            });
+        }
+
+        return deferred.promise();
+    };
+
+}(GSoft.Dynamite.ResLoader = GSoft.Dynamite.ResLoader || {}, jq110));
 
 // ====================
 // Edit-mode Metadata Panel module
@@ -282,6 +318,14 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             ExecuteOrDelayUntilScriptLoaded(addLinkToSiteActions, "sp.js");
         }
     };
+
+    Utils.getCurrentCulture = function() {
+        if (_spPageContextInfo.currentLanguage == 1033) {
+            return "en-US";
+        } else {
+            return "fr-FR";
+        }
+    }
 
     function addLinkToSiteActions() {
         GSoft.Dynamite.Res.ensureResThenExecute(["GSoft.Dynamite"], function() {
