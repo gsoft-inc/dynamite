@@ -1,6 +1,12 @@
 <StyleCopSettings Version="4.3">
   <GlobalSettings>
     <StringProperty Name="MergeSettingsFiles">NoMerge</StringProperty>
+	<CollectionProperty Name="RecognizedWords">
+      <Value>dll</Value>
+	  <Value>Guid</Value>
+      <Value>Nav</Value>
+	  <Value>Enum</Value>
+    </CollectionProperty>
   </GlobalSettings>
   <Analyzers>
     <Analyzer AnalyzerId="Microsoft.StyleCop.CSharp.NamingRules">

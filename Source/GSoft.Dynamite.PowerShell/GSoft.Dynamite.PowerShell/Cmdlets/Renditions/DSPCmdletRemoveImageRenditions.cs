@@ -56,7 +56,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, "Removing image renditions on site '{0}'", siteUrl));
                 using (var site = new SPSite(siteUrl))
                 {
-                    using (var childScope = PowerShellContainer.BeginSiteLifetimeScope(site))
+                    using (var childScope = PowerShellContainer.BeginLifetimeScope(site))
                     {
                         var imageRenditionHelper = childScope.Resolve<ImageRenditionHelper>();
 

@@ -52,7 +52,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
                         var managedNavigationNode = webNode.Descendants("ManagedNavigation").SingleOrDefault();
                         if (managedNavigationNode != null)
                         {
-                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                            using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
                                 var settings = new ManagedNavigationSettings(managedNavigationNode);
                                 var navigationHelper = childScope.Resolve<NavigationHelper>();

@@ -80,6 +80,13 @@
     </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx.designer.cs">
       <DependentUpon>GoogleAnalyticsTracking.ascx.cs</DependentUpon>
+	</Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.cs">
+      <DependentUpon>CssImports.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.designer.cs">
+      <DependentUpon>CssImports.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
       <DependentUpon>JavascriptImports.ascx</DependentUpon>
@@ -109,6 +116,12 @@
     </None>
     <None Include="Features\Google Analytics Tracking\Google Analytics Tracking.feature">
       <FeatureId>{dad6f710-ef35-479c-a057-55f6e5931656}</FeatureId>
+	</None>
+    <None Include="DynamiteCssImports\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{8f027e41-5904-4451-90b2-55fdf3cbaea3}</SharePointProjectItemId>
+    </None>
+    <None Include="Features\CSS Imports\CSS Imports.feature">
+      <FeatureId>{f33ae721-5d4a-477c-a984-6ce3266c2aa7}</FeatureId>
     </None>
     <None Include="Features\Web Config Modifications\Web Config Modifications.feature">
       <FeatureId>{3e6c6a28-0bee-4166-95f4-849754b5be7d}</FeatureId>
@@ -140,13 +153,20 @@
   <ItemGroup>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx" />
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx" />
-    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
-      <SubType>ASPXCodeBehind</SubType>
-    </Content>
     <Content Include="DynamiteGoogleAnalyticsSearchSend\Elements.xml" />
     <Content Include="DynamiteGoogleAnalyticsTracking\Elements.xml" />
     <Content Include="Features\Google Analytics Tracking\Google Analytics Tracking.Template.xml">
       <DependentUpon>Google Analytics Tracking.feature</DependentUpon>
+	</Content>
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="DynamiteCssImports\Elements.xml" />
+    <Content Include="Features\CSS Imports\CSS Imports.Template.xml">
+      <DependentUpon>CSS Imports.feature</DependentUpon>
     </Content>
     <Content Include="Features\Web Config Modifications\Web Config Modifications.Template.xml">
       <DependentUpon>Web Config Modifications.feature</DependentUpon>
@@ -157,6 +177,7 @@
     <Content Include="DynamiteJavascriptImports\Elements.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Layouts\GSoft.Dynamite\CSS\GSoft.Dynamite.Core.css" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.BindindHandlers.js" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.Extensions.js" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Core.js" />

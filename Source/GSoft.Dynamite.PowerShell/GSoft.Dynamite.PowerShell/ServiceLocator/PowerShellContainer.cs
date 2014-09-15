@@ -35,9 +35,9 @@ namespace GSoft.Dynamite.PowerShell.Unity
         /// </summary>
         /// <param name="feature">The feature that define the scope</param>
         /// <returns>A LifeTimeScope</returns>
-        public static ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
+        public static ILifetimeScope BeginLifetimeScope(SPFeature feature)
         {
-            return serviceLocator.BeginFeatureLifetimeScope(feature);
+            return serviceLocator.BeginLifetimeScope(feature);
         }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace GSoft.Dynamite.PowerShell.Unity
         /// </summary>
         /// <param name="web">The web that define the scope</param>
         /// <returns>A LifeTimeScope</returns>
-        public static ILifetimeScope BeginWebLifetimeScope(SPWeb web)
+        public static ILifetimeScope BeginLifetimeScope(SPWeb web)
         {
-            return serviceLocator.BeginWebLifetimeScope(web);
+            return serviceLocator.BeginLifetimeScope(web);
         }
 
         /// <summary>
@@ -55,9 +55,9 @@ namespace GSoft.Dynamite.PowerShell.Unity
         /// </summary>
         /// <param name="site">The site that define the scope</param>
         /// <returns>A LifeTimeScope</returns>
-        public static ILifetimeScope BeginSiteLifetimeScope(SPSite site)
+        public static ILifetimeScope BeginLifetimeScope(SPSite site)
         {
-            return serviceLocator.BeginSiteLifetimeScope(site);
+            return serviceLocator.BeginLifetimeScope(site);
         }
     }
 }

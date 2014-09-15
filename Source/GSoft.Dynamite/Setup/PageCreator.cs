@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Web.UI;
 using GSoft.Dynamite.Extensions;
@@ -131,6 +132,23 @@ namespace GSoft.Dynamite.Setup
                                 }
                             }
 
+                            if (pageInfo.IsWelcomePage)
+                            {
+                                folder.WelcomePage = newPage.ListItem.Name;
+                                folder.Update();
+                                EnsureFolderPublish(folder);
+
+                                if (folder.UniqueId == newPage.ListItem.ParentList.RootFolder.UniqueId)
+                                {
+                                    // We are setting the Pages library's root folder's welcome page, so let's assume this means we also need to set it as the website's welcome page as well
+                                    var webRootFolder = newPage.ListItem.ParentList.ParentWeb.RootFolder;
+                                    webRootFolder.WelcomePage = string.Format(CultureInfo.InvariantCulture, "{0}/{1}", publishingWeb.PagesListName, newPage.Name);
+                                    webRootFolder.Update();
+
+                                    EnsureFolderPublish(folder);
+                                }
+                            }
+
                             newPage.ListItem.Update();
                         }
                     }
@@ -175,6 +193,19 @@ namespace GSoft.Dynamite.Setup
             }
 
             return contentTypeId;
+        }
+
+        private static void EnsureFolderPublish(SPFolder folder)
+        {
+            if (folder.Item != null
+                && folder.Item.ModerationInformation != null
+                && folder.Item.ParentList.EnableModeration
+                && folder.Item.ModerationInformation.Status != SPModerationStatusType.Approved)
+            {
+                // Only approve a folder if it isn't approved
+                folder.Item.ModerationInformation.Status = SPModerationStatusType.Approved;
+                folder.Item.Update();
+            }
         }
     }
 }

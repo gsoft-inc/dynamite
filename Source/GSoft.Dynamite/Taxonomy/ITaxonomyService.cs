@@ -266,5 +266,14 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termSetName">The term set name</param>
         /// <returns>A list of taxonomy values</returns>
         IList<Term> GetTermsForTermSet(SPSite site, string termSetName);
+
+        /// <summary>
+        /// Gets the term set from group.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="group">The group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>The term set for the specified store, group and term set name.</returns>
+        TermSet GetTermSetFromGroup(TermStore termStore, Group group, string termSetName);
     }
 }

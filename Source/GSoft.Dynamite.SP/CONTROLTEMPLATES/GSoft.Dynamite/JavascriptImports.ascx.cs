@@ -81,8 +81,6 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
             {
                 // Script not found, remove from page
                 scriptLink.Parent.Controls.Remove(scriptLink);
-
-                // Current.Resolve<ILogger>().Info("Failed to find script in layouts folder. Removing script link from page: " + scriptLink.Name);
             }
         }
     }
