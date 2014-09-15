@@ -46,9 +46,9 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="feature">The current feature that is requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        public static ILifetimeScope BeginFeatureLifetimeScope(SPFeature feature)
+        public static ILifetimeScope BeginLifetimeScope(SPFeature feature)
         {
-            return innerLocator.BeginFeatureLifetimeScope(feature);
+            return innerLocator.BeginLifetimeScope(feature);
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="web">The current web from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
-        public static ILifetimeScope BeginWebLifetimeScope(SPWeb web)
+        public static ILifetimeScope BeginLifetimeScope(SPWeb web)
         {
-            return innerLocator.BeginWebLifetimeScope(web);
+            return innerLocator.BeginLifetimeScope(web);
         }
     }
 }

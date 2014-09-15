@@ -34,7 +34,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
         {
             this.WriteWarning("Sync SPWeb " + this.SourceWeb.Url + " to the " + this.LabelToSync.ToUpper() + " variation label...");
 
-            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(this.SourceWeb))
+            using (var childScope = PowerShellContainer.BeginLifetimeScope(this.SourceWeb))
             {
                 var variationHelper = childScope.Resolve<VariationHelper>();
                 variationHelper.SyncWeb(this.SourceWeb, this.LabelToSync);

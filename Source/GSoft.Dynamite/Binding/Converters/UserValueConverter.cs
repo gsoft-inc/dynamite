@@ -1,6 +1,7 @@
 using System.Globalization;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
+using System;
 
 namespace GSoft.Dynamite.Binding.Converters
 {
@@ -22,9 +23,17 @@ namespace GSoft.Dynamite.Binding.Converters
         public override object Convert(object value, SharePointListItemConversionArguments arguments)
         {
             UserValue userValue = null;
-            var sharepointUserValue = new SPFieldUserValue(arguments.ListItem.Web, value as string);
-            var principal = sharepointUserValue.User;
-            userValue = principal != null ? new UserValue(principal) : null;
+
+            try
+            {
+                var sharepointUserValue = new SPFieldUserValue(arguments.ListItem.Web, value as string);
+                var principal = sharepointUserValue.User;
+                userValue = principal != null ? new UserValue(principal) : null;
+            }
+            catch (ArgumentException)
+            {
+                // failed to read SPUser value, will return null
+            }
 
             return userValue;            
         }

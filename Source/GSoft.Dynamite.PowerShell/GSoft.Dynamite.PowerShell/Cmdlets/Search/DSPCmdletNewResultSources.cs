@@ -70,7 +70,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 
                 using (var site = new SPSite(contextWeb))
                 {
-                    using (var childScope = PowerShellContainer.BeginWebLifetimeScope(site.RootWeb))
+                    using (var childScope = PowerShellContainer.BeginLifetimeScope(site.RootWeb))
                     {
                         var searchHelper = childScope.Resolve<SearchHelper>();
 
