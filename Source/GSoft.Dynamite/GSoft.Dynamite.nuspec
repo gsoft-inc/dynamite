@@ -15,8 +15,8 @@
     <copyright>Copyright 2014</copyright>
     <tags>SharePoint</tags>
     <dependencies>
-      <dependency id="Autofac" version="3.5.0" />
-      <dependency id="Newtonsoft.Json" version="6.0.3" />
+      <dependency id="Autofac" version="[3.5.0]" />
+      <dependency id="Newtonsoft.Json" version="[6.0.3]" />
     </dependencies>
   </metadata>
   <files>
