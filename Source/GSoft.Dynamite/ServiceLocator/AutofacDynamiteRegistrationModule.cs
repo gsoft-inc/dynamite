@@ -4,6 +4,7 @@ using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caching;
+using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.Definitions;
@@ -13,6 +14,7 @@ using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.Monitoring;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
@@ -60,13 +62,15 @@ namespace GSoft.Dynamite.ServiceLocator
             var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);    // Logger without debug output
             builder.RegisterInstance<ILogger>(logger);
 #endif
+            // Monitoring
+            builder.RegisterType<AggregateTimeTracker>().As<IAggregateTimeTracker>().InstancePerSite();
 
             // Binding
             var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
-            var cachedBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
+            var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
 
             builder.RegisterType<SharePointDataRowEntitySchema>();
-            builder.RegisterInstance<IEntitySchemaBuilder>(cachedBuilder);
+            builder.RegisterInstance<IEntitySchemaBuilder>(cachedSchemaBuilder);
             builder.RegisterType<TaxonomyValueDataRowConverter>();
             builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
             builder.RegisterType<TaxonomyValueConverter>();
@@ -140,8 +144,13 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PageCreator>();
 
             // Taxonomy
-            builder.RegisterType<SiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>().SingleInstance();
-            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>().InstancePerSite();
+            builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
+            builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
+
+            //// Example of monitored (profiled) instance:
+            ////builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
+            ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
+
             builder.RegisterType<TaxonomyHelper>();
 
             // Timer Jobs
@@ -159,6 +168,10 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
             builder.RegisterType<DisplayTemplateHelper>();
             builder.RegisterType<ImageRenditionHelper>();
+
+            // CAML query builder and utilities
+            builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
+            builder.RegisterType<CamlUtils>();
 
             // Web config
             builder.RegisterType<WebConfigModificationHelper>();

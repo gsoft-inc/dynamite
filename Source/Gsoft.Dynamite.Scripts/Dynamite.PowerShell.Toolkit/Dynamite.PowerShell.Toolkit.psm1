@@ -99,7 +99,7 @@ Export-ModuleMember -Function Update-DSPTokens
 Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup
 
 # Features
-Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Switch-DSPFeatures
+Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Switch-DSPFeatures
 
 # Managed Paths
 Export-ModuleMember New-DSPManagedPath

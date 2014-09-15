@@ -2,6 +2,7 @@
 
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -31,24 +32,27 @@ namespace GSoft.Dynamite.Taxonomy
         /// </param>
         public SiteTaxonomyCache(SPSite site, string termStoreName)
         {
-            if (site == null)
+            using (new SPMonitoredScope("GSoft.Dynamite - Site taxonomy cache initialization"))
             {
-                throw new ArgumentNullException("site", "SPSite is currently null, please pass a valid site as argument.");    
-            }
+                if (site == null)
+                {
+                    throw new ArgumentNullException("site", "SPSite is currently null, please pass a valid site as argument.");
+                }
 
-            this.SiteId = site.ID;
+                this.SiteId = site.ID;
 
-            // Signal the session's internal cache to refresh itself periodically
-            this.TaxonomySession = new TaxonomySession(site, true);
+                // Don't send in the updateCache=true setting - let the SharePoint inner Taxonomy cache refresh itself normally (every 10 seconds or so)
+                this.TaxonomySession = new TaxonomySession(site);
 
-            if (!string.IsNullOrEmpty(termStoreName))
-            {
-                this.SiteCollectionGroup = this.TaxonomySession.TermStores[termStoreName].GetSiteCollectionGroup(site);
-            }
-            else
-            {
-                // Use default term store
-                this.SiteCollectionGroup = this.TaxonomySession.DefaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
+                if (!string.IsNullOrEmpty(termStoreName))
+                {
+                    this.SiteCollectionGroup = this.TaxonomySession.TermStores[termStoreName].GetSiteCollectionGroup(site);
+                }
+                else
+                {
+                    // Use default term store
+                    this.SiteCollectionGroup = this.TaxonomySession.DefaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
+                }
             }
         }
 

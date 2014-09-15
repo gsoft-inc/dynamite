@@ -71,7 +71,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                 {
                     using (var web = site.OpenWeb())
                     {
-                        using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                        using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                         {
                             var listHelper = childScope.Resolve<ListHelper>();
                             var catalogHelper = childScope.Resolve<CatalogHelper>();
@@ -190,7 +190,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         {
             SPList list = null;
 
-            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+            using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
             {
                 var listHelper = childScope.Resolve<ListHelper>();
                 list = listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
@@ -251,7 +251,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         {
             SPList list = null;
 
-            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+            using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
             {
                 var listHelper = childScope.Resolve<ListHelper>();
                 list = listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
@@ -314,7 +314,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
         private void CreateSegments(SPList list, Catalog catalog)
         {
-            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(list.ParentWeb))
+            using (var childScope = PowerShellContainer.BeginLifetimeScope(list.ParentWeb))
             {
                 var listHelper = childScope.Resolve<ListHelper>();
                 var taxonomyHelper = childScope.Resolve<TaxonomyHelper>();
@@ -371,7 +371,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
         private void SetDefaultValues(SPList list, Catalog catalog)
         {
-            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(list.ParentWeb))
+            using (var childScope = PowerShellContainer.BeginLifetimeScope(list.ParentWeb))
             {
                 var taxonomyHelper = childScope.Resolve<TaxonomyHelper>();
 

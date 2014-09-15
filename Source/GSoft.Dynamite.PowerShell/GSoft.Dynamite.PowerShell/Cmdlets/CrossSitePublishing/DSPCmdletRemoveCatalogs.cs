@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
                         if (isContinue)
                         {
-                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                            using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
                                 var listHelper = childScope.Resolve<ListHelper>();
 

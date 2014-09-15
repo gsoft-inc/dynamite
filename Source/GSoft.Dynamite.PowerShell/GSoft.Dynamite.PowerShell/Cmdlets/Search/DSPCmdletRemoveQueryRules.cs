@@ -56,7 +56,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                     {
                         using (var web = site.OpenWeb(contextWeb))
                         {
-                            using (var childScope = PowerShellContainer.BeginWebLifetimeScope(web))
+                            using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
                                 var searchHelper = childScope.Resolve<SearchHelper>();
                                 var searchServiceApp = searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);

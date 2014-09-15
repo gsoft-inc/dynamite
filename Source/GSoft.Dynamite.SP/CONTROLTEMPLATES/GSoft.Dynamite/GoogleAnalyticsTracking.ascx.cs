@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Web.UI;
-using Microsoft.SharePoint;
 using Autofac;
 using GSoft.Dynamite.Configuration;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebControls;
 
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
+    /// <summary>
+    /// Google analytics user control
+    /// </summary>
     public partial class GoogleAnalyticsTracking : UserControl
     {
         /// <summary>

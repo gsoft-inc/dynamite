@@ -28,7 +28,7 @@ namespace GSoft.Dynamite.Configuration
         /// Method to get the Mail to send exception and errors
         /// </summary>
         /// <param name="web">The current web</param>
-        /// <returns>Comma seperated emails</returns>
+        /// <returns>Comma separated emails</returns>
         /// <remarks>
         /// The implementation of this method should check on the most nested scope first than fallback on the next.
         /// Web > Site > WebApplication > Farm

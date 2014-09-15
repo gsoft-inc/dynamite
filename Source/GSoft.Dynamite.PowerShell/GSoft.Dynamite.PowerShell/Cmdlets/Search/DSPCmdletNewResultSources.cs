@@ -70,7 +70,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
 
                 using (var site = new SPSite(contextWeb))
                 {
-                    using (var childScope = PowerShellContainer.BeginWebLifetimeScope(site.RootWeb))
+                    using (var childScope = PowerShellContainer.BeginLifetimeScope(site.RootWeb))
                     {
                         var searchHelper = childScope.Resolve<SearchHelper>();
 
@@ -102,7 +102,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         if (!string.IsNullOrEmpty(sortDirectionsAsString) && !string.IsNullOrEmpty(sortFields))
                         {
                             var delimiter = new[] { ',', ';', ' ' };
-                            var fields = sortFields.Split(delimiter,StringSplitOptions.RemoveEmptyEntries);
+                            var fields = sortFields.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
                             var directions = sortDirectionsAsString.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(x => (SortDirection)Enum.Parse(typeof(SortDirection), x));
 
                             searchHelper.EnsureResultSource(

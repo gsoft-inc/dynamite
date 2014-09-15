@@ -31,7 +31,22 @@
 	
 .PARAMETER Domain
 	The prefix for the token file 'Tokens.Domain.ps1'. By default the value is the current NetBIOS name.
-        
+ 	
+.PARAMETER Encoding
+	Specifies the file encoding. The default is UTF8.
+	Valid values are:
+	-- ASCII: Uses the encoding for the ASCII (7-bit) character set.
+	-- BigEndianUnicode: Encodes in UTF-16 format using the big-endian byte order.
+	-- Byte: Encodes a set of characters into a sequence of bytes.
+	-- String: Uses the encoding type for a string.
+	-- Unicode: Encodes in UTF-16 format using the little-endian byte order.
+	-- UTF7: Encodes in UTF-7 format.
+	-- UTF8: Encodes in UTF-8 format.
+	-- Unknown: The encoding type is unknown or invalid. The data can be treated as binary.
+	
+.PARAMETER TemplatePath
+	The path where the template files are tokenized. By default the value is the current working location.
+               
   .LINK
     GSoft, Team Dynamite on Github
     > https://github.com/GSoft-SharePoint
@@ -53,6 +68,13 @@ function Update-DSPTokens {
 		[string]$Domain = [System.Net.Dns]::GetHostName(),
 		
 		[Parameter(Mandatory=$false)]
+		[Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding]
+		$Encoding = [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding]::UTF8,
+		
+		[ValidateScript({Test-Path $_})]
+		[string]$TemplatePath = (Get-Location),
+		
+		[Parameter(Mandatory=$false)]
 		[switch]$UseHostName,
 		
 		[Parameter(Mandatory=$false)]
@@ -68,6 +90,9 @@ function Update-DSPTokens {
 	}
 
 	$tokenPath = ""
+	
+	$Path = Resolve-Path $Path
+	$TemplatePath = Resolve-Path $TemplatePath
 		
 	Get-ChildItem -Path $Path -Include "Tokens.$Domain.ps1" -Recurse | foreach {
 		$tokenPath = $_.FullName
@@ -75,7 +100,7 @@ function Update-DSPTokens {
 	
 	if (Test-Path $tokenPath) {
 		Write-Host "Found token file at : $tokenPath"
-		Execute-TokenFile $Path $tokenPath
+		Execute-TokenFile $TemplatePath $tokenPath $Encoding
 	}
 	else {
 		Write-Host "Didn't found the token file named : Tokens.$Domain.ps1"
@@ -100,7 +125,8 @@ function script:Get-CurrentDomain {
 function script:Execute-TokenFile {
 	param (
 		$Path,
-		$TokenPath
+		$TokenPath,
+		$Encoding
 	)
 	Write-Host "$TokenPath"
 	# Load tokens
@@ -113,15 +139,15 @@ function script:Execute-TokenFile {
 		
 		try {
 			# Get the contents of the template file.
-			$contents  = Get-Content $_ -Encoding UTF8 -ErrorAction Stop
+			$contents  = Get-Content $_ -Encoding $Encoding -ErrorAction Stop
 			
 			# for each token in our token file, we replace the token in the contents of the file.
 			$tokens | ForEach {
 				$contents = $contents -replace "\[\[$($_.Name)\]\]", $_.Value
 			}
 			
-			# Write the contents with the replaces tokens to a new file overiding any current file.
-			Set-Content -Encoding UTF8 -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
+			# Write the contents with the replaces tokens to a new file overriding any current file.
+			Set-Content -Encoding $Encoding -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
 		} catch {
 			Write-Host "Failed - $_" -ForegroundColor Red
 		}

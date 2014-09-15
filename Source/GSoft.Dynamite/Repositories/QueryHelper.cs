@@ -63,7 +63,6 @@ namespace GSoft.Dynamite.Repositories
 
                 if (propertyDetails != null)
                 {
-                    
                     var fieldInternalName = !string.IsNullOrEmpty(propertyDetails.PropertyName) ? propertyDetails.PropertyName : info.Name;
 
                     if (!propertyDetails.IsLookupId)
@@ -83,6 +82,9 @@ namespace GSoft.Dynamite.Repositories
                     }
                 }
             }
+
+            // Always fetch CT info
+            viewFieldsString += "<FieldRef Name='ContentTypeId' />";
 
             return viewFieldsString;
         }

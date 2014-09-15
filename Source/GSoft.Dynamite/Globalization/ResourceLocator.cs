@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Resources;
 using System.Web;
 using GSoft.Dynamite.Structures;
@@ -18,10 +20,13 @@ namespace GSoft.Dynamite.Globalization
         /// Creates a new resource locator which will default to the provided
         /// resource file name.
         /// </summary>
-        /// <param name="resourceFileConfig">The current application's default/global resource file names</param>
-        public ResourceLocator(IResourceLocatorConfig resourceFileConfig)
+        /// <param name="resourceFileConfigs">All registered implementations for IResourceLocatorConfig</param>
+        public ResourceLocator(IEnumerable<IResourceLocatorConfig> resourceFileConfigs)
         {
-            this._defaultResourceFileNames = resourceFileConfig.ResourceFileKeys;
+            var resourceFiles = new string[] { };
+            resourceFiles = resourceFileConfigs.Aggregate(resourceFiles, (current, config) => current.Union(config.ResourceFileKeys).ToArray());
+
+            this._defaultResourceFileNames = resourceFiles;
         }
 
         /// <summary>
