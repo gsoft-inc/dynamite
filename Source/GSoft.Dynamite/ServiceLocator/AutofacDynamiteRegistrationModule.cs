@@ -146,8 +146,10 @@ namespace GSoft.Dynamite.ServiceLocator
             // Taxonomy
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
-            //builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
-            //builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
+
+            //// Example of monitored (profiled) instance:
+            ////builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
+            ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 
             builder.RegisterType<TaxonomyHelper>();
 

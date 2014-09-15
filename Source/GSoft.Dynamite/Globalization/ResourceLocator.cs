@@ -23,7 +23,7 @@ namespace GSoft.Dynamite.Globalization
         /// <param name="resourceFileConfigs">All registered implementations for IResourceLocatorConfig</param>
         public ResourceLocator(IEnumerable<IResourceLocatorConfig> resourceFileConfigs)
         {
-            var resourceFiles = new string[]{};
+            var resourceFiles = new string[] { };
             resourceFiles = resourceFileConfigs.Aggregate(resourceFiles, (current, config) => current.Union(config.ResourceFileKeys).ToArray());
 
             this._defaultResourceFileNames = resourceFiles;

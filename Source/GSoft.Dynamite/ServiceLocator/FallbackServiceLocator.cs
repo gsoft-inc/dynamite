@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
         /// <summary>
         /// By default, the service locator instance will load all Dynamite registration modules available in the GAC
-        /// (i.e. all those modules located within assemblies that match the pattern "GSoft.Dynamite*.dll)
+        /// (i.e. all those modules located within assemblies that match the pattern "GSoft.Dynamite*.DLL")
         /// </summary>
         private static ISharePointServiceLocator fallbackServiceLocator = new SharePointServiceLocator("GSoft.Dynamite");
 

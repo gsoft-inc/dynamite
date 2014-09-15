@@ -41,8 +41,7 @@ namespace GSoft.Dynamite.Taxonomy
 
                 this.SiteId = site.ID;
 
-                // Signal the session's internal cache to refresh itself periodically
-                //this.TaxonomySession = new TaxonomySession(site, true);
+                // Don't send in the updateCache=true setting - let the SharePoint inner Taxonomy cache refresh itself normally (every 10 seconds or so)
                 this.TaxonomySession = new TaxonomySession(site);
 
                 if (!string.IsNullOrEmpty(termStoreName))

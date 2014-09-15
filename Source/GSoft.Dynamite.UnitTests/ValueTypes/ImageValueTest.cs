@@ -6,6 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.ValueTypes
 {
+    /// <summary>
+    /// Test class
+    /// </summary>
     [TestClass]
     public class ImageValueTest
     {
@@ -20,6 +23,9 @@ namespace GSoft.Dynamite.UnitTests.ValueTypes
         private const int NewHorizontalSpacing = 10;
         private const int NewVerticalSpacing = 15;
 
+        /// <summary>
+        /// Test method
+        /// </summary>
         [TestMethod]
         public void GivenAnImageFieldValueToImageValueConstructorExpectPropertiesToBeSetted()
         {

@@ -8,7 +8,7 @@ using GSoft.Dynamite.Utils;
 namespace GSoft.Dynamite.Monitoring
 {
     /// <summary>
-    /// TODO: Update summary.
+    /// Aggregate time tracking utility
     /// </summary>
     public class AggregateTimeTracker : IAggregateTimeTracker
     {
@@ -17,16 +17,31 @@ namespace GSoft.Dynamite.Monitoring
         private IDictionary<string, TimeSpan> aggregateTimeSpans = new Dictionary<string, TimeSpan>();
         private ILogger log;
 
+        /// <summary>
+        /// Summing Time Tracker
+        /// </summary>
+        /// <param name="log">The logging utility</param>
         public AggregateTimeTracker(ILogger log)
         {
             this.log = log;
         }
         
+        /// <summary>
+        /// Fetches the total time spent in code segments that
+        /// were timed using the specified key
+        /// </summary>
+        /// <param name="key">The key that was used to track time</param>
+        /// <returns>The sum time span</returns>
         public TimeSpan GetAggregateTimeSpentForKey(string key)
         {
             return this.EnsureTimeSpanForKey(key);
         }
 
+        /// <summary>
+        /// Adds time to the total for the specified key
+        /// </summary>
+        /// <param name="key">The key of the timings aggregate</param>
+        /// <param name="timeSpan">The time spent that must be added</param>
         public void AddTimeSpanToAggregateTimeSpentForKey(string key, TimeSpan timeSpan)
         {
             // Don't allow two threads to update aggregate at once
@@ -47,6 +62,11 @@ namespace GSoft.Dynamite.Monitoring
                 });
         }
 
+        /// <summary>
+        /// Starts a time tracking scope
+        /// </summary>
+        /// <param name="key">The aggregate timings key</param>
+        /// <returns>The disposable timing scope</returns>
         public TimeTrackerScope BeginTimeTrackerScope(string key)
         {
             return new TimeTrackerScope(key, this);
@@ -64,7 +84,6 @@ namespace GSoft.Dynamite.Monitoring
                                key,
                                () =>
                                {
-
                                    // Double check for thread concurency, somone might have aquired write lock before we did
                                    if (!this.aggregateTimeSpans.ContainsKey(key))
                                    {

@@ -6,7 +6,7 @@ using System.Web.UI.WebControls.WebParts;
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 {
     /// <summary>
-    /// Control that provide an easy way to send the query string to Google Analytics in the sharepoint 2013 search box.
+    /// Control that provide an easy way to send the query string to Google Analytics in the SharePoint 2013 search box.
     /// </summary>
     public partial class GoogleAnalyticsSearchSend : UserControl
     {

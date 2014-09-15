@@ -182,7 +182,7 @@ namespace GSoft.Dynamite.Taxonomy
             SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
             TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
-            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
+            TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
             return termSet.GetTerm(id);
         }
@@ -200,7 +200,7 @@ namespace GSoft.Dynamite.Taxonomy
             SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
             TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
             Group siteCollectionGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
-            TermSet termSet = GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
+            TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
             return termSet.GetTerm(id);
         }

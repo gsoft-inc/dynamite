@@ -1,28 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using Autofac;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
-using GSoft.Dynamite.Logging;
-using System.Reflection;
-using System.Globalization;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
     /// <summary>
+    /// <para>
     /// Special service locator which scans the GAC for DLLs that match the 
-    /// *.ServiceLocator.dll pattern for a ISharePointServiceLocatorAccessor
+    /// *.ServiceLocator.DLL pattern for a ISharePointServiceLocatorAccessor
     /// to which it will delegate container provider duties.
-    /// 
+    /// </para>
+    /// <para>
     /// Thanks to these ServiceLocator-bootstrapping mechanics, you can build
     /// reusable "framework" SharePoint components that can have their inner
-    /// implementations overrided by AddOns' registration module (since the
-    /// AddOn's ServiceLocator is responsible for determining the final set
+    /// implementations overridden by add-on registration module (since the
+    /// add-on ServiceLocator is responsible for determining the final set
     /// of all registration modules that will be loaded).
+    /// </para>
     /// </summary>
     public class AddOnProvidedServiceLocator : ISharePointServiceLocator
     {
@@ -35,15 +38,18 @@ namespace GSoft.Dynamite.ServiceLocator
         private object lockObject = new object();
 
         /// <summary>
+        /// <para>
         /// Exposes the most-nested currently available lifetime scope.
-        /// 
+        /// </para>
+        /// <para>
         /// In an HTTP-request context, will return a shared per-request
         /// scope (allowing you to inject InstancePerSite, InstancePerWeb
-        /// and IntancePerRequest-registered objects). Be sure to enable Dynamite's
+        /// and InstancePerRequest-registered objects). Be sure to enable Dynamite's
         /// feature HttpModule feature: "GSoft.Dynamite.SP_Web Config Modifications" so
         /// that InstancePerRequest-scoped objects get properly disposed at the end of
         /// every HttpRequest.
-        /// 
+        /// </para>
+        /// <para>
         /// Outside an HTTP-request context, will return the root application
         /// container itself (preventing you from injecting InstancePerSite,
         /// InstancePerWeb or InstancePerRequest objects).  If more than two DLLs exist in GAC that match the 
@@ -51,19 +57,22 @@ namespace GSoft.Dynamite.ServiceLocator
         /// for DI bootstrapping at application startup, due to lack of context it will be impossible 
         /// to disambiguate between the available containers. Use BeginLifetimeScope(SPFeature) or 
         /// BeginLifetimeScope(SPWeb) or BeginLifetimeScope(SPSite) or BeginLifetimeScope(SPWebApplication) 
-        /// instead when outside an HTTP-request context (e.g. Cmdlets, FeatureActivated, etc.).
-        /// 
+        /// instead when outside an HTTP-request context (e.g. PowerShell commands, FeatureActivated, etc.).
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPWeb-SPSite-SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Do not dispose this scope, as it will be reused by others. Prefer using
         /// BeginLifetimeScope() within a using block to this method to ensure all
         /// IDisposable objects you inject get properly disposed.
+        /// </para>
         /// </summary>
         [Obsolete("Prefer usage of BeginLifetimeScope() from a using block to ensure proper disposal of all IDisposable objects you injected.")]
         public ILifetimeScope Current
@@ -85,16 +94,19 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope - a child to the most-nested currently 
         /// available lifetime scope.
-        /// 
+        /// </para>
+        /// <para>
         /// In an HTTP-request context, will return a child scope to the shared 
         /// per-request scope (allowing you to inject InstancePerSite, InstancePerWeb
         /// and InstancePerRequest-registered objects). Be sure to enable Dynamite's
         /// feature HttpModule feature: "GSoft.Dynamite.SP_Web Config Modifications" so
         /// that InstancePerRequest-scoped objects get properly disposed at the end of
         /// every HttpRequest.
-        /// 
+        /// </para>
+        /// <para>
         /// Outside an HTTP-request context, will return the a child of the root application
         /// container itself (preventing you from injecting InstancePerSite, InstancePerWeb 
         /// or InstancePerRequest objects). If more than two DLLs exist in GAC that match the 
@@ -102,18 +114,21 @@ namespace GSoft.Dynamite.ServiceLocator
         /// for DI bootstrapping at application startup, due to lack of context it will be impossible 
         /// to disambiguate between the available containers. Use BeginLifetimeScope(SPFeature) or 
         /// BeginLifetimeScope(SPWeb) or BeginLifetimeScope(SPSite) or BeginLifetimeScope(SPWebApplication) 
-        /// instead when outside an HTTP-request context (e.g. Cmdlets, FeatureActivated, etc.).
-        /// 
+        /// instead when outside an HTTP-request context (e.g. PowerShell commands, FeatureActivated, etc.).
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPWeb-SPSite-SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public ILifetimeScope BeginLifetimeScope()
@@ -122,27 +137,33 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope that is as nested as possible,
         /// depending on the scope of the specified feature.
-        /// 
+        /// </para>
+        /// <para>
         /// In a SPSite or SPWeb-scoped feature context, will return a web-specific
         /// lifetime scope (allowing you to inject InstancePerSite and InstancePerWeb
         /// objects - InstancePerRequest scoped objects will be inaccessible).
-        /// 
+        /// </para>
+        /// <para>
         /// In a SPFarm or SPWebApplication feature context, will return a child
         /// container of the root application container (preventing you from injecting
         /// InstancePerSite, InstancePerWeb or InstancePerRequest objects).
-        /// 
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPWeb-SPSite-SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
         /// <param name="feature">The current feature context from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
@@ -174,24 +195,28 @@ namespace GSoft.Dynamite.ServiceLocator
                 this.EnsureServiceLocatorAccessorForCurrentContext();
             }
 
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(feature);;
+            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(feature);
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope under the scope of the specified web
         /// (allowing you to inject InstancePerSite and InstancePerWeb objects - InstancePerRequest
         /// scoped objects will be inaccessible).
-        /// 
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPWeb-SPSite-SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
         /// <param name="web">The current web from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
@@ -202,20 +227,24 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope under the scope of the specified site collection
         /// (allowing you to inject InstancePerSite objects - InstancePerWeb and InstancePerRequest
         /// scoped objects will be inaccessible).
-        /// 
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPSite-SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
         /// <param name="site">The current site collection from which we are requesting a child lifetime scope</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
@@ -226,20 +255,24 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope under the root application container (objects
         /// registered as InstancePerSite, InstancePerWeb or InstancePerRequest will be
         /// inaccessible).
-        /// 
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in one of the SPPersistedObject's property bags in the SPWebApp-SPFarm 
         /// hierarchy to indicate which ServiceLocator should be used in your context. If
-        /// the disambiguator setting cannot be found in any of the property bags in the
+        /// the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
         /// <param name="webApplication">The current context's web application</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
@@ -250,21 +283,25 @@ namespace GSoft.Dynamite.ServiceLocator
         }
 
         /// <summary>
+        /// <para>
         /// Creates a new child lifetime scope under the root application container (objects
         /// registered as InstancePerSite, InstancePerWeb or InstancePerRequest will be
         /// inaccessible).
-        /// 
+        /// </para>
+        /// <para>
         /// If more than 1 assembly matches the *.ServiceLocator.DLL pattern in the GAC,
         /// store your preferred ServiceLocator assembly name (with key: 'ServiceLocatorAssemblyName') 
         /// in the SPFarm property bag to indicate which ServiceLocator should be used in your context. 
-        /// If the disambiguator setting cannot be found in any of the property bags in the
+        /// If the discriminator setting cannot be found in any of the property bags in the
         /// hierarchy, an error will be logged to ULS and the FallbackServiceLocator will be used
         /// (preventing your AddOn registration modules from being loaded).
-        /// 
+        /// </para>
+        /// <para>
         /// Please dispose this lifetime scope when done (E.G. call this method from
         /// a using block).
+        /// </para>
         /// </summary>
-        /// <param name="site">The current context's farm</param>
+        /// <param name="farm">The current context's farm</param>
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public ILifetimeScope BeginLifetimeScope(SPFarm farm)
         {
@@ -328,7 +365,6 @@ namespace GSoft.Dynamite.ServiceLocator
 
                             if (matchingAssemblies.Any())
                             {
-
                                 if (matchingAssemblies.Count > 1)
                                 {
                                     // 2) If more than one service locator is found, we must disambiguate. We have to use the 
@@ -360,7 +396,7 @@ namespace GSoft.Dynamite.ServiceLocator
                                     }
                                     else
                                     {
-                                        // We failed to find a disambiguator setting in all of the context's Property Bags
+                                        // We failed to find a discriminator setting in all of the context's Property Bags
                                         throw new InvalidOperationException(basicDisambiguationErrorMessage +
                                             " You cannot begin injection from the root application container if more that one ServiceLocator assembly exists in the GAC." +
                                             " You must begin injection with one of the following methods on your ISharePointServiceLocator: BeginLifetimeScope(SPFeature) or" +
@@ -429,8 +465,8 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <param name="site">The context's SPSite. Keep null if none available.</param>
         /// <param name="webApplication">The context's SPWebApplication. Keep null if none available.</param>
         /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
-        /// <param name="locationWhereDiscriminatorWasFound">A out-param string that returns the identity of the SPPersistedObject where the disambiguator setting was found</param>
-        /// <returns>The ServiceLocatorAssemblyName disambiguator settings, if found in one of the context objects' property bags</returns>
+        /// <param name="locationWhereDiscriminatorWasFound">An out parameter string that returns the identity of the SPPersistedObject where the discriminator setting was found</param>
+        /// <returns>The ServiceLocatorAssemblyName discriminator settings, if found in one of the context objects' property bags</returns>
         private string FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, out string locationWhereDiscriminatorWasFound)
         {
             if (web != null && web.Properties.ContainsKey(KeyServiceLocatorAssemblyName))
@@ -463,10 +499,10 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <summary>
         /// Loops through all Types in an assembly to find one that implements
         /// the <see cref="ISharePointServiceLocatorAccessor"/> interface, so
-        /// that it can be used to access the preferred AddOn's ServiceLocator.
+        /// that it can be used to access the preferred add-on ServiceLocator.
         /// </summary>
         /// <param name="assembly">The assembly to scan</param>
-        /// <returns>The AddOn's service locator accessor type</returns>
+        /// <returns>The add-on service locator accessor type</returns>
         private Type FindServiceLocatorAccessorType(Assembly assembly)
         {
             var accessorInterfaceType = typeof(ISharePointServiceLocatorAccessor);

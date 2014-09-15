@@ -20,10 +20,11 @@ namespace GSoft.Dynamite.Definitions
         private string resourceFileName;
 
         /// <summary>
-        /// Default constructore for ContentTypeInfo
+        /// Default constructor for ContentTypeInfo
         /// </summary>
         public ContentTypeInfo()
-        { }
+        { 
+        }
 
         /// <summary>
         /// Creates a content type metadata encapsulation

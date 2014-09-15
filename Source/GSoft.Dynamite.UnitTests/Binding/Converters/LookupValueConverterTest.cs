@@ -10,9 +10,15 @@ namespace GSoft.Dynamite.UnitTests.Binding.Converters
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Test class
+    /// </summary>
     [TestClass]
     public class LookupValueConverterTest
     {
+        /// <summary>
+        /// Test method
+        /// </summary>
         [TestMethod]
         public void TestThatLookupValueIsProperlyInitializedWhenIdAndValueAreSplittedByKey()
         {

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-
-using GSoft.Dynamite.Utils;
-
-using Microsoft.SharePoint;
-using GSoft.Dynamite.Logging;
+using System.Linq;
 using System.Web;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Utils;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -18,6 +16,10 @@ namespace GSoft.Dynamite.Taxonomy
         private const string KeyPrefix = "PerRequestSiteTaxonomyCacheManager_";
         private ILogger log;
 
+        /// <summary>
+        /// Per-request taxonomy cache manager (using HttpContext.Items)
+        /// </summary>
+        /// <param name="log">Logging utility</param>
         public PerRequestSiteTaxonomyCacheManager(ILogger log)
         {
             this.log = log;

@@ -842,7 +842,7 @@ namespace GSoft.Dynamite.Caml
         /// </summary>
         /// <param name="list">The list over which the query will be done</param>
         /// <param name="taxonomyFieldInternalName">The name of the site column associated with the term set</param>
-        /// <param name="termId">Guid by which to find the term (dupes not supported)</param>
+        /// <param name="termId">ID by which to find the term (dupes not supported)</param>
         /// <param name="includeDescendants">Whether the Term's child terms should be query hits as well</param>
         /// <returns>A string representation of the CAML query.</returns>
         public string TermFilter(SPList list, string taxonomyFieldInternalName, Guid termId, bool includeDescendants)

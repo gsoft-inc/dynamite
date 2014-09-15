@@ -1,14 +1,17 @@
-﻿using Autofac;
-using GSoft.Dynamite.ServiceLocator;
-using Microsoft.SharePoint;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using GSoft.Dynamite.ServiceLocator;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite
 {
+    /// <summary>
+    /// Container proxy for the Dynamite WSP.
+    /// </summary>
     internal class DynamiteWspContainerProxy
     {
         private static ISharePointServiceLocator innerLocator = new AddOnProvidedServiceLocator();
