@@ -51,6 +51,27 @@ namespace GSoft.Dynamite.Caml
         string DateRangesOverlap(string fieldRefElement, string valueElement);
 
         /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <param name="period">The period.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName, string period);
+
+        /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName);
+
+        /// <summary>
         /// Creates CAML equal with the specified left and right conditions.
         /// </summary>
         /// <param name="leftCondition">The left condition.</param>
