@@ -86,6 +86,42 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <param name="period">The period.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName, string period)
+        {
+            var startFieldRef = this.FieldRef(startDateFieldName);
+            var endFieldRef = this.FieldRef(endDateFieldName);
+            var periodValue = this.Value("DateTime", Tag(period, null));
+
+            return Tag(CamlConstants.DateRangesOverlap, startFieldRef + endFieldRef + periodValue);
+        }
+
+        /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName)
+        {
+            var startFieldRef = this.FieldRef(startDateFieldName);
+            var endFieldRef = this.FieldRef(endDateFieldName);
+            var periodValue = this.Value("DateTime", Tag("Month", null));
+
+            return Tag(CamlConstants.DateRangesOverlap, startFieldRef + endFieldRef + periodValue);
+        }
+
+
+        /// <summary>
         /// Creates CAML equal with the specified left and right conditions.
         /// </summary>
         /// <param name="leftCondition">The left condition.</param>

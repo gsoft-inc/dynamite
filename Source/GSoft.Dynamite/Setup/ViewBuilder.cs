@@ -78,10 +78,27 @@ namespace GSoft.Dynamite.Setup
             else
             {
                 this.logger.Warn(
-                    "View '{0}' has already been created in list '{1}'.  Skipping view creation.", 
+                    "View '{0}' has already been created in list '{1}'.  Updating the view.", 
                     viewInfo.Name, 
                     viewCollection.List.Title);
+
+                // Update the existing view
+                ensuredView.ViewFields.DeleteAll();
+                viewInfo.ViewFields.ToList().ForEach(vf => ensuredView.ViewFields.Add(vf));
+                ensuredView.Query = viewInfo.Query;
+                ensuredView.Joins = viewInfo.Joins;
+                ensuredView.ProjectedFields = viewInfo.ProjectedFields;
+                ensuredView.RowLimit = viewInfo.RowLimit;
+                ensuredView.Paged = viewInfo.IsPaged;
+                ensuredView.DefaultView = viewInfo.IsDefaultView;
             }
+
+            if (!string.IsNullOrEmpty(viewInfo.ViewData))
+            {
+                ensuredView.ViewData = viewInfo.ViewData; 
+            }
+
+            ensuredView.Update();
 
             return ensuredView;
         }

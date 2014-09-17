@@ -86,5 +86,13 @@
         /// <c>true</c> if this instance is personal view; otherwise, <c>false</c>.
         /// </value>
         public bool IsPersonalView { get; set; }
+
+        /// <summary>
+        /// Gets or sets the view data.
+        /// </summary>
+        /// <value>
+        /// The view data.
+        /// </value>
+        public string ViewData { get; set; }
     }
 }
