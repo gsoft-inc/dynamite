@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
+using System.Xml;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Setup
 {
-    using Microsoft.SharePoint.BusinessData.Administration;
+    using System.Diagnostics.CodeAnalysis;
+
+    using Microsoft.Office.RecordsManagement.PolicyFeatures;
 
     /// <summary>
     /// List view builder.
@@ -101,6 +105,163 @@ namespace GSoft.Dynamite.Setup
             ensuredView.Update();
 
             return ensuredView;
+        }
+
+        /// <summary>
+        /// Ensures the calendar overlays.
+        /// Note: This clears the existing overlays.
+        /// </summary>
+        /// <param name="viewCollection">The view collection.</param>
+        /// <param name="overlayInfos">The overlay information objects.</param>
+        /// <param name="overlayList">The overlay list.</param>
+        public void EnsureCalendarOverlays(SPViewCollection viewCollection, CalendarOverlayInfo[] overlayInfos)
+        {
+            for (var i = 0; i < overlayInfos.Length; i++)
+            {
+                var overlayInfo = overlayInfos[i];
+                AddCalendarOverlay(
+                    viewCollection.List,
+                    overlayInfo.TargetViewName,
+                    null,
+                    null,
+                    viewCollection.List,
+                    overlayInfo.Name,
+                    overlayInfo.Description,
+                    overlayInfo.Color,
+                    overlayInfo.AlwaysShow,
+                    i == 0);
+            }
+        }
+
+        /// <summary>
+        /// Ensures the calendar overlays.
+        /// Note: This clears the existing overlays.
+        /// </summary>
+        /// <param name="viewCollection">The view collection.</param>
+        /// <param name="overlayInfos">The overlay information objects.</param>
+        /// <param name="overlayList">The overlay list.</param>
+        public void EnsureCalendarOverlays(SPViewCollection viewCollection, CalendarOverlayInfo[] overlayInfos, SPList overlayList)
+        {
+            for (var i = 0; i < overlayInfos.Length; i++)
+            {
+                var overlayInfo = overlayInfos[i];
+                AddCalendarOverlay(
+                    viewCollection.List,
+                    overlayInfo.TargetViewName,
+                    null,
+                    null,
+                    overlayList,
+                    overlayInfo.Name,
+                    overlayInfo.Description,
+                    overlayInfo.Color,
+                    overlayInfo.AlwaysShow,
+                    i == 0);
+            }
+        }
+
+        /// <summary>
+        /// Adds the calendar overlay.
+        /// Please spare me with the code quality...
+        /// Code taken from Gary Lapointe's blog: http://blog.falchionconsulting.com/index.php/2011/06/programmatically-setting-sharepoint-2010-calendar-overlays/
+        /// </summary>
+        /// <param name="targetList">The target list.</param>
+        /// <param name="viewName">Name of the view.</param>
+        /// <param name="owaUrl">The Office Web Access URL.</param>
+        /// <param name="exchangeUrl">The exchange URL.</param>
+        /// <param name="overlayList">The overlay list.</param>
+        /// <param name="overlayName">Name of the overlay.</param>
+        /// <param name="overlayDescription">The overlay description.</param>
+        /// <param name="color">The color.</param>
+        /// <param name="alwaysShow">if set to <c>true</c> [always show].</param>
+        /// <param name="clearExisting">if set to <c>true</c> [clear existing].</param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void AddCalendarOverlay(SPList targetList, string viewName, string owaUrl, string exchangeUrl, SPList overlayList, string overlayName, string overlayDescription, CalendarOverlayColor color, bool alwaysShow, bool clearExisting)
+        {
+            var isSharePointOverlay = overlayList != null;
+            var linkUrl = isSharePointOverlay ? overlayList.DefaultViewUrl : owaUrl;
+
+            var targetView = targetList.DefaultView;
+            if (!string.IsNullOrEmpty(viewName))
+            {
+                targetView = targetList.Views[viewName];
+            }
+
+            var xml = new XmlDocument();
+            XmlElement aggregationElement = null;
+            var count = 0;
+            if (string.IsNullOrEmpty(targetView.CalendarSettings) || clearExisting)
+            {
+                xml.AppendChild(xml.CreateElement("AggregationCalendars"));
+                aggregationElement = xml.CreateElement("AggregationCalendar");
+                if (xml.DocumentElement != null)
+                {
+                    xml.DocumentElement.AppendChild(aggregationElement);
+                }
+            }
+            else
+            {
+                xml.LoadXml(targetView.CalendarSettings);
+                var calendars = xml.SelectNodes("/AggregationCalendars/AggregationCalendar");
+                if (calendars != null)
+                {
+                    count = calendars.Count;
+                }
+
+                aggregationElement =
+                    xml.SelectSingleNode(
+                        string.Format("/AggregationCalendars/AggregationCalendar[@CalendarUrl='{0}']", linkUrl)) as XmlElement;
+
+                if (aggregationElement == null)
+                {
+                    if (count >= 10)
+                    {
+                        throw new SPException(
+                            string.Format(
+                                "10 calendar ovarlays already exist for the calendar {0}.",
+                                targetList.RootFolder.ServerRelativeUrl));
+                    }
+
+                    aggregationElement = xml.CreateElement("AggregationCalendar");
+                    if (xml.DocumentElement != null)
+                    {
+                        xml.DocumentElement.AppendChild(aggregationElement);
+                    }
+                }
+            }
+
+            if (!aggregationElement.HasAttribute("Id"))
+            {
+                aggregationElement.SetAttribute("Id", Guid.NewGuid().ToString("B", CultureInfo.InvariantCulture));
+            }
+
+            aggregationElement.SetAttribute("Type", isSharePointOverlay ? "SharePoint" : "Exchange");
+            aggregationElement.SetAttribute("Name", !string.IsNullOrEmpty(overlayName) ? overlayName : (overlayList == null ? string.Empty : overlayList.Title));
+            aggregationElement.SetAttribute("Description", !string.IsNullOrEmpty(overlayDescription) ? overlayDescription : (overlayList == null ? string.Empty : overlayList.Description));
+            aggregationElement.SetAttribute("Color", ((int)color).ToString(CultureInfo.InvariantCulture));
+            aggregationElement.SetAttribute("AlwaysShow", alwaysShow.ToString());
+            aggregationElement.SetAttribute("CalendarUrl", linkUrl);
+
+            var settingsElement = aggregationElement.SelectSingleNode("./Settings") as XmlElement;
+            if (settingsElement == null)
+            {
+                settingsElement = xml.CreateElement("Settings");
+                aggregationElement.AppendChild(settingsElement);
+            }
+
+            if (isSharePointOverlay)
+            {
+                settingsElement.SetAttribute("WebUrl", overlayList.ParentWeb.Site.MakeFullUrl(overlayList.ParentWebUrl));
+                settingsElement.SetAttribute("ListId", overlayList.ID.ToString("B", CultureInfo.InvariantCulture));
+                settingsElement.SetAttribute("ViewId", overlayList.DefaultView.ID.ToString("B", CultureInfo.InvariantCulture));
+                settingsElement.SetAttribute("ListFormUrl", overlayList.Forms[PAGETYPE.PAGE_DISPLAYFORM].ServerRelativeUrl);
+            }
+            else
+            {
+                settingsElement.SetAttribute("ServiceUrl", exchangeUrl);
+            }
+
+            targetView.CalendarSettings = xml.OuterXml;
+            targetView.Update();
         }
     }
 }
