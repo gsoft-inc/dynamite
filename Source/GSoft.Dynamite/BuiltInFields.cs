@@ -18,6 +18,11 @@ namespace GSoft.Dynamite
         public const string TitleName = "Title";
 
         /// <summary>
+        /// The link title internal name
+        /// </summary>
+        public const string LinkTitleName = "LinkTitle";
+
+        /// <summary>
         /// FileRef (i.e. File Url) field internal name
         /// </summary>
         public const string FileRefName = "FileRef";
@@ -102,6 +107,11 @@ namespace GSoft.Dynamite
         /// Title field info
         /// </summary>
         public static readonly FieldInfo Title = new FieldInfo(TitleName, SPBuiltInFieldId.Title);
+
+        /// <summary>
+        /// Link title field info
+        /// </summary>
+        public static readonly FieldInfo LinkTitle = new FieldInfo(LinkTitleName, SPBuiltInFieldId.LinkTitle);
 
         /// <summary>
         /// FileRef (i.e. File Url) field info
