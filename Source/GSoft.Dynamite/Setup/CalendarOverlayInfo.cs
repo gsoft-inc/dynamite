@@ -54,36 +54,10 @@
     }
 
     /// <summary>
-    /// The calendar overlay type
-    /// </summary>
-    public enum CalendarOverlayType
-    {
-        /// <summary>
-        /// The SharePoint overlay type.
-        /// </summary>
-        SharePoint = 1,
-
-        /// <summary>
-        /// The Exchange overlay type.
-        /// </summary>
-        Exchange = 2
-    }
-
-    /// <summary>
     /// Calendar overlay information.
     /// </summary>
     public class CalendarOverlayInfo
     {
-        private bool useTargetListAsOverlayList = true;
-
-        /// <summary>
-        /// Gets or sets the type of the overlay.
-        /// </summary>
-        /// <value>
-        /// The type of the overlay.
-        /// </value>
-        public CalendarOverlayType OverlayType { get; set; }
-
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -131,5 +105,13 @@
         /// The name of the target view.
         /// </value>
         public string TargetViewName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the overlay view.
+        /// </summary>
+        /// <value>
+        /// The name of the overlay view.
+        /// </value>
+        public string OverlayViewName { get; set; }
     }
 }

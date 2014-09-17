@@ -113,7 +113,6 @@ namespace GSoft.Dynamite.Setup
         /// </summary>
         /// <param name="viewCollection">The view collection.</param>
         /// <param name="overlayInfos">The overlay information objects.</param>
-        /// <param name="overlayList">The overlay list.</param>
         public void EnsureCalendarOverlays(SPViewCollection viewCollection, CalendarOverlayInfo[] overlayInfos)
         {
             for (var i = 0; i < overlayInfos.Length; i++)
@@ -122,6 +121,7 @@ namespace GSoft.Dynamite.Setup
                 AddCalendarOverlay(
                     viewCollection.List,
                     overlayInfo.TargetViewName,
+                    overlayInfo.OverlayViewName,
                     null,
                     null,
                     viewCollection.List,
@@ -146,8 +146,9 @@ namespace GSoft.Dynamite.Setup
             {
                 var overlayInfo = overlayInfos[i];
                 AddCalendarOverlay(
-                    viewCollection.List,
+                    overlayList,
                     overlayInfo.TargetViewName,
+                    overlayInfo.OverlayViewName,
                     null,
                     null,
                     overlayList,
@@ -166,6 +167,7 @@ namespace GSoft.Dynamite.Setup
         /// </summary>
         /// <param name="targetList">The target list.</param>
         /// <param name="viewName">Name of the view.</param>
+        /// <param name="overlayViewName">Name of the overlay view.</param>
         /// <param name="owaUrl">The Office Web Access URL.</param>
         /// <param name="exchangeUrl">The exchange URL.</param>
         /// <param name="overlayList">The overlay list.</param>
@@ -175,7 +177,7 @@ namespace GSoft.Dynamite.Setup
         /// <param name="alwaysShow">if set to <c>true</c> [always show].</param>
         /// <param name="clearExisting">if set to <c>true</c> [clear existing].</param>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        private static void AddCalendarOverlay(SPList targetList, string viewName, string owaUrl, string exchangeUrl, SPList overlayList, string overlayName, string overlayDescription, CalendarOverlayColor color, bool alwaysShow, bool clearExisting)
+        private static void AddCalendarOverlay(SPList targetList, string viewName, string overlayViewName, string owaUrl, string exchangeUrl, SPList overlayList, string overlayName, string overlayDescription, CalendarOverlayColor color, bool alwaysShow, bool clearExisting)
         {
             var isSharePointOverlay = overlayList != null;
             var linkUrl = isSharePointOverlay ? overlayList.DefaultViewUrl : owaUrl;
@@ -250,9 +252,10 @@ namespace GSoft.Dynamite.Setup
 
             if (isSharePointOverlay)
             {
+                var overlayViewId = string.IsNullOrEmpty(overlayViewName) ? overlayList.DefaultView.ID : overlayList.Views[overlayViewName].ID; 
                 settingsElement.SetAttribute("WebUrl", overlayList.ParentWeb.Site.MakeFullUrl(overlayList.ParentWebUrl));
                 settingsElement.SetAttribute("ListId", overlayList.ID.ToString("B", CultureInfo.InvariantCulture));
-                settingsElement.SetAttribute("ViewId", overlayList.DefaultView.ID.ToString("B", CultureInfo.InvariantCulture));
+                settingsElement.SetAttribute("ViewId", overlayViewId.ToString("B", CultureInfo.InvariantCulture));
                 settingsElement.SetAttribute("ListFormUrl", overlayList.Forms[PAGETYPE.PAGE_DISPLAYFORM].ServerRelativeUrl);
             }
             else
