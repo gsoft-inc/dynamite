@@ -38,6 +38,11 @@ namespace GSoft.Dynamite
         public const string UrlName = "URL";
 
         /// <summary>
+        /// The end date field internal name
+        /// </summary>
+        public const string EndDateName = "_EndDate";
+
+        /// <summary>
         /// ContentType field internal name
         /// </summary>
         public const string ContentTypeName = "ContentType";
@@ -137,6 +142,11 @@ namespace GSoft.Dynamite
         /// URL field info
         /// </summary>
         public static readonly FieldInfo Url = new FieldInfo(UrlName, SPBuiltInFieldId.URL);
+
+        /// <summary>
+        /// The end date
+        /// </summary>
+        public static readonly FieldInfo EndDate = new FieldInfo(EndDateName, SPBuiltInFieldId._EndDate);
 
         /// <summary>
         /// TaxCatchAll field info.
