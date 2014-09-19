@@ -95,6 +95,7 @@
     <Compile Include="Definitions\GuidFieldInfo.cs" />
     <Compile Include="Definitions\ListInfo.cs" />
     <Compile Include="Definitions\ManagedPropertyInfo.cs" />
+    <Compile Include="Definitions\ResultSourceInfo.cs" />
     <Compile Include="Definitions\TaxonomyFieldInfo.cs" />
     <Compile Include="Definitions\TermGroupInfo.cs" />
     <Compile Include="Definitions\TermInfo.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Definitions\Values\TaxonomyFieldInfoValue.cs" />
     <Compile Include="Definitions\Values\TextFieldInfoValue.cs" />
     <Compile Include="Definitions\WebInfo.cs" />
+    <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
@@ -292,7 +294,7 @@
     <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
     <Compile Include="Utils\NamedReaderWriterLocker.cs" />
-    <Compile Include="Utils\SearchHelper.cs" />
+    <Compile Include="Helpers\SearchHelper.cs" />
     <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />

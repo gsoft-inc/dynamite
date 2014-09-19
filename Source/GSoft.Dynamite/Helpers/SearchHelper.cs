@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using GSoft.Dynamite.Definitions;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Search service utilities
     /// </summary>
     public class SearchHelper
     {
+
         /// <summary>
         /// Creates a site search scope if it doesn't exist yet
         /// </summary>
@@ -164,6 +167,44 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Ensure a result source
+        /// </summary>
+        /// <param name="contextSite">The context SPSite object</param>
+        /// <param name="resultSourceInfo">The result source configuration object</param>
+        /// <returns></returns>
+        public string EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
+        {
+            Source resultSource = null;
+            var resultSourceName = string.Empty;
+
+            var sortCollection = new SortCollection();
+
+            if (resultSourceInfo.SortSettings != null)
+            {            
+                foreach (KeyValuePair<string, SortDirection> sortSetting in resultSourceInfo.SortSettings)
+                {
+                    sortCollection.Add(sortSetting.Key, sortSetting.Value);
+                }
+            }
+
+            // Get the search service application for the current site
+            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
+            if (searchServiceApplication != null)
+            {
+                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level,
+                    resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query,
+                    sortCollection, resultSourceInfo.Overwrite);
+            }
+
+            if (resultSource != null)
+            {
+                resultSourceName = resultSource.Name;
+            }
+
+            return resultSourceName;
+        }
+
+        /// <summary>
         /// Get a result source object by name
         /// </summary>
         /// <param name="ssa">The search service application</param>
@@ -190,19 +231,15 @@ namespace GSoft.Dynamite.Utils
         /// <param name="searchProvider">The search provider for this result source.</param>
         /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
         /// <param name="query">The search query in KQL format.</param>
-        /// <param name="sortField">Internal name of the sort field.</param>
-        /// <param name="direction">The sort direction.</param>
+        /// <param name="sortSettings">The sorting configuration foe the result source</param>
         /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite)
+        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, SortCollection sortSettings, bool overwrite)
         {
-            var sortCollection = new SortCollection();
-            sortCollection.Add(sortField, direction);
-
             var queryProperties = new QueryTransformProperties();
-            queryProperties["SortList"] = sortCollection;
+            queryProperties["SortList"] = sortSettings;
 
             return this.EnsureResultSource(ssa, resultSourceName, level, searchProvider, contextWeb, query, queryProperties, overwrite);
         }
@@ -226,8 +263,11 @@ namespace GSoft.Dynamite.Utils
         {
             var sortCollection = new SortCollection();
 
-            var fields = sortFields.Select((field, index) => new { Field = field, Direction = directions.ElementAt(index) }).ToList();
-            fields.ForEach(f => sortCollection.Add(f.Field, f.Direction));
+            if (sortFields != null && directions != null)
+            {
+                var fields = sortFields.Select((field, index) => new { Field = field, Direction = directions.ElementAt(index) }).ToList();
+                fields.ForEach(f => sortCollection.Add(f.Field, f.Direction));  
+            }
 
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortCollection;

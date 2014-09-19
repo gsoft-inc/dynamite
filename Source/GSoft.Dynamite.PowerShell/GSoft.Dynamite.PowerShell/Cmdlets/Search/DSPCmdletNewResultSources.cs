@@ -3,6 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
 using Autofac;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
@@ -124,8 +125,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 sortObjectLevel,
                                 searchProvider,
                                 site.RootWeb,
-                                query,
-                                null,
+                                query,null,null,
                                 this.Overwrite);
                         }
                     }
