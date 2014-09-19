@@ -180,7 +180,8 @@ namespace GSoft.Dynamite.Setup
         private static void AddCalendarOverlay(SPList targetList, string viewName, string overlayViewName, string owaUrl, string exchangeUrl, SPList overlayList, string overlayName, string overlayDescription, CalendarOverlayColor color, bool alwaysShow, bool clearExisting)
         {
             var isSharePointOverlay = overlayList != null;
-            var linkUrl = isSharePointOverlay ? overlayList.DefaultViewUrl : owaUrl;
+            var overlayViewId = string.IsNullOrEmpty(overlayViewName) ? overlayList.DefaultView.ID : overlayList.Views[overlayViewName].ID;
+            var linkUrl = isSharePointOverlay ? overlayList.GetView(overlayViewId).Url : owaUrl;
 
             var targetView = targetList.DefaultView;
             if (!string.IsNullOrEmpty(viewName))
@@ -252,7 +253,6 @@ namespace GSoft.Dynamite.Setup
 
             if (isSharePointOverlay)
             {
-                var overlayViewId = string.IsNullOrEmpty(overlayViewName) ? overlayList.DefaultView.ID : overlayList.Views[overlayViewName].ID; 
                 settingsElement.SetAttribute("WebUrl", overlayList.ParentWeb.Site.MakeFullUrl(overlayList.ParentWebUrl));
                 settingsElement.SetAttribute("ListId", overlayList.ID.ToString("B", CultureInfo.InvariantCulture));
                 settingsElement.SetAttribute("ViewId", overlayViewId.ToString("B", CultureInfo.InvariantCulture));
