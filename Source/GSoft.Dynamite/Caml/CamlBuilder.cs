@@ -723,6 +723,25 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Values the specified field value.
+        /// </summary>
+        /// <param name="fieldValue">The field value.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string Value(DateTime fieldValue, bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value, 
+                fieldValue.ToString(CultureInfo.InvariantCulture), 
+                CamlConstants.Type, 
+                CamlConstants.DateTime, 
+                CamlConstants.IncludeTimeValue, 
+                includeTimeValue.ToString().ToUpperInvariant());
+        }
+
+        /// <summary>
         /// Creates CAML value with the specified value.
         /// </summary>
         /// <param name="fieldValue">The field value.</param>
@@ -1029,6 +1048,22 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Todays the specified include time value.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        public string Today(bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value,
+                Tag("Today", string.Empty),
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                CamlConstants.IncludeTimeValue,
+                includeTimeValue.ToString().ToUpperInvariant());
+        }
+
+        /// <summary>
         /// Gets the today value tag.
         /// </summary>
         /// <param name="offsetDays">The offset days.</param>
@@ -1042,6 +1077,23 @@ namespace GSoft.Dynamite.Caml
                 CamlConstants.Type,
                 CamlConstants.DateTime,
                 Tag("Today", string.Empty, "OffsetDays", offsetDays));
+        }
+
+        /// <summary>
+        /// Todays the specified offset days.
+        /// </summary>
+        /// <param name="offsetDays">The offset days.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        public string Today(int offsetDays, bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value,
+                Tag("Today", string.Empty, "OffsetDays", offsetDays),
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                CamlConstants.IncludeTimeValue,
+                includeTimeValue.ToString().ToUpperInvariant());
         }
 
         private static string Tag(string tag, string attribute, string attributeValue, string value)

@@ -96,6 +96,11 @@
         internal static readonly string HTMLEncode = "HTMLEncode";
 
         /// <summary>
+        /// The include time value
+        /// </summary>
+        internal static readonly string IncludeTimeValue = "IncludeTimeValue";
+
+        /// <summary>
         /// The integer CAML constant
         /// </summary>
         internal static readonly string Integer = "Integer";

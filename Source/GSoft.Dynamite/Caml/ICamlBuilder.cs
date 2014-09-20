@@ -482,6 +482,16 @@ namespace GSoft.Dynamite.Caml
         string Value(DateTime fieldValue);
 
         /// <summary>
+        /// Values the specified field value.
+        /// </summary>
+        /// <param name="fieldValue">The field value.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string Value(DateTime fieldValue, bool includeTimeValue);
+
+        /// <summary>
         /// Creates CAML value with the specified value.
         /// </summary>
         /// <param name="fieldValue">The field value.</param>
@@ -638,6 +648,13 @@ namespace GSoft.Dynamite.Caml
         string Today();
 
         /// <summary>
+        /// Todays the specified include time value.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        string Today(bool includeTimeValue);
+
+        /// <summary>
         /// Returns the today value tag.
         /// </summary>
         /// <param name="offsetDays">The offset, in days.</param>
@@ -645,5 +662,13 @@ namespace GSoft.Dynamite.Caml
         /// The today value tag.
         /// </returns>
         string Today(int offsetDays);
+
+        /// <summary>
+        /// Todays the specified offset days.
+        /// </summary>
+        /// <param name="offsetDays">The offset days.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        string Today(int offsetDays, bool includeTimeValue);
     }
 }
