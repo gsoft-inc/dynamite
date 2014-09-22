@@ -5,14 +5,16 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint;
+using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeBuilder
+    public class ContentTypeHelper
     {
         /// <summary>
         /// Ensure the content type based on its content type info. 
@@ -28,16 +30,55 @@ namespace GSoft.Dynamite.Definitions
         {
             SPContentType contentType = this.EnsureContentType(
                 contentTypeCollection,
-                contentTypeInfo.ContentTypeId,
-                contentTypeInfo.TitleResourceString);
+                new SPContentTypeId(contentTypeInfo.ContentTypeId),
+                contentTypeInfo.DisplayName);
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
-            contentType.Description = contentTypeInfo.DescriptionResourceString;
-            contentType.Group = contentTypeInfo.ContentGroupResourceString;
+            if (contentTypeInfo.TitleResources != null)
+            {
+                // Set title according to resources
+                foreach (KeyValuePair<CultureInfo, string> title in contentTypeInfo.TitleResources)
+                {
+                    contentType.NameResource.SetValueForUICulture(title.Key, title.Value);
+                }
+            }
+
+            if (contentTypeInfo.DescriptionResources != null)
+            {
+                // Set title according to resources
+                foreach (KeyValuePair<CultureInfo, string> description in contentTypeInfo.DescriptionResources)
+                {
+                    contentType.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
+                }
+            }
+            else
+            {
+                contentType.Description = contentTypeInfo.Description;
+            }
+         
+            contentType.Group = contentTypeInfo.Group;
             contentType.Update();
 
             return contentType;
+        }
+
+        /// <summary>
+        /// Ensure a list of content type
+        /// </summary>
+        /// <param name="contentTypeCollection">The content type collection</param>
+        /// <param name="contentTypeInfos">The content types information</param>
+        /// <returns>The content types list</returns>
+        public IEnumerable<SPContentType> EnsureContentType(SPContentTypeCollection contentTypeCollection, ICollection<ContentTypeInfo> contentTypeInfos)
+        {
+            var contentTypes = new List<SPContentType>();
+
+            foreach (ContentTypeInfo contentType in contentTypeInfos)
+            {
+                contentTypes.Add(this.EnsureContentType(contentTypeCollection, contentType));
+            }
+
+            return contentTypes;
         }
 
         /// <summary>
@@ -126,6 +167,17 @@ namespace GSoft.Dynamite.Definitions
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Ensure a single content in a collection
+        /// </summary>
+        /// <param name="collection">The content type collection</param>
+        /// <param name="contentType">The content type info</param>
+        /// <returns>The content type object</returns>
+        public SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType)
+        {
+            return this.EnsureContentType(collection, contentType.Id, contentType.Name);
         }
 
         /// <summary>
@@ -229,7 +281,7 @@ namespace GSoft.Dynamite.Definitions
             SPWeb web = contentType.ParentWeb;
 
             // We get from AvailableFields because we don't need to modify the field.
-            SPField field = web.AvailableFields[fieldInfo.ID];
+            SPField field = web.AvailableFields[fieldInfo.Id];
 
             if (field != null)
             {
@@ -256,7 +308,7 @@ namespace GSoft.Dynamite.Definitions
             foreach (FieldInfo fieldInfo in fieldInfos)
             {
                 // We get the field from AvailableFields because we don't need to modify the field.
-                SPField field = contentType.ParentWeb.AvailableFields[fieldInfo.ID];
+                SPField field = contentType.ParentWeb.AvailableFields[fieldInfo.Id];
                 if (field != null)
                 {
                     // We add it to the list of fields we got.

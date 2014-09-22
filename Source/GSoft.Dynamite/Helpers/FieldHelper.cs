@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
+using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for managing SP Fields.
@@ -16,14 +19,17 @@ namespace GSoft.Dynamite.Definitions
     public class FieldHelper
     {
         private readonly ILogger _logger;
+        private readonly TaxonomyHelper _taxonomyHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
-        public FieldHelper(ILogger logger)
+        /// <param name="taxonomyHelper">The taxonomy helper</param>
+        public FieldHelper(ILogger logger, TaxonomyHelper taxonomyHelper)
         {
             this._logger = logger;
+            this._taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -191,7 +197,7 @@ namespace GSoft.Dynamite.Definitions
         /// <param name="fieldsXml">The field schema XMLs.</param>
         /// <returns>A collection of strings that contain the internal name of the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
-        public IList<string> AddFields(SPFieldCollection fieldCollection, XDocument fieldsXml)
+        public IList<string> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml)
         {
             if (fieldsXml == null)
             {
@@ -210,7 +216,7 @@ namespace GSoft.Dynamite.Definitions
             foreach (XElement field in fields)
             {
                 // Add the field to the collection.
-                string internalname = this.AddField(fieldCollection, field);
+                string internalname = this.EnsureField(fieldCollection, field);
                 if (!string.IsNullOrEmpty(internalname))
                 {
                     internalNames.Add(internalname);
@@ -237,7 +243,7 @@ namespace GSoft.Dynamite.Definitions
         /// fieldXml
         /// </exception>
         /// <exception cref="System.FormatException">Invalid xml.</exception>
-        public string AddField(SPFieldCollection fieldCollection, XElement fieldXml)
+        public string EnsureField(SPFieldCollection fieldCollection, XElement fieldXml)
         {
             if (fieldCollection == null)
             {
@@ -284,6 +290,80 @@ namespace GSoft.Dynamite.Definitions
                 string msg = string.Format(CultureInfo.InvariantCulture, "Unable to create field. Invalid xml. id: '{0}' DisplayName: '{1}' Name: '{2}'", id, displayName, internalName);
                 throw new FormatException(msg);
             }
+        }
+
+        /// <summary>
+        /// Ensure a field
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfo">The field info configuration</param>
+        /// <returns>The internal name of the field</returns>
+        public string EnsureField(SPFieldCollection fieldCollection, FieldInfo fieldInfo)
+        {
+            string field;
+
+            if (fieldInfo.GetType() == typeof(TaxonomyFieldInfo))
+            {
+                field = this.EnsureField(fieldCollection, fieldInfo as TaxonomyFieldInfo);
+            }
+            else
+            {
+                field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+            }
+
+            return field;
+        }
+
+        /// <summary>
+        /// Ensure a taxonomy field
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfo">The field info configuration</param>
+        /// <returns>The internal name of the field</returns>
+        public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
+        {
+            var field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+
+            // Get the term store default language for term set name
+            var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
+
+            if (fieldInfo.DefaultValue != null)
+            {
+                var defaultValue = fieldInfo.DefaultValue as TaxonomyFieldInfoValue;
+                string termSubsetName = string.Empty;
+                if (defaultValue.TermSubset != null)
+                {
+                    termSubsetName = defaultValue.TermSubset.Name;
+                }
+
+                // Metadata mapping configuration
+                this._taxonomyHelper.AssignTermSetToSiteColumn(
+                            fieldCollection.Web,
+                            fieldInfo.Id,
+                            defaultValue.TermGroup.Name,
+                            defaultValue.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            termSubsetName);
+            }
+
+            return field;
+        }
+
+        /// <summary>
+        /// Ensure a collection of fields
+        /// </summary>
+        /// <param name="fieldCollection">The field collection</param>
+        /// <param name="fieldInfos">The field info configuration</param>
+        /// <returns>The internal names of the field</returns>
+        public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<FieldInfo> fieldInfos)
+        {
+            var fieldNames = new List<string>();
+
+            foreach (FieldInfo fieldInfo in fieldInfos)
+            {
+                fieldNames.Add(this.EnsureField(fieldCollection, fieldInfo));
+            }
+
+            return fieldNames;
         }
 
         private static string GetAttributeValue(XElement fieldXml, string key)

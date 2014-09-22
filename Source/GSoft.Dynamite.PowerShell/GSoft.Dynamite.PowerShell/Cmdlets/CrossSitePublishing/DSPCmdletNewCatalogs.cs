@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using Autofac;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
@@ -384,11 +385,11 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         var taxonomyDefaultValue = defaultValue as TaxonomyField;
                         if (((Microsoft.SharePoint.Taxonomy.TaxonomyField)field).AllowMultipleValues)
                         {
-                            taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values);
+                            //taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values);
                         }
                         else
                         {
-                            taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
+                            //taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TTermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.Values.First());
                         }
                     }
                     else if (field.GetType() == typeof(SPFieldText))

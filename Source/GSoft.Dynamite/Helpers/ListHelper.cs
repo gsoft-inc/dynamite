@@ -7,45 +7,50 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Schemas;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 
-namespace GSoft.Dynamite.Lists
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
     public class ListHelper
     {
-        private readonly ContentTypeBuilder contentTypeBuilder;
-        private readonly IResourceLocator resourceLocator;
-        private readonly FieldHelper fieldHelper;
-        private readonly ILogger logger;
-        private readonly ISharePointEntityBinder binder;
+        private readonly ContentTypeHelper _contentTypeHelper;
+        private readonly IResourceLocator _resourceLocator;
+        private readonly FieldHelper _fieldHelper;
+        private readonly ILogger _logger;
+        private readonly ISharePointEntityBinder _binder;
+        private readonly TaxonomyHelper _taxonomyHelper;
 
         /// <summary>
         /// Creates a list helper
         /// </summary>
-        /// <param name="contentTypeBuilder">A content type helper</param>
+        /// <param name="contentTypeHelper">A content type helper</param>
         /// <param name="fieldHelper">The field helper.</param>
+        /// <param name="taxonomyHelper">The taxonomy helper</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
+        public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper, TaxonomyHelper taxonomyHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
-            this.contentTypeBuilder = contentTypeBuilder;
-            this.fieldHelper = fieldHelper;
-            this.resourceLocator = resourceLocator;
-            this.logger = logger;
-            this.binder = binder;
+            this._contentTypeHelper = contentTypeHelper;
+            this._fieldHelper = fieldHelper;
+            this._resourceLocator = resourceLocator;
+            this._logger = logger;
+            this._binder = binder;
+            this._taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -136,18 +141,149 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
+        /// Ensure the list in the web
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="rootFolderUrl">The root folder URL of the list</param>
+        /// <param name="titles">Titles by labels for the list</param>
+        /// <param name="descriptions">Description by labels for the list</param>
+        /// <param name="templateType">The template type of the list</param>
+        /// <returns>The list object</returns>
+        public SPList EnsureList(SPWeb web, string rootFolderUrl, IDictionary<CultureInfo, string> titles, IDictionary<CultureInfo, string> descriptions, SPListTemplateType templateType)
+        {
+            var list = this.GetListByRootFolderUrl(web, rootFolderUrl);
+
+            if (list != null)
+            {
+                // List already exists, check for correct template
+                if (list.BaseTemplate != templateType)
+                {
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", rootFolderUrl, list.BaseTemplate, templateType));
+                }
+            }
+            else
+            {
+                // Create new list
+                var id = web.Lists.Add(rootFolderUrl, string.Empty, templateType);
+                list = web.Lists[id];
+
+                // Set title according to resources
+                foreach (KeyValuePair<CultureInfo, string> title in titles)
+                {
+                    list.TitleResource.SetValueForUICulture(title.Key, title.Value);
+                }
+
+                // Set description according to resources
+                foreach (KeyValuePair<CultureInfo, string> description in descriptions)
+                {
+                    list.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
+                }
+
+                list.Update();
+            }
+
+            return list;
+        }
+
+        /// <summary>
         /// Creates the list or returns the existing one.
         /// </summary>
         /// <remarks>The list name and description will not be translated</remarks>
         /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
         /// <param name="web">The current web</param>
-        /// <param name="catalog">The Catalog to create</param>
+        /// <param name="listInfo">The list to create</param>
         /// <returns>The new list or the existing list</returns>
-        public SPList EnsureList(SPWeb web, Catalog catalog)
-        {
-            return this.EnsureList(web, catalog.RootFolderUrl, catalog.Description, catalog.ListTemplate);
+        public SPList EnsureList(SPWeb web, ListInfo listInfo)
+        {          
+            var list = this.GetListByRootFolderUrl(web, listInfo.RootFolderUrl);
+
+            // Ensure the list
+            if (list == null)
+            {
+                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+            }
+            else
+            {
+                this._logger.Info("List " + listInfo.RootFolderUrl + " already exists");
+
+                // If the Overwrite paramter is set to true, celete and recreate the catalog
+                if (listInfo.Overwrite)
+                {
+                    this._logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
+
+                    list.Delete();
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                }
+                else
+                {
+                    // Get the existing list
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                }
+            }
+
+            // Remove Item Content Type
+            if (listInfo.RemoveDefaultContentType)
+            {
+                this._logger.Info("Removing the default Item Content Type");
+
+                // If content type is direct child of item, remove it
+                this.RemoveItemContentType(list);
+            }
+
+            // Add All Content Types
+            this.EnsureContentType(list, listInfo.ContentTypes);
+
+            // Draft VisibilityType
+            if (listInfo.HasDraftVisibilityType)
+            {
+                list.EnableModeration = true;
+                list.DraftVersionVisibility = listInfo.DraftVisibilityType;
+
+                list.Update();
+            }
+
+            // Ratings
+            this.SetRatings(list, listInfo.RatingType, listInfo.EnableRatings);
+
+            // Set list Write Security
+            this.SetWriteSecurity(list, listInfo.WriteSecurity);
+
+            // Quick Launch Navigation
+            if (listInfo.AddToQuickLaunch)
+            {
+                this.AddtoQuickLaunch(list);
+            }
+
+            // Default View Fields
+            this.AddFieldsToDefaultView(web, list, listInfo.DefaultViewFields);
+
+            // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).    
+            list = this.GetListByRootFolderUrl(web, listInfo.RootFolderUrl);
+
+            // Default Values
+            this.SetDefaultValues(list, listInfo);
+
+            return list;
         }
 
+        /// <summary>
+        /// Ensure a list of lists in the web
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="listInfos">The list information</param>
+        /// <returns>List of lists</returns>
+        public IEnumerable<SPList> EnsureList(SPWeb web, ICollection<ListInfo> listInfos)
+        {
+            var lists = new List<SPList>();
+
+            foreach (ListInfo list in listInfos)
+            {
+                lists.Add(this.EnsureList(web, list));
+            }
+
+            return lists;
+        }
+        
         /// <summary>
         /// Adds the content type id.
         /// </summary>
@@ -155,7 +291,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="contentTypeId">The content type id.</param>
         /// <exception cref="System.ArgumentNullException">Any null parameters.</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">contentTypeId;Content Type not available in the lists parent web.</exception>
-        public void AddContentType(SPList list, SPContentTypeId contentTypeId)
+        public void EnsureContentType(SPList list, SPContentTypeId contentTypeId)
         {
             if (list == null)
             {
@@ -171,7 +307,7 @@ namespace GSoft.Dynamite.Lists
 
             if (contentType != null)
             {
-                this.AddContentType(list, contentType);
+                this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
             }
             else
             {
@@ -185,7 +321,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="list">The list.</param>
         /// <param name="contentType">Type of the content.</param>
         /// <exception cref="System.ArgumentNullException">Any null parameter.</exception>
-        public void AddContentType(SPList list, SPContentType contentType)
+        public void EnsureContentType(SPList list, ContentTypeInfo contentType)
         {
             if (list == null)
             {
@@ -204,8 +340,21 @@ namespace GSoft.Dynamite.Lists
                 list.Update(true);
             }
 
-            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType.Id, contentType.Name);
+            this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
             list.Update(true);
+        }
+
+        /// <summary>
+        /// Ensure a list of content types for a list
+        /// </summary>
+        /// <param name="list">The list</param>
+        /// <param name="contentTypes">The content type list</param>
+        public void EnsureContentType(SPList list, ICollection<ContentTypeInfo> contentTypes)
+        {
+            foreach (ContentTypeInfo contentType in contentTypes)
+            {
+                this.EnsureContentType(list, contentType);
+            }
         }
 
         /// <summary>
@@ -248,7 +397,7 @@ namespace GSoft.Dynamite.Lists
             genericField.FieldStaticName = fieldInternalName;
             genericField.FieldGroup = fieldGroup;
 
-            var fieldName = this.fieldHelper.AddField(list.Fields, genericField.ToXElement());
+            var fieldName = this._fieldHelper.EnsureField(list.Fields, genericField.ToXElement());
 
             if (!string.IsNullOrEmpty(fieldName))
             {
@@ -379,6 +528,28 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
+        /// Add the list to the quick launch bar
+        /// </summary>
+        /// <param name="list">The list</param>
+        public void AddtoQuickLaunch(SPList list)
+        {
+            var web = list.ParentWeb;
+
+            // Check for an existing link to the list.
+            var listNode = web.Navigation.GetNodeByUrl(list.DefaultViewUrl);
+
+            // No link, so create one.
+            if (listNode == null)
+            {
+                // Create the node.
+                listNode = new SPNavigationNode(list.Title, list.DefaultViewUrl);
+
+                // Add it to Quick Launch.
+                web.Navigation.AddToQuickLaunch(listNode, SPQuickLaunchHeading.Lists);
+            }
+        }
+
+        /// <summary>
         ///  Set WriteSecurity on a SPList
         /// </summary>
         /// <param name="list">The list.</param>
@@ -398,7 +569,7 @@ namespace GSoft.Dynamite.Lists
         {
             if (list != null && field != null)
             {
-                var listField = this.fieldHelper.GetFieldById(list.Fields, field.ID);
+                var listField = this._fieldHelper.GetFieldById(list.Fields, field.Id);
 
                 if (listField != null)
                 {
@@ -424,30 +595,6 @@ namespace GSoft.Dynamite.Lists
         }
 
         #region List View
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
-        {
-            this.AddFieldsToDefaultView(web, catalog, fields, false);
-        }
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields)
-        {
-            var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
-            this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
-        }
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -481,26 +628,15 @@ namespace GSoft.Dynamite.Lists
 
             foreach (FieldInfo field in fields)
             {
-                if (list.Fields.Contains(field.ID))
+                if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
                 {
-                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
-                }
-                else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
-                {
-                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName));
+                    this.EnsureFieldInView(fieldCollection, field.InternalName);
                 }
                 else
                 {
-                    if (list.Fields.Contains(field.ID))
-                    {
-                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
-                    }
-                    else
-                    {
-                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
-                    }
+                    this._logger.Warn("Field with InternalName {0} was not found in list '{1}' fields", field.Id, list.Title);
                 }
-
+                
                 defaulView.Update();
             }
         }
@@ -509,13 +645,16 @@ namespace GSoft.Dynamite.Lists
         /// Ensure the field in the view
         /// </summary>
         /// <param name="fieldCollection">the collection of fields</param>
-        /// <param name="field">the current field</param>
-        public void EnsureFieldInView(SPViewFieldCollection fieldCollection, SPField field)
+        /// <param name="fieldInternalName">the current field internal name</param>
+        public void EnsureFieldInView(SPViewFieldCollection fieldCollection, string fieldInternalName)
         {
-            if (!fieldCollection.Exists(field.InternalName))
+            if (!string.IsNullOrEmpty(fieldInternalName))
             {
-                fieldCollection.Add(field.InternalName);
-            }
+                if (!fieldCollection.Exists(fieldInternalName))
+                {
+                    fieldCollection.Add(fieldInternalName);
+                }
+            }          
         }
         #endregion
 
@@ -532,13 +671,53 @@ namespace GSoft.Dynamite.Lists
             if (publishedLinksList != null && !publishedLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishedLink.Title))
             {
                 var item = publishedLinksList.Items.Add();
-                this.binder.FromEntity(publishedLink, item);
+                this._binder.FromEntity(publishedLink, item);
 
                 item.Update();
             }
         }
 
         #endregion PublishedLinks
+
+        /// <summary>
+        /// Set default values for a list info objects
+        /// </summary>
+        /// <param name="list">The list object to configure</param>
+        /// <param name="listInfo">The list configuration object</param>
+        public void SetDefaultValues(SPList list, ListInfo listInfo)
+        {
+            if (listInfo.DefaultValues != null)
+            {
+                foreach (KeyValuePair<FieldInfo, IFieldInfoValue> defaultValue in listInfo.DefaultValues)
+                {
+                    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
+                    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFieldInfoValue))
+                    {
+                        var taxonomyFieldInfoValue = defaultValue.Value as TaxonomyFieldInfoValue;
+                        var termGroupName = taxonomyFieldInfoValue.TermGroup.Name;
+                        var termSetName = taxonomyFieldInfoValue.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
+                        var termSubsetName = taxonomyFieldInfoValue.TermSubset != null
+                            ? taxonomyFieldInfoValue.TermSubset.Name
+                            : string.Empty;
+
+                        if (taxonomyFieldInfoValue.TermGroup != null &&
+                            taxonomyFieldInfoValue.TermSet != null)
+                        {
+                            // Change managed metadata mapping
+                            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
+                        }
+
+                        // Set the default value for the field
+                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, defaultValue.Value as TaxonomyFieldInfoValue);
+                    }
+                    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is TextFieldInfoValue))
+                    {
+                        field.DefaultValue = ((TextFieldInfoValue)defaultValue.Value).Values.FirstOrDefault();
+                        field.Update();
+                    }
+                }
+            }
+        }
 
         private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
@@ -580,12 +759,12 @@ namespace GSoft.Dynamite.Lists
                     {
                         // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
                         string resourceFileName = resourceStringSplit[0].Replace("$Resources:", string.Empty);
-                        nameFromResourceString = this.resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
+                        nameFromResourceString = this._resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
                     }
                     else
                     {
                         // let's try to find a resource with that string directly as key
-                        nameFromResourceString = this.resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
+                        nameFromResourceString = this._resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
                     }
 
                     if (!string.IsNullOrEmpty(nameFromResourceString))

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;

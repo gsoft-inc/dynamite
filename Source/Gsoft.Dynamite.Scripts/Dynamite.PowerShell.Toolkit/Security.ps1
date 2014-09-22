@@ -200,10 +200,14 @@ function Set-DSPWebPermissions()
 
 		$web = $_.Name
 
+		if([System.Convert]::ToBoolean($_.BreakRoleInheritance) -eq $true)
+		{			
+			Set-DSPWebPermissionInheritance -Web $web -Break
+		}
+
 		# Groups
 		if ($_.Groups -ne $null)
 		{
-			Set-DSPWebPermissionInheritance -Web $web -Break
 			Add-DSPGroupByXml -Web $web -Group $_.Groups
 		}
 	}

@@ -94,6 +94,7 @@
     </Fakes>
     <Fakes Include="Fakes\System.Web.fakes" />
     <Fakes Include="Fakes\mscorlib.fakes" />
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

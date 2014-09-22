@@ -50,7 +50,7 @@
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
@@ -90,6 +90,24 @@
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\PropertyBagHelper.cs" />
     <Compile Include="Configuration\PropertyBagValue.cs" />
+    <Compile Include="Definitions\CatalogInfo.cs" />
+    <Compile Include="Definitions\BaseTypeInfo.cs" />
+    <Compile Include="Definitions\GuidFieldInfo.cs" />
+    <Compile Include="Definitions\ListInfo.cs" />
+    <Compile Include="Definitions\ManagedPropertyInfo.cs" />
+    <Compile Include="Definitions\PageLayoutInfo.cs" />
+    <Compile Include="Definitions\ResultSourceInfo.cs" />
+    <Compile Include="Definitions\TaxonomyFieldInfo.cs" />
+    <Compile Include="Definitions\TermGroupInfo.cs" />
+    <Compile Include="Definitions\TermInfo.cs" />
+    <Compile Include="Definitions\TermSetInfo.cs" />
+    <Compile Include="Definitions\TextFieldInfo.cs" />
+    <Compile Include="Definitions\Values\FieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\IFieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\TaxonomyFieldInfoValue.cs" />
+    <Compile Include="Definitions\Values\TextFieldInfoValue.cs" />
+    <Compile Include="Definitions\WebInfo.cs" />
+    <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
     <Compile Include="Globalization\Variations\VariationHelper.cs" />
@@ -168,7 +186,6 @@
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
     <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
-    <Compile Include="Catalogs\CatalogBuilder.cs" />
     <Compile Include="Catalogs\Catalog.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
@@ -256,14 +273,14 @@
     <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
-    <Compile Include="Taxonomy\TaxonomyHelper.cs" />
+    <Compile Include="Helpers\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Utils\CatalogHelper.cs" />
+    <Compile Include="Helpers\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
-    <Compile Include="Definitions\ContentTypeBuilder.cs" />
+    <Compile Include="Helpers\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
@@ -276,19 +293,19 @@
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Utils\NavigationHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
-    <Compile Include="Definitions\FieldHelper.cs" />
+    <Compile Include="Helpers\FieldHelper.cs" />
     <Compile Include="Definitions\FieldInfo.cs" />
     <Compile Include="Utils\GacAssemblyLocator.cs" />
     <Compile Include="MasterPages\IExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Globalization\IResourceLocator.cs" />
-    <Compile Include="Lists\ListHelper.cs" />
+    <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Lists\ListSecurityHelper.cs" />
     <Compile Include="MasterPages\MasterPageHelper.cs" />
     <Compile Include="Globalization\MuiHelper.cs" />
     <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
     <Compile Include="Utils\NamedReaderWriterLocker.cs" />
-    <Compile Include="Utils\SearchHelper.cs" />
+    <Compile Include="Helpers\SearchHelper.cs" />
     <Compile Include="Security\SecurityHelper.cs" />
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
