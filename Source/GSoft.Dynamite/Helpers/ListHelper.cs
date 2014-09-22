@@ -707,8 +707,8 @@ namespace GSoft.Dynamite.Helpers
                             this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
                         }
 
-                        // Set the default value vot the field
-                        this._taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field as TaxonomyField, defaultValue.Value as TaxonomyFieldInfoValue);
+                        // Set the default value for the field
+                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, defaultValue.Value as TaxonomyFieldInfoValue);
                     }
                     else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is TextFieldInfoValue))
                     {

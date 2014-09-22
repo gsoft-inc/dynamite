@@ -276,7 +276,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="termGroupName">The term group name.</param>
         /// <param name="termSetName">the term set name.</param>
         /// <param name="termLabel">The term label.</param>
-        public void SetDefaultTaxonomyValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel)
+        public void SetDefaultTaxonomyFieldValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel)
         {
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
@@ -312,7 +312,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="web">The web</param>
         /// <param name="field">The field</param>
         /// <param name="defaultValue">The taxonomy default value</param>
-        public void SetDefaultTaxonomyValue(
+        public void SetDefaultTaxonomyFieldValue(
             SPWeb web, TaxonomyField field, TaxonomyFieldInfoValue defaultValue)
         {
             var termGroupName = defaultValue.TermGroup.Name;
@@ -324,7 +324,7 @@ namespace GSoft.Dynamite.Helpers
                 {
                     if (field.AllowMultipleValues)
                     {
-                        this.SetDefaultTaxonomyMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Name).ToArray());
+                        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Name).ToArray());
                     }
                 }
                 else
@@ -332,7 +332,7 @@ namespace GSoft.Dynamite.Helpers
                     var firstOrDefault = defaultValue.Values.FirstOrDefault();
                     if (firstOrDefault != null)
                     {
-                        this.SetDefaultTaxonomyValue(web, field, termGroupName, termSetName, firstOrDefault.Name);
+                        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Name);
                     }
                 }
             }     
@@ -346,7 +346,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
         /// <param name="termLabels">Term label</param>
-        public void SetDefaultTaxonomyMultiValue(
+        public void SetDefaultTaxonomyFieldMultiValue(
             SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels)
         {
             var taxonomySession = new TaxonomySession(web.Site);
@@ -435,7 +435,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="termGroupName">Term group name.</param>
         /// <param name="termSetName">Term Set Name.</param>
         /// <param name="termLabel">Term Label.</param>
-        public void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
+        public void SetItemTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
         {
             var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
 
