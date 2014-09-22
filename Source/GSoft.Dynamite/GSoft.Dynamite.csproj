@@ -224,6 +224,9 @@
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
+    <Compile Include="Utils\DialogLayoutsPageBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Definitions\FieldHelper.cs" />
