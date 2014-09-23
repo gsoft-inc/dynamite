@@ -3,20 +3,23 @@ using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions.Values;
 using Microsoft.SharePoint.Publishing;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Definition for a Taxonomy field
     /// </summary>
-    public class TaxonomyFieldInfo : FieldInfo
+    public class TaxonomyFieldInfo : FieldInfo<TaxonomyValue>
     {
         private bool _isMultiple;
-
+                
         /// <summary>
-        /// Default constructor
+        /// Initializes a new FieldInfo
         /// </summary>
-        public TaxonomyFieldInfo()
+        /// <param name="internalName">The internal name of the field</param>
+        /// <param name="id">The field identifier</param>
+        public TaxonomyFieldInfo(string internalName, Guid id) : base(internalName, id)
         {
             // Default Taxonomy Type
             this.Type = "TaxonomyFieldType";

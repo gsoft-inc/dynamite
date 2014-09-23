@@ -226,204 +226,204 @@ namespace GSoft.Dynamite
         /// <summary>
         /// Title field info
         /// </summary>
-        public static readonly FieldInfo Title = new FieldInfo(TitleName, SPBuiltInFieldId.Title);
+        public static readonly IFieldInfo Title = new TextFieldInfo(TitleName, SPBuiltInFieldId.Title);
 
         /// <summary>
         /// Title linked to item with edit menu
         /// </summary>
-        public static readonly FieldInfo TitleLink = new FieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle);
+        public static readonly IFieldInfo TitleLink = new TextFieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle);
 
         /// <summary>
         /// Title linked to item with no edit menu
         /// </summary>
-        public static readonly FieldInfo TitleLinkNoMenu = new FieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu);
+        public static readonly IFieldInfo TitleLinkNoMenu = new TextFieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu);
 
         /// <summary>
         /// FileRef (i.e. File Url) field info
         /// </summary>
-        public static readonly FieldInfo FileRef = new FieldInfo(FileRefName, SPBuiltInFieldId.FileRef);
+        public static readonly IFieldInfo FileRef = new TextFieldInfo(FileRefName, SPBuiltInFieldId.FileRef);
 
         /// <summary>
         /// FileLeafRef (i.e. Document Name) field info
         /// </summary>
-        public static readonly FieldInfo FileLeafRef = new FieldInfo(FileLeafRefName, SPBuiltInFieldId.FileLeafRef);
+        public static readonly IFieldInfo FileLeafRef = new TextFieldInfo(FileLeafRefName, SPBuiltInFieldId.FileLeafRef);
 
         /// <summary>
         /// ContentType field info
         /// </summary>
-        public static readonly FieldInfo ContentType = new FieldInfo(ContentTypeName, SPBuiltInFieldId.ContentType);
+        public static readonly IFieldInfo ContentType = new TextFieldInfo(ContentTypeName, SPBuiltInFieldId.ContentType);
 
         /// <summary>
         /// ContentTypeId field info
         /// </summary>
-        public static readonly FieldInfo ContentTypeId = new FieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
+        public static readonly IFieldInfo ContentTypeId = new TextFieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
 
         /// <summary>
         /// URL field info
         /// </summary>
-        public static readonly FieldInfo Url = new FieldInfo(UrlName, SPBuiltInFieldId.URL);
+        public static readonly IFieldInfo Url = new TextFieldInfo(UrlName, SPBuiltInFieldId.URL);   // TODO: turn into UrlFieldValue
 
         /// <summary>
         /// TaxCatchAll field info.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static readonly FieldInfo TaxCatchAll = new FieldInfo(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611"));
+        public static readonly IFieldInfo TaxCatchAll = new TextFieldInfo(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611"));
 
         /// <summary>
         /// TaxCatchAllLabel field info.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static readonly FieldInfo TaxCatchAllLabel = new FieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2"));
+        public static readonly IFieldInfo TaxCatchAllLabel = new TextFieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2"));
 
         /// <summary>
         /// The assigned to field info
         /// </summary>
-        public static readonly FieldInfo AssignedTo = new FieldInfo(AssignedToName, SPBuiltInFieldId.AssignedTo);
+        public static readonly IFieldInfo AssignedTo = new TextFieldInfo(AssignedToName, SPBuiltInFieldId.AssignedTo);  // TODO: turn into UserFieldInfo
 
         /// <summary>
         /// The percent complete field info
         /// </summary>
-        public static readonly FieldInfo PercentComplete = new FieldInfo(PercentCompleteName, SPBuiltInFieldId.PercentComplete);
+        public static readonly IFieldInfo PercentComplete = new TextFieldInfo(PercentCompleteName, SPBuiltInFieldId.PercentComplete);
 
         /// <summary>
         /// The predecessors field info
         /// </summary>
-        public static readonly FieldInfo Predecessors = new FieldInfo(PredecessorsName, SPBuiltInFieldId.Predecessors);
+        public static readonly IFieldInfo Predecessors = new TextFieldInfo(PredecessorsName, SPBuiltInFieldId.Predecessors);
 
         /// <summary>
         /// The priority field info
         /// </summary>
-        public static readonly FieldInfo Priority = new FieldInfo(PriorityName, SPBuiltInFieldId.Priority);
+        public static readonly IFieldInfo Priority = new TextFieldInfo(PriorityName, SPBuiltInFieldId.Priority);    // TODO: turn into ChoiceFieldInfo
 
         /// <summary>
         /// The task status field info
         /// </summary>
-        public static readonly FieldInfo TaskStatus = new FieldInfo(TaskStatusName, SPBuiltInFieldId.TaskStatus);
+        public static readonly IFieldInfo TaskStatus = new TextFieldInfo(TaskStatusName, SPBuiltInFieldId.TaskStatus);      // TODO: turn into ChoiceFieldInfo
 
         /// <summary>
         /// The home phone field info
         /// </summary>
-        public static readonly FieldInfo HomePhone = new FieldInfo(HomePhoneName, SPBuiltInFieldId.HomePhone);
+        public static readonly IFieldInfo HomePhone = new TextFieldInfo(HomePhoneName, SPBuiltInFieldId.HomePhone);
 
         /// <summary>
         /// The work fax field info
         /// </summary>
-        public static readonly FieldInfo WorkFax = new FieldInfo(WorkFaxName, SPBuiltInFieldId.WorkFax);
+        public static readonly IFieldInfo WorkFax = new TextFieldInfo(WorkFaxName, SPBuiltInFieldId.WorkFax);
 
         /// <summary>
         /// The work address field info
         /// </summary>
-        public static readonly FieldInfo WorkAddress = new FieldInfo(WorkAddressName, SPBuiltInFieldId.WorkAddress);
+        public static readonly IFieldInfo WorkAddress = new TextFieldInfo(WorkAddressName, SPBuiltInFieldId.WorkAddress);
 
         /// <summary>
         /// The work country field info
         /// </summary>
-        public static readonly FieldInfo WorkCountry = new FieldInfo(WorkCountryName, SPBuiltInFieldId.WorkCountry);
+        public static readonly IFieldInfo WorkCountry = new TextFieldInfo(WorkCountryName, SPBuiltInFieldId.WorkCountry);
 
         /// <summary>
         /// The work city field info
         /// </summary>
-        public static readonly FieldInfo WorkCity = new FieldInfo(WorkCityName, SPBuiltInFieldId.WorkCity);
+        public static readonly IFieldInfo WorkCity = new TextFieldInfo(WorkCityName, SPBuiltInFieldId.WorkCity);
 
         /// <summary>
         /// The work state field info
         /// </summary>
-        public static readonly FieldInfo WorkState = new FieldInfo(WorkStateName, SPBuiltInFieldId.WorkState);
+        public static readonly IFieldInfo WorkState = new TextFieldInfo(WorkStateName, SPBuiltInFieldId.WorkState);
 
         /// <summary>
         /// The work zip field info
         /// </summary>
-        public static readonly FieldInfo WorkZip = new FieldInfo(WorkZipName, SPBuiltInFieldId.WorkZip);
+        public static readonly IFieldInfo WorkZip = new TextFieldInfo(WorkZipName, SPBuiltInFieldId.WorkZip);
 
         /// <summary>
         /// The web page field info
         /// </summary>
-        public static readonly FieldInfo Webpage = new FieldInfo(WebpageName, SPBuiltInFieldId.WebPage);
+        public static readonly IFieldInfo Webpage = new TextFieldInfo(WebpageName, SPBuiltInFieldId.WebPage);       // TODO: turn into UrlFieldInfo
 
         /// <summary>
         /// The comments field info
         /// </summary>
-        public static readonly FieldInfo Comments = new FieldInfo(CommentsName, SPBuiltInFieldId.Comments);
+        public static readonly IFieldInfo Comments = new TextFieldInfo(CommentsName, SPBuiltInFieldId.Comments);
 
         /// <summary>
         /// The department field info
         /// </summary>
-        public static readonly FieldInfo Department = new FieldInfo(DepartmentName, SPBuiltInFieldId.Department);
+        public static readonly IFieldInfo Department = new TextFieldInfo(DepartmentName, SPBuiltInFieldId.Department);
 
         /// <summary>
         /// The role field info
         /// </summary>
-        public static readonly FieldInfo Role = new FieldInfo(RoleName, SPBuiltInFieldId.Role);
+        public static readonly IFieldInfo Role = new TextFieldInfo(RoleName, SPBuiltInFieldId.Role);
 
         /// <summary>
         /// The related items field info
         /// </summary>
-        public static readonly FieldInfo RelatedItems = new FieldInfo(RelatedItemsName, SPBuiltInFieldId.RelatedItems);
+        public static readonly IFieldInfo RelatedItems = new TextFieldInfo(RelatedItemsName, SPBuiltInFieldId.RelatedItems);
 
         /// <summary>
         /// The display order field info
         /// </summary>
-        public static readonly FieldInfo DisplayOrder = new FieldInfo(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb"));
+        public static readonly IFieldInfo DisplayOrder = new TextFieldInfo(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb"));
 
         /// <summary>
         /// The master page URL field info
         /// </summary>
-        public static readonly FieldInfo MasterPageUrl = new FieldInfo(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c"));
+        public static readonly IFieldInfo MasterPageUrl = new TextFieldInfo(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c"));   // TODO: Turn into UrlFieldInfo
 
         /// <summary>
         /// The theme URL field info
         /// </summary>
-        public static readonly FieldInfo ThemeUrl = new FieldInfo(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1"));
+        public static readonly IFieldInfo ThemeUrl = new TextFieldInfo(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1")); // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The image URL field info
         /// </summary>
-        public static readonly FieldInfo ImageUrl = new FieldInfo(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023"));
+        public static readonly IFieldInfo ImageUrl = new TextFieldInfo(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023")); // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The font scheme URL field info
         /// </summary>
-        public static readonly FieldInfo FontSchemeUrl = new FieldInfo(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320"));
+        public static readonly IFieldInfo FontSchemeUrl = new TextFieldInfo(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320")); // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The enterprise keywords field info
         /// </summary>
-        public static readonly FieldInfo EnterpriseKeywords = new FieldInfo(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38"));
+        public static readonly IFieldInfo EnterpriseKeywords = new TaxonomyFieldInfo(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); // TODO: turn into TaxonomyMultiFieldInfo
 
         /// <summary>
         /// The cell phone
         /// </summary>
-        public static readonly FieldInfo CellPhone = new FieldInfo(CellPhoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2"));
+        public static readonly IFieldInfo CellPhone = new TextFieldInfo(CellPhoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2"));
 
         /// <summary>
         /// The full name
         /// </summary>
-        public static readonly FieldInfo FullName = new FieldInfo(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538"));
+        public static readonly IFieldInfo FullName = new TextFieldInfo(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538"));
 
         /// <summary>
         /// The email
         /// </summary>
-        public static readonly FieldInfo Email = new FieldInfo(EmailName, SPBuiltInFieldId.EMail);
+        public static readonly IFieldInfo Email = new TextFieldInfo(EmailName, SPBuiltInFieldId.EMail);
 
         /// <summary>
         /// The first name
         /// </summary>
-        public static readonly FieldInfo FirstName = new FieldInfo(FirstNameName, SPBuiltInFieldId.FirstName);
+        public static readonly IFieldInfo FirstName = new TextFieldInfo(FirstNameName, SPBuiltInFieldId.FirstName);
 
         /// <summary>
         /// The work phone
         /// </summary>
-        public static readonly FieldInfo WorkPhone = new FieldInfo(WorkPhoneName, SPBuiltInFieldId.WorkPhone);
+        public static readonly IFieldInfo WorkPhone = new TextFieldInfo(WorkPhoneName, SPBuiltInFieldId.WorkPhone);
 
         /// <summary>
         /// The job title
         /// </summary>
-        public static readonly FieldInfo JobTitle = new FieldInfo(JobTitleName, SPBuiltInFieldId.JobTitle);
+        public static readonly IFieldInfo JobTitle = new TextFieldInfo(JobTitleName, SPBuiltInFieldId.JobTitle);
 
         /// <summary>
         /// The company
         /// </summary>
-        public static readonly FieldInfo Company = new FieldInfo(CompanyName, SPBuiltInFieldId.Company);
+        public static readonly IFieldInfo Company = new TextFieldInfo(CompanyName, SPBuiltInFieldId.Company);
 
         #endregion
     }

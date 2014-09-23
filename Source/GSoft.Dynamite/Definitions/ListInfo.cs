@@ -112,11 +112,11 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// The default view fields for the list
         /// </summary>
-        public ICollection<FieldInfo> DefaultViewFields { get; set; }
+        public ICollection<IFieldInfo> DefaultViewFields { get; set; }
 
         /// <summary>
         /// Default values for he current list
         /// </summary>
-        public IDictionary<FieldInfo, IFieldInfoValue> DefaultValues { get; set; }
+        public IDictionary<IFieldInfo, IFieldInfoValue> DefaultValues { get; set; }
     }
 }

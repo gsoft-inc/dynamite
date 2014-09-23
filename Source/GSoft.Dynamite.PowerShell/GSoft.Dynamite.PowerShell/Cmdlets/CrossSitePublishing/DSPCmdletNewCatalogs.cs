@@ -19,6 +19,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.PowerShell;
 using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Definitions;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {
@@ -106,7 +107,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                                 {
                                     var fieldInfos = catalog.DefaultViewFields
                                         .Where(x => !string.IsNullOrEmpty(x.InternalName))
-                                        .Select(x => new Definitions.FieldInfo(x.InternalName, Guid.Empty))
+                                        .Select(x => new TextFieldInfo(x.InternalName, Guid.Empty))
                                         .ToArray();
 
                                     listHelper.AddFieldsToDefaultView(list.ParentWeb, list, fieldInfos, true); 

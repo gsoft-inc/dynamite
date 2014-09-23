@@ -1,11 +1,12 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Definition of a GUID field
     /// </summary>
-    public class GuidFieldInfo : FieldInfo
+    public class GuidFieldInfo : FieldInfo<Guid>
     {
         /// <summary>
         /// The XML schema of a GUID field as XElement

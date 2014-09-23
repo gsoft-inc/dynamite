@@ -29,6 +29,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Terms in the term set
         /// </summary>
-        public IDictionary<string, TermInfo> Terms { get; set; }   
+        //public IDictionary<string, TermInfo> Terms { get; set; } 
     }
 }

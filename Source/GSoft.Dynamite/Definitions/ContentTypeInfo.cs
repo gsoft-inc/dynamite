@@ -27,6 +27,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Field description for all of the content type's fields (not including fields from parent content types)
         /// </summary>
-        public ICollection<FieldInfo> Fields { get; set; }
+        public ICollection<IFieldInfo> Fields { get; set; }
     }
 }

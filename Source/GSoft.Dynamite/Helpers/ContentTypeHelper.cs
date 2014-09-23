@@ -7,7 +7,8 @@ using System.Reflection;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint;
-using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
+//using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
+using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -265,7 +266,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>Null if the field does not exist, else the field is returned.</returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPField EnsureFieldInContentType(SPContentType contentType, FieldInfo fieldInfo)
+        public SPField EnsureFieldInContentType(SPContentType contentType, IFieldInfo fieldInfo)
         {
             if (contentType == null)
             {
@@ -299,13 +300,13 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="fieldInfos">The field information.</param>
         /// <returns>IEnumerable of SPFields that where found.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<FieldInfo> fieldInfos)
+        public IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos)
         {
             bool fieldWasAdded = false;
             List<SPField> fields = new List<SPField>();
 
             // For each field we want to add.
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            foreach (IFieldInfo fieldInfo in fieldInfos)
             {
                 // We get the field from AvailableFields because we don't need to modify the field.
                 SPField field = contentType.ParentWeb.AvailableFields[fieldInfo.Id];
@@ -380,7 +381,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<FieldInfo> orderedFields)
+        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields)
         {
             var fieldInternalNames = contentType.FieldLinks.Cast<SPFieldLink>().Where(x => !x.Hidden).Select(x => x.Name).ToList();
 

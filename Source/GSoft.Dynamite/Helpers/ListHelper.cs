@@ -18,7 +18,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
-using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
+using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -565,7 +565,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="list">The list who owns the field</param>
         /// <param name="field">The field to enforce</param>
-        public void EnforceUniqueValuesToField(SPList list, FieldInfo field)
+        public void EnforceUniqueValuesToField(SPList list, IFieldInfo field)
         {
             if (list != null && field != null)
             {
@@ -602,7 +602,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields)
         {
             this.AddFieldsToDefaultView(web, list, fields, false);
         }
@@ -614,7 +614,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
         {
             // get the default view of the list
             var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
@@ -626,7 +626,7 @@ namespace GSoft.Dynamite.Helpers
                 fieldCollection.DeleteAll();
             }
 
-            foreach (FieldInfo field in fields)
+            foreach (IFieldInfo field in fields)
             {
                 if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
                 {
@@ -688,7 +688,7 @@ namespace GSoft.Dynamite.Helpers
         {
             if (listInfo.DefaultValues != null)
             {
-                foreach (KeyValuePair<FieldInfo, IFieldInfoValue> defaultValue in listInfo.DefaultValues)
+                foreach (KeyValuePair<IFieldInfo, IFieldInfoValue> defaultValue in listInfo.DefaultValues)
                 {
                     var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
                     if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFieldInfoValue))

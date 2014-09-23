@@ -10,6 +10,7 @@ using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
+using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -298,7 +299,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfo">The field info configuration</param>
         /// <returns>The internal name of the field</returns>
-        public string EnsureField(SPFieldCollection fieldCollection, FieldInfo fieldInfo)
+        public string EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
         {
             string field;
 
@@ -354,11 +355,11 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfos">The field info configuration</param>
         /// <returns>The internal names of the field</returns>
-        public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<FieldInfo> fieldInfos)
+        public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos)
         {
             var fieldNames = new List<string>();
 
-            foreach (FieldInfo fieldInfo in fieldInfos)
+            foreach (IFieldInfo fieldInfo in fieldInfos)
             {
                 fieldNames.Add(this.EnsureField(fieldCollection, fieldInfo));
             }

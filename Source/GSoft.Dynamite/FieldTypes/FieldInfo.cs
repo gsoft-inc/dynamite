@@ -10,7 +10,7 @@ namespace GSoft.Dynamite.Definitions
     /// <summary>
     /// Defines the field info structure.
     /// </summary>
-    public class FieldInfo : BaseTypeInfo
+    public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
     {
         #region Properties backing fields
 
@@ -29,11 +29,11 @@ namespace GSoft.Dynamite.Definitions
         /// Initializes a new FieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
-        /// <param name="Id">The field identifier</param>
-        public FieldInfo(string internalName, Guid Id)
+        /// <param name="id">The field identifier</param>
+        public FieldInfo(string internalName, Guid id)
         {
             this.InternalName = internalName;
-            this.Id = Id;
+            this.Id = id;
         }
 
         /// <summary>

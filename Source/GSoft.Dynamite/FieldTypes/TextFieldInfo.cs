@@ -1,19 +1,22 @@
 ﻿using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
+using System;
 
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// Definition of a TextField info
     /// </summary>
-    public class TextFieldInfo : FieldInfo
+    public class TextFieldInfo : FieldInfo<string>
     {
         private bool _isMultiLine;
 
         /// <summary>
-        /// Default constructor
+        /// Initializes a new TextFieldInfo
         /// </summary>
-        public TextFieldInfo()
+        /// <param name="internalName">The internal name of the field</param>
+        /// <param name="id">The field identifier</param>
+        public TextFieldInfo(string internalName, Guid id) : base(internalName, id)
         {
             // Default Text Field Type
             this.Type = "Text";
