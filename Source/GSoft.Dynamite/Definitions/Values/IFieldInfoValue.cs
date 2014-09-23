@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface for a field value
     /// </summary>
-    public interface IFieldInfoValue
-    {
-    }
+    //public interface IFieldInfoValue
+    //{
+    //}
 }

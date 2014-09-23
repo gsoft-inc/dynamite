@@ -49,7 +49,7 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Default mapping configuration for the field
         /// </summary>
-        IFieldInfoValue DefaultValue { get; set; }
+        object DefaultValue { get; set; }
 
         /// <summary>
         /// The XElement XML format of the field

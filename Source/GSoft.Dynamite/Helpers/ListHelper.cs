@@ -19,6 +19,7 @@ using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -688,31 +689,31 @@ namespace GSoft.Dynamite.Helpers
         {
             if (listInfo.DefaultValues != null)
             {
-                foreach (KeyValuePair<IFieldInfo, IFieldInfoValue> defaultValue in listInfo.DefaultValues)
+                foreach (KeyValuePair<IFieldInfo, object> defaultValue in listInfo.DefaultValues)
                 {
                     var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
-                    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFieldInfoValue))
+                    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFullValue))
                     {
-                        var taxonomyFieldInfoValue = defaultValue.Value as TaxonomyFieldInfoValue;
-                        var termGroupName = taxonomyFieldInfoValue.TermGroup.Name;
-                        var termSetName = taxonomyFieldInfoValue.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
-                        var termSubsetName = taxonomyFieldInfoValue.TermSubset != null
-                            ? taxonomyFieldInfoValue.TermSubset.Name
+                        var taxonomyValue = defaultValue.Value as TaxonomyFullValue;
+                        var termGroupName = taxonomyValue.Context.Group.Name;
+                        var termSetName = taxonomyValue.Context.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
+                        var termSubsetName = taxonomyValue.Context.TermSubset != null
+                            ? taxonomyValue.Context.TermSubset.Label
                             : string.Empty;
 
-                        if (taxonomyFieldInfoValue.TermGroup != null &&
-                            taxonomyFieldInfoValue.TermSet != null)
+                        if (taxonomyValue.Context.Group != null &&
+                            taxonomyValue.Context.TermSet != null)
                         {
                             // Change managed metadata mapping
                             this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
                         }
 
                         // Set the default value for the field
-                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, defaultValue.Value as TaxonomyFieldInfoValue);
+                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
                     }
-                    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is TextFieldInfoValue))
+                    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is string))
                     {
-                        field.DefaultValue = ((TextFieldInfoValue)defaultValue.Value).Values.FirstOrDefault();
+                        field.DefaultValue = (string)defaultValue.Value;
                         field.Update();
                     }
                 }

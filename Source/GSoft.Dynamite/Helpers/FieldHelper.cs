@@ -11,6 +11,7 @@ using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -330,19 +331,19 @@ namespace GSoft.Dynamite.Helpers
 
             if (fieldInfo.DefaultValue != null)
             {
-                var defaultValue = fieldInfo.DefaultValue as TaxonomyFieldInfoValue;
+                var defaultValue = fieldInfo.DefaultValue as TaxonomyFullValue;
                 string termSubsetName = string.Empty;
-                if (defaultValue.TermSubset != null)
+                if (defaultValue.Context.TermSubset != null)
                 {
-                    termSubsetName = defaultValue.TermSubset.Name;
+                    termSubsetName = defaultValue.Context.TermSubset.Label;
                 }
 
                 // Metadata mapping configuration
                 this._taxonomyHelper.AssignTermSetToSiteColumn(
                             fieldCollection.Web,
                             fieldInfo.Id,
-                            defaultValue.TermGroup.Name,
-                            defaultValue.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            defaultValue.Context.Group.Name,
+                            defaultValue.Context.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
                             termSubsetName);
             }
 

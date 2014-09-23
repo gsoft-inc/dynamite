@@ -117,6 +117,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Default values for he current list
         /// </summary>
-        public IDictionary<IFieldInfo, IFieldInfoValue> DefaultValues { get; set; }
+        public IDictionary<IFieldInfo, object> DefaultValues { get; set; }
     }
 }

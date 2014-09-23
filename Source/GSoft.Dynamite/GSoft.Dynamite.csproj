@@ -313,6 +313,7 @@
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
     <Compile Include="Utils\VersionContext.cs" />
+    <Compile Include="ValueTypes\TaxonomyFullValue.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />

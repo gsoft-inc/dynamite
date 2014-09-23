@@ -313,28 +313,33 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="field">The field</param>
         /// <param name="defaultValue">The taxonomy default value</param>
         public void SetDefaultTaxonomyFieldValue(
-            SPWeb web, TaxonomyField field, TaxonomyFieldInfoValue defaultValue)
+            SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue)
         {
-            var termGroupName = defaultValue.TermGroup.Name;
-            var termSetName = defaultValue.TermSet.Labels[new CultureInfo((int)web.Language)];
+            var termGroupName = defaultValue.Context.Group.Name;
+            var termSetName = defaultValue.Context.TermSet.Labels[new CultureInfo((int)web.Language)];
 
-            if (defaultValue.Values != null)
+            if (defaultValue.Term != null)
             {
-                if (defaultValue.Values.Length > 1)
-                {
-                    if (field.AllowMultipleValues)
-                    {
-                        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Name).ToArray());
-                    }
-                }
-                else
-                {
-                    var firstOrDefault = defaultValue.Values.FirstOrDefault();
-                    if (firstOrDefault != null)
-                    {
-                        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Name);
-                    }
-                }
+                this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, defaultValue.Term.Label);
+
+                // TODO: add SetDefaultTaxonomyFieldValueMulti
+
+
+                //if (defaultValue.Values.Length > 1)
+                //{
+                //    if (field.AllowMultipleValues)
+                //    {
+                //        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Label).ToArray());
+                //    }
+                //}
+                //else
+                //{
+                //    var firstOrDefault = defaultValue.Values.FirstOrDefault();
+                //    if (firstOrDefault != null)
+                //    {
+                //        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Label);
+                //    }
+                //}
             }     
         }
 

@@ -9,7 +9,7 @@ namespace GSoft.Dynamite.Definitions.Values
     /// <summary>
     /// Definition for a TextField Value
     /// </summary>
-    public class TextFieldInfoValue : FieldInfoValue<string>
-    {
-    }
+    //public class TextFieldInfoValue : FieldInfoValue<string>
+    //{
+    //}
 }

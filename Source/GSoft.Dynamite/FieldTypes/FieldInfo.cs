@@ -86,9 +86,9 @@ namespace GSoft.Dynamite.Definitions
         public XElement Schema { get; set; }
 
         /// <summary>
-        /// Default mapping configuration for the field
+        /// Default field value. Should be of type T.
         /// </summary>
-        public IFieldInfoValue DefaultValue { get; set; }
+        public object DefaultValue { get; set; }
 
         /// <summary>
         /// The XElement XML format of the field
