@@ -2,7 +2,6 @@
 using System.Data;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Definitions.Values;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 
 namespace GSoft.Dynamite.Definitions
@@ -22,7 +21,7 @@ namespace GSoft.Dynamite.Definitions
         /// Default constructor
         /// </summary>
         public FieldInfo()
-        {            
+        {
         }
 
         /// <summary>
@@ -30,40 +29,45 @@ namespace GSoft.Dynamite.Definitions
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public FieldInfo(string internalName, Guid id)
+        public FieldInfo(string internalName, Guid id, string sharePointFieldTypeName)
         {
+            if (string.IsNullOrEmpty(internalName))
+            {
+                throw new ArgumentNullException("internalName");
+            } 
+            else if (id == null || id == Guid.Empty) 
+            {
+                throw new ArgumentNullException("internalName");
+            }
+            else if (internalName.Length > 32)
+            {
+                throw new ArgumentOutOfRangeException("internalName", "SharePoint field internal name cannot have more than 32 characters");
+            }
+
             this.InternalName = internalName;
             this.Id = id;
-        }
-
-        /// <summary>
-        /// The internal name of the field
-        /// </summary>
-        public string InternalName
-        {
-            get
-            {
-                return this._internalName;
-            }
-
-            set
-            {
-                this._internalName = value;
-
-                // Set the static name identical to the internal name
-                this.StaticName = value;
-            }
+            this.Type = sharePointFieldTypeName;
         }
 
         /// <summary>
         /// Unique identifier of the field
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
+
+        /// <summary>
+        /// The internal name of the field
+        /// </summary>
+        public string InternalName { get; private set; }
+
+        /// <summary>
+        /// SharePoint Field Type name of the field
+        /// </summary>
+        public string Type { get; private set; }
 
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
-        public RequiredTypes RequiredType { get; set; }
+        public RequiredTypes Required { get; set; }
 
         /// <summary>
         /// Indicates if the field must enforce unique values
@@ -71,33 +75,28 @@ namespace GSoft.Dynamite.Definitions
         public bool EnforceUniqueValues { get; set; }
 
         /// <summary>
-        /// The static name of the field
+        /// Returns the FieldInfo's associated ValueType.
+        /// For example, a TextFieldInfo should return typeof(string)
+        /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
         /// </summary>
-        public string StaticName { get; set; }
+        public Type AssociatedValueType
+        {
+            get
+            {
+                return typeof(T);
+            }
+        }
+
 
         /// <summary>
-        /// Type of the field
+        /// Default field value.
         /// </summary>
-        public string Type { get; set; }
+        public T DefaultValue { get; set; }
 
         /// <summary>
         /// The XML schema of the field
         /// </summary>
-        public XElement Schema { get; set; }
-
-        /// <summary>
-        /// Default field value. Should be of type T.
-        /// </summary>
-        public object DefaultValue { get; set; }
-
-        /// <summary>
-        /// The XElement XML format of the field
-        /// </summary>
-        /// <returns>The XML schema of the field as XElement</returns>
-        public virtual XElement ToXElement()
-        {
-            return null;
-        }
+        public abstract XElement Schema { get; }
 
         /// <summary>
         /// The string XML format of the field
@@ -105,7 +104,7 @@ namespace GSoft.Dynamite.Definitions
         /// <returns>The XML schema of the field as string</returns>
         public override string ToString()
         {
-            return this.ToXElement().ToString();
+            return this.Schema.ToString();
         }
     }
 }

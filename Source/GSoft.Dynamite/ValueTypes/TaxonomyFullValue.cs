@@ -26,6 +26,7 @@ namespace GSoft.Dynamite.ValueTypes
         /// <param name="taxonomyValue">The taxonomy value.</param>
         public TaxonomyFullValue(TaxonomyFieldValue taxonomyValue)
         {
+
             //Guid termGuid;
 
             //if (taxonomyValue == null)

@@ -7,21 +7,20 @@ using GSoft.Dynamite.ValueTypes;
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
-    /// Definition for a Taxonomy field
+    /// Definition for a TaxonomyMulti field
     /// </summary>
-    public class TaxonomyFieldInfo : FieldInfo<TaxonomyFullValue>
+    public class TaxonomyMultiFieldInfo : FieldInfo<TaxonomyValueCollection>
     {
-        private bool _isMultiple;
-                
         /// <summary>
         /// Initializes a new FieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public TaxonomyFieldInfo(string internalName, Guid id)
-            : base(internalName, id, "TaxonomyFieldType")
+        public TaxonomyMultiFieldInfo(string internalName, Guid id)
+            : base(internalName, id, "TaxonomyFieldTypeMulti")
         {
         }
+
         /// <summary>
         /// Gets or sets a value indicating whether [is open].
         /// </summary>
@@ -48,7 +47,7 @@ namespace GSoft.Dynamite.Definitions
                     new XAttribute("Description", this.Description),
                     new XAttribute("Group", this.Group),
                     new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()),
-                    new XAttribute("Mult", "FALSE"),
+                    new XAttribute("Mult", "TRUE"),
                     new XElement(
                         "Customization",
                         new XElement(

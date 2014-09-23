@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
 using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
@@ -310,7 +309,7 @@ namespace GSoft.Dynamite.Helpers
             }
             else
             {
-                field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+                field = this.EnsureField(fieldCollection, fieldInfo.Schema);
             }
 
             return field;
@@ -324,7 +323,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>The internal name of the field</returns>
         public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
         {
-            var field = this.EnsureField(fieldCollection, fieldInfo.ToXElement());
+            var field = this.EnsureField(fieldCollection, fieldInfo.Schema);
 
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
@@ -337,6 +336,8 @@ namespace GSoft.Dynamite.Helpers
                 {
                     termSubsetName = defaultValue.Context.TermSubset.Label;
                 }
+
+                // TODO: DefaultValue shouldn't be used for this. Use TaxonomyContext object on TaxonomyFieldInfo instead. DefaultValue should be used for the TermSet-mapped (thx to Context) field.
 
                 // Metadata mapping configuration
                 this._taxonomyHelper.AssignTermSetToSiteColumn(

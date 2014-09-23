@@ -287,7 +287,7 @@ namespace GSoft.Dynamite.Helpers
             if (field != null)
             {
                 // Add the field to the content type and its children.
-                AddFieldToContentType(contentType, field, true, fieldInfo.RequiredType);
+                AddFieldToContentType(contentType, field, true, fieldInfo.Required);
             }
 
             return field;
@@ -316,7 +316,7 @@ namespace GSoft.Dynamite.Helpers
                     fields.Add(field);
 
                     // Then we add it to the content type without updating the content type.
-                    if (AddFieldToContentType(contentType, field, false, fieldInfo.RequiredType))
+                    if (AddFieldToContentType(contentType, field, false, fieldInfo.Required))
                     {
                         fieldWasAdded = true;
                     }

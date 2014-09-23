@@ -38,11 +38,11 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Title by languages (LCID) for the list
         /// </summary>
-        public IDictionary<CultureInfo, string> TitleResources { get; set; }
+        public IDictionary<CultureInfo, string> TitleResources { get; set; }        // TODO: maybe replace this with TitleResourceKey and store localized values in resource files
 
         /// <summary>
         /// Description by languages (LCID) for the list
         /// </summary>
-        public IDictionary<CultureInfo, string> DescriptionResources { get; set; }
+        public IDictionary<CultureInfo, string> DescriptionResources { get; set; }      // TODO: maybe replace this with DescriptionResourceKey
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes;

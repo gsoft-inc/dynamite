@@ -1,5 +1,4 @@
 ﻿using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Definitions.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +11,24 @@ namespace GSoft.Dynamite.Definitions
     public interface IFieldInfo
     {
         /// <summary>
-        /// The internal name of the field
-        /// </summary>
-        string InternalName { get; set; }
-        
-        /// <summary>
         /// Unique identifier of the field
         /// </summary>
-        Guid Id { get; set; }
+        Guid Id { get; }
+
+        /// <summary>
+        /// The internal name of the field
+        /// </summary>
+        string InternalName { get; }
+
+        /// <summary>
+        /// Type of the field
+        /// </summary>
+        string Type { get; }
 
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
-        RequiredTypes RequiredType { get; set; }
+        RequiredTypes Required { get; set; }
 
         /// <summary>
         /// Indicates if the field must enforce unique values
@@ -32,35 +36,22 @@ namespace GSoft.Dynamite.Definitions
         bool EnforceUniqueValues { get; set; }
 
         /// <summary>
-        /// The static name of the field
+        /// Returns the FieldInfo's associated ValueType.
+        /// For example, a TextFieldInfo should return typeof(string)
+        /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
         /// </summary>
-        string StaticName { get; set; }
-
-        /// <summary>
-        /// Type of the field
-        /// </summary>
-        string Type { get; set; }
+        Type AssociatedValueType { get; }
 
         /// <summary>
         /// The XML schema of the field
         /// </summary>
-        XElement Schema { get; set; }
-
-        /// <summary>
-        /// Default mapping configuration for the field
-        /// </summary>
-        object DefaultValue { get; set; }
-
-        /// <summary>
-        /// The XElement XML format of the field
-        /// </summary>
-        /// <returns>The XML schema of the field as XElement</returns>
-        XElement ToXElement();
+        XElement Schema { get; }
 
         /// <summary>
         /// The string XML format of the field
         /// </summary>
         /// <returns>The XML schema of the field as string</returns>
         string ToString();
+
     }
 }

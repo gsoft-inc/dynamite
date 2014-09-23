@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
@@ -687,36 +686,40 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="listInfo">The list configuration object</param>
         public void SetDefaultValues(SPList list, ListInfo listInfo)
         {
-            if (listInfo.DefaultValues != null)
+            if (listInfo.FieldDefinitions.Count > 0)
             {
-                foreach (KeyValuePair<IFieldInfo, object> defaultValue in listInfo.DefaultValues)
-                {
-                    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
-                    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFullValue))
-                    {
-                        var taxonomyValue = defaultValue.Value as TaxonomyFullValue;
-                        var termGroupName = taxonomyValue.Context.Group.Name;
-                        var termSetName = taxonomyValue.Context.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
-                        var termSubsetName = taxonomyValue.Context.TermSubset != null
-                            ? taxonomyValue.Context.TermSubset.Label
-                            : string.Empty;
+                this._fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
-                        if (taxonomyValue.Context.Group != null &&
-                            taxonomyValue.Context.TermSet != null)
-                        {
-                            // Change managed metadata mapping
-                            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
-                        }
+                // TODO: make sure that EnsureField takes care of ensureing both the TermSet binding (TaxonomyContext) and Default value of the column
 
-                        // Set the default value for the field
-                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
-                    }
-                    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is string))
-                    {
-                        field.DefaultValue = (string)defaultValue.Value;
-                        field.Update();
-                    }
-                }
+                //foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
+                //{
+                //    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
+                //    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFullValue))
+                //    {
+                //        var taxonomyValue = defaultValue.Value as TaxonomyFullValue;
+                //        var termGroupName = taxonomyValue.Context.Group.Name;
+                //        var termSetName = taxonomyValue.Context.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
+                //        var termSubsetName = taxonomyValue.Context.TermSubset != null
+                //            ? taxonomyValue.Context.TermSubset.Label
+                //            : string.Empty;
+
+                //        if (taxonomyValue.Context.Group != null &&
+                //            taxonomyValue.Context.TermSet != null)
+                //        {
+                //            // Change managed metadata mapping
+                //            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
+                //        }
+
+                //        // Set the default value for the field
+                //        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                //    }
+                //    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is string))
+                //    {
+                //        field.DefaultValue = (string)defaultValue.Value;
+                //        field.Update();
+                //    }
+                //}
             }
         }
 

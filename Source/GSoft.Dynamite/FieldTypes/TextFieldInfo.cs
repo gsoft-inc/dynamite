@@ -9,80 +9,46 @@ namespace GSoft.Dynamite.Definitions
     /// </summary>
     public class TextFieldInfo : FieldInfo<string>
     {
-        private bool _isMultiLine;
-
         /// <summary>
         /// Initializes a new TextFieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public TextFieldInfo(string internalName, Guid id) : base(internalName, id)
+        public TextFieldInfo(string internalName, Guid id) : base(internalName, id, "Text")
         {
-            // Default Text Field Type
-            this.Type = "Text";
         }
 
-        #region Properties
-
         /// <summary>
-        /// Gets or sets a value indicating whether [is multi line].
+        /// The XML schema of the Text field
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if [is multi line]; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsMultiLine
+        public override XElement Schema
         {
             get
             {
-                return this._isMultiLine;
-            }
+                var schema = new XElement(
+                    "Field",
+                    new XAttribute("Name", this.InternalName),
+                    new XAttribute("Type", this.Type),
+                    new XAttribute("ID", "{" + this.Id + "}"),
+                    new XAttribute("StaticName", this.InternalName),
+                    new XAttribute("DisplayName", this.DisplayName),
+                    new XAttribute("Description", this.Description),
+                    new XAttribute("Group", this.Group),
+                    new XAttribute("ShowInListSettings", "TRUE"));
 
-            set
-            {
-                if (value == false)
+                // Check the Required type
+                if (this.Required == RequiredTypes.Required)
                 {
-                    this._isMultiLine = true;
-                    this.Type = "Text";
+                    this.Schema.Add(new XAttribute("Required", "TRUE"));
                 }
-                else
+
+                if (this.Required == RequiredTypes.NotRequired)
                 {
-                    this.Type = "Note";
+                    this.Schema.Add(new XAttribute("Required", "FALSE"));
                 }
+
+                return schema;
             }
-        }
-
-        #endregion
-
-        /// <summary>
-        /// The XML schema of a Text field as XElement
-        /// </summary>
-        /// <returns>The XML schema of a Text field as XElement</returns>
-        public override XElement ToXElement()
-        {
-
-            this.Schema = new XElement(
-                                        "Field",
-                                        new XAttribute("Name", this.InternalName),
-                                        new XAttribute("Type", this.Type),
-                                        new XAttribute("ID", "{" + this.Id + "}"),
-                                        new XAttribute("StaticName", this.StaticName),
-                                        new XAttribute("DisplayName", this.DisplayName),
-                                        new XAttribute("Description", this.Description),
-                                        new XAttribute("Group", this.Group),
-                                        new XAttribute("ShowInListSettings", "TRUE"));
-
-            // Check the Required type
-            if (this.RequiredType == RequiredTypes.Required)
-            {
-                this.Schema.Add(new XAttribute("Required", "TRUE"));
-            }
-
-            if (this.RequiredType == RequiredTypes.NotRequired)
-            {
-                this.Schema.Add(new XAttribute("Required", "FALSE"));
-            }
-
-            return this.Schema;
         }
     }
 }
