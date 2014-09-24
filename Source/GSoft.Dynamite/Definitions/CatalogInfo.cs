@@ -19,12 +19,11 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Initializes a new CatalogInfo
         /// </summary>
-        /// <param name="rootFolderServerRelativeUrl">The server-relative URL of the list</param>
+        /// <param name="webRelativeUrl">The web-relative URL of the list</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
-        public CatalogInfo(string rootFolderServerRelativeUrl, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
-            : base(rootFolderServerRelativeUrl, displayNameResourceKey, descriptionResourceKey, groupResourceKey)
+        public CatalogInfo(string webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
+            : base(webRelativeUrl, displayNameResourceKey, descriptionResourceKey)
         {
             this.IsAnonymous = false;
             this.ManagedProperties = new List<ManagedPropertyInfo>();
