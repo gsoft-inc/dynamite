@@ -14,41 +14,22 @@ namespace GSoft.Dynamite.Definitions
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public NoteFieldInfo(string internalName, Guid id)
-            : base(internalName, id, "Note")
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public NoteFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(internalName, id, "Note", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
         }
 
         /// <summary>
-        /// The XML schema of the Text field
+        /// The XML schema of the Note field
         /// </summary>
         public override XElement Schema
         {
             get
             {
-                var schema = new XElement(
-                    "Field",
-                    new XAttribute("Name", this.InternalName),
-                    new XAttribute("Type", this.Type),
-                    new XAttribute("ID", "{" + this.Id + "}"),
-                    new XAttribute("StaticName", this.InternalName),
-                    new XAttribute("DisplayName", this.DisplayName),
-                    new XAttribute("Description", this.Description),
-                    new XAttribute("Group", this.Group),
-                    new XAttribute("ShowInListSettings", "TRUE"));
-
-                // Check the Required type
-                if (this.Required == RequiredTypes.Required)
-                {
-                    this.Schema.Add(new XAttribute("Required", "TRUE"));
-                }
-
-                if (this.Required == RequiredTypes.NotRequired)
-                {
-                    this.Schema.Add(new XAttribute("Required", "FALSE"));
-                }
-
-                return schema;
+                return this.BasicFieldSchema;
             }
         }
     }

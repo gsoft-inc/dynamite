@@ -18,6 +18,7 @@ namespace GSoft.Dynamite.Definitions
         {
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
+            this.Overwrite = false;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();

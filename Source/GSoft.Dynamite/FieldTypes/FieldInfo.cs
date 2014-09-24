@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
@@ -11,12 +12,6 @@ namespace GSoft.Dynamite.Definitions
     /// </summary>
     public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
     {
-        #region Properties backing fields
-
-        private string _internalName;
-
-        #endregion
-
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -29,7 +24,11 @@ namespace GSoft.Dynamite.Definitions
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public FieldInfo(string internalName, Guid id, string sharePointFieldTypeName)
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             if (string.IsNullOrEmpty(internalName))
             {
@@ -37,7 +36,7 @@ namespace GSoft.Dynamite.Definitions
             } 
             else if (id == null || id == Guid.Empty) 
             {
-                throw new ArgumentNullException("internalName");
+                throw new ArgumentNullException("id");
             }
             else if (internalName.Length > 32)
             {
@@ -46,7 +45,35 @@ namespace GSoft.Dynamite.Definitions
 
             this.InternalName = internalName;
             this.Id = id;
-            this.Type = sharePointFieldTypeName;
+            this.Type = fieldTypeName;
+        }
+
+        /// <summary>
+        /// Creates a new FieldInfo object from an existing field schema XML
+        /// </summary>
+        /// <param name="fieldSchemaXml">Field's XML definition</param>
+        public FieldInfo(XElement fieldSchemaXml)
+        {
+            if (fieldSchemaXml == null)
+            {
+                throw new ArgumentNullException("fieldSchemaXml");
+            }
+            
+            if (!this.XmlHasAllBasicAttributes(fieldSchemaXml))
+            {
+                throw new ArgumentException("fieldSchemaXml", "Attribute missing from field definitions");
+            }
+
+            this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
+            this.InternalName = fieldSchemaXml.Attribute("InternalName").Value;
+            this.Type = fieldSchemaXml.Attribute("Type").Value;
+        }
+
+        private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
+        {
+            return fieldSchemaXml.Attribute("ID") == null
+                || fieldSchemaXml.Attribute("InternalName") == null
+                || fieldSchemaXml.Attribute("Type") == null;
         }
 
         /// <summary>
@@ -105,6 +132,37 @@ namespace GSoft.Dynamite.Definitions
         public override string ToString()
         {
             return this.Schema.ToString();
+        }
+
+        protected XElement BasicFieldSchema
+        {
+            get
+            {
+                var schema = new XElement(
+                    "Field",
+                    new XAttribute("Name", this.InternalName),
+                    new XAttribute("Type", this.Type),
+                    new XAttribute("ID", "{" + this.Id + "}"),
+                    new XAttribute("StaticName", this.InternalName),
+                    new XAttribute("DisplayName", this.DisplayName),
+                    new XAttribute("Description", this.Description),
+                    new XAttribute("Group", this.Group),
+                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()),
+                    new XAttribute("ShowInListSettings", "TRUE"));
+                
+                // Check the Required type
+                if (this.Required == RequiredTypes.Required)
+                {
+                    schema.Add(new XAttribute("Required", "TRUE"));
+                }
+
+                if (this.Required == RequiredTypes.NotRequired)
+                {
+                    schema.Add(new XAttribute("Required", "FALSE"));
+                }
+
+                return schema;
+            }
         }
     }
 }

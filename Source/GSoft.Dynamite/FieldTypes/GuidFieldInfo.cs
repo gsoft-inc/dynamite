@@ -9,12 +9,15 @@ namespace GSoft.Dynamite.Definitions
     public class GuidFieldInfo : FieldInfo<Guid>
     {
         /// <summary>
-        /// Initializes a new NoteFieldInfo
+        /// Initializes a new GuidFieldInfo
         /// </summary>
-        /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public GuidFieldInfo(string internalName, Guid id)
-            : base(internalName, id, "Guid")
+        /// <param name="internalName">The internal name of the field</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public GuidFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(internalName, id, "Guid", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
         }
 

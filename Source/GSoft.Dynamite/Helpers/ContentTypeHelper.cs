@@ -9,6 +9,7 @@ using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint;
 //using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
+using System.Threading;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -36,29 +37,21 @@ namespace GSoft.Dynamite.Helpers
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
-            if (contentTypeInfo.TitleResources != null)
+            var availableLanguages = contentType.ParentWeb.SupportedUICultures.Reverse();   // end with the main language
+            foreach (var availableLanguage in availableLanguages)
             {
-                // Set title according to resources
-                foreach (KeyValuePair<CultureInfo, string> title in contentTypeInfo.TitleResources)
-                {
-                    contentType.NameResource.SetValueForUICulture(title.Key, title.Value);
-                }
+                var currentCulture = CultureInfo.CurrentUICulture;
+
+                // make sure the ResourceLocator will fetch the correct culture's DisplayName value
+                Thread.CurrentThread.CurrentUICulture = availableLanguage;
+                contentType.Name = contentTypeInfo.DisplayName;
+                contentType.Description = contentTypeInfo.Description;
+                contentType.Group = contentTypeInfo.Group;
+
+                // restore the MUI culture to the old value
+                Thread.CurrentThread.CurrentUICulture = currentCulture;
             }
 
-            if (contentTypeInfo.DescriptionResources != null)
-            {
-                // Set title according to resources
-                foreach (KeyValuePair<CultureInfo, string> description in contentTypeInfo.DescriptionResources)
-                {
-                    contentType.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
-                }
-            }
-            else
-            {
-                contentType.Description = contentTypeInfo.Description;
-            }
-         
-            contentType.Group = contentTypeInfo.Group;
             contentType.Update();
 
             return contentType;

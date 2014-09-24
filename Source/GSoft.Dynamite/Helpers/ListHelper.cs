@@ -145,11 +145,11 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="web">The web</param>
         /// <param name="rootFolderUrl">The root folder URL of the list</param>
-        /// <param name="titles">Titles by labels for the list</param>
-        /// <param name="descriptions">Description by labels for the list</param>
+        /// <param name="titleResourceKey">Titles' resource key</param>
+        /// <param name="descriptionResourceKey">Descriptions' resource key</param>
         /// <param name="templateType">The template type of the list</param>
         /// <returns>The list object</returns>
-        public SPList EnsureList(SPWeb web, string rootFolderUrl, IDictionary<CultureInfo, string> titles, IDictionary<CultureInfo, string> descriptions, SPListTemplateType templateType)
+        public SPList EnsureList(SPWeb web, string rootFolderUrl, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
         {
             var list = this.GetListByRootFolderUrl(web, rootFolderUrl);
 
@@ -167,16 +167,14 @@ namespace GSoft.Dynamite.Helpers
                 var id = web.Lists.Add(rootFolderUrl, string.Empty, templateType);
                 list = web.Lists[id];
 
-                // Set title according to resources
-                foreach (KeyValuePair<CultureInfo, string> title in titles)
+                var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
+                foreach (var availableLanguage in availableLanguages)
                 {
-                    list.TitleResource.SetValueForUICulture(title.Key, title.Value);
-                }
+                    var title = this._resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
+                    var description = this._resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
 
-                // Set description according to resources
-                foreach (KeyValuePair<CultureInfo, string> description in descriptions)
-                {
-                    list.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
+                    list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                    list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
                 }
 
                 list.Update();
@@ -200,24 +198,24 @@ namespace GSoft.Dynamite.Helpers
             // Ensure the list
             if (list == null)
             {
-                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
             }
             else
             {
                 this._logger.Info("List " + listInfo.RootFolderUrl + " already exists");
 
-                // If the Overwrite paramter is set to true, celete and recreate the catalog
+                // If the Overwrite parameter is set to true, celete and recreate the catalog
                 if (listInfo.Overwrite)
                 {
                     this._logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
 
                     list.Delete();
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                 }
                 else
                 {
                     // Get the existing list
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                 }
             }
 

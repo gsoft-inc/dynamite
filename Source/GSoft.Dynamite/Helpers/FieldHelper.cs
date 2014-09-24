@@ -11,6 +11,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -328,13 +329,13 @@ namespace GSoft.Dynamite.Helpers
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
 
-            if (fieldInfo.DefaultValue != null)
+            if (fieldInfo.TermStoreMapping != null)
             {
-                var defaultValue = fieldInfo.DefaultValue as TaxonomyFullValue;
+                TaxonomyContext taxContext = fieldInfo.TermStoreMapping;
                 string termSubsetName = string.Empty;
-                if (defaultValue.Context.TermSubset != null)
+                if (taxContext.TermSubset != null)
                 {
-                    termSubsetName = defaultValue.Context.TermSubset.Label;
+                    termSubsetName = taxContext.TermSubset.Label;
                 }
 
                 // TODO: DefaultValue shouldn't be used for this. Use TaxonomyContext object on TaxonomyFieldInfo instead. DefaultValue should be used for the TermSet-mapped (thx to Context) field.
@@ -343,9 +344,22 @@ namespace GSoft.Dynamite.Helpers
                 this._taxonomyHelper.AssignTermSetToSiteColumn(
                             fieldCollection.Web,
                             fieldInfo.Id,
-                            defaultValue.Context.Group.Name,
-                            defaultValue.Context.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            taxContext.Group.Name,
+                            taxContext.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
                             termSubsetName);
+            }
+
+            if (fieldInfo.DefaultValue != null)
+            {
+                SPField newlyCreatedField = fieldCollection[fieldInfo.Id];
+
+                // TODO: create a IFieldValueWriter<ValueType> utility to re-use the proper
+                // taxonomy setter logic which is locked up in the TaxonomyValueConverter
+
+                //newlyCreatedField.DefaultValueTyped = 
+
+                //TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
+               
             }
 
             return field;

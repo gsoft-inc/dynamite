@@ -26,6 +26,21 @@ namespace GSoft.Dynamite.Definitions
         string Type { get; }
 
         /// <summary>
+        /// Field display title
+        /// </summary>
+        string DisplayName { get; }
+
+        /// <summary>
+        /// Field description
+        /// </summary>
+        string Description { get; }
+
+        /// <summary>
+        /// Content group in SharePoint definitions
+        /// </summary>
+        string Group { get; }
+        
+        /// <summary>
         /// Indicates if the field is required
         /// </summary>
         RequiredTypes Required { get; set; }

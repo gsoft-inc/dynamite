@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 using Microsoft.SharePoint.Publishing;
 using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -10,25 +11,74 @@ namespace GSoft.Dynamite.Definitions
     /// Definition for a Taxonomy field
     /// </summary>
     public class TaxonomyFieldInfo : FieldInfo<TaxonomyFullValue>
-    {
-        private bool _isMultiple;
-                
+    {                
         /// <summary>
         /// Initializes a new FieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
-        public TaxonomyFieldInfo(string internalName, Guid id)
-            : base(internalName, id, "TaxonomyFieldType")
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public TaxonomyFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(internalName, id, "TaxonomyFieldType", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
         }
+
+        public static XElement TaxonomyFieldCustomizationSchema(Guid associatedNoteFieldId, bool isPathRendered, bool createValuesInEditForm)
+        {
+            XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";
+            
+            return new XElement(
+                "Customization",
+                new XElement(
+                    "ArrayOfProperty",
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "TextField"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q6", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q6:string"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            "{" + associatedNoteFieldId + "}")),
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "IsPathRendered"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q7:boolean"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            isPathRendered.ToString()),
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "CreateValuesInEditForm"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q9", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q9:boolean"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            createValuesInEditForm.ToString())))));
+        }
+
         /// <summary>
-        /// Gets or sets a value indicating whether [is open].
+        /// If true, the full parent-to-children path to the term will be rendered in the UI whenever
+        /// a term is associated to this field
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if [is open]; otherwise, <c>false</c>.
-        /// </value>
-        public bool IsOpen { get; set; }
+        public bool IsPathRendered { get; set; }
+
+        /// <summary>
+        /// If the associated TermSet is open and this value is true, then contributors will
+        /// be able to "fill-in" taxonomy value
+        /// </summary>
+        public bool CreateValuesInEditForm { get; set; }
+
+        /// <summary>
+        /// Determines to which term set (and, optionally, which sub-term) the taxonomy column
+        /// will be mapped, limiting the user's choices in the Edit Form's taxonomy picker.
+        /// </summary>
+        public TaxonomyContext TermStoreMapping { get; set; }
 
         /// <summary>
         /// The XML schema of the Taxonomy field
@@ -37,51 +87,10 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";
-                var schema = new XElement(
-                    "Field",
-                    new XAttribute("Name", this.InternalName),
-                    new XAttribute("Type", this.Type),
-                    new XAttribute("ID", "{" + this.Id + "}"),
-                    new XAttribute("StaticName", this.InternalName),
-                    new XAttribute("DisplayName", this.DisplayName),
-                    new XAttribute("Description", this.Description),
-                    new XAttribute("Group", this.Group),
-                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()),
-                    new XAttribute("Mult", "FALSE"),
-                    new XElement(
-                        "Customization",
-                        new XElement(
-                            "ArrayOfProperty",
-                            new XElement(
-                                "Property",
-                                new XElement("Name", "TextField"),
-                                new XElement(
-                                    "Value",
-                                    new XAttribute(XNamespace.Xmlns + "q6", "http://www.w3.org/2001/XMLSchema"),
-                                    new XAttribute(p4 + "type", "q6:string"),
-                                    new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                                    "{" + Guid.NewGuid() + "}")),
-                            new XElement(
-                                "Property",
-                                new XElement("Name", "IsPathRendered"),
-                                new XElement(
-                                    "Value",
-                                    new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
-                                    new XAttribute(p4 + "type", "q7:boolean"),
-                                    new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                                    "false")))));
+                var schema = this.BasicFieldSchema;
 
-                // Check the Required type
-                if (this.Required == RequiredTypes.Required)
-                {
-                    schema.Add(new XAttribute("Required", "TRUE"));
-                }
-
-                if (this.Required == RequiredTypes.NotRequired)
-                {
-                    schema.Add(new XAttribute("Required", "FALSE"));
-                }
+                schema.Add(new XAttribute("Mult", "FALSE"));
+                schema.Add(TaxonomyFieldCustomizationSchema(Guid.NewGuid(), this.IsPathRendered, this.CreateValuesInEditForm));
 
                 return schema;
             }
