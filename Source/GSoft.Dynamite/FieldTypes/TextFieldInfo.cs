@@ -2,6 +2,7 @@
 using GSoft.Dynamite.Binding;
 using System;
 using GSoft.Dynamite.Definitions;
+using System.Globalization;
 
 namespace GSoft.Dynamite.FieldTypes
 {
@@ -23,6 +24,18 @@ namespace GSoft.Dynamite.FieldTypes
         {
             // Default max length
             this.MaxLength = 255;
+        }
+
+        /// <summary>
+        /// Creates a new FieldInfo object from an existing field schema XML
+        /// </summary>
+        /// <param name="fieldSchemaXml">Field's XML definition</param>
+        public TextFieldInfo(XElement fieldSchemaXml) : base(fieldSchemaXml)
+        {
+            if (fieldSchemaXml.Attribute("MaxLength") != null)
+            {
+                this.MaxLength = int.Parse(fieldSchemaXml.Attribute("MaxLength").Value, CultureInfo.InvariantCulture);
+            }
         }
 
         /// <summary>

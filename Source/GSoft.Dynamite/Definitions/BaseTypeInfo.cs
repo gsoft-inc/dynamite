@@ -79,7 +79,7 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                return FindResourceValueForKey(this.DescriptionResourceKey);
+                return FindResourceValueForKey(this.GroupResourceKey);
             }
         }
 

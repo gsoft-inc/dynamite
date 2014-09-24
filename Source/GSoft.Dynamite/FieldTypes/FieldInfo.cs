@@ -65,15 +65,33 @@ namespace GSoft.Dynamite.Definitions
             }
 
             this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
-            this.InternalName = fieldSchemaXml.Attribute("InternalName").Value;
+            this.InternalName = fieldSchemaXml.Attribute("Name").Value;
             this.Type = fieldSchemaXml.Attribute("Type").Value;
+
+            if (fieldSchemaXml.Attribute("DisplayName") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.DisplayNameResourceKey = fieldSchemaXml.Attribute("DisplayName").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("Description") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.DescriptionResourceKey = fieldSchemaXml.Attribute("Description").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("Group") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.GroupResourceKey = fieldSchemaXml.Attribute("Group").Value;
+            }
         }
 
         private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
         {
-            return fieldSchemaXml.Attribute("ID") == null
-                || fieldSchemaXml.Attribute("InternalName") == null
-                || fieldSchemaXml.Attribute("Type") == null;
+            return fieldSchemaXml.Attribute("ID") != null
+                || fieldSchemaXml.Attribute("Name") != null
+                || fieldSchemaXml.Attribute("Type") != null;
         }
 
         /// <summary>
