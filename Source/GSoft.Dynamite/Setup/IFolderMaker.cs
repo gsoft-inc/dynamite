@@ -1,10 +1,12 @@
 ﻿namespace GSoft.Dynamite.Setup
 {
     using Microsoft.SharePoint;
+    using System;
 
     /// <summary>
     /// Used to recursively build SPFolders and publishing pages from metadata in the Pages library
     /// </summary>
+    [Obsolete]
     public interface IFolderMaker
     {
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Lists;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 using Microsoft.SharePoint;
@@ -19,6 +18,11 @@ namespace GSoft.Dynamite.Definitions
         {
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
+            this.Overwrite = false;
+
+            this.ContentTypes = new List<ContentTypeInfo>();
+            this.DefaultViewFields = new List<IFieldInfo>();
+            this.FieldDefinitions = new List<IFieldInfo>();
         }
 
         /// <summary>
@@ -97,11 +101,10 @@ namespace GSoft.Dynamite.Definitions
         public WriteSecurityOptions WriteSecurity { get; set; }
 
         /// <summary>
-        /// Gets or sets the content types.
+        /// Content types definitions. If content types are specified, content type management
+        /// should be turned on in your list. If not content types are specified, the collection
+        /// of FieldDefinitions should be used to add fields to your list.
         /// </summary>
-        /// <value>
-        /// The content types.
-        /// </value>
         public ICollection<ContentTypeInfo> ContentTypes { get; set; }
 
         /// <summary>
@@ -112,11 +115,13 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// The default view fields for the list
         /// </summary>
-        public ICollection<FieldInfo> DefaultViewFields { get; set; }
+        public ICollection<IFieldInfo> DefaultViewFields { get; set; }
 
         /// <summary>
-        /// Default values for he current list
+        /// List field definitions. Use to override site column definitions that come from ContentTypeInfo.
+        /// If no ContentTypes are specified, these definitions should be used to add columns directly on
+        /// your custom list.
         /// </summary>
-        public IDictionary<FieldInfo, IFieldInfoValue> DefaultValues { get; set; }
+        public ICollection<IFieldInfo> FieldDefinitions { get; set; }
     }
 }

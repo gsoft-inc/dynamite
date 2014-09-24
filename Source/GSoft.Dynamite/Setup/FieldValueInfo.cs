@@ -1,11 +1,13 @@
 ﻿using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
+using System;
 
 namespace GSoft.Dynamite.Setup
 {
     /// <summary>
     /// Helps in filling fields
     /// </summary>
+    [Obsolete]
     public class FieldValueInfo : IFieldValueInfo
     {
         /// <summary>

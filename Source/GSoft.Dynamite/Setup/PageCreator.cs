@@ -19,6 +19,7 @@ namespace GSoft.Dynamite.Setup
     /// <summary>
     /// Adds pages to the Pages library
     /// </summary>
+    [Obsolete]
     public class PageCreator
     {
         private readonly FolderRepository folderRepository;

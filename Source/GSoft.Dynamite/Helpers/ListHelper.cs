@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Definitions.Values;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
@@ -18,7 +17,8 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
-using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
+using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -145,11 +145,11 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="web">The web</param>
         /// <param name="rootFolderUrl">The root folder URL of the list</param>
-        /// <param name="titles">Titles by labels for the list</param>
-        /// <param name="descriptions">Description by labels for the list</param>
+        /// <param name="titleResourceKey">Titles' resource key</param>
+        /// <param name="descriptionResourceKey">Descriptions' resource key</param>
         /// <param name="templateType">The template type of the list</param>
         /// <returns>The list object</returns>
-        public SPList EnsureList(SPWeb web, string rootFolderUrl, IDictionary<CultureInfo, string> titles, IDictionary<CultureInfo, string> descriptions, SPListTemplateType templateType)
+        public SPList EnsureList(SPWeb web, string rootFolderUrl, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
         {
             var list = this.GetListByRootFolderUrl(web, rootFolderUrl);
 
@@ -167,16 +167,14 @@ namespace GSoft.Dynamite.Helpers
                 var id = web.Lists.Add(rootFolderUrl, string.Empty, templateType);
                 list = web.Lists[id];
 
-                // Set title according to resources
-                foreach (KeyValuePair<CultureInfo, string> title in titles)
+                var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
+                foreach (var availableLanguage in availableLanguages)
                 {
-                    list.TitleResource.SetValueForUICulture(title.Key, title.Value);
-                }
+                    var title = this._resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
+                    var description = this._resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
 
-                // Set description according to resources
-                foreach (KeyValuePair<CultureInfo, string> description in descriptions)
-                {
-                    list.DescriptionResource.SetValueForUICulture(description.Key, description.Value);
+                    list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                    list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
                 }
 
                 list.Update();
@@ -200,24 +198,24 @@ namespace GSoft.Dynamite.Helpers
             // Ensure the list
             if (list == null)
             {
-                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
             }
             else
             {
                 this._logger.Info("List " + listInfo.RootFolderUrl + " already exists");
 
-                // If the Overwrite paramter is set to true, celete and recreate the catalog
+                // If the Overwrite parameter is set to true, celete and recreate the catalog
                 if (listInfo.Overwrite)
                 {
                     this._logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
 
                     list.Delete();
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                 }
                 else
                 {
                     // Get the existing list
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.TitleResources, listInfo.DescriptionResources, listInfo.ListTemplate);
+                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                 }
             }
 
@@ -565,7 +563,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="list">The list who owns the field</param>
         /// <param name="field">The field to enforce</param>
-        public void EnforceUniqueValuesToField(SPList list, FieldInfo field)
+        public void EnforceUniqueValuesToField(SPList list, IFieldInfo field)
         {
             if (list != null && field != null)
             {
@@ -602,7 +600,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields)
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields)
         {
             this.AddFieldsToDefaultView(web, list, fields, false);
         }
@@ -614,7 +612,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
         {
             // get the default view of the list
             var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
@@ -626,7 +624,7 @@ namespace GSoft.Dynamite.Helpers
                 fieldCollection.DeleteAll();
             }
 
-            foreach (FieldInfo field in fields)
+            foreach (IFieldInfo field in fields)
             {
                 if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
                 {
@@ -686,36 +684,40 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="listInfo">The list configuration object</param>
         public void SetDefaultValues(SPList list, ListInfo listInfo)
         {
-            if (listInfo.DefaultValues != null)
+            if (listInfo.FieldDefinitions.Count > 0)
             {
-                foreach (KeyValuePair<FieldInfo, IFieldInfoValue> defaultValue in listInfo.DefaultValues)
-                {
-                    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
-                    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFieldInfoValue))
-                    {
-                        var taxonomyFieldInfoValue = defaultValue.Value as TaxonomyFieldInfoValue;
-                        var termGroupName = taxonomyFieldInfoValue.TermGroup.Name;
-                        var termSetName = taxonomyFieldInfoValue.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
-                        var termSubsetName = taxonomyFieldInfoValue.TermSubset != null
-                            ? taxonomyFieldInfoValue.TermSubset.Name
-                            : string.Empty;
+                this._fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
-                        if (taxonomyFieldInfoValue.TermGroup != null &&
-                            taxonomyFieldInfoValue.TermSet != null)
-                        {
-                            // Change managed metadata mapping
-                            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
-                        }
+                // TODO: make sure that EnsureField takes care of ensureing both the TermSet binding (TaxonomyContext) and Default value of the column
 
-                        // Set the default value for the field
-                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, defaultValue.Value as TaxonomyFieldInfoValue);
-                    }
-                    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is TextFieldInfoValue))
-                    {
-                        field.DefaultValue = ((TextFieldInfoValue)defaultValue.Value).Values.FirstOrDefault();
-                        field.Update();
-                    }
-                }
+                //foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
+                //{
+                //    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
+                //    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFullValue))
+                //    {
+                //        var taxonomyValue = defaultValue.Value as TaxonomyFullValue;
+                //        var termGroupName = taxonomyValue.Context.Group.Name;
+                //        var termSetName = taxonomyValue.Context.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
+                //        var termSubsetName = taxonomyValue.Context.TermSubset != null
+                //            ? taxonomyValue.Context.TermSubset.Label
+                //            : string.Empty;
+
+                //        if (taxonomyValue.Context.Group != null &&
+                //            taxonomyValue.Context.TermSet != null)
+                //        {
+                //            // Change managed metadata mapping
+                //            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
+                //        }
+
+                //        // Set the default value for the field
+                //        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                //    }
+                //    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is string))
+                //    {
+                //        field.DefaultValue = (string)defaultValue.Value;
+                //        field.Update();
+                //    }
+                //}
             }
         }
 

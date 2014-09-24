@@ -1,4 +1,5 @@
 ﻿using Microsoft.SharePoint.Administration;
+using System;
 
 namespace GSoft.Dynamite.Logging
 {
@@ -144,12 +145,23 @@ namespace GSoft.Dynamite.Logging
         /// <param name="args">The message arguments.</param>
         protected virtual void InnerLog(TraceSeverity traceSeverity, string message, params object[] args)
         {
-            SPDiagnosticsService.Local.WriteTrace(
-                0,
-                new SPDiagnosticsCategory(this.CategoryName, TraceSeverity.Medium, EventSeverity.Information),
-                traceSeverity,
-                this.Name + " - " + message, 
-                args);
+            try
+            {
+                SPDiagnosticsService.Local.WriteTrace(
+                    0,
+                    new SPDiagnosticsCategory(this.CategoryName, TraceSeverity.Medium, EventSeverity.Information),
+                    traceSeverity,
+                    this.Name + " - " + message,
+                    args);
+            }
+            catch (TypeInitializationException)
+            {
+                // Failed to initialize local diagnostics service. Swallow exception and simply fail to log.
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // We're running this code outside of a proper x64 process meant for SharePoint (for some reason)
+            }
         }
     }
 }

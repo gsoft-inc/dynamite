@@ -14,6 +14,7 @@ namespace GSoft.Dynamite.Setup
     /// <summary>
     /// Helps in constructing a translatable folder tree of <see cref="FolderInfo"/>
     /// </summary>
+    [Obsolete]
     public class FolderMaker : IFolderMaker
     {
         private readonly ILogger logger;

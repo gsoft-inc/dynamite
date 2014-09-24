@@ -3,12 +3,14 @@ using System.Collections.ObjectModel;
 using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using System;
 
 namespace GSoft.Dynamite.Setup
 {    
     /// <summary>
     /// Metadata about a taxonomy-multi field value
     /// </summary>
+    [Obsolete]
     public interface ITaxonomyMultiInfo : IFieldValueInfo
     {
         /// <summary>

@@ -32,27 +32,44 @@ namespace GSoft.Dynamite.Taxonomy
         /// </param>
         public SiteTaxonomyCache(SPSite site, string termStoreName)
         {
-            using (new SPMonitoredScope("GSoft.Dynamite - Site taxonomy cache initialization"))
+            SPMonitoredScope monitor = null;
+
+            try
             {
-                if (site == null)
-                {
-                    throw new ArgumentNullException("site", "SPSite is currently null, please pass a valid site as argument.");
-                }
+                monitor = new SPMonitoredScope("GSoft.Dynamite - Site taxonomy cache initialization");
+            }
+            catch (TypeInitializationException)
+            {
+                // Failed to initialize local diagnostics service. Fail to log monitor trace.
+            }
+            catch (ArgumentNullException)
+            {
+                // Failed to initialize local diagnostics service. Fail to log monitor trace.
+            }
 
-                this.SiteId = site.ID;
+            if (site == null)
+            {
+                throw new ArgumentNullException("site", "SPSite is currently null, please pass a valid site as argument.");
+            }
 
-                // Don't send in the updateCache=true setting - let the SharePoint inner Taxonomy cache refresh itself normally (every 10 seconds or so)
-                this.TaxonomySession = new TaxonomySession(site);
+            this.SiteId = site.ID;
 
-                if (!string.IsNullOrEmpty(termStoreName))
-                {
-                    this.SiteCollectionGroup = this.TaxonomySession.TermStores[termStoreName].GetSiteCollectionGroup(site);
-                }
-                else
-                {
-                    // Use default term store
-                    this.SiteCollectionGroup = this.TaxonomySession.DefaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
-                }
+            // Don't send in the updateCache=true setting - let the SharePoint inner Taxonomy cache refresh itself normally (every 10 seconds or so)
+            this.TaxonomySession = new TaxonomySession(site);
+
+            if (!string.IsNullOrEmpty(termStoreName))
+            {
+                this.SiteCollectionGroup = this.TaxonomySession.TermStores[termStoreName].GetSiteCollectionGroup(site);
+            }
+            else
+            {
+                // Use default term store
+                this.SiteCollectionGroup = this.TaxonomySession.DefaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
+            }
+
+            if (monitor != null)
+            {
+                monitor.Dispose();
             }
         }
 

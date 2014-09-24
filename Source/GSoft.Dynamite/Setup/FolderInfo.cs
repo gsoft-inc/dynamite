@@ -2,12 +2,14 @@
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Setup;
 using Microsoft.SharePoint;
+using System;
 
 namespace GSoft.Dynamite.Setup
 {
     /// <summary>
     /// Data used in creating translatable folders by <see cref="FolderMaker"/>
     /// </summary>
+    [Obsolete]
     public class FolderInfo : IFolderInfo
     {
         private IList<IFolderInfo> subFolders;

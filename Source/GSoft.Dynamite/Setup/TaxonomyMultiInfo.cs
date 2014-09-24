@@ -15,6 +15,7 @@ namespace GSoft.Dynamite.Setup
     /// <summary>
     /// Helps in filling taxonomy-multi fields
     /// </summary>
+    [Obsolete]
     public class TaxonomyMultiInfo : FieldValueInfo, ITaxonomyMultiInfo
     {
         private Collection<Term> terms = new Collection<Term>();

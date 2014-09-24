@@ -6,6 +6,7 @@ using System.Resources;
 using System.Web;
 using GSoft.Dynamite.Structures;
 using Microsoft.SharePoint.Utilities;
+using System.Runtime.InteropServices;
 
 namespace GSoft.Dynamite.Globalization
 {
@@ -134,7 +135,14 @@ namespace GSoft.Dynamite.Globalization
             if (string.IsNullOrEmpty(found))
             {
                 // Second, look into the 14/Resources
-                found = SPUtility.GetLocalizedString("$Resources:" + resourceKey, resourceFileName, Convert.ToUInt32(culture.LCID));
+                try
+                {
+                    found = SPUtility.GetLocalizedString("$Resources:" + resourceKey, resourceFileName, Convert.ToUInt32(culture.LCID));
+                }
+                catch (COMException)
+                {
+                    // Failed to access ambient SPRequest object constructor. Fail to locate resource silently.
+                }
             }
 
             return found;

@@ -3,10 +3,12 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using Microsoft.SharePoint;
+    using System;
 
     /// <summary>
     /// Metadata about a folder inside the Pages library
     /// </summary>
+    [Obsolete]
     public interface IFolderInfo
     {
         /// <summary>

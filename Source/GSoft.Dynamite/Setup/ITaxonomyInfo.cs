@@ -3,10 +3,12 @@
     using Microsoft.Office.DocumentManagement;
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Taxonomy;
+    using System;
 
     /// <summary>
     /// Metadata about a taxonomy field value
     /// </summary>
+    [Obsolete]
     public interface ITaxonomyInfo : IFieldValueInfo
     {
         /// <summary>

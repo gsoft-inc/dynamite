@@ -5,10 +5,12 @@
 
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Publishing;
+    using System;
 
     /// <summary>
     /// Metadata about a publishing page
     /// </summary>
+    [Obsolete]
     public interface IPageInfo
     {
         /// <summary>

@@ -10,10 +10,29 @@ namespace GSoft.Dynamite.Definitions
     public class TermSetInfo
     {
         /// <summary>
-        /// Default constructor for TermSetInfo
+        /// Default constructor for TermSetInfo for serialization purposes
         /// </summary>
         public TermSetInfo()
         {          
+        }
+
+        /// <summary>
+        /// Constructor for TermSetInfo belonging to default site collection term group
+        /// </summary>
+        public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels)
+        {
+            this.Id = id;
+            this.Labels = labels;
+        }
+
+        /// <summary>
+        /// Constructor for TermSetInfo belonging to specfic farm-wide term group
+        /// </summary>
+        public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels, TermGroupInfo termGroup)
+        {
+            this.Id = id;
+            this.Labels = labels;
+            this.Group = termGroup;
         }
 
         /// <summary>
@@ -25,10 +44,10 @@ namespace GSoft.Dynamite.Definitions
         /// Labels by languages (LCID) for the Term Set
         /// </summary>
         public IDictionary<CultureInfo, string> Labels { get; set; }
-        
+
         /// <summary>
-        /// Terms in the term set
+        /// Parent Term Group definition
         /// </summary>
-        public IDictionary<string, TermInfo> Terms { get; set; }   
+        public TermGroupInfo Group { get; set; }
     }
 }

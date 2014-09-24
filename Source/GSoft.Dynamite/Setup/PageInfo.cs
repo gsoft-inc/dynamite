@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-
-using Microsoft.SharePoint;
+﻿using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GSoft.Dynamite.Setup
 {
     /// <summary>
     /// Metadata for a pair of translatable pages
     /// </summary>
+    [Obsolete]
     public class PageInfo : IPageInfo
     {
         /// <summary>

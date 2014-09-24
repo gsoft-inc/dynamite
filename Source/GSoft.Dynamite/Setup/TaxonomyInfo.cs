@@ -3,12 +3,14 @@
 using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
+using System;
 
 namespace GSoft.Dynamite.Setup
 {
     /// <summary>
     /// Helps in filling taxonomy fields
     /// </summary>
+    [Obsolete]
     public class TaxonomyInfo : FieldValueInfo, ITaxonomyInfo
     {
         /// <summary>

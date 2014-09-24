@@ -2,10 +2,12 @@
 {
     using Microsoft.Office.DocumentManagement;
     using Microsoft.SharePoint;
+    using System;
 
     /// <summary>
     /// Metadata about a field value on a list item
     /// </summary>
+    [Obsolete]
     public interface IFieldValueInfo
     {
         /// <summary>

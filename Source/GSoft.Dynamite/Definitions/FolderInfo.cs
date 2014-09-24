@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GSoft.Dynamite.Definitions.Values;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -67,9 +66,10 @@ namespace GSoft.Dynamite.Definitions
         } 
 
         /// <summary>
-        /// Values for the folder
+        /// Values for the folder should be stored in the DefaultValue
+        /// property of the FieldInfo objects.
         /// </summary>
-        public IDictionary<FieldInfo, IFieldInfoValue> Values { get; set; }
+        public ICollection<IFieldInfo> ItemFieldValues { get; set; }
 
         /// <summary>
         /// True if the folder is a root folder
