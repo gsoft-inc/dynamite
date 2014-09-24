@@ -29,15 +29,8 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                return new XElement(
-                    "Field",
-                    new XAttribute("Name", this.InternalName),
-                    new XAttribute("Type", this.Type),
-                    new XAttribute("ID", "{" + this.Id + "}"),
-                    new XAttribute("StaticName", this.InternalName),
-                    new XAttribute("DisplayName", this.DisplayName),
-                    new XAttribute("Description", this.Description),
-                    new XAttribute("Group", this.Group));
+                // Assuming Guid field type has no special properties of its own
+                return this.BasicFieldSchema;
             }
         }
     }

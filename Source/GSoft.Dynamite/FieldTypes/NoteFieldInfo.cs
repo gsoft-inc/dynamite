@@ -73,6 +73,7 @@ namespace GSoft.Dynamite.Definitions
                 else
                 {
                     schema.Add(new XAttribute("RichText", "FALSE"));
+                    schema.Add(new XAttribute("RichTextMode", "Compatible"));
                 }
 
                 return schema;

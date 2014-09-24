@@ -85,7 +85,7 @@ namespace GSoft.Dynamite.UnitTests.FieldTypes
             var noteFieldDefinition = this.CreateNoteFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
             
             // testing out RichText=Off, look out for RichTextMode="Compatible"
-            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" RichText=\"FALSE\"  RichTextMode=\"Compatible\" />";
+            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" RichText=\"FALSE\" RichTextMode=\"Compatible\" />";
 
             Assert.AreEqual(validXml, noteFieldDefinition.ToString());
         }

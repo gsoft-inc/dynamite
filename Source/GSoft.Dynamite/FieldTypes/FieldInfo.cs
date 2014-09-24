@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
+using System.Globalization;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -85,6 +86,21 @@ namespace GSoft.Dynamite.Definitions
                 // TODO: maybe try to parse $Resource string here... maybe not?
                 this.GroupResourceKey = fieldSchemaXml.Attribute("Group").Value;
             }
+
+            if (fieldSchemaXml.Attribute("Required") != null)
+            {
+                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredTypes.Required : RequiredTypes.NotRequired;
+            }
+
+            if (fieldSchemaXml.Attribute("EnforceUniqueValues") != null)
+            {
+                this.EnforceUniqueValues = bool.Parse(fieldSchemaXml.Attribute("EnforceUniqueValues").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("Hidden") != null)
+            {
+                this.IsHidden = bool.Parse(fieldSchemaXml.Attribute("Hidden").Value);
+            }
         }
 
         private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
@@ -118,6 +134,11 @@ namespace GSoft.Dynamite.Definitions
         /// Indicates if the field must enforce unique values
         /// </summary>
         public bool EnforceUniqueValues { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be hidden
+        /// </summary>
+        public bool IsHidden { get; set; }
 
         /// <summary>
         /// Returns the FieldInfo's associated ValueType.
@@ -177,6 +198,12 @@ namespace GSoft.Dynamite.Definitions
                 if (this.Required == RequiredTypes.NotRequired)
                 {
                     schema.Add(new XAttribute("Required", "FALSE"));
+                }
+
+                // Hidden state
+                if (this.IsHidden)
+                {
+                    schema.Add(new XAttribute("Hidden", "TRUE"));
                 }
 
                 return schema;
