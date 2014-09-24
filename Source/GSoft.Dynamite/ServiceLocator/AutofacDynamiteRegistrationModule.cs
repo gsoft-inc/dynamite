@@ -87,15 +87,13 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PropertyBagHelper>();
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
-            // Definitions
-            builder.RegisterType<ContentTypeHelper>();
-            builder.RegisterType<FieldHelper>();
-
             // Exception
             builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
-            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
+            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     
+
+            // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
             builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
             builder.RegisterType<MuiHelper>();
             builder.RegisterType<DateHelper>();
@@ -107,11 +105,9 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<VariationHelper>();
 
             // Lists
-            builder.RegisterType<ListHelper>();
             builder.RegisterType<ListLocator>();
             builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>();
-            builder.RegisterType<CatalogHelper>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>();
@@ -136,8 +132,8 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Setup
             builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
-            builder.RegisterType<FolderInfo>().As<IFolderInfo>();
-            builder.RegisterType<PageInfo>().As<IPageInfo>();
+            //// builder.RegisterType<FolderInfo>().As<IFolderInfo>();
+            //// builder.RegisterType<PageInfo>().As<IPageInfo>();
             builder.RegisterType<TaxonomyInfo>().As<ITaxonomyInfo>();
             builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
 
@@ -159,7 +155,6 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Utils
             builder.RegisterType<EventReceiverHelper>();
-            builder.RegisterType<SearchHelper>();
             builder.RegisterType<CustomActionHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
             builder.RegisterType<NavigationHelper>();
@@ -179,6 +174,15 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Web Parts
             builder.RegisterType<WebPartHelper>();
+
+            // Definitions
+            builder.RegisterType<PageHelper>();
+            builder.RegisterType<FolderHelper>();
+            builder.RegisterType<SearchHelper>();
+            builder.RegisterType<ListHelper>();
+            builder.RegisterType<CatalogHelper>();
+            builder.RegisterType<ContentTypeHelper>();
+            builder.RegisterType<FieldHelper>();
         }
     }
 }

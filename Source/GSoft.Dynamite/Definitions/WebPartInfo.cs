@@ -1,5 +1,4 @@
 ﻿using System.Web.UI.WebControls.WebParts;
-using Microsoft.Office.Server.Search.WebControls;
 
 namespace GSoft.Dynamite.Definitions
 {
@@ -9,18 +8,13 @@ namespace GSoft.Dynamite.Definitions
     public class WebPartInfo
     {
         /// <summary>
+        /// Name of the WebPart
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
         /// The WebPartObject
         /// </summary>
-        public WebPart WebPart { get; set;}
-
-        /// <summary>
-        /// The name of the zone
-        /// </summary>
-        public string ZoneName { get; set; }
-
-        /// <summary>
-        /// Index of the WebPart in the zone
-        /// </summary>
-        public string ZoneIndex { get; set; }
+        public WebPart WebPart { get; set; }
     }
 }

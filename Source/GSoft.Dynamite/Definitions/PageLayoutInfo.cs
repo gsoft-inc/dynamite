@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GSoft.Dynamite.Definitions
+﻿namespace GSoft.Dynamite.Definitions
 {
+    /// <summary>
+    /// Definition of a page layout info
+    /// </summary>
     public class PageLayoutInfo
     {
         /// <summary>
@@ -21,7 +18,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// The associated content type id
         /// </summary>
-        public string AssociatedContentTypeId { get; set; }
-    
+        public string AssociatedContentTypeId { get; set; } 
     }
 }

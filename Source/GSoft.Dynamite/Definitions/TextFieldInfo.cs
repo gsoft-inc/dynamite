@@ -51,12 +51,11 @@ namespace GSoft.Dynamite.Definitions
         #endregion
 
         /// <summary>
-        /// The XML schema of a Text field as XElement
+        /// The XML schema of a Text field as XElement (override)
         /// </summary>
         /// <returns>The XML schema of a Text field as XElement</returns>
         public override XElement ToXElement()
         {
-
             this.Schema = new XElement(
                                         "Field",
                                         new XAttribute("Name", this.InternalName),

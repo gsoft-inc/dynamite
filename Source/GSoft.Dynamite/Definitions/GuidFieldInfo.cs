@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Definitions
     public class GuidFieldInfo : FieldInfo
     {
         /// <summary>
-        /// The XML schema of a GUID field as XElement
+        /// The XML schema of a GUID field as XElement (override)
         /// </summary>
         /// <returns>The XML schema of a GUID field as XElement</returns>
         public override XElement ToXElement()

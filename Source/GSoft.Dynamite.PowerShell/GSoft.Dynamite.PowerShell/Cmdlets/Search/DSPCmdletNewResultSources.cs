@@ -125,7 +125,9 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                                 sortObjectLevel,
                                 searchProvider,
                                 site.RootWeb,
-                                query,null,null,
+                                query,
+                                null, 
+                                null,
                                 this.Overwrite);
                         }
                     }

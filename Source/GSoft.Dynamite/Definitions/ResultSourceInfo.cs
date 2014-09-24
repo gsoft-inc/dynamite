@@ -42,8 +42,8 @@ namespace GSoft.Dynamite.Definitions
         /// </summary>
         public string SearchProvider
         {
-            get { return _searchProvider ?? (_searchProvider = "Local SharePoint Provider"); }
-            set { _searchProvider = value; }
+            get { return this._searchProvider ?? (this._searchProvider = "Local SharePoint Provider"); }
+            set { this._searchProvider = value; }
         }
     }
 }
