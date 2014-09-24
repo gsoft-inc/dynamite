@@ -41,7 +41,7 @@ namespace GSoft.Dynamite.Definitions
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Name of the group
+        /// Name of the group (non-localizable)
         /// </summary>
         public string Name { get; set; }
 

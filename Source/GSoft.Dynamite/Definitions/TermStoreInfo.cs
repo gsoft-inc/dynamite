@@ -24,10 +24,5 @@ namespace GSoft.Dynamite.Definitions
         /// Name of the group
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Term Sets for this group
-        /// </summary>
-        //public IDictionary<string, TermSetInfo> TermSets { get; set; }
     }
 }

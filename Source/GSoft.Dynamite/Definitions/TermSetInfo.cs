@@ -41,6 +41,25 @@ namespace GSoft.Dynamite.Definitions
         public Guid Id { get; set; }
 
         /// <summary>
+        /// Term set label in the current MUI language
+        /// </summary>
+        public string Label
+        {
+            get
+            {
+                // get the label for the current UI thread culture
+                return this.Labels.ContainsKey(CultureInfo.CurrentUICulture) ?
+                    this.Labels[CultureInfo.CurrentUICulture] : string.Empty;
+            }
+
+            set
+            {
+                // set the label for the current UI thread culture
+                this.Labels[CultureInfo.CurrentUICulture] = value;
+            }
+        }
+
+        /// <summary>
         /// Labels by languages (LCID) for the Term Set
         /// </summary>
         public IDictionary<CultureInfo, string> Labels { get; set; }

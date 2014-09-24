@@ -28,15 +28,21 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                return this.DefaultLabels.ContainsKey(CultureInfo.CurrentUICulture) ?
-                    this.DefaultLabels[CultureInfo.CurrentUICulture] : string.Empty;
+                return this.Labels.ContainsKey(CultureInfo.CurrentUICulture) ?
+                    this.Labels[CultureInfo.CurrentUICulture] : string.Empty;
+            }
+
+            set
+            {
+                // set the label for the current UI thread culture
+                this.Labels[CultureInfo.CurrentUICulture] = value;
             }
         }
 
         /// <summary>
         /// Default labels by language (LCID) for the Term
         /// </summary>
-        public IDictionary<CultureInfo, string> DefaultLabels { get; set; }
+        public IDictionary<CultureInfo, string> Labels { get; set; }
 
         /// <summary>
         /// Parent Term Set definition
