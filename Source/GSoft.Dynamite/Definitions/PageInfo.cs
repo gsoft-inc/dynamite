@@ -8,6 +8,14 @@ namespace GSoft.Dynamite.Definitions
     public class PageInfo
     {
         /// <summary>
+        /// Default PageInfo constructor for serialization purposes
+        /// </summary>
+        public PageInfo()
+        {
+            this.WebParts = new Dictionary<string, WebPartInfo>();
+        }
+
+        /// <summary>
         /// Name of the file for the page
         /// </summary>
         public string FileName { get; set; }
@@ -30,6 +38,6 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// WebParts by zone 
         /// </summary>
-        public IDictionary<string, WebPartInfo> Webparts { get; set; } 
+        public IDictionary<string, WebPartInfo> WebParts { get; set; } 
     }
 }

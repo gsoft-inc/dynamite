@@ -32,7 +32,7 @@ namespace GSoft.Dynamite.Definitions
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Description resource key</param>
-        public ListInfo(string rootFolderServerRelativeUrl, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        public ListInfo(string rootFolderServerRelativeUrl, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // Default value

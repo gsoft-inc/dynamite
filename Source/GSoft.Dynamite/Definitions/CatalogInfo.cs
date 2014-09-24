@@ -8,11 +8,26 @@ namespace GSoft.Dynamite.Definitions
     public class CatalogInfo : ListInfo
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor for serialization purposes
         /// </summary>
         public CatalogInfo()
         {
             this.IsAnonymous = false;
+            this.ManagedProperties = new List<ManagedPropertyInfo>();
+        }
+        
+        /// <summary>
+        /// Initializes a new CatalogInfo
+        /// </summary>
+        /// <param name="rootFolderServerRelativeUrl">The server-relative URL of the list</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public CatalogInfo(string rootFolderServerRelativeUrl, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(rootFolderServerRelativeUrl, displayNameResourceKey, descriptionResourceKey, groupResourceKey)
+        {
+            this.IsAnonymous = false;
+            this.ManagedProperties = new List<ManagedPropertyInfo>();
         }
 
         /// <summary>
@@ -23,7 +38,7 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Managed properties exposed through the catalog
         /// </summary>
-        public IList<ManagedPropertyInfo> ManagedProperties { get; set; }
+        public ICollection<ManagedPropertyInfo> ManagedProperties { get; set; }
 
         /// <summary>
         /// Enforce unique values on the navigation column
