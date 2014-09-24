@@ -13,32 +13,54 @@ namespace GSoft.Dynamite.Definitions
         /// Default constructor for TermSetInfo for serialization purposes
         /// </summary>
         public TermSetInfo()
-        {          
+        {
+            this.Labels = new Dictionary<CultureInfo, string>();     
         }
 
         /// <summary>
-        /// Constructor for TermSetInfo belonging to default site collection term group
+        /// Constructor for single language (CurrentUICulture) TermSetInfo belonging to default site collection term group
         /// </summary>
-        public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels)
+        public TermSetInfo(Guid id, string label)
+            : this()
+        {
+            this.Id = id;
+            this.Label = label;
+            this.Group = null;      // should assume site-collection specific term group
+        }
+
+        /// <summary>
+        /// Constructor for single language (CurrentUICulture) TermSetInfo belonging to specfic farm-wide term group
+        /// </summary>
+        public TermSetInfo(Guid id, string label, TermGroupInfo termGroup)
+            : this(id, label)
+        {
+            this.Group = termGroup;     // global farm term group
+        }
+
+        /// <summary>
+        /// Constructor for fully translated TermSetInfo belonging to default site collection term group
+        /// </summary>
+        public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels) 
+            : this()
         {
             this.Id = id;
             this.Labels = labels;
+            this.Group = null;      // should assume site-collection specific term group
         }
 
         /// <summary>
-        /// Constructor for TermSetInfo belonging to specfic farm-wide term group
+        /// Constructor for fully translated TermSetInfo belonging to specfic farm-wide term group
         /// </summary>
         public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels, TermGroupInfo termGroup)
+            : this(id, labels)
         {
-            this.Id = id;
-            this.Labels = labels;
-            this.Group = termGroup;
+            this.Group = termGroup;     // global farm term group
         }
 
         /// <summary>
         /// Id of the term set
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// Term set label in the current MUI language

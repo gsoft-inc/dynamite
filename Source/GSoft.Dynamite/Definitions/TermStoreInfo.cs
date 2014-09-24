@@ -9,16 +9,25 @@ namespace GSoft.Dynamite.Definitions
     public class TermStoreInfo
     {
         /// <summary>
-        /// Default constructor for TermGroupInfo
+        /// Default constructor for TermStoreInfo for serialization purposes
         /// </summary>
         public TermStoreInfo()
         {           
+        }
+        
+        /// <summary>
+        /// Constructor for TermStoreInfo
+        /// </summary>
+        public TermStoreInfo(Guid id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
         }
 
         /// <summary>
         /// Id of the group
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// Name of the group

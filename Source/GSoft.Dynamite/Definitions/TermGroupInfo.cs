@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Constructor for TermGroupInfo belonging to default Farm term store
         /// </summary>
-        public TermGroupInfo(Guid id, string name)
+        public TermGroupInfo(Guid id, string name) : this()
         {
             this.Id = id;
             this.Name = name;
@@ -29,16 +29,15 @@ namespace GSoft.Dynamite.Definitions
         /// Constructor for TermGroupInfo belonging to specifc term store
         /// </summary>
         public TermGroupInfo(Guid id, string name, TermStoreInfo termStore)
+            : this(id, name)
         {
-            this.Id = id;
-            this.Name = name;
             this.TermStore = termStore;      // specific term store
         }
 
         /// <summary>
         /// Id of the group
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// Name of the group (non-localizable)

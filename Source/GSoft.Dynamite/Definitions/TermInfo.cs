@@ -10,16 +10,39 @@ namespace GSoft.Dynamite.Definitions
     public class TermInfo
     {
         /// <summary>
-        /// Default constructor for TermInfo
+        /// Default constructor for TermInfo for serialization purposes
         /// </summary>
         public TermInfo()
-        {           
+        {
+            this.Labels = new Dictionary<CultureInfo, string>();
+        }
+
+        /// <summary>
+        /// Constructor for single language (CurrentUICulture) Termnfo belonging to specfic term set
+        /// </summary>
+        public TermInfo(Guid id, string label, TermSetInfo termSet)
+            : this()
+        {
+            this.Id = id;
+            this.Label = label;
+            this.TermSet = termSet;
+        }
+        
+        /// <summary>
+        /// Constructor for fully translated TermInfo belonging to specfic term set
+        /// </summary>
+        public TermInfo(Guid id, IDictionary<CultureInfo, string> labels, TermSetInfo termSet)
+            : this()
+        {
+            this.Id = id;
+            this.Labels = labels;
+            this.TermSet = termSet;
         }
 
         /// <summary>
         /// GUID of the term
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
         /// <summary>
         /// Default term label in the current MUI language
