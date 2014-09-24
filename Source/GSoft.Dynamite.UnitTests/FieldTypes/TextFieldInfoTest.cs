@@ -71,14 +71,15 @@ namespace GSoft.Dynamite.UnitTests.FieldTypes
         public void Schema_ShouldOutputValidFieldXml()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
+            textFieldDefinition.MaxLength = 400;    // test out the MaxLength param
 
-            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"255\" />";
+            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"400\" />";
 
             Assert.AreEqual(validXml, textFieldDefinition.Schema.ToString());
         }
 
         [TestMethod]
-        public void toString_ShouldOutputValidFieldXml()
+        public void ToString_ShouldOutputValidFieldXml()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
 

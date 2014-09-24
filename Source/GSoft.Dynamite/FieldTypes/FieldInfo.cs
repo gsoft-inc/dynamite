@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.Definitions
             
             if (!this.XmlHasAllBasicAttributes(fieldSchemaXml))
             {
-                throw new ArgumentException("fieldSchemaXml", "Attribute missing from field definitions");
+                throw new ArgumentException("fieldSchemaXml", "Attribute missing from field definitions: ID, Name or Type.");
             }
 
             this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
