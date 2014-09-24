@@ -12,9 +12,28 @@ namespace GSoft.Dynamite.Definitions
     public class ListInfo : BaseTypeInfo
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor for serialization purposes
         /// </summary>
         public ListInfo()
+        {
+            // Default value
+            this.WriteSecurity = WriteSecurityOptions.AllUser;
+            this.Overwrite = false;
+
+            this.ContentTypes = new List<ContentTypeInfo>();
+            this.DefaultViewFields = new List<IFieldInfo>();
+            this.FieldDefinitions = new List<IFieldInfo>();
+        }
+        
+        /// <summary>
+        /// Initializes a new ListInfo
+        /// </summary>
+        /// <param name="rootFolderServerRelativeUrl">The server-relative URL of the list</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Description resource key</param>
+        public ListInfo(string rootFolderServerRelativeUrl, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
