@@ -84,7 +84,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Branding\DisplayTemplateHelper.cs" />
+    <Compile Include="Definitions\DisplayTemplateInfo.cs" />
+    <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />

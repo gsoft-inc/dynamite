@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Branding
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for display template work
