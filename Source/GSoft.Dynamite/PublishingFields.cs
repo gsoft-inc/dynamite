@@ -65,7 +65,12 @@ namespace GSoft.Dynamite
         /// <summary>
         /// PublishingContact name
         /// </summary>
-        public const string PublishingContactName = "PublishingContact";        
+        public const string PublishingContactName = "PublishingContact";
+
+        /// <summary>
+        /// PublishingPageImage name
+        /// </summary>
+        public const string PublishingPageImageName = "PublishingPageImage";
 
         #endregion
 
@@ -125,6 +130,11 @@ namespace GSoft.Dynamite
         /// PublishingContact field info
         /// </summary>
         public static readonly IFieldInfo PublishingContact = new MinimalFieldInfo(PublishingContactName, new Guid("aea1a4dd-0f19-417d-8721-95a1d28762ab"));   // TODO: turn into UserFieldInfo
+
+        /// <summary>
+        /// PublishingPageImage field info
+        /// </summary>
+        public static readonly IFieldInfo PublishingPageImage = new MinimalFieldInfo(PublishingPageImageName, new Guid("{3DE94B06-4120-41A5-B907-88773E493458}"));
 
         #endregion
     }
