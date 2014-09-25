@@ -50,7 +50,7 @@ namespace GSoft.Dynamite.Definitions
                             new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
                             new XAttribute(p4 + "type", "q7:boolean"),
                             new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                            isPathRendered.ToString()),
+                            isPathRendered.ToString().ToLowerInvariant()),
                     new XElement(
                         "Property",
                         new XElement("Name", "CreateValuesInEditForm"),
@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.Definitions
                             new XAttribute(XNamespace.Xmlns + "q9", "http://www.w3.org/2001/XMLSchema"),
                             new XAttribute(p4 + "type", "q9:boolean"),
                             new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                            createValuesInEditForm.ToString())))));
+                            createValuesInEditForm.ToString().ToLowerInvariant())))));
         }
 
         /// <summary>
