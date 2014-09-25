@@ -13,7 +13,7 @@ namespace GSoft.Dynamite.Definitions
     {
         #region Backing fields
 
-        private IDictionary<string, PageInfo> _pages;
+        private IList<PageInfo> _pages;
         private IList<FolderInfo> _subFolders;
 
         #endregion
@@ -26,13 +26,13 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Pages in the folder
         /// </summary>
-        public IDictionary<string, PageInfo> Pages 
+        public IList<PageInfo> Pages 
         {
             get
             {
                 if (this._pages == null)
                 {
-                    return new Dictionary<string, PageInfo>();
+                    return new List<PageInfo>();
                 }
 
                 return this._pages;

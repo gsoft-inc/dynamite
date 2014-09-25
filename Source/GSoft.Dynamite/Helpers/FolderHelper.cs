@@ -60,7 +60,7 @@ namespace GSoft.Dynamite.Helpers
                 folder = library.RootFolder;
                 
                 // Create pages
-                this._pageHelper.EnsurePage(library, folder, folderInfo.Pages.Values.ToList());
+                this._pageHelper.EnsurePage(library, folder, folderInfo.Pages);
 
                 // Create sub folders
                 foreach (var childFolder in folderInfo.SubFolders)
@@ -90,7 +90,7 @@ namespace GSoft.Dynamite.Helpers
                     }
 
                     // Create pages
-                    this._pageHelper.EnsurePage(library, folder, folderInfo.Pages.Values.ToList());
+                    this._pageHelper.EnsurePage(library, folder, folderInfo.Pages);
                 }
 
                 // Create sub folders
