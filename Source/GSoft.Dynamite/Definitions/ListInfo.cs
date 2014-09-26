@@ -24,17 +24,18 @@ namespace GSoft.Dynamite.Definitions
             this.DefaultViewFields = new List<IFieldInfo>();
             this.FieldDefinitions = new List<IFieldInfo>();
         }
-        
+
         /// <summary>
         /// Initializes a new ListInfo
         /// </summary>
         /// <param name="webRelativeUrl">The web-relative URL of the list</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
         public ListInfo(string webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, string.Empty)
         {
+            this.RootFolderUrl = webRelativeUrl;
+
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
