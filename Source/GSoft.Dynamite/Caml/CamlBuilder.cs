@@ -256,6 +256,18 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// Determines whether this instance is published.
         /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(bool includeTimeValue)
+        {
+            return this.And(this.IsAfterPublishingStartDate(includeTimeValue), this.IsBeforePublishingExpiryDate(includeTimeValue));
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
         /// <param name="startDateTime">The start date time.</param>
         /// <param name="expirationDateTime">The expiration date time.</param>
         /// <returns>
@@ -289,6 +301,20 @@ namespace GSoft.Dynamite.Caml
         {
             return this.Or(
                 this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsBeforePublishingExpiryDate(bool includeTimeValue)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today(includeTimeValue)),
                 this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
         }
 
@@ -330,6 +356,20 @@ namespace GSoft.Dynamite.Caml
         {
             return this.Or(
                 this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsAfterPublishingStartDate(bool includeTimeValue)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today(includeTimeValue)),
                 this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
         }
 

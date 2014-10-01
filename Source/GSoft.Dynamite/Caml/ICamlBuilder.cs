@@ -166,6 +166,15 @@ namespace GSoft.Dynamite.Caml
         string IsPublished();
 
         /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsPublished(bool includeTimeValue);
+
+        /// <summary>
         /// Determines whether this instance is published based on a specified start and end date.
         /// </summary>
         /// <param name="startDateTime">The start date time.</param>
@@ -194,6 +203,15 @@ namespace GSoft.Dynamite.Caml
         string IsBeforePublishingExpiryDate();
 
         /// <summary>
+        /// Determines whether [is publishing expired] based on today's date.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsBeforePublishingExpiryDate(bool includeTimeValue);
+
+        /// <summary>
         /// Determines whether [is publishing expired] based on a specified date.
         /// </summary>
         /// <param name="expirationDateTime">The expiration date time.</param>
@@ -218,6 +236,15 @@ namespace GSoft.Dynamite.Caml
         /// A string representation of the CAML query.
         /// </returns>
         string IsAfterPublishingStartDate();
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string IsAfterPublishingStartDate(bool includeTimeValue);
 
         /// <summary>
         /// Determines whether [is publishing started] based on a specified date.
