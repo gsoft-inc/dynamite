@@ -84,6 +84,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Branding\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
@@ -293,6 +294,7 @@
     <Compile Include="Security\Unsafe.cs" />
     <Compile Include="Security\UserHelper.cs" />
     <Compile Include="Utils\VersionContext.cs" />
+    <Compile Include="ValueTypes\UserValueCollection.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="WebParts\WebPartHelper.cs" />
