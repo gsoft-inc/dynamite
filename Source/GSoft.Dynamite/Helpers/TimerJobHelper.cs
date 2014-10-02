@@ -1,74 +1,12 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="TimerJobExpert.cs" company="">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
+﻿using System;
+using System.Linq;
+using System.Threading;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 
-namespace GSoft.Dynamite.TimerJobs
+namespace GSoft.Dynamite.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading;
-
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Administration;
-
-    /// <summary>
-    /// The TimerJobExpert interface.
-    /// </summary>
-    [Obsolete("Use TimerJobHelper instead")]
-    public interface ITimerJobExpert
-    {
-        /// <summary>
-        /// The create job.
-        /// </summary>
-        /// <param name="site">
-        /// The site.
-        /// </param>
-        /// <param name="workItemType">
-        /// The work item type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        Guid CreateJob(SPSite site, Guid workItemType);
-
-        /// <summary>
-        /// The start job.
-        /// </summary>
-        /// <param name="site">
-        /// The site.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The jobId<see cref="Guid"/>.
-        /// </returns>
-        Guid StartJob(SPSite site, string name);
-
-        /// <summary>
-        /// The wait for job.
-        /// </summary>
-        /// <param name="site">
-        /// The site.
-        /// </param>
-        /// <param name="jobId">
-        /// The job id.
-        /// </param>
-        /// <param name="startDate">
-        /// The start date.
-        /// </param>
-        void WaitForJob(SPSite site, Guid jobId, DateTime startDate);
-    }
-
-    /// <summary>
-    /// The timer job expert.
-    /// </summary>
-    [Obsolete("Use TimerJobHelper instead")]
-    public class TimerJobExpert : ITimerJobExpert
+    public class TimerJobHelper
     {
         /// <summary>
         /// The create job.

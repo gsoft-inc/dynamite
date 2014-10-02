@@ -85,6 +85,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
+    <Compile Include="Definitions\SiteInfo.cs" />
+    <Compile Include="Definitions\VariationSettingsInfo.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
@@ -123,7 +125,8 @@
     <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
-    <Compile Include="Globalization\Variations\VariationHelper.cs" />
+    <Compile Include="Helpers\TimerJobHelper.cs" />
+    <Compile Include="Helpers\VariationHelper.cs" />
     <Compile Include="Helpers\FolderHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
@@ -347,7 +350,7 @@
     <Compile Include="Globalization\Variations\IVariationDirector.cs" />
     <Compile Include="Globalization\Variations\IVariationExpert.cs" />
     <Compile Include="Globalization\Variations\VariationExpert.cs" />
-    <Compile Include="Globalization\Variations\VariationLabel.cs" />
+    <Compile Include="Definitions\VariationLabelInfo.cs" />
     <Compile Include="WebParts\IBaseWebPart.cs" />
     <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />

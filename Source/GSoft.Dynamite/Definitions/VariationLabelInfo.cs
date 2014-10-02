@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.Globalization.Variations
+﻿namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
     /// The creation mode.
@@ -14,7 +14,7 @@
     /// <summary>
     /// A simple POCO that represent a variation label
     /// </summary>
-    public class VariationLabel
+    public class VariationLabelInfo
     {
         /// <summary>
         /// Gets or sets the title.
@@ -24,7 +24,7 @@
         /// <summary>
         /// Gets or sets the flag control display name.
         /// </summary>
-        public string ControlDisplayName { get; set; }
+        public string FlagControlDisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets the language.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.TimerJobs;
 using Microsoft.SharePoint;
 
@@ -12,23 +13,24 @@ namespace GSoft.Dynamite.Globalization.Variations
     /// A variation builder that creates one Canadian English-culture source variation label
     /// and its Canadian French-culture destination.
     /// </summary>
+    [Obsolete("Use the VariationHelper class")]
     public class CanadianEnglishAndFrenchVariationBuilder : IVariationBuilder
     {
-        private static IList<VariationLabel> labels = new List<VariationLabel>()
+        private static IList<VariationLabelInfo> labels = new List<VariationLabelInfo>()
         {
-            new VariationLabel
+            new VariationLabelInfo
                 {
                     Title = "en", 
-                    ControlDisplayName = "English",
+                    FlagControlDisplayName = "English",
                     Language = "en-US",
                     Locale = new CultureInfo("en-CA").LCID,     // 4105
                     HierarchyCreationMode = CreationMode.PublishingSitesAndAllPages,
                     IsSource = true
                 },
-            new VariationLabel
+            new VariationLabelInfo
                 {
                     Title = "fr",
-                    ControlDisplayName = "Français",
+                    FlagControlDisplayName = "Français",
                     Language = "fr-FR",
                     Locale = new CultureInfo("fr-CA").LCID,     // 3084
                     HierarchyCreationMode = CreationMode.PublishingSitesAndAllPages
@@ -51,7 +53,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <summary>
         /// The available labels.
         /// </summary>
-        public static IList<VariationLabel> Labels
+        public static IList<VariationLabelInfo> Labels
         {
             get
             {
@@ -119,7 +121,7 @@ namespace GSoft.Dynamite.Globalization.Variations
             Guid varListId = new Guid(rootWeb.AllProperties["_VarLabelsListId"] as string);
             SPList varList = rootWeb.Lists[varListId];
 
-            foreach (VariationLabel label in Labels)
+            foreach (VariationLabelInfo label in Labels)
             {
                 SPListItem item;
                 var existingItems = varList.Items.Cast<SPListItem>().Where(listItem => listItem.Title == label.Title).ToList();
@@ -136,7 +138,7 @@ namespace GSoft.Dynamite.Globalization.Variations
                  
                 item[SPBuiltInFieldId.Title] = label.Title;
                 item["Description"] = label.Description;
-                item["Flag Control Display Name"] = label.ControlDisplayName;
+                item["Flag Control Display Name"] = label.FlagControlDisplayName;
                 item["Language"] = label.Language;
                 item["Locale"] = label.Locale.ToString(CultureInfo.InvariantCulture);
                 item["Hierarchy Creation Mode"] = label.HierarchyCreationMode;
@@ -174,7 +176,7 @@ namespace GSoft.Dynamite.Globalization.Variations
 
             // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
             // Also take care of setting the regional settings on each site.
-            foreach (VariationLabel label in Labels)
+            foreach (VariationLabelInfo label in Labels)
             {
                 using (var labelWeb = site.OpenWeb(label.Title))
                 {
@@ -182,7 +184,7 @@ namespace GSoft.Dynamite.Globalization.Variations
                     var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
                     Thread.CurrentThread.CurrentUICulture = new CultureInfo(label.Language);
 
-                    labelWeb.Title = label.ControlDisplayName;
+                    labelWeb.Title = label.FlagControlDisplayName;
                     labelWeb.Update();
 
                     Thread.CurrentThread.CurrentUICulture = previousUiCulture;
