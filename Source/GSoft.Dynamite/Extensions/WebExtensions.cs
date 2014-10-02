@@ -8,6 +8,8 @@ using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Extensions
 {
+    using System.IO;
+
     /// <summary>
     /// Extensions for the SPWeb type.
     /// </summary>
@@ -21,7 +23,15 @@ namespace GSoft.Dynamite.Extensions
         /// <returns>The Pages library.</returns>
         public static SPList GetPagesLibrary(this SPWeb web)
         {
-            return web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.GetLocalizedString("$Resources:List_Pages_UrlName", "osrvcore", web.Language)));
+            try
+            {
+                var list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.GetLocalizedString("$Resources:List_Pages_UrlName", "osrvcore", web.Language)));
+                return list;
+            }
+            catch (FileNotFoundException)
+            {
+                return null;
+            }
         }
 
         /// <summary>

@@ -31,3 +31,20 @@ function Get-BooleanValue() {
   	}
   }
 }
+
+function New-HeaderDrawing(){
+  Param
+  (
+  	[hashtable]$Values	
+  )
+
+	Write-Host "`n$("-" * 50)" -ForegroundColor Green
+	
+    $Values.Keys | Foreach-Object {
+    
+     	Write-Host $_ -ForegroundColor Cyan -NoNewline
+		Write-Host $Values.Item($_) -ForegroundColor Yellow  
+     }
+
+	Write-Host "$("-" * 50)`n" -ForegroundColor Green
+}

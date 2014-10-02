@@ -140,4 +140,7 @@ Export-ModuleMember Set-DSPWebPermissions
 # Timer Job
 Export-ModuleMember Set-DSPTimerJobs
 
+# Utilities
+Export-ModuleMember New-HeaderDrawing
+
 #endregion

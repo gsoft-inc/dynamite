@@ -26,7 +26,7 @@ using System.Runtime.InteropServices;
 // A DLL used as third-party reference in a SharePoint context is easier to patch if its AssemblyVersion
 // never changes (otherwise, runtime assembly resolution will break every time you redeploy and newly
 // version-bumped assembly of the third-party).
-[assembly: AssemblyVersion("15.0.0.0")]
+[assembly: AssemblyVersion("1.2.0.247")]
 
 // The AssemblyFileVersion is used to track the current version.
 // The version 0.0.0.0 flags a developement machine-build artifact.
