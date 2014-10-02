@@ -93,7 +93,7 @@ Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPM
 Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-SuggestedBrowserContentLocations
 
 # Tokenizer
-Export-ModuleMember -Function Update-DSPTokens
+Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens
 
 # Taxonomy
 Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup

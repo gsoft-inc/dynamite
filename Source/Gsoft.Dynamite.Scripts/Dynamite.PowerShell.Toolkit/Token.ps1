@@ -155,3 +155,126 @@ function script:Execute-TokenFile {
 		Write-Host "Success!" -ForegroundColor Green
 	}
 }
+
+# Prepare package for use
+function Initialize-DSPTokens {
+	Param (   
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [ValidateScript({Test-Path $_})]
+        [Parameter(Mandatory=$true)]
+        [string]$SourcePath,
+
+        [ValidateScript({Test-Path $_})]
+        [Parameter(Mandatory=$true)]
+        [string]$CustomizationPath,
+
+        [Parameter(Mandatory=$false)]
+		[switch]$Force,
+
+        [Parameter(Mandatory=$false)]
+		[switch]$Release
+	)
+    
+    $SourcePath = Resolve-Path $SourcePath
+    $CustomizationPath = Resolve-Path $CustomizationPath
+
+    # Force delete all Package folder
+    if ($Force -eq $true)
+    {
+        Get-ChildItem -Path $DestinationPath -Recurse | Remove-Item -force -recurse
+    }
+
+    # 1 Copy and tokenize everything from source folder
+    Execute-DSPTransfert $SourcePath $DestinationPath
+
+    # 2 Copy and tokenize everything from customization folder
+    Execute-DSPTransfert $CustomizationPath $DestinationPath
+
+    # 3 Setup WSP Copy
+    $wspPath = Join-Path $DestinationPath "\Solutions\WSP\"
+    $filterPath = "*`\bin`\Debug"
+
+    if ($Release -eq $true)
+    {
+        $filterPath = $filterPath.Replace("Debug", "Release")
+    }
+    
+    # 4 Copy WSP from /tools/
+    Copy-DSPSolution $SourcePath  $wspPath $filterPath
+
+    # 5 Copy WSP from /content/
+    $sourcePath = Join-Path $CustomizationPath "/../" | Resolve-Path
+    Copy-DSPSolution $sourcePath $wspPath $filterPath
+}
+
+function script:Execute-DSPTransfert {
+	param (
+		$Path,
+        $DestinationPath
+	)
+    
+    # Copy all .ps1 script inside $Path to $DestinationPath
+    Copy-DSPFile $Path $DestinationPath "*.ps1"
+
+    # Copy all .template script inside $Path to $DestinationPath
+    Copy-DSPFile $Path $DestinationPath "*.template"
+}
+
+function script:Copy-DSPFile {
+	param (
+		$Path,
+        $DestinationPath,
+		$Match
+	)
+
+    if ((![String]::IsNullOrEmpty($DestinationPath)))
+    {
+    	# Replace tokens in all .template files.
+	    Get-ChildItem -Path $Path -Include $Match -Recurse | foreach {
+		    Write-Host "Copying script file '$_'... " -NoNewline
+
+            # Get the relative Path of the file from where we are.
+            $relativePath = $_.FullName.Replace($Path, "")
+
+            # We then build the path from the package path with the relative folder 
+            $fileFullName = Join-Path $DestinationPath $relativePath
+
+            # We remove the filename to test the path and create the folder if it doesnt exist
+            $packageSpecificPath = Split-Path $fileFullName
+            if (!(Test-Path $packageSpecificPath)) 
+            {
+                New-Item -ItemType Directory -Force -Path $packageSpecificPath | Out-Null
+            }
+
+            # We write the tokenized file
+			Copy-Item $_.FullName $fileFullName -Force -ErrorAction Stop
+		    Write-Host "Success!" -ForegroundColor Green
+        }
+    }
+}
+
+function script:Copy-DSPSolution {
+	param (
+		$Path,
+        $DestinationPath,
+		$FilterPath
+	)
+    
+    if ([string]::IsNullOrEmpty($FilterPath))
+    {
+        $FilterPath = "*"
+    }
+
+    if (!(Test-Path $DestinationPath)) 
+    {
+        New-Item -ItemType Directory -Force -Path $DestinationPath | Out-Null
+    }
+
+    Get-ChildItem -Path $Path -Include "*.wsp" -Recurse | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
+		Write-Host "Copying WSP file '$_'... " -NoNewline
+		Copy-Item $_.FullName $DestinationPath -Force -ErrorAction Stop
+		Write-Host "Success!" -ForegroundColor Green
+    }
+}
