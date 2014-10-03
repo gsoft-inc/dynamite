@@ -8,25 +8,25 @@ namespace GSoft.Dynamite.Security
 {
     /// <summary>The security constants.</summary>
     public class SecurityConstants
-    {
+    { 
         /// <summary>
         /// The approve permission.
         /// </summary>
-        internal const string Approve = "Approve";
+        public const string Approve = "Approve";
 
         /// <summary>
         /// The contribute permission.
         /// </summary>
-        internal const string Contribute = "Contribute";
+        public const string Contribute = "Contribute";
 
         /// <summary>
         /// The read permission.
         /// </summary>
-        internal const string Read = "Read";
+        public const string Read = "Read";
 
         /// <summary>
         /// The full.
         /// </summary>
-        internal const string Full = "Full Control";
+        public const string Full = "Full Control";
     }
 }
