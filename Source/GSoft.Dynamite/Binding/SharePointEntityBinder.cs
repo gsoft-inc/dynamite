@@ -224,6 +224,7 @@ namespace GSoft.Dynamite.Binding
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
+            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValueCollection), new UserValueCollectionConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this.taxonomyValueConverter);
             this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionConverter);
