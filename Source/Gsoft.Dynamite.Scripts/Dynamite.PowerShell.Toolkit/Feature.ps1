@@ -495,3 +495,57 @@ function Switch-DSPFeatures()
 		}
    }
 }
+
+function Switch-DSPFeature()
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		$Url,
+
+		[Parameter(Mandatory=$true, Position=1)]
+		$Id,
+		
+		[Parameter(Mandatory=$false, Position=2)]
+		$State=$true
+	)
+
+	if($Id -ne $null)
+	{
+		if($State -eq $true)
+		{
+			if (![string]::IsNullOrEmpty($Url))
+			{
+				Write-Verbose "`tActivating feature $Id on $Url" 
+				Enable-SPFeature -Identity $Id -Url $Url -Force:$true
+			}
+			else
+			{
+				Write-Verbose "`tActivating farm feature $FeatureName" 
+				Enable-SPFeature -Identity $Id -Force:$true
+			}
+		}
+		else
+		{
+			$f = $spWeb.Features[$Id]
+			if($f -ne $null)
+			{
+				if (![string]::IsNullOrEmpty($Url))
+				{
+					Write-Verbose "`tDeactivating feature $Id on $Url" 
+					Disable-SPFeature -Identity $Id -Url $Url -Force:$true -Confirm:$false
+				}
+				else 
+				{
+					Write-Verbose "`tDeactivating feature $Id" 
+					Disable-SPFeature -Identity $Id -Force:$true -Confirm:$false
+				}
+			}
+			else
+			{
+				Write-Warning "`tFeature with Id $Id is already disabled on $Url"
+			} 					
+		}
+	}
+}

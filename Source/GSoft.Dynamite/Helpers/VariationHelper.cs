@@ -22,6 +22,7 @@ namespace GSoft.Dynamite.Helpers
     {
         private readonly ILogger _logger;
         private readonly TimerJobHelper _timerJobHelper;
+        private readonly ListHelper _listHelper;
         private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
@@ -29,10 +30,11 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="timerJobHelper">The timer job helper</param>
-        public VariationHelper(ILogger logger, TimerJobHelper timerJobHelper)
+        public VariationHelper(ILogger logger, TimerJobHelper timerJobHelper, ListHelper listHelper)
         {
             this._logger = logger;
             this._timerJobHelper = timerJobHelper;
+            this._listHelper = listHelper;
         }
 
         /// <summary>
@@ -97,6 +99,26 @@ namespace GSoft.Dynamite.Helpers
         }
 
         /// <summary>
+        /// Sync a SPList for multiple target labels
+        /// </summary>
+        /// <param name="listInfo"></param>
+        /// <param name="labels"></param>
+        public void SyncList(SPWeb web, ListInfo listInfo, IList<VariationLabelInfo> labels)
+        {
+            var list = this._listHelper.EnsureList(web, listInfo);
+
+            foreach (VariationLabelInfo label in labels)
+            {
+                // Synchronize only target labels
+                if (!label.IsSource)
+                {
+                    this.SyncList(list, label.Title);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Sync a SPList for a target label
         /// </summary>
         /// <param name="listToSync">The source SPList instance to sync.</param>
@@ -156,6 +178,23 @@ namespace GSoft.Dynamite.Helpers
                     }
                 }
             }));
+        }
+
+        /// <summary>
+        /// Sync a SPList for multiple target labels
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="labels">Variations labels</param>
+        public void SyncWeb(SPWeb web, IList<VariationLabelInfo> labels)
+        {
+            foreach (VariationLabelInfo label in labels)
+            {
+                // Synchronize only target labels
+                if (!label.IsSource)
+                {
+                    this.SyncWeb(web, label.Title);
+                }
+            }
         }
 
         /// <summary>
