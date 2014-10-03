@@ -84,6 +84,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
     <Compile Include="Definitions\VariationSettingsInfo.cs" />
