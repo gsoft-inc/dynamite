@@ -166,19 +166,21 @@ namespace GSoft.Dynamite.Helpers
                 // Create new list
                 var id = web.Lists.Add(rootFolderUrl, string.Empty, templateType);
                 list = web.Lists[id];
-
-                var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
-                foreach (var availableLanguage in availableLanguages)
-                {
-                    var title = this._resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
-                    var description = this._resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
-
-                    list.TitleResource.SetValueForUICulture(availableLanguage, title);
-                    list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
-                }
-
-                list.Update();
             }
+
+            // Update title and description
+            // Note that the variations synchronization process for a list doesn't copy the resources settings in the target sites
+            var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
+            foreach (var availableLanguage in availableLanguages)
+            {
+                var title = this._resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
+                var description = this._resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
+
+                list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
+            }
+
+            list.Update();
 
             return list;
         }

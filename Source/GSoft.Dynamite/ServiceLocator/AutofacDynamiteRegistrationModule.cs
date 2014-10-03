@@ -102,7 +102,6 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
-            builder.RegisterType<VariationHelper>();
 
             // Lists
             builder.RegisterType<ListLocator>();
@@ -183,6 +182,8 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<CatalogHelper>();
             builder.RegisterType<ContentTypeHelper>();
             builder.RegisterType<FieldHelper>();
+            builder.RegisterType<VariationHelper>();
+            builder.RegisterType<TimerJobHelper>();
         }
     }
 }

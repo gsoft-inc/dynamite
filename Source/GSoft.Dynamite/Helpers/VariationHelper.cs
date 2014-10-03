@@ -1,34 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web;
+using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Globalization.Variations
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
-    /// Helper from a old codebase. Must be merge with Expert and/or Builder
-    /// We use the 2 sync method in the PowerShell assembly.
+    /// SharePoint variations helpers
     /// </summary>
-    [Obsolete]
     public class VariationHelper
     {
-        private readonly ILogger logger;
-        private readonly string publishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
+        private readonly ILogger _logger;
+        private readonly TimerJobHelper _timerJobHelper;
+        private readonly ListHelper _listHelper;
+        private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
-        public VariationHelper(ILogger logger)
+        /// <param name="timerJobHelper">The timer job helper</param>
+        public VariationHelper(ILogger logger, TimerJobHelper timerJobHelper, ListHelper listHelper)
         {
-            this.logger = logger;
+            this._logger = logger;
+            this._timerJobHelper = timerJobHelper;
+            this._listHelper = listHelper;
         }
 
         /// <summary>
@@ -69,7 +75,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
-            this.logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
+            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
 
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
@@ -93,13 +99,33 @@ namespace GSoft.Dynamite.Globalization.Variations
         }
 
         /// <summary>
+        /// Sync a SPList for multiple target labels
+        /// </summary>
+        /// <param name="listInfo"></param>
+        /// <param name="labels"></param>
+        public void SyncList(SPWeb web, ListInfo listInfo, IList<VariationLabelInfo> labels)
+        {
+            var list = this._listHelper.EnsureList(web, listInfo);
+
+            foreach (VariationLabelInfo label in labels)
+            {
+                // Synchronize only target labels
+                if (!label.IsSource)
+                {
+                    this.SyncList(list, label.Title);
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Sync a SPList for a target label
         /// </summary>
         /// <param name="listToSync">The source SPList instance to sync.</param>
         /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         public void SyncList(SPList listToSync, string labelToSync)
         {
-            this.logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
+            this._logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
 
             var sourceWeb = listToSync.ParentWeb;
             Guid sourceListGuid = listToSync.ID;
@@ -116,7 +142,7 @@ namespace GSoft.Dynamite.Globalization.Variations
                     {
                         var list = elevatedWeb.Lists[sourceListGuid];
 
-                        var publishingAssembly = Assembly.LoadFrom(this.publishingAssemblyPath);
+                        var publishingAssembly = Assembly.LoadFrom(PublishingAssemblyPath);
                         var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
                         var multiLingualResourceList = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.MultiLingualResourceList");
 
@@ -155,15 +181,32 @@ namespace GSoft.Dynamite.Globalization.Variations
         }
 
         /// <summary>
+        /// Sync a SPList for multiple target labels
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="labels">Variations labels</param>
+        public void SyncWeb(SPWeb web, IList<VariationLabelInfo> labels)
+        {
+            foreach (VariationLabelInfo label in labels)
+            {
+                // Synchronize only target labels
+                if (!label.IsSource)
+                {
+                    this.SyncWeb(web, label.Title);
+                }
+            }
+        }
+
+        /// <summary>
         /// Sync a SPWeb with variations
         /// </summary>
         /// <param name="web">The source web instance to sync.</param>
         /// <param name="labelToSync">Source label to sync</param>
         public void SyncWeb(SPWeb web, string labelToSync)
         {
-            this.logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
+            this._logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
 
-            var publishingAssembly = Assembly.LoadFrom(this.publishingAssemblyPath);
+            var publishingAssembly = Assembly.LoadFrom(PublishingAssemblyPath);
             var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
             var cachedVariationSettings = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.CachedVariationSettings");
 
@@ -217,6 +260,151 @@ namespace GSoft.Dynamite.Globalization.Variations
         {
             var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
             return site.RootWeb.Lists[guid];
+        }
+
+        /// <summary>
+        /// The configure variations settings method.
+        /// </summary>
+        /// <param name="site">
+        /// The site collection.
+        /// </param>
+        /// <param name="variationSettings">The variations settings</param>
+        public void EnsureVariationsSettings(SPSite site, VariationSettingsInfo variationSettings)
+        {
+            var rootWeb = site.RootWeb;
+            Guid varRelationshipsListId = new Guid(rootWeb.AllProperties["_VarRelationshipsListId"] as string);
+            SPList varRelationshipsList = rootWeb.Lists[varRelationshipsListId];
+            SPFolder rootFolder = varRelationshipsList.RootFolder;
+
+            // Automatic creation
+            rootFolder.Properties["EnableAutoSpawnPropertyName"] = variationSettings.EnableAutoSpawn;
+
+            // Recreate Deleted Target Page; set to false to enable recreation
+            rootFolder.Properties["AutoSpawnStopAfterDeletePropertyName"] = variationSettings.AutoSpawnStopAfterDelete;
+
+            // Update Target Page Web Parts
+            rootFolder.Properties["UpdateWebPartsPropertyName"] = variationSettings.UpdateWebParts;
+
+            // Resources
+            rootFolder.Properties["CopyResourcesPropertyName"] = variationSettings.CopyResources;
+
+            // Notification
+            rootFolder.Properties["SendNotificationEmailPropertyName"] = variationSettings.SendNotificationEmail;
+            rootFolder.Properties["SourceVarRootWebTemplatePropertyName"] = variationSettings.SourceVarRootWebTemplate;
+            rootFolder.Update();
+
+            SPListItem item = null;
+            if (varRelationshipsList.Items.Count > 0)
+            {
+                item = varRelationshipsList.Items[0];
+            }
+            else
+            {
+                item = varRelationshipsList.Items.Add();
+                item["GroupGuid"] = new Guid("F68A02C8-2DCC-4894-B67D-BBAED5A066F9");
+            }
+
+            item["Deleted"] = false;
+            item["ObjectID"] = rootWeb.ServerRelativeUrl;
+            item["ParentAreaID"] = string.Empty;
+
+            item.Update();
+        }
+
+        /// <summary>
+        /// The create variations method.
+        /// </summary>
+        /// <param name="site">
+        /// The site collection.
+        /// </param>
+        public void EnsureVariationlabels(SPSite site, IList<VariationLabelInfo> labels)
+        {
+            var rootWeb = site.RootWeb;
+            Guid varListId = new Guid(rootWeb.AllProperties["_VarLabelsListId"] as string);
+            SPList varList = rootWeb.Lists[varListId];
+
+            foreach (VariationLabelInfo label in labels)
+            {
+                SPListItem item;
+                var existingItems = varList.Items.Cast<SPListItem>().Where(listItem => listItem.Title == label.Title).ToList();
+
+                if (existingItems.Count > 0)
+                {
+                    item = existingItems[0];
+                }
+                else
+                {
+                    // create the label
+                    item = varList.Items.Add();
+                }
+
+                item[SPBuiltInFieldId.Title] = label.Title;
+                item["Description"] = label.Description;
+                item["Flag Control Display Name"] = label.FlagControlDisplayName;
+                item["Language"] = label.Language;
+                item["Locale"] = label.Locale.ToString(CultureInfo.InvariantCulture);
+                item["Hierarchy Creation Mode"] = label.HierarchyCreationMode;
+                item["Is Source"] = label.IsSource.ToString();
+
+                if (existingItems.Count > 0)
+                {
+                    // assume hierarchy already exists also
+                    item["Hierarchy Is Created"] = true;
+                }
+                else
+                {
+                    item["Hierarchy Is Created"] = false;
+                }
+
+                item.Update();
+            }
+        }
+
+        /// <summary>
+        /// The create hierarchies.
+        /// </summary>
+        /// <param name="site">
+        /// The site.
+        /// </param>
+        /// <param name="labels">The variation labels</param>
+        public void CreateHierarchies(SPSite site, IList<VariationLabelInfo> labels)
+        {
+            this._timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
+
+            var jobId = this._timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
+
+            DateTime startTime = DateTime.Now.ToUniversalTime();
+
+            this._timerJobHelper.WaitForJob(site, jobId, startTime);
+
+            // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
+            // Also take care of setting the regional settings on each site.
+            foreach (VariationLabelInfo label in labels)
+            {
+                using (var labelWeb = site.OpenWeb(label.Title))
+                {
+                    // UICulture's gotta be in the same locale as the web being renamed (otherwise change won't go through - thanks MUI!)
+                    var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(label.Language);
+
+                    labelWeb.Title = label.FlagControlDisplayName;
+                    labelWeb.Update();
+
+                    Thread.CurrentThread.CurrentUICulture = previousUiCulture;
+                }
+            }
+        }
+
+        public void SetupVariations(SPSite site, VariationSettingsInfo variationSettings)
+        {
+            // Configure varaitions settings
+            this.EnsureVariationsSettings(site, variationSettings);
+            
+            // Create labels
+            this.EnsureVariationlabels(site, variationSettings.Labels);
+
+            // Create hierachies
+            this.CreateHierarchies(site, variationSettings.Labels);
         }
     }
 }

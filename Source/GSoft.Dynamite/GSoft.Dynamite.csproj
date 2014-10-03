@@ -84,7 +84,10 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
+    <Compile Include="Definitions\SiteInfo.cs" />
+    <Compile Include="Definitions\VariationSettingsInfo.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
@@ -123,7 +126,8 @@
     <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
-    <Compile Include="Globalization\Variations\VariationHelper.cs" />
+    <Compile Include="Helpers\TimerJobHelper.cs" />
+    <Compile Include="Helpers\VariationHelper.cs" />
     <Compile Include="Helpers\FolderHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
@@ -143,6 +147,18 @@
     <Compile Include="Monitoring\AggregateTimeTracker.cs" />
     <Compile Include="Monitoring\IAggregateTimeTracker.cs" />
     <Compile Include="Monitoring\TimeTrackerScope.cs" />
+    <Compile Include="Security\FolderRoles.cs" />
+    <Compile Include="Security\GroupRolePair.cs" />
+    <Compile Include="Repositories\IItemLocator.cs" />
+    <Compile Include="Security\IObjectRoles.cs" />
+    <Compile Include="Security\ISecurityConfigurator.cs" />
+    <Compile Include="Security\ISecurityMappings.cs" />
+    <Compile Include="Security\ItemRoles.cs" />
+    <Compile Include="Security\ListRoles.cs" />
+    <Compile Include="Security\ObjectRoles.cs" />
+    <Compile Include="Security\ReadSecurity.cs" />
+    <Compile Include="Security\SecurityConstants.cs" />
+    <Compile Include="Security\WriteSecurity.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
@@ -347,7 +363,7 @@
     <Compile Include="Globalization\Variations\IVariationDirector.cs" />
     <Compile Include="Globalization\Variations\IVariationExpert.cs" />
     <Compile Include="Globalization\Variations\VariationExpert.cs" />
-    <Compile Include="Globalization\Variations\VariationLabel.cs" />
+    <Compile Include="Definitions\VariationLabelInfo.cs" />
     <Compile Include="WebParts\IBaseWebPart.cs" />
     <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
