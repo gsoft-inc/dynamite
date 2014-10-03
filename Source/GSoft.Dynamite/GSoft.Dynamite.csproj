@@ -52,6 +52,10 @@
       <Private>True</Private>
       <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="JohnHolliday.Caml.Net, Version=1.0.2850.20101, Culture=neutral, PublicKeyToken=1a6e75059df6ca83, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Binaries\JohnHolliday.Caml.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.DocumentManagement, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
@@ -102,6 +106,7 @@
     <Compile Include="Navigation\NavigationManagedProperties.cs" />
     <Compile Include="Navigation\NavigationNode.cs" />
     <Compile Include="Navigation\NavigationService.cs" />
+    <Compile Include="Repositories\ItemLocator.cs" />
     <Compile Include="Search\BuiltInManagedProperties.cs" />
     <Compile Include="Caml\CamlBuilder.cs" />
     <Compile Include="Caml\CamlConstants.cs" />
