@@ -3,7 +3,7 @@
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                      xsi:schemaLocation="urn:Microsoft.SharePoint.PowerShell  SPCmdletSchema.xsd">
 
-  <ps:Assembly Name="$SharePoint.Project.AssemblyFullName$">
+  <ps:Assembly Name="GSoft.Dynamite.PowerShell, Version=1.2.0.254, Culture=neutral, PublicKeyToken=5f6f0b0f2b7999e5">
     <ps:Cmdlet>
       <ps:VerbName>Add-DSPPropertyBagValue</ps:VerbName>
       <ps:ClassName>GSoft.Dynamite.PowerShell.Cmdlets.Configuration.DSPCmdletAddPropertyBagValue</ps:ClassName>
