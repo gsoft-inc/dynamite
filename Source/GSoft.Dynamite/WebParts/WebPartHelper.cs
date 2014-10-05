@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
@@ -14,14 +15,16 @@ namespace GSoft.Dynamite.WebParts
     public class WebPartHelper
     {
         private readonly XmlHelper xmlHelper;
+        private readonly ILogger logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="xmlHelper">Helper for Xml work</param>
-        public WebPartHelper(XmlHelper xmlHelper)
+        public WebPartHelper(XmlHelper xmlHelper, ILogger logger)
         {
             this.xmlHelper = xmlHelper;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -51,7 +54,7 @@ namespace GSoft.Dynamite.WebParts
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Called method uses ListItem.")]
         public string GenerateWebPartHtml(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart)
         {
-            Guid storageKey = this.AddWebPartToZone(item, webPart, "wpz", 0);
+            Guid storageKey = this.EnsureWebPartToZone(item, webPart, "wpz", 0);
             string richContentEmbed = "<div class=\"ms-rtestate-read ms-rte-wpbox\" contenteditable=\"false\">" +
                       "<div class=\"ms-rtestate-notify ms-rtestate-read {0}\" id=\"div_{0}\"></div>" +
                       "<div id=\"vid_{0}\" style=\"display:none\"></div>" +
@@ -95,12 +98,12 @@ namespace GSoft.Dynamite.WebParts
         /// </summary>
         /// <param name="item">the item to add the web part to</param>
         /// <param name="webPart">The web part name to get</param>
-        /// <param name="webPartZoneName">the web part zone to add the web part to</param>
+        /// <param name="webPartZoneId">the web part zone to add the web part to</param>
         /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
         /// <returns>Return the Storage key of the web part</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public Guid AddWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneName, int webPartZoneIndex)
+        public Guid EnsureWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneId, int webPartZoneIndex)
         {
             Guid storageKey = Guid.Empty;
 
@@ -108,8 +111,15 @@ namespace GSoft.Dynamite.WebParts
             {
                 if (webPart != null)
                 {
-                    manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
-                    storageKey = manager.GetStorageKey(webPart);
+                    if (manager.WebParts[webPart.Title] == null)
+                    {
+                        manager.AddWebPart(webPart, webPartZoneId, webPartZoneIndex);
+                        storageKey = manager.GetStorageKey(webPart);
+                    }
+                    else
+                    {
+                        this.logger.Warn("A WebPart with the name {0} already exists on the page {1}", webPart.Title, item[BuiltInFields.TitleName]);
+                    }
                 }
             }
 

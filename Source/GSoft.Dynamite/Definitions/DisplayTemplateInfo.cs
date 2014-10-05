@@ -10,7 +10,7 @@
             this.HtmlFileName = displayTemplateName + ".html";
             this.JavascriptFileName = displayTemplateName + ".js";
             this._category = displayTemplateCategory;
-            this.Url = "~sitecollection/_catalogs/masterpage/Display Templates/" + Category + "/" + JavascriptFileName;
+            this.ItemTemplateIdUrl = "~sitecollection/_catalogs/masterpage/Display Templates/" + Category + "/" + JavascriptFileName;
         }
 
         /// <summary>
@@ -51,7 +51,7 @@
             }
         }
 
-        public string Url { get; private set; }
+        public string ItemTemplateIdUrl { get; private set; }
     }
 
     public enum DisplayTemplateCategory

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.WebParts;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
@@ -11,6 +12,13 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class PageHelper
     {
+        private WebPartHelper _webParthelper;
+
+        public PageHelper(WebPartHelper webParthelper)
+        {
+            this._webParthelper = webParthelper;
+        }
+
         /// <summary>
         /// Ensure a collection of pages in a folder
         /// </summary>
@@ -69,6 +77,12 @@ namespace GSoft.Dynamite.Helpers
                     publishingPage.Title = page.Title;
                     publishingPage.Update();
                 }
+            }
+
+            // Insert WebParts
+            foreach (KeyValuePair<string, WebPartInfo> wpSetting in page.WebParts)
+            {
+                this._webParthelper.EnsureWebPartToZone(publishingPage.ListItem, wpSetting.Value.WebPart, wpSetting.Key, 1);
             }
 
             return publishingPage;

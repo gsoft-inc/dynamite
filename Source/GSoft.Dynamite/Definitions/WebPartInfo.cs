@@ -7,6 +7,13 @@ namespace GSoft.Dynamite.Definitions
     /// </summary>
     public class WebPartInfo
     {
+        private WebPart _webpart;
+
+        public WebPartInfo(string name)
+        {
+            this.Name = name;
+        }
+
         /// <summary>
         /// Name of the WebPart
         /// </summary>
@@ -15,6 +22,19 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// The WebPartObject
         /// </summary>
-        public WebPart WebPart { get; set; }
+        public WebPart WebPart
+        {
+            get
+            {
+                return _webpart;
+            }
+            set
+            {
+                this._webpart = value;
+
+                // Update the title
+                this._webpart.Title = this.Name;
+            }    
+        }
     }
 }
