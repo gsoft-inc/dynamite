@@ -179,11 +179,15 @@ function Initialize-DSPTokens {
     
     $SourcePath = Resolve-Path $SourcePath
     $CustomizationPath = Resolve-Path $CustomizationPath
+    $DestinationPath = Resolve-Path $DestinationPath
+
 
     # Force delete all Package folder
     if ($Force -eq $true)
     {
+        Write-Host "Attempt to clear the following path : $DestinationPath... " -ForegroundColor Yellow -NoNewLine
         Get-ChildItem -Path $DestinationPath -Recurse | Remove-Item -force -recurse
+        Write-Host "DONE" -ForeGroundColor Green
     }
 
     # 1 Copy and tokenize everything from source folder
@@ -201,10 +205,13 @@ function Initialize-DSPTokens {
         $filterPath = $filterPath.Replace("Debug", "Release")
     }
     
-    # 4 Copy WSP from /tools/
-    Copy-DSPSolution $SourcePath  $wspPath $filterPath
+    # 4 Copy WSP from /Libraries
+    Write-Host $SourcePath -ForegroundColor Yellow
+    $index = $SourcePath.IndexOf("Libraries`\")
+    $libPath = $SourcePath.Substring(0, $index + "Libraries`\".Length)
+    Copy-DSPSolution $libPath  $wspPath "*"
 
-    # 5 Copy WSP from /content/
+    # 5 Copy WSP from /Source
     $sourcePath = Join-Path $CustomizationPath "/../" | Resolve-Path
     Copy-DSPSolution $sourcePath $wspPath $filterPath
 }
@@ -271,6 +278,8 @@ function script:Copy-DSPSolution {
     {
         New-Item -ItemType Directory -Force -Path $DestinationPath | Out-Null
     }
+    
+    Write-Host "Searching WSPs in $Path matching $FilterPath"
 
     Get-ChildItem -Path $Path -Include "*.wsp" -Recurse | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
 		Write-Host "Copying WSP file '$_'... " -NoNewline

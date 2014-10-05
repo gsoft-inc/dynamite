@@ -120,6 +120,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Repositories
             builder.RegisterType<FolderRepository>();
             builder.RegisterType<QueryHelper>().As<IQueryHelper>();
+            builder.RegisterType<ItemLocator>().As<IItemLocator>();
 
             // Security
             builder.RegisterType<SecurityHelper>();
