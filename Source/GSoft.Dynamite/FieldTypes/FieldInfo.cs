@@ -53,7 +53,7 @@ namespace GSoft.Dynamite.Definitions
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public FieldInfo(XElement fieldSchemaXml) : this()
+        public FieldInfo(XElement fieldSchemaXml)
         {
             if (fieldSchemaXml == null)
             {
@@ -104,22 +104,22 @@ namespace GSoft.Dynamite.Definitions
 
             if (fieldSchemaXml.Attribute("ShowInDisplayForm") != null)
             {
-                this.ShowInDisplayForm = bool.Parse(fieldSchemaXml.Attribute("ShowInDisplayForm").Value);
+                this.IsHiddenInDisplayForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInDisplayForm").Value);
             }
 
             if (fieldSchemaXml.Attribute("ShowInEditForm") != null)
             {
-                this.ShowInEditForm = bool.Parse(fieldSchemaXml.Attribute("ShowInEditForm").Value);
+                this.IsHiddenInEditForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInEditForm").Value);
             }
 
             if (fieldSchemaXml.Attribute("ShowInNewForm") != null)
             {
-                this.ShowInNewForm = bool.Parse(fieldSchemaXml.Attribute("ShowInNewForm").Value);
+                this.IsHiddenInNewForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInNewForm").Value);
             }
 
             if (fieldSchemaXml.Attribute("ShowInListSettings") != null)
             {
-                this.ShowInListSettings = bool.Parse(fieldSchemaXml.Attribute("ShowInListSettings").Value);
+                this.IsHiddenInListSettings = !bool.Parse(fieldSchemaXml.Attribute("ShowInListSettings").Value);
             }
         }
 
@@ -163,22 +163,22 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// Indicates if field should be shown in the display form
         /// </summary>
-        public bool ShowInDisplayForm { get; set; }
+        public bool IsHiddenInDisplayForm { get; set; }
 
         /// <summary>
         /// Indicates if field should be shown in the new form
         /// </summary>
-        public bool ShowInNewForm { get; set; }
+        public bool IsHiddenInNewForm { get; set; }
 
         /// <summary>
         /// Indicates if field should be shown in the edit form
         /// </summary>
-        public bool ShowInEditForm { get; set; }
+        public bool IsHiddenInEditForm { get; set; }
 
         /// <summary>
         /// Indicates if field should be shown in the list settings
         /// </summary>
-        public bool ShowInListSettings { get; set; }
+        public bool IsHiddenInListSettings { get; set; }
 
         /// <summary>
         /// Returns the FieldInfo's associated ValueType.
@@ -246,22 +246,22 @@ namespace GSoft.Dynamite.Definitions
                 }
 
                 // Show in Display Form
-                if (!this.ShowInDisplayForm)
+                if (this.IsHiddenInDisplayForm)
                 {
                     schema.Add(new XAttribute("ShowInDisplayForm", "FALSE"));
                 }
                 // Show in Edit Form
-                if (!this.ShowInEditForm)
+                if (this.IsHiddenInEditForm)
                 {
                     schema.Add(new XAttribute("ShowInEditForm", "FALSE"));
                 }
                 // Show in new Form
-                if (!this.ShowInNewForm)
+                if (this.IsHiddenInNewForm)
                 {
                     schema.Add(new XAttribute("ShowInNewForm", "FALSE"));
                 }
                 // Show in List settings
-                if (!this.ShowInListSettings)
+                if (this.IsHiddenInListSettings)
                 {
                     schema.Add(new XAttribute("ShowInListSettings", "FALSE"));
                 }
