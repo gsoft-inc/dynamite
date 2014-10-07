@@ -34,8 +34,8 @@ namespace GSoft.Dynamite.Definitions
             if (string.IsNullOrEmpty(internalName))
             {
                 throw new ArgumentNullException("internalName");
-            } 
-            else if (id == null || id == Guid.Empty) 
+            }
+            else if (id == null || id == Guid.Empty)
             {
                 throw new ArgumentNullException("id");
             }
@@ -53,13 +53,13 @@ namespace GSoft.Dynamite.Definitions
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public FieldInfo(XElement fieldSchemaXml)
+        public FieldInfo(XElement fieldSchemaXml) : this()
         {
             if (fieldSchemaXml == null)
             {
                 throw new ArgumentNullException("fieldSchemaXml");
             }
-            
+
             if (!this.XmlHasAllBasicAttributes(fieldSchemaXml))
             {
                 throw new ArgumentException("fieldSchemaXml", "Attribute missing from field definitions: ID, Name or Type.");
@@ -101,6 +101,26 @@ namespace GSoft.Dynamite.Definitions
             {
                 this.IsHidden = bool.Parse(fieldSchemaXml.Attribute("Hidden").Value);
             }
+
+            if (fieldSchemaXml.Attribute("ShowInDisplayForm") != null)
+            {
+                this.ShowInDisplayForm = bool.Parse(fieldSchemaXml.Attribute("ShowInDisplayForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInEditForm") != null)
+            {
+                this.ShowInEditForm = bool.Parse(fieldSchemaXml.Attribute("ShowInEditForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInNewForm") != null)
+            {
+                this.ShowInNewForm = bool.Parse(fieldSchemaXml.Attribute("ShowInNewForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInListSettings") != null)
+            {
+                this.ShowInListSettings = bool.Parse(fieldSchemaXml.Attribute("ShowInListSettings").Value);
+            }
         }
 
         private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
@@ -139,6 +159,26 @@ namespace GSoft.Dynamite.Definitions
         /// Indicates if field should be hidden
         /// </summary>
         public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the display form
+        /// </summary>
+        public bool ShowInDisplayForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the new form
+        /// </summary>
+        public bool ShowInNewForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the edit form
+        /// </summary>
+        public bool ShowInEditForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the list settings
+        /// </summary>
+        public bool ShowInListSettings { get; set; }
 
         /// <summary>
         /// Returns the FieldInfo's associated ValueType.
@@ -186,9 +226,8 @@ namespace GSoft.Dynamite.Definitions
                     new XAttribute("DisplayName", this.DisplayName),
                     new XAttribute("Description", this.Description),
                     new XAttribute("Group", this.Group),
-                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()),
-                    new XAttribute("ShowInListSettings", "TRUE"));
-                
+                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()));
+
                 // Check the Required type
                 if (this.Required == RequiredTypes.Required)
                 {
@@ -204,6 +243,31 @@ namespace GSoft.Dynamite.Definitions
                 if (this.IsHidden)
                 {
                     schema.Add(new XAttribute("Hidden", "TRUE"));
+                }
+
+                // Show in Display Form
+                if (!this.ShowInDisplayForm)
+                {
+                    schema.Add(new XAttribute("ShowInDisplayForm", "FALSE"));
+                }
+                // Show in Edit Form
+                if (!this.ShowInEditForm)
+                {
+                    schema.Add(new XAttribute("ShowInEditForm", "FALSE"));
+                }
+                // Show in new Form
+                if (!this.ShowInNewForm)
+                {
+                    schema.Add(new XAttribute("ShowInNewForm", "FALSE"));
+                }
+                // Show in List settings
+                if (!this.ShowInListSettings)
+                {
+                    schema.Add(new XAttribute("ShowInListSettings", "FALSE"));
+                }
+                else
+                {
+                    schema.Add(new XAttribute("ShowInListSettings", "TRUE"));
                 }
 
                 return schema;
