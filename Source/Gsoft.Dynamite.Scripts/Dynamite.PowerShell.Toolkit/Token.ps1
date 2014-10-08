@@ -159,29 +159,69 @@ function script:Execute-TokenFile {
 # Prepare package for use
 function Initialize-DSPTokens {
 	Param (   
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$DestinationPath,
 
-        [ValidateScript({Test-Path $_})]
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
+        [string]$ProjectPath,
+
+        [Parameter(Mandatory=$false)]
         [string]$SourcePath,
 
-        [ValidateScript({Test-Path $_})]
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$false)]
         [string]$CustomizationPath,
 
         [Parameter(Mandatory=$false)]
 		[switch]$Force,
 
         [Parameter(Mandatory=$false)]
-		[switch]$Release
+		[switch]$Release,
+
+        [Parameter(Mandatory=$false)]
+		[switch]$Demo
 	)
     
+    $SourceFilter = "GSoft.Dynamite.CrossSitePublishingCMS*"
+    if($Release -eq $false)
+    {
+        $SourceFilter = $SourceFilter + "pre*"
+    } 
+
+    if (![string]::IsNullOrEmpty($ProjectPath)) 
+    {
+        $ProjectPath = Resolve-Path $ProjectPath
+        Write-Host "Project Path used is $ProjectPath" -ForegroundColor Yellow
+
+        $CustomizationPath = Join-Path $ProjectPath "/Source" | Resolve-Path
+        
+        # DestinationPath will be /Source/package
+        $DestinationPath = Join-Path $CustomizationPath "/package" | Resolve-Path
+
+        if ($Demo -eq $false)
+        {
+            # Source path is the latest CrossSitePublishingCMS tools folder
+            $SourcePath = Get-ChildItem -Path $ProjectPath -Recurse -Include $SourceFilter | ? { $_.PSIsContainer } | sort Name | Select-Object -Last 1 | Select FullName | foreach {$_.FullName}
+            $SourcePath = Join-Path $SourcePath "/tools" | Resolve-Path
+                   
+            # CustomizationPath will be the one finishing in .Script
+            $CustomizationPath = Get-ChildItem -Path $CustomizationPath | ? { $_.Name -like "*.Scripts" } | Select FullName | foreach {$_.FullName}
+        }
+        else 
+        {
+            $CustomizationPath = Get-ChildItem -Path $CustomizationPath | ? { $_.Name -like "*.CrossSitePublishingCMS" } | Select FullName | foreach {$_.FullName}
+        }
+    }
+
+    # Quirks for the demo folder who have no source
+    if ($Demo -eq $true) 
+    {
+        $SourcePath = $CustomizationPath
+    }
+
     $SourcePath = Resolve-Path $SourcePath
     $CustomizationPath = Resolve-Path $CustomizationPath
     $DestinationPath = Resolve-Path $DestinationPath
-
-
+  
     # Force delete all Package folder
     if ($Force -eq $true)
     {
@@ -206,10 +246,12 @@ function Initialize-DSPTokens {
     }
     
     # 4 Copy WSP from /Libraries
-    Write-Host $SourcePath -ForegroundColor Yellow
-    $index = $SourcePath.IndexOf("Libraries`\")
-    $libPath = $SourcePath.Substring(0, $index + "Libraries`\".Length)
-    Copy-DSPSolution $libPath  $wspPath "*"
+    if ($Demo -eq $false)
+    {
+        $index = $SourcePath.IndexOf("Libraries`\")
+        $libPath = $SourcePath.Substring(0, $index + "Libraries`\".Length)
+        Copy-DSPSolution $libPath  $wspPath "*"
+    }
 
     # 5 Copy WSP from /Source
     $sourcePath = Join-Path $CustomizationPath "/../" | Resolve-Path
