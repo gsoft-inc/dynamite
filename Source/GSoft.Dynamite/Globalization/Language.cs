@@ -21,6 +21,12 @@ namespace GSoft.Dynamite
         public static readonly Language English = new Language(new CultureInfo("en-US"));
 
         /// <summary>
+        /// The Inuktitut language.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "This object is immutable.")]
+        public static readonly Language Inuktitut = new Language(new CultureInfo("iu"));
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Language"/> class.
         /// </summary>
         /// <param name="culture">The culture.</param>

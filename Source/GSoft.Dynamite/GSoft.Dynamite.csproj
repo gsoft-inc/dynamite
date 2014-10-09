@@ -92,6 +92,7 @@
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
     <Compile Include="Definitions\VariationSettingsInfo.cs" />
+    <Compile Include="Globalization\Languages.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
