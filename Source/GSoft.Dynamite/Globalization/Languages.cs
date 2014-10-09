@@ -23,7 +23,7 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The full name string</returns>
         public static string TwoLetterISOLanguageNameToFullName(string twoLetterIsoLanguage)
         {
-            var candidate = AvailableLanguages.FirstOrDefault(language => language.Culture.ThreeLetterISOLanguageName.ToLowerInvariant() == twoLetterIsoLanguage.ToLowerInvariant());
+            var candidate = AvailableLanguages.FirstOrDefault(language => language.Culture.TwoLetterISOLanguageName.ToLowerInvariant() == twoLetterIsoLanguage.ToLowerInvariant());
 
             if (candidate == null)
             {

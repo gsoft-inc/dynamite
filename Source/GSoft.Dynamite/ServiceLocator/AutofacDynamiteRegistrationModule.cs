@@ -158,7 +158,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<CustomActionHelper>();
             builder.RegisterType<ContentOrganizerHelper>();
             builder.RegisterType<NavigationHelper>();
-            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>().InstancePerRequest();
 
             // Branding
             builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
