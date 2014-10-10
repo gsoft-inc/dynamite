@@ -18,7 +18,8 @@
         /// </returns>
         public string Serialize(object obj)
         {
-            return JsonConvert.SerializeObject(obj);
+            var settings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+            return JsonConvert.SerializeObject(obj, settings);
         }
 
         /// <summary>
@@ -35,7 +36,8 @@
         /// </returns>
         public T Deserialize<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            var settings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+            return JsonConvert.DeserializeObject<T>(json, settings);
         }
     }
 }
