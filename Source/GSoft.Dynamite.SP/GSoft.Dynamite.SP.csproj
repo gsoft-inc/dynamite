@@ -128,6 +128,7 @@
     <Content Include="DynamiteJavascriptImports\Elements.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Layouts\GSoft.Dynamite\Img\gsoft-feature.png" />
     <Content Include="Layouts\GSoft.Dynamite\CSS\GSoft.Dynamite.Core.css" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.BindindHandlers.js" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.Extensions.js" />
