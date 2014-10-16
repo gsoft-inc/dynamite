@@ -342,6 +342,21 @@ namespace GSoft.Dynamite.Helpers
         }
 
         /// <summary>
+        /// Delete a result source
+        /// </summary>
+        /// <param name="contextSite">The context site collection</param>
+        /// <param name="resultSourceInfo">The result source info object</param>
+        public void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
+        {
+            // Get the search service application for the current site
+            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
+            if (searchServiceApplication != null)
+            {
+                this.DeleteResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, contextSite.RootWeb);
+            }
+        }
+
+        /// <summary>
         /// Creates a query rule object for the search level.
         /// </summary>
         /// <param name="ssa">The search service application.</param>
