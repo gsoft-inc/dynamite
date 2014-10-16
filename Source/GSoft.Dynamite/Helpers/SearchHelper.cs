@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
+using System.Web;
 using GSoft.Dynamite.Definitions;
+using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
 namespace GSoft.Dynamite.Helpers
@@ -171,10 +175,9 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="contextSite">The context SPSite object</param>
         /// <param name="resultSourceInfo">The result source configuration object</param>
         /// <returns>The name of the result source</returns>
-        public string EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
+        public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
             Source resultSource = null;
-            var resultSourceName = string.Empty;
 
             var sortCollection = new SortCollection();
 
@@ -193,12 +196,7 @@ namespace GSoft.Dynamite.Helpers
                 resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, resultSourceInfo.Overwrite);
             }
 
-            if (resultSource != null)
-            {
-                resultSourceName = resultSource.Name;
-            }
-
-            return resultSourceName;
+            return resultSource;
         }
 
         /// <summary>
@@ -522,6 +520,95 @@ namespace GSoft.Dynamite.Helpers
             queryAction.BestBetIds.Add(bestBetId);
 
             rule.Update();
+        }
+
+        /// <summary>
+        /// Ensure a Result Type in a site collection
+        /// </summary>
+        /// <param name="site">The site collection</param>
+        /// <param name="resultType">The result type info object</param>
+        /// <returns></returns>
+        public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
+        {
+            ResultItemType resType = null;
+    
+            var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
+            var resultSource = this.EnsureResultSource(site, resultType.ResultSource);
+
+            var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
+            var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
+
+            // Get the existing result type
+            resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
+
+            if (resType == null)
+            {
+                resType = new ResultItemType(searchOwner);
+
+                resType.Name = resultType.Name;
+                resType.SourceID = resultSource.Id;
+
+                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateIdUrl;
+                var properties = resultType.DisplayProperties.Select(t => t.Name).ToArray();
+                resType.DisplayProperties = string.Join(",", properties);
+                resType.RulePriority = resultType.Priority;
+
+                // Create rules
+                var rules = 
+                    resultType.Rules.Select(
+                        this.CreateCustomPropertyRule)
+                        .ToList();
+                resType.Rules = new PropertyRuleCollection(rules);
+
+                typeof (ResultItemType).GetProperty("OptimizeForFrequentUse")
+                    .SetValue(resType, resultType.OptimizeForFrequenUse);
+
+                // Add the result type
+                resultTypeManager.AddResultItemType(resType);
+            }
+ 
+            return resType;
+        }
+
+        /// <summary>
+        /// Delete a result type in the site collection
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="resultType">The result type objectt</param>
+        public void DeleteResultType(SPSite site, ResultTypeInfo resultType)
+        {
+            ResultItemType resType = null;
+    
+            var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
+            var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
+            var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
+
+            // Get the existing result type
+            resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
+
+            if (resType != null)
+            {
+                resultTypeManager.DeleteResultItemType(resType);
+            }  
+        }
+
+        /// <summary>
+        /// Create a custom result type rule
+        /// </summary>
+        /// <param name="resultTypeRule">The result type rule info object</param>
+        /// <returns>The property rule</returns>
+        public PropertyRule CreateCustomPropertyRule(ResultTypeRuleInfo resultTypeRule)
+        {
+            var type = typeof(PropertyRuleOperator);
+            var info = type.GetProperty("DefaultOperators", BindingFlags.NonPublic | BindingFlags.Static);
+            var value = info.GetValue(null);
+            var defaultOperators = (Dictionary<PropertyRuleOperator.DefaultOperator, PropertyRuleOperator>)value;
+
+            var rule = new PropertyRule(resultTypeRule.PropertyName, defaultOperators[resultTypeRule.Operator])
+            {
+                PropertyValues = new List<string>(resultTypeRule.Values)
+            };
+            return rule;
         }
 
         /// <summary>

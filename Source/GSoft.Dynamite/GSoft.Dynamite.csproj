@@ -90,6 +90,8 @@
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
+    <Compile Include="Definitions\ResultTypeInfo.cs" />
+    <Compile Include="Definitions\ResultTypeRuleInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
     <Compile Include="Definitions\VariationSettingsInfo.cs" />
     <Compile Include="Globalization\Languages.cs" />

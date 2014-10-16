@@ -80,7 +80,7 @@
     </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx.designer.cs">
       <DependentUpon>GoogleAnalyticsTracking.ascx.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.cs">
       <DependentUpon>CssImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -109,15 +109,27 @@
     <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
     </None>
+    <None Include="DynamiteBootstrapNonResponsive\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{5b161480-587e-4f8d-9b49-63bdb0fde0f4}</SharePointProjectItemId>
+    </None>
+    <None Include="DynamiteBootstrapResponsive\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{fb43b44b-6b22-47e3-a33a-75237d4fa14f}</SharePointProjectItemId>
+    </None>
     <None Include="DynamiteGoogleAnalyticsSearchSend\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{031177f7-6718-4c69-99c4-81ce1a852ab8}</SharePointProjectItemId>
     </None>
     <None Include="DynamiteGoogleAnalyticsTracking\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{b2c07b03-3b43-43b6-9380-d0614cd74dc8}</SharePointProjectItemId>
     </None>
+    <None Include="Features\Bootstrap Non Responsive\Bootstrap Non Responsive.feature">
+      <FeatureId>{3c2d4a5a-fdb7-4127-9fcb-fc0d2215aea8}</FeatureId>
+    </None>
+    <None Include="Features\Bootstrap Responsive\Bootstrap Responsive.feature">
+      <FeatureId>{2bd8393f-2785-45b0-a806-5f524101d8a7}</FeatureId>
+    </None>
     <None Include="Features\Google Analytics Tracking\Google Analytics Tracking.feature">
       <FeatureId>{dad6f710-ef35-479c-a057-55f6e5931656}</FeatureId>
-	</None>
+    </None>
     <None Include="DynamiteCssImports\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{8f027e41-5904-4451-90b2-55fdf3cbaea3}</SharePointProjectItemId>
     </None>
@@ -154,11 +166,24 @@
   <ItemGroup>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx" />
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx" />
+    <Content Include="DynamiteBootstrapResponsive\bootstrap.min.js" />
+    <Content Include="DynamiteBootstrapResponsive\Elements.xml" />
+    <Content Include="Features\Bootstrap Responsive\Bootstrap Responsive.Template.xml">
+      <DependentUpon>Bootstrap Responsive.feature</DependentUpon>
+    </Content>
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap-sharepoint.css" />
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap-theme.min.css" />
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap.min.css" />
+    <Content Include="DynamiteBootstrapNonResponsive\bootstrap.min.js" />
+    <Content Include="DynamiteBootstrapNonResponsive\Elements.xml" />
     <Content Include="DynamiteGoogleAnalyticsSearchSend\Elements.xml" />
     <Content Include="DynamiteGoogleAnalyticsTracking\Elements.xml" />
+    <Content Include="Features\Bootstrap Non Responsive\Bootstrap Non Responsive.Template.xml">
+      <DependentUpon>Bootstrap Non Responsive.feature</DependentUpon>
+    </Content>
     <Content Include="Features\Google Analytics Tracking\Google Analytics Tracking.Template.xml">
       <DependentUpon>Google Analytics Tracking.feature</DependentUpon>
-	</Content>
+    </Content>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
