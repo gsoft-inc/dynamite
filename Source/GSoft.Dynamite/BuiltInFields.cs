@@ -220,6 +220,21 @@ namespace GSoft.Dynamite
         /// </summary>
         public const string PublishedLinksUrlName = "PublishedLinksURL";
 
+        /// <summary>
+        /// Author : The creator of the item
+        /// </summary>
+        public const string AuthorName = "Author";
+
+        /// <summary>
+        /// Created : The date of creation of the item
+        /// </summary>
+        public const string CreatedName = "Created";
+
+        /// <summary>
+        /// Modified : The date of the last modificatio
+        /// </summary>
+        public const string ModifiedName = "Modified";
+
         #endregion
 
         #region FieldInfo
@@ -425,6 +440,21 @@ namespace GSoft.Dynamite
         /// The company
         /// </summary>
         public static readonly IFieldInfo Company = new MinimalFieldInfo(CompanyName, SPBuiltInFieldId.Company);
+
+        /// <summary>
+        /// The Author
+        /// </summary>
+        public static readonly IFieldInfo Author = new MinimalFieldInfo(AuthorName, SPBuiltInFieldId.Author);
+
+        /// <summary>
+        /// The Created
+        /// </summary>
+        public static readonly IFieldInfo Created = new MinimalFieldInfo(CreatedName, SPBuiltInFieldId.Created);
+
+        /// <summary>
+        /// The Created
+        /// </summary>
+        public static readonly IFieldInfo Modified = new MinimalFieldInfo(ModifiedName, SPBuiltInFieldId.Modified);
 
         #endregion
     }
