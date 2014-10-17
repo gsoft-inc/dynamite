@@ -38,6 +38,14 @@ namespace GSoft.Dynamite.Definitions
         /// <summary>
         /// WebParts by zone 
         /// </summary>
-        public IDictionary<string, WebPartInfo> WebParts { get; set; } 
+        public IDictionary<string, WebPartInfo> WebParts { get; set; }
+
+        /// <summary>
+        /// Get the site relative url to use in term driven page setting
+        /// </summary>
+        public string RelativeTermDrivenPageUrl
+        {
+            get { return "~site/Pages/" + this.FileName + ".aspx"; }
+        }
     }
 }

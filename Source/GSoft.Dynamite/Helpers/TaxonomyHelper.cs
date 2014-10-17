@@ -413,6 +413,22 @@ namespace GSoft.Dynamite.Helpers
         }
 
         /// <summary>
+        /// Get a taxonomy term group by its id
+        /// </summary>
+        /// <param name="termStore">the term store</param>
+        /// <param name="id">The id of the group</param>
+        /// <returns>The taxonomy group</returns>
+        public Group GetTermGroupById(TermStore termStore, Guid id)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var group = termStore.GetGroup(id);
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
+
+        /// <summary>
         /// Gets the term set by name.
         /// </summary>
         /// <param name="termStore">The term store.</param>
@@ -425,6 +441,23 @@ namespace GSoft.Dynamite.Helpers
             var originalWorkingLanguage = termStore.WorkingLanguage;
             termStore.WorkingLanguage = Language.English.Culture.LCID;
             var termSet = group.TermSets[termSetName];
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return termSet;
+        }
+
+        /// <summary>
+        /// Get a taxonomy term set bu its id
+        /// </summary>
+        /// <param name="termStore">The term store</param>
+        /// <param name="group">The taxonomy term group</param>
+        /// <param name="id">The term set id</param>
+        /// <returns>The taxonomy term set</returns>
+        public TermSet GetTermSetById(TermStore termStore, Group group, Guid id)
+        {
+            var originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = Language.English.Culture.LCID;
+            var termSet = group.TermSets[id];
             termStore.WorkingLanguage = originalWorkingLanguage;
 
             return termSet;

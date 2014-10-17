@@ -93,6 +93,7 @@
     <Compile Include="Definitions\ResultTypeInfo.cs" />
     <Compile Include="Definitions\ResultTypeRuleInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
+    <Compile Include="Definitions\TermDrivenPageSettingInfo.cs" />
     <Compile Include="Definitions\VariationSettingsInfo.cs" />
     <Compile Include="Globalization\Languages.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
@@ -332,7 +333,7 @@
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
-    <Compile Include="Utils\NavigationHelper.cs" />
+    <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Helpers\FieldHelper.cs" />
     <Compile Include="FieldTypes\FieldInfo.cs" />
