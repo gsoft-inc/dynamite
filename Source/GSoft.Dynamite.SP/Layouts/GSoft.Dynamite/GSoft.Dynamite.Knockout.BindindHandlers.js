@@ -62,11 +62,20 @@
             // and again whenever the associated observable changes value.
             // Update the DOM element based on the supplied values here.
             var tab = valueAccessor();
+            var tabContent = $(element);
 
             if (tab.isSelected()) {
-                $(element).show();
+                tabContent.show();
             } else {
-                $(element).hide();
+                tabContent.hide();
+            }
+
+            // Add a 'validation-error' class to the tab(s) which contain validation errors
+            // Useful when the tab hides the field control(s) that are in validation error
+            var hasValidationError = $(".ms-formvalidation", tabContent).length >= 1;
+            var tabElement = $("li:contains(" + tab.resourceString() + ")");
+            if (tabElement.length > 0) {
+                tabElement.toggleClass("validation-error", hasValidationError);
             }
         }
     };
