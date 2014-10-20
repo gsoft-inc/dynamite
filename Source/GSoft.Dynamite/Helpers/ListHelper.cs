@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.FieldTypes;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
@@ -194,7 +195,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="listInfo">The list to create</param>
         /// <returns>The new list or the existing list</returns>
         public SPList EnsureList(SPWeb web, ListInfo listInfo)
-        {          
+        {
             var list = this.GetListByRootFolderUrl(web, listInfo.RootFolderUrl);
 
             // Ensure the list
@@ -283,7 +284,7 @@ namespace GSoft.Dynamite.Helpers
 
             return lists;
         }
-        
+
         /// <summary>
         /// Adds the content type id.
         /// </summary>
@@ -636,7 +637,7 @@ namespace GSoft.Dynamite.Helpers
                 {
                     this._logger.Warn("Field with InternalName {0} was not found in list '{1}' fields", field.Id, list.Title);
                 }
-                
+
                 defaulView.Update();
             }
         }
@@ -654,7 +655,7 @@ namespace GSoft.Dynamite.Helpers
                 {
                     fieldCollection.Add(fieldInternalName);
                 }
-            }          
+            }
         }
         #endregion
 
@@ -690,36 +691,43 @@ namespace GSoft.Dynamite.Helpers
             {
                 this._fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
-                // TODO: make sure that EnsureField takes care of ensureing both the TermSet binding (TaxonomyContext) and Default value of the column
+                foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
+                {
+                    // Get the field in the list
+                    var field = list.Fields.GetFieldByInternalName(fieldDefinition.InternalName);
+                    if (field != null && field.GetType() == typeof(TaxonomyField) && ((fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))))
+                    {
+                        var taxonomyField = fieldDefinition as TaxonomyFieldInfo;
+                       
+                        // Get mapping informations
+                        var termGroupName = taxonomyField.TermStoreMapping.Group.Name;
 
-                //foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
-                //{
-                //    var field = list.Fields.GetFieldByInternalName(defaultValue.Key.InternalName);
-                //    if (field.GetType() == typeof(TaxonomyField) && (defaultValue.Value is TaxonomyFullValue))
-                //    {
-                //        var taxonomyValue = defaultValue.Value as TaxonomyFullValue;
-                //        var termGroupName = taxonomyValue.Context.Group.Name;
-                //        var termSetName = taxonomyValue.Context.TermSet.Labels[new CultureInfo((int)list.ParentWeb.Language)];
-                //        var termSubsetName = taxonomyValue.Context.TermSubset != null
-                //            ? taxonomyValue.Context.TermSubset.Label
-                //            : string.Empty;
+                        // Get the term sets according to the default term store language 
+                        var termStoreDefaultLanguage =
+                            this._taxonomyHelper.GetTermStoreDefaultLanguage(list.ParentWeb.Site);
 
-                //        if (taxonomyValue.Context.Group != null &&
-                //            taxonomyValue.Context.TermSet != null)
-                //        {
-                //            // Change managed metadata mapping
-                //            this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
-                //        }
+                        var termSetName = taxonomyField.TermStoreMapping.TermSet.Labels[new CultureInfo(termStoreDefaultLanguage)];
+                        var termSubsetName = taxonomyField.TermStoreMapping.TermSubset != null
+                            ? taxonomyField.TermStoreMapping.TermSubset.Labels[new CultureInfo(termStoreDefaultLanguage)]
+                            : string.Empty;
 
-                //        // Set the default value for the field
-                //        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
-                //    }
-                //    else if (field.GetType() == typeof(SPFieldText) && (defaultValue.Value is string))
-                //    {
-                //        field.DefaultValue = (string)defaultValue.Value;
-                //        field.Update();
-                //    }
-                //}
+                        // Get default value informations
+                        var taxonomyValue = taxonomyField.DefaultValue;
+
+                        // Change managed metadata mapping
+                        this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
+                        
+                        // Set the default value for the field
+                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                    }
+                    else if (field.GetType() == typeof(SPFieldText) && (fieldDefinition.GetType() == typeof(TextFieldInfo)))
+                    {
+                        var textField = fieldDefinition as TextFieldInfo;
+
+                        field.DefaultValue = (string)textField.DefaultValue;
+                        field.Update();
+                    }
+                }
             }
         }
 

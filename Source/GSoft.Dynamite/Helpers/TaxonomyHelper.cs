@@ -315,14 +315,15 @@ namespace GSoft.Dynamite.Helpers
             SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue)
         {
             var termGroupName = defaultValue.Context.Group.Name;
-            var termSetName = defaultValue.Context.TermSet.Labels[new CultureInfo((int)web.Language)];
+
+            // Get the term set name according to the default term store language
+            var termSetName = defaultValue.Context.TermSet.Labels[new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site))];
 
             if (defaultValue.Term != null)
             {
                 this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, defaultValue.Term.Label);
 
                 // TODO: add SetDefaultTaxonomyFieldValueMulti
-
 
                 //if (defaultValue.Values.Length > 1)
                 //{
@@ -549,9 +550,6 @@ namespace GSoft.Dynamite.Helpers
 
         private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, string termSubsetName)
         {
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = Language.English.Culture.LCID;
-
             Group group = termStore.Groups[termStoreGroupName];
             TermSet termSet = group.TermSets[termSetName];
 
@@ -572,15 +570,10 @@ namespace GSoft.Dynamite.Helpers
             }
 
             field.Update();
-
-            termStore.WorkingLanguage = originalWorkingLanguage;
         }
 
         private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, Guid termSubsetId)
         {
-            int originalWorkingLanguage = termStore.WorkingLanguage;
-            termStore.WorkingLanguage = Language.English.Culture.LCID;
-
             Group group = termStore.Groups[termStoreGroupName];
             TermSet termSet = group.TermSets[termSetName];
 
@@ -592,8 +585,6 @@ namespace GSoft.Dynamite.Helpers
             // Select a sub node of the termset to limit selection
             field.AnchorId = Guid.Empty != termSubsetId ? termSubsetId : Guid.Empty;
             field.Update();
-
-            termStore.WorkingLanguage = originalWorkingLanguage;
         }
         #endregion
     }
