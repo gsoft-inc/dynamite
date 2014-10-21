@@ -56,6 +56,11 @@ namespace GSoft.Dynamite.Definitions
         public bool HasFriendlyRelativeDisplay { get; set; }
 
         /// <summary>
+        /// DEfault formula for the field
+        /// </summary>
+        public string DefaultFormula { get; set; }
+
+        /// <summary>
         /// The XML schema of the Note field
         /// </summary>
         public override XElement Schema
@@ -73,6 +78,11 @@ namespace GSoft.Dynamite.Definitions
                 else
                 {
                     schema.Add(new XAttribute("FriendlyDisplayFormat", "Disabled"));
+                }
+
+                if (!string.IsNullOrEmpty(this.DefaultFormula))
+                {
+                    schema.Add(new XElement("DefaultFormula", this.DefaultFormula));
                 }
 
                 return schema;
