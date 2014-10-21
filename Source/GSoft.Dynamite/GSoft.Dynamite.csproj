@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
+    <Compile Include="Definitions\EventReceiverInfo.cs" />
     <Compile Include="Definitions\ResultTypeInfo.cs" />
     <Compile Include="Definitions\ResultTypeRuleInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
@@ -332,7 +333,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
-    <Compile Include="Utils\EventReceiverHelper.cs" />
+    <Compile Include="Helpers\EventReceiverHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Helpers\FieldHelper.cs" />

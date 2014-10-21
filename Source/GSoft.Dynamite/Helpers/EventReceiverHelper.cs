@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class the manage event receivers.
     /// </summary>
     public class EventReceiverHelper
     {
+        private readonly ContentTypeHelper contentTypeHelper;
+
+        public EventReceiverHelper(ContentTypeHelper contentTypeHelper)
+        {
+            this.contentTypeHelper = contentTypeHelper;
+        }
+
         /// <summary>
         /// Does the event receiver definition exist in the collection?
         /// </summary>
@@ -89,6 +97,25 @@ namespace GSoft.Dynamite.Utils
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Add an event receiver
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        public void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
+        {
+            // Content Types
+            if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
+            {
+                var contentType = this.contentTypeHelper.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
+
+                if (contentType != null)
+                {
+                    this.contentTypeHelper.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
+                }
+            }         
         }
     }
 }
