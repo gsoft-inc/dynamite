@@ -11,12 +11,8 @@ namespace GSoft.Dynamite.Definitions
     /// </summary>
     public class FolderInfo
     {
-        #region Backing fields
-
-        private IList<PageInfo> _pages;
-        private IList<FolderInfo> _subFolders;
-
-        #endregion
+        private IList<PageInfo> pages;
+        private IList<FolderInfo> subFolders;
 
         /// <summary>
         /// Name of the folder
@@ -30,17 +26,17 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                if (this._pages == null)
+                if (this.pages == null)
                 {
                     return new List<PageInfo>();
                 }
 
-                return this._pages;
+                return this.pages;
             }
 
             set
             {
-                this._pages = value;
+                this.pages = value;
             }
         }
 
@@ -51,17 +47,17 @@ namespace GSoft.Dynamite.Definitions
         {
             get
             {
-                if (this._subFolders == null)
+                if (this.subFolders == null)
                 {
                     return new List<FolderInfo>();
                 }
 
-                return this._subFolders;
+                return this.subFolders;
             }
 
             set
             {
-                this._subFolders = value;
+                this.subFolders = value;
             }
         } 
 
@@ -75,5 +71,10 @@ namespace GSoft.Dynamite.Definitions
         /// True if the folder is a root folder
         /// </summary>
         public bool IsRootFolder { get; set; }
+
+        /// <summary>
+        /// The Welcome Page of the folder
+        /// </summary>
+        public PageInfo WelcomePage { get; set; }
     }
 }
