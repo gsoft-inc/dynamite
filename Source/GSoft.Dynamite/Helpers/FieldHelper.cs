@@ -9,6 +9,7 @@ using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
+using Microsoft.SharePoint.WebPartPages.Communication;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
@@ -311,6 +312,18 @@ namespace GSoft.Dynamite.Helpers
             else
             {
                 field = this.EnsureField(fieldCollection, fieldInfo.Schema);
+            }
+
+            // Gets the created field
+            var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
+
+            // Updates the visibility of the field
+            if (createdField != null)
+            {
+                createdField.ShowInListSettings = fieldInfo.IsHiddenInListSettings;
+                createdField.ShowInDisplayForm = fieldInfo.IsHiddenInDisplayForm;
+                createdField.ShowInEditForm = fieldInfo.IsHiddenInEditForm;
+                createdField.ShowInNewForm = fieldInfo.IsHiddenInNewForm;
             }
 
             return field;

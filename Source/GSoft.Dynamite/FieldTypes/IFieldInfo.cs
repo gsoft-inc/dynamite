@@ -63,6 +63,26 @@ namespace GSoft.Dynamite.Definitions
         XElement Schema { get; }
 
         /// <summary>
+        /// Indicates if field should be shown in the display form
+        /// </summary>
+        bool IsHiddenInDisplayForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the new form
+        /// </summary>
+        bool IsHiddenInNewForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the edit form
+        /// </summary>
+        bool IsHiddenInEditForm { get; set; }
+
+        /// <summary>
+        /// Indicates if field should be shown in the list settings
+        /// </summary>
+        bool IsHiddenInListSettings { get; set; }
+
+        /// <summary>
         /// The string XML format of the field
         /// </summary>
         /// <returns>The XML schema of the field as string</returns>
