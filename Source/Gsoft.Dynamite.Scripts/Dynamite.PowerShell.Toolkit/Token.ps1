@@ -195,7 +195,12 @@ function Initialize-DSPTokens {
         $CustomizationPath = Join-Path $ProjectPath "/Source" | Resolve-Path
         
         # DestinationPath will be /Source/package
-        $DestinationPath = Join-Path $CustomizationPath "/package" | Resolve-Path
+        $DestinationPath = Join-Path $CustomizationPath "/package"
+
+        if (!(Test-Path $DestinationPath)) 
+        {
+            New-Item -ItemType Directory -Force -Path $DestinationPath | Out-Null
+        }
 
         if ($Demo -eq $false)
         {

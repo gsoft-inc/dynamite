@@ -47,5 +47,10 @@ namespace GSoft.Dynamite.Definitions
         {
             get { return "~site/Pages/" + this.FileName + ".aspx"; }
         }
+
+        /// <summary>
+        /// Are we publishing this page or not ?
+        /// </summary>
+        public bool IsPublished { get; set; }
     }
 }
