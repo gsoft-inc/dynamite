@@ -120,7 +120,6 @@ namespace GSoft.Dynamite.Caml
             return Tag(CamlConstants.DateRangesOverlap, startFieldRef + endFieldRef + periodValue);
         }
 
-
         /// <summary>
         /// Creates CAML equal with the specified left and right conditions.
         /// </summary>
@@ -216,6 +215,19 @@ namespace GSoft.Dynamite.Caml
         public string GreaterThan(string leftCondition, string rightCondition)
         {
             return Tag(CamlConstants.GreaterThan, null, null, leftCondition + rightCondition);
+        }
+
+        /// <summary>
+        /// Creates CAML equal with the specified left and right conditions.
+        /// </summary>
+        /// <param name="leftCondition">The left condition.</param>
+        /// <param name="rightCondition">The right condition.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string In(string leftCondition, string rightCondition)
+        {
+            return Tag(CamlConstants.In, null, null, leftCondition + rightCondition);
         }
 
         /// <summary>

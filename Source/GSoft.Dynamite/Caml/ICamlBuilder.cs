@@ -140,6 +140,16 @@ namespace GSoft.Dynamite.Caml
         string GreaterThan(string leftCondition, string rightCondition);
 
         /// <summary>
+        /// Creates CAML equal with the specified left and right conditions.
+        /// </summary>
+        /// <param name="leftCondition">The left condition.</param>
+        /// <param name="rightCondition">The right condition.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        string In(string leftCondition, string rightCondition);
+
+        /// <summary>
         /// Creates a CAML query to determine whether [is content type] [the specified content type identifier].
         /// </summary>
         /// <param name="contentTypeId">The content type identifier.</param>
