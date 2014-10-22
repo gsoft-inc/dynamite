@@ -49,6 +49,14 @@ namespace GSoft.Dynamite.Definitions
         }
 
         /// <summary>
+        /// Get the site relative url to use in term driven page setting
+        /// </summary>
+        public string LibraryRelativePageUrl
+        {
+            get { return "Pages/" + this.FileName + ".aspx"; }
+        }
+
+        /// <summary>
         /// Are we publishing this page or not ?
         /// </summary>
         public bool IsPublished { get; set; }
