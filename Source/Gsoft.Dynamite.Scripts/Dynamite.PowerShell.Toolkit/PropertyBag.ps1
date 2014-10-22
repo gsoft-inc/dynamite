@@ -136,3 +136,48 @@ function Set-DSPWebAppProperty()
   
   $SPWebApp.Update();
 }
+
+function Set-DSPWebProperty()
+{
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[string]$Url,
+		
+		[Parameter(Mandatory=$true)]
+		[string]$Key,
+		
+		[Parameter(Mandatory=$true)]
+		[string]$Value
+	)
+	
+	$SPWeb = Get-SPWeb -Identity $Url
+	
+	if ($SPWeb.GetProperty($Key) -eq $null)
+	{ 
+		$SPWeb.AddProperty($Key, $Value)
+	}
+	else
+	{
+		$SPWeb.SetProperty($Key, $Value)
+	}                        
+  
+  $SPWeb.Update();
+}
+
+function Get-DSPWebProperty()
+{
+	[CmdletBinding()]
+	Param
+  (
+		[Parameter(Mandatory=$true)]
+		[string]$Url,
+		
+		[Parameter(Mandatory=$true)]
+		[string]$Key
+	)
+	
+	$SPWeb = Get-SPWeb -Identity $Url
+	return $SPWeb.GetProperty($Key)
+}
