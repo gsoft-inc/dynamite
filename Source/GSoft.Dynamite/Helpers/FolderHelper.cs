@@ -16,8 +16,8 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class FolderHelper
     {
-        private readonly ILogger _logger;
-        private readonly PageHelper _pageHelper;
+        private readonly ILogger logger;
+        private readonly PageHelper pageHelper;
 
         /// <summary>
         /// Constructor for FolderHelper
@@ -26,8 +26,8 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="pageHelper">The page helper instance</param>
         public FolderHelper(ILogger logger, PageHelper pageHelper)
         {
-            this._logger = logger;
-            this._pageHelper = pageHelper;
+            this.logger = logger;
+            this.pageHelper = pageHelper;
         }
 
         /// <summary>
@@ -41,6 +41,16 @@ namespace GSoft.Dynamite.Helpers
             {
                 this.EnsureFolder(library, null, folderInfo);
             }
+        }
+
+        /// <summary>
+        /// Method to revert to home page to the default.aspx page
+        /// </summary>
+        /// <param name="web">The web</param>
+        public void ResetHomePageToDefault(SPWeb web)
+        {
+            web.RootFolder.WelcomePage = "Pages/default.aspx";
+            web.RootFolder.Update();
         }
 
         /// <summary>
@@ -60,12 +70,19 @@ namespace GSoft.Dynamite.Helpers
                 folder = library.RootFolder;
                 
                 // Create pages
-                this._pageHelper.EnsurePage(library, folder, folderInfo.Pages);
+                this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
 
                 // Create sub folders
                 foreach (var childFolder in folderInfo.SubFolders)
                 {
                     this.EnsureFolder(library, folder, childFolder);
+                }
+
+                // Set Web HomePage
+                if (folderInfo.WelcomePage != null)
+                {
+                    library.ParentWeb.RootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl;
+                    library.ParentWeb.RootFolder.Update();
                 }
             }
             else
@@ -75,12 +92,12 @@ namespace GSoft.Dynamite.Helpers
                     try
                     {
                         folder = parentFolder.SubFolders[folderInfo.Name];
-                        this._logger.Info("Skipping folder creation for " + folderInfo.Name +
+                        this.logger.Info("Skipping folder creation for " + folderInfo.Name +
                                          " because it already exists (will still apply values and default metadata)");
                     }
                     catch (ArgumentException)
                     {
-                        this._logger.Info("Creating folder " + folderInfo.Name);
+                        this.logger.Info("Creating folder " + folderInfo.Name);
                     }
 
                     if (folder == null)
@@ -90,7 +107,7 @@ namespace GSoft.Dynamite.Helpers
                     }
 
                     // Create pages
-                    this._pageHelper.EnsurePage(library, folder, folderInfo.Pages);
+                    this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
                 }
 
                 // Create sub folders

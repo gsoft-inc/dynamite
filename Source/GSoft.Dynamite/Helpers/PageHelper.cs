@@ -12,11 +12,11 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class PageHelper
     {
-        private WebPartHelper _webParthelper;
+        private WebPartHelper webPartHelper;
 
         public PageHelper(WebPartHelper webParthelper)
         {
-            this._webParthelper = webParthelper;
+            this.webPartHelper = webParthelper;
         }
 
         /// <summary>
@@ -82,7 +82,14 @@ namespace GSoft.Dynamite.Helpers
             // Insert WebParts
             foreach (KeyValuePair<string, WebPartInfo> wpSetting in page.WebParts)
             {
-                this._webParthelper.EnsureWebPartToZone(publishingPage.ListItem, wpSetting.Value.WebPart, wpSetting.Key, 1);
+                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, wpSetting.Value.WebPart, wpSetting.Key, 1);
+            }
+
+            // Publish
+            if (page.IsPublished)
+            {
+                publishingPage.ListItem.File.CheckIn("Dynamite Ensure Creation");
+                publishingPage.ListItem.File.Publish("Dynamite Ensure Creation");
             }
 
             return publishingPage;
