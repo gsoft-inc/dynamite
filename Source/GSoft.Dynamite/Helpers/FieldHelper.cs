@@ -9,6 +9,7 @@ using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
+using Microsoft.SharePoint.WebPartPages.Communication;
 using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
@@ -63,7 +64,7 @@ namespace GSoft.Dynamite.Helpers
             }
 
             this._logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
-            
+
             // Get the field.
             SPFieldLookup lookupField = this.GetFieldById(web.Fields, fieldId) as SPFieldLookup;
             if (lookupField == null)
@@ -313,9 +314,15 @@ namespace GSoft.Dynamite.Helpers
                 field = this.EnsureField(fieldCollection, fieldInfo.Schema);
             }
 
+            // Gets the created field
+            var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
+
+            // Updates the visibility of the field
+            UpdateFieldVisibility(createdField, fieldInfo);
+
             return field;
         }
-
+        
         /// <summary>
         /// Ensure a taxonomy field
         /// </summary>
@@ -325,6 +332,12 @@ namespace GSoft.Dynamite.Helpers
         public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
         {
             var field = this.EnsureField(fieldCollection, fieldInfo.Schema);
+
+            // Gets the created field
+            var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
+
+            // Updates the visibility of the field
+            UpdateFieldVisibility(createdField, fieldInfo);
 
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
@@ -359,7 +372,7 @@ namespace GSoft.Dynamite.Helpers
                 //newlyCreatedField.DefaultValueTyped = 
 
                 //TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
-               
+
             }
 
             return field;
@@ -381,6 +394,19 @@ namespace GSoft.Dynamite.Helpers
             }
 
             return fieldNames;
+        }
+
+        private SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
+        {
+            if (field != null)
+            {
+                field.ShowInListSettings = !fieldInfo.IsHiddenInListSettings;
+                field.ShowInDisplayForm = !fieldInfo.IsHiddenInDisplayForm;
+                field.ShowInEditForm = !fieldInfo.IsHiddenInEditForm;
+                field.ShowInNewForm = !fieldInfo.IsHiddenInNewForm;
+                field.Update(true);
+            }
+            return field;
         }
 
         private static string GetAttributeValue(XElement fieldXml, string key)
@@ -514,7 +540,7 @@ namespace GSoft.Dynamite.Helpers
                 this._logger.Fatal("Attribute 'DisplayName' is required for field with id: '{0}'.", id);
                 return false;
             }
-            
+
             // Validate internal name
             internalName = GetAttributeValue(fieldXml, "Name");
             if (string.IsNullOrEmpty(internalName))
