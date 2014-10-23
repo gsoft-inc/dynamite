@@ -245,10 +245,10 @@ namespace GSoft.Dynamite.Utils
         /// Method to get a CatalogConnectionSettings from the site
         /// </summary>
         /// <param name="site">The SPSite to get the connection from</param>
-        /// <param name="serverRelativeUrl">The server relative url where the catalog belong</param>
+        /// <param name="webAbsoluteUrl">The server relative url where the catalog belong</param>
         /// <param name="catalogRootUrl">The root url of the catalog.</param>
         /// <returns>A catalogConnectionSettings object</returns>
-        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string serverRelativeUrl, string catalogRootUrl)
+        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string webAbsoluteUrl, string catalogRootUrl)
         {
             string listToken = "lists";
             string catalogPath = string.Empty;
@@ -259,7 +259,7 @@ namespace GSoft.Dynamite.Utils
                 tokens.Insert(0, listToken);
             }
 
-            return PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(serverRelativeUrl, string.Join("/", tokens)));
+            return PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(webAbsoluteUrl, string.Join("/", tokens)));
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace GSoft.Dynamite.Utils
 
             // Be careful, you must launch a search crawl before creating a catalog connection.
             // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
-            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.ServerRelativeUrl, catalog.RootFolderUrl);
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.RootFolderUrl);
 
             if (connectionSettings != null)
             {
@@ -295,7 +295,7 @@ namespace GSoft.Dynamite.Utils
 
             // Be careful, you must launch a search crawl before creating a catalog connection.
             // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
-            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.ServerRelativeUrl, catalog.RootFolderUrl);
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.RootFolderUrl);
 
             if (connectionSettings != null)
             {
@@ -306,7 +306,7 @@ namespace GSoft.Dynamite.Utils
 
                 // Rename the catalog (otherwise, can cause "The value must be at most 64 characters long" error 
                 // because of the name of the connection is generated automatically by SharePoint
-                connectionSettings.CatalogName = catalogConnectionInfo.SourceWeb.Title + " - " +
+                connectionSettings.CatalogName = catalogConnectionInfo.SourceWeb.Title + " - " + catalogConnectionInfo.SourceWeb.Locale.Name + " - " +
                                                  catalogConnectionInfo.Catalog.DisplayName;
 
                 connectionSettings.IsManualCatalogItemUrlRewriteTemplate =
