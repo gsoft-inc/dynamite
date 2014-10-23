@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
+    <Compile Include="Definitions\CatalogConnectionInfo.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
     <Compile Include="Definitions\EventReceiverInfo.cs" />
     <Compile Include="Definitions\ResultTypeInfo.cs" />

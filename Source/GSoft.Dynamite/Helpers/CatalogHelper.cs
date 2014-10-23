@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
@@ -262,6 +263,72 @@ namespace GSoft.Dynamite.Utils
         }
 
         /// <summary>
+        /// Delete a catalog connection
+        /// </summary>
+        /// <param name="site">The target site</param>
+        /// <param name="catalogConnectionInfo">The catalog connection information</param>
+        public void DeleteCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo)
+        {
+            // Get the catalog
+            var catalog = catalogConnectionInfo.Catalog;
+
+            // Be careful, you must launch a search crawl before creating a catalog connection.
+            // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.ServerRelativeUrl, catalog.RootFolderUrl);
+
+            if (connectionSettings != null)
+            {
+                this.DeleteCatalogConnection(site, connectionSettings);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new catalog connection
+        /// </summary>
+        /// <param name="site">The target site</param>
+        /// <param name="catalogConnectionInfo">The catalog connection information</param>
+        /// <param name="overwrite">True if the connection must be override. False otherwise</param>
+        public void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo, bool overwrite)
+        {
+            // Get the catalog
+            var catalog = catalogConnectionInfo.Catalog;
+
+            // Be careful, you must launch a search crawl before creating a catalog connection.
+            // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.ServerRelativeUrl, catalog.RootFolderUrl);
+
+            if (connectionSettings != null)
+            {
+                // Configure additional catalog connection settings
+                connectionSettings.CatalogItemUrlRewriteTemplate = catalogConnectionInfo.CatalogItemUrlRewriteTemplate;
+                connectionSettings.CatalogTaxonomyManagedProperty = catalogConnectionInfo.CatalogTaxonomyManagedProperty;
+                connectionSettings.RewriteCatalogItemUrls = catalogConnectionInfo.RewriteCatalogItemUrls;
+
+                // Rename the catalog (otherwise, can cause "The value must be at most 64 characters long" error 
+                // because of the name of the connection is generated automatically by SharePoint
+                connectionSettings.CatalogName = catalogConnectionInfo.SourceWeb.Title + " - " +
+                                                 catalogConnectionInfo.Catalog.DisplayName;
+
+                connectionSettings.IsManualCatalogItemUrlRewriteTemplate =
+                    catalogConnectionInfo.IsManualCatalogItemUrlRewriteTemplate;
+                connectionSettings.IsReusedWithPinning = catalogConnectionInfo.IsReusedWithPinning;
+                connectionSettings.CatalogItemUrlRewriteTemplate = catalogConnectionInfo.CatalogItemUrlRewriteTemplate;
+
+                // Update the publishing web infos
+                connectionSettings.ConnectedWebId = catalogConnectionInfo.TargetWeb.ID;
+                connectionSettings.ConnectedWebServerRelativeUrl = catalogConnectionInfo.TargetWeb.ServerRelativeUrl;
+
+                // Create the connection
+                this.CreateCatalogConnection(site, connectionSettings, overwrite);
+            }
+            else
+            {
+                this._logger.Info(
+                    "Connection information not found for the catalog {0}. Maybe you forgot to start a search crawl before?", catalog.DisplayName);
+            }
+        }
+
+        /// <summary>
         /// Method to create a catalog connection
         /// </summary>
         /// <param name="site">The site where to create the connection</param>
@@ -291,6 +358,25 @@ namespace GSoft.Dynamite.Utils
             {
                 this._logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
                 catalogManager.AddCatalogConnection(catalogConnectionSettings);
+                catalogManager.Update();
+            }
+        }
+
+        /// <summary>
+        /// Delete a catalog connection
+        /// </summary>
+        /// <param name="site">The site where to delete the connection</param>
+        /// <param name="catalogConnectionSettings">The catalog connection settings to create</param>
+        public void DeleteCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings)
+        {
+             var catalogManager = new CatalogConnectionManager(site);
+
+            // If catalog connection exist
+            if (catalogManager.Contains(catalogConnectionSettings.CatalogUrl))
+            {
+                // Delete the existing connection
+                this._logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                catalogManager.DeleteCatalogConnection(catalogConnectionSettings.CatalogUrl);
                 catalogManager.Update();
             }
         }
