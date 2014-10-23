@@ -81,8 +81,9 @@ namespace GSoft.Dynamite.Helpers
                 // Set Web HomePage
                 if (folderInfo.WelcomePage != null)
                 {
-                    library.ParentWeb.RootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl;
-                    library.ParentWeb.RootFolder.Update();
+                    var rootFolder = library.ParentWeb.RootFolder;
+                    rootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl;
+                    rootFolder.Update();
                 }
             }
             else
