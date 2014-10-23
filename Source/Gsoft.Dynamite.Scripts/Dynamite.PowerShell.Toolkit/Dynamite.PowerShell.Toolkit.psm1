@@ -84,7 +84,7 @@ Export-ModuleMember -Function Get-DSPVersion, Get-DSPModuleName
 Export-ModuleMember -Function New-DSPContentDatabase
 
 # PropertyBag
-Export-ModuleMember -Function Get-DSPWebAppProperty, Set-DSPWebAppProperty
+Export-ModuleMember -Function Get-DSPWebAppProperty, Set-DSPWebAppProperty, Set-DSPWebProperty, Get-DSPWebProperty
 
 # Search - Managed Properties
 Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByKeyword, Add-DSPCrawlExtension, Start-DSPContentSourceCrawl, Wait-DSPContentSourceCrawl, New-DSPResultSources, Set-DSPResultTypesByXml, New-DSPQueryRules
