@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,5 +77,10 @@ namespace GSoft.Dynamite.Definitions
         /// The Welcome Page of the folder
         /// </summary>
         public PageInfo WelcomePage { get; set; }
+
+        /// <summary>
+        /// The culture to create that folder hierarchie. If null, create in all culture.
+        /// </summary>
+        public CultureInfo Locale { get; set; }
     }
 }
