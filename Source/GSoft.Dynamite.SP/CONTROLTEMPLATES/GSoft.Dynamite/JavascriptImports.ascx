@@ -14,7 +14,7 @@
 
 <SharePoint:ScriptLink ID="KnockOutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.0.0.js" Localizable="false" OnDemand="false" runat="server"/>
 <SharePoint:ScriptLink ID="MomentScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/moment-with-langs.min.js" Localizable="false" OnDemand="false" runat="server"/>
-<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-min.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-1.7.0.min.js" Localizable="false" OnDemand="false" runat="server"/>
 
 <%-- Dynamite JS libraries --%>
 <SharePoint:ScriptLink ID="DynamiteCoreScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Core.js" Localizable="false" OnDemand="false" runat="server" />
