@@ -133,6 +133,11 @@ namespace GSoft.Dynamite.Definitions
         public bool AddToQuickLaunch { get; set; }
 
         /// <summary>
+        /// Enable attachments ont hte list
+        /// </summary>
+        public bool EnableAttachements { get; set; }
+
+        /// <summary>
         /// The default view fields for the list
         /// </summary>
         public ICollection<IFieldInfo> DefaultViewFields { get; set; }

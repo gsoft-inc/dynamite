@@ -255,6 +255,13 @@ namespace GSoft.Dynamite.Helpers
                 this.AddtoQuickLaunch(list);
             }
 
+            // Attachements
+            if (listInfo.EnableAttachements)
+            {
+                list.EnableAttachments = listInfo.EnableAttachements;
+                list.Update();
+            }
+
             // Default View Fields
             this.AddFieldsToDefaultView(web, list, listInfo.DefaultViewFields);
 
