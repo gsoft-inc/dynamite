@@ -369,6 +369,24 @@ namespace GSoft.Dynamite.Helpers
         }
 
         /// <summary>
+        /// Remove the event receiver definition for the content type.
+        /// </summary>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="type">The receiver type.</param>
+        /// <param name="className">Name of the class.</param>
+        public void DeleteEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string className)
+        {
+            var eventReceiverDefinition = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().FirstOrDefault(x => (x.Class == className) && (x.Type == type));
+
+            // If definition isn't already defined, add it to the content type
+            if (eventReceiverDefinition != null)
+            {
+                contentType.EventReceivers[eventReceiverDefinition.Id].Delete();
+                contentType.Update(true);
+            }
+        }
+
+        /// <summary>
         /// Reorders fields in the content type according to index position.
         /// </summary>
         /// <param name="contentType">Type of the content.</param>

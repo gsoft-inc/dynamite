@@ -117,5 +117,25 @@ namespace GSoft.Dynamite.Helpers
                 }
             }         
         }
+
+        /// <summary>
+        /// Remove an event receiver
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        public void DeleteEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
+        {
+            // Content Types
+            if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
+            {
+                var contentType = this.contentTypeHelper.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
+
+                if (contentType != null)
+                {
+                    this.contentTypeHelper.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
+                }
+            }
+        }
+
     }
 }
