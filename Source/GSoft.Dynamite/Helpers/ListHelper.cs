@@ -256,7 +256,7 @@ namespace GSoft.Dynamite.Helpers
             }
 
             // Attachements
-            if (listInfo.EnableAttachements)
+            if (!listInfo.EnableAttachements)
             {
                 list.EnableAttachments = listInfo.EnableAttachements;
                 list.Update();

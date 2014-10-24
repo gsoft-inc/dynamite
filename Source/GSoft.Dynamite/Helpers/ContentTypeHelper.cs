@@ -381,7 +381,10 @@ namespace GSoft.Dynamite.Helpers
             // If definition isn't already defined, add it to the content type
             if (eventReceiverDefinition != null)
             {
-                contentType.EventReceivers[eventReceiverDefinition.Id].Delete();
+                var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => eventReceiver.Type == eventReceiverDefinition.Type).ToList();
+
+                eventToDelete.ForEach(c => c.Delete());
+                
                 contentType.Update(true);
             }
         }
