@@ -270,10 +270,7 @@ function script:Execute-DSPTransfert {
 	)
     
     # Copy all .ps1 script inside $Path to $DestinationPath
-    Copy-DSPFile $Path $DestinationPath "*.ps1"
-
-    # Copy all .template script inside $Path to $DestinationPath
-    Copy-DSPFile $Path $DestinationPath "*.template"
+    Copy-DSPFile $Path $DestinationPath @("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png")
 }
 
 function script:Copy-DSPFile {
