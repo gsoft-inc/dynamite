@@ -146,6 +146,7 @@
       <SharePointProjectItemId>{720cb6d9-4c7a-4ed4-a8ff-e3c297dd0c74}</SharePointProjectItemId>
     </None>
     <None Include="GSoft.Dynamite.SP.nuspec" />
+    <None Include="Layouts\GSoft.Dynamite\Lib\underscore-min.map" />
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{ff112f9f-2429-46c2-a407-771ef33b1d94}</SharePointProjectItemId>
     </None>
@@ -213,7 +214,7 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery.html5-placeholder-shim.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.0.0.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\moment-with-langs.min.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-min.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.7.0.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml">
