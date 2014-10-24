@@ -1,5 +1,6 @@
 ﻿using Microsoft.SharePoint.Administration;
 using System;
+using System.Diagnostics;
 
 namespace GSoft.Dynamite.Logging
 {
@@ -135,6 +136,20 @@ namespace GSoft.Dynamite.Logging
         public void Fatal(string format, params object[] args)
         {
             this.InnerLog(TraceSeverity.Unexpected, format, args);
+        }
+
+        /// <summary>
+        /// Output the information on an exception
+        /// </summary>
+        /// <param name="exception">The exception to log</param>
+        public void Exception(Exception exception)
+        {
+            if (exception == null)
+            {
+                throw new ArgumentNullException("exception");
+            }
+
+            this.InnerLog(TraceSeverity.Unexpected, string.Format("[{0}: {1}] {2}", exception.GetType().Name, exception.Message, new StackTrace(exception).ToString()));
         }
 
         /// <summary>

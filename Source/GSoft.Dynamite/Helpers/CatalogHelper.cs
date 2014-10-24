@@ -9,6 +9,7 @@ using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
+using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Taxonomy;
@@ -21,8 +22,8 @@ namespace GSoft.Dynamite.Utils
     /// </summary>
     public class CatalogHelper
     {
-        private readonly ILogger _logger;
-        private readonly ListHelper _listHelper;
+        private readonly ILogger logger;
+        private readonly ListHelper listHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
@@ -31,8 +32,8 @@ namespace GSoft.Dynamite.Utils
         /// <param name="listHelper">The list helper</param>
         public CatalogHelper(ILogger logger, ListHelper listHelper)
         {
-            this._logger = logger;
-            this._listHelper = listHelper;
+            this.logger = logger;
+            this.listHelper = listHelper;
         }
 
         /// <summary>
@@ -61,7 +62,7 @@ namespace GSoft.Dynamite.Utils
         /// </returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, bool activateAnonymousAccess)
         {
-            this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
+            this.logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
             // Add properties for catalog publishing on the root folder
             list.IndexedRootFolderPropertyKeys.Add("PublishingCatalogSettings");
@@ -76,7 +77,7 @@ namespace GSoft.Dynamite.Utils
                 list.BreakRoleInheritance(true, false);
 
                 // Allow anonymous access on the list
-                list.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessList; 
+                list.AnonymousPermMask64 |= SPBasePermissions.AnonymousSearchAccessList;
             }
 
             var fieldList = new Collection<string>();
@@ -125,7 +126,7 @@ namespace GSoft.Dynamite.Utils
         /// </returns>
         public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, string taxonomyFieldMap, bool activateAnonymousAccess)
         {
-            this._logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
+            this.logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
             var catalogList = this.SetListAsCatalog(list, availableManagedProperties, activateAnonymousAccess);
             var rootFolder = catalogList.RootFolder;
@@ -176,7 +177,7 @@ namespace GSoft.Dynamite.Utils
             Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
             // Create the list if doesn't exists
-            var list = this._listHelper.EnsureList(web, catalog);
+            var list = this.listHelper.EnsureList(web, catalog);
 
             if (catalog.TaxonomyFieldMap == null)
             {
@@ -214,7 +215,7 @@ namespace GSoft.Dynamite.Utils
 
                         field.EnforceUniqueValues = true;
                         field.Update();
-                        
+
                         list.Update();
                     }
                 }
@@ -259,7 +260,20 @@ namespace GSoft.Dynamite.Utils
                 tokens.Insert(0, listToken);
             }
 
-            return PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(webAbsoluteUrl, string.Join("/", tokens)));
+
+            CatalogConnectionSettings catalogConnectionSettings = null;
+
+            try
+            {
+                catalogConnectionSettings = PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(webAbsoluteUrl, string.Join("/", tokens)));
+            }
+            catch (InternalQueryErrorException exception)
+            {
+                this.logger.Error("Publishing Catalog with tokens {0} was not found on site {1}", string.Join(", ", tokens.ToArray()), site.Url);
+                this.logger.Exception(exception);
+            }
+
+            return catalogConnectionSettings;
         }
 
         /// <summary>
@@ -323,7 +337,7 @@ namespace GSoft.Dynamite.Utils
             }
             else
             {
-                this._logger.Info(
+                this.logger.Info(
                     "Connection information not found for the catalog {0}. Maybe you forgot to start a search crawl before?", catalog.DisplayName);
             }
         }
@@ -344,19 +358,19 @@ namespace GSoft.Dynamite.Utils
                 if (overwriteIfExist)
                 {
                     // Delete the existing connection
-                    this._logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                    this.logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
                     catalogManager.DeleteCatalogConnection(catalogConnectionSettings.CatalogUrl);
                     catalogManager.Update();
 
                     // Add connection to the catalog manager
-                    this._logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                    this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
                     catalogManager.AddCatalogConnection(catalogConnectionSettings);
                     catalogManager.Update();
                 }
             }
             else
             {
-                this._logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                this.logger.Info("Creating catalog connection: " + catalogConnectionSettings.CatalogUrl);
                 catalogManager.AddCatalogConnection(catalogConnectionSettings);
                 catalogManager.Update();
             }
@@ -369,13 +383,13 @@ namespace GSoft.Dynamite.Utils
         /// <param name="catalogConnectionSettings">The catalog connection settings to create</param>
         public void DeleteCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings)
         {
-             var catalogManager = new CatalogConnectionManager(site);
+            var catalogManager = new CatalogConnectionManager(site);
 
             // If catalog connection exist
             if (catalogManager.Contains(catalogConnectionSettings.CatalogUrl))
             {
                 // Delete the existing connection
-                this._logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
+                this.logger.Info("Deleting catalog connection: " + catalogConnectionSettings.CatalogUrl);
                 catalogManager.DeleteCatalogConnection(catalogConnectionSettings.CatalogUrl);
                 catalogManager.Update();
             }
