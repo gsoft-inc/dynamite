@@ -277,6 +277,35 @@ namespace GSoft.Dynamite.Definitions
             return fields;
         }
 
+        /// <summary>
+        /// Creates the content type with a new instance of SPSite because the updates from the last content type changes were not propagated from the database.
+        /// </summary>
+        /// <param name="contentTypeInfo">The content type information.</param>
+        /// <param name="site">The site.</param>
+        /// <returns>
+        /// Return ContentType
+        /// </returns>
+        public SPContentType CreateContentType(ContentTypeInfo contentTypeInfo, SPSite site)
+        {
+            SPContentType contentType = null;
+
+            using (var newSite = new SPSite(site.ID))
+            {
+                contentType = this.EnsureContentType(
+                    newSite.RootWeb.ContentTypes,
+                    contentTypeInfo.ContentTypeId,
+                    contentTypeInfo.TitleResourceString);
+
+                this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
+
+                contentType.Description = contentTypeInfo.DescriptionResourceString;
+                contentType.Group = contentTypeInfo.ContentGroupResourceString;
+                contentType.Update();
+            }
+
+            return contentType;
+        }
+
         #region Private methods
         private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType)
         {

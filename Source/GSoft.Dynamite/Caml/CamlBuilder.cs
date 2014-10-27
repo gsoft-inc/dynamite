@@ -86,6 +86,41 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <param name="period">The period.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName, string period)
+        {
+            var startFieldRef = this.FieldRef(startDateFieldName);
+            var endFieldRef = this.FieldRef(endDateFieldName);
+            var periodValue = this.Value("DateTime", Tag(period, null));
+
+            return Tag(CamlConstants.DateRangesOverlap, startFieldRef + endFieldRef + periodValue);
+        }
+
+        /// <summary>
+        /// Calendar view date ranges overlap.
+        /// </summary>
+        /// <param name="startDateFieldName">The start date field name.</param>
+        /// <param name="endDateFieldName">The end date field name.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string CalendarViewDateRangesOverlap(string startDateFieldName, string endDateFieldName)
+        {
+            var startFieldRef = this.FieldRef(startDateFieldName);
+            var endFieldRef = this.FieldRef(endDateFieldName);
+            var periodValue = this.Value("DateTime", Tag("Month", null));
+
+            return Tag(CamlConstants.DateRangesOverlap, startFieldRef + endFieldRef + periodValue);
+        }
+
+        /// <summary>
         /// Creates CAML equal with the specified left and right conditions.
         /// </summary>
         /// <param name="leftCondition">The left condition.</param>
@@ -183,6 +218,19 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Creates CAML equal with the specified left and right conditions.
+        /// </summary>
+        /// <param name="leftCondition">The left condition.</param>
+        /// <param name="rightCondition">The right condition.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string In(string leftCondition, string rightCondition)
+        {
+            return Tag(CamlConstants.In, null, null, leftCondition + rightCondition);
+        }
+
+        /// <summary>
         /// Creates a CAML query to determine whether [is content type] [the specified content type identifier].
         /// </summary>
         /// <param name="contentTypeId">The content type identifier.</param>
@@ -204,6 +252,165 @@ namespace GSoft.Dynamite.Caml
         public string IsOrInheritsContentType(SPContentTypeId contentTypeId)
         {
             return this.BeginsWith(this.FieldRef("ContentTypeId"), this.Value("ContentTypeId", contentTypeId.ToString()));
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished()
+        {
+            return this.And(this.IsAfterPublishingStartDate(), this.IsBeforePublishingExpiryDate());
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(bool includeTimeValue)
+        {
+            return this.And(this.IsAfterPublishingStartDate(includeTimeValue), this.IsBeforePublishingExpiryDate(includeTimeValue));
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published.
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(DateTime startDateTime, DateTime expirationDateTime)
+        {
+            return this.And(this.IsAfterPublishingStartDate(startDateTime), this.IsBeforePublishingExpiryDate(expirationDateTime));
+        }
+
+        /// <summary>
+        /// Determines whether this instance is published based on a specified start and end offset.
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsPublished(int startOffsetDays, int expirationOffsetDays)
+        {
+            return this.And(this.IsAfterPublishingStartDate(startOffsetDays), this.IsBeforePublishingExpiryDate(expirationOffsetDays));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsBeforePublishingExpiryDate()
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsBeforePublishingExpiryDate(bool includeTimeValue)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today(includeTimeValue)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired].
+        /// </summary>
+        /// <param name="expirationDateTime">The expiration date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsBeforePublishingExpiryDate(DateTime expirationDateTime)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Value(expirationDateTime)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing expired] [the specified expiration days offset].
+        /// </summary>
+        /// <param name="expirationOffsetDays">The number of offset days from today for the expiration date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsBeforePublishingExpiryDate(int expirationOffsetDays)
+        {
+            return this.Or(
+                this.GreaterThanOrEqual(this.FieldRef(BuiltInFields.PublishingExpirationDateName), this.Today(expirationOffsetDays)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingExpirationDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
+        /// </summary>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsAfterPublishingStartDate()
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today()),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] based on today's date.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsAfterPublishingStartDate(bool includeTimeValue)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today(includeTimeValue)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started].
+        /// </summary>
+        /// <param name="startDateTime">The start date time.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsAfterPublishingStartDate(DateTime startDateTime)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Value(startDateTime)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
+        }
+
+        /// <summary>
+        /// Determines whether [is publishing started] [the specified start date offset].
+        /// </summary>
+        /// <param name="startOffsetDays">The number of offset days from today for the starting date.</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string IsAfterPublishingStartDate(int startOffsetDays)
+        {
+            return this.Or(
+                this.LesserThanOrEqual(this.FieldRef(BuiltInFields.PublishingStartDateName), this.Today(startOffsetDays)),
+                this.IsNull(this.FieldRef(BuiltInFields.PublishingStartDateName)));
         }
 
         /// <summary>
@@ -568,6 +775,25 @@ namespace GSoft.Dynamite.Caml
         }
 
         /// <summary>
+        /// Values the specified field value.
+        /// </summary>
+        /// <param name="fieldValue">The field value.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>
+        /// A string representation of the CAML query.
+        /// </returns>
+        public string Value(DateTime fieldValue, bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value, 
+                fieldValue.ToString(CultureInfo.InvariantCulture), 
+                CamlConstants.Type, 
+                CamlConstants.DateTime, 
+                CamlConstants.IncludeTimeValue, 
+                includeTimeValue.ToString().ToUpperInvariant());
+        }
+
+        /// <summary>
         /// Creates CAML value with the specified value.
         /// </summary>
         /// <param name="fieldValue">The field value.</param>
@@ -856,6 +1082,70 @@ namespace GSoft.Dynamite.Caml
             }
 
             return this.TermFilter(list, taxonomyFieldInternalName, new List<Term>() { taxonomyTerm }, includeDescendants);
+        }
+
+        /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <returns>
+        /// The today value.
+        /// </returns>
+        public string Today()
+        {
+            return Tag(
+                CamlConstants.Value, 
+                CamlConstants.Type, 
+                CamlConstants.DateTime, 
+                Tag("Today", string.Empty));
+        }
+
+        /// <summary>
+        /// Todays the specified include time value.
+        /// </summary>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        public string Today(bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value,
+                Tag("Today", string.Empty),
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                CamlConstants.IncludeTimeValue,
+                includeTimeValue.ToString().ToUpperInvariant());
+        }
+
+        /// <summary>
+        /// Gets the today value tag.
+        /// </summary>
+        /// <param name="offsetDays">The offset days.</param>
+        /// <returns>
+        /// The today value.
+        /// </returns>
+        public string Today(int offsetDays)
+        {
+            return Tag(
+                CamlConstants.Value,
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                Tag("Today", string.Empty, "OffsetDays", offsetDays));
+        }
+
+        /// <summary>
+        /// Todays the specified offset days.
+        /// </summary>
+        /// <param name="offsetDays">The offset days.</param>
+        /// <param name="includeTimeValue">if set to <c>true</c> [include time value].</param>
+        /// <returns>A string representation of the CAML query.</returns>
+        public string Today(int offsetDays, bool includeTimeValue)
+        {
+            return Tag(
+                CamlConstants.Value,
+                Tag("Today", string.Empty, "OffsetDays", offsetDays),
+                CamlConstants.Type,
+                CamlConstants.DateTime,
+                CamlConstants.IncludeTimeValue,
+                includeTimeValue.ToString().ToUpperInvariant());
         }
 
         private static string Tag(string tag, string attribute, string attributeValue, string value)

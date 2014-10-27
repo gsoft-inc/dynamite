@@ -11,6 +11,11 @@ namespace GSoft.Dynamite
         #region Name
 
         /// <summary>
+        /// Start date field internal name
+        /// </summary>
+        public const string StartDateName = "StartDate";
+
+        /// <summary>
         /// EventDate field internal name
         /// </summary>
         public const string EventDateName = "EventDate";
@@ -103,6 +108,11 @@ namespace GSoft.Dynamite
         #endregion
 
         #region FieldInfo
+
+        /// <summary>
+        /// Start date field info
+        /// </summary>
+        public static readonly FieldInfo StartDate = new FieldInfo(StartDateName, new Guid("{64cd368d-2f95-4bfc-a1f9-8d4324ecb007}"));
 
         /// <summary>
         /// EventDate field info

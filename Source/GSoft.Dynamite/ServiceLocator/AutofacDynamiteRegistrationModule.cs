@@ -1,5 +1,4 @@
 ﻿using Autofac;
-
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Cache;
@@ -10,6 +9,7 @@ using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.MasterPages;
+using GSoft.Dynamite.Monitoring;
 using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
@@ -19,7 +19,6 @@ using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
-using GSoft.Dynamite.Monitoring;
 
 namespace GSoft.Dynamite.ServiceLocator
 {   
@@ -117,12 +116,13 @@ namespace GSoft.Dynamite.ServiceLocator
 
             builder.RegisterType<FolderMaker>().As<IFolderMaker>();
             builder.RegisterType<PageCreator>();
+            builder.RegisterType<ViewBuilder>();
 
             // Taxonomy
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
-            //builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
-            //builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
+            //// builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
+            //// builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 
             builder.RegisterType<TaxonomyHelper>();
 

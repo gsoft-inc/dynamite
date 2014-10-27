@@ -198,10 +198,13 @@
     <Compile Include="Setup\IPageInfo.cs" />
     <Compile Include="Setup\ITaxonomyInfo.cs" />
     <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\CalendarOverlayInfo.cs" />
     <Compile Include="Setup\PageCreator.cs" />
     <Compile Include="Setup\PageInfo.cs" />
     <Compile Include="Setup\TaxonomyInfo.cs" />
     <Compile Include="Setup\TaxonomyMultiInfo.cs" />
+    <Compile Include="Setup\ViewBuilder.cs" />
+    <Compile Include="Setup\ViewInfo.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Taxonomy\PerRequestSiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\MonitoredTaxonomyService.cs" />
@@ -209,7 +212,9 @@
     <Compile Include="Taxonomy\ITaxonomyService.cs" />
     <Compile Include="Taxonomy\ISiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\TaxonomyHelper.cs" />
-    <Compile Include="Taxonomy\TaxonomyService.cs" />
+    <Compile Include="Taxonomy\TaxonomyService.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
@@ -219,6 +224,9 @@
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
     <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
+    <Compile Include="Utils\DialogLayoutsPageBase.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Definitions\FieldHelper.cs" />

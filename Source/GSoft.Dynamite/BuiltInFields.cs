@@ -18,6 +18,11 @@ namespace GSoft.Dynamite
         public const string TitleName = "Title";
 
         /// <summary>
+        /// The link title internal name
+        /// </summary>
+        public const string LinkTitleName = "LinkTitle";
+
+        /// <summary>
         /// FileRef (i.e. File Url) field internal name
         /// </summary>
         public const string FileRefName = "FileRef";
@@ -33,6 +38,11 @@ namespace GSoft.Dynamite
         public const string UrlName = "URL";
 
         /// <summary>
+        /// The end date field internal name
+        /// </summary>
+        public const string EndDateName = "_EndDate";
+
+        /// <summary>
         /// ContentType field internal name
         /// </summary>
         public const string ContentTypeName = "ContentType";
@@ -46,6 +56,41 @@ namespace GSoft.Dynamite
         /// The publishing page content name
         /// </summary>
         public const string PublishingPageContentName = "PublishingPageContent";
+
+        /// <summary>
+        /// The comments note field name
+        /// </summary>
+        public const string CommentsName = "Comments";
+
+        /// <summary>
+        /// The publishing start date field name
+        /// </summary>
+        public const string PublishingStartDateName = "PublishingStartDate";
+
+        /// <summary>
+        /// The publishing expiration date field name
+        /// </summary>
+        public const string PublishingExpirationDateName = "PublishingExpirationDate";
+
+        /// <summary>
+        /// The publishing contact field name
+        /// </summary>
+        public const string PublishingContactName = "PublishingContact";
+
+        /// <summary>
+        /// The publishing contact email field name
+        /// </summary>
+        public const string PublishingContactEmailName = "PublishingContactEmail";
+
+        /// <summary>
+        /// The publishing contact picture field name
+        /// </summary>
+        public const string PublishingContactPictureName = "PublishingContactPicture";
+
+        /// <summary>
+        /// The publishing rollup image field name
+        /// </summary>
+        public const string PublishingRollupImageName = "PublishingRollupImage";
 
         /// <summary>
         /// TaxCatchAll field name.
@@ -69,6 +114,11 @@ namespace GSoft.Dynamite
         public static readonly FieldInfo Title = new FieldInfo(TitleName, SPBuiltInFieldId.Title);
 
         /// <summary>
+        /// Link title field info
+        /// </summary>
+        public static readonly FieldInfo LinkTitle = new FieldInfo(LinkTitleName, SPBuiltInFieldId.LinkTitle);
+
+        /// <summary>
         /// FileRef (i.e. File Url) field info
         /// </summary>
         public static readonly FieldInfo FileRef = new FieldInfo(FileRefName, SPBuiltInFieldId.FileRef);
@@ -88,11 +138,15 @@ namespace GSoft.Dynamite
         /// </summary>
         public static readonly FieldInfo ContentTypeId = new FieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
 
-
         /// <summary>
         /// URL field info
         /// </summary>
         public static readonly FieldInfo Url = new FieldInfo(UrlName, SPBuiltInFieldId.URL);
+
+        /// <summary>
+        /// The end date
+        /// </summary>
+        public static readonly FieldInfo EndDate = new FieldInfo(EndDateName, SPBuiltInFieldId._EndDate);
 
         /// <summary>
         /// TaxCatchAll field info.
@@ -110,6 +164,41 @@ namespace GSoft.Dynamite
         /// The publishing page content field info.
         /// </summary>
         public static readonly FieldInfo PublishingPageContent = new FieldInfo(PublishingPageContentName, new Guid("f55c4d88-1f2e-4ad9-aaa8-819af4ee7ee8"));
+
+        /// <summary>
+        /// The comments field info.
+        /// </summary>
+        public static readonly FieldInfo Comments = new FieldInfo(CommentsName, SPBuiltInFieldId.Comments);
+
+        /// <summary>
+        /// The publishing start date field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingStartDate = new FieldInfo(PublishingStartDateName, new Guid("51d39414-03dc-4bd0-b777-d3e20cb350f7"));
+
+        /// <summary>
+        /// The publishing expiration date field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingExpirationDate = new FieldInfo(PublishingExpirationDateName, new Guid("a990e64f-faa3-49c1-aafa-885fda79de62"));
+
+        /// <summary>
+        /// The publishing contact field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingContact = new FieldInfo(PublishingContactName, new Guid("aea1a4dd-0f19-417d-8721-95a1d28762ab"));
+
+        /// <summary>
+        /// The publishing contact email field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingContactEmail = new FieldInfo(PublishingContactEmailName, new Guid("c79dba91-e60b-400e-973d-c6d06f192720"));
+
+        /// <summary>
+        /// The publishing contact picture field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingContactPicture = new FieldInfo(PublishingContactPictureName, new Guid("dc47d55f-9bf9-494a-8d5b-e619214dd19a"));
+
+        /// <summary>
+        /// The publishing rollup image field info.
+        /// </summary>
+        public static readonly FieldInfo PublishingRollupImage = new FieldInfo(PublishingRollupImageName, new Guid("543bc2cf-1f30-488e-8f25-6fe3b689d9ac"));
 
         #endregion
     }
