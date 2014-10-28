@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     /// <summary>
     /// Definition of a GUID field

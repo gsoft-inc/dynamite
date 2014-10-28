@@ -5,7 +5,7 @@ using System.Globalization;
 namespace GSoft.Dynamite.Definitions
 {
     /// <summary>
-    /// Encapsulates Taxonomy Term Set properties
+    /// Encapsulates taxonomy Term Set properties
     /// </summary>
     public class TermSetInfo
     {
@@ -87,7 +87,8 @@ namespace GSoft.Dynamite.Definitions
         public IDictionary<CultureInfo, string> Labels { get; set; }
 
         /// <summary>
-        /// Parent Term Group definition
+        /// Parent Term Group definition. If this value is null, assume 
+        /// default site collection term group and default farm term store.
         /// </summary>
         public TermGroupInfo Group { get; set; }
     }

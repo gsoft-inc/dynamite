@@ -4,7 +4,7 @@ using System;
 using System.Globalization;
 using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     /// <summary>
     /// Definition of a UserField info

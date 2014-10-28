@@ -311,6 +311,7 @@
     <Compile Include="SiteColumns\TextField.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
+    <Compile Include="Taxonomy\TermInfoFactory.cs" />
     <Compile Include="Taxonomy\PerRequestSiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\MonitoredTaxonomyService.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
@@ -356,6 +357,7 @@
     <Compile Include="Utils\VersionContext.cs" />
     <Compile Include="ValueTypes\TaxonomyFullValue.cs" />
     <Compile Include="ValueTypes\LookupValueCollection.cs" />
+    <Compile Include="ValueTypes\TaxonomyFullValueCollection.cs" />
     <Compile Include="ValueTypes\UserValueCollection.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />

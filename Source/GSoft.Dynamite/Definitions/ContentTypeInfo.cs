@@ -4,6 +4,7 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Utils;
 
 using Microsoft.SharePoint;
+using GSoft.Dynamite.FieldTypes;
 
 namespace GSoft.Dynamite.Definitions
 {
