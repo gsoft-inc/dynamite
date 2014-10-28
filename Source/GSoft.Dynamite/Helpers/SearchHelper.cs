@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Logging;
 using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
@@ -22,6 +23,17 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class SearchHelper : ISearchHelper
     {
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="logger">The logger</param>
+        public SearchHelper(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         /// <summary>
         /// Creates a site search scope if it doesn't exist yet
         /// </summary>
@@ -416,6 +428,157 @@ namespace GSoft.Dynamite.Helpers
         }
 
         /// <summary>
+        /// Ensure a managed property in the search service application schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        /// <param name="overwrite">True to overwrite.False otherwise</param>
+        /// <returns>The managed property</returns>
+        public ManagedProperty EnsureManagedProperty(SPSite site, GSoft.Dynamite.Definitions.ManagedPropertyInfo managedPropertyInfo, bool overwrite)
+        {
+            ManagedProperty managedProperty = null;
+            var mappingCollection = new MappingCollection();
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+            var propertyName = managedPropertyInfo.Name;
+            var propertyType = managedPropertyInfo.Type;
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            if (managedProperties.Contains(propertyName))
+            {
+                var prop = managedProperties[propertyName];
+                if (overwrite)
+                {
+                    if (prop.DeleteDisallowed)
+                    {
+                        this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
+                    }
+                    else
+                    {
+                        prop.DeleteAllMappings();
+                        prop.Delete();
+                        managedProperty = managedProperties.Create(propertyName, propertyType);
+                    }
+                }           
+            }
+            else
+            {
+                managedProperty = managedProperties.Create(propertyName, propertyType);               
+            }
+
+            if (managedProperty != null)
+            {
+                // Configure the managed property
+                managedProperty.Sortable = managedPropertyInfo.Sortable;
+                managedProperty.SortableType = managedPropertyInfo.SortableType;
+                managedProperty.Refinable = managedPropertyInfo.Refinable;
+                managedProperty.Retrievable = managedPropertyInfo.Retrievable;
+                managedProperty.RespectPriority = managedPropertyInfo.RespectPriority;
+                managedProperty.Queryable = managedPropertyInfo.Queryable;
+                managedProperty.Searchable = managedPropertyInfo.Searchable;
+                managedProperty.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
+                managedProperty.FullTextIndex = managedPropertyInfo.FullTextIndex;
+                managedProperty.Context = managedPropertyInfo.Context;
+                managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+
+                // Ensure crawl properties mappings
+                foreach (KeyValuePair<string, int> crawledProperty in managedPropertyInfo.CrawledProperties)
+                {
+                    // Get the crawled property
+                    var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
+                    
+                    if (cp != null)
+                    {
+                        // Create mapping information
+                        var mapping = new Mapping
+                        {
+                            CrawledPropertyName = cp.Name,
+                            CrawledPropset = cp.Propset,
+                            ManagedPid = managedProperty.PID,
+                            MappingOrder = crawledProperty.Value
+                        };
+
+                        if (!managedProperty.GetMappings().Contains(mapping))
+                        {
+                            mappingCollection.Add(mapping);
+                        }
+                        else
+                        {
+                            this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledProperty);
+                        }
+                    }
+                    else
+                    {
+                        this.logger.Info("Crawled property with name {0} not found!", crawledProperty);
+                    }
+                }
+
+                // Apply mappings to the managed property
+                if (mappingCollection.Count > 0)
+                {
+                    managedProperty.SetMappings(mappingCollection);
+                }
+
+                managedProperty.Update();
+            }
+
+            return managedProperty;
+        }
+
+        /// <summary>
+        /// Delete a managed property from the search schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        public void DeleteManagedProperty(SPSite site, GSoft.Dynamite.Definitions.ManagedPropertyInfo managedPropertyInfo)
+        {
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            if (managedProperties.Contains(managedPropertyInfo.Name))
+            {
+                var prop = managedProperties[managedPropertyInfo.Name];
+                prop.DeleteAllMappings();
+                prop.Delete();
+            }
+        }
+
+        /// <summary>
+        /// Get a crawled property by name
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="crawledPropertyName">The crawl property name</param>
+        /// <returns>The crawled property</returns>
+        public CrawledProperty GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
+        {
+            CrawledProperty crawledProperty = null;
+
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+            
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+
+            // Search in all categories
+            foreach (var category in sspSchema.AllCategories)
+            {
+                foreach (var property in category.GetAllCrawledProperties())
+                {
+                    if (string.CompareOrdinal(property.Name, crawledPropertyName) == 0)
+                    {
+                        crawledProperty = property;
+                    }
+                }
+            }
+
+            return crawledProperty;
+        }
+
+        /// <summary>
         /// Delete all query rules corresponding to the display name
         /// </summary>
         /// <param name="ssa">The search service application.</param>
@@ -542,7 +705,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="site">The site collection</param>
         /// <param name="resultType">The result type info object</param>
-        /// <returns></returns>
+        /// <returns>The result type item</returns>
         public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
         {
             ResultItemType resType = null;
@@ -575,7 +738,7 @@ namespace GSoft.Dynamite.Helpers
                         .ToList();
                 resType.Rules = new PropertyRuleCollection(rules);
 
-                typeof (ResultItemType).GetProperty("OptimizeForFrequentUse")
+                typeof(ResultItemType).GetProperty("OptimizeForFrequentUse")
                     .SetValue(resType, resultType.OptimizeForFrequenUse);
 
                 // Add the result type
@@ -589,7 +752,7 @@ namespace GSoft.Dynamite.Helpers
         /// Delete a result type in the site collection
         /// </summary>
         /// <param name="site">The site</param>
-        /// <param name="resultType">The result type objectt</param>
+        /// <param name="resultType">The result type object</param>
         public void DeleteResultType(SPSite site, ResultTypeInfo resultType)
         {
             ResultItemType resType = null;
