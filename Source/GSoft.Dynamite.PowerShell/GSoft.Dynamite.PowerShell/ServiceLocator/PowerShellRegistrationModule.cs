@@ -26,7 +26,7 @@ namespace GSoft.Dynamite.PowerShell.ServiceLocator
         {
             builder.RegisterType<PowerShellResourceLocationConfig>().As<IResourceLocatorConfig>();
 
-            builder.RegisterType<CatalogHelper>();
+            builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
         }
     }
 }

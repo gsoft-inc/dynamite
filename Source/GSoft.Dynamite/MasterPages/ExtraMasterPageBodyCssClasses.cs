@@ -12,13 +12,13 @@ namespace GSoft.Dynamite.MasterPages
     /// </summary>
     public class ExtraMasterPageBodyCssClasses : IExtraMasterPageBodyCssClasses
     {
-        private SecurityHelper securityHelper;
+        private readonly ISecurityHelper securityHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExtraMasterPageBodyCssClasses"/> class.
         /// </summary>
         /// <param name="securityHelper">The security helper.</param>
-        public ExtraMasterPageBodyCssClasses(SecurityHelper securityHelper)
+        public ExtraMasterPageBodyCssClasses(ISecurityHelper securityHelper)
         {
             this.securityHelper = securityHelper;
         }

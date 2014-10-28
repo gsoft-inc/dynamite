@@ -83,12 +83,12 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
 
             // Configuration 
-            builder.RegisterType<PropertyBagHelper>();
+            builder.RegisterType<PropertyBagHelper>().As<IPropertyBagHelper>();
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
             // Definitions
-            builder.RegisterType<ContentTypeBuilder>();
-            builder.RegisterType<FieldHelper>();
+            builder.RegisterType<ContentTypeBuilder>().As<IContentTypeBuilder>();
+            builder.RegisterType<FieldHelper>().As<IFieldHelper>();
 
             // Exception
             builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
@@ -96,42 +96,41 @@ namespace GSoft.Dynamite.ServiceLocator
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
             builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
-            builder.RegisterType<MuiHelper>();
-            builder.RegisterType<DateHelper>();
-            builder.RegisterType<RegionalSettingsHelper>();
+            builder.RegisterType<MuiHelper>().As<IMuiHelper>();
+            builder.RegisterType<DateHelper>().As<IDateHelper>();
+            builder.RegisterType<RegionalSettingsHelper>().As<IRegionalSettingsHelper>();
 
             builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
-            builder.RegisterType<VariationHelper>();
+            builder.RegisterType<VariationHelper>().As<IVariationHelper>();
 
             // Lists
-            builder.RegisterType<ListHelper>();
-            builder.RegisterType<ListLocator>();
+            builder.RegisterType<ListHelper>().As<IListHelper>();
             builder.RegisterType<ListLocator>().As<IListLocator>();
-            builder.RegisterType<ListSecurityHelper>();
-            builder.RegisterType<CatalogBuilder>();
+            builder.RegisterType<ListSecurityHelper>().As<IListSecurityHelper>();
+            builder.RegisterType<CatalogBuilder>().As<ICatalogBuilder>();
 
             // MasterPages
-            builder.RegisterType<MasterPageHelper>();
+            builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
             builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
 
             // Navigation 
-            builder.RegisterType<NavigationService>();
+            builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<NavigationNode>().As<INavigationNode>();
             builder.RegisterType<NavigationManagedProperties>();
 
             // Repositories
-            builder.RegisterType<FolderRepository>();
+            builder.RegisterType<FolderRepository>().As<IFolderRepository>();
             builder.RegisterType<QueryHelper>().As<IQueryHelper>();
             builder.RegisterType<ItemLocator>().As<IItemLocator>();
 
             // Security
-            builder.RegisterType<SecurityHelper>();
-            builder.RegisterType<UserHelper>();
+            builder.RegisterType<SecurityHelper>().As<ISecurityHelper>();
+            builder.RegisterType<UserHelper>().As<IUserHelper>();
 
             // Serializers
-            builder.RegisterType<XmlHelper>();
+            builder.RegisterType<XmlHelper>().As<IXmlHelper>();
             builder.RegisterType<JsonNetSerializer>().As<ISerializer>().SingleInstance();
 
             // Setup
@@ -142,7 +141,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
 
             builder.RegisterType<FolderMaker>().As<IFolderMaker>();
-            builder.RegisterType<PageCreator>();
+            builder.RegisterType<PageCreator>().As<IPageCreator>();
 
             // Taxonomy
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
@@ -152,33 +151,33 @@ namespace GSoft.Dynamite.ServiceLocator
             ////builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
             ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 
-            builder.RegisterType<TaxonomyHelper>();
+            builder.RegisterType<TaxonomyHelper>().As<ITaxonomyHelper>();
 
             // Timer Jobs
             builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
 
             // Utils
-            builder.RegisterType<EventReceiverHelper>();
-            builder.RegisterType<SearchHelper>();
-            builder.RegisterType<CustomActionHelper>();
-            builder.RegisterType<ContentOrganizerHelper>();
-            builder.RegisterType<NavigationHelper>();
+            builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();
+            builder.RegisterType<SearchHelper>().As<ISearchHelper>();
+            builder.RegisterType<CustomActionHelper>().As<ICustomActionHelper>();
+            builder.RegisterType<ContentOrganizerHelper>().As<IContentOrganizerHelper>();
+            builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
             builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
 
             // Branding
             builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
-            builder.RegisterType<DisplayTemplateHelper>();
-            builder.RegisterType<ImageRenditionHelper>();
+            builder.RegisterType<DisplayTemplateHelper>().As<IDisplayTemplateHelper>();
+            builder.RegisterType<ImageRenditionHelper>().As<IImageRenditionHelper>();
 
             // CAML query builder and utilities
             builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
-            builder.RegisterType<CamlUtils>();
+            builder.RegisterType<CamlUtils>().As<ICamlUtils>();
 
             // Web config
-            builder.RegisterType<WebConfigModificationHelper>();
+            builder.RegisterType<WebConfigModificationHelper>().As<IWebConfigModificationHelper>();
 
             // Web Parts
-            builder.RegisterType<WebPartHelper>();
+            builder.RegisterType<WebPartHelper>().As<IWebPartHelper>();
         }
     }
 }

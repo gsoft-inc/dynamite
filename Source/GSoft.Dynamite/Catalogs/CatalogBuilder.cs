@@ -18,11 +18,11 @@ namespace GSoft.Dynamite.Catalogs
     /// <summary>
     /// Helper class for Cross Site Publishing operations
     /// </summary>
-    public class CatalogBuilder
+    public class CatalogBuilder : ICatalogBuilder
     {
         private readonly ILogger logger;
-        private readonly ListHelper listHelper;
-        private readonly TaxonomyHelper taxonomyHelper;
+        private readonly IListHelper listHelper;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="logger">The logger</param>
         /// <param name="listHelper">The List Helper</param>
         /// <param name="taxonomyHelper">The Taxonomy Helper</param>
-        public CatalogBuilder(ILogger logger, ListHelper listHelper, TaxonomyHelper taxonomyHelper)
+        public CatalogBuilder(ILogger logger, IListHelper listHelper, ITaxonomyHelper taxonomyHelper)
         {
             this.logger = logger;
             this.listHelper = listHelper;

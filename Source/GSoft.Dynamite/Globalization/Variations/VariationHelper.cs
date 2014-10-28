@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.Globalization.Variations
     /// We use the 2 sync method in the PowerShell assembly.
     /// </summary>
     [Obsolete]
-    public class VariationHelper
+    public class VariationHelper : IVariationHelper
     {
         private readonly ILogger logger;
         private readonly string publishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";

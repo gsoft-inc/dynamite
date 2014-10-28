@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Serializers
     /// <summary>
     /// Helper to work with Xml
     /// </summary>
-    public class XmlHelper
+    public class XmlHelper : IXmlHelper
     {
         private readonly ILogger logger;
 

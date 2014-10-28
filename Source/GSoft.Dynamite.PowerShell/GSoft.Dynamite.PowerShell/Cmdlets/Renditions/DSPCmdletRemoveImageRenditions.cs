@@ -58,7 +58,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                 {
                     using (var childScope = PowerShellContainer.BeginLifetimeScope(site))
                     {
-                        var imageRenditionHelper = childScope.Resolve<ImageRenditionHelper>();
+                        var imageRenditionHelper = childScope.Resolve<IImageRenditionHelper>();
 
                         // Get all image existingImageRendition definitions
                         var renditionDefinitions = from rendition in siteNode.Descendants("ImageRendition")
