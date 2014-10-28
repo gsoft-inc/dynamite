@@ -13,7 +13,7 @@ namespace GSoft.Dynamite.Branding
     /// <summary>
     /// Helper class to work with image matchingRenditions
     /// </summary>
-    public class ImageRenditionHelper
+    public class ImageRenditionHelper : IImageRenditionHelper
     {
         private readonly ILogger logger;
 

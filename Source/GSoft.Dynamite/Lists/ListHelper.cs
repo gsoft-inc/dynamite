@@ -23,11 +23,11 @@ namespace GSoft.Dynamite.Lists
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
-    public class ListHelper
+    public class ListHelper : IListHelper
     {
-        private readonly ContentTypeBuilder contentTypeBuilder;
+        private readonly IContentTypeBuilder contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
-        private readonly FieldHelper fieldHelper;
+        private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
         private readonly ISharePointEntityBinder binder;
 
@@ -39,7 +39,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
+        public ListHelper(IContentTypeBuilder contentTypeBuilder, IFieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;

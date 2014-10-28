@@ -60,7 +60,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         {
                             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
-                                var listHelper = childScope.Resolve<ListHelper>();
+                                var listHelper = childScope.Resolve<IListHelper>();
 
                                 // Create the list if doesn't exists
                                 var list = listHelper.GetListByRootFolderUrl(web, catalogUrl);

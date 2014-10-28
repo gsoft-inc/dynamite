@@ -11,15 +11,15 @@ namespace GSoft.Dynamite.WebParts
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
     /// </summary>
-    public class WebPartHelper
+    public class WebPartHelper : IWebPartHelper
     {
-        private readonly XmlHelper xmlHelper;
+        private readonly IXmlHelper xmlHelper;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="xmlHelper">Helper for Xml work</param>
-        public WebPartHelper(XmlHelper xmlHelper)
+        public WebPartHelper(IXmlHelper xmlHelper)
         {
             this.xmlHelper = xmlHelper;
         }

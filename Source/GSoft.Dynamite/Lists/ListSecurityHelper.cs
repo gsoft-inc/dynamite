@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Lists
     /// <summary>
     /// Utility to change lists' permissions
     /// </summary>
-    public class ListSecurityHelper
+    public class ListSecurityHelper : IListSecurityHelper
     {
         /// <summary>
         /// Method to remove the collaboration rights to all members excepts administrator

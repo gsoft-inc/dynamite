@@ -14,7 +14,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Search service utilities
     /// </summary>
-    public class SearchHelper
+    public class SearchHelper : ISearchHelper
     {
         /// <summary>
         /// Creates a site search scope if it doesn't exist yet

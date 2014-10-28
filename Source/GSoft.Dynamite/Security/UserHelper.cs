@@ -9,7 +9,7 @@ namespace GSoft.Dynamite.Security
     /// <summary>
     /// SharePoint User Helper Class
     /// </summary>
-    public class UserHelper
+    public class UserHelper : IUserHelper
     {
         /// <summary>
         /// Get user SharePoint groups membership (bypass AD groups in SharePoint groups)

@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Helper class for Cross Site Publishing operations
     /// </summary>
-    public class CatalogHelper
+    public class CatalogHelper : ICatalogHelper
     {
         private readonly ILogger _logger;
 

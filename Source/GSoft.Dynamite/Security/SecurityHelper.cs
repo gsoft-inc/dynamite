@@ -9,7 +9,7 @@ namespace GSoft.Dynamite.Security
     /// <summary>
     /// Helper class for managing Role-based security.
     /// </summary>
-    public class SecurityHelper
+    public class SecurityHelper : ISecurityHelper
     {
         /// <summary>
         /// Adds the role.

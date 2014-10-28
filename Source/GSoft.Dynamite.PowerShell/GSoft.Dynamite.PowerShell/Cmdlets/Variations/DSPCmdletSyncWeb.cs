@@ -36,7 +36,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 
             using (var childScope = PowerShellContainer.BeginLifetimeScope(this.SourceWeb))
             {
-                var variationHelper = childScope.Resolve<VariationHelper>();
+                var variationHelper = childScope.Resolve<IVariationHelper>();
                 variationHelper.SyncWeb(this.SourceWeb, this.LabelToSync);
             }
 

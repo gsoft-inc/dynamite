@@ -16,17 +16,17 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Navigation configuration helper.
     /// </summary>
-    public class NavigationHelper
+    public class NavigationHelper : INavigationHelper
     {
-        private readonly TaxonomyHelper _taxonomyHelper;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
         /// <param name="taxonomyHelper">The taxonomy helper.</param>
-        public NavigationHelper(TaxonomyHelper taxonomyHelper)
+        public NavigationHelper(ITaxonomyHelper taxonomyHelper)
         {
-            this._taxonomyHelper = taxonomyHelper;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -40,8 +40,8 @@ namespace GSoft.Dynamite.Utils
             if (taxonomySession.TermStores.Count > 0)
             {
                 var termStore = taxonomySession.TermStores[settings.TermStoreName];
-                var group = this._taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
-                var termSet = this._taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
+                var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
+                var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
                 var navigationSettings = new WebNavigationSettings(web);
                 
                 navigationSettings.GlobalNavigation.TermStoreId = termStore.Id;

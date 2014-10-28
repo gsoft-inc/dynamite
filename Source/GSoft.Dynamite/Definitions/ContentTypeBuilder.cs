@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Definitions
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeBuilder
+    public class ContentTypeBuilder : IContentTypeBuilder
     {
         /// <summary>
         /// Ensure the content type based on its content type info. 

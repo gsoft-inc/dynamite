@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Schemas
     /// </summary>
     public class TaxonomyFieldSchema : GenericFieldSchema
     {
-        private bool _isMultiple, _enforceUniqueValues;
+        private bool isMultiple, enforceUniqueValues;
 
         #region Properties
 
@@ -22,14 +22,14 @@ namespace GSoft.Dynamite.Schemas
         {
             get
             {
-                return this._isMultiple;
+                return this.isMultiple;
             }
 
             set
             {
                 if (value == false)
                 {
-                    this._isMultiple = true;
+                    this.isMultiple = true;
                     this.FieldType = "TaxonomyFieldType";
                 }
                 else
@@ -47,8 +47,8 @@ namespace GSoft.Dynamite.Schemas
         /// </value>
         public bool EnforceUniqueValues
         {
-            get { return this._enforceUniqueValues; }
-            set { this._enforceUniqueValues = value; }
+            get { return this.enforceUniqueValues; }
+            set { this.enforceUniqueValues = value; }
         }
 
         #endregion
@@ -69,8 +69,8 @@ namespace GSoft.Dynamite.Schemas
                 new XAttribute("DisplayName", this.FieldDisplayName),
                 new XAttribute("Description", this.FieldDescription),
                 new XAttribute("Group", this.FieldGroup),
-                new XAttribute("EnforceUniqueValues", this._enforceUniqueValues.ToString().ToUpper()),
-                new XAttribute("Mult", this._isMultiple.ToString().ToUpper()),
+                new XAttribute("EnforceUniqueValues", this.enforceUniqueValues.ToString().ToUpper()),
+                new XAttribute("Mult", this.isMultiple.ToString().ToUpper()),
                 new XElement(
                     "Customization",
                     new XElement(

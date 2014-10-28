@@ -13,7 +13,7 @@ namespace GSoft.Dynamite.Globalization
     /// Also assumes that InitializeWebDefaultRegionalSettings is called during
     /// the setup phase of the site to change the web's regional settings to en-CA.
     /// </summary>
-    public class RegionalSettingsHelper
+    public class RegionalSettingsHelper : IRegionalSettingsHelper
     {
         /// <summary>
         /// The default time zone - ID 10 is UTC-5 (Eastern Time)

@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Helper class the manage event receivers.
     /// </summary>
-    public class EventReceiverHelper
+    public class EventReceiverHelper : IEventReceiverHelper
     {
         /// <summary>
         /// Does the event receiver definition exist in the collection?
