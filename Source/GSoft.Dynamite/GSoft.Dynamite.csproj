@@ -359,7 +359,7 @@
     <Compile Include="ValueTypes\UserValueCollection.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
-    <Compile Include="WebParts\WebPartHelper.cs" />
+    <Compile Include="Helpers\WebPartHelper.cs" />
     <Compile Include="ValueTypes\ImageValue.cs" />
     <Compile Include="ValueTypes\LookupValue.cs" />
     <Compile Include="ValueTypes\PrincipalValue.cs" />

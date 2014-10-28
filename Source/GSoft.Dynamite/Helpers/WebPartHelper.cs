@@ -7,7 +7,7 @@ using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
 
-namespace GSoft.Dynamite.WebParts
+namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
