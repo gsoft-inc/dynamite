@@ -696,8 +696,6 @@ namespace GSoft.Dynamite.Helpers
         {
             if (listInfo.FieldDefinitions.Count > 0)
             {
-                this._fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
-
                 foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
                 {
                     // Get the field in the list
