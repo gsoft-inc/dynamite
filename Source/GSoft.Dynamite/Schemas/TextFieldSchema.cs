@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Schemas
     /// </summary>
     public class TextFieldSchema : GenericFieldSchema
     {
-        private bool _isMultiLine;
+        private bool isMultiLine;
         
         #region Properties
 
@@ -21,14 +21,14 @@ namespace GSoft.Dynamite.Schemas
         {
             get
             {
-                return this._isMultiLine;
+                return this.isMultiLine;
             }
 
             set
             {
                 if (value == false)
                 {
-                    this._isMultiLine = true;
+                    this.isMultiLine = true;
                     this.FieldType = "Text";
                 }
                 else

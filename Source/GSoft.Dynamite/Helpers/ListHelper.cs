@@ -26,15 +26,14 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
-    public class ListHelper
+    public class ListHelper : IListHelper
     {
-        private readonly ContentTypeHelper _contentTypeHelper;
-        private readonly IResourceLocator _resourceLocator;
-        private readonly FieldHelper _fieldHelper;
-        private readonly ILogger _logger;
-        private readonly ISharePointEntityBinder _binder;
-        private readonly TaxonomyHelper _taxonomyHelper;
-
+        private readonly IContentTypeBuilder contentTypeBuilder;
+        private readonly IResourceLocator resourceLocator;
+        private readonly IFieldHelper fieldHelper;
+        private readonly ILogger logger;
+        private readonly ISharePointEntityBinder binder;
+	private readonly TaxonomyHelper taxonomyHelper;
         /// <summary>
         /// Creates a list helper
         /// </summary>
@@ -44,14 +43,14 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
-        public ListHelper(ContentTypeHelper contentTypeHelper, FieldHelper fieldHelper, TaxonomyHelper taxonomyHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
+        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
         {
-            this._contentTypeHelper = contentTypeHelper;
-            this._fieldHelper = fieldHelper;
-            this._resourceLocator = resourceLocator;
-            this._logger = logger;
-            this._binder = binder;
-            this._taxonomyHelper = taxonomyHelper;
+            this.contentTypeHelper = contentTypeHelper;
+            this.fieldHelper = fieldHelper;
+            this.resourceLocator = resourceLocator;
+            this.logger = logger;
+            this.binder = binder;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -348,7 +347,7 @@ namespace GSoft.Dynamite.Helpers
                 list.Update(true);
             }
 
-            this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
+            this.contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
             list.Update(true);
         }
 
@@ -405,7 +404,7 @@ namespace GSoft.Dynamite.Helpers
             genericField.FieldStaticName = fieldInternalName;
             genericField.FieldGroup = fieldGroup;
 
-            var fieldName = this._fieldHelper.EnsureField(list.Fields, genericField.ToXElement());
+            var fieldName = this.fieldHelper.EnsureField(list.Fields, genericField.ToXElement());
 
             if (!string.IsNullOrEmpty(fieldName))
             {
@@ -577,7 +576,7 @@ namespace GSoft.Dynamite.Helpers
         {
             if (list != null && field != null)
             {
-                var listField = this._fieldHelper.GetFieldById(list.Fields, field.Id);
+                var listField = this.fieldHelper.GetFieldById(list.Fields, field.Id);
 
                 if (listField != null)
                 {
@@ -603,6 +602,30 @@ namespace GSoft.Dynamite.Helpers
         }
 
         #region List View
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="catalog">the current catalog</param>
+        /// <param name="fields">the collection of fields</param>
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
+        {
+            this.AddFieldsToDefaultView(web, catalog, fields, false);
+        }
+
+        /// <summary>
+        /// Add fields in the default view of the list
+        /// </summary>
+        /// <param name="web">the current web</param>
+        /// <param name="catalog">the current catalog</param>
+        /// <param name="fields">the collection of fields</param>
+        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        {
+            var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
+            this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
+        }
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -636,13 +659,24 @@ namespace GSoft.Dynamite.Helpers
 
             foreach (IFieldInfo field in fields)
             {
-                if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
+                 if (list.Fields.Contains(field.ID))
                 {
-                    this.EnsureFieldInView(fieldCollection, field.InternalName);
+                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                }
+                else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
+                {
+                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName));
                 }
                 else
                 {
-                    this._logger.Warn("Field with InternalName {0} was not found in list '{1}' fields", field.Id, list.Title);
+                    if (list.Fields.Contains(field.ID))
+                    {
+                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                    }
+                    else
+                    {
+                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                    }
                 }
 
                 defaulView.Update();
@@ -776,12 +810,12 @@ namespace GSoft.Dynamite.Helpers
                     {
                         // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
                         string resourceFileName = resourceStringSplit[0].Replace("$Resources:", string.Empty);
-                        nameFromResourceString = this._resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
+                        nameFromResourceString = this.resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
                     }
                     else
                     {
                         // let's try to find a resource with that string directly as key
-                        nameFromResourceString = this._resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
+                        nameFromResourceString = this.resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
                     }
 
                     if (!string.IsNullOrEmpty(nameFromResourceString))

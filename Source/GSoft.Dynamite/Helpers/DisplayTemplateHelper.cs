@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for display template work
     /// </summary>
-    public class DisplayTemplateHelper
+    public class DisplayTemplateHelper : IDisplayTemplateHelper
     {
         /// <summary>
         /// Folder name for Display Templates

@@ -19,10 +19,9 @@ namespace GSoft.Dynamite.Setup
     /// <summary>
     /// Adds pages to the Pages library
     /// </summary>
-    [Obsolete]
-    public class PageCreator
+    public class PageCreator : IPageCreator
     {
-        private readonly FolderRepository folderRepository;
+        private readonly IFolderRepository folderRepository;
         private readonly ILogger logger;
 
         /// <summary>
@@ -30,7 +29,7 @@ namespace GSoft.Dynamite.Setup
         /// </summary>
         /// <param name="folderRepository">Folder repository</param>
         /// <param name="logger">the current logger</param>
-        public PageCreator(FolderRepository folderRepository, ILogger logger)
+        public PageCreator(IFolderRepository folderRepository, ILogger logger)
         {
             this.folderRepository = folderRepository;
             this.logger = logger;

@@ -18,8 +18,8 @@ namespace GSoft.Dynamite.Repositories
     /// </summary>
     public class QueryHelper : IQueryHelper
     {
-        private ITaxonomyService taxonomyService;
-        private ILogger log;
+        private readonly ITaxonomyService taxonomyService;
+        private readonly ILogger log;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="QueryHelper"/> class.

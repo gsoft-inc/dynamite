@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class the manage event receivers.
     /// </summary>
-    public class EventReceiverHelper
+    public class EventReceiverHelper : IEventReceiverHelper
     {
         private readonly ContentTypeHelper contentTypeHelper;
 

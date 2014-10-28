@@ -12,7 +12,7 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
     /// </summary>
-    public class WebPartHelper
+    public class WebPartHelper : IWebPartHelper
     {
         private readonly XmlHelper xmlHelper;
         private readonly ILogger logger;

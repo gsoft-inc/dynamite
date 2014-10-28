@@ -100,6 +100,9 @@
     <Compile Include="Globalization\Languages.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
+    <Compile Include="Caml\ICamlUtils.cs" />
+    <Compile Include="Catalogs\ICatalogBuilder.cs" />
+    <Compile Include="Configuration\IPropertyBagHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\PropertyBagHelper.cs" />
@@ -141,10 +144,14 @@
     <Compile Include="Helpers\FolderHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
+    <Compile Include="Lists\IListHelper.cs" />
     <Compile Include="Lists\IListLocator.cs" />
+    <Compile Include="Lists\IListSecurityHelper.cs" />
+    <Compile Include="MasterPages\IMasterPageHelper.cs" />
     <Compile Include="MasterPages\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Navigation\INavigationNode.cs" />
+    <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="Navigation\NavigationManagedProperties.cs" />
     <Compile Include="Navigation\NavigationNode.cs" />
     <Compile Include="Navigation\NavigationService.cs" />
@@ -163,13 +170,16 @@
     <Compile Include="Repositories\IItemLocator.cs" />
     <Compile Include="Security\IObjectRoles.cs" />
     <Compile Include="Security\ISecurityConfigurator.cs" />
+    <Compile Include="Security\ISecurityHelper.cs" />
     <Compile Include="Security\ISecurityMappings.cs" />
     <Compile Include="Security\ItemRoles.cs" />
+    <Compile Include="Security\IUserHelper.cs" />
     <Compile Include="Security\ListRoles.cs" />
     <Compile Include="Security\ObjectRoles.cs" />
     <Compile Include="Security\ReadSecurity.cs" />
     <Compile Include="Security\SecurityConstants.cs" />
     <Compile Include="Security\WriteSecurity.cs" />
+    <Compile Include="Serializers\IXmlHelper.cs" />
     <Compile Include="ServiceLocator\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
@@ -298,6 +308,7 @@
     <Compile Include="Setup\IFieldValueInfo.cs" />
     <Compile Include="Setup\IFolderInfo.cs" />
     <Compile Include="Setup\IFolderMaker.cs" />
+    <Compile Include="Setup\IPageCreator.cs" />
     <Compile Include="Setup\IPageInfo.cs" />
     <Compile Include="Setup\ITaxonomyInfo.cs" />
     <Compile Include="Setup\ITaxonomyMultiInfo.cs" />
@@ -311,6 +322,7 @@
     <Compile Include="SiteColumns\TextField.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Structures\ResourceValue.cs" />
+    <Compile Include="Taxonomy\ITaxonomyHelper.cs" />
     <Compile Include="Taxonomy\PerRequestSiteTaxonomyCacheManager.cs" />
     <Compile Include="Taxonomy\MonitoredTaxonomyService.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCache.cs" />
@@ -334,8 +346,14 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
-    <Compile Include="Helpers\EventReceiverHelper.cs" />
-    <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Utils\EventReceiverHelper.cs" />
+    <Compile Include="Utils\ICatalogHelper.cs" />
+    <Compile Include="Utils\IContentOrganizerHelper.cs" />
+    <Compile Include="Utils\ICustomActionHelper.cs" />
+    <Compile Include="Utils\IEventReceiverHelper.cs" />
+    <Compile Include="Utils\INavigationHelper.cs" />
+    <Compile Include="Utils\ISearchHelper.cs" />
+    <Compile Include="Utils\NavigationHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Helpers\FieldHelper.cs" />
     <Compile Include="FieldTypes\FieldInfo.cs" />
@@ -357,6 +375,7 @@
     <Compile Include="ValueTypes\TaxonomyFullValue.cs" />
     <Compile Include="ValueTypes\LookupValueCollection.cs" />
     <Compile Include="ValueTypes\UserValueCollection.cs" />
+    <Compile Include="WebConfig\IWebConfigModificationHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
     <Compile Include="ServiceLocator\AutofacDynamiteRegistrationModule.cs" />
     <Compile Include="Helpers\WebPartHelper.cs" />

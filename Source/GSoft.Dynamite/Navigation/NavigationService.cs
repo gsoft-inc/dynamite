@@ -18,11 +18,11 @@ namespace GSoft.Dynamite.Navigation
       /// <summary>
     /// Service for main menu navigation nodes.
     /// </summary>
-    public class NavigationService
-    {
+    public class NavigationService : INavigationService
+      {
         private readonly ILogger logger;
-        private readonly NavigationHelper navigationHelper;
-        private readonly SearchHelper searchHelper;
+        private readonly INavigationHelper navigationHelper;
+        private readonly ISearchHelper searchHelper;
         private readonly ICatalogNavigation catalogNavigation;
 
           /// <summary>
@@ -32,7 +32,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationHelper">The navigation helper.</param>
         /// <param name="searchHelper">The search helper.</param>
         /// <param name="catalogNavigation">The catalog navigation.</param>
-        public NavigationService(ILogger logger, NavigationHelper navigationHelper, SearchHelper searchHelper, ICatalogNavigation catalogNavigation)
+        public NavigationService(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper, ICatalogNavigation catalogNavigation)
         {
             this.logger = logger;
             this.navigationHelper = navigationHelper;

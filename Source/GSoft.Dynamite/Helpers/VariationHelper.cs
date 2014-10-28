@@ -18,7 +18,8 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// SharePoint variations helpers
     /// </summary>
-    public class VariationHelper
+    [Obsolete]
+    public class VariationHelper : IVariationHelper
     {
         private readonly ILogger _logger;
         private readonly TimerJobHelper _timerJobHelper;
@@ -125,7 +126,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         public void SyncList(SPList listToSync, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
+            this.logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
 
             var sourceWeb = listToSync.ParentWeb;
             Guid sourceListGuid = listToSync.ID;
@@ -204,7 +205,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labelToSync">Source label to sync</param>
         public void SyncWeb(SPWeb web, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
+            this.logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
 
             var publishingAssembly = Assembly.LoadFrom(PublishingAssemblyPath);
             var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");

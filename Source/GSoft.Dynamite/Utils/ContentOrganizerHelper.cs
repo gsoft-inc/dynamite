@@ -10,7 +10,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// SharePoint Content Organizer Helper
     /// </summary>
-    public class ContentOrganizerHelper
+    public class ContentOrganizerHelper : IContentOrganizerHelper
     {
         /// <summary>
         /// Create a custom rule for the content organizer (Without folder auto creation)

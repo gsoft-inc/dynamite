@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         {
                             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
-                                var searchHelper = childScope.Resolve<SearchHelper>();
+                                var searchHelper = childScope.Resolve<ISearchHelper>();
                                 var searchServiceApp = searchHelper.GetDefaultSearchServiceApplication(serviceApplicationName);
                                 var queryRules = searchHelper.GetQueryRulesByName(searchServiceApp, searchObjectLevel, web, displayName);
 

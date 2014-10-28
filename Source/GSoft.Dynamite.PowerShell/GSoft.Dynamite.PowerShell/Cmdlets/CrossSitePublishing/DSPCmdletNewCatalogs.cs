@@ -76,8 +76,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                     {
                         using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                         {
-                            var listHelper = childScope.Resolve<ListHelper>();
-                            var catalogHelper = childScope.Resolve<CatalogHelper>();
+                            var listHelper = childScope.Resolve<IListHelper>();
+                            var catalogHelper = childScope.Resolve<ICatalogHelper>();
 
                             // Get all catalogs configurations
                             var catalogs = from catalogNode in webNode.Descendants("Catalog")
@@ -195,7 +195,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
             {
-                var listHelper = childScope.Resolve<ListHelper>();
+                var listHelper = childScope.Resolve<IListHelper>();
                 list = listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
 
                 if (list == null)
@@ -256,7 +256,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 
             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
             {
-                var listHelper = childScope.Resolve<ListHelper>();
+                var listHelper = childScope.Resolve<IListHelper>();
                 list = listHelper.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
             }
 
@@ -319,8 +319,8 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         {
             using (var childScope = PowerShellContainer.BeginLifetimeScope(list.ParentWeb))
             {
-                var listHelper = childScope.Resolve<ListHelper>();
-                var taxonomyHelper = childScope.Resolve<TaxonomyHelper>();
+                var listHelper = childScope.Resolve<IListHelper>();
+                var taxonomyHelper = childScope.Resolve<ITaxonomyHelper>();
 
                 // Add segments to the list
                 foreach (var segment in catalog.Segments)
@@ -376,7 +376,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
         {
             using (var childScope = PowerShellContainer.BeginLifetimeScope(list.ParentWeb))
             {
-                var taxonomyHelper = childScope.Resolve<TaxonomyHelper>();
+                var taxonomyHelper = childScope.Resolve<ITaxonomyHelper>();
 
                 // Add segments to the list
                 foreach (var defaultValue in catalog.Defaults)
