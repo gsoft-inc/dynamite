@@ -184,6 +184,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ContentTypeHelper>();
             builder.RegisterType<FieldHelper>();
             builder.RegisterType<VariationHelper>();
+            builder.RegisterType<VariationSyncHelper>();
             builder.RegisterType<TimerJobHelper>();
         }
     }

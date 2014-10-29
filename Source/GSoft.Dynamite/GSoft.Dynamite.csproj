@@ -140,6 +140,7 @@
     <Compile Include="Helpers\VariationHelper.cs" />
     <Compile Include="Helpers\FolderHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
+    <Compile Include="Helpers\VariationSyncHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
     <Compile Include="Lists\IListLocator.cs" />
     <Compile Include="MasterPages\Minification.cs" />
