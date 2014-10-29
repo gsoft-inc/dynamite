@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.MasterPages
     /// <summary>
     /// Provides utility methods for creating a setup for a custom master page within SharePoint.
     /// </summary>
-    public class MasterPageHelper
+    public class MasterPageHelper : IMasterPageHelper
     {
         private readonly ILogger logger;
         private readonly string seattleMasterPageFilename = "seattle.master";

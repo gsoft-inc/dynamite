@@ -9,10 +9,14 @@ using Microsoft.SharePoint.WebPartPages;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using System.Web.UI.WebControls.WebParts;
+
+    using GSoft.Dynamite.WebParts;
+
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
     /// </summary>
-    public class WebPartHelper
+    public class WebPartHelper : IWebPartHelper
     {
         private readonly XmlHelper xmlHelper;
         private readonly ILogger logger;
@@ -103,7 +107,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>Return the Storage key of the web part</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public Guid EnsureWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneId, int webPartZoneIndex)
+        public Guid EnsureWebPartToZone(SPListItem item, WebPart webPart, string webPartZoneId, int webPartZoneIndex)
         {
             Guid storageKey = Guid.Empty;
 

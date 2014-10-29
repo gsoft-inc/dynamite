@@ -18,10 +18,12 @@ using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Utils;
+
     /// <summary>
     /// Search service utilities
     /// </summary>
-    public class SearchHelper
+    public class SearchHelper : ISearchHelper
     {
         private readonly ILogger logger;
 
@@ -179,6 +181,20 @@ namespace GSoft.Dynamite.Helpers
             }
 
             return resultSource;
+        }
+
+        public Source EnsureResultSource(
+            SearchServiceApplication ssa,
+            string resultSourceName,
+            SearchObjectLevel level,
+            string searchProvider,
+            SPWeb contextWeb,
+            string query,
+            string sortField,
+            SortDirection direction,
+            bool overwrite)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

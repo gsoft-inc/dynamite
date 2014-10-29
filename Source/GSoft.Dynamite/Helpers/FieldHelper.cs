@@ -21,23 +21,20 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for managing SP Fields.
     /// </summary>
-    public class FieldHelper
+    public class FieldHelper : IFieldHelper
     {
-        private readonly ILogger _logger;
-        private readonly TaxonomyHelper _taxonomyHelper;
-        private readonly IResourceLocator _resourceLocator;
+        private readonly ILogger logger;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
-        /// <param name="resourceLocator">The resource locator</param>
-        public FieldHelper(ILogger logger, TaxonomyHelper taxonomyHelper, IResourceLocator resourceLocator)
+        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper)
         {
-            this._logger = logger;
-            this._taxonomyHelper = taxonomyHelper;
-            this._resourceLocator = resourceLocator;
+            this.logger = logger;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -68,8 +65,8 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("listUrl");
             }
 
-            this._logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
-
+            this.logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
+            
             // Get the field.
             SPFieldLookup lookupField = this.GetFieldById(web.Fields, fieldId) as SPFieldLookup;
             if (lookupField == null)
@@ -83,7 +80,7 @@ namespace GSoft.Dynamite.Helpers
             // Configure the lookup field.
             this.SetLookupToList(lookupField, lookupList);
 
-            this._logger.Info("End method 'SetLookupToList'.");
+            this.logger.Info("End method 'SetLookupToList'.");
         }
 
         /// <summary>
@@ -117,7 +114,7 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("lookupList");
             }
 
-            this._logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
+            this.logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
 
             // Get the field.
             SPFieldLookup lookupField = this.GetFieldById(fieldCollection, fieldId) as SPFieldLookup;
@@ -129,7 +126,7 @@ namespace GSoft.Dynamite.Helpers
             // Configure the lookup field.
             this.SetLookupToList(lookupField, lookupList);
 
-            this._logger.Info("End method 'SetLookupToList'.");
+            this.logger.Info("End method 'SetLookupToList'.");
         }
 
         /// <summary>
@@ -154,7 +151,7 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("The parameter 'lookupList' cannot be null.", "lookupList");
             }
 
-            this._logger.Info("Start method 'SetLookupToList' for field with id '{0}'", lookupField.Id);
+            this.logger.Info("Start method 'SetLookupToList' for field with id '{0}'", lookupField.Id);
 
             // Get the fields schema xml.
             XDocument fieldSchema = XDocument.Parse(lookupField.SchemaXml);
@@ -167,7 +164,7 @@ namespace GSoft.Dynamite.Helpers
             // Update the lookup field.
             lookupField.SchemaXml = fieldSchema.ToString();
 
-            this._logger.Info("End method 'SetLookupToList'.");
+            this.logger.Info("End method 'SetLookupToList'.");
         }
 
         /// <summary>
@@ -212,14 +209,14 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("fieldsXml");
             }
 
-            this._logger.Info("Start method 'AddFields'");
+            this.logger.Info("Start method 'EnsureFields'");
 
             IList<string> internalNames = new List<string>();
 
             // Get all the field declerations in the XmlDocument.
             var fields = fieldsXml.Root.Elements("Field");
 
-            this._logger.Info("Found '{0}' fields to add.", fields.Count());
+            this.logger.Info("Found '{0}' fields to add.", fields.Count());
 
             foreach (XElement field in fields)
             {
@@ -231,7 +228,7 @@ namespace GSoft.Dynamite.Helpers
                 }
             }
 
-            this._logger.Info("End method 'AddFields'. Returning '{0}' internal names.", internalNames.Count);
+            this.logger.Info("End method 'EnsureFields'. Returning '{0}' internal names.", internalNames.Count);
 
             // Return a list of the fields that where created.
             return internalNames;
@@ -263,7 +260,7 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("fieldXml");
             }
 
-            this._logger.Info("Start method 'AddField'");
+            this.logger.Info("Start method 'EnsureField'");
 
             Guid id = Guid.Empty;
             string displayName = string.Empty;
@@ -283,13 +280,13 @@ namespace GSoft.Dynamite.Helpers
 
                     string addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
 
-                    this._logger.Info("End method 'AddField'. Added field with internal name '{0}'", addedInternalName);
+                    this.logger.Info("End method 'EnsureField'. Added field with internal name '{0}'", addedInternalName);
 
                     return addedInternalName;
                 }
                 else
                 {
-                    this._logger.Warn("End method 'AddField'. Field with id '{0}' and display name '{1}' was not added because it already exists in the collection.", id, displayName);
+                    this.logger.Warn("End method 'EnsureField'. Field with id '{0}' and display name '{1}' was not added because it already exists in the collection.", id, displayName);
                     return string.Empty;
                 }
             }
@@ -362,7 +359,7 @@ namespace GSoft.Dynamite.Helpers
             UpdateFieldVisibility(createdField, fieldInfo);
 
             // Get the term store default language for term set name
-            var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
+            var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
 
             if (fieldInfo.TermStoreMapping != null)
             {
@@ -376,7 +373,7 @@ namespace GSoft.Dynamite.Helpers
                 // TODO: DefaultValue shouldn't be used for this. Use TaxonomyContext object on TaxonomyFieldInfo instead. DefaultValue should be used for the TermSet-mapped (thx to Context) field.
 
                 // Metadata mapping configuration
-                this._taxonomyHelper.AssignTermSetToSiteColumn(
+                this.taxonomyHelper.AssignTermSetToSiteColumn(
                             fieldCollection.Web,
                             fieldInfo.Id,
                             taxContext.Group.Name,
@@ -449,7 +446,7 @@ namespace GSoft.Dynamite.Helpers
             if (fieldCollection.Contains(fieldId))
             {
                 // If Id is found in the collection.
-                this._logger.Warn("Field with id '{0}' is already in the collection.", fieldId);
+                this.logger.Warn("Field with id '{0}' is already in the collection.", fieldId);
                 return true;
             }
 
@@ -472,14 +469,14 @@ namespace GSoft.Dynamite.Helpers
             else
             {
                 // We found it!
-                this._logger.Warn("Field with display name '{0}' is already in the collection.", displayName);
+                this.logger.Warn("Field with display name '{0}' is already in the collection.", displayName);
                 return true;
             }
         }
 
         private XElement FixLookupFieldXml(SPWeb web, XElement fieldXml)
         {
-            this._logger.Info("Fixing up lookup field xml.");
+            this.logger.Info("Fixing up lookup field xml.");
 
             // Validate the list attribute is present.
             string list = GetAttributeValue(fieldXml, "List");
@@ -506,7 +503,7 @@ namespace GSoft.Dynamite.Helpers
             string webIdValue = web.ID.ToString();
             string requiredValue = required ? "TRUE" : "FALSE";
 
-            this._logger.Info("Setting field xml attributes, List: '{0}' WebId: '{1}' Required: '{2}'", listValue, webIdValue, requiredValue);
+            this.logger.Info("Setting field xml attributes, List: '{0}' WebId: '{1}' Required: '{2}'", listValue, webIdValue, requiredValue);
 
             // Update the xml.
             fieldXml.SetAttributeValue("List", listValue);
@@ -520,7 +517,7 @@ namespace GSoft.Dynamite.Helpers
         private bool IsLookup(XElement fieldXml)
         {
             string fieldType = GetAttributeValue(fieldXml, "Type");
-            this._logger.Info("Field is of type '{0}'", fieldType);
+            this.logger.Info("Field is of type '{0}'", fieldType);
             return string.Compare(fieldType, "Lookup", true, CultureInfo.InvariantCulture) == 0;
         }
 
@@ -534,7 +531,7 @@ namespace GSoft.Dynamite.Helpers
             string strId = GetAttributeValue(fieldXml, "ID");
             if (string.IsNullOrEmpty(strId))
             {
-                this._logger.Fatal("Attribute 'ID' is required.");
+                this.logger.Fatal("Attribute 'ID' is required.");
                 return false;
             }
             else
@@ -545,12 +542,12 @@ namespace GSoft.Dynamite.Helpers
                 }
                 catch (FormatException)
                 {
-                    this._logger.Fatal("Attribute ID: '{0}' needs to be a guid.", strId);
+                    this.logger.Fatal("Attribute ID: '{0}' needs to be a guid.", strId);
                     return false;
                 }
                 catch (OverflowException)
                 {
-                    this._logger.Fatal("Attribute ID: '{0}' needs to be a guid.", strId);
+                    this.logger.Fatal("Attribute ID: '{0}' needs to be a guid.", strId);
                     return false;
                 }
             }
@@ -559,7 +556,7 @@ namespace GSoft.Dynamite.Helpers
             displayName = GetAttributeValue(fieldXml, "DisplayName");
             if (string.IsNullOrEmpty(displayName))
             {
-                this._logger.Fatal("Attribute 'DisplayName' is required for field with id: '{0}'.", id);
+                this.logger.Fatal("Attribute 'DisplayName' is required for field with id: '{0}'.", id);
                 return false;
             }
 
@@ -567,7 +564,7 @@ namespace GSoft.Dynamite.Helpers
             internalName = GetAttributeValue(fieldXml, "Name");
             if (string.IsNullOrEmpty(internalName))
             {
-                this._logger.Fatal("Attribute 'Name' is required for field with id: '{0}'.", id);
+                this.logger.Fatal("Attribute 'Name' is required for field with id: '{0}'.", id);
                 return false;
             }
 

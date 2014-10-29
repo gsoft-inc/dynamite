@@ -2,7 +2,6 @@
 using System.Management.Automation;
 using Autofac;
 using GSoft.Dynamite.Globalization.Variations;
-using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.PowerShell.Unity;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.PowerShell;
@@ -37,7 +36,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Variations
 
             using (var childScope = PowerShellContainer.BeginLifetimeScope(this.SourceWeb))
             {
-                var variationHelper = childScope.Resolve<VariationHelper>();
+                var variationHelper = childScope.Resolve<IVariationHelper>();
                 variationHelper.SyncWeb(this.SourceWeb, this.LabelToSync);
             }
 

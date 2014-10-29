@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using GSoft.Dynamite.Definitions;
+
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes;
@@ -17,12 +15,12 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for managing Taxonomy.
     /// </summary>
-    public class TaxonomyHelper
+    public class TaxonomyHelper : ITaxonomyHelper
     {
         private const string AssemblyFullName = "Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c";
         private const string ClassFullName = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
 
-        private readonly EventReceiverHelper eventReceiverHelper;
+        private readonly IEventReceiverHelper eventReceiverHelper;
         private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
@@ -30,7 +28,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="eventReceiverHelper">An event receiver helper.</param>
         /// <param name="taxonomyService">The taxonomy service.</param>
-        public TaxonomyHelper(EventReceiverHelper eventReceiverHelper, ITaxonomyService taxonomyService)
+        public TaxonomyHelper(IEventReceiverHelper eventReceiverHelper, ITaxonomyService taxonomyService)
         {
             this.eventReceiverHelper = eventReceiverHelper;
             this.taxonomyService = taxonomyService;
@@ -473,7 +471,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="termGroupName">Term group name.</param>
         /// <param name="termSetName">Term Set Name.</param>
         /// <param name="termLabel">Term Label.</param>
-        public void SetItemTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
+        public void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
         {
             var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
 

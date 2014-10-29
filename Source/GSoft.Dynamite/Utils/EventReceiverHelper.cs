@@ -5,16 +5,18 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Utils;
+
     /// <summary>
     /// Helper class the manage event receivers.
     /// </summary>
-    public class EventReceiverHelper
+    public class EventReceiverHelper : IEventReceiverHelper
     {
-        private readonly ContentTypeHelper contentTypeHelper;
+        private readonly IContentTypeBuilder contentTypeBuilder;
 
-        public EventReceiverHelper(ContentTypeHelper contentTypeHelper)
+        public EventReceiverHelper(IContentTypeBuilder contentTypeBuilder)
         {
-            this.contentTypeHelper = contentTypeHelper;
+            this.contentTypeBuilder = contentTypeBuilder;
         }
 
         /// <summary>
@@ -109,11 +111,11 @@ namespace GSoft.Dynamite.Helpers
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
             {
-                var contentType = this.contentTypeHelper.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
+                var contentType = this.contentTypeBuilder.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
 
                 if (contentType != null)
                 {
-                    this.contentTypeHelper.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
+                    this.contentTypeBuilder.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
                 }
             }         
         }
@@ -128,11 +130,11 @@ namespace GSoft.Dynamite.Helpers
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
             {
-                var contentType = this.contentTypeHelper.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
+                var contentType = this.contentTypeBuilder.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
 
                 if (contentType != null)
                 {
-                    this.contentTypeHelper.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
+                    this.contentTypeBuilder.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
                 }
             }
         }

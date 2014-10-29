@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.FieldTypes;
 using System.Xml.Linq;
+
+using GSoft.Dynamite.Definitions;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.FieldTypes
 {
+    using GSoft.Dynamite.FieldTypes;
+
     /// <summary>
     /// Validation of NoteFieldInfo expected behavior
     /// </summary>

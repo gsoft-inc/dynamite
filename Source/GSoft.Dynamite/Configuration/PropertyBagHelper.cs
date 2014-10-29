@@ -14,7 +14,7 @@ namespace GSoft.Dynamite.Configuration
     /// <summary>
     /// Helper class to interact with the Property bags
     /// </summary>
-    public class PropertyBagHelper
+    public class PropertyBagHelper : IPropertyBagHelper
     {
         private ILogger logger;
 

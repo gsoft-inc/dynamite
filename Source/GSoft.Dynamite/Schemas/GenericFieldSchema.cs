@@ -9,14 +9,14 @@ namespace GSoft.Dynamite.Schemas
     [Obsolete]
     public abstract class GenericFieldSchema
     {
-        private Guid _fieldId;
+        private Guid fieldId;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         protected GenericFieldSchema()
         {
-            this._fieldId = Guid.NewGuid();
+            this.fieldId = Guid.NewGuid();
         }
 
         #region Properties
@@ -77,8 +77,8 @@ namespace GSoft.Dynamite.Schemas
         /// </value>
         public Guid FieldId
         {
-            get { return this._fieldId; }
-            set { this._fieldId = value; }
+            get { return this.fieldId; }
+            set { this.fieldId = value; }
         }
 
         /// <summary>

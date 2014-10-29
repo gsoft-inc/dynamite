@@ -3,7 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
 using Autofac;
-using GSoft.Dynamite.Helpers;
+
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
@@ -57,7 +57,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                     {
                         using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                         {
-                            var searchHelper = childScope.Resolve<SearchHelper>();
+                            var searchHelper = childScope.Resolve<ISearchHelper>();
 
                             var doProcess = ShouldContinue("Are you sure?", "Delete all result sources");
                             if (doProcess)

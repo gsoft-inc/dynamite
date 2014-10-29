@@ -15,14 +15,17 @@ using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Globalization.Variations;
+    using GSoft.Dynamite.Lists;
+
     /// <summary>
     /// SharePoint variations helpers
     /// </summary>
-    public class VariationHelper
+    public class VariationHelper : IVariationHelper
     {
-        private readonly ILogger _logger;
-        private readonly TimerJobHelper _timerJobHelper;
-        private readonly ListHelper _listHelper;
+        private readonly ILogger logger;
+        private readonly ITimerJobHelper timerJobHelper;
+        private readonly IListHelper listHelper;
         private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
@@ -30,11 +33,11 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="timerJobHelper">The timer job helper</param>
-        public VariationHelper(ILogger logger, TimerJobHelper timerJobHelper, ListHelper listHelper)
+        public VariationHelper(ILogger logger, ITimerJobHelper timerJobHelper, IListHelper listHelper)
         {
-            this._logger = logger;
-            this._timerJobHelper = timerJobHelper;
-            this._listHelper = listHelper;
+            this.logger = logger;
+            this.timerJobHelper = timerJobHelper;
+            this.listHelper = listHelper;
         }
 
         /// <summary>
@@ -75,7 +78,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
-            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
+            this.logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
 
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
@@ -105,7 +108,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labels"></param>
         public void SyncList(SPWeb web, ListInfo listInfo, IList<VariationLabelInfo> labels)
         {
-            var list = this._listHelper.EnsureList(web, listInfo);
+            var list = this.listHelper.EnsureList(web, listInfo);
 
             foreach (VariationLabelInfo label in labels)
             {
@@ -125,7 +128,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         public void SyncList(SPList listToSync, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
+            this.logger.Info("Start method 'SyncList' for list: '{0}' with label '{1}'", listToSync.Title, labelToSync);
 
             var sourceWeb = listToSync.ParentWeb;
             Guid sourceListGuid = listToSync.ID;
@@ -204,7 +207,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labelToSync">Source label to sync</param>
         public void SyncWeb(SPWeb web, string labelToSync)
         {
-            this._logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
+            this.logger.Info("Start method 'SyncWeb' for web: '{0}' with label '{1}'", web.Url, labelToSync);
 
             var publishingAssembly = Assembly.LoadFrom(PublishingAssemblyPath);
             var workItemHelper = publishingAssembly.GetType("Microsoft.SharePoint.Publishing.Internal.VariationWorkItemHelper");
@@ -369,13 +372,13 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labels">The variation labels</param>
         public void CreateHierarchies(SPSite site, IList<VariationLabelInfo> labels)
         {
-            this._timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
+            this.timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
 
-            var jobId = this._timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
+            var jobId = this.timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
 
             DateTime startTime = DateTime.Now.ToUniversalTime();
 
-            this._timerJobHelper.WaitForJob(site, jobId, startTime);
+            this.timerJobHelper.WaitForJob(site, jobId, startTime);
 
             // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
             // Also take care of setting the regional settings on each site.

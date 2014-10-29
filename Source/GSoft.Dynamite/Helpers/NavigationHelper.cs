@@ -14,23 +14,25 @@ using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Utils;
+
     /// <summary>
     /// Navigation configuration helper.
     /// </summary>
-    public class NavigationHelper
+    public class NavigationHelper : INavigationHelper
     {
-        private readonly TaxonomyHelper _taxonomyHelper;
-        private readonly ITaxonomyService _taxonomyService;
+        private readonly ITaxonomyHelper taxonomyHelper;
+        private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
         /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <param name="taxonomyService">The taxonomy service</param>
-        public NavigationHelper(TaxonomyHelper taxonomyHelper, ITaxonomyService taxonomyService)
+        public NavigationHelper(ITaxonomyHelper taxonomyHelper, ITaxonomyService taxonomyService)
         {
-            this._taxonomyHelper = taxonomyHelper;
-            this._taxonomyService = taxonomyService;
+            this.taxonomyHelper = taxonomyHelper;
+            this.taxonomyService = taxonomyService;
         }
 
         /// <summary>
@@ -44,8 +46,8 @@ namespace GSoft.Dynamite.Helpers
             if (taxonomySession.TermStores.Count > 0)
             {
                 var termStore = taxonomySession.TermStores[settings.TermStoreName];
-                var group = this._taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
-                var termSet = this._taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
+                var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
+                var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
                 var navigationSettings = new WebNavigationSettings(web);
                 
                 navigationSettings.GlobalNavigation.TermStoreId = termStore.Id;
@@ -153,12 +155,12 @@ namespace GSoft.Dynamite.Helpers
                 {
                     // Get the term set group by name
                     // Note, when you build the term store hierachy by XML using Gary Lapointe Cmdlet, the term group ID isn't kept
-                    var group = this._taxonomyHelper.GetTermGroupByName(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
+                    var group = this.taxonomyHelper.GetTermGroupByName(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
 
                     if (group != null)
                     {
                         // Get the term set 
-                        var termSet = this._taxonomyHelper.GetTermSetById(defaultTermStore, group, termDrivenPageInfo.TermSet.Id);
+                        var termSet = this.taxonomyHelper.GetTermSetById(defaultTermStore, group, termDrivenPageInfo.TermSet.Id);
 
                         // Set URLs
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
@@ -181,7 +183,7 @@ namespace GSoft.Dynamite.Helpers
                 if (termDrivenPageInfo.IsTerm)
                 {
                     // Get the taxonomy term
-                    var term = this._taxonomyService.GetTermForId(site, termDrivenPageInfo.Term.Id);
+                    var term = this.taxonomyService.GetTermForId(site, termDrivenPageInfo.Term.Id);
 
                     if (term != null)
                     {

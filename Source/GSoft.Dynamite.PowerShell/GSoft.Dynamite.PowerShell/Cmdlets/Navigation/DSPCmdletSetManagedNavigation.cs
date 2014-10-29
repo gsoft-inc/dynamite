@@ -3,7 +3,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
 using Autofac;
-using GSoft.Dynamite.Helpers;
+
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
@@ -56,7 +56,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Navigation
                             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
                                 var settings = new ManagedNavigationSettings(managedNavigationNode);
-                                var navigationHelper = childScope.Resolve<NavigationHelper>();
+                                var navigationHelper = childScope.Resolve<INavigationHelper>();
                                 navigationHelper.SetWebNavigationSettings(web, settings);
                             }
                         }
