@@ -4,6 +4,8 @@ namespace GSoft.Dynamite.Definitions
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 
+    using GSoft.Dynamite.FieldTypes;
+
     using Microsoft.SharePoint;
 
     public interface IContentTypeBuilder

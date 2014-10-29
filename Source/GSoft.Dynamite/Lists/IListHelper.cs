@@ -6,6 +6,7 @@
 
     using GSoft.Dynamite.Catalogs;
     using GSoft.Dynamite.Definitions;
+    using GSoft.Dynamite.FieldTypes;
     using GSoft.Dynamite.Lists.Entities;
     using GSoft.Dynamite.Schemas;
 

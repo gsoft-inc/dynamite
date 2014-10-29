@@ -7,8 +7,6 @@ using System.Reflection;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint;
-//using FieldInfo = GSoft.Dynamite.Definitions.FieldInfo;
-using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using System.Threading;
 using GSoft.Dynamite.FieldTypes;
 

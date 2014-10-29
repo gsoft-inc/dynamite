@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.FieldTypes
 {
+    using GSoft.Dynamite.FieldTypes;
+
     /// <summary>
     /// Validation of NoteFieldInfo expected behavior
     /// </summary>

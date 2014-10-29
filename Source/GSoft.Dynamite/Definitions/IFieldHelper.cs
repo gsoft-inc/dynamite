@@ -5,6 +5,8 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Xml.Linq;
 
+    using GSoft.Dynamite.FieldTypes;
+
     using Microsoft.SharePoint;
 
     public interface IFieldHelper

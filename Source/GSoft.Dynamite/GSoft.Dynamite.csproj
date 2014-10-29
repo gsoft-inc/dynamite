@@ -147,6 +147,7 @@
     <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
+    <Compile Include="Helpers\ITimerJobHelper.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\TimerJobHelper.cs" />
@@ -382,7 +383,6 @@
     <Compile Include="Utils\VersionContext.cs" />
     <Compile Include="ValueTypes\TaxonomyFullValue.cs" />
     <Compile Include="ValueTypes\LookupValueCollection.cs" />
-    <Compile Include="ValueTypes\TaxonomyFullValueCollection.cs" />
     <Compile Include="ValueTypes\UserValueCollection.cs" />
     <Compile Include="WebConfig\IWebConfigModificationHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
