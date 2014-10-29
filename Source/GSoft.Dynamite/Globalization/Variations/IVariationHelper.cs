@@ -30,17 +30,11 @@ namespace GSoft.Dynamite.Globalization.Variations
         ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync);
 
         /// <summary>
-        /// Sync a SPList for a target label
+        /// Get the variations labels for the site collection.
+        /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
-        /// <param name="listToSync">The source SPList instance to sync.</param>
-        /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
-        void SyncList(SPList listToSync, string labelToSync);
-
-        /// <summary>
-        /// Sync a SPWeb with variations
-        /// </summary>
-        /// <param name="web">The source web instance to sync.</param>
-        /// <param name="labelToSync">Source label to sync</param>
-        void SyncWeb(SPWeb web, string labelToSync);
+        /// <param name="site">The site.</param>
+        /// <returns>A collection of unique label.</returns>
+        ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site);
     }
 }

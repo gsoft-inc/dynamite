@@ -88,7 +88,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
             // Definitions
-            builder.RegisterType<ContentTypeBuilder>().As<IContentTypeBuilder>();
+            builder.RegisterType<ContentTypeHelper>().As<IContentTypeBuilder>();
             builder.RegisterType<FieldHelper>().As<IFieldHelper>();
 
             // Exception
@@ -107,6 +107,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
             builder.RegisterType<VariationHelper>().As<IVariationHelper>();
+            builder.RegisterType<VariationSyncHelper>().As<IVariationSyncHelper>();
 
             // Lists
             builder.RegisterType<ListHelper>().As<IListHelper>();
