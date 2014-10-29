@@ -48,7 +48,7 @@ namespace GSoft.Dynamite.WebParts
         /// <returns>Return the Storage key of the web part</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        Guid AddWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneName, int webPartZoneIndex);
+        Guid EnsureWebPartToZone(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart, string webPartZoneName, int webPartZoneIndex);
 
         /// <summary>
         /// Method to create a web part.

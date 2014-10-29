@@ -23,6 +23,9 @@ using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Catalogs;
+    using GSoft.Dynamite.Taxonomy;
+
     /// <summary>
     /// Helper class to manage lists.
     /// </summary>
@@ -33,19 +36,18 @@ namespace GSoft.Dynamite.Helpers
         private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
         private readonly ISharePointEntityBinder binder;
-	private readonly TaxonomyHelper taxonomyHelper;
-        /// <summary>
-        /// Creates a list helper
-        /// </summary>
-        /// <param name="contentTypeHelper">A content type helper</param>
+        private readonly ITaxonomyHelper taxonomyHelper;
+
+        /// <summary>Creates a list helper</summary>
+        /// <param name="contentTypeBuilder">The content Type Builder.</param>
         /// <param name="fieldHelper">The field helper.</param>
-        /// <param name="taxonomyHelper">The taxonomy helper</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
-        public ListHelper(ContentTypeBuilder contentTypeBuilder, FieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder)
+        /// <param name="taxonomyHelper">The taxonomy Helper.</param>
+        public ListHelper(IContentTypeBuilder contentTypeBuilder, IFieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder, ITaxonomyHelper taxonomyHelper)
         {
-            this.contentTypeHelper = contentTypeHelper;
+            this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
@@ -173,8 +175,8 @@ namespace GSoft.Dynamite.Helpers
             var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
             foreach (var availableLanguage in availableLanguages)
             {
-                var title = this._resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
-                var description = this._resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
+                var title = this.resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
+                var description = this.resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
 
                 list.TitleResource.SetValueForUICulture(availableLanguage, title);
                 list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
@@ -204,12 +206,12 @@ namespace GSoft.Dynamite.Helpers
             }
             else
             {
-                this._logger.Info("List " + listInfo.RootFolderUrl + " already exists");
+                this.logger.Info("List " + listInfo.RootFolderUrl + " already exists");
 
                 // If the Overwrite parameter is set to true, celete and recreate the catalog
                 if (listInfo.Overwrite)
                 {
-                    this._logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
+                    this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
 
                     list.Delete();
                     list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
@@ -224,7 +226,7 @@ namespace GSoft.Dynamite.Helpers
             // Remove Item Content Type
             if (listInfo.RemoveDefaultContentType)
             {
-                this._logger.Info("Removing the default Item Content Type");
+                this.logger.Info("Removing the default Item Content Type");
 
                 // If content type is direct child of item, remove it
                 this.RemoveItemContentType(list);
@@ -314,7 +316,7 @@ namespace GSoft.Dynamite.Helpers
 
             if (contentType != null)
             {
-                this._contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
+                this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType);
             }
             else
             {
@@ -347,7 +349,7 @@ namespace GSoft.Dynamite.Helpers
                 list.Update(true);
             }
 
-            this.contentTypeHelper.EnsureContentType(list.ContentTypes, contentType);
+            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType);
             list.Update(true);
         }
 
@@ -609,7 +611,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="web">the current web</param>
         /// <param name="catalog">the current catalog</param>
         /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields)
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields)
         {
             this.AddFieldsToDefaultView(web, catalog, fields, false);
         }
@@ -621,7 +623,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="catalog">the current catalog</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields)
+        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
         {
             var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
             this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
@@ -659,23 +661,23 @@ namespace GSoft.Dynamite.Helpers
 
             foreach (IFieldInfo field in fields)
             {
-                 if (list.Fields.Contains(field.ID))
+                 if (list.Fields.Contains(field.Id))
                 {
-                    this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                    this.EnsureFieldInView(fieldCollection, list.Fields[field.Id].InternalName);
                 }
                 else if (list.Fields.ContainsFieldWithStaticName(field.InternalName))
                 {
-                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName));
+                    this.EnsureFieldInView(fieldCollection, list.Fields.GetFieldByInternalName(field.InternalName).InternalName);
                 }
                 else
                 {
-                    if (list.Fields.Contains(field.ID))
+                    if (list.Fields.Contains(field.Id))
                     {
-                        this.EnsureFieldInView(fieldCollection, list.Fields[field.ID]);
+                        this.EnsureFieldInView(fieldCollection, list.Fields[field.Id].InternalName);
                     }
                     else
                     {
-                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.ID, list.Title);
+                        this.logger.Warn("Field with ID {0} was not found in list '{1}' fields", field.Id, list.Title);
                     }
                 }
 
@@ -713,7 +715,7 @@ namespace GSoft.Dynamite.Helpers
             if (publishedLinksList != null && !publishedLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishedLink.Title))
             {
                 var item = publishedLinksList.Items.Add();
-                this._binder.FromEntity(publishedLink, item);
+                this.binder.FromEntity(publishedLink, item);
 
                 item.Update();
             }
@@ -743,7 +745,7 @@ namespace GSoft.Dynamite.Helpers
 
                         // Get the term sets according to the default term store language 
                         var termStoreDefaultLanguage =
-                            this._taxonomyHelper.GetTermStoreDefaultLanguage(list.ParentWeb.Site);
+                            this.taxonomyHelper.GetTermStoreDefaultLanguage(list.ParentWeb.Site);
 
                         var termSetName = taxonomyField.TermStoreMapping.TermSet.Labels[new CultureInfo(termStoreDefaultLanguage)];
                         var termSubsetName = taxonomyField.TermStoreMapping.TermSubset != null
@@ -754,10 +756,10 @@ namespace GSoft.Dynamite.Helpers
                         var taxonomyValue = taxonomyField.DefaultValue;
 
                         // Change managed metadata mapping
-                        this._taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
+                        this.taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
                         
                         // Set the default value for the field
-                        this._taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                        this.taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
                     }
                     else if (field.GetType() == typeof(SPFieldText) && (fieldDefinition.GetType() == typeof(TextFieldInfo)))
                     {

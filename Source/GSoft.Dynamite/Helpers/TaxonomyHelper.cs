@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using GSoft.Dynamite.Definitions;
+
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes;
@@ -473,7 +471,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="termGroupName">Term group name.</param>
         /// <param name="termSetName">Term Set Name.</param>
         /// <param name="termLabel">Term Label.</param>
-        public void SetItemTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
+        public void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel)
         {
             var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroupName, termSetName, termLabel);
 

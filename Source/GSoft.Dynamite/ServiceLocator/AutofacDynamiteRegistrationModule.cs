@@ -158,6 +158,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Timer Jobs
             builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
+            builder.RegisterType<TimerJobHelper>().As<ITimerJobHelper>();
 
             // Utils
             builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();

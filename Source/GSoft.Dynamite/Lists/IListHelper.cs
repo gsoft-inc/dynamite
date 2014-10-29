@@ -49,15 +49,33 @@
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType);
 
-        /// <summary>
-        /// Creates the list or returns the existing one.
-        /// </summary>
+        /// <summary>Creates the list or returns the existing one.</summary>
         /// <remarks>The list name and description will not be translated</remarks>
         /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
         /// <param name="web">The current web</param>
-        /// <param name="catalog">The Catalog to create</param>
+        /// <param name="listInfo">The list Info.</param>
         /// <returns>The new list or the existing list</returns>
-        SPList EnsureList(SPWeb web, Catalog catalog);
+        SPList EnsureList(SPWeb web, ListInfo listInfo);
+
+        /// <summary>The ensure list.</summary>
+        /// <param name="web">The web.</param>
+        /// <param name="listInfos">The list infos.</param>
+        /// <returns>The <see cref="IEnumerable"/>.</returns>
+        IEnumerable<SPList> EnsureList(SPWeb web, ICollection<ListInfo> listInfos);
+
+        /// <summary>The ensure list.</summary>
+        /// <param name="web">The web.</param>
+        /// <param name="rootFolderUrl">The root folder url.</param>
+        /// <param name="titleResourceKey">The title resource key.</param>
+        /// <param name="descriptionResourceKey">The description resource key.</param>
+        /// <param name="templateType">The template type.</param>
+        /// <returns>The <see cref="SPList"/>.</returns>
+        SPList EnsureList(
+            SPWeb web,
+            string rootFolderUrl,
+            string titleResourceKey,
+            string descriptionResourceKey,
+            SPListTemplateType templateType);
 
         /// <summary>
         /// Adds the content type id.
@@ -66,15 +84,15 @@
         /// <param name="contentTypeId">The content type id.</param>
         /// <exception cref="System.ArgumentNullException">Any null parameters.</exception>
         /// <exception cref="System.ArgumentOutOfRangeException">contentTypeId;Content Type not available in the lists parent web.</exception>
-        void AddContentType(SPList list, SPContentTypeId contentTypeId);
+        void EnsureContentType(SPList list, SPContentTypeId contentTypeId);
 
         /// <summary>
         /// Adds the content type.
         /// </summary>
         /// <param name="list">The list.</param>
-        /// <param name="contentType">Type of the content.</param>
+        /// <param name="contentTypeInfo"></param>
         /// <exception cref="System.ArgumentNullException">Any null parameter.</exception>
-        void AddContentType(SPList list, SPContentType contentType);
+        void EnsureContentType(SPList list, ContentTypeInfo contentTypeInfo);
 
         /// <summary>
         /// Get the list by root folder url
@@ -164,7 +182,7 @@
         /// </summary>
         /// <param name="list">The list who owns the field</param>
         /// <param name="field">The field to enforce</param>
-        void EnforceUniqueValuesToField(SPList list, FieldInfo field);
+        void EnforceUniqueValuesToField(SPList list, IFieldInfo field);
 
         /// <summary>
         /// Method to remove the Item Content Type from the List
@@ -178,7 +196,7 @@
         /// <param name="web">the current web</param>
         /// <param name="catalog">the current catalog</param>
         /// <param name="fields">the collection of fields</param>
-        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields);
+        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields);
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -187,7 +205,7 @@
         /// <param name="catalog">the current catalog</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<FieldInfo> fields, bool removeExistingViewFields);
+        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -195,7 +213,7 @@
         /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields);
+        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields);
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -204,14 +222,14 @@
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<FieldInfo> fields, bool removeExistingViewFields);
+        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
 
         /// <summary>
         /// Ensure the field in the view
         /// </summary>
         /// <param name="fieldCollection">the collection of fields</param>
-        /// <param name="field">the current field</param>
-        void EnsureFieldInView(SPViewFieldCollection fieldCollection, SPField field);
+        /// <param name="fieldInternalName">the current field</param>
+        void EnsureFieldInView(SPViewFieldCollection fieldCollection, string fieldInternalName);
 
         /// <summary>
         /// Method to create if not exist the publishing link in a Publishing link list of the site
@@ -219,5 +237,9 @@
         /// <param name="site">The current Site to create the publishing link.</param>
         /// <param name="publishedLink">The publishing link to create</param>
         void EnsurePublishedLinks(SPSite site, PublishedLink publishedLink);
+
+        void AddtoQuickLaunch(SPList list);
+
+        void SetDefaultValues(SPList list, ListInfo listInfo);
     }
 }

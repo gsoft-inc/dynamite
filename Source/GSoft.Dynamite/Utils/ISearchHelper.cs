@@ -4,6 +4,8 @@ namespace GSoft.Dynamite.Utils
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
+    using GSoft.Dynamite.Definitions;
+
     using Microsoft.Office.Server.Search.Administration;
     using Microsoft.Office.Server.Search.Administration.Query;
     using Microsoft.Office.Server.Search.Query;
@@ -33,6 +35,12 @@ namespace GSoft.Dynamite.Utils
         /// <returns>The newly created scope</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         Scope EnsureSharedScope(SPSite site, string scopeName, string displayGroupName, string searchPagePath);
+
+        /// <summary>The ensure result type.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="resultType">The result type.</param>
+        /// <returns>The <see cref="ResultItemType"/>.</returns>
+        ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType);
 
         /// <summary>
         /// Gets the result source by name using the default application name:'Search Service Application'.
@@ -88,6 +96,12 @@ namespace GSoft.Dynamite.Utils
         /// </returns>
         Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, string sortField, SortDirection direction, bool overwrite);
 
+        /// <summary>The ensure result source.</summary>
+        /// <param name="contextSite">The context site.</param>
+        /// <param name="resultSourceInfo">The result source info.</param>
+        /// <returns>The <see cref="Source"/>.</returns>
+        Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo);
+
         /// <summary>
         /// Ensure a search result source
         /// </summary>
@@ -129,6 +143,21 @@ namespace GSoft.Dynamite.Utils
         /// <param name="level">The level.</param>
         /// <param name="contextWeb">The context web.</param>
         void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb);
+
+        /// <summary>The delete result source.</summary>
+        /// <param name="contextSite">The context site.</param>
+        /// <param name="resultSourceInfo">The result source info.</param>
+        void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo);
+
+        /// <summary>The delete result type.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="resultType">The result type.</param>
+        void DeleteResultType(SPSite site, ResultTypeInfo resultType);
+
+        /// <summary>The delete managed property.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="managedPropertyInfo">The managed property info.</param>
+        void DeleteManagedProperty(SPSite site, Definitions.ManagedPropertyInfo managedPropertyInfo);
 
         /// <summary>
         /// Creates a query rule object for the search level.
@@ -201,5 +230,7 @@ namespace GSoft.Dynamite.Utils
         /// <param name="rule">The query rule object</param>
         /// <param name="bestBetId">The bestBetIds</param>
         void CreatePromotedResultAction(QueryRule rule, Guid bestBetId);
+
+        PropertyRule CreateCustomPropertyRule(ResultTypeRuleInfo resultTypeRule);
     }
 }

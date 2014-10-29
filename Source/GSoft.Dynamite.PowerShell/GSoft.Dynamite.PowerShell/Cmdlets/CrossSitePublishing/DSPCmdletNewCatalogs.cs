@@ -6,8 +6,10 @@ using System.Management.Automation;
 using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+
 using Autofac;
-using GSoft.Dynamite.Helpers;
+
+using GSoft.Dynamite.FieldTypes;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.Entities;
 using GSoft.Dynamite.PowerShell.Extensions;
@@ -15,12 +17,10 @@ using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
+
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.PowerShell;
-using Microsoft.SharePoint.Utilities;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.FieldTypes;
 
 namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
 {

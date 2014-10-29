@@ -142,7 +142,7 @@ namespace GSoft.Dynamite.Catalogs
             Thread.CurrentThread.CurrentUICulture = new CultureInfo((int)web.Language);
 
             // Create the list if doesn't exists
-            var list = this.listHelper.EnsureList(web, catalog);
+            var list = this.listHelper.EnsureList(web, catalog.DisplayName, catalog.Description, catalog.ListTemplate);
 
             // Rename List
             list.Title = catalog.DisplayName;
@@ -160,7 +160,7 @@ namespace GSoft.Dynamite.Catalogs
             {
                 foreach (var contentTypeId in catalog.ContentTypeIds)
                 {
-                    this.listHelper.AddContentType(list, contentTypeId);
+                    this.listHelper.EnsureContentType(list, contentTypeId);
                 }
             }
 
@@ -307,11 +307,11 @@ namespace GSoft.Dynamite.Catalogs
                         var taxonomyDefaultValue = defaultValue as TaxoField;
                         if (((Microsoft.SharePoint.Taxonomy.TaxonomyField)field).AllowMultipleValues)
                         {
-                            this.taxonomyHelper.SetDefaultTaxonomyMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.DefaultValues.ToArray());
+                            this.taxonomyHelper.SetDefaultTaxonomyFieldMultiValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.DefaultValues.ToArray());
                         }
                         else
                         {
-                            this.taxonomyHelper.SetDefaultTaxonomyValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.DefaultValues.FirstOrDefault());
+                            this.taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field, taxonomyDefaultValue.TermSetGroupName, taxonomyDefaultValue.TermSetName, defaultValue.DefaultValues.FirstOrDefault());
                         }
                     }
                     else if (field.GetType() == typeof(SPFieldText))

@@ -5,6 +5,8 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Branding;
+
     /// <summary>
     /// Helper class for display template work
     /// </summary>

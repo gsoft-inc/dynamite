@@ -14,6 +14,8 @@ using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Utils;
+
     /// <summary>
     /// Navigation configuration helper.
     /// </summary>
@@ -153,12 +155,12 @@ namespace GSoft.Dynamite.Helpers
                 {
                     // Get the term set group by name
                     // Note, when you build the term store hierachy by XML using Gary Lapointe Cmdlet, the term group ID isn't kept
-                    var group = this._taxonomyHelper.GetTermGroupByName(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
+                    var group = this.taxonomyHelper.GetTermGroupByName(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
 
                     if (group != null)
                     {
                         // Get the term set 
-                        var termSet = this._taxonomyHelper.GetTermSetById(defaultTermStore, group, termDrivenPageInfo.TermSet.Id);
+                        var termSet = this.taxonomyHelper.GetTermSetById(defaultTermStore, group, termDrivenPageInfo.TermSet.Id);
 
                         // Set URLs
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
@@ -181,7 +183,7 @@ namespace GSoft.Dynamite.Helpers
                 if (termDrivenPageInfo.IsTerm)
                 {
                     // Get the taxonomy term
-                    var term = this._taxonomyService.GetTermForId(site, termDrivenPageInfo.Term.Id);
+                    var term = this.taxonomyService.GetTermForId(site, termDrivenPageInfo.Term.Id);
 
                     if (term != null)
                     {

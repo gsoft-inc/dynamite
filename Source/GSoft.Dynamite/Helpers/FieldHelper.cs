@@ -22,14 +22,14 @@ namespace GSoft.Dynamite.Helpers
     public class FieldHelper : IFieldHelper
     {
         private readonly ILogger logger;
-        private readonly TaxonomyHelper taxonomyHelper;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
-        public FieldHelper(ILogger logger, TaxonomyHelper taxonomyHelper)
+        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper)
         {
             this.logger = logger;
             this.taxonomyHelper = taxonomyHelper;
@@ -207,7 +207,7 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("fieldsXml");
             }
 
-            this.logger.Info("Start method 'AddFields'");
+            this.logger.Info("Start method 'EnsureFields'");
 
             IList<string> internalNames = new List<string>();
 
@@ -226,7 +226,7 @@ namespace GSoft.Dynamite.Helpers
                 }
             }
 
-            this.logger.Info("End method 'AddFields'. Returning '{0}' internal names.", internalNames.Count);
+            this.logger.Info("End method 'EnsureFields'. Returning '{0}' internal names.", internalNames.Count);
 
             // Return a list of the fields that where created.
             return internalNames;
@@ -258,7 +258,7 @@ namespace GSoft.Dynamite.Helpers
                 throw new ArgumentNullException("fieldXml");
             }
 
-            this.logger.Info("Start method 'AddField'");
+            this.logger.Info("Start method 'EnsureField'");
 
             Guid id = Guid.Empty;
             string displayName = string.Empty;
@@ -278,13 +278,13 @@ namespace GSoft.Dynamite.Helpers
 
                     string addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
 
-                    this.logger.Info("End method 'AddField'. Added field with internal name '{0}'", addedInternalName);
+                    this.logger.Info("End method 'EnsureField'. Added field with internal name '{0}'", addedInternalName);
 
                     return addedInternalName;
                 }
                 else
                 {
-                    this.logger.Warn("End method 'AddField'. Field with id '{0}' and display name '{1}' was not added because it already exists in the collection.", id, displayName);
+                    this.logger.Warn("End method 'EnsureField'. Field with id '{0}' and display name '{1}' was not added because it already exists in the collection.", id, displayName);
                     return string.Empty;
                 }
             }
@@ -340,7 +340,7 @@ namespace GSoft.Dynamite.Helpers
             UpdateFieldVisibility(createdField, fieldInfo);
 
             // Get the term store default language for term set name
-            var termStoreDefaultLanguageLcid = this._taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
+            var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
 
             if (fieldInfo.TermStoreMapping != null)
             {
@@ -354,7 +354,7 @@ namespace GSoft.Dynamite.Helpers
                 // TODO: DefaultValue shouldn't be used for this. Use TaxonomyContext object on TaxonomyFieldInfo instead. DefaultValue should be used for the TermSet-mapped (thx to Context) field.
 
                 // Metadata mapping configuration
-                this._taxonomyHelper.AssignTermSetToSiteColumn(
+                this.taxonomyHelper.AssignTermSetToSiteColumn(
                             fieldCollection.Web,
                             fieldInfo.Id,
                             taxContext.Group.Name,

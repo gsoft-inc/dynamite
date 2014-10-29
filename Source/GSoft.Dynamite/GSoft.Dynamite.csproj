@@ -89,15 +89,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
+    <Compile Include="Branding\IDisplayTemplateHelper.cs" />
+    <Compile Include="Branding\IImageRenditionHelper.cs" />
+    <Compile Include="Catalogs\CatalogBuilder.cs" />
     <Compile Include="Definitions\CatalogConnectionInfo.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
     <Compile Include="Definitions\EventReceiverInfo.cs" />
+    <Compile Include="Definitions\IContentTypeBuilder.cs" />
+    <Compile Include="Definitions\IFieldHelper.cs" />
     <Compile Include="Definitions\ResultTypeInfo.cs" />
     <Compile Include="Definitions\ResultTypeRuleInfo.cs" />
     <Compile Include="Definitions\SiteInfo.cs" />
     <Compile Include="Definitions\TermDrivenPageSettingInfo.cs" />
     <Compile Include="Definitions\VariationSettingsInfo.cs" />
+    <Compile Include="Globalization\IDateHelper.cs" />
+    <Compile Include="Globalization\IMuiHelper.cs" />
+    <Compile Include="Globalization\IRegionalSettingsHelper.cs" />
     <Compile Include="Globalization\Languages.cs" />
+    <Compile Include="Globalization\Variations\IVariationHelper.cs" />
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Caml\ICamlUtils.cs" />
@@ -119,7 +128,6 @@
     <Compile Include="FieldTypes\UserFieldInfo.cs" />
     <Compile Include="FieldTypes\UrlFieldInfo.cs" />
     <Compile Include="FieldTypes\MinimalFieldInfo.cs" />
-    <Compile Include="FieldTypes\GuidFieldInfo.cs" />
     <Compile Include="FieldTypes\IFieldInfo.cs" />
     <Compile Include="Definitions\ListInfo.cs" />
     <Compile Include="Definitions\ManagedPropertyInfo.cs" />
@@ -139,8 +147,10 @@
     <Compile Include="Definitions\WebPartInfo.cs" />
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
+    <Compile Include="Utils\EventReceiverHelper.cs" />
+    <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\TimerJobHelper.cs" />
-    <Compile Include="Helpers\VariationHelper.cs" />
+    <Compile Include="Utils\VariationHelper.cs" />
     <Compile Include="Helpers\FolderHelper.cs" />
     <Compile Include="Helpers\PageHelper.cs" />
     <Compile Include="Lists\Entities\PublishedLink.cs" />
@@ -331,12 +341,12 @@
     <Compile Include="Helpers\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyContext.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Helpers\CatalogHelper.cs" />
+    <Compile Include="Utils\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Utils\ContentOrganizerHelper.cs" />
-    <Compile Include="Helpers\ContentTypeHelper.cs" />
+    <Compile Include="Helpers\ContentTypeBuilder.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Utils\CustomDocumentSetFeatureReceiver.cs" />
@@ -346,14 +356,12 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
-    <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Utils\ICatalogHelper.cs" />
     <Compile Include="Utils\IContentOrganizerHelper.cs" />
     <Compile Include="Utils\ICustomActionHelper.cs" />
     <Compile Include="Utils\IEventReceiverHelper.cs" />
     <Compile Include="Utils\INavigationHelper.cs" />
     <Compile Include="Utils\ISearchHelper.cs" />
-    <Compile Include="Utils\NavigationHelper.cs" />
     <Compile Include="MasterPages\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Helpers\FieldHelper.cs" />
     <Compile Include="FieldTypes\FieldInfo.cs" />
@@ -397,6 +405,7 @@
     <Compile Include="WebParts\IBaseWebPart.cs" />
     <Compile Include="WebParts\IDefaultPageWebPartIndex.cs" />
     <Compile Include="WebParts\IDefaultPageWebParts.cs" />
+    <Compile Include="WebParts\IWebPartHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Shared\GSoft.Dynamite.snk">

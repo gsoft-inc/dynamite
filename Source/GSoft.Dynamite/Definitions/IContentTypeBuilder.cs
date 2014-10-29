@@ -31,6 +31,22 @@ namespace GSoft.Dynamite.Definitions
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName);
 
+        /// <summary>The ensure content type.</summary>
+        /// <param name="contentTypeCollection">The content type collection.</param>
+        /// <param name="contentTypeInfos">The content type infos.</param>
+        /// <returns>The <see cref="IEnumerable"/>.</returns>
+        IEnumerable<SPContentType> EnsureContentType(
+            SPContentTypeCollection contentTypeCollection,
+            ICollection<ContentTypeInfo> contentTypeInfos);
+
+
+        /// <summary>The ensure content type.</summary>
+        /// <param name="collection">The collection.</param>
+        /// <param name="contentType">The content type.</param>
+        /// <returns>The <see cref="SPContentType"/>.</returns>
+        SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType);
+
+
         /// <summary>
         /// Deletes the content type if not used.
         /// </summary>
@@ -58,7 +74,7 @@ namespace GSoft.Dynamite.Definitions
         /// <returns>Null if the field does not exist, else the field is returned.</returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPField EnsureFieldInContentType(SPContentType contentType, FieldInfo fieldInfo);
+        SPField EnsureFieldInContentType(SPContentType contentType, IFieldInfo fieldInfo);
 
         /// <summary>
         /// Ensures the SPFields are in the content type. If not, they will be added and the content type updated.
@@ -67,7 +83,7 @@ namespace GSoft.Dynamite.Definitions
         /// <param name="fieldInfos">The field information.</param>
         /// <returns>IEnumerable of SPFields that where found.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<FieldInfo> fieldInfos);
+        IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos);
 
         /// <summary>
         /// Adds the event receiver definition to the content type.
@@ -95,6 +111,12 @@ namespace GSoft.Dynamite.Definitions
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        void ReorderFieldsInContentType(SPContentType contentType, ICollection<FieldInfo> orderedFields);
+        void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields);
+
+        /// <summary>The delete event receiver definition.</summary>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="className">The class name.</param>
+        void DeleteEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string className);
     }
 }

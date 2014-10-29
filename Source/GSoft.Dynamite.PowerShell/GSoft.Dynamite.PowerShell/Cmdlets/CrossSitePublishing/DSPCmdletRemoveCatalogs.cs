@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using System.Xml.Linq;
 using Autofac;
-using GSoft.Dynamite.Helpers;
+
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;

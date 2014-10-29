@@ -59,14 +59,12 @@
         /// <returns>The SPField.</returns>
         SPField GetFieldById(SPFieldCollection fieldCollection, Guid fieldId);
 
-        /// <summary>
-        /// Adds a collection of fields defined in xml to a collection of fields.
-        /// </summary>
+        /// <summary>Adds a collection of fields defined in xml to a collection of fields.</summary>
         /// <param name="fieldCollection">The SPField collection.</param>
-        /// <param name="fieldsXml">The field schema XMLs.</param>
+        /// <param name="fieldInfos">The field Infos.</param>
         /// <returns>A collection of strings that contain the internal name of the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
-        IList<string> AddFields(SPFieldCollection fieldCollection, XDocument fieldsXml);
+        IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos);
 
         /// <summary>
         /// Adds a field defined in xml to a collection of fields.
@@ -82,6 +80,24 @@
         /// fieldXml
         /// </exception>
         /// <exception cref="System.FormatException">Invalid xml.</exception>
-        string AddField(SPFieldCollection fieldCollection, XElement fieldXml);
+        string EnsureField(SPFieldCollection fieldCollection, XElement fieldXml);
+
+        /// <summary>The ensure field.</summary>
+        /// <param name="fieldCollection">The field collection.</param>
+        /// <param name="fieldsXml">The fields xml.</param>
+        /// <returns>The <see cref="IList"/>.</returns>
+        IList<string> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml);
+
+        /// <summary>The ensure field.</summary>
+        /// <param name="fieldCollection">The field collection.</param>
+        /// <param name="fieldInfo">The field info.</param>
+        /// <returns>The <see cref="string"/>.</returns>
+        string EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo);
+
+        /// <summary>The ensure field.</summary>
+        /// <param name="fieldCollection">The field collection.</param>
+        /// <param name="fieldInfo">The field info.</param>
+        /// <returns>The <see cref="string"/>.</returns>
+        string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo);
     }
 }

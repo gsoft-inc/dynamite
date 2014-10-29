@@ -3,6 +3,8 @@ namespace GSoft.Dynamite.Taxonomy
     using System;
     using System.Diagnostics.CodeAnalysis;
 
+    using GSoft.Dynamite.ValueTypes;
+
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Taxonomy;
 
@@ -126,8 +128,15 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termGroupName">The term group name.</param>
         /// <param name="termSetName">the term set name.</param>
         /// <param name="termLabel">The term label.</param>
-        void SetDefaultTaxonomyValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel);
+        void SetDefaultTaxonomyFieldValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel);
 
+        /// <summary>The set default taxonomy field value.</summary>
+        /// <param name="web">The web.</param>
+        /// <param name="field">The field.</param>
+        /// <param name="defaultValue">The default value.</param>
+        void SetDefaultTaxonomyFieldValue(SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue);
+
+       
         /// <summary>
         /// Set default value for a multi valued taxonomy site column
         /// </summary>
@@ -136,7 +145,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
         /// <param name="terms">Term label</param>
-        void SetDefaultTaxonomyMultiValue(
+        void SetDefaultTaxonomyFieldMultiValue(
             SPWeb web, SPField field, string termGroupName, string termSetName, string[] terms);
 
         /// <summary>
@@ -170,5 +179,12 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termSetName">Term Set Name.</param>
         /// <param name="termLabel">Term Label.</param>
         void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel);
+
+        /// <summary>The get term store default language.</summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The <see cref="int"/>.</returns>
+        int GetTermStoreDefaultLanguage(SPSite site);
+
+        TermSet GetTermSetById(TermStore termStore, Group group, Guid id);
     }
 }
