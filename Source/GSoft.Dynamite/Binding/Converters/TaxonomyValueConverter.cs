@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.Binding.Converters
     /// </summary>
     public class TaxonomyValueConverter : SharePointListItemValueConverter
     {
-        private ITaxonomyService taxonomyService;
+        private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Converter constructor with dependency injection

@@ -24,9 +24,9 @@ namespace GSoft.Dynamite.Navigation
     public class CatalogNavigation : ICatalogNavigation
     {
         private const string LocalSharePointResultsSourceName = "Local SharePoint Results";
-        private readonly ILogger _logger;
-        private readonly NavigationHelper _navigationHelper;
-        private readonly SearchHelper _searchHelper;
+        private readonly ILogger logger;
+        private readonly INavigationHelper navigationHelper;
+        private readonly ISearchHelper searchHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CatalogNavigation" /> class.
@@ -34,11 +34,11 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="logger">The logger.</param>
         /// <param name="navigationHelper">The navigation helper.</param>
         /// <param name="searchHelper">The search helper.</param>
-        public CatalogNavigation(ILogger logger, NavigationHelper navigationHelper, SearchHelper searchHelper)
+        public CatalogNavigation(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper)
         {
-            this._logger = logger;
-            this._navigationHelper = navigationHelper;
-            this._searchHelper = searchHelper;
+            this.logger = logger;
+            this.navigationHelper = navigationHelper;
+            this.searchHelper = searchHelper;
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace GSoft.Dynamite.Navigation
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    this._logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
+                    this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
                                         Using label web URL with path and query strings as navigation URL.");
 
                     // Keep query string (except source)
@@ -203,10 +203,10 @@ namespace GSoft.Dynamite.Navigation
                     TaxonomyNavigation.GetTermSetForWeb(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true).GetWithNewView(view);
 
                 // Get the matching label navigation term and return it's friendly URL
-                var navigationTerm = this._navigationHelper.GetNavigationTermById(navigationTermSet.Terms, termId);
+                var navigationTerm = this.navigationHelper.GetNavigationTermById(navigationTermSet.Terms, termId);
                 if (navigationTerm != null)
                 {
-                    this._logger.Info(
+                    this.logger.Info(
                         "GetPeerCatalogCategoryUrl: Navigation term found for term id '{0}': '{1}'",
                         termId,
                         navigationTerm.Title);
@@ -225,7 +225,7 @@ namespace GSoft.Dynamite.Navigation
                 }
                 else
                 {
-                    this._logger.Error("GetPeerCatalogCategoryUrl: Navigation term not found for term id '{0}'", termId);
+                    this.logger.Error("GetPeerCatalogCategoryUrl: Navigation term not found for term id '{0}'", termId);
 
                     return new Uri(
                         Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
@@ -240,7 +240,7 @@ namespace GSoft.Dynamite.Navigation
 
             var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title), UriKind.Relative);
 
-            var searchResultSource = this._searchHelper.GetResultSourceByName(LocalSharePointResultsSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
+            var searchResultSource = this.searchHelper.GetResultSourceByName(LocalSharePointResultsSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
 
             var labelLocalAgnosticLanguage = label.Language.Split('-').First();
             var query = new KeywordQuery(SPContext.Current.Web)

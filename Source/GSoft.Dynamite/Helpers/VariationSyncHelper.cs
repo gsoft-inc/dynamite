@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Helpers
 {
-    public class VariationSyncHelper
+    public class VariationSyncHelper : IVariationSyncHelper
     {
         private readonly ILogger _logger;
         private readonly ListHelper _listHelper;

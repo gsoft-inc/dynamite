@@ -10,7 +10,7 @@ namespace GSoft.Dynamite.WebConfig
     /// <summary>
     /// Helper class to add, clean, remove WebConfig modifications programmatically
     /// </summary>
-    public class WebConfigModificationHelper
+    public class WebConfigModificationHelper : IWebConfigModificationHelper
     {
         /// <summary>
         /// Method to add one or multiple WebConfig modifications

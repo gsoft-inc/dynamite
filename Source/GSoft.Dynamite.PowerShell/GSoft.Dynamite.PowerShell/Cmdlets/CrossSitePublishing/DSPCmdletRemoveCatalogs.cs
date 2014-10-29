@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using System.Xml.Linq;
 using Autofac;
-using GSoft.Dynamite.Helpers;
+
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing
                         {
                             using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                             {
-                                var listHelper = childScope.Resolve<ListHelper>();
+                                var listHelper = childScope.Resolve<IListHelper>();
 
                                 // Create the list if doesn't exists
                                 var list = listHelper.GetListByRootFolderUrl(web, catalogUrl);

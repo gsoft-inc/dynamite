@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Globalization
     /// <summary>
     /// A helper class for dealing with the Multilanguage UI.
     /// </summary>
-    public class MuiHelper
+    public class MuiHelper : IMuiHelper
     {
         /// <summary>
         /// Ensures the language support for the specified language.

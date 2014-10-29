@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Utilities to manipulate a web's UserCustomActions collection
     /// </summary>
-    public class CustomActionHelper
+    public class CustomActionHelper : ICustomActionHelper
     {
         /// <summary>
         /// Checks if the custom action is contained in the SPUserCustomActionCollection and if so, 

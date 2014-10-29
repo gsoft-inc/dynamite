@@ -5,7 +5,7 @@ namespace GSoft.Dynamite.Caml
     /// <summary>
     /// TODO: CAML utility methods.
     /// </summary>
-    public class CamlUtils
+    public class CamlUtils : ICamlUtils
     {
         /// <summary>
         /// Trimming utility for rich text content returned from SPQueries

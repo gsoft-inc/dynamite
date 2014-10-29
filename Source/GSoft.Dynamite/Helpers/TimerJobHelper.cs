@@ -6,7 +6,8 @@ using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Helpers
 {
-    public class TimerJobHelper
+    /// <summary>The timer job helper.</summary>
+    public class TimerJobHelper : ITimerJobHelper
     {
         /// <summary>
         /// The create job.

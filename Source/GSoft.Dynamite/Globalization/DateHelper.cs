@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Globalization
     /// <summary>
     /// SharePoint Date Helper Class
     /// </summary>
-    public class DateHelper
+    public class DateHelper : IDateHelper
     {
         /// <summary>
         /// Get the current date corresponding to the local SharePoint SPWeb Time zone.

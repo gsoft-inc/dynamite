@@ -3,32 +3,41 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
+using System.Web;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Helpers
 {
+    using GSoft.Dynamite.Globalization.Variations;
+    using GSoft.Dynamite.Lists;
+
     /// <summary>
     /// SharePoint variations helpers
     /// </summary>
-    public class VariationHelper
+    public class VariationHelper : IVariationHelper
     {
-        private readonly ILogger _logger;
-        private readonly TimerJobHelper _timerJobHelper;
+        private readonly ILogger logger;
+        private readonly ITimerJobHelper timerJobHelper;
+        private readonly IListHelper listHelper;
+        private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="timerJobHelper">The timer job helper</param>
-        public VariationHelper(ILogger logger, TimerJobHelper timerJobHelper)
+        public VariationHelper(ILogger logger, ITimerJobHelper timerJobHelper, IListHelper listHelper)
         {
-            this._logger = logger;
-            this._timerJobHelper = timerJobHelper;
+            this.logger = logger;
+            this.timerJobHelper = timerJobHelper;
+            this.listHelper = listHelper;
         }
 
         /// <summary>
@@ -69,7 +78,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync)
         {
-            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
+            this.logger.Info("Start method 'GetVariationLabels' for site url: '{0}' with label '{1}'", site.Url, labelToSync);
 
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
@@ -101,7 +110,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site)
         {
-            this._logger.Info("Start method 'GetVariationLabels' for site url: '{0}'", site.Url);
+            this.logger.Info("Start method 'GetVariationLabels' for site url: '{0}'", site.Url);
 
             var web = site.RootWeb;
             var variationLabelsList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, "/Variation Labels/Allitems.aspx"));
@@ -253,13 +262,13 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labels">The variation labels</param>
         public void CreateHierarchies(SPSite site, IList<VariationLabelInfo> labels)
         {
-            this._timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
+            this.timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
 
-            var jobId = this._timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
+            var jobId = this.timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
 
             DateTime startTime = DateTime.Now.ToUniversalTime();
 
-            this._timerJobHelper.WaitForJob(site, jobId, startTime);
+            this.timerJobHelper.WaitForJob(site, jobId, startTime);
 
             // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
             // Also take care of setting the regional settings on each site.

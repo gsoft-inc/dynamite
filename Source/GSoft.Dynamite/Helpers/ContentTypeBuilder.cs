@@ -16,7 +16,7 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeHelper
+    public class ContentTypeHelper : IContentTypeBuilder
     {
         private readonly VariationHelper _variationHelper;
 

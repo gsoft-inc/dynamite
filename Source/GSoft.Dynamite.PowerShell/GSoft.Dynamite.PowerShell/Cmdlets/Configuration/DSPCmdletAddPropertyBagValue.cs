@@ -69,7 +69,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Configuration
                     {
                         using (var childScope = PowerShellContainer.BeginLifetimeScope(web))
                         {
-                            var propertyBagHelper = childScope.Resolve<PropertyBagHelper>();
+                            var propertyBagHelper = childScope.Resolve<IPropertyBagHelper>();
                             var propertyBagValues = webNode.Descendants("PropertyBagValue").Select(x => (PropertyBagValue)this.serializer.Deserialize(x.CreateReader())).ToList();
                             propertyBagHelper.SetWebValues(web, propertyBagValues);
                         }
