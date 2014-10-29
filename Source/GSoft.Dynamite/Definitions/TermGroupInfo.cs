@@ -16,9 +16,22 @@ namespace GSoft.Dynamite.Definitions
         }
 
         /// <summary>
+        /// Constructor for TermGroupInfo belonging to default Farm term store
+        /// </summary>
+        /// <param name="id">The term group id</param>
+        /// <param name="name">The term group name</param>
+        public TermGroupInfo(Guid id, string name) : this()
+        {
+            this.Name = name;
+            this.Id = id;
+            this.TermStore = null;
+        }
+
+
+        /// <summary>
         /// Constructor for TermGroupInfo belonging to specifc term store
         /// </summary>
-        public TermGroupInfo(Guid id, string name, TermStoreInfo termStore)
+        public TermGroupInfo(Guid id, string name, TermStoreInfo termStore) : this(id, name)
         {
             this.TermStore = termStore;
         }
