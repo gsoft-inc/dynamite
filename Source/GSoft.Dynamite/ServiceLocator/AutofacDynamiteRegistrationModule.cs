@@ -80,8 +80,6 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
-            builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
-            builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
 
             // Configuration 
             builder.RegisterType<PropertyBagHelper>();
@@ -98,10 +96,6 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<MuiHelper>();
             builder.RegisterType<DateHelper>();
             builder.RegisterType<RegionalSettingsHelper>();
-
-            builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
-            builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
-            builder.RegisterType<VariationExpert>().As<IVariationExpert>();
 
             // Lists
             builder.RegisterType<ListLocator>();
@@ -129,17 +123,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Serializers
             builder.RegisterType<XmlHelper>();
             builder.RegisterType<JsonNetSerializer>().As<ISerializer>().SingleInstance();
-
-            // Setup
-            builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
-            //// builder.RegisterType<FolderInfo>().As<IFolderInfo>();
-            //// builder.RegisterType<PageInfo>().As<IPageInfo>();
-            builder.RegisterType<TaxonomyInfo>().As<ITaxonomyInfo>();
-            builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
-
-            builder.RegisterType<FolderMaker>().As<IFolderMaker>();
-            builder.RegisterType<PageCreator>();
-
+            
             // Taxonomy
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
@@ -149,9 +133,6 @@ namespace GSoft.Dynamite.ServiceLocator
             ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 
             builder.RegisterType<TaxonomyHelper>();
-
-            // Timer Jobs
-            builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
 
             // Utils
             builder.RegisterType<EventReceiverHelper>();

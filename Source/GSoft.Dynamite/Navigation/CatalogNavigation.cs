@@ -122,7 +122,7 @@ namespace GSoft.Dynamite.Navigation
         /// </returns>
         public Uri GetVariationPeerUrl(VariationLabel label)
         {
-            var cacheVariationLabel = new CacheVariationLabel(label);
+            var cacheVariationLabel = new CacheVariationLabel(label);       // TODO: replace with VariationLabelInfo - TopWebUrl is missing from VariationLabelInfo though...
             return this.GetVariationPeerUrl(cacheVariationLabel);
         }
 

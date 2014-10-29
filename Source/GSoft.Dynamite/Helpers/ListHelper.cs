@@ -393,6 +393,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>
         /// The internal name of newly created field.
         /// </returns>
+        [Obsolete]
         public SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
             // TODO: Make this EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
@@ -495,6 +496,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>
         /// The newly created field.
         /// </returns>
+        [Obsolete]
         public SPField CreateGuidField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
         {
             // TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
