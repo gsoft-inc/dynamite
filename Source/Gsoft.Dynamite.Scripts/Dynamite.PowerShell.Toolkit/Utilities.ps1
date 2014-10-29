@@ -48,3 +48,9 @@ function New-HeaderDrawing(){
 
 	Write-Host "$("-" * 50)`n" -ForegroundColor Green
 }
+
+function Test-DSPIsAdmin()
+{
+    $currentPrincipal = New-Object Security.Principal.WindowsPrincipal( [Security.Principal.WindowsIdentity]::GetCurrent() )
+    return $currentPrincipal.IsInRole( [Security.Principal.WindowsBuiltInRole]::Administrator )
+}

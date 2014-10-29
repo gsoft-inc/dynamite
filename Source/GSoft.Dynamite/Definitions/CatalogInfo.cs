@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GSoft.Dynamite.FieldTypes;
+using System.Collections.Generic;
 
 namespace GSoft.Dynamite.Definitions
 {

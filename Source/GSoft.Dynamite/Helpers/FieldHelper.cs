@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
+using System.Threading;
 using System.Xml.Linq;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Portal.WebControls.WSRPWebService;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.SharePoint.WebPartPages.Communication;
-using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.FieldTypes;
 
 namespace GSoft.Dynamite.Helpers
 {
@@ -317,6 +319,23 @@ namespace GSoft.Dynamite.Helpers
             // Gets the created field
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
+            var availableLanguages = createdField.ParentList.ParentWeb.SupportedUICultures.Reverse();   // end with the main language
+            foreach (var availableLanguage in availableLanguages)
+            {
+                var currentCulture = CultureInfo.CurrentUICulture;
+
+                // make sure the ResourceLocator will fetch the correct culture's DisplayName value
+                Thread.CurrentThread.CurrentUICulture = availableLanguage;
+                createdField.Title = fieldInfo.DisplayName;
+                createdField.Description = fieldInfo.Description;
+                createdField.Group = fieldInfo.Group;
+
+                // restore the MUI culture to the old value
+                Thread.CurrentThread.CurrentUICulture = currentCulture;
+            }
+
+            createdField.Update();
+            
             // Updates the visibility of the field
             UpdateFieldVisibility(createdField, fieldInfo);
 

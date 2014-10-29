@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using GSoft.Dynamite.Lists;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 using Microsoft.SharePoint;
+using GSoft.Dynamite.FieldTypes;
 
 namespace GSoft.Dynamite.Definitions
 {

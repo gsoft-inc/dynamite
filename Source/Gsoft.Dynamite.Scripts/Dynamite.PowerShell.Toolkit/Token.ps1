@@ -261,6 +261,17 @@ function Initialize-DSPTokens {
     # 5 Copy WSP from /Source
     $sourcePath = Join-Path $CustomizationPath "/../" | Resolve-Path
     Copy-DSPSolution $sourcePath $wspPath $filterPath
+
+    # 6 Copy DSP from /Libraries/GSoft.Dynamite.SP*/tools
+    $dynamiteSP = Get-ChildItem -Path $ProjectPath -Include "GSoft.Dynamite.SP*" -Recurse | ? { $_.PSIsContainer } | sort Name | Select-Object -Last 1 | Select FullName | foreach {$_.FullName}
+    $dynamiteSPTools = Join-Path $dynamiteSP "tools"
+
+    if (Test-Path $dynamiteSPTools)
+    {
+        $dspPath = Join-Path $DestinationPath "/DSP/"
+        Copy-Item -Path "$dynamiteSPTools/" -Destination $dspPath -recurse -force
+    }
+
 }
 
 function script:Execute-DSPTransfert {

@@ -9,8 +9,8 @@ Write-Host ([string]::Format("[LOG] Installing Module {0}", $moduleName)) -Foreg
 # Create profile if not exist
 if (!(Test-path $PROFILE))
 {
-	Write-Host [string]::Format("[LOG] Creating the following profile {0}", $PROFILE) 
-	New-item –type file –force $PROFILE
+	Write-Host ([string]::Format("[LOG] Creating the following profile {0}", $PROFILE)) 
+	New-item -type file -force $PROFILE
 }
 
 $file = Get-Item $PROFILE

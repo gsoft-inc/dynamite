@@ -382,6 +382,7 @@
     <Compile Include="Utils\VersionContext.cs" />
     <Compile Include="ValueTypes\TaxonomyFullValue.cs" />
     <Compile Include="ValueTypes\LookupValueCollection.cs" />
+    <Compile Include="ValueTypes\TaxonomyFullValueCollection.cs" />
     <Compile Include="ValueTypes\UserValueCollection.cs" />
     <Compile Include="WebConfig\IWebConfigModificationHelper.cs" />
     <Compile Include="WebConfig\WebConfigModificationHelper.cs" />
