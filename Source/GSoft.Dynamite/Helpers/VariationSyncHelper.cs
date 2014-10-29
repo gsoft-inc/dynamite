@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Web;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
@@ -13,11 +14,11 @@ namespace GSoft.Dynamite.Helpers
     public class VariationSyncHelper : IVariationSyncHelper
     {
         private readonly ILogger _logger;
-        private readonly ListHelper _listHelper;
-        private readonly VariationHelper _variationHelper;
+        private readonly IListHelper _listHelper;
+        private readonly IVariationHelper _variationHelper;
         private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
-        public VariationSyncHelper(ILogger logger, VariationHelper variationHelper, ListHelper listHelper)
+        public VariationSyncHelper(ILogger logger, IVariationHelper variationHelper, IListHelper listHelper)
         {
             this._logger = logger;
             this._listHelper = listHelper;

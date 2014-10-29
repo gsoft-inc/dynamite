@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml.Linq;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Portal.WebControls.WSRPWebService;
@@ -25,7 +26,7 @@ namespace GSoft.Dynamite.Helpers
     public class FieldHelper : IFieldHelper
     {
 
-        private readonly VariationHelper variationHelper;
+        private readonly IVariationHelper variationHelper;
         private readonly ILogger logger;
         private readonly ITaxonomyHelper taxonomyHelper;
 
@@ -35,7 +36,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="logger">The logger</param>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
         /// <param name="variationHelper">The variation helper</param>
-        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper, VariationHelper variationHelper)
+        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper, IVariationHelper variationHelper)
         {
             this.logger = logger;
             this.taxonomyHelper = taxonomyHelper;

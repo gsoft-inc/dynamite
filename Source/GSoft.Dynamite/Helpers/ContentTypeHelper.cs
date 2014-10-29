@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint;
 using System.Threading;
 using GSoft.Dynamite.FieldTypes;
@@ -16,11 +17,11 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeHelper : IContentTypeBuilder
+    public class ContentTypeHelper : IContentTypeHelper
     {
-        private readonly VariationHelper _variationHelper;
+        private readonly IVariationHelper _variationHelper;
 
-        public ContentTypeHelper(VariationHelper variationHelper)
+        public ContentTypeHelper(IVariationHelper variationHelper)
         {
             this._variationHelper = variationHelper;
         }

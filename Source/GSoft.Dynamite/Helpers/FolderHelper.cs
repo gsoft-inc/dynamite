@@ -14,17 +14,17 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for SharePoint folders
     /// </summary>
-    public class FolderHelper
+    public class FolderHelper : IFolderHelper
     {
         private readonly ILogger logger;
-        private readonly PageHelper pageHelper;
+        private readonly IPageHelper pageHelper;
 
         /// <summary>
         /// Constructor for FolderHelper
         /// </summary>
         /// <param name="logger">The logger helper instance</param>
         /// <param name="pageHelper">The page helper instance</param>
-        public FolderHelper(ILogger logger, PageHelper pageHelper)
+        public FolderHelper(ILogger logger, IPageHelper pageHelper)
         {
             this.logger = logger;
             this.pageHelper = pageHelper;

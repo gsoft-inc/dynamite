@@ -11,5 +11,13 @@
         /// </summary>
         /// <param name="htmlFiles">The HTML files.</param>
         void GenerateJavaScriptFile(IList<SPFile> htmlFiles);
+
+        string DisplayTemplatesFolder { get; }
+
+        string ContentWebPartFolder { get; }
+
+        string SearchFolder { get; }
+
+        string FilterFolder { get; }
     }
 }

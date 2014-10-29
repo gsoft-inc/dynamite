@@ -1,3 +1,5 @@
+using GSoft.Dynamite.Definitions;
+
 namespace GSoft.Dynamite.Globalization.Variations
 {
     using System.Collections.ObjectModel;
@@ -36,5 +38,12 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <param name="site">The site.</param>
         /// <returns>A collection of unique label.</returns>
         ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site);
+
+        /// <summary>
+        /// Setup variations on a site
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="variationSettings">The variation settings</param>
+        void SetupVariations(SPSite site, VariationSettingsInfo variationSettings);
     }
 }

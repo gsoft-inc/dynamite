@@ -88,8 +88,10 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
 
             // Definitions
-            builder.RegisterType<ContentTypeHelper>().As<IContentTypeBuilder>();
+            builder.RegisterType<ContentTypeHelper>().As<IContentTypeHelper>();
             builder.RegisterType<FieldHelper>().As<IFieldHelper>();
+            builder.RegisterType<FolderHelper>().As<IFolderHelper>();
+            builder.RegisterType<PageHelper>().As<IPageHelper>();
 
             // Exception
             builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
@@ -114,6 +116,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>().As<IListSecurityHelper>();
             builder.RegisterType<CatalogBuilder>().As<ICatalogBuilder>();
+            builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
 
             // MasterPages
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();

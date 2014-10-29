@@ -232,5 +232,15 @@ namespace GSoft.Dynamite.Utils
         void CreatePromotedResultAction(QueryRule rule, Guid bestBetId);
 
         PropertyRule CreateCustomPropertyRule(ResultTypeRuleInfo resultTypeRule);
+
+        /// <summary>
+        /// Ensure a managed property in the search service application schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        /// <param name="overwrite">True to overwrite.False otherwise</param>
+        /// <returns>The managed property</returns>
+        ManagedProperty EnsureManagedProperty(SPSite site,
+            GSoft.Dynamite.Definitions.ManagedPropertyInfo managedPropertyInfo, bool overwrite);
     }
 }

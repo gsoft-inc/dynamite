@@ -18,14 +18,14 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class WebPartHelper : IWebPartHelper
     {
-        private readonly XmlHelper xmlHelper;
+        private readonly IXmlHelper xmlHelper;
         private readonly ILogger logger;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="xmlHelper">Helper for Xml work</param>
-        public WebPartHelper(XmlHelper xmlHelper, ILogger logger)
+        public WebPartHelper(IXmlHelper xmlHelper, ILogger logger)
         {
             this.xmlHelper = xmlHelper;
             this.logger = logger;

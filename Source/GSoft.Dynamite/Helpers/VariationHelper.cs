@@ -25,19 +25,16 @@ namespace GSoft.Dynamite.Helpers
     {
         private readonly ILogger logger;
         private readonly ITimerJobHelper timerJobHelper;
-        private readonly IListHelper listHelper;
-        private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="timerJobHelper">The timer job helper</param>
-        public VariationHelper(ILogger logger, ITimerJobHelper timerJobHelper, IListHelper listHelper)
+        public VariationHelper(ILogger logger, ITimerJobHelper timerJobHelper)
         {
             this.logger = logger;
             this.timerJobHelper = timerJobHelper;
-            this.listHelper = listHelper;
         }
 
         /// <summary>
@@ -288,6 +285,11 @@ namespace GSoft.Dynamite.Helpers
             }
         }
 
+        /// <summary>
+        /// Setup variations on a site
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="variationSettings">The variation settings</param>
         public void SetupVariations(SPSite site, VariationSettingsInfo variationSettings)
         {
             // Configure varaitions settings

@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class ListHelper : IListHelper
     {
-        private readonly IContentTypeBuilder contentTypeBuilder;
+        private readonly IContentTypeHelper contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
         private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
@@ -44,7 +44,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
         /// <param name="taxonomyHelper">The taxonomy Helper.</param>
-        public ListHelper(IContentTypeBuilder contentTypeBuilder, IFieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder, ITaxonomyHelper taxonomyHelper)
+        public ListHelper(IContentTypeHelper contentTypeBuilder, IFieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder, ITaxonomyHelper taxonomyHelper)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;

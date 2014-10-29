@@ -20,17 +20,17 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Helper class for Cross Site Publishing operations
     /// </summary>
-    public class CatalogHelper
+    public class CatalogHelper : ICatalogHelper
     {
         private readonly ILogger logger;
-        private readonly ListHelper listHelper;
+        private readonly IListHelper listHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="listHelper">The list helper</param>
-        public CatalogHelper(ILogger logger, ListHelper listHelper)
+        public CatalogHelper(ILogger logger, IListHelper listHelper)
         {
             this.logger = logger;
             this.listHelper = listHelper;
