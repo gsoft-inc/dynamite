@@ -6,6 +6,7 @@ namespace GSoft.Dynamite.Schemas
     /// <summary>
     /// Generic XML schema for a SharePoint field
     /// </summary>
+    [Obsolete]
     public abstract class GenericFieldSchema
     {
         private Guid _fieldId;

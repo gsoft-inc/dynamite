@@ -9,6 +9,7 @@ namespace GSoft.Dynamite.SiteColumns
     /// <summary>
     /// The SiteColumn base class
     /// </summary>
+    [Obsolete]
     public abstract class SiteColumnBase
     {
         /// <summary>

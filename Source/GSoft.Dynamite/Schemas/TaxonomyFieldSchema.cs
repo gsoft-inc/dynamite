@@ -6,6 +6,7 @@ namespace GSoft.Dynamite.Schemas
     /// <summary>
     /// Taxonomy Field schema
     /// </summary>
+    [Obsolete]
     public class TaxonomyFieldSchema : GenericFieldSchema
     {
         private bool _isMultiple, _enforceUniqueValues;

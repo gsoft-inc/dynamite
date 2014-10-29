@@ -12,6 +12,7 @@ namespace GSoft.Dynamite.Catalogs
     /// <summary>
     /// Class to create catalogs
     /// </summary>
+    [Obsolete]
     public class Catalog
     {
         /// <summary>

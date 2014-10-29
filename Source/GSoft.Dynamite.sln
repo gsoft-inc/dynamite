@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{59F22005-22BB-498C-BE1E-5C0E3BBD989B}"
 	ProjectSection(SolutionItems) = preProject
@@ -63,6 +63,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Variations.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Variations.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Web.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Web.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF77EB75-7BB4-4DFC-B940-6F3EE9E61D8A}"
+	ProjectSection(SolutionItems) = preProject
+		fxcop.FxCop = fxcop.FxCop
+		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
 Global

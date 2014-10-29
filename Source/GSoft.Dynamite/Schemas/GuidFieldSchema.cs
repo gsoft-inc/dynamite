@@ -10,6 +10,7 @@ namespace GSoft.Dynamite.Schemas
     /// <summary>
     /// Represents a GUID field schema
     /// </summary>
+    [Obsolete]
     public class GuidFieldSchema : GenericFieldSchema
     {
         /// <summary>

@@ -1,10 +1,12 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Schemas
 {
     /// <summary>
     /// Text field schema.
     /// </summary>
+    [Obsolete]
     public class TextFieldSchema : GenericFieldSchema
     {
         private bool _isMultiLine;

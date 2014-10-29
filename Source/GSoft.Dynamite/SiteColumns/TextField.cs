@@ -9,6 +9,7 @@ namespace GSoft.Dynamite.SiteColumns
     /// <summary>
     /// Text field definition.
     /// </summary>
+    [Obsolete]
     public class TextField : SiteColumnField
     {
         /// <summary>

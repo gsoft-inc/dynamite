@@ -9,6 +9,7 @@ namespace GSoft.Dynamite.SiteColumns
     /// <summary>
     /// Taxonomy field definition.
     /// </summary>
+    [Obsolete]
     public class TaxoField : SiteColumnField
     {
         /// <summary>
