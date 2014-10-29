@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Security
     /// </summary>
     public class ListRoles : ObjectRoles
     {
-        private ListLocator listLocator;
+        private IListLocator listLocator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListRoles"/> class.
@@ -37,7 +37,7 @@ namespace GSoft.Dynamite.Security
         /// </param>
         /// <param name="shouldCopyParentRolesWhenBreakingInheritance">Whether roles should be copied when inheritance is broken</param>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Just using default value for convenience")]
-        public ListRoles(SPWeb web, ListLocator listLocator, string list, IEnumerable<GroupRolePair> groupRolePairs, bool shouldCopyParentRolesWhenBreakingInheritance = true)
+        public ListRoles(SPWeb web, IListLocator listLocator, string list, IEnumerable<GroupRolePair> groupRolePairs, bool shouldCopyParentRolesWhenBreakingInheritance = true)
             : base(shouldCopyParentRolesWhenBreakingInheritance)
         {
             this.Web = web;
