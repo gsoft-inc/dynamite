@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GSoft.Dynamite.FieldTypes;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;

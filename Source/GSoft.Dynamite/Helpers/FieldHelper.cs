@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
 using System.Xml.Linq;
 using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.SharePoint.WebPartPages.Communication;
-using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.FieldTypes;
 
 namespace GSoft.Dynamite.Helpers
 {

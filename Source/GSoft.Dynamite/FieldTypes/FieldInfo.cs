@@ -5,8 +5,9 @@ using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 using System.Globalization;
+using GSoft.Dynamite.Definitions;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     /// <summary>
     /// Defines the field info structure.

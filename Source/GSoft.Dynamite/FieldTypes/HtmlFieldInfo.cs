@@ -3,7 +3,7 @@ using GSoft.Dynamite.Binding;
 using System;
 using System.Globalization;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     /// <summary>
     /// Definition of a HtmlFieldInfo info

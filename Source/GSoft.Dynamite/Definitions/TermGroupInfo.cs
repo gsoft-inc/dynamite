@@ -16,22 +16,11 @@ namespace GSoft.Dynamite.Definitions
         }
 
         /// <summary>
-        /// Constructor for TermGroupInfo belonging to default Farm term store
-        /// </summary>
-        public TermGroupInfo(Guid id, string name) : this()
-        {
-            this.Id = id;
-            this.Name = name;
-            this.TermStore = null;      // should assume default term store
-        }
-
-        /// <summary>
         /// Constructor for TermGroupInfo belonging to specifc term store
         /// </summary>
         public TermGroupInfo(Guid id, string name, TermStoreInfo termStore)
-            : this(id, name)
         {
-            this.TermStore = termStore;      // specific term store
+            this.TermStore = termStore;
         }
 
         /// <summary>
@@ -45,8 +34,14 @@ namespace GSoft.Dynamite.Definitions
         public string Name { get; set; }
 
         /// <summary>
-        /// Parent term store definition
+        /// Parent term store definition.
         /// </summary>
         public TermStoreInfo TermStore { get; set; }
+
+        /// <summary>
+        /// True, if this is the Publishing automatic per-site-collection term group.
+        /// False, if this is a farm-wide (typical) term group.
+        /// </summary>
+        public bool IsSiteCollectionSpecificTermGroup { get; set; }
     }
 }

@@ -18,7 +18,6 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
-using IFieldInfo = GSoft.Dynamite.Definitions.IFieldInfo;
 using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Helpers

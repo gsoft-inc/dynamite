@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     public interface IFieldInfo
     {

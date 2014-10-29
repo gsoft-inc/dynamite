@@ -5,7 +5,7 @@ using Microsoft.SharePoint.Publishing;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.FieldTypes
 {
     /// <summary>
     /// Definition for a TaxonomyMulti field
