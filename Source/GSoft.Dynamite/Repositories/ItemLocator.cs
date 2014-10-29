@@ -17,13 +17,13 @@ namespace GSoft.Dynamite.Repositories
     /// </summary>
     public class ItemLocator : IItemLocator
     {
-        private readonly ListLocator listLocator;
+        private readonly IListLocator listLocator;
 
         /// <summary>
         /// Utility to find items by name or url
         /// </summary>
         /// <param name="listLocator">List locator utility</param>
-        public ItemLocator(ListLocator listLocator)
+        public ItemLocator(IListLocator listLocator)
         {
             this.listLocator = listLocator;
         }
