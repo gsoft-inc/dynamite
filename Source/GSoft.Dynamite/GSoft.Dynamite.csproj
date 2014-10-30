@@ -91,8 +91,7 @@
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Branding\IDisplayTemplateHelper.cs" />
     <Compile Include="Branding\IImageRenditionHelper.cs" />
-    <Compile Include="Catalogs\CatalogBuilder.cs" />
-    <Compile Include="Definitions\CatalogConnectionInfo.cs" />
+    <Compile Include="Catalogs\CatalogConnectionInfo.cs" />
     <Compile Include="Definitions\DisplayTemplateInfo.cs" />
     <Compile Include="Definitions\EventReceiverInfo.cs" />
     <Compile Include="Definitions\IContentTypeHelper.cs" />
@@ -114,13 +113,12 @@
     <Compile Include="Helpers\DisplayTemplateHelper.cs" />
     <Compile Include="Branding\ImageRenditionHelper.cs" />
     <Compile Include="Caml\ICamlUtils.cs" />
-    <Compile Include="Catalogs\ICatalogBuilder.cs" />
     <Compile Include="Configuration\IPropertyBagHelper.cs" />
     <Compile Include="Configuration\PropertyBagConfiguration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\PropertyBagHelper.cs" />
     <Compile Include="Configuration\PropertyBagValue.cs" />
-    <Compile Include="Definitions\CatalogInfo.cs" />
+    <Compile Include="Catalogs\CatalogInfo.cs" />
     <Compile Include="Definitions\BaseTypeInfo.cs" />
     <Compile Include="Definitions\FolderInfo.cs" />
     <Compile Include="FieldTypes\ImageFieldInfo.cs" />
@@ -256,7 +254,6 @@
     <Compile Include="Cache\ParameterizedCacheKey.cs" />
     <Compile Include="Cache\SimpleCacheKey.cs" />
     <Compile Include="CalendarFields.cs" />
-    <Compile Include="Catalogs\Catalog.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\ConcurrentDictionary.cs" />
     <Compile Include="Collections\ConcurrentList.cs" />
@@ -349,7 +346,7 @@
     <Compile Include="Helpers\TaxonomyHelper.cs" />
     <Compile Include="Taxonomy\TaxonomyContext.cs" />
     <Compile Include="Taxonomy\TaxonomyService.cs" />
-    <Compile Include="Utils\CatalogHelper.cs" />
+    <Compile Include="Catalogs\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="TimerJobs\TimerJobExpert.cs" />
@@ -364,7 +361,7 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Utils\DisabledItemEventsScope.cs" />
-    <Compile Include="Utils\ICatalogHelper.cs" />
+    <Compile Include="Catalogs\ICatalogHelper.cs" />
     <Compile Include="Utils\IContentOrganizerHelper.cs" />
     <Compile Include="Utils\ICustomActionHelper.cs" />
     <Compile Include="Utils\IEventReceiverHelper.cs" />

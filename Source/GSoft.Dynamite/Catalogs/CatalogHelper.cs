@@ -15,7 +15,7 @@ using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Catalogs
 {
     /// <summary>
     /// Helper class for Cross Site Publishing operations

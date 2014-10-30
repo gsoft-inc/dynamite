@@ -1,7 +1,7 @@
 using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint.Publishing;
 
-namespace GSoft.Dynamite.Utils
+namespace GSoft.Dynamite.Catalogs
 {
     using System.Collections.Generic;
 

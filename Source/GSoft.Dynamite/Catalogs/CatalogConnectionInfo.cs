@@ -1,6 +1,6 @@
 ﻿using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.Catalogs
 {
     /// <summary>
     /// Definition for a catalog connection

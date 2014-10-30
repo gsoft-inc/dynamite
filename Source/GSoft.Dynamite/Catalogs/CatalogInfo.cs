@@ -1,7 +1,8 @@
 ﻿using GSoft.Dynamite.FieldTypes;
 using System.Collections.Generic;
+using GSoft.Dynamite.Definitions;
 
-namespace GSoft.Dynamite.Definitions
+namespace GSoft.Dynamite.Catalogs
 {
     /// <summary>
     /// Definition for a catalog
