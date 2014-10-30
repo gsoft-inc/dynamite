@@ -6,17 +6,26 @@ using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Definitions;
+using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint;
 using System.Threading;
 using GSoft.Dynamite.FieldTypes;
+using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Helpers
 {
     /// <summary>
     /// Helper class for managing content types.
     /// </summary>
-    public class ContentTypeBuilder : IContentTypeBuilder
+    public class ContentTypeHelper : IContentTypeHelper
     {
+        private readonly IVariationHelper _variationHelper;
+
+        public ContentTypeHelper(IVariationHelper variationHelper)
+        {
+            this._variationHelper = variationHelper;
+        }
+
         /// <summary>
         /// Ensure the content type based on its content type info. 
         /// Sets the description and Groups resource, adds the fields and calls update.
@@ -36,7 +45,27 @@ namespace GSoft.Dynamite.Helpers
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
-            var availableLanguages = contentType.ParentWeb.SupportedUICultures.Reverse();   // end with the main language
+            var web = contentType.ParentWeb;
+
+            var availableLanguages = new List<CultureInfo>();
+
+            var pubWeb = PublishingWeb.GetPublishingWeb(web);
+
+            if (pubWeb != null)
+            {
+                var labels = this._variationHelper.GetVariationLabels(pubWeb.Web.Site);
+                availableLanguages.AddRange(labels.Select(label => new CultureInfo(label.Language)));
+
+                if (availableLanguages.Count == 0)
+                {
+                    availableLanguages = pubWeb.Web.SupportedUICultures.Reverse().ToList();
+                }
+            }
+            else
+            {
+                availableLanguages = web.SupportedUICultures.Reverse().ToList();   // end with the main language
+            }
+
             foreach (var availableLanguage in availableLanguages)
             {
                 var currentCulture = CultureInfo.CurrentUICulture;

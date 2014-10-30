@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Definitions
 
     using Microsoft.SharePoint;
 
-    public interface IContentTypeBuilder
+    public interface IContentTypeHelper
     {
         /// <summary>
         /// Ensure the content type based on its content type info. 

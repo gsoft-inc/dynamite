@@ -10,11 +10,11 @@ namespace GSoft.Dynamite.Helpers
     /// <summary>
     /// Helper class for SharePoint publishing pages
     /// </summary>
-    public class PageHelper
+    public class PageHelper : IPageHelper
     {
-        private WebPartHelper webPartHelper;
+        private readonly IWebPartHelper webPartHelper;
 
-        public PageHelper(WebPartHelper webParthelper)
+        public PageHelper(IWebPartHelper webParthelper)
         {
             this.webPartHelper = webParthelper;
         }

@@ -15,22 +15,43 @@ namespace GSoft.Dynamite.Helpers
         /// <summary>
         /// Folder name for Display Templates
         /// </summary>
-        public readonly string DisplayTemplatesFolder = "Display Templates";
+        public string DisplayTemplatesFolder {
+            get
+            {
+                return "Display Templates";
+            }
+        }
 
         /// <summary>
         /// Folder name for Content WebPart Folder
         /// </summary>
-        public readonly string ContentWebPartFolder = "Content Web Parts";
+        public string ContentWebPartFolder
+        {
+            get { return "Content Web Parts"; }
+        }
 
         /// <summary>
         /// Folder name for Search 
         /// </summary>
-        public readonly string SearchFolder = "Search";
+        public string SearchFolder
+        {
+            get
+            {
+                return "Search";
+                
+            }
+        }
 
         /// <summary>
         /// Folder name for Filter
         /// </summary>
-        public readonly string FilterFolder = "Filters";
+        public string FilterFolder
+        {
+            get
+            {
+                return "Filters";         
+            }
+        }
 
         private readonly ILogger logger;
 

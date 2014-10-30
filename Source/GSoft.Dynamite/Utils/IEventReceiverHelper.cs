@@ -1,4 +1,6 @@
-﻿namespace GSoft.Dynamite.Utils
+﻿using GSoft.Dynamite.Definitions;
+
+namespace GSoft.Dynamite.Utils
 {
     using System.Diagnostics.CodeAnalysis;
 
@@ -31,5 +33,20 @@
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPEventReceiverDefinition GetEventReceiverDefinition(SPEventReceiverDefinitionCollection collection, SPEventReceiverType type, string assemblyFullName, string classFullName);
+
+
+        /// <summary>
+        /// Add an event receiver
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
+
+        /// <summary>
+        /// Remove an event receiver
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        void DeleteEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
     }
 }

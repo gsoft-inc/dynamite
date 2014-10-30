@@ -12,9 +12,9 @@ namespace GSoft.Dynamite.Helpers
     /// </summary>
     public class EventReceiverHelper : IEventReceiverHelper
     {
-        private readonly IContentTypeBuilder contentTypeBuilder;
+        private readonly IContentTypeHelper contentTypeBuilder;
 
-        public EventReceiverHelper(IContentTypeBuilder contentTypeBuilder)
+        public EventReceiverHelper(IContentTypeHelper contentTypeBuilder)
         {
             this.contentTypeBuilder = contentTypeBuilder;
         }
@@ -138,6 +138,5 @@ namespace GSoft.Dynamite.Helpers
                 }
             }
         }
-
     }
 }

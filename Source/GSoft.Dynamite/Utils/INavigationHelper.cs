@@ -1,3 +1,5 @@
+using GSoft.Dynamite.Definitions;
+
 namespace GSoft.Dynamite.Utils
 {
     using System;
@@ -43,5 +45,12 @@ namespace GSoft.Dynamite.Utils
         /// <returns>A friendly URL slug containing human readable characters.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         string GenerateFriendlyUrlSlug(string phrase, int maxLength = 75);
+
+        /// <summary>
+        /// Set term driven page settings in the term store
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="termDrivenPageInfo">The term driven page setting info</param>
+        void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
     }
 }
