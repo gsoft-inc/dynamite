@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace GSoft.Dynamite.Repositories
 {
+    using GSoft.Dynamite.Fields.Constants;
     using GSoft.Dynamite.Lists;
-
     using JohnHolliday.Caml.Net;
-
     using Microsoft.SharePoint;
 
     /// <summary>

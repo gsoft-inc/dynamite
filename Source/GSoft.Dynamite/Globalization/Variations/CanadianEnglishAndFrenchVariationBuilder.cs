@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.TimerJobs;
 using Microsoft.SharePoint;
 

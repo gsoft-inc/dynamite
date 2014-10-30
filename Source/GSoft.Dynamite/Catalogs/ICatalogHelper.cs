@@ -1,4 +1,3 @@
-using GSoft.Dynamite.Definitions;
 using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Catalogs

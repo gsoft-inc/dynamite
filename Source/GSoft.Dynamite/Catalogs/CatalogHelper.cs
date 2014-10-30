@@ -5,8 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using GSoft.Dynamite.Catalogs;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.Server.Search.Query;

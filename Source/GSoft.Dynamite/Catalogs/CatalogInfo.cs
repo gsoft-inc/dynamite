@@ -1,6 +1,7 @@
-﻿using GSoft.Dynamite.FieldTypes;
-using System.Collections.Generic;
-using GSoft.Dynamite.Definitions;
+﻿using System.Collections.Generic;
+using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Search;
 
 namespace GSoft.Dynamite.Catalogs
 {

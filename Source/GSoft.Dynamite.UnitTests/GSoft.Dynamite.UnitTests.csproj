@@ -87,8 +87,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Binding\Converters\LookupValueConverterTest.cs" />
-    <Compile Include="FieldTypes\NoteFieldInfoTest.cs" />
-    <Compile Include="FieldTypes\TextFieldInfoTest.cs" />
+    <Compile Include="Fields\NoteFieldInfoTest.cs" />
+    <Compile Include="Fields\TextFieldInfoTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>

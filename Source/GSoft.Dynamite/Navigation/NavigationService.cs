@@ -5,6 +5,7 @@ using System.Linq;
 using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;

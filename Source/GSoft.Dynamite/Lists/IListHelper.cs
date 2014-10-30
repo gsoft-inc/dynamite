@@ -3,13 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
     using GSoft.Dynamite.Catalogs;
-    using GSoft.Dynamite.Definitions;
-    using GSoft.Dynamite.FieldTypes;
+    using GSoft.Dynamite.Fields;
     using GSoft.Dynamite.Lists.Entities;
     using GSoft.Dynamite.Schemas;
-
     using Microsoft.SharePoint;
 
     public interface IListHelper

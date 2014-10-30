@@ -1,5 +1,6 @@
 ﻿using System;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Fields.Constants;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite
