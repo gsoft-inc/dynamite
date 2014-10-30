@@ -7,6 +7,7 @@ using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.PowerShell.Extensions;
 using GSoft.Dynamite.PowerShell.PipeBindsObjects;
 using GSoft.Dynamite.PowerShell.Unity;
+using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;

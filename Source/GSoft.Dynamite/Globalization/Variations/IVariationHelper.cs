@@ -1,5 +1,3 @@
-using GSoft.Dynamite.Definitions;
-
 namespace GSoft.Dynamite.Globalization.Variations
 {
     using System.Collections.ObjectModel;

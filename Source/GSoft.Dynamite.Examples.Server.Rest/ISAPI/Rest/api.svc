@@ -1,6 +1,0 @@
-﻿<%@ ServiceHost 
-    Language="C#"
-    Debug="true"   
-    Factory="Microsoft.SharePoint.Client.Services.MultipleBaseAddressWebServiceHostFactory, Microsoft.SharePoint.Client.ServerRuntime, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c"
-    Service="GSoft.Dynamite.Examples.Server.Rest.Services.CacheoDataService, GSoft.Dynamite.Examples.Server.Rest, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5a9ee95e9a30acfe"
-%>

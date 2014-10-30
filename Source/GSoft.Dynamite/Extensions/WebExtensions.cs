@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Globalization;
-﻿using System.Linq;
+using System.IO;
+using System.Linq;
 using System.Web;
-using GSoft.Dynamite.Repositories.Entities;
+using GSoft.Dynamite.Branding.Entities;
+using GSoft.Dynamite.Fields.Constants;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Extensions
 {
-    using System.IO;
-
     /// <summary>
     /// Extensions for the SPWeb type.
     /// </summary>

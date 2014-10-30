@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Caml;
+using GSoft.Dynamite.Fields.Constants;
+using GSoft.Dynamite.Lists;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Repositories
 {
-    using GSoft.Dynamite.Lists;
-
-    using JohnHolliday.Caml.Net;
-
-    using Microsoft.SharePoint;
-
     /// <summary>
     /// The item locator.
     /// </summary>
     public class ItemLocator : IItemLocator
     {
         private readonly IListLocator listLocator;
+        private readonly ICamlBuilder caml;
 
         /// <summary>
         /// Utility to find items by name or url
         /// </summary>
         /// <param name="listLocator">List locator utility</param>
-        public ItemLocator(IListLocator listLocator)
+        public ItemLocator(IListLocator listLocator, ICamlBuilder caml)
         {
             this.listLocator = listLocator;
+            this.caml = caml;
         }
 
         /// <summary>
@@ -44,10 +44,10 @@ namespace GSoft.Dynamite.Repositories
             SPQuery query = new SPQuery();
 
             query.Query =
-                CAML.Where(
-                    CAML.Or(
-                        CAML.Eq(CAML.FieldRef(BuiltInFields.TitleName), CAML.Value(itemTitle)),
-                        CAML.Eq(CAML.FieldRef(BuiltInFields.FileLeafRefName), CAML.Value(itemTitle))));
+                this.caml.Where(
+                    this.caml.Or(
+                        this.caml.Equal(this.caml.FieldRef(BuiltInFields.TitleName), this.caml.Value(itemTitle)),
+                        this.caml.Equal(this.caml.FieldRef(BuiltInFields.FileLeafRefName), this.caml.Value(itemTitle))));
 
             var itemCollection = list.GetItems(query);
 

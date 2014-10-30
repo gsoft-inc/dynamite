@@ -3,28 +3,29 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
-using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Configuration;
-using GSoft.Dynamite.Definitions;
-using GSoft.Dynamite.Exceptions;
+using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.Documents;
+using GSoft.Dynamite.Events;
+using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Folders;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.MasterPages;
 using GSoft.Dynamite.Monitoring;
 using GSoft.Dynamite.Navigation;
+using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
-using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
 
@@ -63,9 +64,7 @@ namespace GSoft.Dynamite.ServiceLocator
             var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);    // Logger without debug output
             builder.RegisterInstance<ILogger>(logger);
 #endif
-            // Monitoring
-            builder.RegisterType<AggregateTimeTracker>().As<IAggregateTimeTracker>().InstancePerSite();
-
+            
             // Binding
             var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
             var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
@@ -78,23 +77,44 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyValueCollectionConverter>();
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
+            // Branding
+            builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
+            builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
+            builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
+            builder.RegisterType<DisplayTemplateHelper>().As<IDisplayTemplateHelper>();
+            builder.RegisterType<ImageRenditionHelper>().As<IImageRenditionHelper>();
+
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
-            builder.RegisterType<AppCacheHelper>().As<IAppCacheHelper>();
-            builder.RegisterType<SessionCacheHelper>().As<ISessionCacheHelper>();
+
+            // CAML query builder and utilities
+            builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
+            builder.RegisterType<CamlUtils>().As<ICamlUtils>();
+            builder.RegisterType<QueryHelper>().As<IQueryHelper>();
+
+            // Catalogs
+            builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
 
             // Configuration 
             builder.RegisterType<PropertyBagHelper>().As<IPropertyBagHelper>();
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
+            builder.RegisterType<WebConfigModificationHelper>().As<IWebConfigModificationHelper>();
 
-            // Definitions
+            // ContentTypes
             builder.RegisterType<ContentTypeHelper>().As<IContentTypeHelper>();
-            builder.RegisterType<FieldHelper>().As<IFieldHelper>();
-            builder.RegisterType<FolderHelper>().As<IFolderHelper>();
-            builder.RegisterType<PageHelper>().As<IPageHelper>();
 
-            // Exception
-            builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
+            // Documents
+            builder.RegisterType<ContentOrganizerHelper>().As<IContentOrganizerHelper>();
+
+            // Events
+            builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();
+
+            // Fields
+            builder.RegisterType<FieldHelper>().As<IFieldHelper>();
+
+            // Folders
+            builder.RegisterType<FolderHelper>().As<IFolderHelper>();
+            builder.RegisterType<FolderRepository>().As<IFolderRepository>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     
@@ -105,8 +125,6 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DateHelper>().As<IDateHelper>();
             builder.RegisterType<RegionalSettingsHelper>().As<IRegionalSettingsHelper>();
 
-            builder.RegisterType<DefaultVariationDirector>().As<IVariationDirector>();
-            builder.RegisterType<CanadianEnglishAndFrenchVariationBuilder>().As<IVariationBuilder>();
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
             builder.RegisterType<VariationHelper>().As<IVariationHelper>();
             builder.RegisterType<VariationSyncHelper>().As<IVariationSyncHelper>();
@@ -115,22 +133,25 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ListHelper>().As<IListHelper>();
             builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>().As<IListSecurityHelper>();
-            builder.RegisterType<CatalogBuilder>().As<ICatalogBuilder>();
-            builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
-
-            // MasterPages
-            builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
-            builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();
+            builder.RegisterType<PublishedLinksEditor>().As<IPublishedLinksEditor>();
+            
+            // Monitoring
+            builder.RegisterType<AggregateTimeTracker>().As<IAggregateTimeTracker>().InstancePerSite();
 
             // Navigation 
             builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<NavigationNode>().As<INavigationNode>();
-            builder.RegisterType<NavigationManagedProperties>();
+            builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
+            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+
+            // Pages
+            builder.RegisterType<PageHelper>().As<IPageHelper>();
 
             // Repositories
-            builder.RegisterType<FolderRepository>().As<IFolderRepository>();
-            builder.RegisterType<QueryHelper>().As<IQueryHelper>();
             builder.RegisterType<ItemLocator>().As<IItemLocator>();
+
+            // Search
+            builder.RegisterType<SearchHelper>().As<ISearchHelper>();
 
             // Security
             builder.RegisterType<SecurityHelper>().As<ISecurityHelper>();
@@ -139,16 +160,6 @@ namespace GSoft.Dynamite.ServiceLocator
             // Serializers
             builder.RegisterType<XmlHelper>().As<IXmlHelper>();
             builder.RegisterType<JsonNetSerializer>().As<ISerializer>().SingleInstance();
-
-            // Setup
-            builder.RegisterType<FieldValueInfo>().As<IFieldValueInfo>();
-            //// builder.RegisterType<FolderInfo>().As<IFolderInfo>();
-            //// builder.RegisterType<PageInfo>().As<IPageInfo>();
-            builder.RegisterType<TaxonomyInfo>().As<ITaxonomyInfo>();
-            builder.RegisterType<TaxonomyMultiInfo>().As<ITaxonomyMultiInfo>();
-
-            builder.RegisterType<FolderMaker>().As<IFolderMaker>();
-            builder.RegisterType<PageCreator>().As<IPageCreator>();
 
             // Taxonomy
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
@@ -161,28 +172,12 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyHelper>().As<ITaxonomyHelper>();
 
             // Timer Jobs
-            builder.RegisterType<TimerJobExpert>().As<ITimerJobExpert>();
             builder.RegisterType<TimerJobHelper>().As<ITimerJobHelper>();
 
             // Utils
-            builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();
-            builder.RegisterType<SearchHelper>().As<ISearchHelper>();
             builder.RegisterType<CustomActionHelper>().As<ICustomActionHelper>();
-            builder.RegisterType<ContentOrganizerHelper>().As<IContentOrganizerHelper>();
-            builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
-            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+            builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
 
-            // Branding
-            builder.RegisterType<ComposedLookRepository>().As<IComposedLookRepository>();
-            builder.RegisterType<DisplayTemplateHelper>().As<IDisplayTemplateHelper>();
-            builder.RegisterType<ImageRenditionHelper>().As<IImageRenditionHelper>();
-
-            // CAML query builder and utilities
-            builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
-            builder.RegisterType<CamlUtils>().As<ICamlUtils>();
-
-            // Web config
-            builder.RegisterType<WebConfigModificationHelper>().As<IWebConfigModificationHelper>();
 
             // Web Parts
             builder.RegisterType<WebPartHelper>().As<IWebPartHelper>();

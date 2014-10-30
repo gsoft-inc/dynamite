@@ -2,7 +2,6 @@
 using System.Globalization;
 using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint.Taxonomy;
-using GSoft.Dynamite.Definitions;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
 

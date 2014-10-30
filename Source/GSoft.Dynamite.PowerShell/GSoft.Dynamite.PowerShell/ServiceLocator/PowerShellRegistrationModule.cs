@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
+using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Utils;
 

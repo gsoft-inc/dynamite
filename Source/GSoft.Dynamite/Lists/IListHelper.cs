@@ -3,13 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-
     using GSoft.Dynamite.Catalogs;
-    using GSoft.Dynamite.Definitions;
-    using GSoft.Dynamite.FieldTypes;
+    using GSoft.Dynamite.Fields;
     using GSoft.Dynamite.Lists.Entities;
-    using GSoft.Dynamite.Schemas;
-
     using Microsoft.SharePoint;
 
     public interface IListHelper
@@ -79,91 +75,6 @@
             SPListTemplateType templateType);
 
         /// <summary>
-        /// Adds the content type id.
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="contentTypeId">The content type id.</param>
-        /// <exception cref="System.ArgumentNullException">Any null parameters.</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">contentTypeId;Content Type not available in the lists parent web.</exception>
-        void EnsureContentType(SPList list, SPContentTypeId contentTypeId);
-
-        /// <summary>
-        /// Adds the content type.
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="contentTypeInfo"></param>
-        /// <exception cref="System.ArgumentNullException">Any null parameter.</exception>
-        void EnsureContentType(SPList list, ContentTypeInfo contentTypeInfo);
-
-        /// <summary>
-        /// Get the list by root folder url
-        /// </summary>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        /// <param name="listRootFolderUrl">
-        /// The list Root Folder Url.
-        /// </param>
-        /// <returns>
-        /// The list
-        /// </returns>
-        SPList GetListByRootFolderUrl(SPWeb web, string listRootFolderUrl);
-
-        /// <summary>
-        /// Creates a field on the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="genericField">The generic field.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <returns>
-        /// The internal name of newly created field.
-        /// </returns>
-        SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup);
-
-        /// <summary>
-        /// Create a taxonomy Field in a SharePoint list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>f
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
-        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
-        /// <returns>The newly created field.</returns>
-        SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen);
-
-        /// <summary>
-        /// Create a text field in the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiLines">if set to <c>true</c> [is multi lines].</param>
-        /// <returns>
-        /// The newly created field.
-        /// </returns>
-        SPField CreateTextField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiLines);
-
-        /// <summary>
-        /// Create a GUID field in the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <returns>
-        /// The newly created field.
-        /// </returns>
-        SPField CreateGuidField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup);
-
-        /// <summary>
         /// Enable or disable ratings on a SPList
         /// </summary>
         /// <param name="list">The list.</param>
@@ -195,26 +106,9 @@
         /// Add fields in the default view of the list
         /// </summary>
         /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields);
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields);
+        void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields);
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -223,7 +117,7 @@
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
+        void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
 
         /// <summary>
         /// Ensure the field in the view
@@ -233,14 +127,16 @@
         void EnsureFieldInView(SPViewFieldCollection fieldCollection, string fieldInternalName);
 
         /// <summary>
-        /// Method to create if not exist the publishing link in a Publishing link list of the site
+        /// Makes sure the list appears in Quick Launch links on its parent web
         /// </summary>
-        /// <param name="site">The current Site to create the publishing link.</param>
-        /// <param name="publishedLink">The publishing link to create</param>
-        void EnsurePublishedLinks(SPSite site, PublishedLink publishedLink);
-
+        /// <param name="list"></param>
         void AddtoQuickLaunch(SPList list);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="listInfo"></param>
         void SetDefaultValues(SPList list, ListInfo listInfo);
     }
 }

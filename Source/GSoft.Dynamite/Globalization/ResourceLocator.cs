@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Resources;
 using System.Web;
-using GSoft.Dynamite.Structures;
 using Microsoft.SharePoint.Utilities;
 using System.Runtime.InteropServices;
 
@@ -39,18 +38,7 @@ namespace GSoft.Dynamite.Globalization
         {
             return this.Find(resourceKey, CultureInfo.CurrentUICulture.LCID);
         }
-
-        /// <summary>
-        /// Finds the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource value configuration.</param>
-        /// <returns>The resource value in the current UI language.</returns>
-        [Obsolete("See ResourceValue class")]
-        public string Find(ResourceValue resource)
-        {
-            return this.Find(resource.File, resource.Key, CultureInfo.CurrentUICulture);
-        }
-
+        
         /// <summary>
         /// Retrieves the resource object specified by the key and language
         /// </summary>
@@ -74,18 +62,6 @@ namespace GSoft.Dynamite.Globalization
             }
 
             return resourceValue;
-        }
-
-        /// <summary>
-        /// Finds the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource value configuration.</param>
-        /// <param name="lcid">The LCID.</param>
-        /// <returns>The resource in the specified language.</returns>
-        [Obsolete("See ResourceValue class")]
-        public string Find(ResourceValue resource, int lcid)
-        {
-            return this.Find(resource.File, resource.Key, new CultureInfo(lcid));
         }
 
         /// <summary>

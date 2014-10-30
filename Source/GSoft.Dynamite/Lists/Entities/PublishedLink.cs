@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Lists.Entities
