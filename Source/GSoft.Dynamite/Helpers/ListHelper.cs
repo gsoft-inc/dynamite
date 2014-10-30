@@ -756,9 +756,12 @@ namespace GSoft.Dynamite.Helpers
 
                         // Change managed metadata mapping
                         this.taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
-                        
+
                         // Set the default value for the field
-                        this.taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                        if (taxonomyValue != null)
+                        {
+                            this.taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
+                        }
                     }
                     else if (field.GetType() == typeof(SPFieldText) && (fieldDefinition.GetType() == typeof(TextFieldInfo)))
                     {
