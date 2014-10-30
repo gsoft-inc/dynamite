@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.WebConfig
+﻿namespace GSoft.Dynamite.Configuration
 {
     using System.Collections.ObjectModel;
 

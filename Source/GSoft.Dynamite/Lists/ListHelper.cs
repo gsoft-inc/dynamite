@@ -14,7 +14,6 @@ using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.Schemas;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;

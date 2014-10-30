@@ -1,8 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ServiceLocator;
-using GSoft.Dynamite.WebConfig;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 

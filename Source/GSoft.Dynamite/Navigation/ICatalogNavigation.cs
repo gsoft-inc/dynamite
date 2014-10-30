@@ -1,5 +1,5 @@
 ﻿using System;
-using GSoft.Dynamite.Caching.Entities;
+using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Navigation
@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="label">The variation label (cacheable object).</param>
         /// <returns>The peer URL.</returns>
-        Uri GetVariationPeerUrl(ICacheVariationLabel label);
+        Uri GetVariationPeerUrl(VariationLabelInfo label);
 
         /// <summary>
         /// Determines whether [is current item] [the specified item URL].

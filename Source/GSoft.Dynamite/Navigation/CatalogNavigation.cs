@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
-using GSoft.Dynamite.Caching.Entities;
+using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search;
@@ -123,18 +123,18 @@ namespace GSoft.Dynamite.Navigation
         /// </returns>
         public Uri GetVariationPeerUrl(VariationLabel label)
         {
-            var cacheVariationLabel = new CacheVariationLabel(label);       // TODO: replace with VariationLabelInfo - TopWebUrl is missing from VariationLabelInfo though...
+            var cacheVariationLabel = new VariationLabelInfo(label);
             return this.GetVariationPeerUrl(cacheVariationLabel);
         }
 
         /// <summary>
         /// Gets the variation peer URL.
         /// </summary>
-        /// <param name="label">The variation label (cacheable object).</param>
+        /// <param name="label">The variation label.</param>
         /// <returns>
         /// The peer URL.
         /// </returns>
-        public Uri GetVariationPeerUrl(ICacheVariationLabel label)
+        public Uri GetVariationPeerUrl(VariationLabelInfo label)
         {
             var currentUrl = HttpContext.Current.Request.Url;
             switch (this.Type)
@@ -148,7 +148,7 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerUrl(ICacheVariationLabel label, Uri currentUrl)
+        private Uri GetPeerUrl(VariationLabelInfo label, Uri currentUrl)
         {
             if (currentUrl.LocalPath.StartsWith("/_layouts"))
             {
@@ -186,7 +186,7 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogCategoryUrl(Uri currentUrl, ICacheVariationLabel label)
+        private Uri GetPeerCatalogCategoryUrl(Uri currentUrl, VariationLabelInfo label)
         {
             // Get current navigation term ID
             var termId = TaxonomyNavigationContext.Current.NavigationTerm.Id;
@@ -235,7 +235,7 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogItemUrl(Uri currentUrl, ICacheVariationLabel label)
+        private Uri GetPeerCatalogItemUrl(Uri currentUrl, VariationLabelInfo label)
         {
             this.ValidateProperties("GetPeerCatalogItemUrl");
 

@@ -1,4 +1,7 @@
-﻿namespace GSoft.Dynamite.Globalization.Variations
+﻿using System;
+using System.Globalization;
+using Microsoft.SharePoint.Publishing;
+namespace GSoft.Dynamite.Globalization.Variations
 {
     /// <summary>
     /// The creation mode.
@@ -16,6 +19,27 @@
     /// </summary>
     public class VariationLabelInfo
     {
+        /// <summary>
+        /// Empty constructor for serialization purposes
+        /// </summary>
+        public VariationLabelInfo()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CacheVariationLabel"/> class.
+        /// </summary>
+        /// <param name="variationLabel">The variation label.</param>
+        public VariationLabelInfo(VariationLabel variationLabel)
+        {
+            this.FlagControlDisplayName = variationLabel.DisplayName;
+            this.IsSource = variationLabel.IsSource;
+            this.Language = variationLabel.Language;
+            this.Locale = new CultureInfo(variationLabel.Locale).LCID;
+            this.Title = variationLabel.Title;
+            this.TopWebUrl = new Uri(variationLabel.TopWebUrl);
+        }
+
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
@@ -50,5 +74,10 @@
         /// Gets or sets the description.
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// URL of the top PublishingWeb in the variations hierarchy
+        /// </summary>
+        public Uri TopWebUrl { get; set; }
     }
 }

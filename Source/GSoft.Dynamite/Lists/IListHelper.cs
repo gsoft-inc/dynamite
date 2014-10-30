@@ -6,7 +6,6 @@
     using GSoft.Dynamite.Catalogs;
     using GSoft.Dynamite.Fields;
     using GSoft.Dynamite.Lists.Entities;
-    using GSoft.Dynamite.Schemas;
     using Microsoft.SharePoint;
 
     public interface IListHelper

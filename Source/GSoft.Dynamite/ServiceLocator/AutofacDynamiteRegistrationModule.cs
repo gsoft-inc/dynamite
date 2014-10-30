@@ -3,7 +3,6 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
-using GSoft.Dynamite.Caching;
 using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Configuration;
@@ -25,11 +24,9 @@ using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
-using GSoft.Dynamite.Setup;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
-using GSoft.Dynamite.WebConfig;
 using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
 
@@ -108,6 +105,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DateHelper>().As<IDateHelper>();
             builder.RegisterType<RegionalSettingsHelper>().As<IRegionalSettingsHelper>();
 
+            builder.RegisterType<VariationExpert>().As<IVariationExpert>();
             builder.RegisterType<VariationHelper>().As<IVariationHelper>();
             builder.RegisterType<VariationSyncHelper>().As<IVariationSyncHelper>();
 
