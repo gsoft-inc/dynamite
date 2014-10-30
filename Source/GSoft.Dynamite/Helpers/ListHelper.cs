@@ -36,6 +36,7 @@ namespace GSoft.Dynamite.Helpers
         private readonly ILogger logger;
         private readonly ISharePointEntityBinder binder;
         private readonly ITaxonomyHelper taxonomyHelper;
+        private readonly IListLocator listLocator;
 
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
@@ -44,7 +45,14 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="logger">The logger</param>
         /// <param name="binder">The entity binder</param>
         /// <param name="taxonomyHelper">The taxonomy Helper.</param>
-        public ListHelper(IContentTypeHelper contentTypeBuilder, IFieldHelper fieldHelper, IResourceLocator resourceLocator, ILogger logger, ISharePointEntityBinder binder, ITaxonomyHelper taxonomyHelper)
+        public ListHelper(
+            IContentTypeHelper contentTypeBuilder, 
+            IFieldHelper fieldHelper, 
+            IResourceLocator resourceLocator, 
+            ILogger logger, 
+            ISharePointEntityBinder binder, 
+            ITaxonomyHelper taxonomyHelper,
+            IListLocator listLocator)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
@@ -52,6 +60,7 @@ namespace GSoft.Dynamite.Helpers
             this.logger = logger;
             this.binder = binder;
             this.taxonomyHelper = taxonomyHelper;
+            this.listLocator = listLocator;
         }
 
         /// <summary>
@@ -86,7 +95,7 @@ namespace GSoft.Dynamite.Helpers
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplate template)
         {
-            var list = this.TryGetList(web, name);
+            var list = this.listLocator.TryGetList(web, name);
 
             if (list != null)
             {
@@ -120,7 +129,7 @@ namespace GSoft.Dynamite.Helpers
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
         {
-            var list = this.TryGetList(web, name);
+            var list = this.listLocator.TryGetList(web, name);
 
             if (list != null)
             {
@@ -152,7 +161,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>The list object</returns>
         public SPList EnsureList(SPWeb web, string rootFolderUrl, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
         {
-            var list = this.GetListByRootFolderUrl(web, rootFolderUrl);
+            var list = this.listLocator.TryGetList(web, rootFolderUrl);
 
             if (list != null)
             {
@@ -196,7 +205,7 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>The new list or the existing list</returns>
         public SPList EnsureList(SPWeb web, ListInfo listInfo)
         {
-            var list = this.GetListByRootFolderUrl(web, listInfo.RootFolderUrl);
+            var list = this.listLocator.TryGetList(web, listInfo.RootFolderUrl);
 
             // Ensure the list
             if (list == null)
@@ -232,7 +241,7 @@ namespace GSoft.Dynamite.Helpers
             }
 
             // Add All Content Types
-            this.EnsureContentType(list, listInfo.ContentTypes);
+            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, listInfo.ContentTypes);
 
             // Draft VisibilityType
             if (listInfo.HasDraftVisibilityType)
@@ -263,10 +272,10 @@ namespace GSoft.Dynamite.Helpers
             }
 
             // Default View Fields
-            this.AddFieldsToDefaultView(web, list, listInfo.DefaultViewFields);
+            this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
 
             // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).    
-            list = this.GetListByRootFolderUrl(web, listInfo.RootFolderUrl);
+            list = this.listLocator.TryGetList(web, listInfo.RootFolderUrl);
 
             // Default Values
             this.SetDefaultValues(list, listInfo);
@@ -290,224 +299,6 @@ namespace GSoft.Dynamite.Helpers
             }
 
             return lists;
-        }
-
-        /// <summary>
-        /// Adds the content type id.
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="contentTypeId">The content type id.</param>
-        /// <exception cref="System.ArgumentNullException">Any null parameters.</exception>
-        /// <exception cref="System.ArgumentOutOfRangeException">contentTypeId;Content Type not available in the lists parent web.</exception>
-        public void EnsureContentType(SPList list, SPContentTypeId contentTypeId)
-        {
-            if (list == null)
-            {
-                throw new ArgumentNullException("list");
-            }
-
-            if (contentTypeId == null)
-            {
-                throw new ArgumentNullException("contentTypeId");
-            }
-
-            SPContentType contentType = list.ParentWeb.AvailableContentTypes[contentTypeId];
-
-            if (contentType != null)
-            {
-                this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType);
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException("contentTypeId", "Content Type not available in the lists parent web.");
-            }
-        }
-
-        /// <summary>
-        /// Adds the content type.
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="contentType">Type of the content.</param>
-        /// <exception cref="System.ArgumentNullException">Any null parameter.</exception>
-        public void EnsureContentType(SPList list, ContentTypeInfo contentType)
-        {
-            if (list == null)
-            {
-                throw new ArgumentNullException("list");
-            }
-
-            if (contentType == null)
-            {
-                throw new ArgumentNullException("contentType");
-            }
-
-            // Enable content types if not yet done.
-            if (!list.ContentTypesEnabled)
-            {
-                list.ContentTypesEnabled = true;
-                list.Update(true);
-            }
-
-            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, contentType);
-            list.Update(true);
-        }
-
-        /// <summary>
-        /// Ensure a list of content types for a list
-        /// </summary>
-        /// <param name="list">The list</param>
-        /// <param name="contentTypes">The content type list</param>
-        public void EnsureContentType(SPList list, ICollection<ContentTypeInfo> contentTypes)
-        {
-            foreach (ContentTypeInfo contentType in contentTypes)
-            {
-                this.EnsureContentType(list, contentType);
-            }
-        }
-
-        /// <summary>
-        /// Get the list by root folder url
-        /// </summary>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        /// <param name="listRootFolderUrl">
-        /// The list Root Folder Url.
-        /// </param>
-        /// <returns>
-        /// The list
-        /// </returns>
-        public SPList GetListByRootFolderUrl(SPWeb web, string listRootFolderUrl)
-        {
-            return web.Lists.Cast<SPList>().Where(list => list.RootFolder.Name.ToLowerInvariant() == listRootFolderUrl.ToLowerInvariant()).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Creates a field on the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="genericField">The generic field.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <returns>
-        /// The internal name of newly created field.
-        /// </returns>
-        [Obsolete]
-        public SPField CreateListField(SPList list, GenericFieldSchema genericField, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
-        {
-            // TODO: Make this EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
-            genericField.FieldName = fieldInternalName;
-
-            // Here is a trick: We have to pass the internal name as display name and set the display name after creation
-            genericField.FieldDisplayName = fieldInternalName;
-            genericField.FieldDescription = fieldDescription;
-            genericField.FieldStaticName = fieldInternalName;
-            genericField.FieldGroup = fieldGroup;
-
-            var fieldName = this.fieldHelper.EnsureField(list.Fields, genericField.ToXElement());
-
-            if (!string.IsNullOrEmpty(fieldName))
-            {
-                // When you set title, need to be in the same Culture as Current web Culture 
-                // Thanks to http://www.sharepointblues.com/2011/11/14/splist-title-property-spfield-displayname-property-not-updating/
-                Thread.CurrentThread.CurrentUICulture =
-                    new CultureInfo((int)list.ParentWeb.Language);
-
-                // Get the new field - Be careful, return the display name    
-                var field = list.Fields.GetFieldByInternalName(fieldInternalName);
-                field.Title = fieldDisplayName;
-                field.Description = fieldDescription;
-                field.Update(true);
-
-                list.Update();
-            }
-
-            return list.Fields.GetFieldByInternalName(fieldInternalName);
-        }
-
-        /// <summary>
-        /// Create a taxonomy Field in a SharePoint list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>f
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiple">True if the field must allow multiple values. False otherwise.</param>
-        /// <param name="isOpen">True is the the field is an open term creation. False otherwise.</param>
-        /// <returns>The newly created field.</returns>
-        [Obsolete]
-        public SPField CreateListTaxonomyField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiple, bool isOpen)
-        {
-            // TODO: Combine this with EnsureListField and prefer using ContentTypeHelper.EnsureField instead of using list columns (i.e. use CTs)
-            // To support all this, make FieldInfo more complete to document all field metadata (instead of polluting ListHelper)
-
-            // Create the schema 
-            // TODO: inject this properly through Registration on Container
-            var taxonomySchema = new TaxonomyFieldSchema();
-            taxonomySchema.IsMultiple = false;
-
-            // Dont'use CreateNewField method because of its doesn't generate the Field ID
-            var field = this.CreateListField(list, taxonomySchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup) as TaxonomyField;
-
-            field.Open = isOpen;
-            field.AllowMultipleValues = isMultiple;
-            field.TargetTemplate = string.Empty;
-            field.Update(true);
-            list.Update();
-
-            return field;
-        }
-
-        /// <summary>
-        /// Create a text field in the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <param name="isMultiLines">if set to <c>true</c> [is multi lines].</param>
-        /// <returns>
-        /// The newly created field.
-        /// </returns>
-        [Obsolete]
-        public SPField CreateTextField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup, bool isMultiLines)
-        {
-            // TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
-            // these concepts with ContentTypeHelper...
-
-            // Create the schema 
-            var textFieldSchema = new TextFieldSchema { IsMultiLine = false };
-            var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
-
-            return field;
-        }
-
-        /// <summary>
-        /// Create a GUID field in the list
-        /// </summary>
-        /// <param name="list">The list.</param>
-        /// <param name="fieldInternalName">The Field internal name.</param>
-        /// <param name="fieldDisplayName">The field display name.</param>
-        /// <param name="fieldDescription">The field description.</param>
-        /// <param name="fieldGroup">The field group.</param>
-        /// <returns>
-        /// The newly created field.
-        /// </returns>
-        [Obsolete]
-        public SPField CreateGuidField(SPList list, string fieldInternalName, string fieldDisplayName, string fieldDescription, string fieldGroup)
-        {
-            // TODO: See CreateTaxonomyField comment above, this needs to be refactored/moved because Lists should have to know about all this (since want to share 
-            // these concepts with ContentTypeHelper...
-
-            // Create the schema 
-            var textFieldSchema = new GuidFieldSchema();
-            var field = this.CreateListField(list, textFieldSchema, fieldInternalName, fieldDisplayName, fieldDescription, fieldGroup);
-
-            return field;
         }
 
         /// <summary>
@@ -611,50 +402,23 @@ namespace GSoft.Dynamite.Helpers
         /// <summary>
         /// Add fields in the default view of the list
         /// </summary>
-        /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields)
-        {
-            this.AddFieldsToDefaultView(web, catalog, fields, false);
-        }
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
-        /// <param name="catalog">the current catalog</param>
-        /// <param name="fields">the collection of fields</param>
-        /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, Catalog catalog, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
-        {
-            var list = this.GetListByRootFolderUrl(web, catalog.RootFolderUrl);
-            this.AddFieldsToDefaultView(web, list, fields, removeExistingViewFields);
-        }
-
-        /// <summary>
-        /// Add fields in the default view of the list
-        /// </summary>
-        /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields)
+        public void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields)
         {
-            this.AddFieldsToDefaultView(web, list, fields, false);
+            this.AddFieldsToDefaultView(list, fields, false);
         }
 
         /// <summary>
         /// Add fields in the default view of the list
         /// </summary>
-        /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPWeb web, SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
+        public void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
         {
-            // get the default view of the list
-            var defaulView = web.GetViewFromUrl(list.DefaultViewUrl);
-            var fieldCollection = defaulView.ViewFields;
+            var defaultView = list.DefaultView;
+            var fieldCollection = defaultView.ViewFields;
 
             // Remove default view fields
             if (removeExistingViewFields)
@@ -664,7 +428,7 @@ namespace GSoft.Dynamite.Helpers
 
             foreach (IFieldInfo field in fields)
             {
-                 if (list.Fields.Contains(field.Id))
+                if (list.Fields.Contains(field.Id))
                 {
                     this.EnsureFieldInView(fieldCollection, list.Fields[field.Id].InternalName);
                 }
@@ -684,7 +448,7 @@ namespace GSoft.Dynamite.Helpers
                     }
                 }
 
-                defaulView.Update();
+                defaultView.Update();
             }
         }
 
@@ -704,27 +468,6 @@ namespace GSoft.Dynamite.Helpers
             }
         }
         #endregion
-
-        #region PublishedLinks
-        /// <summary>
-        /// Method to create if not exist the publishing link in a Publishing link list of the site
-        /// </summary>
-        /// <param name="site">The current Site to create the publishing link.</param>
-        /// <param name="publishedLink">The publishing link to create</param>
-        public void EnsurePublishedLinks(SPSite site, PublishedLink publishedLink)
-        {
-            var publishedLinksList = this.TryGetList(site.RootWeb, "/PublishedLinks");
-
-            if (publishedLinksList != null && !publishedLinksList.Items.Cast<SPListItem>().Any(link => link.Title == publishedLink.Title))
-            {
-                var item = publishedLinksList.Items.Add();
-                this.binder.FromEntity(publishedLink, item);
-
-                item.Update();
-            }
-        }
-
-        #endregion PublishedLinks
 
         /// <summary>
         /// Set default values for a list info objects
@@ -778,62 +521,5 @@ namespace GSoft.Dynamite.Helpers
             }
         }
 
-        private SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
-        {
-            // first try finding the list by name, simple
-            var list = web.Lists.TryGetList(titleOrUrlOrResourceString);
-
-            if (list == null)
-            {
-                try
-                {
-                    // second, try to find the list by its web-relative URL
-                    list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, titleOrUrlOrResourceString));
-                }
-                catch (FileNotFoundException)
-                {
-                    // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
-                }
-
-                if (list == null && !titleOrUrlOrResourceString.Contains("Lists"))
-                {
-                    try
-                    {
-                        // third, try to find the list by its Lists-relative URL by adding Lists if its missing
-                        list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, SPUtility.ConcatUrls("Lists", titleOrUrlOrResourceString)));
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
-                    }
-                }
-
-                if (list == null)
-                {
-                    // finally, try to handle the name as a resource key string
-                    string[] resourceStringSplit = titleOrUrlOrResourceString.Split(',');
-                    string nameFromResourceString = string.Empty;
-
-                    if (resourceStringSplit.Length > 1)
-                    {
-                        // We're dealing with a resource string which looks like this: $Resources:Some.Namespace,Resource_Key
-                        string resourceFileName = resourceStringSplit[0].Replace("$Resources:", string.Empty);
-                        nameFromResourceString = this.resourceLocator.Find(resourceFileName, resourceStringSplit[1], web.UICulture.LCID);
-                    }
-                    else
-                    {
-                        // let's try to find a resource with that string directly as key
-                        nameFromResourceString = this.resourceLocator.Find(titleOrUrlOrResourceString, web.UICulture.LCID);
-                    }
-
-                    if (!string.IsNullOrEmpty(nameFromResourceString))
-                    {
-                        list = web.Lists.TryGetList(nameFromResourceString);
-                    }
-                }
-            }
-
-            return list;
-        }
     }
 }

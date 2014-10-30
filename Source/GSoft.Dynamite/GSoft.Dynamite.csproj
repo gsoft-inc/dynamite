@@ -152,6 +152,8 @@
     <Compile Include="Exceptions\CatchAllExceptionHandler.cs" />
     <Compile Include="Exceptions\ICatchAllExceptionHandler.cs" />
     <Compile Include="Helpers\ITimerJobHelper.cs" />
+    <Compile Include="Lists\PublishedLinksEditor.cs" />
+    <Compile Include="Lists\IPublishedLinksEditor.cs" />
     <Compile Include="Utils\EventReceiverHelper.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\TimerJobHelper.cs" />

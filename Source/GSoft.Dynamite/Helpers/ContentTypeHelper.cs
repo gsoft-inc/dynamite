@@ -140,6 +140,13 @@ namespace GSoft.Dynamite.Helpers
                     // Can we add the content type to the list?
                     if (list.IsContentTypeAllowed(contentTypeId))
                     {
+                        // Enable content types if not yet done.
+                        if (!list.ContentTypesEnabled)
+                        {
+                            list.ContentTypesEnabled = true;
+                            list.Update(true);
+                        }
+
                         // Try to use the list's web's content type if it already exists
                         var contentTypeInWeb = list.ParentWeb.AvailableContentTypes[contentTypeId];
 
