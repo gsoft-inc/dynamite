@@ -9,6 +9,7 @@ namespace GSoft.Dynamite.Taxonomy
     /// <summary>
     /// The site taxonomy cache manager.
     /// </summary>
+    [Obsolete("Can cause TermStore editing conflicts and stale Term problems. Prefer usage of PerRequestSiteTaxonomyCacheManager.")]
     public class SiteTaxonomyCacheManager : ISiteTaxonomyCacheManager
     {
         private static readonly NamedReaderWriterLocker<Guid> NamedLocker = new NamedReaderWriterLocker<Guid>();

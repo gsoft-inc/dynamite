@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.Exceptions
+namespace GSoft.Dynamite.Utils
 {
     /// <summary>
     /// Wrap your code with this handler to swallow and log all exceptions
