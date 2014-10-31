@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Configuration
         private readonly string ErrorEmailKey = "GSOFT_DYNAMITE_ERROR_EMAIL";
         private readonly string GoogleAnalyticsIdKey = "GSOFT_DYNAMITE_GOOGLE_ANALYTICS_TRACKING_ID";
 
-        private IPropertyBagHelper propertyBagHelper;
+        private readonly IPropertyBagHelper propertyBagHelper;
 
         /// <summary>
         /// Property Bag Configuration item
