@@ -14,7 +14,15 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="web">The web.</param>
         /// <param name="settings">The settings.</param>
+        [Obsolete("Use NavigationSettingsInfos class instead")]
         void SetWebNavigationSettings(SPWeb web, ManagedNavigationSettings settings);
+
+        /// <summary>
+        /// Sets the web navigation settings.
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="settings">The settings.</param>
+        void SetWebNavigationSettings(SPWeb web, ManagedNavigationInfo settings);
 
         /// <summary>
         /// Gets the navigation term by identifier.
@@ -48,5 +56,11 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="site">The site</param>
         /// <param name="termDrivenPageInfo">The term driven page setting info</param>
         void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
+
+        /// <summary>
+        /// Reset web navigation to its default configuration
+        /// </summary>
+        /// <param name="web">The web</param>
+        void ResetWebNavigationToDefault(SPWeb web);
     }
 }

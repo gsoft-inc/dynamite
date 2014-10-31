@@ -50,7 +50,7 @@
   <ItemGroup>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <Private>True</Private>
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
@@ -93,6 +93,7 @@
     <Compile Include="ContentTypes\IContentTypeHelper.cs" />
     <Compile Include="Fields\IFieldHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
+    <Compile Include="Navigation\ManagedNavigationInfo.cs" />
     <Compile Include="Pages\IPageHelper.cs" />
     <Compile Include="Search\ResultTypeInfo.cs" />
     <Compile Include="Search\ResultTypeRuleInfo.cs" />
