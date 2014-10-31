@@ -322,13 +322,17 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (term != null)
             {
-                string label = string.Empty;
+                string label;
 
                //  May arrive if the term label haven't been updated correctly on the source object for the current language
                 if (string.IsNullOrEmpty(term.Label) && term.Labels.Count > 0)
                 {
                     // Trying to get the default language label
                     label = term.Labels[defaultLanguage];
+                }
+                else
+                {
+                    label = term.Label;
                 }
 
                 this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, label);
