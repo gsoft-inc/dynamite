@@ -313,13 +313,25 @@ namespace GSoft.Dynamite.Taxonomy
             SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue)
         {
             var termGroupName = defaultValue.Context.Group.Name;
+            var defaultLanguage = new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site));
 
             // Get the term set name according to the default term store language
-            var termSetName = defaultValue.Context.TermSet.Labels[new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site))];
+            var termSetName = defaultValue.Context.TermSet.Labels[defaultLanguage];
 
-            if (defaultValue.Term != null)
+            var term = defaultValue.Term;
+
+            if (term != null)
             {
-                this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, defaultValue.Term.Label);
+                string label = string.Empty;
+
+               //  May arrive if the term label haven't been updated correctly on the source object for the current language
+                if (string.IsNullOrEmpty(term.Label) && term.Labels.Count > 0)
+                {
+                    // Trying to get the default language label
+                    label = term.Labels[defaultLanguage];
+                }
+
+                this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, label);
 
                 // TODO: add SetDefaultTaxonomyFieldValueMulti
 
