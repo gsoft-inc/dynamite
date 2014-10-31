@@ -133,7 +133,7 @@ namespace GSoft.Dynamite.ContentTypes
             if (TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
                 // Make sure its not already in the list.
-                var contentTypeInList = list.ContentTypes.Cast<SPContentType>().FirstOrDefault(ct => ct.Parent.Id == contentTypeId);
+                var contentTypeInList = list.ContentTypes.Cast<SPContentType>().FirstOrDefault(ct => ct.Id == contentTypeId || ct.Parent.Id == contentTypeId);
                 if (contentTypeInList == null)
                 {
                     // Can we add the content type to the list?
