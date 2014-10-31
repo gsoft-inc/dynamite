@@ -223,9 +223,9 @@ namespace GSoft.Dynamite.Fields
                     new XAttribute("Type", this.Type),
                     new XAttribute("ID", "{" + this.Id + "}"),
                     new XAttribute("StaticName", this.InternalName),
-                    new XAttribute("DisplayName", this.DisplayName),
-                    new XAttribute("Description", this.Description),
-                    new XAttribute("Group", this.Group),
+                    new XAttribute("DisplayName", this.DisplayNameResourceString),
+                    new XAttribute("Description", this.DescriptionResourceString),
+                    new XAttribute("Group", this.GroupResourceString),
                     new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()));
 
                 // Check the Required type

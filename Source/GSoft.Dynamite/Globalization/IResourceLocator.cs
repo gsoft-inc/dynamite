@@ -56,5 +56,12 @@ namespace GSoft.Dynamite.Globalization
         /// <param name="resourceKey">The resource key</param>
         /// <returns>The resource string for the key and filename</returns>
         string GetResourceString(string resourceFileName, string resourceKey);
+
+        /// <summary>
+        /// Get the resource string with dollar format
+        /// </summary>
+        /// <param name="resourceKey">The resource key</param>
+        /// <returns>The resource string for the key and filename</returns>
+        string GetResourceString(string resourceKey);
     }
 }

@@ -319,47 +319,6 @@ namespace GSoft.Dynamite.Fields
             // Gets the created field
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
-            var web = fieldCollection.Web ?? fieldCollection.List.ParentWeb;
-         
-            var availableLanguages = new List<CultureInfo>();
-
-            var pubWeb = PublishingWeb.GetPublishingWeb(web);
-
-            if (pubWeb != null)
-            {
-                var labels = this.variationHelper.GetVariationLabels(pubWeb.Web.Site);
-                availableLanguages.AddRange(labels.Select(label => new CultureInfo(label.Language)));
-
-                if (availableLanguages.Count == 0)
-                {
-                    availableLanguages = pubWeb.Web.SupportedUICultures.Reverse().ToList();
-                }
-            }
-            else
-            {
-                availableLanguages = web.SupportedUICultures.Reverse().ToList();   // end with the main language
-            }
-            
-            foreach (var availableLanguage in availableLanguages)
-            {
-                var currentCulture = CultureInfo.CurrentUICulture;
-
-                // make sure the ResourceLocator will fetch the correct culture's DisplayName value
-                Thread.CurrentThread.CurrentUICulture = availableLanguage;
-                createdField.Title = fieldInfo.DisplayName;
-                createdField.TitleResource.SetValueForUICulture(currentCulture, fieldInfo.DisplayName);
-                createdField.TitleResource.Update();
-                createdField.Description = fieldInfo.Description;
-                createdField.DescriptionResource.SetValueForUICulture(currentCulture, fieldInfo.Description);
-                createdField.DescriptionResource.Update();
-                createdField.Group = fieldInfo.Group;
-
-                // restore the MUI culture to the old value
-                Thread.CurrentThread.CurrentUICulture = currentCulture;
-            }
-
-            createdField.Update(true);
-
             // Updates the visibility of the field
             UpdateFieldVisibility(createdField, fieldInfo);
 
