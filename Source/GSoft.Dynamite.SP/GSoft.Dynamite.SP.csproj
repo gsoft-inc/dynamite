@@ -105,7 +105,6 @@
     <None Include="..\..\Shared\GSoft.Dynamite.snk">
       <Link>Properties\GSoft.Dynamite.snk</Link>
     </None>
-    <None Include="app.config" />
     <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
     </None>
