@@ -15,18 +15,8 @@
       <ps:HelpFile></ps:HelpFile>
     </ps:Cmdlet>
     <ps:Cmdlet>
-      <ps:VerbName>New-DSPCatalogs</ps:VerbName>
-      <ps:ClassName>GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.DSPCmdletNewCatalogs</ps:ClassName>
-      <ps:HelpFile></ps:HelpFile>
-    </ps:Cmdlet>
-    <ps:Cmdlet>
       <ps:VerbName>Remove-DSPCatalogConnection</ps:VerbName>
       <ps:ClassName>GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.DSPCmdletRemoveCatalogConnection</ps:ClassName>
-      <ps:HelpFile></ps:HelpFile>
-    </ps:Cmdlet>
-    <ps:Cmdlet>
-      <ps:VerbName>Remove-DSPCatalogs</ps:VerbName>
-      <ps:ClassName>GSoft.Dynamite.PowerShell.Cmdlets.CrossSitePublishing.DSPCmdletRemoveCatalogs</ps:ClassName>
       <ps:HelpFile></ps:HelpFile>
     </ps:Cmdlet>
     <ps:Cmdlet>
