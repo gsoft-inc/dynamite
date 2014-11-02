@@ -238,7 +238,7 @@ namespace GSoft.Dynamite.Navigation
 
                     if (term != null)
                     {
-                        var terms = new List<Term> {term};
+                        var terms = new List<Term> { term };
                         terms.AddRange(term.ReusedTerms);
 
                         // For the orginal term and its reuses
@@ -254,7 +254,9 @@ namespace GSoft.Dynamite.Navigation
                             if (!string.IsNullOrEmpty(isNavigationTermSet))
                             {
                                 // Get the associated navigation term set 
-                                var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(currentTerm.TermSet, site.RootWeb,
+                                var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
+                                    currentTerm.TermSet, 
+                                    site.RootWeb,
                                     StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
 
                                 // Get the navigation term
@@ -271,7 +273,8 @@ namespace GSoft.Dynamite.Navigation
                                 {
                                     if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
                                     {
-                                        currentTerm.SetLocalCustomProperty("_Sys_Nav_SimpleLinkUrl",
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_SimpleLinkUrl",
                                             termDrivenPageInfo.SimpleLinkOrHeader);
                                     }
                                 }
@@ -285,19 +288,22 @@ namespace GSoft.Dynamite.Navigation
 
                                     if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
                                     {
-                                        currentTerm.SetLocalCustomProperty("_Sys_Nav_TargetUrlForChildTerms",
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_TargetUrlForChildTerms",
                                             termDrivenPageInfo.TargetUrlForChildTerms);
                                     }
 
                                     if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
                                     {
-                                        currentTerm.SetLocalCustomProperty("_Sys_Nav_CatalogTargetUrl",
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_CatalogTargetUrl",
                                             termDrivenPageInfo.CatalogTargetUrl);
                                     }
 
                                     if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
                                     {
-                                        currentTerm.SetLocalCustomProperty("_Sys_Nav_CatalogTargetUrlForChildTerms",
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_CatalogTargetUrlForChildTerms",
                                             termDrivenPageInfo.CatalogTargetUrlForChildTerms);
                                     }
                                 }
