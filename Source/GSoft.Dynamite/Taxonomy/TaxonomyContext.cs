@@ -8,9 +8,9 @@ namespace GSoft.Dynamite.Taxonomy
 {
     /// <summary>
     /// Represents a SharePoint taxonomy field binding context.
-    /// I.e. defines the term set or subterm of a term set that
+    /// I.e. defines the term set or sub-term of a term set that
     /// will serve to limit in the choices of a taxonomy value picker
-    /// dialog for a paticular taxonomy field.
+    /// dialog for a particular taxonomy field.
     /// </summary>
     public class TaxonomyContext
     {

@@ -182,6 +182,19 @@ namespace GSoft.Dynamite.Search
             return resultSource;
         }
 
+        /// <summary>
+        /// Ensures the presence of the specified result source configuration in the search service
+        /// </summary>
+        /// <param name="ssa">The search service application to modify</param>
+        /// <param name="resultSourceName">The result source's name</param>
+        /// <param name="level">The search object level</param>
+        /// <param name="searchProvider">The search provider name</param>
+        /// <param name="contextWeb">The context's web</param>
+        /// <param name="query">The query string for the result source</param>
+        /// <param name="sortField">The sort field name</param>
+        /// <param name="direction">The sort direction</param>
+        /// <param name="overwrite">Whether the result source configuration should get overwritten if already present</param>
+        /// <returns>The newly created result source</returns>
         public Source EnsureResultSource(
             SearchServiceApplication ssa,
             string resultSourceName,
@@ -193,6 +206,7 @@ namespace GSoft.Dynamite.Search
             SortDirection direction,
             bool overwrite)
         {
+            // TODO: implement this
             throw new NotImplementedException();
         }
 
@@ -741,7 +755,7 @@ namespace GSoft.Dynamite.Search
                 resType.Name = resultType.Name;
                 resType.SourceID = resultSource.Id;
 
-                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateIdUrl;
+                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateUrl;
                 var properties = resultType.DisplayProperties.Select(t => t.Name).ToArray();
                 resType.DisplayProperties = string.Join(",", properties);
                 resType.RulePriority = resultType.Priority;

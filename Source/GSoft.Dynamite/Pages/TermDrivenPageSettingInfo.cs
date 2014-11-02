@@ -7,25 +7,13 @@ namespace GSoft.Dynamite.Pages
     /// </summary>
     public class TermDrivenPageSettingInfo
     {
-        public TermSetInfo TermSet { get; private set; }
-        public TermInfo Term { get; private set; }
-
-        public bool IsTermSet { get; private set; }
-        public bool IsTerm { get; private set; }
-
-        public string TargetUrl { get; private set; }
-        public string TargetUrlForChildTerms { get; private set; }
-        public string CatalogTargetUrl { get;  private set; }
-        public string CatalogTargetUrlForChildTerms { get; private set; }
-
-        public bool ExcludeFromGlobalNavigation { get; private set; }
-        public bool ExcludeFromCurrentNavigation { get; private set; }
-
-        public string SimpleLinkOrHeader { get; private set; }
-        public bool IsSimpleLinkOrHeader { get; private set; }
-
-        public TermDrivenPageSettingInfo(TermSetInfo termSet, string targetUrlForChildTerms,
-            string catalogTargetUrlForChildTerms)
+        /// <summary>
+        /// Initializes a new <see cref="TermDrivenPageSettingInfo"/> instance
+        /// </summary>
+        /// <param name="termSet">The term set</param>
+        /// <param name="targetUrlForChildTerms">The target page for child terms</param>
+        /// <param name="catalogTargetUrlForChildTerms">The target catalog page for child terms</param>
+        public TermDrivenPageSettingInfo(TermSetInfo termSet, string targetUrlForChildTerms, string catalogTargetUrlForChildTerms)
         {
             this.TermSet = termSet;
             this.TargetUrlForChildTerms = targetUrlForChildTerms;
@@ -34,8 +22,24 @@ namespace GSoft.Dynamite.Pages
             this.IsTerm = false;
         }
 
-        public TermDrivenPageSettingInfo(TermInfo term, string targetUrl, string catalogTargetUrl,
-            string targetUrlForChildTerms, string catalogTargetUrlForChildTerms, bool excludeFromGlobalNav, bool excludeFromCurrentNav)
+        /// <summary>
+        /// Initializes a new <see cref="TermDrivenPageSettingInfo"/> instance
+        /// </summary>
+        /// <param name="term">The target term</param>
+        /// <param name="targetUrl">The destination URL</param>
+        /// <param name="catalogTargetUrl">The catalog destination URL</param>
+        /// <param name="targetUrlForChildTerms">The target URL for child terms</param>
+        /// <param name="catalogTargetUrlForChildTerms">The catalog target URL for child terms</param>
+        /// <param name="excludeFromGlobalNav">Whether the term should be excluded from global navigation</param>
+        /// <param name="excludeFromCurrentNav">Whether the term should be excluded from current navigation</param>
+        public TermDrivenPageSettingInfo(
+            TermInfo term, 
+            string targetUrl, 
+            string catalogTargetUrl,
+            string targetUrlForChildTerms, 
+            string catalogTargetUrlForChildTerms, 
+            bool excludeFromGlobalNav, 
+            bool excludeFromCurrentNav)
         {
             this.TargetUrlForChildTerms = targetUrlForChildTerms;
             this.CatalogTargetUrlForChildTerms = catalogTargetUrlForChildTerms;
@@ -49,6 +53,11 @@ namespace GSoft.Dynamite.Pages
             this.IsSimpleLinkOrHeader = false;
         }
 
+        /// <summary>
+        /// Initializes a new <see cref="TermDrivenPageSettingInfo"/> instance
+        /// </summary>
+        /// <param name="term">The target term</param>
+        /// <param name="simpleLinkOrHeader">The simple link or header metadata</param>
         public TermDrivenPageSettingInfo(TermInfo term, string simpleLinkOrHeader)
         {
             this.Term = term;
@@ -58,5 +67,64 @@ namespace GSoft.Dynamite.Pages
             this.SimpleLinkOrHeader = simpleLinkOrHeader;
         }
 
+        /// <summary>
+        /// Term set of the page's term
+        /// </summary>
+        public TermSetInfo TermSet { get; private set; }
+
+        /// <summary>
+        /// The page's associated term
+        /// </summary>
+        public TermInfo Term { get; private set; }
+
+        /// <summary>
+        /// Was defined with a term set
+        /// </summary>
+        public bool IsTermSet { get; private set; }
+
+        /// <summary>
+        /// Was defined with a term
+        /// </summary>
+        public bool IsTerm { get; private set; }
+
+        /// <summary>
+        /// Target navigation URL for items tagged with the current term
+        /// </summary>
+        public string TargetUrl { get; private set; }
+
+        /// <summary>
+        /// Target navigation URL for all items tagged with child terms of the current term
+        /// </summary>
+        public string TargetUrlForChildTerms { get; private set; }
+
+        /// <summary>
+        /// The catalog target URL
+        /// </summary>
+        public string CatalogTargetUrl { get; private set; }
+
+        /// <summary>
+        /// The catalog child terms target URL
+        /// </summary>
+        public string CatalogTargetUrlForChildTerms { get; private set; }
+
+        /// <summary>
+        /// Whether term should be excluded from global navigation
+        /// </summary>
+        public bool ExcludeFromGlobalNavigation { get; private set; }
+
+        /// <summary>
+        /// Whether term should be excluded from current navigation
+        /// </summary>
+        public bool ExcludeFromCurrentNavigation { get; private set; }
+
+        /// <summary>
+        /// Simple link or header metadata
+        /// </summary>
+        public string SimpleLinkOrHeader { get; private set; }
+
+        /// <summary>
+        /// Whether simple link or header metadata is provided
+        /// </summary>
+        public bool IsSimpleLinkOrHeader { get; private set; }
     }
 }

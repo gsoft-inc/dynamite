@@ -33,8 +33,7 @@ namespace GSoft.Dynamite.Fields
         {
             this.logger = logger;
             this.taxonomyHelper = taxonomyHelper;
-                        this.variationHelper = variationHelper;
-
+            this.variationHelper = variationHelper;
         }
 
         /// <summary>
@@ -320,7 +319,7 @@ namespace GSoft.Dynamite.Fields
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
             // Updates the visibility of the field
-            UpdateFieldVisibility(createdField, fieldInfo);
+            this.UpdateFieldVisibility(createdField, fieldInfo);
 
             return field;
         }
@@ -339,7 +338,7 @@ namespace GSoft.Dynamite.Fields
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
             // Updates the visibility of the field
-            UpdateFieldVisibility(createdField, fieldInfo);
+            this.UpdateFieldVisibility(createdField, fieldInfo);
 
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
@@ -368,13 +367,13 @@ namespace GSoft.Dynamite.Fields
             {
                 SPField newlyCreatedField = fieldCollection[fieldInfo.Id];
 
-                // TODO: create a IFieldValueWriter<ValueType> utility to re-use the proper
-                // taxonomy setter logic which is locked up in the TaxonomyValueConverter
+                //// TODO: create a IFieldValueWriter<ValueType> utility to re-use the proper
+                //// taxonomy setter logic which is locked up in the TaxonomyValueConverter.
+                //// Or fall back on copy-pasting the logic if absolutely needed
 
-                //newlyCreatedField.DefaultValueTyped = 
+                //// newlyCreatedField.DefaultValueTyped = 
 
-                //TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
-
+                ////TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
             }
 
             return field;
@@ -408,6 +407,7 @@ namespace GSoft.Dynamite.Fields
                 field.ShowInNewForm = !fieldInfo.IsHiddenInNewForm;
                 field.Update(true);
             }
+
             return field;
         }
 

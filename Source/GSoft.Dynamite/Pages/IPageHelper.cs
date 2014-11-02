@@ -8,6 +8,9 @@ using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Pages
 {
+    /// <summary>
+    /// Helper for SharePoint publishing pages
+    /// </summary>
     public interface IPageHelper
     {
         /// <summary>

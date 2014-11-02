@@ -58,9 +58,6 @@
     <Reference Include="mscorlib.2.0.0.0.Fakes">
       <HintPath>FakesAssemblies\mscorlib.2.0.0.0.Fakes.dll</HintPath>
     </Reference>
-    <Reference Include="NMock3">
-      <HintPath>..\packages\NMock3.3.5.44\lib\net35\NMock3.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.2.0.0.0.Fakes">
       <HintPath>FakesAssemblies\System.2.0.0.0.Fakes.dll</HintPath>
@@ -99,7 +96,6 @@
     </Fakes>
     <Fakes Include="Fakes\System.Web.fakes" />
     <Fakes Include="Fakes\mscorlib.fakes" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />

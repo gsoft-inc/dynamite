@@ -324,7 +324,7 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 string label;
 
-               //  May arrive if the term label haven't been updated correctly on the source object for the current language
+               // May arrive if the term label haven't been updated correctly on the source object for the current language
                 if (string.IsNullOrEmpty(term.Label) && term.Labels.Count > 0)
                 {
                     // Trying to get the default language label
@@ -339,21 +339,21 @@ namespace GSoft.Dynamite.Taxonomy
 
                 // TODO: add SetDefaultTaxonomyFieldValueMulti
 
-                //if (defaultValue.Values.Length > 1)
-                //{
-                //    if (field.AllowMultipleValues)
-                //    {
-                //        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Label).ToArray());
-                //    }
-                //}
-                //else
-                //{
-                //    var firstOrDefault = defaultValue.Values.FirstOrDefault();
-                //    if (firstOrDefault != null)
-                //    {
-                //        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Label);
-                //    }
-                //}
+                ////if (defaultValue.Values.Length > 1)
+                ////{
+                ////    if (field.AllowMultipleValues)
+                ////    {
+                ////        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Label).ToArray());
+                ////    }
+                ////}
+                ////else
+                ////{
+                ////    var firstOrDefault = defaultValue.Values.FirstOrDefault();
+                ////    if (firstOrDefault != null)
+                ////    {
+                ////        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Label);
+                ////    }
+                ////}
             }     
         }
 

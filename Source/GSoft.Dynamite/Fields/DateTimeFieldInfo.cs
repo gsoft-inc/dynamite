@@ -1,7 +1,5 @@
-﻿using System.Xml.Linq;
-using GSoft.Dynamite.Binding;
-using System;
-using System.Globalization;
+﻿using System;
+using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Fields
 {
@@ -17,7 +15,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
         public DateTimeFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "DateTime", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
@@ -51,12 +49,12 @@ namespace GSoft.Dynamite.Fields
         public string Format { get; set; }
 
         /// <summary>
-        /// Toggle to show a firendly relative-time string instead of timestamp
+        /// Toggle to show a friendly relative-time string instead of timestamp
         /// </summary>
         public bool HasFriendlyRelativeDisplay { get; set; }
 
         /// <summary>
-        /// DEfault formula for the field
+        /// Default formula for the field
         /// </summary>
         public string DefaultFormula { get; set; }
 

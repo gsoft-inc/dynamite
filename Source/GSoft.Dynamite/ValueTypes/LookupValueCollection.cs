@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes
@@ -36,7 +35,6 @@ namespace GSoft.Dynamite.ValueTypes
             this(new LookupValueCollection(lookupFieldList.Select(lookupFieldValue => new LookupValue(lookupFieldValue)).ToList()))
         {
         }
-    
     
         /// <summary>
         /// Initializes a new instance of the <see cref="LookupValueCollection"/> class.

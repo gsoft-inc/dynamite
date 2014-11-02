@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// The timer job helper
+    /// </summary>
     public interface ITimerJobHelper
     {
         /// <summary>

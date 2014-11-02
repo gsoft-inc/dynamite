@@ -18,8 +18,11 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Constructor for single language (CurrentUICulture) Termnfo belonging to specfic term set
+        /// Constructor for single language (CurrentUICulture) TermInfo belonging to specific term set
         /// </summary>
+        /// <param name="id">The term's ID</param>
+        /// <param name="label">The term's default label</param>
+        /// <param name="termSet">The parent term set</param>
         public TermInfo(Guid id, string label, TermSetInfo termSet)
             : this()
         {
@@ -29,8 +32,11 @@ namespace GSoft.Dynamite.Taxonomy
         }
         
         /// <summary>
-        /// Constructor for fully translated TermInfo belonging to specfic term set
+        /// Constructor for fully translated TermInfo belonging to specific term set
         /// </summary>
+        /// <param name="id">The term's ID</param>
+        /// <param name="labels">All default labels</param>
+        /// <param name="termSet">The parent term set</param>
         public TermInfo(Guid id, IDictionary<CultureInfo, string> labels, TermSetInfo termSet)
             : this()
         {

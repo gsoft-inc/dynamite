@@ -40,8 +40,8 @@ namespace GSoft.Dynamite.Lists
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
-        /// <param name="binder">The entity binder</param>
         /// <param name="taxonomyHelper">The taxonomy Helper.</param>
+        /// <param name="listLocator">List locator</param>
         public ListHelper(
             IContentTypeHelper contentTypeBuilder, 
             IFieldHelper fieldHelper, 
@@ -477,7 +477,7 @@ namespace GSoft.Dynamite.Lists
                 {
                     // Get the field in the list
                     var field = list.Fields.GetFieldByInternalName(fieldDefinition.InternalName);
-                    if (field != null && field.GetType() == typeof(TaxonomyField) && ((fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))))
+                    if (field != null && field.GetType() == typeof(TaxonomyField) && fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))
                     {
                         var taxonomyField = fieldDefinition as TaxonomyFieldInfo;
                        
@@ -515,6 +515,5 @@ namespace GSoft.Dynamite.Lists
                 }
             }
         }
-
     }
 }

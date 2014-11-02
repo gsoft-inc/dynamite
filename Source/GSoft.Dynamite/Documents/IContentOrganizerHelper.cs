@@ -2,6 +2,9 @@ namespace GSoft.Dynamite.Documents
 {
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// SharePoint Content Organizer Helper
+    /// </summary>
     public interface IContentOrganizerHelper
     {
         /// <summary>

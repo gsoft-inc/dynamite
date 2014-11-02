@@ -4,6 +4,9 @@ namespace GSoft.Dynamite.Navigation
 
     using Microsoft.SharePoint.Publishing.Navigation;
 
+    /// <summary>
+    /// Service for main menu navigation nodes.
+    /// </summary>
     public interface INavigationService
     {
         /// <summary>

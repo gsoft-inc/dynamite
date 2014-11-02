@@ -15,7 +15,7 @@ using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Navigation
 {
-      /// <summary>
+    /// <summary>
     /// Service for main menu navigation nodes.
     /// </summary>
     public class NavigationService : INavigationService

@@ -98,7 +98,6 @@ namespace GSoft.Dynamite.Helpers
         /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
         /// <param name="site">The site.</param>
-        /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
         /// <returns>A collection of unique label.</returns>
         public ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site)
         {
@@ -123,28 +122,6 @@ namespace GSoft.Dynamite.Helpers
             }
 
             return new ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel>(list);
-        }
-
-        /// <summary>
-        /// Get the hidden relationships list for a site collection.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The relationships list.</returns>
-        private SPList GetVariationLabelHiddenList(SPSite site)
-        {
-            var guid = new Guid(site.RootWeb.GetProperty("_VarLabelsListId").ToString());
-            return site.RootWeb.Lists[guid];
-        }
-
-        /// <summary>
-        /// Get the hidden variation labels for a site collection.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>the variation labels list.</returns>
-        private SPList GetRelationshipsHiddenList(SPSite site)
-        {
-            var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
-            return site.RootWeb.Lists[guid];
         }
 
         /// <summary>
@@ -202,6 +179,7 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="site">
         /// The site collection.
         /// </param>
+        /// <param name="labels">The label metadata for all that should be synched. example: <c>"en"</c> or <c>"fr"</c>.</param>
         public void EnsureVariationlabels(SPSite site, IList<VariationLabelInfo> labels)
         {
             var rootWeb = site.RootWeb;
@@ -295,6 +273,28 @@ namespace GSoft.Dynamite.Helpers
 
             // Create hierachies
             this.CreateHierarchies(site, variationSettings.Labels);
+        }
+
+        /// <summary>
+        /// Get the hidden relationships list for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The relationships list.</returns>
+        private SPList GetVariationLabelHiddenList(SPSite site)
+        {
+            var guid = new Guid(site.RootWeb.GetProperty("_VarLabelsListId").ToString());
+            return site.RootWeb.Lists[guid];
+        }
+
+        /// <summary>
+        /// Get the hidden variation labels for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>the variation labels list.</returns>
+        private SPList GetRelationshipsHiddenList(SPSite site)
+        {
+            var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
+            return site.RootWeb.Lists[guid];
         }
     }
 }

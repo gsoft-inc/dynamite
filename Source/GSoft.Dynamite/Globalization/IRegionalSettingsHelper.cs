@@ -4,6 +4,13 @@ namespace GSoft.Dynamite.Globalization
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helps in setting custom regional settings for users as they switch MUI.
+    /// Assumes that the web is created in English and that the French language
+    /// pack is installed.
+    /// Also assumes that InitializeWebDefaultRegionalSettings is called during
+    /// the setup phase of the site to change the web's regional settings to en-CA.
+    /// </summary>
     public interface IRegionalSettingsHelper
     {
         /// <summary>

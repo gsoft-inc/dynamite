@@ -7,6 +7,9 @@ namespace GSoft.Dynamite.Navigation
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Publishing.Navigation;
 
+    /// <summary>
+    /// Navigation configuration helper.
+    /// </summary>
     public interface INavigationHelper
     {
         /// <summary>

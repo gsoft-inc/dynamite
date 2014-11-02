@@ -4,19 +4,16 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Events
 {
+    /// <summary>
+    /// Easily serializable representation of event receiver metadata
+    /// </summary>
     public class EventReceiverInfo
     {
-        public enum EventReceiverOwner
-        {
-            ContentType,
-            List
-        }
-
         /// <summary>
         /// Event Receiver Info (Content Type)
         /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="type"></param>
+        /// <param name="contentType">Content type metadata</param>
+        /// <param name="type">Type of receiver</param>
         public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type)
         {
             this.ContentType = contentType;
@@ -27,13 +24,29 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// Event Receiver Info (List)
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="type"></param>
+        /// <param name="list">List metadata</param>
+        /// <param name="type">Type of receiver</param>
         public EventReceiverInfo(ListInfo list, SPEventReceiverType type)
         {
             this.List = list;
             this.EventOwner = EventReceiverOwner.List;
             this.ReceiverType = type;
+        }
+
+        /// <summary>
+        /// Types of event receivers
+        /// </summary>
+        public enum EventReceiverOwner
+        {
+            /// <summary>
+            /// Receiver for all instances of items with a particular content type
+            /// </summary>
+            ContentType,
+
+            /// <summary>
+            /// Receiver for all items in a list
+            /// </summary>
+            List
         }
 
         /// <summary>

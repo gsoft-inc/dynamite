@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.Globalization
         private static readonly List<Language> AvailableLanguages = new List<Language>() { Language.English, Language.French, Language.Inuktitut };
 
         /// <summary>
-        /// Method to get the language full name from the TwoLetter Iso language
+        /// Method to get the language full name from the TwoLetter ISO language
         /// </summary>
         /// <param name="twoLetterIsoLanguage">The two letter representing the language in ISO</param>
         /// <returns>The full name string</returns>

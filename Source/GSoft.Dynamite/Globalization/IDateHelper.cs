@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// SharePoint Date Helper
+    /// </summary>
     public interface IDateHelper
     {
         /// <summary>

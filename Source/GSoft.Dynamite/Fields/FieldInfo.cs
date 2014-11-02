@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
-using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
-using System.Globalization;
 
 namespace GSoft.Dynamite.Fields
 {
     /// <summary>
     /// Defines the field info structure.
     /// </summary>
+    /// <typeparam name="T">ValueType associated to that particular Field type</typeparam>
     public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
     {
         /// <summary>
@@ -25,9 +22,10 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
+        /// <param name="fieldTypeName">Name of the type of field (site column type)</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content Group resource key</param>
         public FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
@@ -123,13 +121,6 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
-        {
-            return fieldSchemaXml.Attribute("ID") != null
-                || fieldSchemaXml.Attribute("Name") != null
-                || fieldSchemaXml.Attribute("Type") != null;
-        }
-
         /// <summary>
         /// Unique identifier of the field
         /// </summary>
@@ -193,7 +184,6 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-
         /// <summary>
         /// Default field value.
         /// </summary>
@@ -203,16 +193,10 @@ namespace GSoft.Dynamite.Fields
         /// The XML schema of the field
         /// </summary>
         public abstract XElement Schema { get; }
-
+        
         /// <summary>
-        /// The string XML format of the field
+        /// Basic XML for a field definition
         /// </summary>
-        /// <returns>The XML schema of the field as string</returns>
-        public override string ToString()
-        {
-            return this.Schema.ToString();
-        }
-
         protected XElement BasicFieldSchema
         {
             get
@@ -250,16 +234,19 @@ namespace GSoft.Dynamite.Fields
                 {
                     schema.Add(new XAttribute("ShowInDisplayForm", "FALSE"));
                 }
+
                 // Show in Edit Form
                 if (this.IsHiddenInEditForm)
                 {
                     schema.Add(new XAttribute("ShowInEditForm", "FALSE"));
                 }
+
                 // Show in new Form
                 if (this.IsHiddenInNewForm)
                 {
                     schema.Add(new XAttribute("ShowInNewForm", "FALSE"));
                 }
+
                 // Show in List settings
                 if (this.IsHiddenInListSettings)
                 {
@@ -272,6 +259,22 @@ namespace GSoft.Dynamite.Fields
 
                 return schema;
             }
+        }
+
+        /// <summary>
+        /// The string XML format of the field
+        /// </summary>
+        /// <returns>The XML schema of the field as string</returns>
+        public override string ToString()
+        {
+            return this.Schema.ToString();
+        }
+
+        private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
+        {
+            return fieldSchemaXml.Attribute("ID") != null
+                || fieldSchemaXml.Attribute("Name") != null
+                || fieldSchemaXml.Attribute("Type") != null;
         }
     }
 }
