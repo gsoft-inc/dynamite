@@ -131,7 +131,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// fAllDayEvent field info
         /// </summary>
-        public static readonly IFieldInfo AllDayEvent = new MinimalFieldInfo(AllDayEventName, new Guid("{7d95d1f4-f5fd-4a70-90cd-b35abc9b5bc8}")); //TODO: turn into BooleanFieldInfo
+        public static readonly IFieldInfo AllDayEvent = new MinimalFieldInfo(AllDayEventName, new Guid("{7d95d1f4-f5fd-4a70-90cd-b35abc9b5bc8}"));  // TODO: turn into BooleanFieldInfo
 
         /// <summary>
         /// fRecurrence field info

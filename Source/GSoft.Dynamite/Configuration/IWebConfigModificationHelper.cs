@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint.Administration;
 
+    /// <summary>
+    /// Helper to add, clean, remove WebConfig modifications programmatically
+    /// </summary>
     public interface IWebConfigModificationHelper
     {
         /// <summary>

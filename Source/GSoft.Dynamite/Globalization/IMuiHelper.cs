@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// A helper for dealing with the Multilanguage UI.
+    /// </summary>
     public interface IMuiHelper
     {
         /// <summary>

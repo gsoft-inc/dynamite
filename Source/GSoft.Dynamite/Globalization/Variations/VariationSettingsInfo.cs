@@ -3,7 +3,7 @@
 namespace GSoft.Dynamite.Globalization.Variations
 {
     /// <summary>
-    /// Variations settings defintion
+    /// Variations settings definition
     /// </summary>
     public class VariationSettingsInfo
     {
@@ -31,7 +31,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         public string AutoSpawnStopAfterDelete { get; set; }
 
         /// <summary>
-        /// Enable ("true") or disable ("false") the webparts update
+        /// Enable ("true") or disable ("false") the web parts' update process
         /// </summary>
         public string UpdateWebParts { get; set; }
 

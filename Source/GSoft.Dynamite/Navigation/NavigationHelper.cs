@@ -238,58 +238,80 @@ namespace GSoft.Dynamite.Navigation
 
                     if (term != null)
                     {
-                        // Check in the term term set is flagged as navigation term set
-                        var isNavigationTermSet = term.TermSet.CustomProperties["_Sys_Nav_IsNavigationTermSet"];
-                        if (string.CompareOrdinal(isNavigationTermSet, "True") != 0)
+                        var terms = new List<Term> { term };
+                        terms.AddRange(term.ReusedTerms);
+
+                        // For the orginal term and its reuses
+                        foreach (var currentTerm in terms)
                         {
-                            term.TermSet.SetCustomProperty("_Sys_Nav_IsNavigationTermSet", "True");
-                            term.TermSet.TermStore.CommitAll();
-                        }
+                            string isNavigationTermSet;
 
-                        // Get the associated navigation term set 
-                        var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(term.TermSet, site.RootWeb, StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
+                            // Check if the term term set is flagged as navigation term set
+                            // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
+                            currentTerm.TermSet.CustomProperties.TryGetValue("_Sys_Nav_IsNavigationTermSet", out isNavigationTermSet);
 
-                        // Get the navigation term
-                        var navigationTerm = navigationTermSet.Terms.FirstOrDefault(t => t.Id.Equals(term.Id));
-                        if (navigationTerm != null)
-                        {
-                            navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
-                            navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
-                        }
-
-                        if (termDrivenPageInfo.IsSimpleLinkOrHeader)
-                        {
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
+                            // If the term set allow navigation
+                            if (!string.IsNullOrEmpty(isNavigationTermSet))
                             {
-                                term.SetLocalCustomProperty("_Sys_Nav_SimpleLinkUrl", termDrivenPageInfo.SimpleLinkOrHeader);
+                                // Get the associated navigation term set 
+                                var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
+                                    currentTerm.TermSet, 
+                                    site.RootWeb,
+                                    StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
+
+                                // Get the navigation term
+                                var navigationTerm = navigationTermSet.Terms.FirstOrDefault(t => t.Id.Equals(currentTerm.Id));
+                                if (navigationTerm != null)
+                                {
+                                    navigationTerm.ExcludeFromCurrentNavigation =
+                                        termDrivenPageInfo.ExcludeFromCurrentNavigation;
+                                    navigationTerm.ExcludeFromGlobalNavigation =
+                                        termDrivenPageInfo.ExcludeFromGlobalNavigation;
+                                }
+
+                                if (termDrivenPageInfo.IsSimpleLinkOrHeader)
+                                {
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
+                                    {
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_SimpleLinkUrl",
+                                            termDrivenPageInfo.SimpleLinkOrHeader);
+                                    }
+                                }
+                                else
+                                {
+                                    // Set URLs properties
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
+                                    {
+                                        currentTerm.SetLocalCustomProperty("_Sys_Nav_TargetUrl", termDrivenPageInfo.TargetUrl);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
+                                    {
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_TargetUrlForChildTerms",
+                                            termDrivenPageInfo.TargetUrlForChildTerms);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
+                                    {
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_CatalogTargetUrl",
+                                            termDrivenPageInfo.CatalogTargetUrl);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
+                                    {
+                                        currentTerm.SetLocalCustomProperty(
+                                            "_Sys_Nav_CatalogTargetUrlForChildTerms",
+                                            termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                                    }
+                                }
+
+                                // Commit all updates
+                                currentTerm.TermStore.CommitAll();
                             }
                         }
-                        else
-                        {
-                            // Set URLs properties
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
-                            {
-                                term.SetLocalCustomProperty("_Sys_Nav_TargetUrl", termDrivenPageInfo.TargetUrl);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
-                            {
-                                term.SetLocalCustomProperty("_Sys_Nav_TargetUrlForChildTerms", termDrivenPageInfo.TargetUrlForChildTerms);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
-                            {
-                                term.SetLocalCustomProperty("_Sys_Nav_CatalogTargetUrl", termDrivenPageInfo.CatalogTargetUrl);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
-                            {
-                                term.SetLocalCustomProperty("_Sys_Nav_CatalogTargetUrlForChildTerms", termDrivenPageInfo.CatalogTargetUrlForChildTerms);
-                            }
-                        }
-
-                        // Commit all updates
-                        term.TermStore.CommitAll();
                     }
                 }             
             }

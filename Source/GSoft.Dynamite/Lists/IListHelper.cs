@@ -8,6 +8,9 @@
     using GSoft.Dynamite.Lists.Entities;
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper to manage lists.
+    /// </summary>
     public interface IListHelper
     {
         /// <summary>
@@ -56,7 +59,7 @@
 
         /// <summary>The ensure list.</summary>
         /// <param name="web">The web.</param>
-        /// <param name="listInfos">The list infos.</param>
+        /// <param name="listInfos">The list information.</param>
         /// <returns>The <see cref="IEnumerable"/>.</returns>
         IEnumerable<SPList> EnsureList(SPWeb web, ICollection<ListInfo> listInfos);
 
@@ -105,7 +108,6 @@
         /// <summary>
         /// Add fields in the default view of the list
         /// </summary>
-        /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields);
@@ -113,7 +115,6 @@
         /// <summary>
         /// Add fields in the default view of the list
         /// </summary>
-        /// <param name="web">the current web</param>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
@@ -129,14 +130,14 @@
         /// <summary>
         /// Makes sure the list appears in Quick Launch links on its parent web
         /// </summary>
-        /// <param name="list"></param>
+        /// <param name="list">List that should be added to Quick Launch</param>
         void AddtoQuickLaunch(SPList list);
 
         /// <summary>
-        /// 
+        /// Updates the field default values for the specified list
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="listInfo"></param>
+        /// <param name="list">The SharePoint list to update</param>
+        /// <param name="listInfo">The list metadata, including the new default values for all fields.</param>
         void SetDefaultValues(SPList list, ListInfo listInfo);
     }
 }

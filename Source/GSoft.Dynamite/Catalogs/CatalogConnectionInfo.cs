@@ -7,13 +7,22 @@ namespace GSoft.Dynamite.Catalogs
     /// </summary>
     public class CatalogConnectionInfo
     {
-        public CatalogConnectionInfo(CatalogInfo catalog,
+        /// <summary>
+        /// Initializes a new catalog connection metadata object
+        /// </summary>
+        /// <param name="catalog">The catalog metadata object</param>
+        /// <param name="catalogTaxonomyManagedProperty">The managed property name</param>
+        /// <param name="rewriteCatalogItemUrls">Whether catalog item URLs should be rewritten</param>
+        /// <param name="isManualCatalogItemUrlRewriteTemplate">Whether the URL rewriting is done through a manual template</param>
+        /// <param name="isReusedWithPinning">Whether the term set can be reused through </param>
+        /// <param name="catalogItemUrlRewriteTemplate">The manual item URL rewriting template</param>
+        public CatalogConnectionInfo(
+            CatalogInfo catalog,
             string catalogTaxonomyManagedProperty,
             bool rewriteCatalogItemUrls,
             bool isManualCatalogItemUrlRewriteTemplate,
             bool isReusedWithPinning,
-            string catalogItemUrlRewriteTemplate
-            )
+            string catalogItemUrlRewriteTemplate)
         {
             this.Catalog = catalog;
             this.CatalogTaxonomyManagedProperty = catalogTaxonomyManagedProperty;
@@ -29,7 +38,7 @@ namespace GSoft.Dynamite.Catalogs
         public CatalogInfo Catalog { get; private set; }
 
         /// <summary>
-        /// Indicates if the firendly url should be displayed instead of pointing to the source catalog
+        /// Indicates if the friendly url should be displayed instead of pointing to the source catalog
         /// </summary>
         public bool RewriteCatalogItemUrls { get; private set; }
 

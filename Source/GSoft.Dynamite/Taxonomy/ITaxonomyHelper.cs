@@ -8,6 +8,9 @@ namespace GSoft.Dynamite.Taxonomy
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Taxonomy;
 
+    /// <summary>
+    /// Helper for managing Taxonomy.
+    /// </summary>
     public interface ITaxonomyHelper
     {
         /// <summary>
@@ -136,7 +139,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="defaultValue">The default value.</param>
         void SetDefaultTaxonomyFieldValue(SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue);
 
-       
         /// <summary>
         /// Set default value for a multi valued taxonomy site column
         /// </summary>
@@ -185,6 +187,13 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The <see cref="int"/>.</returns>
         int GetTermStoreDefaultLanguage(SPSite site);
 
+        /// <summary>
+        /// Finds a term site by its ID from within a certain group
+        /// </summary>
+        /// <param name="termStore">The term store to look in</param>
+        /// <param name="group">The parent term set group</param>
+        /// <param name="id">The ID of term set</param>
+        /// <returns>The term set, if found</returns>
         TermSet GetTermSetById(TermStore termStore, Group group, Guid id);
     }
 }

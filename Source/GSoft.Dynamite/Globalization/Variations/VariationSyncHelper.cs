@@ -10,13 +10,24 @@ using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Helpers
 {
+    /// <summary>
+    /// Forces the synchronization (i.e. copy from source label to destination language) 
+    /// of lists and webs in the variations process
+    /// </summary>
     public class VariationSyncHelper : IVariationSyncHelper
     {
+        private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
+
         private readonly ILogger _logger;
         private readonly IListHelper _listHelper;
         private readonly IVariationHelper _variationHelper;
-        private const string PublishingAssemblyPath = @"C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\15\ISAPI\Microsoft.SharePoint.Publishing.dll";
 
+        /// <summary>
+        /// Initializes a new <see cref="VariationSyncHelper"/> instance
+        /// </summary>
+        /// <param name="logger">Logging utility</param>
+        /// <param name="variationHelper">Variations helper</param>
+        /// <param name="listHelper">List helper</param>
         public VariationSyncHelper(ILogger logger, IVariationHelper variationHelper, IListHelper listHelper)
         {
             this._logger = logger;
@@ -28,8 +39,8 @@ namespace GSoft.Dynamite.Helpers
         /// Sync a SPList for multiple target labels
         /// </summary>
         /// <param name="web">The web</param>
-        /// <param name="listInfo"></param>
-        /// <param name="labels"></param>
+        /// <param name="listInfo">The source list metadata</param>
+        /// <param name="labels">The destination labels</param>
         public void SyncList(SPWeb web, ListInfo listInfo, IList<VariationLabelInfo> labels)
         {
             var list = this._listHelper.EnsureList(web, listInfo);

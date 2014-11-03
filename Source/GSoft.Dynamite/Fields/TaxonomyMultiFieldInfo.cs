@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
-using GSoft.Dynamite.Binding;
-using Microsoft.SharePoint.Publishing;
-using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Fields
 {
@@ -19,7 +17,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
         public TaxonomyMultiFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "TaxonomyFieldTypeMulti", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {

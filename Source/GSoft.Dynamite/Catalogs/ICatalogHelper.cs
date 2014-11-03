@@ -1,11 +1,12 @@
+using System.Collections.Generic;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Catalogs
 {
-    using System.Collections.Generic;
-
-    using Microsoft.SharePoint;
-
+    /// <summary>
+    /// Helper class for Cross Site Publishing operations
+    /// </summary>
     public interface ICatalogHelper
     {
         /// <summary>
@@ -98,8 +99,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="site">The site where to create the connection</param>
         /// <param name="catalogConnectionSettings">The catalog connection settings to create</param>
         /// <param name="overwriteIfExist">if true and existing, the connection will be deleted then recreated</param>
-        void CreateCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings,
-            bool overwriteIfExist);
+        void CreateCatalogConnection(SPSite site, CatalogConnectionSettings catalogConnectionSettings, bool overwriteIfExist);
 
         /// <summary>
         /// Delete a catalog connection

@@ -9,6 +9,10 @@ namespace GSoft.Dynamite.WebParts
     {
         private WebPart _webpart;
 
+        /// <summary>
+        /// Initializes a new <see cref="WebPartInfo"/> instance
+        /// </summary>
+        /// <param name="name">The name of the web part</param>
         public WebPartInfo(string name)
         {
             this.Name = name;
@@ -26,8 +30,9 @@ namespace GSoft.Dynamite.WebParts
         {
             get
             {
-                return _webpart;
+                return this._webpart;
             }
+
             set
             {
                 this._webpart = value;

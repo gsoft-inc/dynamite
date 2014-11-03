@@ -11,6 +11,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
     [TestClass]
     public class NoteFieldInfoTest
     {
+        /// <summary>
+        /// Validates that value type is string
+        /// </summary>
         [TestMethod]
         public void ShouldHaveAssociationToValueTypeString()
         {
@@ -19,6 +22,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(typeof(string), noteFieldDefinition.AssociatedValueType);
         }
 
+        /// <summary>
+        /// Validates that Note is the site column type
+        /// </summary>
         [TestMethod]
         public void ShouldBeInitializedWithTypeNote()
         {
@@ -27,6 +33,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("Note", noteFieldDefinition.Type);
         }
 
+        /// <summary>
+        /// Validates that number of lines should be 6 by default
+        /// </summary>
         [TestMethod]
         public void ShouldBeInitializedWithDefaultNumLines6()
         {
@@ -35,6 +44,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(6, noteFieldDefinition.NumLines);
         }
 
+        /// <summary>
+        /// Validates that an ID should always be given
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ShouldHaveId()
@@ -42,6 +54,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.Empty);
         }
 
+        /// <summary>
+        /// Validates that a Name should always be given
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ShouldHaveInternalName()
@@ -49,11 +64,14 @@ namespace GSoft.Dynamite.UnitTests.Fields
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.Empty, internalName: "SomeName");
         }
 
+        /// <summary>
+        /// Validates that XML definition can be used as input
+        /// </summary>
         [TestMethod]
         public void ShouldBeAbleToCreateFromXml()
         {
-            var xElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" />");
-            var noteFieldDefinition = new NoteFieldInfo(xElement);
+            var xmlElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" />");
+            var noteFieldDefinition = new NoteFieldInfo(xmlElement);
 
             Assert.AreEqual("SomeInternalName", noteFieldDefinition.InternalName);
             Assert.AreEqual("Note", noteFieldDefinition.Type);
@@ -64,6 +82,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(6, noteFieldDefinition.NumLines);
         }
 
+        /// <summary>
+        /// Validates that XML definition can be printed as output through Schema
+        /// </summary>
         [TestMethod]
         public void Schema_ShouldOutputValidFieldXml()
         {
@@ -76,6 +97,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(validXml, noteFieldDefinition.Schema.ToString());
         }
 
+        /// <summary>
+        /// Validates that XML definition can be printed as output through ToString
+        /// </summary>
         [TestMethod]
         public void ToString_ShouldOutputValidFieldXml()
         {

@@ -81,7 +81,7 @@ namespace GSoft.Dynamite.Folders
         public PageInfo WelcomePage { get; set; }
 
         /// <summary>
-        /// The culture to create that folder hierarchie. If null, create in all culture.
+        /// The culture to create that folder hierarchy. If null, create in all culture.
         /// </summary>
         public CultureInfo Locale { get; set; }
     }

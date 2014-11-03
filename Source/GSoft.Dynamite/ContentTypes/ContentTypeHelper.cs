@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint;
-using System.Threading;
 using Microsoft.SharePoint.Publishing;
-using GSoft.Dynamite.Fields;
 
 namespace GSoft.Dynamite.ContentTypes
 {
@@ -20,6 +20,10 @@ namespace GSoft.Dynamite.ContentTypes
     {
         private readonly IVariationHelper _variationHelper;
 
+        /// <summary>
+        /// Initializes a new <see cref="ContentTypeHelper"/> instance
+        /// </summary>
+        /// <param name="variationHelper">Variations helper</param>
         public ContentTypeHelper(IVariationHelper variationHelper)
         {
             this._variationHelper = variationHelper;

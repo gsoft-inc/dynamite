@@ -4,6 +4,9 @@ namespace GSoft.Dynamite.Security
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper for managing Role-based security.
+    /// </summary>
     public interface ISecurityHelper
     {
         /// <summary>

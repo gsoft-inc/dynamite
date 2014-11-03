@@ -15,15 +15,15 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// TODO: document proper field types and get rid of this
         /// </summary>
-        /// <param name="internalName"></param>
-        /// <param name="id"></param>
+        /// <param name="internalName">Internal name of the site column</param>
+        /// <param name="id">Unique ID of the column</param>
         public MinimalFieldInfo(string internalName, Guid id) 
             : base(internalName, id, string.Empty, string.Empty, string.Empty, string.Empty)
         {
         }
 
         /// <summary>
-        /// 
+        /// The XML schema of the field
         /// </summary>
         public override XElement Schema
         {

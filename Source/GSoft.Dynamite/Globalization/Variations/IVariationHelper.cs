@@ -4,6 +4,9 @@ namespace GSoft.Dynamite.Globalization.Variations
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// SharePoint variations helper
+    /// </summary>
     public interface IVariationHelper
     {
         /// <summary>

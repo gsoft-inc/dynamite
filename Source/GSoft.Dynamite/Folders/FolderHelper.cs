@@ -44,7 +44,7 @@ namespace GSoft.Dynamite.Folders
         }
 
         /// <summary>
-        /// Method to revert to home page to the default.aspx page
+        /// Method to revert to home page to the default web page
         /// </summary>
         /// <param name="web">The web</param>
         public void ResetHomePageToDefault(SPWeb web)

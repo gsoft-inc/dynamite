@@ -135,7 +135,7 @@ namespace GSoft.Dynamite.Lists
         public bool AddToQuickLaunch { get; set; }
 
         /// <summary>
-        /// Enable attachments ont hte list
+        /// Enable attachments on the list
         /// </summary>
         public bool EnableAttachements { get; set; }
 

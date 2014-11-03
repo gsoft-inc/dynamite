@@ -178,7 +178,6 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<CustomActionHelper>().As<ICustomActionHelper>();
             builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
 
-
             // Web Parts
             builder.RegisterType<WebPartHelper>().As<IWebPartHelper>();
         }

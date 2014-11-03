@@ -3,6 +3,9 @@ namespace GSoft.Dynamite.Branding
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Publishing;
 
+    /// <summary>
+    /// Utility to help manage image renditions
+    /// </summary>
     public interface IImageRenditionHelper
     {
         /// <summary>

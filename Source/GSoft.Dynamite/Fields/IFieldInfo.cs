@@ -1,13 +1,12 @@
-﻿using GSoft.Dynamite.Binding;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Xml.Linq;
+using GSoft.Dynamite.Binding;
 
 namespace GSoft.Dynamite.Fields
 {
+    /// <summary>
+    /// Metadata about a SharePoint field/site column
+    /// </summary>
     public interface IFieldInfo
     {
         /// <summary>
@@ -87,6 +86,5 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <returns>The XML schema of the field as string</returns>
         string ToString();
-
     }
 }

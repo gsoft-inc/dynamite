@@ -10,6 +10,9 @@ namespace GSoft.Dynamite.Search
     using Microsoft.Office.Server.Search.Query.Rules;
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Search service utilities
+    /// </summary>
     public interface ISearchHelper
     {
         /// <summary>
@@ -229,6 +232,11 @@ namespace GSoft.Dynamite.Search
         /// <param name="bestBetId">The bestBetIds</param>
         void CreatePromotedResultAction(QueryRule rule, Guid bestBetId);
 
+        /// <summary>
+        /// Creates a custom property rule
+        /// </summary>
+        /// <param name="resultTypeRule">The result type rule metadata</param>
+        /// <returns>The created property rule</returns>
         PropertyRule CreateCustomPropertyRule(ResultTypeRuleInfo resultTypeRule);
 
         /// <summary>

@@ -6,6 +6,9 @@ namespace GSoft.Dynamite.ContentTypes
     using GSoft.Dynamite.Fields;
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper for managing content types.
+    /// </summary>
     public interface IContentTypeHelper
     {
         /// <summary>
@@ -33,19 +36,17 @@ namespace GSoft.Dynamite.ContentTypes
 
         /// <summary>The ensure content type.</summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
-        /// <param name="contentTypeInfos">The content type infos.</param>
+        /// <param name="contentTypeInfos">The content type information</param>
         /// <returns>The <see cref="IEnumerable"/>.</returns>
         IEnumerable<SPContentType> EnsureContentType(
             SPContentTypeCollection contentTypeCollection,
             ICollection<ContentTypeInfo> contentTypeInfos);
-
 
         /// <summary>The ensure content type.</summary>
         /// <param name="collection">The collection.</param>
         /// <param name="contentType">The content type.</param>
         /// <returns>The <see cref="SPContentType"/>.</returns>
         SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType);
-
 
         /// <summary>
         /// Deletes the content type if not used.

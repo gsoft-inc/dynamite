@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Xml.Linq;
 using GSoft.Dynamite.Fields;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.Fields
 {
     /// <summary>
-    /// Summary description for TextFieldInfo
+    /// Validates behavior of <see cref="TextFieldInfo"/>
     /// </summary>
     [TestClass]
     public class TextFieldInfoTest
     {
+        /// <summary>
+        /// Validates that string is the associated value type
+        /// </summary>
         [TestMethod]
         public void ShouldHaveAssociationToValueTypeString()
         {
@@ -21,6 +22,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(typeof(string), textFieldDefinition.AssociatedValueType);
         }
 
+        /// <summary>
+        /// Validates that Text is the site column type name
+        /// </summary>
         [TestMethod]
         public void ShouldBeInitializedWithTypeText()
         {
@@ -29,6 +33,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("Text", textFieldDefinition.Type);
         }
 
+        /// <summary>
+        /// Validates that maximum length should be 255 by default
+        /// </summary>
         [TestMethod]
         public void ShouldBeInitializedWithDefaultMaxLength255()
         {
@@ -37,6 +44,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(255, textFieldDefinition.MaxLength);
         }
 
+        /// <summary>
+        /// Validates that ID is always given
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ShouldHaveId()
@@ -44,6 +54,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.Empty);
         }
 
+        /// <summary>
+        /// Validates that Name is always given
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void ShouldHaveInternalName()
@@ -51,11 +64,14 @@ namespace GSoft.Dynamite.UnitTests.Fields
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.Empty, internalName: "SomeName");
         }
 
+        /// <summary>
+        /// Validates that XML definition can be used as input
+        /// </summary>
         [TestMethod]
         public void ShouldBeAbleToCreateFromXml()
         {
-            var xElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"255\" />");
-            var textFieldDefinition = new TextFieldInfo(xElement);
+            var xmlElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"255\" />");
+            var textFieldDefinition = new TextFieldInfo(xmlElement);
 
             Assert.AreEqual("SomeInternalName", textFieldDefinition.InternalName);
             Assert.AreEqual("Text", textFieldDefinition.Type);
@@ -66,6 +82,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(255, textFieldDefinition.MaxLength);
         }
 
+        /// <summary>
+        /// Validates that XML definition can be printed as output through Schema
+        /// </summary>
         [TestMethod]
         public void Schema_ShouldOutputValidFieldXml()
         {
@@ -77,6 +96,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual(validXml, textFieldDefinition.Schema.ToString());
         }
 
+        /// <summary>
+        /// Validates that XML definition can be printed as output through ToString
+        /// </summary>
         [TestMethod]
         public void ToString_ShouldOutputValidFieldXml()
         {

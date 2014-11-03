@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Utility to help manage master pages
+    /// </summary>
     public interface IMasterPageHelper
     {
         /// <summary>

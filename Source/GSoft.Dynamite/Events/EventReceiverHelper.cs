@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.SharePoint;
 using GSoft.Dynamite.ContentTypes;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Events
 {
@@ -12,9 +12,13 @@ namespace GSoft.Dynamite.Events
     {
         private readonly IContentTypeHelper contentTypeBuilder;
 
-        public EventReceiverHelper(IContentTypeHelper contentTypeBuilder)
+        /// <summary>
+        /// Initializes a new <see cref="EventReceiverHelper"/> instance.
+        /// </summary>
+        /// <param name="contentTypeHelper">Content type management utility</param>
+        public EventReceiverHelper(IContentTypeHelper contentTypeHelper)
         {
-            this.contentTypeBuilder = contentTypeBuilder;
+            this.contentTypeBuilder = contentTypeHelper;
         }
 
         /// <summary>
