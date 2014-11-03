@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -312,7 +312,6 @@
     <Compile Include="Catalogs\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
-    <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Documents\ContentOrganizerHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />

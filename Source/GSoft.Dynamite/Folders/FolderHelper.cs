@@ -82,7 +82,7 @@ namespace GSoft.Dynamite.Folders
                 if (folderInfo.WelcomePage != null)
                 {
                     var rootFolder = library.ParentWeb.RootFolder;
-                    rootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl;
+                    rootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl.ToString();
                     rootFolder.Update();
                 }
             }

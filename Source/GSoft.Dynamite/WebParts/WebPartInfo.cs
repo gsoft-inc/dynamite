@@ -7,38 +7,45 @@ namespace GSoft.Dynamite.WebParts
     /// </summary>
     public class WebPartInfo
     {
-        private WebPart _webpart;
+        private WebPart webpart;
 
         /// <summary>
         /// Initializes a new <see cref="WebPartInfo"/> instance
         /// </summary>
-        /// <param name="name">The name of the web part</param>
-        public WebPartInfo(string name)
+        /// <param name="name">The title of web part</param>
+        /// <param name="zoneName">The name of zone in which the web part should be instantiated</param>
+        public WebPartInfo(string name, string zoneName)
         {
             this.Name = name;
+            this.ZoneName = zoneName;
         }
 
         /// <summary>
-        /// Name of the WebPart
+        /// Title of the web part
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The WebPartObject
+        /// Name of the WebPartZone to which to add the web part
+        /// </summary>
+        public string ZoneName { get; set; }
+
+        /// <summary>
+        /// The WebPart object that should be provisioned
         /// </summary>
         public WebPart WebPart
         {
             get
             {
-                return this._webpart;
+                return this.webpart;
             }
 
             set
             {
-                this._webpart = value;
+                this.webpart = value;
 
                 // Update the title
-                this._webpart.Title = this.Name;
+                this.webpart.Title = this.Name;
             }    
         }
     }

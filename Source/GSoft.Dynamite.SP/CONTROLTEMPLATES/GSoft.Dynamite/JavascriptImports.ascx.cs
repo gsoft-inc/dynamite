@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -12,7 +13,7 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
     /// <summary>
     /// User control to add the import of JavaScript libraries
     /// </summary>
-    public partial class JavascriptImports : UserControl
+    public partial class JavaScriptImports : UserControl
     {
         /// <summary>
         /// Root folder URL format
@@ -39,14 +40,14 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 
                     if (!string.IsNullOrEmpty(rootFolderQueryStringArgument))
                     {
-                        var parentFolderUrlSubStringLength = rootFolderQueryStringArgument.Length - (rootFolderQueryStringArgument.Length - rootFolderQueryStringArgument.LastIndexOf("/"));
+                        var parentFolderUrlSubStringLength = rootFolderQueryStringArgument.Length - (rootFolderQueryStringArgument.Length - rootFolderQueryStringArgument.LastIndexOf("/", StringComparison.OrdinalIgnoreCase));
                         if (parentFolderUrlSubStringLength > 0)
                         {
                             var parentFolderUrl = rootFolderQueryStringArgument.Substring(0, parentFolderUrlSubStringLength);
 
                             if (parentFolderUrl.Contains(listUrl))
                             {
-                                this.ParentFolderUrlLiteral.Text = string.Format(ListRootFolderUrlFormat, listUrl, parentFolderUrl);
+                                this.ParentFolderUrlLiteral.Text = string.Format(CultureInfo.InvariantCulture, ListRootFolderUrlFormat, listUrl, parentFolderUrl);
                             }
                         }
                     }
@@ -54,23 +55,23 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
                 else if (SPContext.Current.File != null)
                 {
                     // go to AllItems view for current item's folder
-                    this.ParentFolderUrlLiteral.Text = string.Format(ListRootFolderUrlFormat, listUrl, SPContext.Current.File.ParentFolder.ServerRelativeUrl);
+                    this.ParentFolderUrlLiteral.Text = string.Format(CultureInfo.InvariantCulture, ListRootFolderUrlFormat, listUrl, SPContext.Current.File.ParentFolder.ServerRelativeUrl);
                 }
             }
 
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryPlaceHolderShim);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryNoConflictScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockOutScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.MomentScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.UnderscoreScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutBindingHandlersScriptLink);
-            this.MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutExtensionsScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryPlaceholderShim);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.JqueryNoConflictScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.MomentScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.UnderscoreScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.DynamiteCoreScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutBindingHandlersScriptLink);
+            MakeBrowserCacheSafeOrRemoveIfMissing(this.KnockoutExtensionsScriptLink);
         }
 
-        private void MakeBrowserCacheSafeOrRemoveIfMissing(ScriptLink scriptLink)
+        private static void MakeBrowserCacheSafeOrRemoveIfMissing(ScriptLink scriptLink)
         {
             try
             {

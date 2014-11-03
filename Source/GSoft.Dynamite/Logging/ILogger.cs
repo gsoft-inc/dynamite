@@ -83,7 +83,7 @@ namespace GSoft.Dynamite.Logging
         /// <summary>
         /// Output information on an exception
         /// </summary>
-        /// <param name="exception">The exception to log</param>
-        void Exception(Exception exception);
+        /// <param name="exceptionToLog">The exception to log</param>
+        void Exception(Exception exceptionToLog);
     }
 }
