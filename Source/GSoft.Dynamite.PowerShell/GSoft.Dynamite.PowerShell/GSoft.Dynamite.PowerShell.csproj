@@ -112,7 +112,6 @@
     <Compile Include="ServiceLocator\PowerShellRegistrationModule.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ServiceLocator\PowerShellResourceLocationConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Shared\GSoft.Dynamite.snk">
