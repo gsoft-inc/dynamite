@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 
@@ -69,6 +70,7 @@ namespace GSoft.Dynamite.Branding
         /// Generates the java script file corresponding to the HTML file.
         /// </summary>
         /// <param name="htmlFiles">The HTML files.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "SPFile-generated exceptions are hard to anticipate. General exceptions are properly logged here.")]
         public void GenerateJavaScriptFile(IList<SPFile> htmlFiles)
         {
             foreach (var htmlFile in htmlFiles)

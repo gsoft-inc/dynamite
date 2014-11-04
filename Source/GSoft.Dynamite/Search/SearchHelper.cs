@@ -755,7 +755,7 @@ namespace GSoft.Dynamite.Search
                 resType.Name = resultType.Name;
                 resType.SourceID = resultSource.Id;
 
-                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateUrl;
+                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateTokenizedPath;
                 var properties = resultType.DisplayProperties.Select(t => t.Name).ToArray();
                 resType.DisplayProperties = string.Join(",", properties);
                 resType.RulePriority = resultType.Priority;

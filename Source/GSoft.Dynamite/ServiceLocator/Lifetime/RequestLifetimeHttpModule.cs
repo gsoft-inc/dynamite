@@ -43,7 +43,7 @@ namespace GSoft.Dynamite.ServiceLocator.Lifetime
 
             if (requestLifetimeScopeProvider == null)
             {
-                throw new ArgumentNullException("lifetimeScopeProvider");
+                throw new ArgumentNullException("requestLifetimeScopeProvider");
             }
 
             // Add to dictionary of (there can be a different per-request lifetime provider for each container in the AppDomain)

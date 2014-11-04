@@ -29,14 +29,26 @@ namespace GSoft.Dynamite.Lists.Entities
         /// <param name="title">The title of the item</param>
         /// <param name="description">The description of the published link</param>
         /// <param name="url">The url of the link</param>
-        /// <param name="urlDescription">The description of the url</param>
-        public PublishedLink(string title, string description, string url, string urlDescription)
+        /// <param name="linkDescription">The description of the url</param>
+        public PublishedLink(string title, string description, Uri url, string linkDescription)
             : this()
         {
             this.Title = title;
             this.PublishedLinksDescription = description;
-            this.PublishedLinksPath.Url = url;
-            this.PublishedLinksPath.Description = urlDescription;
+            this.PublishedLinksPath.Url = url.AbsoluteUri;
+            this.PublishedLinksPath.Description = linkDescription;
+        }
+
+        /// <summary>
+        /// Constructor with parameters
+        /// </summary>
+        /// <param name="title">The title of the item</param>
+        /// <param name="description">The description of the published link</param>
+        /// <param name="url">The url of the link</param>
+        /// <param name="linkDescription">The description of the url</param>
+        public PublishedLink(string title, string description, string url, string linkDescription)
+            : this(title, description, new Uri(url), linkDescription)
+        {
         }
 
         /// <summary>

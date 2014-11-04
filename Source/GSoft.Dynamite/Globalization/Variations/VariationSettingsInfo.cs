@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GSoft.Dynamite.Globalization.Variations
 {
@@ -53,6 +54,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <summary>
         /// Supported language labels
         /// </summary>
-        public IList<VariationLabelInfo> Labels { get; set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexile object initialization.")]
+        public ICollection<VariationLabelInfo> Labels { get; set; }
     }
 }

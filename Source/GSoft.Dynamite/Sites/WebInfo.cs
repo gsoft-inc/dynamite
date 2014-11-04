@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +25,8 @@ namespace GSoft.Dynamite.Sites
         /// <summary>
         /// Lists of the web
         /// </summary>
-        public IList<ListInfo> Lists { get; set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexile object initialization.")]
+        public ICollection<ListInfo> Lists { get; set; }
 
         /// <summary>
         /// The web's name

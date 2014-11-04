@@ -35,20 +35,6 @@ namespace GSoft.Dynamite.ServiceLocator
         private static readonly IDictionary<string, IContainer> AppDomainContainersCollection = new Dictionary<string, IContainer>();
 
         /// <summary>
-        /// Returns a service locator instance for the entire application (i.e. throughout 
-        /// the current AppDomain). Acts as root Container for all other child lifetime
-        /// scopes. Hosts all singletons that are registered as SingleInstance().
-        /// Whenever applicable, prefer creating a child lifetime scope instead of resolving 
-        /// directly for this root Container instance.
-        /// </summary>
-        /// <param name="appRootNamespace">The key of the current app</param>
-        /// <returns>The container</returns>
-        public static IContainer CurrentContainer(string appRootNamespace)
-        {
-            return CurrentContainer(appRootNamespace, null);
-        }
-
-        /// <summary>
         /// The current container.
         /// </summary>
         /// <param name="appRootNamespace">
@@ -127,8 +113,8 @@ namespace GSoft.Dynamite.ServiceLocator
             // Now make sure all Dynamite component modules (i.e. all DLLs that start with GSoft.Dynamite.*) are registered BEFORE
             // any other modules.
             // This ensures that "client" modules will be able to override the Container registrations of GSoft.Dynamite.Components modules.
-            var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite."));
-            var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite."));
+            var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite.", StringComparison.OrdinalIgnoreCase));
+            var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite.", StringComparison.OrdinalIgnoreCase));
 
             // 1) Build the base container with only Dynamite-related components
             containerBuilderForDynamiteComponents.RegisterAssemblyModules(dynamiteComponentModuleAssemblies.ToArray());

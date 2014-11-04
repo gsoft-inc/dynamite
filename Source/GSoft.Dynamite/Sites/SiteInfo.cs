@@ -12,9 +12,19 @@ namespace GSoft.Dynamite.Sites
         /// </summary>
         /// <param name="url">The site's Uri-parse-able URL</param>
         /// <param name="name">The site's name</param>
-        public SiteInfo(string url, string name)
+        public SiteInfo(string url, string name) 
+            : this(new Uri(url), name)
+        { 
+        }
+
+        /// <summary>
+        /// Initializes a new site metadata object
+        /// </summary>
+        /// <param name="url">The site's Uri-parse-able URL</param>
+        /// <param name="name">The site's name</param>
+        public SiteInfo(Uri url, string name)
         {
-           this.Url = new Uri(url);
+           this.Url = url;
            this.Name = name;
         }
 

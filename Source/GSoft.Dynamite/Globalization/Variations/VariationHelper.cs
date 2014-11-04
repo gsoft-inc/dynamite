@@ -272,10 +272,10 @@ namespace GSoft.Dynamite.Helpers
             this.EnsureVariationsSettings(site, variationSettings);
             
             // Create labels
-            this.EnsureVariationlabels(site, variationSettings.Labels);
+            this.EnsureVariationlabels(site, variationSettings.Labels.ToList());
 
             // Create hierachies
-            this.CreateHierarchies(site, variationSettings.Labels);
+            this.CreateHierarchies(site, variationSettings.Labels.ToList());
         }
 
         /// <summary>

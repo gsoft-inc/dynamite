@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,8 @@ namespace GSoft.Dynamite.Branding
         /// <param name="serverRelativeUrl">The server relative url</param>
         /// <param name="serverRelativeCssUrl">The server relative CSS URL.</param>
         /// <returns>A CSS registration control.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
         public static CssRegistration GenerateCssRegistration(string serverRelativeUrl, string serverRelativeCssUrl)
         {
             return GenerateCssRegistration(serverRelativeUrl, serverRelativeCssUrl, true, string.Empty);
@@ -48,6 +51,7 @@ namespace GSoft.Dynamite.Branding
         /// <param name="site">The current Site</param>
         /// <param name="serverRelativeCssUrl">The server relative CSS URL.</param>
         /// <returns>A CSS registration control.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
         public static CssRegistration GenerateCssRegistration(SPSite site, string serverRelativeCssUrl)
         {
             return GenerateCssRegistration(site.ServerRelativeUrl, serverRelativeCssUrl, true, string.Empty);
@@ -60,6 +64,7 @@ namespace GSoft.Dynamite.Branding
         /// <param name="serverRelativeCssUrl">The server relative CSS URL.</param>
         /// <param name="afterCss">To put the CSS registration after this script</param>
         /// <returns>A CSS registration control.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
         public static CssRegistration GenerateCssRegistration(SPSite site, string serverRelativeCssUrl, string afterCss)
         {
             return GenerateCssRegistration(site.ServerRelativeUrl, serverRelativeCssUrl, true, afterCss);
@@ -73,6 +78,8 @@ namespace GSoft.Dynamite.Branding
         /// <param name="useVersionTag">Boolean to override the use of a version tag. It's easier to break into JavaScript if the version doesn't change on every load.</param>
         /// <param name="afterCss">To put the CSS registration after this script</param>
         /// <returns>A CSS registration control.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "While dealing with CssRegistration objects, string URL manipulation is more straightforward than using Uris.")]
         public static CssRegistration GenerateCssRegistration(string serverRelativeUrl, string serverRelativeCssUrl, bool useVersionTag, string afterCss)
         {
             var cssUrl = useVersionTag ? serverRelativeCssUrl + "?v=" + VersionContext.CurrentVersionTag : serverRelativeCssUrl;
