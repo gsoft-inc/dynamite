@@ -36,5 +36,13 @@ namespace GSoft.Dynamite.Pages
         /// <param name="excludeObsolete">exclude obsolete page layout</param>
         /// <returns>the page layout</returns>
         PageLayout GetPageLayout(PublishingSite publishingSite, string pageLayoutName, bool excludeObsolete);
+
+        /// <summary>
+        /// Configures a page layout
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="pageLayoutInfo">The page layout info</param>
+        /// <returns>The page layout</returns>
+        PageLayout EnsurePageLayout(SPSite site, PageLayoutInfo pageLayoutInfo);
     }
 }

@@ -18,10 +18,22 @@ namespace GSoft.Dynamite.Events
         /// <param name="contentType"></param>
         /// <param name="type"></param>
         public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type)
+            : this (contentType, type, SPEventReceiverSynchronization.Default)
+        {
+        }
+
+        /// <summary>
+        /// Event Receiver Info (Content Type)
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="type"></param>
+        /// <param name="syncType">Synchronization type</param>
+        public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
         {
             this.ContentType = contentType;
             this.ReceiverType = type;
             this.EventOwner = EventReceiverOwner.ContentType;
+            this.SynchronizationType = syncType;
         }
 
         /// <summary>
@@ -29,11 +41,22 @@ namespace GSoft.Dynamite.Events
         /// </summary>
         /// <param name="list"></param>
         /// <param name="type"></param>
-        public EventReceiverInfo(ListInfo list, SPEventReceiverType type)
+        public EventReceiverInfo(ListInfo list, SPEventReceiverType type) : this(list, type, SPEventReceiverSynchronization.Default)
+        {
+        }
+
+        /// <summary>
+        /// Event Receiver Info (List)
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="type"></param>
+        /// <param name="syncType">Synchronization type</param>
+        public EventReceiverInfo(ListInfo list, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
         {
             this.List = list;
             this.EventOwner = EventReceiverOwner.List;
             this.ReceiverType = type;
+            this.SynchronizationType = syncType;
         }
 
         /// <summary>
@@ -65,5 +88,10 @@ namespace GSoft.Dynamite.Events
         /// The owner of the event receiver
         /// </summary>
         public EventReceiverOwner EventOwner { get; private set; }
+
+        /// <summary>
+        /// Synchronization type for the event receiver
+        /// </summary>
+        public SPEventReceiverSynchronization SynchronizationType { get; set; }
     }
 }

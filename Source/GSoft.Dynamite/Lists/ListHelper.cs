@@ -2,24 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
-using GSoft.Dynamite.Lists;
-using GSoft.Dynamite.Lists.Entities;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
-using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -34,6 +26,8 @@ namespace GSoft.Dynamite.Lists
         private readonly ILogger logger;
         private readonly ITaxonomyHelper taxonomyHelper;
         private readonly IListLocator listLocator;
+
+        private const string PagesLibraryRootFolder = "Pages";
 
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
@@ -209,20 +203,24 @@ namespace GSoft.Dynamite.Lists
             }
             else
             {
-                this.logger.Info("List " + listInfo.RootFolderUrl + " already exists");
+                // If it isn't the pages library
+                if (string.CompareOrdinal(list.RootFolder.Name, PagesLibraryRootFolder) != 0)
+                {                            
+                    this.logger.Info("List " + listInfo.RootFolderUrl + " already exists");
 
-                // If the Overwrite parameter is set to true, celete and recreate the catalog
-                if (listInfo.Overwrite)
-                {
-                    this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
+                    // If the Overwrite parameter is set to true, celete and recreate the catalog
+                    if (listInfo.Overwrite)
+                    {
+                        this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
 
-                    list.Delete();
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
-                }
-                else
-                {
-                    // Get the existing list
-                    list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                        list.Delete();
+                        list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                    }
+                    else
+                    {
+                        // Get the existing list
+                        list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                    }
                 }
             }
 

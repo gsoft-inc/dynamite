@@ -367,14 +367,18 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="assemblyName">Name of the assembly.</param>
         /// <param name="className">Name of the class.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className)
         {
+            SPEventReceiverDefinition eventReceiverDefinition = null;
+
             var classType = Type.GetType(string.Format(CultureInfo.InvariantCulture, "{0}, {1}", className, assemblyName));
             if (classType != null)
             {
                 var assembly = Assembly.GetAssembly(classType);
-                this.AddEventReceiverDefinition(contentType, type, assembly, className);
+                eventReceiverDefinition = this.AddEventReceiverDefinition(contentType, type, assembly, className);
             }
+
+            return eventReceiverDefinition;
         }
 
         /// <summary>
@@ -385,21 +389,25 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="assembly">The assembly.</param>
         /// <param name="className">Name of the class.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className)
         {
+            SPEventReceiverDefinition eventReceiverDefinition = null;
+
             var isAlreadyDefined = contentType.EventReceivers.Cast<SPEventReceiverDefinition>()
                 .Any(x => (x.Class == className) && (x.Type == type));
 
             // If definition isn't already defined, add it to the content type
             if (!isAlreadyDefined)
             {
-                var eventReceiverDefinition = contentType.EventReceivers.Add();
+                eventReceiverDefinition = contentType.EventReceivers.Add();
                 eventReceiverDefinition.Type = type;
                 eventReceiverDefinition.Assembly = assembly.FullName;
                 eventReceiverDefinition.Class = className;
                 eventReceiverDefinition.Update();
                 contentType.Update(true);
             }
+
+            return eventReceiverDefinition;
         }
 
         /// <summary>

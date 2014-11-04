@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI;
+using GSoft.Dynamite.Events;
 using GSoft.Dynamite.WebParts;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
@@ -67,15 +69,15 @@ namespace GSoft.Dynamite.Pages
 
             if (publishingPage == null)
             {
-                // Only create the page if it doesn't exist yet
+                // Only create the page if it doesn't exist yet and allow event firing on ItemAdded
                 publishingPage = publishingPages.Add(pageServerRelativeUrl, pageLayout);
+            }
 
-                // Set the title
-                if (!string.IsNullOrEmpty(page.Title))
-                {
-                    publishingPage.Title = page.Title;
-                    publishingPage.Update();
-                }
+            // Set the title
+            if (!string.IsNullOrEmpty(page.Title))
+            {
+                publishingPage.Title = page.Title;
+                publishingPage.Update();
             }
 
             // Insert WebParts
@@ -90,7 +92,7 @@ namespace GSoft.Dynamite.Pages
                 publishingPage.ListItem.File.CheckIn("Dynamite Ensure Creation");
                 publishingPage.ListItem.File.Publish("Dynamite Ensure Creation");
             }
-
+            
             return publishingPage;
         }
 
@@ -104,6 +106,32 @@ namespace GSoft.Dynamite.Pages
         public PageLayout GetPageLayout(PublishingSite publishingSite, string pageLayoutName, bool excludeObsolete)
         {
             return publishingSite.GetPageLayouts(excludeObsolete).Cast<PageLayout>().FirstOrDefault(pageLayout => pageLayout.Name == pageLayoutName);
+        }
+
+        /// <summary>
+        /// Configures a page layout
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="pageLayoutInfo">The page layout info</param>
+        /// <returns>The page layout</returns>
+        public PageLayout EnsurePageLayout(SPSite site, PageLayoutInfo pageLayoutInfo)
+        {
+            var publishingSite = new PublishingSite(site);
+            var pageLayout = this.GetPageLayout(publishingSite, pageLayoutInfo.Name, true);
+
+            if (!string.IsNullOrEmpty(pageLayoutInfo.AssociatedContentTypeId))
+            {
+                var contentTypeId =
+                site.RootWeb.ContentTypes.BestMatch(new SPContentTypeId(pageLayoutInfo.AssociatedContentTypeId));
+
+                var ct = site.RootWeb.ContentTypes[contentTypeId];
+
+                // Update the publishing associated content type
+                pageLayout.AssociatedContentType = ct;
+                pageLayout.Update();
+            }
+
+            return pageLayout;
         }
     }
 }

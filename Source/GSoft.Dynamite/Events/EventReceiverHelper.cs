@@ -106,6 +106,8 @@ namespace GSoft.Dynamite.Events
         /// <param name="eventReceiver">The event receiver definition</param>
         public void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
+            SPEventReceiverDefinition eventDefinition = null;
+
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
             {
@@ -113,9 +115,16 @@ namespace GSoft.Dynamite.Events
 
                 if (contentType != null)
                 {
-                    this.contentTypeBuilder.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
+                    eventDefinition = this.contentTypeBuilder.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
                 }
-            }         
+            }  
+       
+            // Update Synchronization
+            if (eventReceiver.SynchronizationType != SPEventReceiverSynchronization.Default && eventDefinition != null)
+            {
+                eventDefinition.Synchronization = eventReceiver.SynchronizationType;
+                eventDefinition.Update();
+            }
         }
 
         /// <summary>

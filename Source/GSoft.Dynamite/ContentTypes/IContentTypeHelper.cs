@@ -93,7 +93,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="assemblyName">Name of the assembly.</param>
         /// <param name="className">Name of the class.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className);
+        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className);
 
         /// <summary>
         /// Adds the event receiver definition to the content type.
@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="assembly">The assembly.</param>
         /// <param name="className">Name of the class.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className);
+        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className);
 
         /// <summary>
         /// Reorders fields in the content type according to index position.
