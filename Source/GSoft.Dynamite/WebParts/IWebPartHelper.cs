@@ -6,6 +6,9 @@ namespace GSoft.Dynamite.WebParts
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.WebPartPages;
 
+    /// <summary>
+    /// Web Part helper
+    /// </summary>
     public interface IWebPartHelper
     {
         /// <summary>

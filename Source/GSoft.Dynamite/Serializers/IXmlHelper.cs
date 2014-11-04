@@ -2,6 +2,9 @@
 {
     using System.Xml;
 
+    /// <summary>
+    /// Helper to work with Xml
+    /// </summary>
     public interface IXmlHelper
     {
         /// <summary>

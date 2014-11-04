@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
-using System.Web;
-using Microsoft.Office.Server.Search.WebControls;
-using Microsoft.SharePoint.Utilities;
 using System.Runtime.InteropServices;
+using System.Web;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Globalization
 {

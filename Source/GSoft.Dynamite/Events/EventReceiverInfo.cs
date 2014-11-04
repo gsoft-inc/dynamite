@@ -4,30 +4,27 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Events
 {
+    /// <summary>
+    /// Info object for an event receiver
+    /// </summary>
     public class EventReceiverInfo
     {
-        public enum EventReceiverOwner
-        {
-            ContentType,
-            List
-        }
-
         /// <summary>
         /// Event Receiver Info (Content Type)
         /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="type"></param>
+        /// <param name="contentType">The content type</param>
+        /// <param name="type">The event receiver type</param>
         public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type)
-            : this (contentType, type, SPEventReceiverSynchronization.Default)
+            : this(contentType, type, SPEventReceiverSynchronization.Default)
         {
         }
 
         /// <summary>
         /// Event Receiver Info (Content Type)
         /// </summary>
-        /// <param name="contentType"></param>
-        /// <param name="type"></param>
-        /// <param name="syncType">Synchronization type</param>
+        /// <param name="contentType">The content type</param>
+        /// <param name="type">The event receiver type</param>
+        /// <param name="syncType">The synchronization type</param>
         public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
         {
             this.ContentType = contentType;
@@ -39,8 +36,8 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// Event Receiver Info (List)
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="type"></param>
+        /// <param name="list">The list</param>
+        /// <param name="type">The event receiver type</param>
         public EventReceiverInfo(ListInfo list, SPEventReceiverType type) : this(list, type, SPEventReceiverSynchronization.Default)
         {
         }
@@ -48,15 +45,31 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// Event Receiver Info (List)
         /// </summary>
-        /// <param name="list"></param>
-        /// <param name="type"></param>
-        /// <param name="syncType">Synchronization type</param>
+        /// <param name="list">The list</param>
+        /// <param name="type">The event receiver type</param>
+        /// <param name="syncType">The synchronization type</param>
         public EventReceiverInfo(ListInfo list, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
         {
             this.List = list;
             this.EventOwner = EventReceiverOwner.List;
             this.ReceiverType = type;
             this.SynchronizationType = syncType;
+        }
+
+        /// <summary>
+        /// The owner type
+        /// </summary>
+        public enum EventReceiverOwner
+        {
+            /// <summary>
+            /// Content Type Owner Type
+            /// </summary>
+            ContentType,
+
+            /// <summary>
+            /// List Owner Type
+            /// </summary>
+            List
         }
 
         /// <summary>

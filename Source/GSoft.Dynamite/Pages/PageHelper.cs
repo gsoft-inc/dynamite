@@ -15,9 +15,13 @@ namespace GSoft.Dynamite.Pages
     {
         private readonly IWebPartHelper webPartHelper;
 
-        public PageHelper(IWebPartHelper webParthelper)
+        /// <summary>
+        /// Initializes a new <see cref="PageHelper"/> instance
+        /// </summary>
+        /// <param name="webPartHelper">Web Part helper</param>
+        public PageHelper(IWebPartHelper webPartHelper)
         {
-            this.webPartHelper = webParthelper;
+            this.webPartHelper = webPartHelper;
         }
 
         /// <summary>
@@ -81,9 +85,9 @@ namespace GSoft.Dynamite.Pages
             }
 
             // Insert WebParts
-            foreach (KeyValuePair<string, WebPartInfo> wpSetting in page.WebParts)
+            foreach (KeyValuePair<string, WebPartInfo> webPartSetting in page.WebParts)
             {
-                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, wpSetting.Value.WebPart, wpSetting.Key, 1);
+                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, webPartSetting.Value.WebPart, webPartSetting.Key, 1);
             }
 
             // Publish

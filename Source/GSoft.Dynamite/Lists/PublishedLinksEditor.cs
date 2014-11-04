@@ -20,8 +20,8 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// Initializes a new instance of <see cref="PublishedLinksEditor"/>
         /// </summary>
-        /// <param name="listLocator"></param>
-        /// <param name="entityBinder"></param>
+        /// <param name="listLocator">The list locator</param>
+        /// <param name="entityBinder">The entity binder</param>
         public PublishedLinksEditor(IListLocator listLocator, ISharePointEntityBinder entityBinder)
         {
             this.listLocator = listLocator;

@@ -18,6 +18,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Constructor for TermStoreInfo
         /// </summary>
+        /// <param name="id">The term store's ID</param>
+        /// <param name="name">The term store's name</param>
         public TermStoreInfo(Guid id, string name)
         {
             this.Id = id;

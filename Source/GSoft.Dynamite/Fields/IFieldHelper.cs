@@ -7,6 +7,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper for managing SP Fields.
+    /// </summary>
     public interface IFieldHelper
     {
         /// <summary>
@@ -61,7 +64,7 @@
 
         /// <summary>Adds a collection of fields defined in xml to a collection of fields.</summary>
         /// <param name="fieldCollection">The SPField collection.</param>
-        /// <param name="fieldInfos">The field Infos.</param>
+        /// <param name="fieldInfos">The fields' information.</param>
         /// <returns>A collection of strings that contain the internal name of the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
         IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos);

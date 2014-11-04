@@ -20,6 +20,8 @@ namespace GSoft.Dynamite.Lists
     /// </summary>
     public class ListHelper : IListHelper
     {
+        private const string PagesLibraryRootFolder = "Pages";
+
         private readonly IContentTypeHelper contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
         private readonly IFieldHelper fieldHelper;
@@ -27,15 +29,13 @@ namespace GSoft.Dynamite.Lists
         private readonly ITaxonomyHelper taxonomyHelper;
         private readonly IListLocator listLocator;
 
-        private const string PagesLibraryRootFolder = "Pages";
-
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
         /// <param name="fieldHelper">The field helper.</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
-        /// <param name="binder">The entity binder</param>
         /// <param name="taxonomyHelper">The taxonomy Helper.</param>
+        /// <param name="listLocator">List locator</param>
         public ListHelper(
             IContentTypeHelper contentTypeBuilder, 
             IFieldHelper fieldHelper, 
@@ -475,7 +475,7 @@ namespace GSoft.Dynamite.Lists
                 {
                     // Get the field in the list
                     var field = list.Fields.GetFieldByInternalName(fieldDefinition.InternalName);
-                    if (field != null && field.GetType() == typeof(TaxonomyField) && ((fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))))
+                    if (field != null && field.GetType() == typeof(TaxonomyField) && fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))
                     {
                         var taxonomyField = fieldDefinition as TaxonomyFieldInfo;
                        
@@ -513,6 +513,5 @@ namespace GSoft.Dynamite.Lists
                 }
             }
         }
-
     }
 }

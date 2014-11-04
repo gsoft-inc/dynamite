@@ -7,6 +7,9 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Folders
 {
+    /// <summary>
+    /// Helper for SharePoint folders
+    /// </summary>
     public interface IFolderHelper
     {
         /// <summary>
@@ -17,7 +20,7 @@ namespace GSoft.Dynamite.Folders
         void EnsureFolderHierarchy(SPList library, FolderInfo folderInfo);
 
         /// <summary>
-        /// Method to revert to home page to the default.aspx page
+        /// Method to revert to home page to the default web page
         /// </summary>
         /// <param name="web">The web</param>
         void ResetHomePageToDefault(SPWeb web);

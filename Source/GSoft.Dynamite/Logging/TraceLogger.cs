@@ -1,6 +1,6 @@
-﻿using Microsoft.SharePoint.Administration;
-using System;
+﻿using System;
 using System.Diagnostics;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Logging
 {

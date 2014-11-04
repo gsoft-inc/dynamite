@@ -6,6 +6,9 @@ namespace GSoft.Dynamite.ContentTypes
     using GSoft.Dynamite.Fields;
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper for managing content types.
+    /// </summary>
     public interface IContentTypeHelper
     {
         /// <summary>
@@ -33,19 +36,17 @@ namespace GSoft.Dynamite.ContentTypes
 
         /// <summary>The ensure content type.</summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
-        /// <param name="contentTypeInfos">The content type infos.</param>
+        /// <param name="contentTypeInfos">The content type information</param>
         /// <returns>The <see cref="IEnumerable"/>.</returns>
         IEnumerable<SPContentType> EnsureContentType(
             SPContentTypeCollection contentTypeCollection,
             ICollection<ContentTypeInfo> contentTypeInfos);
-
 
         /// <summary>The ensure content type.</summary>
         /// <param name="collection">The collection.</param>
         /// <param name="contentType">The content type.</param>
         /// <returns>The <see cref="SPContentType"/>.</returns>
         SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType);
-
 
         /// <summary>
         /// Deletes the content type if not used.
@@ -92,8 +93,10 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assemblyName">Name of the assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className);
+        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
         /// Adds the event receiver definition to the content type.
@@ -102,8 +105,10 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assembly">The assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className);
+        SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
         /// Reorders fields in the content type according to index position.

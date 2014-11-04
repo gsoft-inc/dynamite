@@ -8,14 +8,18 @@ using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Globalization.Variations
 {
+    /// <summary>
+    /// Forces the synchronization (i.e. copy from source label to destination language) 
+    /// of lists and webs in the variations process
+    /// </summary>
     public interface IVariationSyncHelper
     {
         /// <summary>
         /// Sync a SPList for multiple target labels
         /// </summary>
         /// <param name="web">The web</param>
-        /// <param name="listInfo"></param>
-        /// <param name="labels"></param>
+        /// <param name="listInfo">The source list metadata</param>
+        /// <param name="labels">The destination labels</param>
         void SyncList(SPWeb web, ListInfo listInfo, IList<VariationLabelInfo> labels);
 
         /// <summary>

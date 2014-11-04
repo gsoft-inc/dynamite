@@ -26,10 +26,19 @@ namespace GSoft.Dynamite.Sites
         /// </summary>
         public IList<ListInfo> Lists { get; set; }
 
+        /// <summary>
+        /// The web's name
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// The relative-to-parent path to the web
+        /// </summary>
         public string Path { get; set; }
 
+        /// <summary>
+        /// The web template to be applied
+        /// </summary>
         public SPWebTemplate Template { get; set; }
     }
 }

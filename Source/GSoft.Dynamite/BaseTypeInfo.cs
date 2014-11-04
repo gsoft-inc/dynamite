@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Autofac;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.ServiceLocator;
-using Autofac;
 
 namespace GSoft.Dynamite
 {
@@ -27,7 +21,7 @@ namespace GSoft.Dynamite
         /// </summary>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
         public BaseTypeInfo(string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : this()
         {

@@ -4,6 +4,9 @@ namespace GSoft.Dynamite.Security
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// SharePoint User Helper
+    /// </summary>
     public interface IUserHelper
     {
         /// <summary>

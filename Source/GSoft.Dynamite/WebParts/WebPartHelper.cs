@@ -25,6 +25,7 @@ namespace GSoft.Dynamite.WebParts
         /// Default constructor
         /// </summary>
         /// <param name="xmlHelper">Helper for Xml work</param>
+        /// <param name="logger">Logging utility</param>
         public WebPartHelper(IXmlHelper xmlHelper, ILogger logger)
         {
             this.xmlHelper = xmlHelper;

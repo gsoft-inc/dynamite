@@ -1,7 +1,6 @@
-﻿using System.Xml.Linq;
-using GSoft.Dynamite.Binding;
-using System;
+﻿using System;
 using System.Globalization;
+using System.Xml.Linq;
 
 namespace GSoft.Dynamite.Fields
 {
@@ -17,7 +16,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
         public TextFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "Text", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
@@ -38,7 +37,7 @@ namespace GSoft.Dynamite.Fields
         }
 
         /// <summary>
-        /// Maxinimum number of characters in text field
+        /// Maximum number of characters in text field
         /// </summary>
         public int MaxLength { get; set; }
 

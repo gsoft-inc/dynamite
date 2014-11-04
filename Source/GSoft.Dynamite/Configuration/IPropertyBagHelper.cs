@@ -5,6 +5,9 @@
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
 
+    /// <summary>
+    /// Helper to interact with the Property bags
+    /// </summary>
     public interface IPropertyBagHelper
     {
         /// <summary>

@@ -6,6 +6,7 @@ namespace GSoft.Dynamite.Navigation
     /// <summary>
     /// Settings for managed navigation on an SPWeb
     /// </summary>
+    [Obsolete("Use NavigationSettingsInfo instead")]
     public class ManagedNavigationSettings
     {
         private string _termStoreName = "Managed Metadata Service";

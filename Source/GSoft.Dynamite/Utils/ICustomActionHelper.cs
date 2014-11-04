@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Custom Actions helper
+    /// </summary>
     public interface ICustomActionHelper
     {
         /// <summary>

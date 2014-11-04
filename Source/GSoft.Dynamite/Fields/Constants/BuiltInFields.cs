@@ -229,7 +229,7 @@ namespace GSoft.Dynamite.Fields.Constants
         public const string CreatedName = "Created";
 
         /// <summary>
-        /// Modified : The date of the last modificatio
+        /// Modified : The date of the last modification
         /// </summary>
         public const string ModifiedName = "Modified";
 

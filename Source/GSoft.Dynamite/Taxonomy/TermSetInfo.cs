@@ -20,6 +20,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Constructor for single language (CurrentUICulture) TermSetInfo belonging to default site collection term group
         /// </summary>
+        /// <param name="id">The term set's ID</param>
+        /// <param name="label">The term set's default name</param>
         public TermSetInfo(Guid id, string label)
             : this()
         {
@@ -29,8 +31,11 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Constructor for single language (CurrentUICulture) TermSetInfo belonging to specfic farm-wide term group
+        /// Constructor for single language (CurrentUICulture) TermSetInfo belonging to specific farm-wide term group
         /// </summary>
+        /// <param name="id">The term set's ID</param>
+        /// <param name="label">The term set's default name</param>
+        /// <param name="termGroup">The parent term group</param>
         public TermSetInfo(Guid id, string label, TermGroupInfo termGroup)
             : this(id, label)
         {
@@ -40,6 +45,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Constructor for fully translated TermSetInfo belonging to default site collection term group
         /// </summary>
+        /// <param name="id">The term set's ID</param>
+        /// <param name="labels">The term set's default labels</param>
         public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels) 
             : this()
         {
@@ -49,8 +56,11 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Constructor for fully translated TermSetInfo belonging to specfic farm-wide term group
+        /// Constructor for fully translated TermSetInfo belonging to specific farm-wide term group
         /// </summary>
+        /// <param name="id">The term set's ID</param>
+        /// <param name="labels">The term set's default labels</param>
+        /// <param name="termGroup">The parent term group</param>
         public TermSetInfo(Guid id, IDictionary<CultureInfo, string> labels, TermGroupInfo termGroup)
             : this(id, labels)
         {

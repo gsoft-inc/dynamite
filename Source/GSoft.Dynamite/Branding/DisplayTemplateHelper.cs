@@ -10,10 +10,22 @@ namespace GSoft.Dynamite.Branding
     /// </summary>
     public class DisplayTemplateHelper : IDisplayTemplateHelper
     {
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DisplayTemplateHelper"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        public DisplayTemplateHelper(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         /// <summary>
         /// Folder name for Display Templates
         /// </summary>
-        public string DisplayTemplatesFolder {
+        public string DisplayTemplatesFolder 
+        {
             get
             {
                 return "Display Templates";
@@ -25,7 +37,10 @@ namespace GSoft.Dynamite.Branding
         /// </summary>
         public string ContentWebPartFolder
         {
-            get { return "Content Web Parts"; }
+            get 
+            { 
+                return "Content Web Parts"; 
+            }
         }
 
         /// <summary>
@@ -36,7 +51,6 @@ namespace GSoft.Dynamite.Branding
             get
             {
                 return "Search";
-                
             }
         }
 
@@ -49,17 +63,6 @@ namespace GSoft.Dynamite.Branding
             {
                 return "Filters";         
             }
-        }
-
-        private readonly ILogger logger;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayTemplateHelper"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        public DisplayTemplateHelper(ILogger logger)
-        {
-            this.logger = logger;
         }
 
         /// <summary>

@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Helper the manage event receivers.
+    /// </summary>
     public interface IEventReceiverHelper
     {
         /// <summary>
@@ -31,7 +34,6 @@
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPEventReceiverDefinition GetEventReceiverDefinition(SPEventReceiverDefinitionCollection collection, SPEventReceiverType type, string assemblyFullName, string classFullName);
-
 
         /// <summary>
         /// Add an event receiver

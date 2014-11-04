@@ -258,7 +258,6 @@ namespace GSoft.Dynamite.Catalogs
                 tokens.Insert(0, listToken);
             }
 
-
             CatalogConnectionSettings catalogConnectionSettings = null;
 
             try

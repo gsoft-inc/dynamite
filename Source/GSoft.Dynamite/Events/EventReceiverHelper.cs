@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.SharePoint;
 using GSoft.Dynamite.ContentTypes;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Events
 {
@@ -12,9 +12,13 @@ namespace GSoft.Dynamite.Events
     {
         private readonly IContentTypeHelper contentTypeBuilder;
 
-        public EventReceiverHelper(IContentTypeHelper contentTypeBuilder)
+        /// <summary>
+        /// Initializes a new <see cref="EventReceiverHelper"/> instance.
+        /// </summary>
+        /// <param name="contentTypeHelper">Content type management utility</param>
+        public EventReceiverHelper(IContentTypeHelper contentTypeHelper)
         {
-            this.contentTypeBuilder = contentTypeBuilder;
+            this.contentTypeBuilder = contentTypeHelper;
         }
 
         /// <summary>
@@ -106,8 +110,6 @@ namespace GSoft.Dynamite.Events
         /// <param name="eventReceiver">The event receiver definition</param>
         public void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
-            SPEventReceiverDefinition eventDefinition = null;
-
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
             {
@@ -115,16 +117,9 @@ namespace GSoft.Dynamite.Events
 
                 if (contentType != null)
                 {
-                    eventDefinition = this.contentTypeBuilder.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName);
+                    this.contentTypeBuilder.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
                 }
             }  
-       
-            // Update Synchronization
-            if (eventReceiver.SynchronizationType != SPEventReceiverSynchronization.Default && eventDefinition != null)
-            {
-                eventDefinition.Synchronization = eventReceiver.SynchronizationType;
-                eventDefinition.Update();
-            }
         }
 
         /// <summary>

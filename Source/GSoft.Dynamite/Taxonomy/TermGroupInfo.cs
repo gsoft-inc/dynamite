@@ -27,10 +27,12 @@ namespace GSoft.Dynamite.Taxonomy
             this.TermStore = null;
         }
 
-
         /// <summary>
-        /// Constructor for TermGroupInfo belonging to specifc term store
+        /// Constructor for TermGroupInfo belonging to specific term store
         /// </summary>
+        /// <param name="id">The term group's ID</param>
+        /// <param name="name">The term group's name</param>
+        /// <param name="termStore">The parent term store</param>
         public TermGroupInfo(Guid id, string name, TermStoreInfo termStore) : this(id, name)
         {
             this.TermStore = termStore;

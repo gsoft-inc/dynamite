@@ -22,6 +22,7 @@ namespace GSoft.Dynamite.Repositories
         /// Utility to find items by name or url
         /// </summary>
         /// <param name="listLocator">List locator utility</param>
+        /// <param name="caml">CAML building utility</param>
         public ItemLocator(IListLocator listLocator, ICamlBuilder caml)
         {
             this.listLocator = listLocator;

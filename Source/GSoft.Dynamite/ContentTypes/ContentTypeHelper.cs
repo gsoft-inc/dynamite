@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint;
-using System.Threading;
 using Microsoft.SharePoint.Publishing;
-using GSoft.Dynamite.Fields;
 
 namespace GSoft.Dynamite.ContentTypes
 {
@@ -20,6 +20,10 @@ namespace GSoft.Dynamite.ContentTypes
     {
         private readonly IVariationHelper _variationHelper;
 
+        /// <summary>
+        /// Initializes a new <see cref="ContentTypeHelper"/> instance
+        /// </summary>
+        /// <param name="variationHelper">Variations helper</param>
         public ContentTypeHelper(IVariationHelper variationHelper)
         {
             this._variationHelper = variationHelper;
@@ -133,7 +137,7 @@ namespace GSoft.Dynamite.ContentTypes
             if (TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
                 // Make sure its not already in the list.
-                var contentTypeInList = list.ContentTypes.Cast<SPContentType>().FirstOrDefault(ct => ct.Parent.Id == contentTypeId);
+                var contentTypeInList = list.ContentTypes.Cast<SPContentType>().FirstOrDefault(ct => ct.Id == contentTypeId || ct.Parent.Id == contentTypeId);
                 if (contentTypeInList == null)
                 {
                     // Can we add the content type to the list?
@@ -366,8 +370,10 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assemblyName">Name of the assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
@@ -375,7 +381,7 @@ namespace GSoft.Dynamite.ContentTypes
             if (classType != null)
             {
                 var assembly = Assembly.GetAssembly(classType);
-                eventReceiverDefinition = this.AddEventReceiverDefinition(contentType, type, assembly, className);
+                eventReceiverDefinition = this.AddEventReceiverDefinition(contentType, type, assembly, className, syncType);
             }
 
             return eventReceiverDefinition;
@@ -388,8 +394,10 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assembly">The assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
@@ -402,6 +410,7 @@ namespace GSoft.Dynamite.ContentTypes
                 eventReceiverDefinition = contentType.EventReceivers.Add();
                 eventReceiverDefinition.Type = type;
                 eventReceiverDefinition.Assembly = assembly.FullName;
+                eventReceiverDefinition.Synchronization = syncType;
                 eventReceiverDefinition.Class = className;
                 eventReceiverDefinition.Update();
                 contentType.Update(true);

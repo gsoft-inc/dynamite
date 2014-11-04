@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Xml.Linq;
-using GSoft.Dynamite.Binding;
-using Microsoft.SharePoint.Publishing;
-using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Fields
 {
@@ -19,47 +17,10 @@ namespace GSoft.Dynamite.Fields
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
         public TaxonomyFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "TaxonomyFieldType", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
-        }
-
-        public static XElement TaxonomyFieldCustomizationSchema(Guid associatedNoteFieldId, bool isPathRendered, bool createValuesInEditForm)
-        {
-            XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";
-            
-            return new XElement(
-                "Customization",
-                new XElement(
-                    "ArrayOfProperty",
-                    new XElement(
-                        "Property",
-                        new XElement("Name", "TextField"),
-                        new XElement(
-                            "Value",
-                            new XAttribute(XNamespace.Xmlns + "q6", "http://www.w3.org/2001/XMLSchema"),
-                            new XAttribute(p4 + "type", "q6:string"),
-                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                            "{" + associatedNoteFieldId + "}")),
-                    new XElement(
-                        "Property",
-                        new XElement("Name", "IsPathRendered"),
-                        new XElement(
-                            "Value",
-                            new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
-                            new XAttribute(p4 + "type", "q7:boolean"),
-                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                            isPathRendered.ToString().ToLowerInvariant()),
-                    new XElement(
-                        "Property",
-                        new XElement("Name", "CreateValuesInEditForm"),
-                        new XElement(
-                            "Value",
-                            new XAttribute(XNamespace.Xmlns + "q9", "http://www.w3.org/2001/XMLSchema"),
-                            new XAttribute(p4 + "type", "q9:boolean"),
-                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
-                            createValuesInEditForm.ToString().ToLowerInvariant())))));
         }
 
         /// <summary>
@@ -94,6 +55,50 @@ namespace GSoft.Dynamite.Fields
 
                 return schema;
             }
+        }
+
+        /// <summary>
+        /// Helper method to format a taxonomy field XML schema
+        /// </summary>
+        /// <param name="associatedNoteFieldId">Unique ID of the taxonomy field's associated note field</param>
+        /// <param name="isPathRendered">Whether the full parent-to-child path to the term should be rendered in the SharePoint UI</param>
+        /// <param name="createValuesInEditForm">Whether the field allow creating new values from the taxonomy picker</param>
+        /// <returns>The field schema XML</returns>
+        public static XElement TaxonomyFieldCustomizationSchema(Guid associatedNoteFieldId, bool isPathRendered, bool createValuesInEditForm)
+        {
+            XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";
+
+            return new XElement(
+                "Customization",
+                new XElement(
+                    "ArrayOfProperty",
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "TextField"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q6", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q6:string"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            "{" + associatedNoteFieldId + "}")),
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "IsPathRendered"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q7", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q7:boolean"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            isPathRendered.ToString().ToLowerInvariant()),
+                    new XElement(
+                        "Property",
+                        new XElement("Name", "CreateValuesInEditForm"),
+                        new XElement(
+                            "Value",
+                            new XAttribute(XNamespace.Xmlns + "q9", "http://www.w3.org/2001/XMLSchema"),
+                            new XAttribute(p4 + "type", "q9:boolean"),
+                            new XAttribute(XNamespace.Xmlns + "p4", "http://www.w3.org/2001/XMLSchema-instance"),
+                            createValuesInEditForm.ToString().ToLowerInvariant())))));
         }
     }
 }
