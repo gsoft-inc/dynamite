@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.ServiceLocator
+﻿namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     using System;
     using System.Collections.Generic;

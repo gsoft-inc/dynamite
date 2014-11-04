@@ -8,7 +8,6 @@ using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Autofac.Features.Scanning;
 using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
@@ -133,7 +132,7 @@ namespace GSoft.Dynamite.ServiceLocator
             var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite."));
 
             // 1) Build the base container with only Dynamite-related components
-            AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForDynamiteComponents, dynamiteComponentModuleAssemblies.ToArray());
+            containerBuilderForDynamiteComponents.RegisterAssemblyModules(dynamiteComponentModuleAssemblies.ToArray());
             var container = containerBuilderForDynamiteComponents.Build();
 
             var logger = container.Resolve<ILogger>();
@@ -143,7 +142,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // 2) Extend the original registrations with any remaining AddOns' registrations
             var containerBuilderForAddOns = new ContainerBuilder();
-            AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForAddOns, allTheRest.ToArray());
+            containerBuilderForAddOns.RegisterAssemblyModules(allTheRest.ToArray());
             containerBuilderForAddOns.Update(container);
 
             string addOnAssemblyNameEnumeration = string.Empty;

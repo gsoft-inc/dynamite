@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Autofac;
 using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ServiceLocator;
+using GSoft.Dynamite.ServiceLocator.Lifetime;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 

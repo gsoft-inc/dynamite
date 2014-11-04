@@ -7,11 +7,12 @@ using System.Web;
 using System.Web.UI;
 using Autofac;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.AddOn
 {
     /// <summary>
     /// <para>

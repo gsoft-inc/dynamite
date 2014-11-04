@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     /// <summary>
     /// <c>Autofac-related</c> HttpModule that takes care of disposing per-request lifetimes

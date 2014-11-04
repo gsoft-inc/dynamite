@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using GSoft.Dynamite.ServiceLocator.AddOn;
 
 namespace GSoft.Dynamite.ServiceLocator
 {

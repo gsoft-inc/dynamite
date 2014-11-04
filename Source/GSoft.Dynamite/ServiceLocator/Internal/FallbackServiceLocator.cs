@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GSoft.Dynamite.ServiceLocator.AddOn;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Internal
 {
     /// <summary>
     /// Service Locator that will be used by default if you fail to define a <see cref="ISharePointServiceLocatorAccess"/>
@@ -11,7 +12,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// *.ServiceLocator.DLL.
     /// By default, this fallback service locator will load all available Dynamite modules.
     /// </summary>
-    public class FallbackServiceLocator : ISharePointServiceLocatorAccessor
+    internal class FallbackServiceLocator : ISharePointServiceLocatorAccessor
     {
         private const string AppName = "GSoft.Dynamite";
 

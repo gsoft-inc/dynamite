@@ -23,6 +23,7 @@ using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
+using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
