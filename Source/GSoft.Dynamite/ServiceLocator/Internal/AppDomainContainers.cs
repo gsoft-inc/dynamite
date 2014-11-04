@@ -112,14 +112,13 @@ namespace GSoft.Dynamite.ServiceLocator
             }
 
             var containerBuilderForDynamiteComponents = new ContainerBuilder();
-            var assemblyLocator = new GacAssemblyLocator();
 
             // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves).
             // I.E. each container gets its own DynamiteRegistrationModule components.
             var dynamiteModule = new AutofacDynamiteRegistrationModule(appRootNamespace);
             containerBuilderForDynamiteComponents.RegisterModule(dynamiteModule);
 
-            var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyFileNameMatchingPredicate);
+            var matchingAssemblies = GacAssemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyFileNameMatchingPredicate);
 
             // Make sure we exclude all other GSoft.Dynamite DLLs (i.e. ignore other versions deployed to same GAC)
             // so that other AutofacDynamiteRegistrationModule instances don't get registered.

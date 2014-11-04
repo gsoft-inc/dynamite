@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.Utils
     /// Do not use this utility in internal or service-level code, because catching all exception types is 
     /// usually considered a bad practice.
     /// </remarks>
-    public interface ICatchAllExceptionHandler
+    public interface ICatchallExceptionHandler
     {
         /// <summary>
         /// Calls the void-returning method and swallows (+ logs) all exceptions types

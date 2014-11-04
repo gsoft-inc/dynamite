@@ -10,16 +10,16 @@
         /// <summary>
         /// The serialize.
         /// </summary>
-        /// <param name="obj">
+        /// <param name="valueToSerialize">
         /// The object to serialize.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string Serialize(object obj)
+        public string Serialize(object valueToSerialize)
         {
             var settings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
-            return JsonConvert.SerializeObject(obj, settings);
+            return JsonConvert.SerializeObject(valueToSerialize, settings);
         }
 
         /// <summary>

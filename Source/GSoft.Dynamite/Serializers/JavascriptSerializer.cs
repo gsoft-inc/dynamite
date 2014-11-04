@@ -5,14 +5,14 @@
     /// <summary>
     /// The JavaScript serializer.
     /// </summary>
-    public class JavascriptSerializer : ISerializer
+    public class JavaScriptSerializer : ISerializer
     {
         private readonly JavaScriptSerializer serializer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JavascriptSerializer"/> class.
+        /// Initializes a new instance of the <see cref="JavaScriptSerializer"/> class.
         /// </summary>
-        public JavascriptSerializer()
+        public JavaScriptSerializer()
         {
             this.serializer = new JavaScriptSerializer();
         }
@@ -20,15 +20,15 @@
         /// <summary>
         /// The serialize.
         /// </summary>
-        /// <param name="obj">
+        /// <param name="valueToSerialize">
         /// The object to serialize.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string Serialize(object obj)
+        public string Serialize(object valueToSerialize)
         {
-            return this.serializer.Serialize(obj);
+            return this.serializer.Serialize(valueToSerialize);
         }
 
         /// <summary>

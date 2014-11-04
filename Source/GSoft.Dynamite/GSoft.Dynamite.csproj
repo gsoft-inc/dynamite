@@ -144,8 +144,8 @@
     <Compile Include="Fields\TextFieldInfo.cs" />
     <Compile Include="Sites\WebInfo.cs" />
     <Compile Include="WebParts\WebPartInfo.cs" />
-    <Compile Include="Utils\CatchAllExceptionHandler.cs" />
-    <Compile Include="Utils\ICatchAllExceptionHandler.cs" />
+    <Compile Include="Utils\CatchallExceptionHandler.cs" />
+    <Compile Include="Utils\ICatchallExceptionHandler.cs" />
     <Compile Include="TimerJobs\ITimerJobHelper.cs" />
     <Compile Include="Lists\PublishedLinksEditor.cs" />
     <Compile Include="Lists\IPublishedLinksEditor.cs" />
@@ -272,7 +272,7 @@
     <Compile Include="Caml\QueryHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeInfo.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
-    <Compile Include="Serializers\JavascriptSerializer.cs" />
+    <Compile Include="Serializers\JavaScriptSerializer.cs" />
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\XmlHelper.cs" />
     <Compile Include="ServiceLocator\AddOn\AddOnProvidedServiceLocator.cs" />
