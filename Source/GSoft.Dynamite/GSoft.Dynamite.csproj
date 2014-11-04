@@ -163,7 +163,6 @@
     <Compile Include="Branding\IMasterPageHelper.cs" />
     <Compile Include="Branding\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
-    <Compile Include="Navigation\INavigationNode.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="Navigation\NavigationManagedProperties.cs" />
     <Compile Include="Navigation\NavigationNode.cs" />
