@@ -21,12 +21,10 @@
   <IgnoreGeneratedCode>True</IgnoreGeneratedCode>
  </ProjectOptions>
  <Targets>
-  <AssemblyReferenceDirectories>
-   <Directory>$(ProjectDir)/GSoft.Dynamite/bin/Release/</Directory>
-   <Directory>$(ProjectDir)/GSoft.Dynamite.SP/bin/Release/</Directory>
-  </AssemblyReferenceDirectories>
-  <Target Name="$(ProjectDir)/GSoft.Dynamite.SP/bin/Debug/GSoft.Dynamite.SP.dll" Analyze="True" AnalyzeAllChildren="True" />
-  <Target Name="$(ProjectDir)/GSoft.Dynamite/bin/Debug/GSoft.Dynamite.dll" Analyze="True" AnalyzeAllChildren="True" />
+   <Target Name="$(ProjectDir)/GSoft.Dynamite.SP/bin/Debug/GSoft.Dynamite.SP.dll" Analyze="True" AnalyzeAllChildren="True" />
+   <Target Name="$(ProjectDir)/GSoft.Dynamite/bin/Debug/GSoft.Dynamite.dll" Analyze="True" AnalyzeAllChildren="True" />
+   <Target Name="$(ProjectDir)/GSoft.Dynamite.SP/bin/Release/GSoft.Dynamite.SP.dll" Analyze="True" AnalyzeAllChildren="True" />
+   <Target Name="$(ProjectDir)/GSoft.Dynamite/bin/Release/GSoft.Dynamite.dll" Analyze="True" AnalyzeAllChildren="True" />
  </Targets>
  <Rules>
   <RuleFiles>
