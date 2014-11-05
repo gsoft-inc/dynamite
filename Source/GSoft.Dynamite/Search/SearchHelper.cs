@@ -207,7 +207,9 @@ namespace GSoft.Dynamite.Search
             SortDirection direction,
             bool overwrite)
         {
-            return this.EnsureResultSource(contextWeb.Site, new ResultSourceInfo()
+            return this.EnsureResultSource(
+                contextWeb.Site,
+                new ResultSourceInfo()
             {
                 Level = level,
                 Name = resultSourceName,
@@ -216,7 +218,7 @@ namespace GSoft.Dynamite.Search
                 SearchProvider = searchProvider,
                 SortSettings = new Dictionary<string, SortDirection>()
                 {
-                    {sortField, direction}
+                    { sortField, direction }
                 }
             });
         }
