@@ -207,8 +207,20 @@ namespace GSoft.Dynamite.Search
             SortDirection direction,
             bool overwrite)
         {
-            // TODO: implement this
-            throw new NotImplementedException();
+            return this.EnsureResultSource(
+                contextWeb.Site,
+                new ResultSourceInfo()
+            {
+                Level = level,
+                Name = resultSourceName,
+                Overwrite = overwrite,
+                Query = query,
+                SearchProvider = searchProvider,
+                SortSettings = new Dictionary<string, SortDirection>()
+                {
+                    { sortField, direction }
+                }
+            });
         }
 
         /// <summary>
@@ -273,7 +285,15 @@ namespace GSoft.Dynamite.Search
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, SortCollection sortSettings, bool overwrite)
+        public Source EnsureResultSource(
+            SearchServiceApplication ssa,
+            string resultSourceName,
+            SearchObjectLevel level,
+            string searchProvider,
+            SPWeb contextWeb,
+            string query,
+            SortCollection sortSettings,
+            bool overwrite)
         {
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortSettings;
@@ -330,8 +350,8 @@ namespace GSoft.Dynamite.Search
         /// </returns>
         public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
         {
-            var s = new SearchService("OSearch15", SPFarm.Local);
-            var searchApplication = from SearchServiceApplication sapp in s.SearchApplications
+            var searchService = new SearchService("OSearch15", SPFarm.Local);
+            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
                                     where sapp.GetSearchApplicationDisplayName() == appName
                                     select sapp;
 
