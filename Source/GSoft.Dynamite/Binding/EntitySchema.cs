@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// The binding details.
         /// </summary>
-        protected readonly LinkedList<EntityBindingDetail> BindingDetails = new LinkedList<EntityBindingDetail>();
+        private LinkedList<EntityBindingDetail> BindingDetails = new LinkedList<EntityBindingDetail>();
 
         #endregion
 

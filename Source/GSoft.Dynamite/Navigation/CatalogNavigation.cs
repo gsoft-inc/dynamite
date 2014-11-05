@@ -20,7 +20,7 @@ using Microsoft.SharePoint.Utilities;
 namespace GSoft.Dynamite.Navigation
 {
     /// <summary>
-    /// Catalog navigation.
+    /// Catalog navigation context utility. Depends on HttpContext.
     /// </summary>
     public class CatalogNavigation : ICatalogNavigation
     {
@@ -70,48 +70,16 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
-        /// Gets or sets the name of the catalog navigation term managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the catalog navigation term managed property.
-        /// </value>
-        public string CatalogNavigationTermManagedPropertyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the association key managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the association key managed property.
-        /// </value>
-        public string AssociationKeyManagedPropertyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the language managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the language managed property.
-        /// </value>
-        public string LanguageManagedPropertyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the association key value.
-        /// </summary>
-        /// <value>
-        /// The association key value.
-        /// </value>
-        public string AssociationKeyValue { get; set; }
-
-        /// <summary>
         /// Determines whether [is current item] [the specified item URL].
         /// </summary>
         /// <param name="itemUrl">The item URL.</param>
         /// <returns>True if URL is the current catalog item.</returns>
-        public bool IsCurrentItem(string itemUrl)
+        public bool IsCurrentItem(Uri itemUrl)
         {
             var queryStrings = HttpUtility.ParseQueryString(HttpContext.Current.Request.Url.Query);
-            var urlSuffix = string.Format("/{0}", queryStrings.Get("UrlSuffix"));
+            var urlSuffix = string.Format(CultureInfo.InvariantCulture, "/{0}", queryStrings.Get("UrlSuffix"));
 
-            return !string.IsNullOrEmpty(urlSuffix) && itemUrl.EndsWith(urlSuffix, StringComparison.InvariantCultureIgnoreCase);
+            return !string.IsNullOrEmpty(urlSuffix) && itemUrl.AbsolutePath.EndsWith(urlSuffix, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -128,7 +96,7 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
-        /// Gets the variation peer URL.
+        /// Gets the variation peer URL (for CategoryPage or undefined context).
         /// </summary>
         /// <param name="label">The variation label.</param>
         /// <returns>
@@ -142,15 +110,47 @@ namespace GSoft.Dynamite.Navigation
                 case CatalogNavigationType.CategoryPage:
                     return this.GetPeerCatalogCategoryUrl(currentUrl, label);
                 case CatalogNavigationType.ItemPage:
-                    return this.GetPeerCatalogItemUrl(currentUrl, label);
+                    throw new InvalidOperationException("Missing information for a Catalog ItemPage context. Use GetVariationPeerUrlForCatalogItem instead.");
                 default:
+                    return this.GetPeerUrl(label, currentUrl);
+            }
+        }
+
+        /// <summary>
+        /// Gets the variation peer URL.
+        /// </summary>
+        /// <param name="label">The variation label.</param>
+        /// <param name="associationKeyManagedPropertyName">Managed property name for association key between variation peer items</param>
+        /// <param name="associationKeyValue">Value of the association key for the current item under variation</param>
+        /// <param name="languageManagedPropertyName">Managed property name for the language discriminator column</param>
+        /// <param name="catalogNavigationTermManagedPropertyName">Managed property name for the catalog navigation taxonomy column</param>
+        /// <returns>
+        /// The peer URL.
+        /// </returns>
+        public Uri GetVariationPeerUrlForCatalogItem(
+            VariationLabelInfo label, 
+            string associationKeyManagedPropertyName, 
+            string associationKeyValue, 
+            string languageManagedPropertyName, 
+            string catalogNavigationTermManagedPropertyName)
+        {
+            var currentUrl = HttpContext.Current.Request.Url;
+            switch (this.Type)
+            {
+                case CatalogNavigationType.CategoryPage:
+                    // Ignore the extra ItemPage parameters (because we aren't in ItemPage context, after all)
+                    return this.GetPeerCatalogCategoryUrl(currentUrl, label);
+                case CatalogNavigationType.ItemPage:
+                    return this.GetPeerCatalogItemUrl(currentUrl, label, associationKeyManagedPropertyName, associationKeyValue, languageManagedPropertyName, catalogNavigationTermManagedPropertyName);
+                default:
+                    // Ignore the extra ItemPage parameters (because we aren't in ItemPage context, after all)
                     return this.GetPeerUrl(label, currentUrl);
             }
         }
 
         private Uri GetPeerUrl(VariationLabelInfo label, Uri currentUrl)
         {
-            if (currentUrl.LocalPath.StartsWith("/_layouts"))
+            if (currentUrl.LocalPath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
                 return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), currentUrl.PathAndQuery));
             }
@@ -235,23 +235,37 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogItemUrl(Uri currentUrl, VariationLabelInfo label)
+        private Uri GetPeerCatalogItemUrl(
+            Uri currentUrl, 
+            VariationLabelInfo label, 
+            string associationKeyManagedPropertyName, 
+            string associationKeyValue, 
+            string languageManagedPropertyName, 
+            string catalogNavigationTermManagedPropertyName)
         {
-            this.ValidateProperties("GetPeerCatalogItemUrl");
+            ValidateProperties("GetPeerCatalogItemUrl", associationKeyManagedPropertyName, associationKeyValue, catalogNavigationTermManagedPropertyName);
 
             var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title), UriKind.Relative);
 
             var searchResultSource = this.searchHelper.GetResultSourceByName(LocalSharePointResultsSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
 
-            var labelLocalAgnosticLanguage = label.Language.Split('-').First();
+            var labelLocaleAgnosticLanguage = label.Language.Split('-').First();
+            var queryText = string.Format(
+                CultureInfo.InvariantCulture, 
+                "{0}:{1} {2}={3}", 
+                associationKeyManagedPropertyName, 
+                associationKeyValue, 
+                languageManagedPropertyName, 
+                labelLocaleAgnosticLanguage);
+
             var query = new KeywordQuery(SPContext.Current.Web)
             {
                 SourceId = searchResultSource.Id,
-                QueryText = string.Format("{0}:{1} {2}={3}", this.AssociationKeyManagedPropertyName, this.AssociationKeyValue, this.LanguageManagedPropertyName, labelLocalAgnosticLanguage),
+                QueryText = queryText
             };
 
             // Search query must include the following properties for the friendly URL to work
-            query.SelectProperties.AddRange(new[] { this.CatalogNavigationTermManagedPropertyName, "Path", "spSiteUrl", "ListID" });
+            query.SelectProperties.AddRange(new[] { catalogNavigationTermManagedPropertyName, "Path", "spSiteUrl", "ListID" });
             var tables = new SearchExecutor().ExecuteQuery(query);
             if (tables.Exists(KnownTableTypes.RelevantResults))
             {
@@ -265,24 +279,25 @@ namespace GSoft.Dynamite.Navigation
             return url;
         }
 
-        private void ValidateProperties(string callingMethodName)
+        private static void ValidateProperties(
+            string callingMethodName,
+            string associationKeyManagedPropertyName,
+            string associationKeyValue,
+            string catalogNavigationTermManagedPropertyName)
         {
-            if (string.IsNullOrEmpty(this.CatalogNavigationTermManagedPropertyName))
+            if (string.IsNullOrEmpty(associationKeyManagedPropertyName))
             {
-                throw new NullReferenceException(string.Format(
-                    "{0}: Property '{1}' is null or empty string.", callingMethodName, "CatalogNavigationTermManagedPropertyName"));
+                throw new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "{0}: Property '{1}' is null or empty string.", callingMethodName, "AssociationKeyManagedPropertyName"));
             }
 
-            if (string.IsNullOrEmpty(this.AssociationKeyManagedPropertyName))
+            if (string.IsNullOrEmpty(associationKeyValue))
             {
-                throw new NullReferenceException(string.Format(
-                    "{0}: Property '{1}' is null or empty string.", callingMethodName, "AssociationKeyManagedPropertyName"));
+                throw new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "{0}: Property '{1}' is null or empty string.", callingMethodName, "AssociationKeyValue"));
             }
 
-            if (string.IsNullOrEmpty(this.AssociationKeyValue))
+            if (string.IsNullOrEmpty(catalogNavigationTermManagedPropertyName))
             {
-                throw new NullReferenceException(string.Format(
-                    "{0}: Property '{1}' is null or empty string.", callingMethodName, "AssociationKeyValue"));
+                throw new ArgumentNullException(string.Format(CultureInfo.InvariantCulture, "{0}: Property '{1}' is null or empty string.", callingMethodName, "CatalogNavigationTermManagedPropertyName"));
             }
         }
     }

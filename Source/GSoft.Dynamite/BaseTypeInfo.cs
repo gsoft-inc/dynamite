@@ -12,7 +12,7 @@ namespace GSoft.Dynamite
         /// <summary>
         /// Default constructor for serialization purposes
         /// </summary>
-        public BaseTypeInfo()
+        protected BaseTypeInfo()
         {
         }
 
@@ -22,7 +22,7 @@ namespace GSoft.Dynamite
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public BaseTypeInfo(string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        protected BaseTypeInfo(string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : this()
         {
             this.DisplayNameResourceKey = displayNameResourceKey;

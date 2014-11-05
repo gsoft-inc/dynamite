@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Logging
@@ -141,15 +142,22 @@ namespace GSoft.Dynamite.Logging
         /// <summary>
         /// Output the information on an exception
         /// </summary>
-        /// <param name="exception">The exception to log</param>
-        public void Exception(Exception exception)
+        /// <param name="exceptionToLog">The exception to log</param>
+        public void Exception(Exception exceptionToLog)
         {
-            if (exception == null)
+            if (exceptionToLog == null)
             {
-                throw new ArgumentNullException("exception");
+                throw new ArgumentNullException("exceptionToLog");
             }
 
-            this.InnerLog(TraceSeverity.Unexpected, string.Format("[{0}: {1}] {2}", exception.GetType().Name, exception.Message, new StackTrace(exception).ToString()));
+            string formatted = string.Format(
+                CultureInfo.InvariantCulture, 
+                "[{0}: {1}] {2}", 
+                exceptionToLog.GetType().Name, 
+                exceptionToLog.Message, 
+                new StackTrace(exceptionToLog).ToString());
+
+            this.InnerLog(TraceSeverity.Unexpected, formatted);
         }
 
         /// <summary>

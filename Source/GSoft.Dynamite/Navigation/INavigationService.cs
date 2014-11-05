@@ -15,21 +15,14 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
         /// <returns>Navigation node</returns>
-        IEnumerable<INavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties);
+        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties);
 
-        /// <summary>
-        /// Map nodes with items
-        /// </summary>
-        /// <param name="navigationTerms">Navigation terms</param>
-        /// <param name="navigationItems">Navigation Items</param>
-        /// <returns>Navigation nodes</returns>
-        IEnumerable<INavigationNode> MapNavigationNodeTree(IEnumerable<INavigationNode> navigationTerms, IEnumerable<INavigationNode> navigationItems);
+        IEnumerable<NavigationNode> MapNavigationNodeTree(IEnumerable<NavigationNode> navigationTerms, IEnumerable<NavigationNode> navigationItems);
 
-        IEnumerable<INavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms);
+        IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms);
 
-        IEnumerable<INavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms, int maxLevel);
+        IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms, int maxLevel);
 
-        IEnumerable<INavigationNode> GetAllNavigationNodes(SPWeb web, NavigationManagedProperties properties);
-
+        IEnumerable<NavigationNode> GetAllNavigationNodes(SPWeb web, NavigationManagedProperties properties);
     }
 }

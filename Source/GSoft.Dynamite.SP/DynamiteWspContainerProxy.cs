@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using GSoft.Dynamite.ServiceLocator;
+using GSoft.Dynamite.ServiceLocator.AddOn;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite
@@ -12,28 +13,10 @@ namespace GSoft.Dynamite
     /// <summary>
     /// Container proxy for the Dynamite WSP.
     /// </summary>
-    internal class DynamiteWspContainerProxy
+    internal static class DynamiteWspContainerProxy
     {
         private static ISharePointServiceLocator innerLocator = new AddOnProvidedServiceLocator();
         
-        /// <summary>
-        /// Exposes the most-nested currently available lifetime scope.
-        /// In an HTTP-request context, will return a shared per-request
-        /// scope (allowing you to inject InstancePerSite, InstancePerWeb
-        /// and InstancePerRequest-registered objects).
-        /// Outside an HTTP-request context, will return the root application
-        /// container itself (preventing you from injecting InstancePerSite,
-        /// InstancePerWeb or InstancePerRequest objects).
-        /// Do not dispose this scope, as it will be reused by others.
-        /// </summary>
-        public static ILifetimeScope Current
-        {
-            get
-            {
-                return innerLocator.Current;
-            }
-        }
-
         /// <summary>
         /// Creates a new child lifetime scope that is as nested as possible,
         /// depending on the scope of the specified feature.

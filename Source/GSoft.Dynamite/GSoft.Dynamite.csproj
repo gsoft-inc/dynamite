@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -30,7 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -144,8 +144,8 @@
     <Compile Include="Fields\TextFieldInfo.cs" />
     <Compile Include="Sites\WebInfo.cs" />
     <Compile Include="WebParts\WebPartInfo.cs" />
-    <Compile Include="Utils\CatchAllExceptionHandler.cs" />
-    <Compile Include="Utils\ICatchAllExceptionHandler.cs" />
+    <Compile Include="Utils\CatchallExceptionHandler.cs" />
+    <Compile Include="Utils\ICatchallExceptionHandler.cs" />
     <Compile Include="TimerJobs\ITimerJobHelper.cs" />
     <Compile Include="Lists\PublishedLinksEditor.cs" />
     <Compile Include="Lists\IPublishedLinksEditor.cs" />
@@ -163,7 +163,6 @@
     <Compile Include="Branding\IMasterPageHelper.cs" />
     <Compile Include="Branding\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
-    <Compile Include="Navigation\INavigationNode.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
     <Compile Include="Navigation\NavigationManagedProperties.cs" />
     <Compile Include="Navigation\NavigationNode.cs" />
@@ -193,7 +192,7 @@
     <Compile Include="Security\SecurityConstants.cs" />
     <Compile Include="Security\WriteSecurity.cs" />
     <Compile Include="Serializers\IXmlHelper.cs" />
-    <Compile Include="ServiceLocator\AppDomainContainers.cs" />
+    <Compile Include="ServiceLocator\Internal\AppDomainContainers.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="Binding\CachedSchemaBuilder.cs" />
     <Compile Include="Binding\ConversionArguments.cs" />
@@ -273,32 +272,29 @@
     <Compile Include="Caml\QueryHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeInfo.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
-    <Compile Include="Serializers\JavascriptSerializer.cs" />
+    <Compile Include="Serializers\JavaScriptSerializer.cs" />
     <Compile Include="Serializers\JsonNetSerializer.cs" />
     <Compile Include="Serializers\XmlHelper.cs" />
-    <Compile Include="ServiceLocator\AddOnProvidedServiceLocator.cs" />
+    <Compile Include="ServiceLocator\AddOn\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
-    <Compile Include="ServiceLocator\FallbackServiceLocator.cs" />
-    <Compile Include="ServiceLocator\InternalServiceLocator.cs" />
-    <Compile Include="ServiceLocator\Internal\AutofacBackportAutowiringPropertyInjector.cs" />
-    <Compile Include="ServiceLocator\Internal\AutofacBackportRegistrationBuilder.cs" />
-    <Compile Include="ServiceLocator\Internal\AutofacBackportScanningUtils.cs" />
-    <Compile Include="ServiceLocator\ISharePointServiceLocatorAccessor.cs" />
+    <Compile Include="ServiceLocator\Internal\FallbackServiceLocator.cs" />
+    <Compile Include="ServiceLocator\Internal\InternalServiceLocator.cs" />
+    <Compile Include="ServiceLocator\AddOn\ISharePointServiceLocatorAccessor.cs" />
     <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />
-    <Compile Include="ServiceLocator\RegistrationExtensions.cs" />
-    <Compile Include="ServiceLocator\RequestLifetimeHttpModule.cs" />
-    <Compile Include="ServiceLocator\SPRequestLifetimeScopeProvider.cs" />
-    <Compile Include="ServiceLocator\SPLifetimeScopeProvider.cs" />
-    <Compile Include="ServiceLocator\SPWebLifetimeScopeProvider.cs" />
-    <Compile Include="ServiceLocator\SPLifetimeTag.cs" />
-    <Compile Include="ServiceLocator\ChildScopeFactory.cs" />
+    <Compile Include="ServiceLocator\Lifetime\RegistrationExtensions.cs" />
+    <Compile Include="ServiceLocator\Lifetime\RequestLifetimeHttpModule.cs" />
+    <Compile Include="ServiceLocator\Lifetime\SPRequestLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\Lifetime\SPLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\Lifetime\SPWebLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\Lifetime\SPLifetimeTag.cs" />
+    <Compile Include="ServiceLocator\Internal\ChildScopeFactory.cs" />
     <Compile Include="ServiceLocator\SharePointContainerProvider.cs" />
-    <Compile Include="ServiceLocator\ILifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\Lifetime\ILifetimeScopeProvider.cs" />
     <Compile Include="ServiceLocator\ISharePointContainerProvider.cs" />
     <Compile Include="ServiceLocator\IContainerProvider.cs" />
     <Compile Include="ServiceLocator\NamespaceFilteredContainerProvider.cs" />
-    <Compile Include="ServiceLocator\SPSiteLifetimeScopeProvider.cs" />
+    <Compile Include="ServiceLocator\Lifetime\SPSiteLifetimeScopeProvider.cs" />
     <Compile Include="SPUrl.cs" />
     <Compile Include="Taxonomy\ITaxonomyHelper.cs" />
     <Compile Include="Taxonomy\PerRequestSiteTaxonomyCacheManager.cs" />
@@ -312,7 +308,6 @@
     <Compile Include="Catalogs\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
     <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
-    <Compile Include="TimerJobs\TimerJobExpert.cs" />
     <Compile Include="Documents\ContentOrganizerHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />

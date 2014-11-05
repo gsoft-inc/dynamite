@@ -17,6 +17,7 @@ using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
 namespace GSoft.Dynamite.Search
 {
+    using System.Globalization;
     using GSoft.Dynamite.Utils;
 
     /// <summary>
@@ -469,7 +470,7 @@ namespace GSoft.Dynamite.Search
             var mappingCollection = new MappingCollection();
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var propertyName = managedPropertyInfo.Name;
-            var propertyType = managedPropertyInfo.Type;
+            var propertyType = managedPropertyInfo.DataType;
 
             // Get the search schema
             var sspSchema = new Schema(ssa);
@@ -617,7 +618,7 @@ namespace GSoft.Dynamite.Search
         public void DeleteQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
         {
             // Get all query rules for this level
-            var rules = this.GetQueryRules(ssa, level, contextWeb);
+            var rules = GetQueryRules(ssa, level, contextWeb);
 
             var queryRuleCollection = new List<QueryRule>();
 
@@ -643,12 +644,12 @@ namespace GSoft.Dynamite.Search
         /// <param name="contextWeb">The SPWeb context.</param>
         /// <param name="displayName">The query rule display name.</param>
         /// <returns>A list of query rules</returns>
-        public List<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
+        public ICollection<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
         {
             var queryRules = new List<QueryRule>();
 
             // Get all query rules for this level
-            var rules = this.GetQueryRules(ssa, level, contextWeb);
+            var rules = GetQueryRules(ssa, level, contextWeb);
 
             if (rules.Contains(displayName))
             {
@@ -708,8 +709,8 @@ namespace GSoft.Dynamite.Search
             if (!string.IsNullOrEmpty(numberOfItems))
             {
                 queryAction.QueryTransform.OverrideProperties = new QueryTransformProperties();
-                queryAction.QueryTransform.OverrideProperties["RowLimit"] = int.Parse(numberOfItems);
-                queryAction.QueryTransform.OverrideProperties["TotalRowsExactMinimum"] = int.Parse(numberOfItems);
+                queryAction.QueryTransform.OverrideProperties["RowLimit"] = int.Parse(numberOfItems, CultureInfo.InvariantCulture);
+                queryAction.QueryTransform.OverrideProperties["TotalRowsExactMinimum"] = int.Parse(numberOfItems, CultureInfo.InvariantCulture);
             }
 
             rule.Update();
@@ -755,7 +756,7 @@ namespace GSoft.Dynamite.Search
                 resType.Name = resultType.Name;
                 resType.SourceID = resultSource.Id;
 
-                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateUrl;
+                resType.DisplayTemplateUrl = resultType.DisplayTemplate.ItemTemplateTokenizedPath;
                 var properties = resultType.DisplayProperties.Select(t => t.Name).ToArray();
                 resType.DisplayProperties = string.Join(",", properties);
                 resType.RulePriority = resultType.Priority;
@@ -825,7 +826,7 @@ namespace GSoft.Dynamite.Search
         /// <param name="level">The search object level.</param>
         /// <param name="contextWeb">The SPWeb context.</param>
         /// <returns>A query rule collection.</returns>
-        private QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
+        private static QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
         {
             var queryRuleManager = new QueryRuleManager(ssa);
             var searchOwner = new SearchObjectOwner(level, contextWeb);

@@ -1,7 +1,7 @@
 ﻿namespace GSoft.Dynamite.Branding
 {
     using System;
-
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.SharePoint;
 
     /// <summary>
@@ -15,7 +15,17 @@
         /// <param name="currentWeb">The web to update.</param>
         /// <param name="systemMasterPageWebRelativeUrl">Web relative Url to the default master page</param>
         /// <param name="publishingMasterPageWebRelativeUrl">Web relative Url to the custom master page</param>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "Overload with Uri exists. FxCop can't see it.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "Overload with Uri exists. FxCop can't see it.")]
         void ApplyMasterPage(SPWeb currentWeb, string systemMasterPageWebRelativeUrl, string publishingMasterPageWebRelativeUrl);
+
+        /// <summary>
+        /// Applies the master page url on a web.
+        /// </summary>
+        /// <param name="currentWeb">The web to update.</param>
+        /// <param name="systemMasterPageWebRelativeUrl">Web relative Url to the default master page</param>
+        /// <param name="publishingMasterPageWebRelativeUrl">Web relative Url to the custom master page</param>
+        void ApplyMasterPage(SPWeb currentWeb, Uri systemMasterPageWebRelativeUrl, Uri publishingMasterPageWebRelativeUrl);
 
         /// <summary>
         /// Applies the master page url on a web.
@@ -23,23 +33,25 @@
         /// <param name="site">The web to update.</param>
         /// <param name="systemMasterPageWebRelativeUrl">Path to the default master page</param>
         /// <param name="publishingMasterPageWebRelativeUrl">Path to the custom master page</param>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "Overload with Uri exists. FxCop can't see it.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "Overload with Uri exists. FxCop can't see it.")]
         void ApplyMasterPage(SPSite site, string systemMasterPageWebRelativeUrl, string publishingMasterPageWebRelativeUrl);
+
+        /// <summary>
+        /// Applies the master page url on a web.
+        /// </summary>
+        /// <param name="site">The web to update.</param>
+        /// <param name="systemMasterPageWebRelativeUrl">Path to the default master page</param>
+        /// <param name="publishingMasterPageWebRelativeUrl">Path to the custom master page</param>
+        void ApplyMasterPage(SPSite site, Uri systemMasterPageWebRelativeUrl, Uri publishingMasterPageWebRelativeUrl);
 
         /// <summary>
         /// Applies the master page url on all the web of a site.
         /// </summary>
         /// <param name="site">The web to update.</param>
-        /// <param name="systemMasterPageFilename">System MasterPage filename</param>
-        /// <param name="publishingMasterPageFilename">Publishing MasterPage filename</param>
-        void ApplyRootMasterPage(SPSite site, string systemMasterPageFilename, string publishingMasterPageFilename);
-
-        /// <summary>
-        /// Reverts the master page url of a web to its default value.
-        /// </summary>
-        /// <param name="currentWeb">The web to update.</param>
-        /// <param name="originalMasterPath">Path to the original master page to revert to</param>
-        [Obsolete]
-        void RevertToDefaultMasterPage(SPWeb currentWeb, string originalMasterPath);
+        /// <param name="systemMasterPageFileName">System MasterPage filename</param>
+        /// <param name="publishingMasterPageFileName">Publishing MasterPage filename</param>
+        void ApplyRootMasterPage(SPSite site, string systemMasterPageFileName, string publishingMasterPageFileName);
 
         /// <summary>
         /// Reverts the master page url of a web to Seattle.
@@ -57,7 +69,7 @@
         /// Generates the master page file corresponding to the HTML file.
         /// </summary>
         /// <param name="site">The site.</param>
-        /// <param name="htmlFilename">The filename of the HTML file. This file is supposed to be on the MasterPage gallery root.</param>
-        void GenerateMasterPage(SPSite site, string htmlFilename);
+        /// <param name="htmlFileName">The filename of the HTML file. This file is supposed to be on the MasterPage gallery root.</param>
+        void GenerateMasterPage(SPSite site, string htmlFileName);
     }
 }

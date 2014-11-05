@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Autofac;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     /// <summary>
     /// Interface for the retrieval of <c>Autofac</c> dependency injection lifetime scopes

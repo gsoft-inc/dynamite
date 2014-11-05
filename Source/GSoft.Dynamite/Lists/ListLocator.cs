@@ -34,15 +34,18 @@ namespace GSoft.Dynamite.Lists
         /// <param name="web">The context's web</param>
         /// <param name="listUrl">The web-relative path to the list</param>
         /// <returns>The list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Statics to be avoided in favor consistency with use of constructor injection for class collaborators.")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "List urls are available as strings through the ListUrls utility.")]
-        public SPList GetByUrl(SPWeb web, string listUrl)
+        public SPList GetByUrl(SPWeb web, Uri listUrl)
         {
             SPList list = null;
 
+            if (listUrl.IsAbsoluteUri)
+            {
+                throw new ArgumentException("Provided listUrl should be relative (only the sub-path after the SPWeb URL).");
+            }
+
             try
             {
-                list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
+                list = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl.ToString()));
             }
             catch (ArgumentException)
             {
@@ -50,6 +53,17 @@ namespace GSoft.Dynamite.Lists
             }
 
             return list;
+        }
+
+        /// <summary>
+        /// Find a list by its web-relative url
+        /// </summary>
+        /// <param name="web">The context's web</param>
+        /// <param name="listUrl">The web-relative path to the list</param>
+        /// <returns>The list</returns>
+        public SPList GetByUrl(SPWeb web, string listUrl)
+        {
+            return this.GetByUrl(web, new Uri(listUrl, UriKind.Relative));
         }
 
         /// <summary>
@@ -66,7 +80,7 @@ namespace GSoft.Dynamite.Lists
 
             try
             {
-                listName = this.resources.Find(listNameResourceKey, web.UICulture.LCID);    // same as (int)web.Language (do not confuse with web.Locale, which refers to culture for currency, etc.
+                listName = this.resources.Find(listNameResourceKey, web.UICulture.LCID);    // same as (int)web.Language (do not confuse with web.Locale, which refers to culture for currency, etc.)
                     
                 if (!string.IsNullOrEmpty(listName))
                 {

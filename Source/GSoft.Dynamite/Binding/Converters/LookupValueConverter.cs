@@ -5,7 +5,7 @@ namespace GSoft.Dynamite.Binding.Converters
 {
     using System;
     using System.Diagnostics;
-
+    using System.Globalization;
     using GSoft.Dynamite.Logging;
 
     /// <summary>
@@ -57,11 +57,11 @@ namespace GSoft.Dynamite.Binding.Converters
             if (stringValue.Contains(";#"))
             {
                 var values = stringValue.Split(new[] { ";#" }, StringSplitOptions.RemoveEmptyEntries);
-                lookupValue = new SPFieldLookupValue(System.Convert.ToInt32(values[0]), values[1]);
+                lookupValue = new SPFieldLookupValue(System.Convert.ToInt32(values[0], CultureInfo.InvariantCulture), values[1]);
             }
             else
             {
-                this.logger.Info(string.Format("About to create a new SPFieldLookupValue with string {0}  StackTrace: {1}", stringValue, Environment.StackTrace));
+                this.logger.Info(string.Format(CultureInfo.InvariantCulture, "About to create a new SPFieldLookupValue with string {0}  StackTrace: {1}", stringValue, Environment.StackTrace));
               
                 lookupValue = new SPFieldLookupValue(stringValue);    
             }

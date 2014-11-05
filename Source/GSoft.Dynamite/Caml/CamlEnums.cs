@@ -5,15 +5,13 @@ namespace GSoft.Dynamite.Caml
     /// <summary>
     /// Enumerables used in CAML queries.
     /// </summary>
-    [SuppressMessage(
-        "StyleCop.CSharp.DocumentationRules", 
-        "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
-        Justification = "Enumerables is spelled correctly.  Get your shit together StyleCop!.")]
-    public class CamlEnums
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Enumerables is spelled correctly.  Get your stuff together StyleCop!.")]
+    public static class CamlEnums
     {
         /// <summary>
         /// Sort type.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum SortType
         {
             /// <summary>
@@ -30,6 +28,7 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// Membership type.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum MembershipType
         {
             /// <summary>
@@ -61,6 +60,7 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// Base type.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum BaseType
         {
             /// <summary>
@@ -92,6 +92,7 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// Query scope.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum QueryScope
         {
             /// <summary>
@@ -113,6 +114,7 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// Auto hyperlink type.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum AutoHyperlinkType
         {
             /// <summary>
@@ -134,6 +136,7 @@ namespace GSoft.Dynamite.Caml
         /// <summary>
         /// URL encoding type.
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping all CAML-related Enums as nested types under CamlEnums makes for a cleaner API.")]
         public enum UrlEncodingType
         {
             /// <summary>

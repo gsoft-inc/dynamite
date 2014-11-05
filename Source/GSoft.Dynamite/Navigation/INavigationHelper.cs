@@ -33,7 +33,6 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationTerms">The navigation terms.</param>
         /// <param name="id">The identifier.</param>
         /// <returns>The navigation term.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id);
 
         /// <summary>
@@ -41,8 +40,15 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="navigationTerm">The navigation term.</param>
         /// <returns>A collection of parent terms, traversing upwards.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         IEnumerable<NavigationTerm> GetNavigationParentTerms(NavigationTerm navigationTerm);
+
+        /// <summary>
+        /// Generates the friendly URL slug with a default maximum length.
+        /// </summary>
+        /// <param name="phrase">The phrase.</param>
+        /// <returns>A friendly URL slug containing human readable characters.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "Return value is just an URL fragment (a slug), not a full URL.")]
+        string GenerateFriendlyUrlSlug(string phrase);
 
         /// <summary>
         /// Generates the friendly URL slug.
@@ -50,8 +56,8 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="phrase">The phrase.</param>
         /// <param name="maxLength">The maximum length.</param>
         /// <returns>A friendly URL slug containing human readable characters.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        string GenerateFriendlyUrlSlug(string phrase, int maxLength = 75);
+        [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings", Justification = "Return value is just an URL fragment (a slug), not a full URL.")]
+        string GenerateFriendlyUrlSlug(string phrase, int maxLength);
 
         /// <summary>
         /// Set term driven page settings in the term store

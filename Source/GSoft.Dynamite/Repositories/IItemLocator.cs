@@ -1,7 +1,7 @@
 ﻿namespace GSoft.Dynamite.Repositories
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
-
     using Microsoft.SharePoint;
 
     /// <summary>
@@ -9,6 +9,17 @@
     /// </summary>
     public interface IItemLocator
     {
+        /// <summary>
+        /// Get the list item corresponding to the given title 
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="listUrl">The list path to reach the list.</param>
+        /// <param name="itemTitle">The title of the list item.</param>
+        /// <returns>
+        /// The <see cref="SPSecurableObject"/>.
+        /// </returns>
+        SPSecurableObject GetByTitle(SPWeb web, Uri listUrl, string itemTitle);
+
         /// <summary>
         /// Get the list item corresponding to the given title 
         /// </summary>

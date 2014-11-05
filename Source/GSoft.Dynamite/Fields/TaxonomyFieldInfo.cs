@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
@@ -64,6 +65,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="isPathRendered">Whether the full parent-to-child path to the term should be rendered in the SharePoint UI</param>
         /// <param name="createValuesInEditForm">Whether the field allow creating new values from the taxonomy picker</param>
         /// <returns>The field schema XML</returns>
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Schema requires lowercase.")]
         public static XElement TaxonomyFieldCustomizationSchema(Guid associatedNoteFieldId, bool isPathRendered, bool createValuesInEditForm)
         {
             XNamespace p4 = "http://www.w3.org/2001/XMLSchema-instance";

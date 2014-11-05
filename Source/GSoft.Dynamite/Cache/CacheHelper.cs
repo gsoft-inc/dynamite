@@ -140,16 +140,36 @@ namespace GSoft.Dynamite.Cache
         }
 
         /// <summary>
+        /// Clear the cached information for a specific key in the CurrentUICulture
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public void ClearCache(ICacheKey key)
+        {
+            string cacheKey = string.Empty;
+            var lcid = CultureInfo.CurrentUICulture.LCID;
+
+            if (lcid == Language.French.Culture.LCID)
+            {
+                cacheKey = key.InFrench;
+            }
+            else
+            {
+                cacheKey = key.InEnglish;
+            }
+
+            this.ClearCache(cacheKey);
+        }
+
+        /// <summary>
         /// Clear the cached information for a specific key.
         /// </summary>
         /// <param name="key">The key.</param>
-        /// <param name="lcid">The language of the cache. If null (default) is passed the current UI culture is used.</param>
-        public void ClearCache(ICacheKey key, int? lcid = null)
+        /// <param name="lcid">The language of the cache to clear.</param>
+        public void ClearCache(ICacheKey key, int lcid)
         {
             string cacheKey = string.Empty;
-            lcid = lcid ?? CultureInfo.CurrentUICulture.LCID;
 
-            if (lcid.Value == Language.French.Culture.LCID)
+            if (lcid == Language.French.Culture.LCID)
             {
                 cacheKey = key.InFrench;
             }

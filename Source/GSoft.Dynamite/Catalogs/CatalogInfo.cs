@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Search;
@@ -18,7 +20,20 @@ namespace GSoft.Dynamite.Catalogs
             this.IsAnonymous = false;
             this.ManagedProperties = new List<ManagedPropertyInfo>();
         }
-        
+
+        /// <summary>
+        /// Initializes a new CatalogInfo
+        /// </summary>
+        /// <param name="webRelativeUrl">The web-relative URL of the list</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        public CatalogInfo(Uri webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
+            : base(webRelativeUrl, displayNameResourceKey, descriptionResourceKey)
+        {
+            this.IsAnonymous = false;
+            this.ManagedProperties = new List<ManagedPropertyInfo>();
+        }
+
         /// <summary>
         /// Initializes a new CatalogInfo
         /// </summary>
@@ -26,10 +41,8 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         public CatalogInfo(string webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
-            : base(webRelativeUrl, displayNameResourceKey, descriptionResourceKey)
+            : this(new Uri(webRelativeUrl, UriKind.Relative), displayNameResourceKey, descriptionResourceKey)
         {
-            this.IsAnonymous = false;
-            this.ManagedProperties = new List<ManagedPropertyInfo>();
         }
 
         /// <summary>
@@ -40,6 +53,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <summary>
         /// Managed properties exposed through the catalog
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<ManagedPropertyInfo> ManagedProperties { get; set; }
 
         /// <summary>

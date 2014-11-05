@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using Autofac;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     /// <summary>
     /// Lifetime scope provider the help share state at the HTTP request level

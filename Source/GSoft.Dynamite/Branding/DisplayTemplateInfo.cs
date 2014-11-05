@@ -8,6 +8,11 @@ namespace GSoft.Dynamite.Branding
     public enum DisplayTemplateCategory
     {
         /// <summary>
+        /// Undefined display template category
+        /// </summary>
+        Undefined = 0,
+
+        /// <summary>
         /// Search display templates
         /// </summary>
         Search = 1,
@@ -85,7 +90,7 @@ namespace GSoft.Dynamite.Branding
         /// <summary>
         /// Path to the Display Template
         /// </summary>
-        public string ItemTemplateUrl 
+        public string ItemTemplateTokenizedPath 
         { 
             get
             {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Office.Server.Search.Administration;
 
 namespace GSoft.Dynamite.Search
@@ -15,7 +16,7 @@ namespace GSoft.Dynamite.Search
         /// <param name="type">The type of the managed property</param>
         public ManagedPropertyInfo(string name, ManagedDataType type) : this(name)
         {
-            this.Type = type;
+            this.DataType = type;
         }
 
         /// <summary>
@@ -82,11 +83,12 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Gets the data type of a managed property.
         /// </summary>
-        public ManagedDataType Type { get; set; }
+        public ManagedDataType DataType { get; set; }
 
         /// <summary>
         /// Mapped crawled properties names
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IDictionary<string, int> CrawledProperties { get; set; }
 
         /// <summary>

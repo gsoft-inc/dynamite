@@ -204,7 +204,7 @@ namespace GSoft.Dynamite.Search
         /// <param name="contextWeb">The SPWeb context.</param>
         /// <param name="displayName">The query rule display name.</param>
         /// <returns>A list of query rules</returns>
-        List<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName);
+        ICollection<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName);
 
         /// <summary>
         /// Create a change query action for a Query Rule

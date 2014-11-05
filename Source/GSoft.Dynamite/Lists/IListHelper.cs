@@ -31,10 +31,10 @@
         /// <param name="web">The current web</param>
         /// <param name="name">The name of the list</param>
         /// <param name="description">The description of the list</param>
-        /// <param name="template">The desired list template to use to instantiate the list</param>
+        /// <param name="listTemplate">The desired list template to use to instantiate the list</param>
         /// <returns>The new list or the existing list</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPList EnsureList(SPWeb web, string name, string description, SPListTemplate template);
+        SPList EnsureList(SPWeb web, string name, string description, SPListTemplate listTemplate);
 
         /// <summary>
         /// Creates the list or returns the existing one.
@@ -65,14 +65,14 @@
 
         /// <summary>The ensure list.</summary>
         /// <param name="web">The web.</param>
-        /// <param name="rootFolderUrl">The root folder url.</param>
+        /// <param name="webRelativePathToList">The web-relative path to the list's root folder.</param>
         /// <param name="titleResourceKey">The title resource key.</param>
         /// <param name="descriptionResourceKey">The description resource key.</param>
         /// <param name="templateType">The template type.</param>
         /// <returns>The <see cref="SPList"/>.</returns>
         SPList EnsureList(
             SPWeb web,
-            string rootFolderUrl,
+            string webRelativePathToList,
             string titleResourceKey,
             string descriptionResourceKey,
             SPListTemplateType templateType);
@@ -89,8 +89,8 @@
         ///  Set WriteSecurity on a SPList
         /// </summary>
         /// <param name="list">The list.</param>
-        /// <param name="option">The Write Security option</param>
-        void SetWriteSecurity(SPList list, WriteSecurityOptions option);
+        /// <param name="writeSecurityOptions">The Write Security option</param>
+        void SetWriteSecurity(SPList list, WriteSecurityOptions writeSecurityOptions);
 
         /// <summary>
         /// Enforce the unique value(s) for a list field. In case the field is reused in the site collection, we can make that change on the list scope.

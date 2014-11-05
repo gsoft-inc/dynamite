@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Branding;
 using Microsoft.Office.Server.Search.Administration;
 
@@ -52,11 +53,13 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The type's rules
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IList<ResultTypeRuleInfo> Rules { get; set; }
 
         /// <summary>
         /// The type's managed property metadata
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IList<ManagedPropertyInfo> DisplayProperties { get; set; }
     }
 }
