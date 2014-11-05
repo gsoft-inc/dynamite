@@ -65,6 +65,7 @@ namespace GSoft.Dynamite.Binding
         /// <returns>
         /// The <see cref="IList"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
         IList<T> Get<T>(SPListItemCollection listItems) where T : new();
 
         /// <summary>

@@ -18,17 +18,14 @@ namespace GSoft.Dynamite.Taxonomy
     /// </remarks>
     public class TaxonomyService : ITaxonomyService
     {
-        private ILogger logger;
         private ISiteTaxonomyCacheManager taxonomyCacheManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyService" /> class.
         /// </summary>
-        /// <param name="logger">The logger.</param>
         /// <param name="taxonomyCacheManager">The taxonomy cache manager</param>
-        public TaxonomyService(ILogger logger, ISiteTaxonomyCacheManager taxonomyCacheManager)
+        public TaxonomyService(ISiteTaxonomyCacheManager taxonomyCacheManager)
         {
-            this.logger = logger;
             this.taxonomyCacheManager = taxonomyCacheManager;
         }
 
@@ -470,7 +467,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
         {
             IList<Term> termHierarchy = new List<Term>();
 
@@ -572,7 +569,7 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (termSet == null)
             {
-                throw new ArgumentNullException("termSetName");
+                throw new ArgumentNullException("termSet");
             }
 
             if (string.IsNullOrEmpty(termLabel))
@@ -726,8 +723,6 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 throw new ArgumentNullException("termSetName");
             }
-
-            IList<Term> termsList = new List<Term>();
 
             Group group = GetGroupFromTermStore(termStore, termStoreGroupName);
             TermSet termSet = this.GetTermSetFromGroup(termStore, group, termSetName);

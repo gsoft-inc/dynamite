@@ -146,9 +146,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="field">The field.</param>
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
-        /// <param name="terms">Term label</param>
-        void SetDefaultTaxonomyFieldMultiValue(
-            SPWeb web, SPField field, string termGroupName, string termSetName, string[] terms);
+        /// <param name="termLabels">Term labels</param>
+        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels);
 
         /// <summary>
         /// Gets the term group by name.

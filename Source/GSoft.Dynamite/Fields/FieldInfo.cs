@@ -88,7 +88,7 @@ namespace GSoft.Dynamite.Fields
 
             if (fieldSchemaXml.Attribute("Required") != null)
             {
-                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredTypes.Required : RequiredTypes.NotRequired;
+                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredType.Required : RequiredType.NotRequired;
             }
 
             if (fieldSchemaXml.Attribute("EnforceUniqueValues") != null)
@@ -140,7 +140,7 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
-        public RequiredTypes Required { get; set; }
+        public RequiredType Required { get; set; }
 
         /// <summary>
         /// Indicates if the field must enforce unique values
@@ -214,12 +214,12 @@ namespace GSoft.Dynamite.Fields
                     new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper(CultureInfo.InvariantCulture)));
 
                 // Check the Required type
-                if (this.Required == RequiredTypes.Required)
+                if (this.Required == RequiredType.Required)
                 {
                     schema.Add(new XAttribute("Required", "TRUE"));
                 }
 
-                if (this.Required == RequiredTypes.NotRequired)
+                if (this.Required == RequiredType.NotRequired)
                 {
                     schema.Add(new XAttribute("Required", "FALSE"));
                 }

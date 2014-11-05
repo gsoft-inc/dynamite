@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GSoft.Dynamite.Security
 {
     /// <summary>The security constants.</summary>
-    public class SecurityConstants
+    public static class SecurityConstants
     { 
         /// <summary>
         /// The approve permission.

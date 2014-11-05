@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.ServiceLocator
     /// <summary>
     /// Even through service location should NEVER be done from within the core Dynamite DLL,
     /// this service locator gives you basic service location facilities when you REALLY, REALLY
-    /// need it (e.g. you have a serializable/newable object and you was to access Dynamite logging
+    /// need it (e.g. you have a serializable/new-able object and you was to access Dynamite logging
     /// utilities from a helper method on that almost-POCO).
     /// </summary>
     internal static class InternalServiceLocator

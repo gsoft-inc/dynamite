@@ -111,7 +111,7 @@ namespace GSoft.Dynamite.Events
         public void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
             // Content Types
-            if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
+            if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
                 var contentType = this.contentTypeBuilder.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
 
@@ -130,7 +130,7 @@ namespace GSoft.Dynamite.Events
         public void DeleteEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
             // Content Types
-            if (eventReceiver.EventOwner == EventReceiverInfo.EventReceiverOwner.ContentType)
+            if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
                 var contentType = this.contentTypeBuilder.EnsureContentType(site.RootWeb.AvailableContentTypes, eventReceiver.ContentType);
 

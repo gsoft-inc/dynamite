@@ -253,7 +253,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false);
+        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst);  // TODO: Review this "parent first" meaning... doesn't "GetTermPathFromRootToTerm" imply parentFirst=true as default? Just plain weird...
 
         /// <summary>
         /// Retrieves all Terms corresponding to a term set in the default term store from the site collection's reserved group

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace GSoft.Dynamite.Taxonomy
@@ -71,6 +72,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Default labels by language (LCID) for the Term
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IDictionary<CultureInfo, string> Labels { get; set; }
 
         /// <summary>

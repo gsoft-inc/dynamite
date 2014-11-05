@@ -427,7 +427,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
         {
             using (var timeTracker = this.timeTracker.BeginTimeTrackerScope(TimeTrackerKey))
             {
