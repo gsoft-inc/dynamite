@@ -1,4 +1,5 @@
-﻿using GSoft.Dynamite.Taxonomy;
+﻿using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Pages
 {
@@ -13,6 +14,8 @@ namespace GSoft.Dynamite.Pages
         /// <param name="termSet">The term set</param>
         /// <param name="targetUrlForChildTerms">The target page for child terms</param>
         /// <param name="catalogTargetUrlForChildTerms">The target catalog page for child terms</param>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public TermDrivenPageSettingInfo(TermSetInfo termSet, string targetUrlForChildTerms, string catalogTargetUrlForChildTerms)
         {
             this.TermSet = termSet;
@@ -32,6 +35,10 @@ namespace GSoft.Dynamite.Pages
         /// <param name="catalogTargetUrlForChildTerms">The catalog target URL for child terms</param>
         /// <param name="excludeFromGlobalNav">Whether the term should be excluded from global navigation</param>
         /// <param name="excludeFromCurrentNav">Whether the term should be excluded from current navigation</param>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "3#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "4#", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public TermDrivenPageSettingInfo(
             TermInfo term, 
             string targetUrl, 
@@ -90,21 +97,25 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// Target navigation URL for items tagged with the current term
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public string TargetUrl { get; private set; }
 
         /// <summary>
         /// Target navigation URL for all items tagged with child terms of the current term
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public string TargetUrlForChildTerms { get; private set; }
 
         /// <summary>
         /// The catalog target URL
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public string CatalogTargetUrl { get; private set; }
 
         /// <summary>
         /// The catalog child terms target URL
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
         public string CatalogTargetUrlForChildTerms { get; private set; }
 
         /// <summary>

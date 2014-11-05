@@ -8,13 +8,13 @@ namespace GSoft.Dynamite.Serializers
         /// <summary>
         /// The serialize method.
         /// </summary>
-        /// <param name="obj">
+        /// <param name="valueToSerialize">
         /// The object to serialize.
         /// </param>
         /// <returns>
         /// The serialized string
         /// </returns>
-        string Serialize(object obj);
+        string Serialize(object valueToSerialize);
 
         /// <summary>
         /// The deserialize.

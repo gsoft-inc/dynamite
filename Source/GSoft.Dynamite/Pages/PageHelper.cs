@@ -85,9 +85,9 @@ namespace GSoft.Dynamite.Pages
             }
 
             // Insert WebParts
-            foreach (KeyValuePair<string, WebPartInfo> webPartSetting in page.WebParts)
+            foreach (WebPartInfo webPartSetting in page.WebParts)
             {
-                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, webPartSetting.Value.WebPart, webPartSetting.Key, 1);
+                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, webPartSetting.WebPart, webPartSetting.ZoneName, 1);
             }
 
             // Publish

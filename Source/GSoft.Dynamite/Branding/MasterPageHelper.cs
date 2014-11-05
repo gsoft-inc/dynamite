@@ -10,7 +10,7 @@ namespace GSoft.Dynamite.Branding
     public class MasterPageHelper : IMasterPageHelper
     {
         private readonly ILogger logger;
-        private readonly string seattleMasterPageFilename = "seattle.master";
+        private readonly string seattleMasterPageFileName = "seattle.master";
 
         /// <summary>
         /// Constructor for dependencies injection
@@ -29,12 +29,23 @@ namespace GSoft.Dynamite.Branding
         /// <param name="publishingMasterPageWebRelativeUrl">Web relative Url to the custom master page</param>
         public void ApplyMasterPage(SPWeb currentWeb, string systemMasterPageWebRelativeUrl, string publishingMasterPageWebRelativeUrl)
         {
+            this.ApplyMasterPage(currentWeb, new Uri(systemMasterPageWebRelativeUrl, UriKind.Relative), new Uri(publishingMasterPageWebRelativeUrl, UriKind.Relative));
+        }
+
+        /// <summary>
+        /// Applies the master page url on a web.
+        /// </summary>
+        /// <param name="currentWeb">The web to update.</param>
+        /// <param name="systemMasterPageWebRelativeUrl">Web relative Url to the default master page</param>
+        /// <param name="publishingMasterPageWebRelativeUrl">Web relative Url to the custom master page</param>
+        public void ApplyMasterPage(SPWeb currentWeb, Uri systemMasterPageWebRelativeUrl, Uri publishingMasterPageWebRelativeUrl)
+        {
             // Be sure to use the root web to forge the url
             var rootWeb = currentWeb.Site.RootWeb;
 
-            var systemMasterPageUri = !string.IsNullOrEmpty(systemMasterPageWebRelativeUrl) ? new SPUrl(rootWeb, systemMasterPageWebRelativeUrl).AbsoluteUrl : null;
-            var publishingMasterPageUri = !string.IsNullOrEmpty(publishingMasterPageWebRelativeUrl) ? new SPUrl(rootWeb, publishingMasterPageWebRelativeUrl).AbsoluteUrl : null;
-            this.UpdateMasterPages(currentWeb, systemMasterPageUri, publishingMasterPageUri);
+            var systemMasterPageUri = !systemMasterPageWebRelativeUrl.IsAbsoluteUri ? new SPUrl(rootWeb, systemMasterPageWebRelativeUrl.ToString()).AbsoluteUrl : null;
+            var publishingMasterPageUri = !publishingMasterPageWebRelativeUrl.IsAbsoluteUri ? new SPUrl(rootWeb, publishingMasterPageWebRelativeUrl.ToString()).AbsoluteUrl : null;
+            UpdateMasterPages(currentWeb, systemMasterPageUri, publishingMasterPageUri);
         }
 
         /// <summary>
@@ -45,46 +56,44 @@ namespace GSoft.Dynamite.Branding
         /// <param name="publishingMasterPageWebRelativeUrl">Path to the custom master page</param>
         public void ApplyMasterPage(SPSite site, string systemMasterPageWebRelativeUrl, string publishingMasterPageWebRelativeUrl)
         {
-            var systemMasterPageUri = !string.IsNullOrEmpty(systemMasterPageWebRelativeUrl) ? new SPUrl(site.RootWeb, systemMasterPageWebRelativeUrl).AbsoluteUrl : null;
-            var publishingMasterPageUri = !string.IsNullOrEmpty(publishingMasterPageWebRelativeUrl) ? new SPUrl(site.RootWeb, publishingMasterPageWebRelativeUrl).AbsoluteUrl : null;
-            this.UpdateMasterPages(site, systemMasterPageUri, publishingMasterPageUri);
+            this.ApplyMasterPage(site, new Uri(systemMasterPageWebRelativeUrl, UriKind.Relative), new Uri(publishingMasterPageWebRelativeUrl, UriKind.Relative));
+        }
+
+        /// <summary>
+        /// Applies the master page url on a web.
+        /// </summary>
+        /// <param name="site">The web to update.</param>
+        /// <param name="systemMasterPageWebRelativeUrl">Path to the default master page</param>
+        /// <param name="publishingMasterPageWebRelativeUrl">Path to the custom master page</param>
+        public void ApplyMasterPage(SPSite site, Uri systemMasterPageWebRelativeUrl, Uri publishingMasterPageWebRelativeUrl)
+        {
+            var systemMasterPageUri = !systemMasterPageWebRelativeUrl.IsAbsoluteUri ? new SPUrl(site.RootWeb, systemMasterPageWebRelativeUrl.ToString()).AbsoluteUrl : null;
+            var publishingMasterPageUri = !publishingMasterPageWebRelativeUrl.IsAbsoluteUri ? new SPUrl(site.RootWeb, publishingMasterPageWebRelativeUrl.ToString()).AbsoluteUrl : null;
+            UpdateMasterPages(site, systemMasterPageUri, publishingMasterPageUri);
         }
 
         /// <summary>
         /// Applies the master page url on all the web of a site.
         /// </summary>
         /// <param name="site">The web to update.</param>
-        /// <param name="systemMasterPageFilename">System MasterPage filename</param>
-        /// <param name="publishingMasterPageFilename">Publishing MasterPage filename</param>
-        public void ApplyRootMasterPage(SPSite site, string systemMasterPageFilename, string publishingMasterPageFilename)
+        /// <param name="systemMasterPageFileName">System MasterPage filename</param>
+        /// <param name="publishingMasterPageFileName">Publishing MasterPage filename</param>
+        public void ApplyRootMasterPage(SPSite site, string systemMasterPageFileName, string publishingMasterPageFileName)
         {
             Uri systemMasterPageUri = null;
             Uri publishingMasterPageUri = null;
 
-            if (!string.IsNullOrEmpty(systemMasterPageFilename))
+            if (!string.IsNullOrEmpty(systemMasterPageFileName))
             {
-                systemMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, systemMasterPageFilename).ServerRelativeUrl).AbsoluteUrl;
+                systemMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, systemMasterPageFileName).ServerRelativeUrl).AbsoluteUrl;
             }
 
-            if (!string.IsNullOrEmpty(publishingMasterPageFilename))
+            if (!string.IsNullOrEmpty(publishingMasterPageFileName))
             {
-                publishingMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, publishingMasterPageFilename).ServerRelativeUrl).AbsoluteUrl;
+                publishingMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, publishingMasterPageFileName).ServerRelativeUrl).AbsoluteUrl;
             }
 
-            this.UpdateMasterPages(site, systemMasterPageUri, publishingMasterPageUri);
-        }
-
-        /// <summary>
-        /// Reverts the master page url of a web to its default value.
-        /// </summary>
-        /// <param name="currentWeb">The web to update.</param>
-        /// <param name="originalMasterPath">Path to the original master page to revert to</param>
-        [Obsolete]
-        public void RevertToDefaultMasterPage(SPWeb currentWeb, string originalMasterPath)
-        {
-            var rootWeb = currentWeb.Site.RootWeb;
-            var masterPageUri = new SPUrl(rootWeb, originalMasterPath).AbsoluteUrl;
-            this.UpdateMasterPages(currentWeb, masterPageUri, masterPageUri);
+            UpdateMasterPages(site, systemMasterPageUri, publishingMasterPageUri);
         }
 
         /// <summary>
@@ -93,9 +102,9 @@ namespace GSoft.Dynamite.Branding
         /// <param name="web">The web to update.</param>
         public void RevertToSeattle(SPWeb web)
         {
-            var masterPageFile = this.GetSiteRelativeMasterPageUrl(web.Site, this.seattleMasterPageFilename);
+            var masterPageFile = this.GetSiteRelativeMasterPageUrl(web.Site, this.seattleMasterPageFileName);
             var seattleMasterPageUri = new SPUrl(web, masterPageFile.ServerRelativeUrl).AbsoluteUrl;
-            this.UpdateMasterPages(web, seattleMasterPageUri, seattleMasterPageUri);
+            UpdateMasterPages(web, seattleMasterPageUri, seattleMasterPageUri);
         }
 
         /// <summary>
@@ -104,19 +113,19 @@ namespace GSoft.Dynamite.Branding
         /// <param name="site">The site containing all the web to update.</param>
         public void RevertToSeattle(SPSite site)
         {
-            var masterPageFile = this.GetSiteRelativeMasterPageUrl(site, this.seattleMasterPageFilename);
+            var masterPageFile = this.GetSiteRelativeMasterPageUrl(site, this.seattleMasterPageFileName);
             var seattleMasterPageUri = new SPUrl(site.RootWeb, masterPageFile.ServerRelativeUrl).AbsoluteUrl;
-            this.UpdateMasterPages(site, seattleMasterPageUri, seattleMasterPageUri);
+            UpdateMasterPages(site, seattleMasterPageUri, seattleMasterPageUri);
         }
 
         /// <summary>
         /// Generates the master page file corresponding to the HTML file.
         /// </summary>
         /// <param name="site">The site.</param>
-        /// <param name="htmlFilename">The filename of the HTML file. This file is supposed to be on the MasterPage gallery root.</param>
-        public void GenerateMasterPage(SPSite site, string htmlFilename)
+        /// <param name="htmlFileName">The filename of the HTML file. This file is supposed to be on the MasterPage gallery root.</param>
+        public void GenerateMasterPage(SPSite site, string htmlFileName)
         {
-            if (string.IsNullOrEmpty(htmlFilename) || !(htmlFilename.EndsWith(".html") || htmlFilename.EndsWith(".htm")))
+            if (string.IsNullOrEmpty(htmlFileName) || !(htmlFileName.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || htmlFileName.EndsWith(".htm", StringComparison.OrdinalIgnoreCase)))
             {
                 throw new ArgumentException("The htmlFilename argument is null of empty and should finish by '.html' or '.htm' .");
             }
@@ -125,7 +134,7 @@ namespace GSoft.Dynamite.Branding
 
             try
             {
-                htmlFile = this.GetSiteRelativeMasterPageUrl(site, htmlFilename);
+                htmlFile = this.GetSiteRelativeMasterPageUrl(site, htmlFileName);
 
                 // undo the customization, necessary only upon successive feature re-activations 
                 // (because the Checkout and edits below cause the unghosting/customization of the file)
@@ -146,7 +155,7 @@ namespace GSoft.Dynamite.Branding
 
                 htmlFile.Publish("Publish masterpage file generation");
 
-                this.logger.Info("Master Page with Url: '{0}' was successfully generated.", htmlFilename);
+                this.logger.Info("Master Page with Url: '{0}' was successfully generated.", htmlFileName);
             }
         }
 
@@ -176,7 +185,7 @@ namespace GSoft.Dynamite.Branding
             return masterPageFile;
         }
 
-        private void UpdateMasterPages(SPWeb web, Uri systemMasterPageUri, Uri publishingMasterPageUri)
+        private static void UpdateMasterPages(SPWeb web, Uri systemMasterPageUri, Uri publishingMasterPageUri)
         {
             if (systemMasterPageUri != null)
             {
@@ -191,11 +200,11 @@ namespace GSoft.Dynamite.Branding
             web.Update();
         }
 
-        private void UpdateMasterPages(SPSite site, Uri systemMasterPageUri, Uri publishingMasterPageUri)
+        private static void UpdateMasterPages(SPSite site, Uri systemMasterPageUri, Uri publishingMasterPageUri)
         {
             foreach (SPWeb web in site.AllWebs)
             {
-                this.UpdateMasterPages(web, systemMasterPageUri, publishingMasterPageUri);
+                UpdateMasterPages(web, systemMasterPageUri, publishingMasterPageUri);
             }
         }
     }

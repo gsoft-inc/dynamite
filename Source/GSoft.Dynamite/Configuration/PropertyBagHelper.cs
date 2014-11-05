@@ -58,13 +58,13 @@ namespace GSoft.Dynamite.Configuration
         /// </summary>
         /// <param name="webUrl">The Url of the web</param>
         /// <param name="propertyBagValues">The property bag values</param>
-        public void SetWebValues(string webUrl, IList<PropertyBagValue> propertyBagValues)
+        public void SetWebValues(Uri webUrl, IList<PropertyBagValue> propertyBagValues)
         {
-            using (var site = new SPSite(webUrl))
+            using (var site = new SPSite(webUrl.AbsoluteUri))
             {
                 using (var web = site.OpenWeb())
                 {
-                    this.Set(web.AllProperties, web.IndexedPropertyKeys, propertyBagValues, webUrl);
+                    this.Set(web.AllProperties, web.IndexedPropertyKeys, propertyBagValues, webUrl.AbsoluteUri);
                     web.Update();
                 }
             }
@@ -94,7 +94,7 @@ namespace GSoft.Dynamite.Configuration
                 throw new ArgumentNullException("web");
             }
 
-            return this.Get(web.AllProperties, key);
+            return Get(web.AllProperties, key);
         }
 
         #endregion Web scope
@@ -114,7 +114,7 @@ namespace GSoft.Dynamite.Configuration
                 throw new ArgumentNullException("site");
             }
 
-            return this.Get(site.RootWeb.AllProperties, key);
+            return Get(site.RootWeb.AllProperties, key);
         }
 
         #endregion Site scope
@@ -133,7 +133,7 @@ namespace GSoft.Dynamite.Configuration
                 throw new ArgumentNullException("webApplication");
             }
 
-            return this.Get(webApplication.Properties, key);
+            return Get(webApplication.Properties, key);
         }
 
         /// <summary>
@@ -141,14 +141,14 @@ namespace GSoft.Dynamite.Configuration
         /// </summary>
         /// <param name="webApplicationUrl">The url of the Web Application</param>
         /// <param name="propertyBagValues">The property bag values to insert</param>
-        public void SetWebApplicationValue(string webApplicationUrl, IList<PropertyBagValue> propertyBagValues)
+        public void SetWebApplicationValue(Uri webApplicationUrl, IList<PropertyBagValue> propertyBagValues)
         {
-            var webApplication = SPWebApplication.Lookup(new Uri(webApplicationUrl));
-            this.Set(webApplication.Properties, null, propertyBagValues, webApplicationUrl);
+            var webApplication = SPWebApplication.Lookup(webApplicationUrl);
+            this.Set(webApplication.Properties, null, propertyBagValues, webApplicationUrl.AbsoluteUri);
         }
         #endregion Web Application scope
 
-        private string Get(Hashtable bag, string key)
+        private static string Get(Hashtable bag, string key)
         {
             object property = null;
 

@@ -46,5 +46,19 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <param name="site">The site</param>
         /// <param name="variationSettings">The variation settings</param>
         void SetupVariations(SPSite site, VariationSettingsInfo variationSettings);
+        
+        /// <summary>
+        /// Get the hidden relationships list for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The relationships list.</returns>
+        SPList GetVariationLabelHiddenList(SPSite site);
+
+        /// <summary>
+        /// Get the hidden variation labels for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>the variation labels list.</returns>
+        SPList GetRelationshipsHiddenList(SPSite site);
     }
 }

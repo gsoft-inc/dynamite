@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,24 @@ namespace GSoft.Dynamite.Folders
     /// </summary>
     public class FolderInfo
     {
-        private IList<PageInfo> pages;
-        private IList<FolderInfo> subFolders;
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public FolderInfo()
+        {
+            this.Pages = new List<PageInfo>();
+            this.Subfolders = new List<FolderInfo>();
+            this.ItemFieldValues = new List<IFieldInfo>();
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="FolderInfo"/> instance
+        /// </summary>
+        /// <param name="name">Folder name (path relative to parent)</param>
+        public FolderInfo(string name) : this()
+        {
+            this.Name = name;
+        }
 
         /// <summary>
         /// Name of the folder
@@ -25,49 +42,20 @@ namespace GSoft.Dynamite.Folders
         /// <summary>
         /// Pages in the folder
         /// </summary>
-        public IList<PageInfo> Pages 
-        {
-            get
-            {
-                if (this.pages == null)
-                {
-                    return new List<PageInfo>();
-                }
-
-                return this.pages;
-            }
-
-            set
-            {
-                this.pages = value;
-            }
-        }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexible initialization.")]
+        public ICollection<PageInfo> Pages { get; set; }
 
         /// <summary>
         /// Sub folders
         /// </summary>
-        public IList<FolderInfo> SubFolders
-        {
-            get
-            {
-                if (this.subFolders == null)
-                {
-                    return new List<FolderInfo>();
-                }
-
-                return this.subFolders;
-            }
-
-            set
-            {
-                this.subFolders = value;
-            }
-        } 
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexible initialization.")]
+        public ICollection<FolderInfo> Subfolders { get; set; }
 
         /// <summary>
         /// Values for the folder should be stored in the DefaultValue
         /// property of the FieldInfo objects.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexible initialization.")]
         public ICollection<IFieldInfo> ItemFieldValues { get; set; }
 
         /// <summary>

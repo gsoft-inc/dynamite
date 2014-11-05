@@ -33,12 +33,26 @@ namespace GSoft.Dynamite.Repositories
         /// Get the list item corresponding to the given title 
         /// </summary>
         /// <param name="web">The web.</param>
-        /// <param name="listUrl">The display name to reach the list.</param>
+        /// <param name="listUrl">The web-relative URL of the .</param>
         /// <param name="itemTitle">The title of the list item.</param>
         /// <returns>
         /// The <see cref="SPSecurableObject"/>.
         /// </returns>
         public SPSecurableObject GetByTitle(SPWeb web, string listUrl, string itemTitle)
+        {
+            return this.GetByTitle(web, new Uri(listUrl, UriKind.Relative), itemTitle);
+        }
+        
+        /// <summary>
+        /// Get the list item corresponding to the given title 
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="listUrl">The list path to reach the list.</param>
+        /// <param name="itemTitle">The title of the list item.</param>
+        /// <returns>
+        /// The <see cref="SPSecurableObject"/>.
+        /// </returns>
+        public SPSecurableObject GetByTitle(SPWeb web, Uri listUrl, string itemTitle)
         {
             SPList list = this.listLocator.GetByUrl(web, listUrl);
 

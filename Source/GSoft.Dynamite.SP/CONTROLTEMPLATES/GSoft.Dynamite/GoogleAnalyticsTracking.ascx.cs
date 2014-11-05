@@ -35,11 +35,14 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         protected void Page_Load(object sender, EventArgs e)
         {
-            var configuration = DynamiteWspContainerProxy.Current.Resolve<IConfiguration>();
-            SPWeb web = SPContext.Current.Site.RootWeb;
+            SPWeb rootWeb = SPContext.Current.Site.RootWeb;
+            using (var scope = DynamiteWspContainerProxy.BeginLifetimeScope(rootWeb))
+            {
+                var configuration = scope.Resolve<IConfiguration>();
 
-            this.GoogleAnalyticsID = configuration.GetGoogleAnalyticsIdByMostNestedScope(web);
-            this.IsInDisplayMode = SPContext.Current.FormContext.FormMode == SPControlMode.Display;
+                this.GoogleAnalyticsID = configuration.GetGoogleAnalyticsIdByMostNestedScope(rootWeb);
+                this.IsInDisplayMode = SPContext.Current.FormContext.FormMode == SPControlMode.Display;
+            }
         }
     }
 }

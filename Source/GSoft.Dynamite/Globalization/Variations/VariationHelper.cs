@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -131,6 +132,7 @@ namespace GSoft.Dynamite.Helpers
         /// The site collection.
         /// </param>
         /// <param name="variationSettings">The variations settings</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged because this type will be injected (all injected type should have non-static public methods only for consistency's sake).")]
         public void EnsureVariationsSettings(SPSite site, VariationSettingsInfo variationSettings)
         {
             var rootWeb = site.RootWeb;
@@ -180,6 +182,7 @@ namespace GSoft.Dynamite.Helpers
         /// The site collection.
         /// </param>
         /// <param name="labels">The label metadata for all that should be synched. example: <c>"en"</c> or <c>"fr"</c>.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged because this type will be injected (all injected type should have non-static public methods only for consistency's sake).")]
         public void EnsureVariationlabels(SPSite site, IList<VariationLabelInfo> labels)
         {
             var rootWeb = site.RootWeb;
@@ -269,10 +272,10 @@ namespace GSoft.Dynamite.Helpers
             this.EnsureVariationsSettings(site, variationSettings);
             
             // Create labels
-            this.EnsureVariationlabels(site, variationSettings.Labels);
+            this.EnsureVariationlabels(site, variationSettings.Labels.ToList());
 
             // Create hierachies
-            this.CreateHierarchies(site, variationSettings.Labels);
+            this.CreateHierarchies(site, variationSettings.Labels.ToList());
         }
 
         /// <summary>
@@ -280,7 +283,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="site">The site.</param>
         /// <returns>The relationships list.</returns>
-        private SPList GetVariationLabelHiddenList(SPSite site)
+        public SPList GetVariationLabelHiddenList(SPSite site)
         {
             var guid = new Guid(site.RootWeb.GetProperty("_VarLabelsListId").ToString());
             return site.RootWeb.Lists[guid];
@@ -291,7 +294,7 @@ namespace GSoft.Dynamite.Helpers
         /// </summary>
         /// <param name="site">The site.</param>
         /// <returns>the variation labels list.</returns>
-        private SPList GetRelationshipsHiddenList(SPSite site)
+        public SPList GetRelationshipsHiddenList(SPSite site)
         {
             var guid = new Guid(site.RootWeb.GetProperty("_VarRelationshipsListId").ToString());
             return site.RootWeb.Lists[guid];

@@ -48,7 +48,7 @@ namespace GSoft.Dynamite.Cache
         /// <param name="englishKey">English key</param>
         /// <param name="frenchKey">French key</param>
         public SimpleCacheKey(string englishKey, string frenchKey)
-            : this(englishKey, englishKey, true)
+            : this(englishKey, frenchKey, true)
         {
         }
 

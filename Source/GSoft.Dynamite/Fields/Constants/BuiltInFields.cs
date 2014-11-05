@@ -181,7 +181,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The cell phone field name
         /// </summary>
-        public const string CellPhoneName = "CellPhone";
+        public const string CellphoneName = "CellPhone";
 
         /// <summary>
         /// The full name field name
@@ -240,219 +240,474 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Title field info
         /// </summary>
-        public static readonly IFieldInfo Title = new MinimalFieldInfo(TitleName, SPBuiltInFieldId.Title);
+        public static IFieldInfo Title
+        {
+            get 
+            { 
+                return new MinimalFieldInfo(TitleName, SPBuiltInFieldId.Title); 
+            }
+        }
 
         /// <summary>
         /// Title linked to item with edit menu
         /// </summary>
-        public static readonly IFieldInfo TitleLink = new MinimalFieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle);
+        public static IFieldInfo TitleLink 
+        { 
+            get { return new MinimalFieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle); } 
+        }
 
         /// <summary>
         /// Title linked to item with no edit menu
         /// </summary>
-        public static readonly IFieldInfo TitleLinkNoMenu = new MinimalFieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu);
+        public static IFieldInfo TitleLinkNoMenu 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu); 
+            } 
+        }
 
         /// <summary>
         /// FileRef (i.e. File Url) field info
         /// </summary>
-        public static readonly IFieldInfo FileRef = new MinimalFieldInfo(FileRefName, SPBuiltInFieldId.FileRef);
+        public static IFieldInfo FileRef 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(FileRefName, SPBuiltInFieldId.FileRef); 
+            } 
+        }
 
         /// <summary>
         /// FileLeafRef (i.e. Document Name) field info
         /// </summary>
-        public static readonly IFieldInfo FileLeafRef = new MinimalFieldInfo(FileLeafRefName, SPBuiltInFieldId.FileLeafRef);
+        public static IFieldInfo FileLeafRef 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(FileLeafRefName, SPBuiltInFieldId.FileLeafRef); 
+            } 
+        }
 
         /// <summary>
         /// ContentType field info
         /// </summary>
-        public static readonly IFieldInfo ContentType = new MinimalFieldInfo(ContentTypeName, SPBuiltInFieldId.ContentType);
+        public static IFieldInfo ContentType 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ContentTypeName, SPBuiltInFieldId.ContentType); 
+            } 
+        }
 
         /// <summary>
         /// ContentTypeId field info
         /// </summary>
-        public static readonly IFieldInfo ContentTypeId = new MinimalFieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId);
+        public static IFieldInfo ContentTypeId 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId); 
+            } 
+        }
 
         /// <summary>
         /// URL field info
         /// </summary>
-        public static readonly IFieldInfo Url = new MinimalFieldInfo(UrlName, SPBuiltInFieldId.URL);   // TODO: turn into UrlFieldValue
+        public static IFieldInfo Url 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(UrlName, SPBuiltInFieldId.URL); 
+            } 
+        }   // TODO: turn into UrlFieldValue
 
         /// <summary>
         /// TaxCatchAll field info.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static readonly IFieldInfo TaxCatchAll = new MinimalFieldInfo(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611"));
+        public static IFieldInfo TaxCatchAll 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611")); 
+            } 
+        }
 
         /// <summary>
         /// TaxCatchAllLabel field info.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static readonly IFieldInfo TaxCatchAllLabel = new MinimalFieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2"));
+        public static IFieldInfo TaxCatchAllLabel 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2")); 
+            } 
+        }
 
         /// <summary>
         /// The assigned to field info
         /// </summary>
-        public static readonly IFieldInfo AssignedTo = new MinimalFieldInfo(AssignedToName, SPBuiltInFieldId.AssignedTo);  // TODO: turn into UserFieldInfo
+        public static IFieldInfo AssignedTo 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(AssignedToName, SPBuiltInFieldId.AssignedTo); 
+            } 
+        }  // TODO: turn into UserFieldInfo
 
         /// <summary>
         /// The percent complete field info
         /// </summary>
-        public static readonly IFieldInfo PercentComplete = new MinimalFieldInfo(PercentCompleteName, SPBuiltInFieldId.PercentComplete);
+        public static IFieldInfo PercentComplete 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(PercentCompleteName, SPBuiltInFieldId.PercentComplete); 
+            } 
+        }
 
         /// <summary>
         /// The predecessors field info
         /// </summary>
-        public static readonly IFieldInfo Predecessors = new MinimalFieldInfo(PredecessorsName, SPBuiltInFieldId.Predecessors);
+        public static IFieldInfo Predecessors 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(PredecessorsName, SPBuiltInFieldId.Predecessors); 
+            } 
+        }
 
         /// <summary>
         /// The priority field info
         /// </summary>
-        public static readonly IFieldInfo Priority = new MinimalFieldInfo(PriorityName, SPBuiltInFieldId.Priority);    // TODO: turn into ChoiceFieldInfo
+        public static IFieldInfo Priority 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(PriorityName, SPBuiltInFieldId.Priority); 
+            } 
+        }    // TODO: turn into ChoiceFieldInfo
 
         /// <summary>
         /// The task status field info
         /// </summary>
-        public static readonly IFieldInfo TaskStatus = new MinimalFieldInfo(TaskStatusName, SPBuiltInFieldId.TaskStatus);      // TODO: turn into ChoiceFieldInfo
+        public static IFieldInfo TaskStatus 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(TaskStatusName, SPBuiltInFieldId.TaskStatus); 
+            } 
+        }      // TODO: turn into ChoiceFieldInfo
 
         /// <summary>
         /// The home phone field info
         /// </summary>
-        public static readonly IFieldInfo HomePhone = new MinimalFieldInfo(HomePhoneName, SPBuiltInFieldId.HomePhone);
+        public static IFieldInfo HomePhone 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(HomePhoneName, SPBuiltInFieldId.HomePhone); 
+            } 
+        }
 
         /// <summary>
         /// The work fax field info
         /// </summary>
-        public static readonly IFieldInfo WorkFax = new MinimalFieldInfo(WorkFaxName, SPBuiltInFieldId.WorkFax);
+        public static IFieldInfo WorkFax 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkFaxName, SPBuiltInFieldId.WorkFax); 
+            } 
+        }
 
         /// <summary>
         /// The work address field info
         /// </summary>
-        public static readonly IFieldInfo WorkAddress = new MinimalFieldInfo(WorkAddressName, SPBuiltInFieldId.WorkAddress);
+        public static IFieldInfo WorkAddress 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkAddressName, SPBuiltInFieldId.WorkAddress); 
+            } 
+        }
 
         /// <summary>
         /// The work country field info
         /// </summary>
-        public static readonly IFieldInfo WorkCountry = new MinimalFieldInfo(WorkCountryName, SPBuiltInFieldId.WorkCountry);
+        public static IFieldInfo WorkCountry 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkCountryName, SPBuiltInFieldId.WorkCountry); 
+            } 
+        }
 
         /// <summary>
         /// The work city field info
         /// </summary>
-        public static readonly IFieldInfo WorkCity = new MinimalFieldInfo(WorkCityName, SPBuiltInFieldId.WorkCity);
+        public static IFieldInfo WorkCity 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkCityName, SPBuiltInFieldId.WorkCity); 
+            } 
+        }
 
         /// <summary>
         /// The work state field info
         /// </summary>
-        public static readonly IFieldInfo WorkState = new MinimalFieldInfo(WorkStateName, SPBuiltInFieldId.WorkState);
+        public static IFieldInfo WorkState 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkStateName, SPBuiltInFieldId.WorkState); 
+            } 
+        }
 
         /// <summary>
         /// The work zip field info
         /// </summary>
-        public static readonly IFieldInfo WorkZip = new MinimalFieldInfo(WorkZipName, SPBuiltInFieldId.WorkZip);
+        public static IFieldInfo WorkZip 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkZipName, SPBuiltInFieldId.WorkZip); 
+            } 
+        }
 
         /// <summary>
         /// The web page field info
         /// </summary>
-        public static readonly IFieldInfo Webpage = new MinimalFieldInfo(WebpageName, SPBuiltInFieldId.WebPage);       // TODO: turn into UrlFieldInfo
+        public static IFieldInfo Webpage 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WebpageName, SPBuiltInFieldId.WebPage); 
+            } 
+        }       // TODO: turn into UrlFieldInfo
 
         /// <summary>
         /// The comments field info
         /// </summary>
-        public static readonly IFieldInfo Comments = new MinimalFieldInfo(CommentsName, SPBuiltInFieldId.Comments);
+        public static IFieldInfo Comments 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(CommentsName, SPBuiltInFieldId.Comments); 
+            } 
+        }
 
         /// <summary>
         /// The department field info
         /// </summary>
-        public static readonly IFieldInfo Department = new MinimalFieldInfo(DepartmentName, SPBuiltInFieldId.Department);
+        public static IFieldInfo Department 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(DepartmentName, SPBuiltInFieldId.Department); 
+            } 
+        }
 
         /// <summary>
         /// The role field info
         /// </summary>
-        public static readonly IFieldInfo Role = new MinimalFieldInfo(RoleName, SPBuiltInFieldId.Role);
+        public static IFieldInfo Role 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(RoleName, SPBuiltInFieldId.Role); 
+            } 
+        }
 
         /// <summary>
         /// The related items field info
         /// </summary>
-        public static readonly IFieldInfo RelatedItems = new MinimalFieldInfo(RelatedItemsName, SPBuiltInFieldId.RelatedItems);
+        public static IFieldInfo RelatedItems 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(RelatedItemsName, SPBuiltInFieldId.RelatedItems); 
+            } 
+        }
 
         /// <summary>
         /// The display order field info
         /// </summary>
-        public static readonly IFieldInfo DisplayOrder = new MinimalFieldInfo(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb"));
+        public static IFieldInfo DisplayOrder 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb")); 
+            } 
+        }
 
         /// <summary>
         /// The master page URL field info
         /// </summary>
-        public static readonly IFieldInfo MasterPageUrl = new MinimalFieldInfo(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c"));   // TODO: Turn into UrlFieldInfo
+        public static IFieldInfo MasterPageUrl 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c")); 
+            } 
+        }   // TODO: Turn into UrlFieldInfo
 
         /// <summary>
         /// The theme URL field info
         /// </summary>
-        public static readonly IFieldInfo ThemeUrl = new MinimalFieldInfo(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1")); // TODO turn into UrlFieldValue
+        public static IFieldInfo ThemeUrl 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1")); 
+            } 
+        } // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The image URL field info
         /// </summary>
-        public static readonly IFieldInfo ImageUrl = new MinimalFieldInfo(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023")); // TODO turn into UrlFieldValue
+        public static IFieldInfo ImageUrl 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023")); 
+            } 
+        } // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The font scheme URL field info
         /// </summary>
-        public static readonly IFieldInfo FontSchemeUrl = new MinimalFieldInfo(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320")); // TODO turn into UrlFieldValue
+        public static IFieldInfo FontSchemeUrl 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320")); 
+            } 
+        } // TODO turn into UrlFieldValue
 
         /// <summary>
         /// The enterprise keywords field info
         /// </summary>
-        public static readonly IFieldInfo EnterpriseKeywords = new MinimalFieldInfo(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); // TODO: turn into TaxonomyMultiFieldInfo
+        public static IFieldInfo EnterpriseKeywords 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); 
+            } 
+        } // TODO: turn into TaxonomyMultiFieldInfo
 
         /// <summary>
         /// The cell phone
         /// </summary>
-        public static readonly IFieldInfo CellPhone = new MinimalFieldInfo(CellPhoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2"));
+        public static IFieldInfo Cellphone 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(CellphoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2")); 
+            } 
+        }
 
         /// <summary>
         /// The full name
         /// </summary>
-        public static readonly IFieldInfo FullName = new MinimalFieldInfo(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538"));
+        public static IFieldInfo FullName 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538")); 
+            } 
+        }
 
         /// <summary>
         /// The email
         /// </summary>
-        public static readonly IFieldInfo Email = new MinimalFieldInfo(EmailName, SPBuiltInFieldId.EMail);
+        public static IFieldInfo Email 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(EmailName, SPBuiltInFieldId.EMail); 
+            } 
+        }
 
         /// <summary>
         /// The first name
         /// </summary>
-        public static readonly IFieldInfo FirstName = new MinimalFieldInfo(FirstNameName, SPBuiltInFieldId.FirstName);
+        public static IFieldInfo FirstName 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(FirstNameName, SPBuiltInFieldId.FirstName); 
+            } 
+        }
 
         /// <summary>
         /// The work phone
         /// </summary>
-        public static readonly IFieldInfo WorkPhone = new MinimalFieldInfo(WorkPhoneName, SPBuiltInFieldId.WorkPhone);
+        public static IFieldInfo WorkPhone 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(WorkPhoneName, SPBuiltInFieldId.WorkPhone); 
+            } 
+        }
 
         /// <summary>
         /// The job title
         /// </summary>
-        public static readonly IFieldInfo JobTitle = new MinimalFieldInfo(JobTitleName, SPBuiltInFieldId.JobTitle);
+        public static IFieldInfo JobTitle 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(JobTitleName, SPBuiltInFieldId.JobTitle); 
+            } 
+        }
 
         /// <summary>
         /// The company
         /// </summary>
-        public static readonly IFieldInfo Company = new MinimalFieldInfo(CompanyName, SPBuiltInFieldId.Company);
+        public static IFieldInfo Company 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(CompanyName, SPBuiltInFieldId.Company); 
+            } 
+        }
 
         /// <summary>
         /// The Author
         /// </summary>
-        public static readonly IFieldInfo Author = new MinimalFieldInfo(AuthorName, SPBuiltInFieldId.Author);
+        public static IFieldInfo Author 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(AuthorName, SPBuiltInFieldId.Author); 
+            } 
+        }
 
         /// <summary>
-        /// The Created
+        /// The Created date
         /// </summary>
-        public static readonly IFieldInfo Created = new MinimalFieldInfo(CreatedName, SPBuiltInFieldId.Created);
+        public static IFieldInfo Created 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(CreatedName, SPBuiltInFieldId.Created); 
+            } 
+        }
 
         /// <summary>
-        /// The Created
+        /// The Modified date
         /// </summary>
-        public static readonly IFieldInfo Modified = new MinimalFieldInfo(ModifiedName, SPBuiltInFieldId.Modified);
+        public static IFieldInfo Modified 
+        { 
+            get 
+            { 
+                return new MinimalFieldInfo(ModifiedName, SPBuiltInFieldId.Modified); 
+            } 
+        }
 
         #endregion
     }

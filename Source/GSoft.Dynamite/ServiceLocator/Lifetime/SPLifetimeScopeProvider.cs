@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.ServiceLocator
+﻿namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     using System;
     using System.Collections.Generic;
@@ -14,16 +14,6 @@
     /// </summary>
     public abstract class SPLifetimeScopeProvider : ILifetimeScopeProvider
     {
-        /// <summary>
-        /// The child scope factory.
-        /// </summary>
-        internal readonly ChildScopeFactory ChildScopeFactory;
-
-        /// <summary>
-        /// The SharePoint container provider.
-        /// </summary>
-        protected readonly ISharePointContainerProvider ContainerProvider;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="SPLifetimeScopeProvider"/> class.
         /// </summary>
@@ -51,6 +41,16 @@
                 return this.ContainerProvider.Current;
             }
         }
+
+        /// <summary>
+        /// The child scope factory.
+        /// </summary>
+        internal ChildScopeFactory ChildScopeFactory { get; private set; }
+
+        /// <summary>
+        /// The SharePoint container provider.
+        /// </summary>
+        protected ISharePointContainerProvider ContainerProvider { get; private set; }
 
         /// <summary>
         /// The end lifetime scope abstract method.

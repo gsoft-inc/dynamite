@@ -18,38 +18,6 @@ namespace GSoft.Dynamite.Navigation
         CatalogNavigationType Type { get; }
 
         /// <summary>
-        /// Gets or sets the name of the catalog navigation term managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the catalog navigation term managed property.
-        /// </value>
-        string CatalogNavigationTermManagedPropertyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the association key managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the association key managed property.
-        /// </value>
-        string AssociationKeyManagedPropertyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the association key value.
-        /// </summary>
-        /// <value>
-        /// The association key value.
-        /// </value>
-        string AssociationKeyValue { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the language managed property.
-        /// </summary>
-        /// <value>
-        /// The name of the language managed property.
-        /// </value>
-        string LanguageManagedPropertyName { get; set; }
-
-        /// <summary>
         /// Gets the variation peer URL.
         /// </summary>
         /// <param name="label">The variation label.</param>
@@ -64,10 +32,28 @@ namespace GSoft.Dynamite.Navigation
         Uri GetVariationPeerUrl(VariationLabelInfo label);
 
         /// <summary>
+        /// Gets the variation peer URL.
+        /// </summary>
+        /// <param name="label">The variation label.</param>
+        /// <param name="associationKeyManagedPropertyName">Managed property name for association key between variation peer items</param>
+        /// <param name="associationKeyValue">Value of the association key for the current item under variation</param>
+        /// <param name="languageManagedPropertyName">Managed property name for the language discriminator column</param>
+        /// <param name="catalogNavigationTermManagedPropertyName">Managed property name for the catalog navigation taxonomy column</param>
+        /// <returns>
+        /// The peer URL.
+        /// </returns>
+        Uri GetVariationPeerUrlForCatalogItem(
+            VariationLabelInfo label,
+            string associationKeyManagedPropertyName,
+            string associationKeyValue,
+            string languageManagedPropertyName,
+            string catalogNavigationTermManagedPropertyName);
+
+        /// <summary>
         /// Determines whether [is current item] [the specified item URL].
         /// </summary>
         /// <param name="itemUrl">The item URL.</param>
         /// <returns>True if URL is the current catalog item.</returns>
-        bool IsCurrentItem(string itemUrl);
+        bool IsCurrentItem(Uri itemUrl);
     }
 }

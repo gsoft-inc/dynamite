@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     /// <summary>
     /// <c>Autofac-related</c> HttpModule that takes care of disposing per-request lifetimes
@@ -43,7 +43,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             if (requestLifetimeScopeProvider == null)
             {
-                throw new ArgumentNullException("lifetimeScopeProvider");
+                throw new ArgumentNullException("requestLifetimeScopeProvider");
             }
 
             // Add to dictionary of (there can be a different per-request lifetime provider for each container in the AppDomain)

@@ -5,7 +5,23 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.Events
 {
     /// <summary>
-    /// Info object for an event receiver
+    /// Types of event receivers
+    /// </summary>
+    public enum EventReceiverOwner
+    {
+        /// <summary>
+        /// Receiver for all instances of items with a particular content type
+        /// </summary>
+        ContentType,
+
+        /// <summary>
+        /// Receiver for all items in a list
+        /// </summary>
+        List
+    }
+
+    /// <summary>
+    /// Easily serializable representation of event receiver metadata
     /// </summary>
     public class EventReceiverInfo
     {
@@ -54,22 +70,6 @@ namespace GSoft.Dynamite.Events
             this.EventOwner = EventReceiverOwner.List;
             this.ReceiverType = type;
             this.SynchronizationType = syncType;
-        }
-
-        /// <summary>
-        /// The owner type
-        /// </summary>
-        public enum EventReceiverOwner
-        {
-            /// <summary>
-            /// Content Type Owner Type
-            /// </summary>
-            ContentType,
-
-            /// <summary>
-            /// List Owner Type
-            /// </summary>
-            List
         }
 
         /// <summary>

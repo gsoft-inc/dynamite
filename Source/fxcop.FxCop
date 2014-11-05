@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<FxCopProject Version="10.0" Name="My FxCop Project">
+<FxCopProject Version="10.0" Name="Dynamite FxCop">
  <ProjectOptions>
   <SharedProject>True</SharedProject>
   <Stylesheet Apply="False">$(FxCopDir)\Xml\FxCopReport.xsl</Stylesheet>
@@ -21,14 +21,8 @@
   <IgnoreGeneratedCode>True</IgnoreGeneratedCode>
  </ProjectOptions>
  <Targets>
-  <AssemblyReferenceDirectories>
-   <Directory>$(ProjectDir)/GSoft.G.SharePoint/bin/Debug/</Directory>
-   <Directory>$(ProjectDir)/GSoft.G/bin/Debug/</Directory>
-   <Directory>$(ProjectDir)/GSoft.G.Testing/bin/Debug/</Directory>
-   <Directory>$(ProjectDir)/GSoft.G.Licensing/bin/Debug/</Directory>
-  </AssemblyReferenceDirectories>
-  <Target Name="$(ProjectDir)/GSoft.Dynamite.Examples/bin/Debug/GSoft.Dynamite.Examples.dll" Analyze="True" AnalyzeAllChildren="True" />
-  <Target Name="$(ProjectDir)/../../../Source/G/GSoft.G.SharePoint/bin/Debug/GSoft.G.SharePoint.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/GSoft.Dynamite.SP/bin/Debug/GSoft.Dynamite.SP.dll" Analyze="True" AnalyzeAllChildren="True" />
+  <Target Name="$(ProjectDir)/GSoft.Dynamite/bin/Debug/GSoft.Dynamite.dll" Analyze="True" AnalyzeAllChildren="True" />
  </Targets>
  <Rules>
   <RuleFiles>

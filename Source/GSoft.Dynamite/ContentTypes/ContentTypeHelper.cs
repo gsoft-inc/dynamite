@@ -466,7 +466,7 @@ namespace GSoft.Dynamite.ContentTypes
         }
 
         #region Private methods
-        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType, RequiredTypes isRequired)
+        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType, RequiredType isRequired)
         {
             // Create the field ref.
             SPFieldLink fieldOneLink = new SPFieldLink(field);
@@ -475,13 +475,13 @@ namespace GSoft.Dynamite.ContentTypes
                 // Set the RequiredType value on the Content Type
                 switch (isRequired)
                 {
-                    case RequiredTypes.Required:
+                    case RequiredType.Required:
                         fieldOneLink.Required = true;
                         break;
-                    case RequiredTypes.NotRequired:
+                    case RequiredType.NotRequired:
                         fieldOneLink.Required = false;
                         break;
-                    case RequiredTypes.Inherit:
+                    case RequiredType.Inherit:
                     default:
                         // Do nothing, it will inherit from the Field definition
                         break;

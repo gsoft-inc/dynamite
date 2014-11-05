@@ -47,7 +47,7 @@ namespace GSoft.Dynamite.Folders
         /// Method to revert to home page to the default web page
         /// </summary>
         /// <param name="web">The web</param>
-        public void ResetHomePageToDefault(SPWeb web)
+        public void ResetWelcomePageToDefault(SPWeb web)
         {
             web.RootFolder.WelcomePage = "Pages/default.aspx";
             web.RootFolder.Update();
@@ -73,7 +73,7 @@ namespace GSoft.Dynamite.Folders
                 this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
 
                 // Create sub folders
-                foreach (var childFolder in folderInfo.SubFolders)
+                foreach (var childFolder in folderInfo.Subfolders)
                 {
                     this.EnsureFolder(library, folder, childFolder);
                 }
@@ -82,7 +82,7 @@ namespace GSoft.Dynamite.Folders
                 if (folderInfo.WelcomePage != null)
                 {
                     var rootFolder = library.ParentWeb.RootFolder;
-                    rootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl;
+                    rootFolder.WelcomePage = folderInfo.WelcomePage.LibraryRelativePageUrl.ToString();
                     rootFolder.Update();
                 }
             }
@@ -112,7 +112,7 @@ namespace GSoft.Dynamite.Folders
                 }
 
                 // Create sub folders
-                foreach (var childFolder in folderInfo.SubFolders)
+                foreach (var childFolder in folderInfo.Subfolders)
                 {
                     this.EnsureFolder(library, folder, childFolder);
                 }

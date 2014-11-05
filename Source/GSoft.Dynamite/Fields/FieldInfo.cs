@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
 
@@ -13,7 +14,7 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FieldInfo()
+        protected FieldInfo()
         {
         }
 
@@ -26,7 +27,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content Group resource key</param>
-        public FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        protected FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             if (string.IsNullOrEmpty(internalName))
@@ -51,16 +52,16 @@ namespace GSoft.Dynamite.Fields
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public FieldInfo(XElement fieldSchemaXml)
+        protected FieldInfo(XElement fieldSchemaXml)
         {
             if (fieldSchemaXml == null)
             {
                 throw new ArgumentNullException("fieldSchemaXml");
             }
 
-            if (!this.XmlHasAllBasicAttributes(fieldSchemaXml))
+            if (!XmlHasAllBasicAttributes(fieldSchemaXml))
             {
-                throw new ArgumentException("fieldSchemaXml", "Attribute missing from field definitions: ID, Name or Type.");
+                throw new ArgumentException("Attribute missing from field definitions: ID, Name or Type.", "fieldSchemaXml");
             }
 
             this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
@@ -87,7 +88,7 @@ namespace GSoft.Dynamite.Fields
 
             if (fieldSchemaXml.Attribute("Required") != null)
             {
-                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredTypes.Required : RequiredTypes.NotRequired;
+                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredType.Required : RequiredType.NotRequired;
             }
 
             if (fieldSchemaXml.Attribute("EnforceUniqueValues") != null)
@@ -139,7 +140,7 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
-        public RequiredTypes Required { get; set; }
+        public RequiredType Required { get; set; }
 
         /// <summary>
         /// Indicates if the field must enforce unique values
@@ -210,15 +211,15 @@ namespace GSoft.Dynamite.Fields
                     new XAttribute("DisplayName", this.DisplayNameResourceString),
                     new XAttribute("Description", this.DescriptionResourceString),
                     new XAttribute("Group", this.GroupResourceString),
-                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper()));
+                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper(CultureInfo.InvariantCulture)));
 
                 // Check the Required type
-                if (this.Required == RequiredTypes.Required)
+                if (this.Required == RequiredType.Required)
                 {
                     schema.Add(new XAttribute("Required", "TRUE"));
                 }
 
-                if (this.Required == RequiredTypes.NotRequired)
+                if (this.Required == RequiredType.NotRequired)
                 {
                     schema.Add(new XAttribute("Required", "FALSE"));
                 }
@@ -270,7 +271,7 @@ namespace GSoft.Dynamite.Fields
             return this.Schema.ToString();
         }
 
-        private bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
+        private static bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
         {
             return fieldSchemaXml.Attribute("ID") != null
                 || fieldSchemaXml.Attribute("Name") != null

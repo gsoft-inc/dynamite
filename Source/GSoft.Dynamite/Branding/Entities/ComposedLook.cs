@@ -67,18 +67,18 @@ namespace GSoft.Dynamite.Branding.Entities
         /// <param name="name">The name.</param>
         /// <param name="masterPagePath">The web relative master page URL path (ex: /_catalogs/masterpage/custom.master).</param>
         /// <param name="themePath">The web relative theme URL path (ex: /_catalogs/theme/15/custom.spcolor).</param>
-        /// <param name="imagePath">The web relative image URL path (ex: /_layouts/15/images/custom.jpg).</param>
         /// <param name="fontSchemePath">The web relative font scheme URL path (ex: /_catalogs/theme/15/custom.spfont).</param>
+        /// <param name="imagePath">The web relative image URL path (ex: /_layouts/15/images/custom.jpg).</param>
         /// <param name="displayOrder">The display order in the list.</param>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "SharePoint specific terminology accepted.")]
-        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath, string imagePath = "", string fontSchemePath = "", int displayOrder = DefaultDisplayOrder)
+        public ComposedLook(SPWeb web, string name, string masterPagePath, string themePath, string fontSchemePath, string imagePath, int displayOrder)
         {
             // Init fields
             this.Name = name;
             this.MasterPagePath = GetServerRelativeUrlValue(web, masterPagePath);
             this.ThemePath = GetServerRelativeUrlValue(web, themePath);
-            this.ImagePath = new UrlValue() { Url = imagePath };
             this.FontSchemePath = GetServerRelativeUrlValue(web, fontSchemePath);
+            this.ImagePath = new UrlValue() { Url = imagePath };
             this.DisplayOrder = displayOrder;
         }
 

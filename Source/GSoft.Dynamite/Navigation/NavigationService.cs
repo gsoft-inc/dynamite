@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Logging;
@@ -45,18 +46,18 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
         /// <returns>Navigation node</returns>
-        public IEnumerable<INavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
+        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
             // Use 'all menu items' result source for search query
             var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
 
             // Build query to return items in current variation label language
             var currentLabel = PublishingWeb.GetPublishingWeb(SPContext.Current.Web).Label;
-            var labelLocalAgnosticLanguage = currentLabel.Language.Split('-').First();
+            var labelLocaleAgnosticLanguage = currentLabel.Language.Split('-').First();
             var query = new KeywordQuery(SPContext.Current.Web)
             {
                 SourceId = searchResultSource.Id,
-                QueryText = string.Format("{0}:{1}", properties.ItemLanguage, labelLocalAgnosticLanguage),
+                QueryText = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", properties.ItemLanguage, labelLocaleAgnosticLanguage),
                 TrimDuplicates = false
             };
 
@@ -82,7 +83,7 @@ namespace GSoft.Dynamite.Navigation
                 query.QueryText,
                 properties.ResultSourceName);
 
-            return new List<INavigationNode>();
+            return new List<NavigationNode>();
         }
 
         /// <summary>
@@ -90,7 +91,7 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="navigationTerms">Navigation terms</param>
         /// <returns>navigation node terms</returns>
-        public IEnumerable<INavigationNode> GetNavigationNodeTerms(IEnumerable<NavigationTerm> navigationTerms)
+        public IEnumerable<NavigationNode> GetNavigationNodeTerms(IEnumerable<NavigationTerm> navigationTerms)
         {
             var terms = navigationTerms as NavigationTerm[] ?? navigationTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
             var nodes = terms.Select(x => new NavigationNode(x)).ToArray();
@@ -116,12 +117,12 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationTerms">Navigation terms</param>
         /// <param name="navigationItems">Navigation Items</param>
         /// <returns>Navigation nodes</returns>
-        public IEnumerable<INavigationNode> MapNavigationNodeTree(IEnumerable<INavigationNode> navigationTerms, IEnumerable<INavigationNode> navigationItems)
+        public IEnumerable<NavigationNode> MapNavigationNodeTree(IEnumerable<NavigationNode> navigationTerms, IEnumerable<NavigationNode> navigationItems)
         {
             // Initialize current navigation term, current navigation branch terms, navigation items and navigation terms
             var currentTerm = TaxonomyNavigationContext.Current.NavigationTerm;
             var currentBranchTerms = this.navigationHelper.GetNavigationParentTerms(currentTerm).ToArray();
-            var items = navigationItems == null ? new INavigationNode[] { } : navigationItems.ToArray();
+            var items = navigationItems == null ? new NavigationNode[] { } : navigationItems.ToArray();
             
             // Set branch properties for current navigation context
             var terms = navigationTerms.ToList();
@@ -131,7 +132,7 @@ namespace GSoft.Dynamite.Navigation
             for (var i = 0; i < terms.Count; i++)
             {
                 var term = terms[i];
-                var childNodes = new List<INavigationNode>();
+                var childNodes = new List<NavigationNode>();
 
                 // If search item found, add it to child items
                 var matchingItems = items.Where(x => x.ParentNodeId.Equals(term.Id));

@@ -5,7 +5,7 @@ using System.Text;
 using Autofac;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.Lifetime
 {
     /// <summary>
     /// Lifetime scope provider the help share state at the SPSite-level

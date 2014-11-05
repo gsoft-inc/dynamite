@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.SharePoint.Publishing;
 
@@ -49,6 +50,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <summary>
         /// Gets or sets the flag control display name.
         /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flag", Justification = "This is the property name SharePoint uses for a Variation label's display name.")]
         public string FlagControlDisplayName { get; set; }
 
         /// <summary>

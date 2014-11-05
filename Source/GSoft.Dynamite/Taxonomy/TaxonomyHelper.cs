@@ -364,7 +364,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="field">The field.</param>
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
-        /// <param name="termLabels">Term label</param>
+        /// <param name="termLabels">Term labels</param>
         public void SetDefaultTaxonomyFieldMultiValue(
             SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels)
         {
@@ -433,6 +433,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStore">the term store</param>
         /// <param name="id">The id of the group</param>
         /// <returns>The taxonomy group</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public Group GetTermGroupById(TermStore termStore, Guid id)
         {
             var originalWorkingLanguage = termStore.WorkingLanguage;
@@ -546,9 +547,10 @@ namespace GSoft.Dynamite.Taxonomy
                     {
                         if (oneField.Id == fieldId)
                         {
-                            if (oneField is TaxonomyField)
+                            var oneTaxoField = oneField as TaxonomyField;
+                            if (oneTaxoField != null)
                             {
-                                listFieldsToUpdate.Add((TaxonomyField)oneField);
+                                listFieldsToUpdate.Add(oneTaxoField);
                             }
                         }
                     }

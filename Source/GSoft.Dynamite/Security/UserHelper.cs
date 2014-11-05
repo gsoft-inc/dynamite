@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.Security
         /// <param name="web">The web.</param>
         /// <param name="userName">The user name.</param>
         /// <returns>List of groups.</returns>
-        public List<string> GetUserSharePointGroups(SPWeb web, string userName)
+        public ICollection<string> GetUserSharePointGroups(SPWeb web, string userName)
         {
             return (from SPGroup @group in web.Groups let isMember = this.FetchUserFromGroup(web, @group.Name, userName) where isMember select @group.Name).ToList();
         }

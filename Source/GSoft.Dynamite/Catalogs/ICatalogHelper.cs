@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
@@ -74,9 +76,20 @@ namespace GSoft.Dynamite.Catalogs
         /// </summary>
         /// <param name="site">The SPSite to get the connection from</param>
         /// <param name="webAbsoluteUrl">The server relative url where the catalog belong</param>
-        /// <param name="catalogRootUrl">The root url of the catalog.</param>
+        /// <param name="catalogWebRelativeUrl">The root url of the catalog.</param>
         /// <returns>A catalogConnectionSettings object</returns>
-        CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string webAbsoluteUrl, string catalogRootUrl);
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "Uri overload exists. FxCop doesn't see it.")]
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "Uri overload exists. FxCop doesn't see it.")]
+        CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string webAbsoluteUrl, string catalogWebRelativeUrl);
+        
+        /// <summary>
+        /// Method to get a CatalogConnectionSettings from the site
+        /// </summary>
+        /// <param name="site">The SPSite to get the connection from</param>
+        /// <param name="webAbsoluteUrl">The full absolute url of the catalog</param>
+        /// <param name="catalogWebRelativeUrl">The root url of the catalog.</param>
+        /// <returns>A catalogConnectionSettings object</returns>
+        CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, Uri webAbsoluteUrl, Uri catalogWebRelativeUrl);
 
         /// <summary>
         /// Delete a catalog connection

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -24,17 +25,17 @@ namespace GSoft.Dynamite.Utils
     /// Do not use this utility in internal or service-level code, because catching all exception types is 
     /// usually considered a bad practice.
     /// </remarks>
-    public class CatchAllExceptionHandler : ICatchAllExceptionHandler
+    public class CatchallExceptionHandler : ICatchallExceptionHandler
     {
         private ILogger logger;
         private IConfiguration configuration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CatchAllExceptionHandler"/> class.
+        /// Initializes a new instance of the <see cref="CatchallExceptionHandler"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="configuration">The project configuration</param>
-        public CatchAllExceptionHandler(ILogger logger, IConfiguration configuration)
+        public CatchallExceptionHandler(ILogger logger, IConfiguration configuration)
         {
             this.logger = logger;
             this.configuration = configuration;
@@ -45,6 +46,7 @@ namespace GSoft.Dynamite.Utils
         /// </summary>
         /// <param name="web">The context's web.</param>
         /// <param name="methodToInvoke">The delegate to invoke.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "The entire point of this utility type is to swallow exceptions and redirect their reporting in order to prevent exceptions in sub-components from breaking web pages completely.")]
         public void Execute(SPWeb web, Action methodToInvoke)
         {
             try
@@ -97,7 +99,7 @@ namespace GSoft.Dynamite.Utils
                     errorUrl = HttpContext.Current.Request.Url.AbsoluteUri;
                 }
 
-                SendEmail(web, devTeamEmail, string.Format("[Automatic Error Email] {0} - Error at {1}", web.Title, errorUrl), message);
+                SendEmail(web, devTeamEmail, string.Format(CultureInfo.InvariantCulture, "[Automatic Error Email] {0} - Error at {1}", web.Title, errorUrl), message);
             }
             else
             {

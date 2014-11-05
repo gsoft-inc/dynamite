@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using Microsoft.SharePoint;
@@ -60,7 +61,7 @@ namespace GSoft.Dynamite.TimerJobs
             }
             else
             {
-                throw new ArgumentException(string.Format("Error: Can't find job {0} passed as argument.", jobName));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Error: Can't find job {0} passed as argument.", jobName));
             }
 
             return jobDefinition.Id;

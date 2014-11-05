@@ -8,7 +8,6 @@ using Autofac.Core;
 using Autofac.Core.Lifetime;
 using Autofac.Features.Scanning;
 using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
@@ -34,20 +33,6 @@ namespace GSoft.Dynamite.ServiceLocator
         /// application root containers
         /// </summary>
         private static readonly IDictionary<string, IContainer> AppDomainContainersCollection = new Dictionary<string, IContainer>();
-
-        /// <summary>
-        /// Returns a service locator instance for the entire application (i.e. throughout 
-        /// the current AppDomain). Acts as root Container for all other child lifetime
-        /// scopes. Hosts all singletons that are registered as SingleInstance().
-        /// Whenever applicable, prefer creating a child lifetime scope instead of resolving 
-        /// directly for this root Container instance.
-        /// </summary>
-        /// <param name="appRootNamespace">The key of the current app</param>
-        /// <returns>The container</returns>
-        public static IContainer CurrentContainer(string appRootNamespace)
-        {
-            return CurrentContainer(appRootNamespace, null);
-        }
 
         /// <summary>
         /// The current container.
@@ -113,14 +98,13 @@ namespace GSoft.Dynamite.ServiceLocator
             }
 
             var containerBuilderForDynamiteComponents = new ContainerBuilder();
-            var assemblyLocator = new GacAssemblyLocator();
 
             // Don't just scan the GAC modules, also prepare the Dynamite core utils (by passing the params in ourselves).
             // I.E. each container gets its own DynamiteRegistrationModule components.
             var dynamiteModule = new AutofacDynamiteRegistrationModule(appRootNamespace);
             containerBuilderForDynamiteComponents.RegisterModule(dynamiteModule);
 
-            var matchingAssemblies = assemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyFileNameMatchingPredicate);
+            var matchingAssemblies = GacAssemblyLocator.GetAssemblies(new List<string> { AssemblyFolder }, assemblyFileNameMatchingPredicate);
 
             // Make sure we exclude all other GSoft.Dynamite DLLs (i.e. ignore other versions deployed to same GAC)
             // so that other AutofacDynamiteRegistrationModule instances don't get registered.
@@ -129,11 +113,11 @@ namespace GSoft.Dynamite.ServiceLocator
             // Now make sure all Dynamite component modules (i.e. all DLLs that start with GSoft.Dynamite.*) are registered BEFORE
             // any other modules.
             // This ensures that "client" modules will be able to override the Container registrations of GSoft.Dynamite.Components modules.
-            var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite."));
-            var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite."));
+            var dynamiteComponentModuleAssemblies = filteredMatchingAssemblies.Where(assembly => assembly.FullName.StartsWith("GSoft.Dynamite.", StringComparison.OrdinalIgnoreCase));
+            var allTheRest = filteredMatchingAssemblies.Where(assembly => !assembly.FullName.StartsWith("GSoft.Dynamite.", StringComparison.OrdinalIgnoreCase));
 
             // 1) Build the base container with only Dynamite-related components
-            AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForDynamiteComponents, dynamiteComponentModuleAssemblies.ToArray());
+            containerBuilderForDynamiteComponents.RegisterAssemblyModules(dynamiteComponentModuleAssemblies.ToArray());
             var container = containerBuilderForDynamiteComponents.Build();
 
             var logger = container.Resolve<ILogger>();
@@ -143,7 +127,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // 2) Extend the original registrations with any remaining AddOns' registrations
             var containerBuilderForAddOns = new ContainerBuilder();
-            AutofacBackportScanningUtils.RegisterAssemblyModules(containerBuilderForAddOns, allTheRest.ToArray());
+            containerBuilderForAddOns.RegisterAssemblyModules(allTheRest.ToArray());
             containerBuilderForAddOns.Update(container);
 
             string addOnAssemblyNameEnumeration = string.Empty;

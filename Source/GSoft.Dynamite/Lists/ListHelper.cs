@@ -79,25 +79,25 @@ namespace GSoft.Dynamite.Lists
         /// <param name="web">The current web</param>
         /// <param name="name">The name of the list</param>
         /// <param name="description">The description of the list</param>
-        /// <param name="template">The desired list template to use to instantiate the list</param>
+        /// <param name="listTemplate">The desired list template to use to instantiate the list</param>
         /// <returns>The new list or the existing list</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplate template)
+        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplate listTemplate)
         {
             var list = this.listLocator.TryGetList(web, name);
 
             if (list != null)
             {
                 // List already exists, check for correct template
-                if (list.BaseTemplate != template.Type)
+                if (list.BaseTemplate != listTemplate.Type)
                 {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, template.Type));
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, listTemplate.Type));
                 }
             }
             else
             {
                 // Create new list
-                var id = web.Lists.Add(name, description, template);
+                var id = web.Lists.Add(name, description, listTemplate);
 
                 list = web.Lists[id];
             }
@@ -143,27 +143,27 @@ namespace GSoft.Dynamite.Lists
         /// Ensure the list in the web
         /// </summary>
         /// <param name="web">The web</param>
-        /// <param name="rootFolderUrl">The root folder URL of the list</param>
+        /// <param name="webRelativePathToList">The web-relative path to the list's root folder.</param>
         /// <param name="titleResourceKey">Titles' resource key</param>
         /// <param name="descriptionResourceKey">Descriptions' resource key</param>
         /// <param name="templateType">The template type of the list</param>
         /// <returns>The list object</returns>
-        public SPList EnsureList(SPWeb web, string rootFolderUrl, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
+        public SPList EnsureList(SPWeb web, string webRelativePathToList, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
         {
-            var list = this.listLocator.TryGetList(web, rootFolderUrl);
+            var list = this.listLocator.TryGetList(web, webRelativePathToList);
 
             if (list != null)
             {
                 // List already exists, check for correct template
                 if (list.BaseTemplate != templateType)
                 {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", rootFolderUrl, list.BaseTemplate, templateType));
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", webRelativePathToList, list.BaseTemplate, templateType));
                 }
             }
             else
             {
                 // Create new list
-                var id = web.Lists.Add(rootFolderUrl, string.Empty, templateType);
+                var id = web.Lists.Add(webRelativePathToList, string.Empty, templateType);
                 list = web.Lists[id];
             }
 
@@ -194,32 +194,35 @@ namespace GSoft.Dynamite.Lists
         /// <returns>The new list or the existing list</returns>
         public SPList EnsureList(SPWeb web, ListInfo listInfo)
         {
-            var list = this.listLocator.TryGetList(web, listInfo.RootFolderUrl);
+            var list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
 
             // Ensure the list
             if (list == null)
             {
-                list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
             }
             else
             {
                 // If it isn't the pages library
                 if (string.CompareOrdinal(list.RootFolder.Name, PagesLibraryRootFolder) != 0)
                 {                            
-                    this.logger.Info("List " + listInfo.RootFolderUrl + " already exists");
+                    this.logger.Info("List " + listInfo.WebRelativeUrl.ToString() + " already exists");
 
                     // If the Overwrite parameter is set to true, celete and recreate the catalog
                     if (listInfo.Overwrite)
                     {
-                        this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.RootFolderUrl);
+                        this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.WebRelativeUrl.ToString());
 
                         list.Delete();
-                        list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+
+                        // TODO: review ListInfo.WebRelativeUrl. RootFolderUrl used to be its name. Is it assumed that all lists live under /Lists/? Is it assumed that 
+                        // _no ListInfo EVER_ will ever ever be created with a WebRelativeUrl value of /Lists/SomeListName ??? This needs more review...
+                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                     }
                     else
                     {
                         // Get the existing list
-                        list = this.EnsureList(web, listInfo.RootFolderUrl, listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                     }
                 }
             }
@@ -265,7 +268,7 @@ namespace GSoft.Dynamite.Lists
             }
 
             // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).    
-            list = this.listLocator.TryGetList(web, listInfo.RootFolderUrl);
+            list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
 
             // Default View Fields
             this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
@@ -349,10 +352,10 @@ namespace GSoft.Dynamite.Lists
         ///  Set WriteSecurity on a SPList
         /// </summary>
         /// <param name="list">The list.</param>
-        /// <param name="option">The Write Security option</param>
-        public void SetWriteSecurity(SPList list, WriteSecurityOptions option)
+        /// <param name="writeSecurityOptions">The Write Security option</param>
+        public void SetWriteSecurity(SPList list, WriteSecurityOptions writeSecurityOptions)
         {
-            list.WriteSecurity = (int)option;
+            list.WriteSecurity = (int)writeSecurityOptions;
             list.Update();
         }
 
