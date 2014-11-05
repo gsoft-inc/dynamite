@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -38,7 +38,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -88,12 +88,12 @@
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.designer.cs">
       <DependentUpon>CssImports.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
-      <DependentUpon>JavascriptImports.ascx</DependentUpon>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx.cs">
+      <DependentUpon>JavaScriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.designer.cs">
-      <DependentUpon>JavascriptImports.ascx.cs</DependentUpon>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx.designer.cs">
+      <DependentUpon>JavaScriptImports.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="DynamiteWspContainerProxy.cs" />
     <Compile Include="Features\Web Config Modifications\Web Config Modifications.EventReceiver.cs">
@@ -187,7 +187,7 @@
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="DynamiteCssImports\Elements.xml" />

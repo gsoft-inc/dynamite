@@ -7,11 +7,12 @@ using System.Web;
 using System.Web.UI;
 using Autofac;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.ServiceLocator.Internal;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
-namespace GSoft.Dynamite.ServiceLocator
+namespace GSoft.Dynamite.ServiceLocator.AddOn
 {
     /// <summary>
     /// <para>
@@ -357,8 +358,7 @@ namespace GSoft.Dynamite.ServiceLocator
                         try
                         {
                             // 1) Scan the GAC for any DLL matching the *.ServiceLocator.DLL pattern
-                            var assemblyScanner = new GacAssemblyLocator();
-                            var matchingAssemblies = assemblyScanner.GetAssemblies(new List<string>() { "GAC_MSIL" }, assemblyFileName => assemblyFileName.Contains(".ServiceLocator"));
+                            var matchingAssemblies = GacAssemblyLocator.GetAssemblies(new List<string>() { "GAC_MSIL" }, assemblyFileName => assemblyFileName.Contains(".ServiceLocator"));
 
                             Assembly serviceLocatorAssembly = null;
                             Type accessorType = null;
@@ -373,7 +373,7 @@ namespace GSoft.Dynamite.ServiceLocator
                                     //    The SPWeb's property bag is inspected first, if available, then the SPSite's RootWeb property
                                     //    bag, then the SPWebApp's, then the SPFarm's property bag as a last resort.
                                     string contextObjectWhereDiscriminatorWasFound;
-                                    string serviceLocatorAssemblyNameDiscriminator = this.FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(web, site, webApplication, farm, out contextObjectWhereDiscriminatorWasFound);
+                                    string serviceLocatorAssemblyNameDiscriminator = FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(web, site, webApplication, farm, out contextObjectWhereDiscriminatorWasFound);
 
                                     string allServiceLocatorAssemblyNames = string.Join(";", matchingAssemblies.Select(locatorAssembly => locatorAssembly.FullName).ToArray());
                                     string basicDisambiguationErrorMessage = string.Format(
@@ -410,7 +410,7 @@ namespace GSoft.Dynamite.ServiceLocator
                                 if (serviceLocatorAssembly != null)
                                 {
                                     // Only one matching assembly, find its accessor class
-                                    accessorType = this.FindServiceLocatorAccessorType(serviceLocatorAssembly);
+                                    accessorType = FindServiceLocatorAccessorType(serviceLocatorAssembly);
                                 }
                                 else
                                 {
@@ -421,7 +421,7 @@ namespace GSoft.Dynamite.ServiceLocator
                                 if (serviceLocatorAssembly != null)
                                 {
                                     // At this point we figured out the right matching assembly: find its accessor class within its types
-                                    accessorType = this.FindServiceLocatorAccessorType(serviceLocatorAssembly);
+                                    accessorType = FindServiceLocatorAccessorType(serviceLocatorAssembly);
                                 }
                             }
                             else
@@ -467,7 +467,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
         /// <param name="locationWhereDiscriminatorWasFound">An out parameter string that returns the identity of the SPPersistedObject where the discriminator setting was found</param>
         /// <returns>The ServiceLocatorAssemblyName discriminator settings, if found in one of the context objects' property bags</returns>
-        private string FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, out string locationWhereDiscriminatorWasFound)
+        private static string FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, out string locationWhereDiscriminatorWasFound)
         {
             if (web != null && web.Properties.ContainsKey(KeyServiceLocatorAssemblyName))
             {
@@ -503,7 +503,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// </summary>
         /// <param name="assembly">The assembly to scan</param>
         /// <returns>The add-on service locator accessor type</returns>
-        private Type FindServiceLocatorAccessorType(Assembly assembly)
+        private static Type FindServiceLocatorAccessorType(Assembly assembly)
         {
             var accessorInterfaceType = typeof(ISharePointServiceLocatorAccessor);
             return assembly.GetTypes().Where(someType => accessorInterfaceType.IsAssignableFrom(someType) && !someType.IsInterface).FirstOrDefault();

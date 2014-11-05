@@ -21,7 +21,6 @@
         /// <exception cref="System.ArgumentNullException">All null parameters.</exception>
         /// <exception cref="System.ArgumentException">Unable to find the lookup field.;lookupField</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "The GetList method for SP requires a string url.")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         [Obsolete("Use method 'SetLookupToList' with SPFieldCollection as first parameter.")]
         void SetLookupToList(SPWeb web, Guid fieldId, string listUrl);
 

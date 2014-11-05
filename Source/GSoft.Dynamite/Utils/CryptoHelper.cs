@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Utils
     /// <summary>
     /// Helper class to encrypt and decrypt data using share secret
     /// </summary>
-    public class CryptoHelper
+    public static class CryptoHelper
     {
         private static byte[] _salt = Encoding.ASCII.GetBytes("o6123642kbM7c5");
 
@@ -16,14 +16,14 @@ namespace GSoft.Dynamite.Utils
         /// Encrypt the given string using AES.  The string can be decrypted using 
         /// DecryptStringAES().  The sharedSecret parameters must match.
         /// </summary>
-        /// <param name="plainText">The text to encrypt.</param>
+        /// <param name="plaintext">The text to encrypt.</param>
         /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
         /// <returns>The Encrypted version of the string</returns>
-        public static string EncryptStringAES(string plainText, string sharedSecret)
+        public static string EncryptStringAES(string plaintext, string sharedSecret)
         {
-            if (string.IsNullOrEmpty(plainText))
+            if (string.IsNullOrEmpty(plaintext))
             {
-                throw new ArgumentNullException("plainText");
+                throw new ArgumentNullException("plaintext");
             }
 
             if (string.IsNullOrEmpty(sharedSecret))
@@ -57,7 +57,7 @@ namespace GSoft.Dynamite.Utils
                         using (StreamWriter streamWriterEncrypt = new StreamWriter(cryptoStreamEncrypt))
                         {
                             // Write all data to the stream.
-                            streamWriterEncrypt.Write(plainText);
+                            streamWriterEncrypt.Write(plaintext);
                         }
                     }
 
@@ -151,13 +151,13 @@ namespace GSoft.Dynamite.Utils
             byte[] rawLength = new byte[sizeof(int)];
             if (stream.Read(rawLength, 0, rawLength.Length) != rawLength.Length)
             {
-                throw new SystemException("Stream did not contain properly formatted byte array");
+                throw new InvalidOperationException("Stream did not contain properly formatted byte array");
             }
 
             byte[] buffer = new byte[BitConverter.ToInt32(rawLength, 0)];
             if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
             {
-                throw new SystemException("Did not read byte array properly");
+                throw new InvalidOperationException("Did not read byte array properly");
             }
 
             return buffer;

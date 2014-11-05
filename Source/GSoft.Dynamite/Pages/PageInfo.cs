@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using GSoft.Dynamite.WebParts;
 
 namespace GSoft.Dynamite.Pages
@@ -13,7 +16,7 @@ namespace GSoft.Dynamite.Pages
         /// </summary>
         public PageInfo()
         {
-            this.WebParts = new Dictionary<string, WebPartInfo>();
+            this.WebParts = new List<WebPartInfo>();
         }
 
         /// <summary>
@@ -39,22 +42,30 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// WebParts by zone 
         /// </summary>
-        public IDictionary<string, WebPartInfo> WebParts { get; set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store collection for more flexible object initialization.")]
+        public ICollection<WebPartInfo> WebParts { get; set; }
 
         /// <summary>
         /// Get the site relative url to use in term driven page setting
         /// </summary>
-        public string RelativeTermDrivenPageUrl
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "URL has a '~site/full/path/here' tokenized format and needs to be used as a string.")]
+        public string SiteTokenizedTermDrivenPageUrl
         {
-            get { return "~site/Pages/" + this.FileName + ".aspx"; }
+            get 
+            { 
+                return string.Format(CultureInfo.InvariantCulture, "~site/{0}", this.LibraryRelativePageUrl.ToString()); 
+            }
         }
 
         /// <summary>
         /// Get the site relative url to use in term driven page setting
         /// </summary>
-        public string LibraryRelativePageUrl
+        public Uri LibraryRelativePageUrl
         {
-            get { return "Pages/" + this.FileName + ".aspx"; }
+            get 
+            { 
+                return new Uri("Pages/" + this.FileName + ".aspx", UriKind.Relative); 
+            }
         }
 
         /// <summary>

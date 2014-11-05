@@ -1,4 +1,4 @@
-﻿namespace GSoft.Dynamite.ServiceLocator
+﻿namespace GSoft.Dynamite.ServiceLocator.AddOn
 {
     /// <summary>
     /// The locator accessor interface

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
@@ -54,7 +55,7 @@ namespace GSoft.Dynamite.Globalization
             {
                 resourceValue = this.Find(fileName, resourceKey, new CultureInfo(lcid));
 
-                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources"))
+                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources", StringComparison.OrdinalIgnoreCase))
                 {
                     // exit as soon as you find the resource in one of the default files
                     break;
@@ -132,7 +133,7 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The resource string for the key and filename</returns>
         public string GetResourceString(string resourceFileName, string resourceKey)
         {
-            return this._defaultResourceFileNames.Contains(resourceFileName) ? string.Format("$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
+            return this._defaultResourceFileNames.Contains(resourceFileName) ? string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
         }
 
         /// <summary>
@@ -140,6 +141,7 @@ namespace GSoft.Dynamite.Globalization
         /// </summary>
         /// <param name="resourceKey">The resource key</param>
         /// <returns>The resource string for the key and filename</returns>
+        [SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "GSoft.Dynamite.Globalization.ResourceLocator.Find(System.String,System.String)", Justification = "We want to use the loose version of Find - without CultureInfo - to match against any resource value.")]
         public string GetResourceString(string resourceKey)
         {
             string resourceString = null;
@@ -150,9 +152,9 @@ namespace GSoft.Dynamite.Globalization
             {
                 var resourceValue = this.Find(fileName, resourceKey);
 
-                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources") && isFound == false)
+                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources", StringComparison.OrdinalIgnoreCase) && isFound == false)
                 {
-                    resourceString = string.Format("$Resources:{0},{1};", fileName, resourceKey);
+                    resourceString = string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", fileName, resourceKey);
                     isFound = true;
                 }
             }

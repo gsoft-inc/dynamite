@@ -104,7 +104,7 @@ namespace GSoft.Dynamite.Branding
             // Get the image existingImageRendition collection of the current site.
             var imageRenditionCollection = SiteImageRenditions.GetRenditions(site);
 
-            var matchingRenditions = imageRenditionCollection.Where(x => x.Name.ToLower().Contains(containsPattern.ToLower())).ToList();
+            var matchingRenditions = imageRenditionCollection.Where(x => x.Name.ToUpperInvariant().Contains(containsPattern.ToUpperInvariant())).ToList();
 
             if (matchingRenditions != null && matchingRenditions.Any())
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Office.Server.Search.Administration;
+﻿using System.Collections.Generic;
+using Microsoft.Office.Server.Search.Administration;
 
 namespace GSoft.Dynamite.Search
 {
@@ -13,7 +14,7 @@ namespace GSoft.Dynamite.Search
         /// <param name="property">Managed property metadata</param>
         /// <param name="propertyOperator">The operator</param>
         /// <param name="values">The associated values</param>
-        public ResultTypeRuleInfo(ManagedPropertyInfo property, PropertyRuleOperator.DefaultOperator propertyOperator, string[] values)
+        public ResultTypeRuleInfo(ManagedPropertyInfo property, PropertyRuleOperator.DefaultOperator propertyOperator, ICollection<string> values)
         {
             this.PropertyName = property.Name;
             this.Operator = propertyOperator;
@@ -33,6 +34,6 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The associated values
         /// </summary>
-        public string[] Values { get; private set; }   
+        public ICollection<string> Values { get; private set; }   
     }
 }

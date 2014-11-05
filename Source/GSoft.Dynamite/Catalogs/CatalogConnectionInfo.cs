@@ -1,4 +1,5 @@
-﻿using Microsoft.SharePoint;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Catalogs
 {
@@ -16,6 +17,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="isManualCatalogItemUrlRewriteTemplate">Whether the URL rewriting is done through a manual template</param>
         /// <param name="isReusedWithPinning">Whether the term set can be reused through </param>
         /// <param name="catalogItemUrlRewriteTemplate">The manual item URL rewriting template</param>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "5#", Justification = "This is a template to follow in order to format friendly-URLs.")]
         public CatalogConnectionInfo(
             CatalogInfo catalog,
             string catalogTaxonomyManagedProperty,
@@ -55,6 +57,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <summary>
         /// The friendly URL template
         /// </summary>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "This is a template to follow in order to format friendly-URLs.")]
         public string CatalogItemUrlRewriteTemplate { get; private set; }
 
         /// <summary>

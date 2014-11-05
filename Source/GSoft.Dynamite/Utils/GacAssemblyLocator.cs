@@ -13,7 +13,7 @@ namespace GSoft.Dynamite.Utils
     /// The Gac assembly locator.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class GacAssemblyLocator
+    public static class GacAssemblyLocator
     {
         private const string FolderPath = @"C:\Windows\Microsoft.NET\assembly\";
 
@@ -33,9 +33,9 @@ namespace GSoft.Dynamite.Utils
         /// The <see cref="IList"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition)
+        public static IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition)
         {
-            return this.GetAssemblies(gacFolders, assemblyNameCondition, null);
+            return GetAssemblies(gacFolders, assemblyNameCondition, null);
         }
 
         /// <summary>
@@ -54,7 +54,8 @@ namespace GSoft.Dynamite.Utils
         /// The <see cref="IList"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We really wish to ignore assembly scanning failures.")]
+        public static IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition)
         {
             var assemblyList = new List<Assembly>();
 
@@ -69,7 +70,7 @@ namespace GSoft.Dynamite.Utils
 
                         foreach (string assemblyFolder in assemblyFolders)
                         {
-                            this.ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
+                            ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
                         }
                     }
                 }
@@ -82,7 +83,8 @@ namespace GSoft.Dynamite.Utils
             return assemblyList;
         }
 
-        private void ProcessFile(string file, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We really wish to ignore assembly scanning failures.")]
+        private static void ProcessFile(string file, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
         {
             try
             {
@@ -108,17 +110,17 @@ namespace GSoft.Dynamite.Utils
             }
         }
 
-        private void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
+        private static void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
         {
             // apply condition here
             foreach (string file in Directory.GetFiles(folder).Where(assemblyNameCondition))
             {
-                this.ProcessFile(file, assemblyVersionCondition, assemblyList);
+                ProcessFile(file, assemblyVersionCondition, assemblyList);
             }
 
             foreach (string subFolder in Directory.GetDirectories(folder))
             {
-                this.ProcessFolder(subFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
+                ProcessFolder(subFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
             }
         }
     }

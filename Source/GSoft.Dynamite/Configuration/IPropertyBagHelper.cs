@@ -1,7 +1,7 @@
 ﻿namespace GSoft.Dynamite.Configuration
 {
+    using System;
     using System.Collections.Generic;
-
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Administration;
 
@@ -23,7 +23,7 @@
         /// </summary>
         /// <param name="webUrl">The Url of the web</param>
         /// <param name="propertyBagValues">The property bag values</param>
-        void SetWebValues(string webUrl, IList<PropertyBagValue> propertyBagValues);
+        void SetWebValues(Uri webUrl, IList<PropertyBagValue> propertyBagValues);
 
         /// <summary>
         /// Method to Set a value in a Web scoped property bag
@@ -61,6 +61,6 @@
         /// </summary>
         /// <param name="webApplicationUrl">The url of the Web Application</param>
         /// <param name="propertyBagValues">The property bag values to insert</param>
-        void SetWebApplicationValue(string webApplicationUrl, IList<PropertyBagValue> propertyBagValues);
+        void SetWebApplicationValue(Uri webApplicationUrl, IList<PropertyBagValue> propertyBagValues);
     }
 }

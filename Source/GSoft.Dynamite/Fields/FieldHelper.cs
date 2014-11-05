@@ -19,7 +19,6 @@ namespace GSoft.Dynamite.Fields
     /// </summary>
     public class FieldHelper : IFieldHelper
     {
-        private readonly IVariationHelper variationHelper;
         private readonly ILogger logger;
         private readonly ITaxonomyHelper taxonomyHelper;
 
@@ -28,12 +27,10 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
-        /// <param name="variationHelper">The variation helper</param>
-        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper, IVariationHelper variationHelper)
+        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper)
         {
             this.logger = logger;
             this.taxonomyHelper = taxonomyHelper;
-            this.variationHelper = variationHelper;
         }
 
         /// <summary>
@@ -142,12 +139,12 @@ namespace GSoft.Dynamite.Fields
         {
             if (lookupField == null)
             {
-                throw new ArgumentNullException("The parameter 'lookupField' cannot be null.", "lookupField");
+                throw new ArgumentNullException("lookupField", "The parameter 'lookupField' cannot be null.");
             }
 
             if (lookupList == null)
             {
-                throw new ArgumentNullException("The parameter 'lookupList' cannot be null.", "lookupList");
+                throw new ArgumentNullException("lookupList", "The parameter 'lookupList' cannot be null.");
             }
 
             this.logger.Info("Start method 'SetLookupToList' for field with id '{0}'", lookupField.Id);
@@ -319,7 +316,7 @@ namespace GSoft.Dynamite.Fields
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
             // Updates the visibility of the field
-            this.UpdateFieldVisibility(createdField, fieldInfo);
+            UpdateFieldVisibility(createdField, fieldInfo);
 
             return field;
         }
@@ -338,7 +335,7 @@ namespace GSoft.Dynamite.Fields
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
 
             // Updates the visibility of the field
-            this.UpdateFieldVisibility(createdField, fieldInfo);
+            UpdateFieldVisibility(createdField, fieldInfo);
 
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
@@ -363,18 +360,18 @@ namespace GSoft.Dynamite.Fields
                             termSubsetName);
             }
 
-            if (fieldInfo.DefaultValue != null)
-            {
-                SPField newlyCreatedField = fieldCollection[fieldInfo.Id];
+            ////if (fieldInfo.DefaultValue != null)
+            ////{
+            ////    /// SPField newlyCreatedField = fieldCollection[fieldInfo.Id];
 
-                //// TODO: create a IFieldValueWriter<ValueType> utility to re-use the proper
-                //// taxonomy setter logic which is locked up in the TaxonomyValueConverter.
-                //// Or fall back on copy-pasting the logic if absolutely needed
+            ////    //// TODO: create a IFieldValueWriter<ValueType> utility to re-use the proper
+            ////    //// taxonomy setter logic which is locked up in the TaxonomyValueConverter.
+            ////    //// Or fall back on copy-pasting the logic if absolutely needed
 
-                //// newlyCreatedField.DefaultValueTyped = 
+            ////    //// newlyCreatedField.DefaultValueTyped = 
 
-                ////TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
-            }
+            ////    ////TaxonomyFullValue defaultValue = fieldInfo.DefaultValue;
+            ////}
 
             return field;
         }
@@ -394,10 +391,10 @@ namespace GSoft.Dynamite.Fields
                 fieldNames.Add(this.EnsureField(fieldCollection, fieldInfo));
             }
 
-            return fieldNames;
+            return fieldNames;      // TODO: remove these returned internal name (that won't be used anyway - you have those internal names in the param collection of FieldInfos)
         }
 
-        private SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
+        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
         {
             if (field != null)
             {
@@ -501,7 +498,7 @@ namespace GSoft.Dynamite.Fields
         {
             string fieldType = GetAttributeValue(fieldXml, "Type");
             this.logger.Info("Field is of type '{0}'", fieldType);
-            return string.Compare(fieldType, "Lookup", true, CultureInfo.InvariantCulture) == 0;
+            return string.Compare(fieldType, "Lookup", StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         private bool IsFieldXmlValid(XElement fieldXml, out Guid id, out string displayName, out string internalName)

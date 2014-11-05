@@ -14,15 +14,12 @@ namespace GSoft.Dynamite.Taxonomy
     public class PerRequestSiteTaxonomyCacheManager : ISiteTaxonomyCacheManager
     {
         private const string KeyPrefix = "PerRequestSiteTaxonomyCacheManager_";
-        private ILogger log;
 
         /// <summary>
         /// Per-request taxonomy cache manager (using HttpContext.Items)
         /// </summary>
-        /// <param name="log">Logging utility</param>
-        public PerRequestSiteTaxonomyCacheManager(ILogger log)
+        public PerRequestSiteTaxonomyCacheManager()
         {
-            this.log = log;
         }
 
         /// <summary>

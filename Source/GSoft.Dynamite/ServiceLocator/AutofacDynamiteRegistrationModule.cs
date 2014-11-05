@@ -23,6 +23,7 @@ using GSoft.Dynamite.Repositories;
 using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
+using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
@@ -140,7 +141,6 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Navigation 
             builder.RegisterType<NavigationService>().As<INavigationService>();
-            builder.RegisterType<NavigationNode>().As<INavigationNode>();
             builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
             builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
 
@@ -176,7 +176,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Utils
             builder.RegisterType<CustomActionHelper>().As<ICustomActionHelper>();
-            builder.RegisterType<CatchAllExceptionHandler>().As<ICatchAllExceptionHandler>();
+            builder.RegisterType<CatchallExceptionHandler>().As<ICatchallExceptionHandler>();
 
             // Web Parts
             builder.RegisterType<WebPartHelper>().As<IWebPartHelper>();

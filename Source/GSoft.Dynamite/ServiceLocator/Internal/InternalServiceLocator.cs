@@ -1,8 +1,15 @@
 ﻿using Autofac;
+using GSoft.Dynamite.ServiceLocator.AddOn;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
-    internal class InternalServiceLocator
+    /// <summary>
+    /// Even through service location should NEVER be done from within the core Dynamite DLL,
+    /// this service locator gives you basic service location facilities when you REALLY, REALLY
+    /// need it (e.g. you have a serializable/new-able object and you was to access Dynamite logging
+    /// utilities from a helper method on that almost-POCO).
+    /// </summary>
+    internal static class InternalServiceLocator
     {
         /// <summary>
         /// The ambient ServiceLocator will be used, or a fallback default locator will

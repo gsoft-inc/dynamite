@@ -42,7 +42,7 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
-        RequiredTypes Required { get; set; }
+        RequiredType Required { get; set; }
 
         /// <summary>
         /// Indicates if the field must enforce unique values

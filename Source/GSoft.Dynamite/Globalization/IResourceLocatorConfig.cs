@@ -21,6 +21,6 @@ namespace GSoft.Dynamite.Globalization
         /// return ["SomeCompany.AppModule", "SomeCompany.OtherModule"].
         /// </summary>
         /// <returns>The names of the resource files</returns>
-        string[] ResourceFileKeys { get; }
+        ICollection<string> ResourceFileKeys { get; }
     }
 }

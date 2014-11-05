@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using Microsoft.SharePoint;
@@ -10,7 +11,7 @@ namespace GSoft.Dynamite.Pages
     /// <summary>
     /// Base page for dialog layout pages.
     /// </summary>
-    public abstract class DialogLayoutsPageBage : LayoutsPageBase
+    public abstract class DialogLayoutsPageBase : LayoutsPageBase
     {
         /// <summary>
         /// The key cancel source
@@ -37,6 +38,7 @@ namespace GSoft.Dynamite.Pages
         /// <value>
         /// The redirection page URL.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Dialog onClose redirect URL should be manipulated as string to avoid bad concatenation.")]
         protected string RedirectionPageUrl { get; set; }
 
         /// <summary>
@@ -128,9 +130,9 @@ namespace GSoft.Dynamite.Pages
         private static bool IsLayoutFolderInTheWeb(string strServerRelativeWebUrl)
         {
             var requestUrl = SPUtility.OriginalServerRelativeRequestUrl;
-            requestUrl = SPHttpUtility.UrlPathDecode(requestUrl, false).ToLower();
-            var index = requestUrl.IndexOf("/_layouts/", StringComparison.Ordinal);
-            return (index > 0 && strServerRelativeWebUrl.ToLower() == requestUrl.Substring(0, index)) || (index == 0 && strServerRelativeWebUrl == "/");
+            requestUrl = SPHttpUtility.UrlPathDecode(requestUrl, false).ToUpper(CultureInfo.InvariantCulture);
+            var index = requestUrl.IndexOf("/_layouts/", StringComparison.OrdinalIgnoreCase);
+            return (index > 0 && strServerRelativeWebUrl.ToUpper(CultureInfo.InvariantCulture) == requestUrl.Substring(0, index)) || (index == 0 && strServerRelativeWebUrl == "/");
         }
 
         private void Redirect()

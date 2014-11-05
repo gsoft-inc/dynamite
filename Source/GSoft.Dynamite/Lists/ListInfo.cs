@@ -1,9 +1,8 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
-using GSoft.Dynamite.Lists;
-using Microsoft.Office.Server.ApplicationRegistry.MetadataModel;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Lists
@@ -26,17 +25,17 @@ namespace GSoft.Dynamite.Lists
             this.DefaultViewFields = new List<IFieldInfo>();
             this.FieldDefinitions = new List<IFieldInfo>();
         }
-
+        
         /// <summary>
         /// Initializes a new ListInfo
         /// </summary>
         /// <param name="webRelativeUrl">The web-relative URL of the list</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        public ListInfo(string webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
+        public ListInfo(Uri webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, string.Empty)
         {
-            this.RootFolderUrl = webRelativeUrl;
+            this.WebRelativeUrl = webRelativeUrl;
 
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
@@ -48,12 +47,23 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
+        /// Initializes a new ListInfo
+        /// </summary>
+        /// <param name="webRelativeUrl">The web-relative URL of the list</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        public ListInfo(string webRelativeUrl, string displayNameResourceKey, string descriptionResourceKey)
+            : this(new Uri(webRelativeUrl, UriKind.Relative), displayNameResourceKey, descriptionResourceKey)
+        {
+        }
+
+        /// <summary>
         /// Gets or sets the root folder URL.
         /// </summary>
         /// <value>
         /// The root folder URL.
         /// </value>
-        public string RootFolderUrl { get; set; }
+        public Uri WebRelativeUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the list template identifier.
@@ -127,6 +137,7 @@ namespace GSoft.Dynamite.Lists
         /// should be turned on in your list. If not content types are specified, the collection
         /// of FieldDefinitions should be used to add fields to your list.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<ContentTypeInfo> ContentTypes { get; set; }
 
         /// <summary>
@@ -142,6 +153,7 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// The default view fields for the list
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<IFieldInfo> DefaultViewFields { get; set; }
 
         /// <summary>
@@ -149,6 +161,7 @@ namespace GSoft.Dynamite.Lists
         /// If no ContentTypes are specified, these definitions should be used to add columns directly on
         /// your custom list.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<IFieldInfo> FieldDefinitions { get; set; }
     }
 }

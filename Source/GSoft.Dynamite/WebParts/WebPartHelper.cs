@@ -103,12 +103,12 @@ namespace GSoft.Dynamite.WebParts
         /// </summary>
         /// <param name="item">the item to add the web part to</param>
         /// <param name="webPart">The web part name to get</param>
-        /// <param name="webPartZoneId">the web part zone to add the web part to</param>
+        /// <param name="webPartZoneName">the web part zone to add the web part to</param>
         /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
         /// <returns>Return the Storage key of the web part</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public Guid EnsureWebPartToZone(SPListItem item, WebPart webPart, string webPartZoneId, int webPartZoneIndex)
+        public Guid EnsureWebPartToZone(SPListItem item, WebPart webPart, string webPartZoneName, int webPartZoneIndex)
         {
             Guid storageKey = Guid.Empty;
 
@@ -118,7 +118,7 @@ namespace GSoft.Dynamite.WebParts
                 {
                     if (manager.WebParts[webPart.Title] == null)
                     {
-                        manager.AddWebPart(webPart, webPartZoneId, webPartZoneIndex);
+                        manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
                         storageKey = manager.GetStorageKey(webPart);
                     }
                     else
@@ -165,9 +165,9 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="x">x axis dimension in pixel</param>
         /// <param name="y">y axis dimension in pixel</param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y)
+        public ContentEditorWebPart CreatePlaceholderWebPart(int x, int y)
         {
-            return this.CreatePlaceHolderWebPart(x, y, string.Empty, string.Empty);
+            return this.CreatePlaceholderWebPart(x, y, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -177,9 +177,9 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="y">y axis dimension in pixel</param>
         /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor)
+        public ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor)
         {
-            return this.CreatePlaceHolderWebPart(x, y, backgroundColor, string.Empty);
+            return this.CreatePlaceholderWebPart(x, y, backgroundColor, string.Empty);
         }
 
         /// <summary>
@@ -190,14 +190,16 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <param name="fontColor">Font hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        public ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor, string fontColor)
+        public ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor)
         {
             var placeHolderWebPart = new ContentEditorWebPart();
             placeHolderWebPart.ChromeType = System.Web.UI.WebControls.WebParts.PartChromeType.None;
 
-            string fontColorSlug = !string.IsNullOrEmpty(backgroundColor) && !string.IsNullOrEmpty(fontColor) ? string.Format("/{0}", fontColor) : string.Empty;
+            string fontColorSlug = !string.IsNullOrEmpty(backgroundColor) && !string.IsNullOrEmpty(fontColor) ? string.Format(CultureInfo.InvariantCulture, "/{0}", fontColor) : string.Empty;
+            string formattedContent = string.Format(CultureInfo.InvariantCulture, "<img src=\"http://placehold.it/{0}x{1}/{2}{3}\"/>", x, y, backgroundColor, fontColorSlug);
 
-            placeHolderWebPart.Content = this.xmlHelper.CreateXmlElementInnerTextFromString(string.Format("<img src=\"http://placehold.it/{0}x{1}/{2}{3}\"/>", x, y, backgroundColor, fontColorSlug));
+            placeHolderWebPart.Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent);
+
             return placeHolderWebPart;
         }
     }

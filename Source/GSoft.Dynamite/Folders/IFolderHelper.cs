@@ -23,6 +23,6 @@ namespace GSoft.Dynamite.Folders
         /// Method to revert to home page to the default web page
         /// </summary>
         /// <param name="web">The web</param>
-        void ResetHomePageToDefault(SPWeb web);
+        void ResetWelcomePageToDefault(SPWeb web);
     }
 }

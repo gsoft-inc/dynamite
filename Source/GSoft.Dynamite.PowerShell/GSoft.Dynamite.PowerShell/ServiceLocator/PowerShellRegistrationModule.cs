@@ -25,8 +25,6 @@ namespace GSoft.Dynamite.PowerShell.ServiceLocator
         /// </remarks>
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<PowerShellResourceLocationConfig>().As<IResourceLocatorConfig>();
-
             builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
         }
     }

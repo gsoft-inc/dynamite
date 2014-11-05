@@ -33,6 +33,16 @@ namespace GSoft.Dynamite.Monitoring
         /// </summary>
         public void Dispose()
         {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Stops time tracking for the scope
+        /// </summary>
+        /// <param name="cleanupBothManagedAndNative">Time tracker is stopped, regardless of this parameter's value.</param>
+        protected virtual void Dispose(bool cleanupBothManagedAndNative)
+        {
             this.stopWatch.Stop();
             this.parentAggregator.AddTimeSpanToAggregateTimeSpentForKey(this.aggregateKey, this.stopWatch.Elapsed);
         }

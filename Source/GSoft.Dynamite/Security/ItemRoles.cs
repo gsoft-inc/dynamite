@@ -62,7 +62,7 @@ namespace GSoft.Dynamite.Security
         {
             get
             {
-                return this.itemLocator.GetByTitle(this.Web, this.SecurableObjectLocation, this.itemName);
+                return this.itemLocator.GetByTitle(this.Web, new Uri(this.SecurableObjectLocation, UriKind.Relative), this.itemName);
             }
         }
     }

@@ -68,11 +68,17 @@ namespace GSoft.Dynamite.Cache
         int ClearCache();
 
         /// <summary>
+        /// Clear the cached information for a specific key (in the CurrentUICulture).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        void ClearCache(ICacheKey key);
+
+        /// <summary>
         /// Clear the cached information for a specific key.
         /// </summary>
         /// <param name="key">The key.</param>
-        /// <param name="lcid">The language of the cache. If null (default) is passed the current UI culture is used.</param>
-        void ClearCache(ICacheKey key, int? lcid = null);
+        /// <param name="lcid">The language of the cache to clear.</param>
+        void ClearCache(ICacheKey key, int lcid);
 
         /// <summary>
         /// Clear the cached information for a specific key.

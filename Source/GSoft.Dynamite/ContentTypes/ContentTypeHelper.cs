@@ -370,15 +370,21 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assemblyName">Name of the assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType)
         {
+            SPEventReceiverDefinition eventReceiverDefinition = null;
+
             var classType = Type.GetType(string.Format(CultureInfo.InvariantCulture, "{0}, {1}", className, assemblyName));
             if (classType != null)
             {
                 var assembly = Assembly.GetAssembly(classType);
-                this.AddEventReceiverDefinition(contentType, type, assembly, className);
+                eventReceiverDefinition = this.AddEventReceiverDefinition(contentType, type, assembly, className, syncType);
             }
+
+            return eventReceiverDefinition;
         }
 
         /// <summary>
@@ -388,22 +394,29 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="type">The receiver type.</param>
         /// <param name="assembly">The assembly.</param>
         /// <param name="className">Name of the class.</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className)
+        public SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType)
         {
+            SPEventReceiverDefinition eventReceiverDefinition = null;
+
             var isAlreadyDefined = contentType.EventReceivers.Cast<SPEventReceiverDefinition>()
                 .Any(x => (x.Class == className) && (x.Type == type));
 
             // If definition isn't already defined, add it to the content type
             if (!isAlreadyDefined)
             {
-                var eventReceiverDefinition = contentType.EventReceivers.Add();
+                eventReceiverDefinition = contentType.EventReceivers.Add();
                 eventReceiverDefinition.Type = type;
                 eventReceiverDefinition.Assembly = assembly.FullName;
+                eventReceiverDefinition.Synchronization = syncType;
                 eventReceiverDefinition.Class = className;
                 eventReceiverDefinition.Update();
                 contentType.Update(true);
             }
+
+            return eventReceiverDefinition;
         }
 
         /// <summary>
@@ -453,7 +466,7 @@ namespace GSoft.Dynamite.ContentTypes
         }
 
         #region Private methods
-        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType, RequiredTypes isRequired)
+        private static bool AddFieldToContentType(SPContentType contentType, SPField field, bool updateContentType, RequiredType isRequired)
         {
             // Create the field ref.
             SPFieldLink fieldOneLink = new SPFieldLink(field);
@@ -462,13 +475,13 @@ namespace GSoft.Dynamite.ContentTypes
                 // Set the RequiredType value on the Content Type
                 switch (isRequired)
                 {
-                    case RequiredTypes.Required:
+                    case RequiredType.Required:
                         fieldOneLink.Required = true;
                         break;
-                    case RequiredTypes.NotRequired:
+                    case RequiredType.NotRequired:
                         fieldOneLink.Required = false;
                         break;
-                    case RequiredTypes.Inherit:
+                    case RequiredType.Inherit:
                     default:
                         // Do nothing, it will inherit from the Field definition
                         break;

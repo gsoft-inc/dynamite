@@ -69,7 +69,7 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="x">x axis dimension in pixel</param>
         /// <param name="y">y axis dimension in pixel</param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y);
+        ContentEditorWebPart CreatePlaceholderWebPart(int x, int y);
 
         /// <summary>
         /// Method to create a Content Editor Web Part containing a place holder image
@@ -78,7 +78,7 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="y">y axis dimension in pixel</param>
         /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor);
+        ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor);
 
         /// <summary>
         /// Method to create a Content Editor Web Part containing a place holder image
@@ -88,6 +88,6 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <param name="fontColor">Font hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
-        ContentEditorWebPart CreatePlaceHolderWebPart(int x, int y, string backgroundColor, string fontColor);
+        ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor);
     }
 }

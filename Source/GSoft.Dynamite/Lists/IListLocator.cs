@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Lists
@@ -14,8 +15,14 @@ namespace GSoft.Dynamite.Lists
         /// <param name="web">The context's web</param>
         /// <param name="listUrl">The web-relative path to the list</param>
         /// <returns>The list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Statics to be avoided in favor consistency with use of constructor injection for class collaborators.")]
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "List urls are available as strings through the ListUrls utility.")]
+        SPList GetByUrl(SPWeb web, Uri listUrl);
+
+        /// <summary>
+        /// Find a list by its web-relative url
+        /// </summary>
+        /// <param name="web">The context's web</param>
+        /// <param name="listUrl">The web-relative path to the list</param>
+        /// <returns>The list</returns>
         SPList GetByUrl(SPWeb web, string listUrl);
 
         /// <summary>
@@ -39,6 +46,8 @@ namespace GSoft.Dynamite.Lists
         /// resource key (i.e. TitleResource.Key only).
         /// </param>
         /// <returns>The list if it was found, null otherwise.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "1#", Justification = "The point of this method is to be lax and accept many types of input strings.")]
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "string", Justification = "Parameter name descriptions the many types of allowed inputs")]
         SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString);
     }
 }

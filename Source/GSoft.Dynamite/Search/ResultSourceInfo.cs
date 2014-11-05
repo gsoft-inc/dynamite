@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SqlServer.Server;
@@ -25,6 +26,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The sorting setting by field. The Key corresponds the field name.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IDictionary<string, SortDirection> SortSettings { get; set; }
 
         /// <summary>

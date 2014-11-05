@@ -1,4 +1,7 @@
-﻿namespace GSoft.Dynamite.Navigation
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+
+namespace GSoft.Dynamite.Navigation
 {
     /// <summary>
     /// Managed property names
@@ -10,6 +13,7 @@
         /// </summary>
         public NavigationManagedProperties()
         {
+            this.FriendlyUrlRequiredProperties = new List<string>();
         }
 
         /// <summary>
@@ -30,7 +34,8 @@
         /// <summary>
         /// The friendly URL required properties
         /// </summary>
-        public string[] FriendlyUrlRequiredProperties { get; set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow repalcement of backing store for more flexible initialization.")]
+        public ICollection<string> FriendlyUrlRequiredProperties { get; set; }
 
         /// <summary>
         /// The result source name

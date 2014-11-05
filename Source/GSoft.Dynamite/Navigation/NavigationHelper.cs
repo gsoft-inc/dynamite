@@ -161,6 +161,17 @@ namespace GSoft.Dynamite.Navigation
 
             return new List<NavigationTerm>();
         }
+        
+        /// <summary>
+        /// Generates the friendly URL slug with a default maximum length of 75 characters.
+        /// </summary>
+        /// <param name="phrase">The phrase.</param>
+        /// <returns>A friendly URL slug containing human readable characters.</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public string GenerateFriendlyUrlSlug(string phrase)
+        {
+            return this.GenerateFriendlyUrlSlug(phrase, 75);
+        }
 
         /// <summary>
         /// Generates the friendly URL slug.
@@ -169,10 +180,11 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="maxLength">The maximum length.</param>
         /// <returns>A friendly URL slug containing human readable characters.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public string GenerateFriendlyUrlSlug(string phrase, int maxLength = 75)
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Slugs should be normalized to lowercase.")]
+        public string GenerateFriendlyUrlSlug(string phrase, int maxLength)
         {
             // Remove diacritics (accented characters)
-            var slug = RemoveDiacritics(phrase.ToLower());
+            var slug = RemoveDiacritics(phrase.ToLower(CultureInfo.InvariantCulture));
 
             // invalid chars, make into spaces
             slug = Regex.Replace(slug, @"[^a-z0-9\s-]", string.Empty);

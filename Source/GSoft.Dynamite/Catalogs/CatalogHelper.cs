@@ -39,13 +39,13 @@ namespace GSoft.Dynamite.Catalogs
         /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields)
         {
-            return this.SetListAsCatalog(list, availableManagedProperties, false);
+            return this.SetListAsCatalog(list, availableFields, false);
         }
 
         /// <summary>
@@ -53,13 +53,14 @@ namespace GSoft.Dynamite.Catalogs
         /// Note: For more information, see PublishingCatalogUtility in Microsoft.SharePoint.Publishing
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, bool activateAnonymousAccess)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, bool activateAnonymousAccess)
         {
+            // TODO: Validate "availableFields" param name. Should it be availableManagedProperties? The comment says internal name. What does FurlFields really expect as format?
             this.logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
             // Add properties for catalog publishing on the root folder
@@ -81,7 +82,7 @@ namespace GSoft.Dynamite.Catalogs
             var fieldList = new Collection<string>();
 
             // For fields name, you need to pass the internal name of the column directly followed by "OWSTEXT"
-            foreach (var availableField in availableManagedProperties)
+            foreach (var availableField in availableFields)
             {
                 fieldList.Add("\"" + availableField + "\"");
             }
@@ -104,29 +105,29 @@ namespace GSoft.Dynamite.Catalogs
         /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <returns>The SharePoint list configured as a catalog.</returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, string taxonomyFieldMap)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap)
         {
-            return this.SetListAsCatalog(list, availableManagedProperties, taxonomyFieldMap, false);
+            return this.SetListAsCatalog(list, availableFields, taxonomyFieldMap, false);
         }
 
         /// <summary>
         /// Set a SharePoint as a product catalog with a taxonomy term for navigation.
         /// </summary>
         /// <param name="list">The SharePoint list.</param>
-        /// <param name="availableManagedProperties">List of internal field names that are available through the catalog.</param>
+        /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <param name="activateAnonymousAccess">if set to <c>true</c> [activate anonymous access].</param>
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
-        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableManagedProperties, string taxonomyFieldMap, bool activateAnonymousAccess)
+        public SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap, bool activateAnonymousAccess)
         {
             this.logger.Info("Start method 'SetListAsCatalog' for list: '{0}'", list.RootFolder.Url);
 
-            var catalogList = this.SetListAsCatalog(list, availableManagedProperties, activateAnonymousAccess);
+            var catalogList = this.SetListAsCatalog(list, availableFields, activateAnonymousAccess);
             var rootFolder = catalogList.RootFolder;
 
             // Set current culture to be able to get the "Title" of the list
@@ -239,19 +240,31 @@ namespace GSoft.Dynamite.Catalogs
 
             return catalogList;
         }
+        
+        /// <summary>
+        /// Method to get a CatalogConnectionSettings from the site
+        /// </summary>
+        /// <param name="site">The SPSite to get the connection from</param>
+        /// <param name="webAbsoluteUrl">The full absolute url of the catalog</param>
+        /// <param name="catalogWebRelativeUrl">The root url of the catalog.</param>
+        /// <returns>A catalogConnectionSettings object</returns>
+        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string webAbsoluteUrl, string catalogWebRelativeUrl)
+        {
+            return this.GetCatalogConnectionSettings(site, new Uri(webAbsoluteUrl, UriKind.Absolute), new Uri(catalogWebRelativeUrl, UriKind.Relative));
+        }
 
         /// <summary>
         /// Method to get a CatalogConnectionSettings from the site
         /// </summary>
         /// <param name="site">The SPSite to get the connection from</param>
-        /// <param name="webAbsoluteUrl">The server relative url where the catalog belong</param>
-        /// <param name="catalogRootUrl">The root url of the catalog.</param>
+        /// <param name="webAbsoluteUrl">The full absolute url of the catalog</param>
+        /// <param name="catalogWebRelativeUrl">The root url of the catalog.</param>
         /// <returns>A catalogConnectionSettings object</returns>
-        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, string webAbsoluteUrl, string catalogRootUrl)
+        public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, Uri webAbsoluteUrl, Uri catalogWebRelativeUrl)
         {
+            // TODO: Validate why do we need this extra lists URL fragment? Why on earther would you want to rework the catalog's web-relative URL to always add the /Lists/ ??? Why call them tokens?
             string listToken = "lists";
-            string catalogPath = string.Empty;
-            var tokens = catalogRootUrl.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var tokens = catalogWebRelativeUrl.ToString().Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             if (tokens.Any() && tokens.First() != listToken)
             {
@@ -262,7 +275,7 @@ namespace GSoft.Dynamite.Catalogs
 
             try
             {
-                catalogConnectionSettings = PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(webAbsoluteUrl, string.Join("/", tokens)));
+                catalogConnectionSettings = PublishingCatalogUtility.GetPublishingCatalog(site, SPUtility.ConcatUrls(webAbsoluteUrl.AbsoluteUri, string.Join("/", tokens)));
             }
             catch (InternalQueryErrorException exception)
             {
@@ -285,7 +298,7 @@ namespace GSoft.Dynamite.Catalogs
 
             // Be careful, you must launch a search crawl before creating a catalog connection.
             // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
-            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.RootFolderUrl);
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.WebRelativeUrl.ToString());
 
             if (connectionSettings != null)
             {
@@ -306,7 +319,7 @@ namespace GSoft.Dynamite.Catalogs
 
             // Be careful, you must launch a search crawl before creating a catalog connection.
             // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
-            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.RootFolderUrl);
+            var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.WebRelativeUrl.ToString());
 
             if (connectionSettings != null)
             {
