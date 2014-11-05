@@ -21,6 +21,16 @@ namespace GSoft.Dynamite.Search
         public static readonly string Url = "Path";
 
         /// <summary>
+        /// The "ListId" of the item
+        /// </summary>
+        public static readonly string ListId = "ListID";
+
+        /// <summary>
+        /// The "spSiteUrl" managed property
+        /// </summary>
+        public static readonly string SiteUrl = "spSiteUrl";
+
+        /// <summary>
         /// Managed properties for the ArticleStartDate field
         /// </summary>
         public static readonly string ArticleStartDate = "ArticleStartDateOWSDATE"; 

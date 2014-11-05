@@ -1,4 +1,6 @@
-﻿namespace GSoft.Dynamite.Navigation
+﻿using Microsoft.SharePoint.Publishing;
+using System.Collections.Generic;
+namespace GSoft.Dynamite.Navigation
 {
     /// <summary>
     /// Managed property names
@@ -36,5 +38,15 @@
         /// The result source name
         /// </summary>
         public string ResultSourceName { get; set; }
+
+        /// <summary>
+        /// The Catalog Item Content Type Id 
+        /// </summary>
+        public string CatalogItemId { get; set; }
+
+        /// <summary>
+        /// The list of query properties 
+        /// </summary>
+        public IList<string> queryProperties { get; set; }
     }
 }
