@@ -211,7 +211,7 @@ namespace GSoft.Dynamite.Search
         {
             var res = new ResultSourceInfo();
 
-            var updateMode = overwrite ? ResultSourceInfo.UpdateBehavior.OverwriteResultSource : ResultSourceInfo.UpdateBehavior.NoChangesIfAlreadyExists;
+            var updateMode = overwrite ? UpdateBehavior.OverwriteResultSource : UpdateBehavior.NoChangesIfAlreadyExists;
 
             res.Level = level;
             res.Name = resultSourceName;
@@ -249,7 +249,7 @@ namespace GSoft.Dynamite.Search
                 }
             }
 
-            if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.OverwriteResultSource))
+            if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
             {
                 overwrite = true;
             }
@@ -265,12 +265,12 @@ namespace GSoft.Dynamite.Search
 
                 string searchQuery = string.Empty;
 
-                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.OverwriteQuery))
+                if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
                 {
                     searchQuery = resultSourceInfo.Query;
                 }
 
-                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.AppendToQuery))
+                if (updateMode.Equals(UpdateBehavior.AppendToQuery))
                 {
                     if (resultSource.QueryTransform != null)
                     {
@@ -286,7 +286,7 @@ namespace GSoft.Dynamite.Search
                     }
                 }
 
-                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.RevertQuery))
+                if (updateMode.Equals(UpdateBehavior.RevertQuery))
                 {
                     if (resultSource.QueryTransform != null)
                     {
