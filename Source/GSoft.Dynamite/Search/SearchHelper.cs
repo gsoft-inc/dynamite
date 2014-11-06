@@ -220,7 +220,7 @@ namespace GSoft.Dynamite.Search
             res.SearchProvider = searchProvider;
             res.SortSettings = new Dictionary<string, SortDirection>()
             {
-                {sortField, direction}
+                { sortField, direction }
             };
 
             return this.EnsureResultSource(
@@ -278,7 +278,6 @@ namespace GSoft.Dynamite.Search
                         if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
                         {
                             searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
-
                         }
                     }
                     else
@@ -292,7 +291,7 @@ namespace GSoft.Dynamite.Search
                     if (resultSource.QueryTransform != null)
                     {
                         var rgx = new Regex(resultSourceInfo.Query);
-                        searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, "");
+                        searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
                     }
                 }
 

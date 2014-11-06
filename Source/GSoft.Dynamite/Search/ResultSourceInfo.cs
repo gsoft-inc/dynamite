@@ -12,6 +12,16 @@ namespace GSoft.Dynamite.Search
     /// </summary>
     public class ResultSourceInfo
     {
+        private string _searchProvider;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ResultSourceInfo()
+        {
+            this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
+        }
+
         /// <summary>
         /// The update mode for the result source
         /// </summary>
@@ -21,30 +31,27 @@ namespace GSoft.Dynamite.Search
             /// Delete and recreate the result source if already exists
             /// </summary>
             OverwriteResultSource,
+
             /// <summary>
             /// Overwrite only the query string of the result source
             /// </summary>
             OverwriteQuery,
+
             /// <summary>
             /// Append string to the existing query
             /// </summary>
             AppendToQuery,
+
             /// <summary>
-            /// Roolback the query to its previous state
+            /// Rollback the query to its previous state
             /// </summary>
             RevertQuery,
+
             /// <summary>
             /// Don't make any changes on the result source if already exists
             /// </summary>
             NoChangesIfAlreadyExists
         }
-
-        public ResultSourceInfo()
-        {
-            this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
-        }
-
-        private string _searchProvider;
 
         /// <summary>
         /// Name of the result source
