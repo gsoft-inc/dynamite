@@ -42,19 +42,19 @@ namespace GSoft.Dynamite.Fields
         public TaxonomyContext TermStoreMapping { get; set; }
 
         /// <summary>
-        /// The XML schema of the Taxonomy field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
-            {
-                var schema = this.BasicFieldSchema;
+            baseFieldSchema.Add(new XAttribute("Mult", "TRUE"));
+            baseFieldSchema.Add(TaxonomyFieldInfo.TaxonomyFieldCustomizationSchema(Guid.NewGuid(), this.IsPathRendered, this.CreateValuesInEditForm));
 
-                schema.Add(new XAttribute("Mult", "TRUE"));
-                schema.Add(TaxonomyFieldInfo.TaxonomyFieldCustomizationSchema(Guid.NewGuid(), this.IsPathRendered, this.CreateValuesInEditForm));
-
-                return schema;
-            }
+            return baseFieldSchema;
         }
     }
 }

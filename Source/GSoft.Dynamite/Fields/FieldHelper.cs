@@ -21,16 +21,19 @@ namespace GSoft.Dynamite.Fields
     {
         private readonly ILogger logger;
         private readonly ITaxonomyHelper taxonomyHelper;
+        private readonly IFieldSchemaHelper fieldSchemaHelper;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
-        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper)
+        /// <param name="fieldSchemaHelper">Field schema builder</param>
+        public FieldHelper(ILogger logger, ITaxonomyHelper taxonomyHelper, IFieldSchemaHelper fieldSchemaHelper)
         {
             this.logger = logger;
             this.taxonomyHelper = taxonomyHelper;
+            this.fieldSchemaHelper = fieldSchemaHelper;
         }
 
         /// <summary>
@@ -309,7 +312,7 @@ namespace GSoft.Dynamite.Fields
             }
             else
             {
-                field = this.EnsureField(fieldCollection, fieldInfo.Schema);
+                field = this.EnsureField(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
             }
 
             // Gets the created field
@@ -329,7 +332,7 @@ namespace GSoft.Dynamite.Fields
         /// <returns>The internal name of the field</returns>
         public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
         {
-            var field = this.EnsureField(fieldCollection, fieldInfo.Schema);
+            var field = this.EnsureField(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
 
             // Gets the created field
             var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);

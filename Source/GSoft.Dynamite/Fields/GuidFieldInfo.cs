@@ -22,16 +22,17 @@ namespace GSoft.Dynamite.Fields
         }
 
         /// <summary>
-        /// The XML schema of a GUID field as XElement
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        /// <returns>The XML schema</returns>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
-            {
-                // Assuming Guid field type has no special properties of its own
-                return this.BasicFieldSchema;
-            }
+            // Assuming Guid field type has no special properties of its own
+            return baseFieldSchema;
         }
     }
 }

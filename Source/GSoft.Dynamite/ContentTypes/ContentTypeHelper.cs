@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
@@ -18,15 +19,18 @@ namespace GSoft.Dynamite.ContentTypes
     /// </summary>
     public class ContentTypeHelper : IContentTypeHelper
     {
-        private readonly IVariationHelper _variationHelper;
+        private readonly IVariationHelper variationHelper;
+        private readonly IResourceLocator resourceLocator;
 
         /// <summary>
         /// Initializes a new <see cref="ContentTypeHelper"/> instance
         /// </summary>
         /// <param name="variationHelper">Variations helper</param>
-        public ContentTypeHelper(IVariationHelper variationHelper)
+        /// <param name="resourceLocator">The resource locator</param>
+        public ContentTypeHelper(IVariationHelper variationHelper, IResourceLocator resourceLocator)
         {
-            this._variationHelper = variationHelper;
+            this.variationHelper = variationHelper;
+            this.resourceLocator = resourceLocator;
         }
 
         /// <summary>
@@ -44,7 +48,7 @@ namespace GSoft.Dynamite.ContentTypes
             SPContentType contentType = this.EnsureContentType(
                 contentTypeCollection,
                 new SPContentTypeId(contentTypeInfo.ContentTypeId),
-                contentTypeInfo.DisplayName);
+                contentTypeInfo.DisplayNameResourceKey);
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
@@ -56,7 +60,7 @@ namespace GSoft.Dynamite.ContentTypes
 
             if (pubWeb != null)
             {
-                var labels = this._variationHelper.GetVariationLabels(pubWeb.Web.Site);
+                var labels = this.variationHelper.GetVariationLabels(pubWeb.Web.Site);
                 availableLanguages.AddRange(labels.Select(label => new CultureInfo(label.Language)));
 
                 if (availableLanguages.Count == 0)
@@ -69,15 +73,19 @@ namespace GSoft.Dynamite.ContentTypes
                 availableLanguages = web.SupportedUICultures.Reverse().ToList();   // end with the main language
             }
 
+            // If multiple languages are enabled, since we have a full ContentTypeInfo object, we want to populate 
+            // all alternate language labels for the Content Type
             foreach (var availableLanguage in availableLanguages)
             {
                 var currentCulture = CultureInfo.CurrentUICulture;
 
-                // make sure the ResourceLocator will fetch the correct culture's DisplayName value
+                // make sure the ResourceLocator will fetch the correct culture's DisplayName values
+                // by forcing the current thread's UI culture temporarily.
                 Thread.CurrentThread.CurrentUICulture = availableLanguage;
-                contentType.Name = contentTypeInfo.DisplayName;
-                contentType.Description = contentTypeInfo.Description;
-                contentType.Group = contentTypeInfo.Group;
+
+                contentType.Name = this.resourceLocator.Find(contentTypeInfo.DisplayNameResourceKey);
+                contentType.Description = this.resourceLocator.Find(contentTypeInfo.DescriptionResourceKey);
+                contentType.Group = this.resourceLocator.Find(contentTypeInfo.GroupResourceKey);
 
                 // restore the MUI culture to the old value
                 Thread.CurrentThread.CurrentUICulture = currentCulture;
@@ -111,7 +119,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
         /// <param name="contentTypeId">The content type id.</param>
-        /// <param name="contentTypeName">Name of the content type.</param>
+        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found and applied.</param>
         /// <returns><c>True</c> if it was added, else <c>False</c>.</returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
@@ -131,6 +139,9 @@ namespace GSoft.Dynamite.ContentTypes
             {
                 throw new ArgumentNullException("contentTypeName");
             }
+
+            // Try to find the CurrentUICulture's value for the content type name (it may be a resource string key)
+            string contentTypeNameResource = this.resourceLocator.Find(contentTypeName);
 
             SPList list = null;
 
@@ -161,7 +172,7 @@ namespace GSoft.Dynamite.ContentTypes
                         else
                         {
                             // Create the content type directly on the list
-                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
                             var returnedListContentType = list.ContentTypes.Add(newListContentType);
                             return returnedListContentType;
                         }
@@ -182,7 +193,7 @@ namespace GSoft.Dynamite.ContentTypes
                     if (contentTypeInWeb == null)
                     {
                         // Add the content type to the collection.
-                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
                         var returnedWebContentType = contentTypeCollection.Add(newWebContentType);
                         return returnedWebContentType;
                     }
@@ -193,7 +204,7 @@ namespace GSoft.Dynamite.ContentTypes
                 }
 
                 // Case if there is no Content Types in the Web (e.g single SPWeb)
-                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeName);
+                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
                 var returnedContentType = contentTypeCollection.Add(newContentType);
                 return returnedContentType;
             }

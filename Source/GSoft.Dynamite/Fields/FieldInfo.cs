@@ -191,85 +191,14 @@ namespace GSoft.Dynamite.Fields
         public T DefaultValue { get; set; }
 
         /// <summary>
-        /// The XML schema of the field
+        /// The XML schema of the Note field
         /// </summary>
-        public abstract XElement Schema { get; }
-        
-        /// <summary>
-        /// Basic XML for a field definition
-        /// </summary>
-        protected XElement BasicFieldSchema
-        {
-            get
-            {
-                var schema = new XElement(
-                    "Field",
-                    new XAttribute("Name", this.InternalName),
-                    new XAttribute("Type", this.Type),
-                    new XAttribute("ID", "{" + this.Id + "}"),
-                    new XAttribute("StaticName", this.InternalName),
-                    new XAttribute("DisplayName", this.DisplayNameResourceString),
-                    new XAttribute("Description", this.DescriptionResourceString),
-                    new XAttribute("Group", this.GroupResourceString),
-                    new XAttribute("EnforceUniqueValues", this.EnforceUniqueValues.ToString().ToUpper(CultureInfo.InvariantCulture)));
-
-                // Check the Required type
-                if (this.Required == RequiredType.Required)
-                {
-                    schema.Add(new XAttribute("Required", "TRUE"));
-                }
-
-                if (this.Required == RequiredType.NotRequired)
-                {
-                    schema.Add(new XAttribute("Required", "FALSE"));
-                }
-
-                // Hidden state
-                if (this.IsHidden)
-                {
-                    schema.Add(new XAttribute("Hidden", "TRUE"));
-                }
-
-                // Show in Display Form
-                if (this.IsHiddenInDisplayForm)
-                {
-                    schema.Add(new XAttribute("ShowInDisplayForm", "FALSE"));
-                }
-
-                // Show in Edit Form
-                if (this.IsHiddenInEditForm)
-                {
-                    schema.Add(new XAttribute("ShowInEditForm", "FALSE"));
-                }
-
-                // Show in new Form
-                if (this.IsHiddenInNewForm)
-                {
-                    schema.Add(new XAttribute("ShowInNewForm", "FALSE"));
-                }
-
-                // Show in List settings
-                if (this.IsHiddenInListSettings)
-                {
-                    schema.Add(new XAttribute("ShowInListSettings", "FALSE"));
-                }
-                else
-                {
-                    schema.Add(new XAttribute("ShowInListSettings", "TRUE"));
-                }
-
-                return schema;
-            }
-        }
-
-        /// <summary>
-        /// The string XML format of the field
-        /// </summary>
-        /// <returns>The XML schema of the field as string</returns>
-        public override string ToString()
-        {
-            return this.Schema.ToString();
-        }
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public abstract XElement Schema(XElement baseFieldSchema);
 
         private static bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
         {

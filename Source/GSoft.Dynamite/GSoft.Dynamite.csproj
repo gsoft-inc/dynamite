@@ -92,6 +92,8 @@
     <Compile Include="Events\EventReceiverInfo.cs" />
     <Compile Include="ContentTypes\IContentTypeHelper.cs" />
     <Compile Include="Fields\IFieldHelper.cs" />
+    <Compile Include="Fields\FieldSchemaHelper.cs" />
+    <Compile Include="Fields\IFieldSchemaHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
     <Compile Include="Pages\IPageHelper.cs" />
@@ -279,7 +281,6 @@
     <Compile Include="ServiceLocator\AddOn\AddOnProvidedServiceLocator.cs" />
     <Compile Include="ServiceLocator\DefaultResourceLocatorConfig.cs" />
     <Compile Include="ServiceLocator\Internal\FallbackServiceLocator.cs" />
-    <Compile Include="ServiceLocator\Internal\InternalServiceLocator.cs" />
     <Compile Include="ServiceLocator\AddOn\ISharePointServiceLocatorAccessor.cs" />
     <Compile Include="ServiceLocator\SharePointServiceLocator.cs" />
     <Compile Include="ServiceLocator\ISharePointServiceLocator.cs" />

@@ -71,6 +71,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.IntegrationTests", "GSoft.Dynamite.IntegrationTests\GSoft.Dynamite.IntegrationTests.csproj", "{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -95,6 +97,10 @@ Global
 		{7379FB7E-3334-4B1D-9991-D7FD7DB52EAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7379FB7E-3334-4B1D-9991-D7FD7DB52EAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7379FB7E-3334-4B1D-9991-D7FD7DB52EAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
