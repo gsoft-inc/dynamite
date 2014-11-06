@@ -808,9 +808,10 @@ namespace GSoft.Dynamite.Search
         public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
         {
             ResultItemType resType = null;
-    
+
+            var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
-            var resultSource = this.EnsureResultSource(site, resultType.ResultSource);
+            var resultSource = this.GetResultSourceByName(ssa, resultType.ResultSource.Name, resultType.ResultSource.Level, site.RootWeb);
 
             var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
