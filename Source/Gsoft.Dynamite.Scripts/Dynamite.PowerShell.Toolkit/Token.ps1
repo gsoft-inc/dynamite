@@ -236,10 +236,10 @@ function Initialize-DSPTokens {
     }
 
     # 1 Copy and tokenize everything from source folder
-    Execute-DSPTransfert $SourcePath $DestinationPath
+    Execute-DSPTransfer $SourcePath $DestinationPath
 
     # 2 Copy and tokenize everything from customization folder
-    Execute-DSPTransfert $CustomizationPath $DestinationPath
+    Execute-DSPTransfer $CustomizationPath $DestinationPath
 
     # 3 Setup WSP Copy
     $wspPath = Join-Path $DestinationPath "\Solutions\WSP\"
@@ -274,17 +274,17 @@ function Initialize-DSPTokens {
 
 }
 
-function script:Execute-DSPTransfert {
+function Execute-DSPTransfer {
 	param (
 		$Path,
         $DestinationPath
 	)
     
     # Copy all .ps1 script inside $Path to $DestinationPath
-    Copy-DSPFile $Path $DestinationPath @("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt")
+    Copy-DSPFile $Path $DestinationPath @("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*")
 }
 
-function script:Copy-DSPFile {
+function Copy-DSPFile {
 	param (
 		$Path,
         $DestinationPath,
@@ -317,7 +317,7 @@ function script:Copy-DSPFile {
     }
 }
 
-function script:Copy-DSPSolution {
+function Copy-DSPSolution {
 	param (
 		$Path,
         $DestinationPath,
