@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.Server.Auditing;
@@ -12,6 +13,7 @@ using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
@@ -220,6 +222,8 @@ namespace GSoft.Dynamite.Search
         public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
             Source resultSource = null;
+            bool overwrite = false;
+            var updateMode = resultSourceInfo.UpdateMode;
 
             var sortCollection = new SortCollection();
 
@@ -231,11 +235,55 @@ namespace GSoft.Dynamite.Search
                 }
             }
 
+            if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.OverwriteResultSource))
+            {
+                overwrite = true;
+            }
+
+            var queryProperties = new QueryTransformProperties();
+            queryProperties["SortList"] = sortCollection;
+
             // Get the search service application for the current site
             var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
             if (searchServiceApplication != null)
             {
-                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, resultSourceInfo.Overwrite);
+                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, overwrite);
+
+                string searchQuery = string.Empty;
+
+                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.OverwriteQuery))
+                {
+                    searchQuery = resultSourceInfo.Query;
+                }
+
+                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.AppendToQuery))
+                {
+                    if (resultSource.QueryTransform != null)
+                    {
+                        var rgx = new Regex(resultSourceInfo.Query);
+                        if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
+                        {
+                            searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
+
+                        }
+                    }
+                    else
+                    {
+                        searchQuery = resultSourceInfo.Query;
+                    }
+                }
+
+                if (updateMode.Equals(ResultSourceInfo.UpdateBehavior.RevertQuery))
+                {
+                    if (resultSource.QueryTransform != null)
+                    {
+                        var rgx = new Regex(resultSourceInfo.Query);
+                        searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, "");
+                    }
+                }
+
+                resultSource.CreateQueryTransform(queryProperties, searchQuery);
+                resultSource.Commit();
             }
 
             return resultSource;

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
+using Microsoft.SharePoint.JSGrid;
 using Microsoft.SqlServer.Server;
 
 namespace GSoft.Dynamite.Search
@@ -11,6 +12,38 @@ namespace GSoft.Dynamite.Search
     /// </summary>
     public class ResultSourceInfo
     {
+        /// <summary>
+        /// The update mode for the result source
+        /// </summary>
+        public enum UpdateBehavior
+        {
+            /// <summary>
+            /// Delete and recreate the result source if already exists
+            /// </summary>
+            OverwriteResultSource,
+            /// <summary>
+            /// Overwrite only the query string of the result source
+            /// </summary>
+            OverwriteQuery,
+            /// <summary>
+            /// Append string to the existing query
+            /// </summary>
+            AppendToQuery,
+            /// <summary>
+            /// Roolback the query to its previous state
+            /// </summary>
+            RevertQuery,
+            /// <summary>
+            /// Don't make any changes on the result source if already exists
+            /// </summary>
+            NoChangesIfAlreadyExists
+        }
+
+        public ResultSourceInfo()
+        {
+            this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
+        }
+
         private string _searchProvider;
 
         /// <summary>
@@ -30,9 +63,9 @@ namespace GSoft.Dynamite.Search
         public IDictionary<string, SortDirection> SortSettings { get; set; }
 
         /// <summary>
-        /// If true, overwrite the result source if existing
+        /// Set the update behavior for the result source
         /// </summary>
-        public bool Overwrite { get; set; }
+        public UpdateBehavior UpdateMode { get; set; }
 
         /// <summary>
         /// The KQL Query
