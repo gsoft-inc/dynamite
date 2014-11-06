@@ -209,20 +209,22 @@ namespace GSoft.Dynamite.Search
             SortDirection direction,
             bool overwrite)
         {
-            return this.EnsureResultSource(
-                contextWeb.Site,
-                new ResultSourceInfo()
+            var res = new ResultSourceInfo();
+
+            var updateMode = overwrite ? ResultSourceInfo.UpdateBehavior.OverwriteResultSource : ResultSourceInfo.UpdateBehavior.NoChangesIfAlreadyExists;
+
+            res.Level = level;
+            res.Name = resultSourceName;
+            res.UpdateMode = updateMode;
+            res.Query = query;
+            res.SearchProvider = searchProvider;
+            res.SortSettings = new Dictionary<string, SortDirection>()
             {
-                Level = level,
-                Name = resultSourceName,
-                Overwrite = overwrite,
-                Query = query,
-                SearchProvider = searchProvider,
-                SortSettings = new Dictionary<string, SortDirection>()
-                {
-                    { sortField, direction }
-                }
-            });
+                {sortField, direction}
+            };
+
+            return this.EnsureResultSource(
+                contextWeb.Site, res);
         }
 
         /// <summary>
