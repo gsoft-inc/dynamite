@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.Server.Auditing;
@@ -12,6 +13,7 @@ using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
+using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
@@ -207,8 +209,22 @@ namespace GSoft.Dynamite.Search
             SortDirection direction,
             bool overwrite)
         {
-            // TODO: implement this
-            throw new NotImplementedException();
+            var res = new ResultSourceInfo();
+
+            var updateMode = overwrite ? UpdateBehavior.OverwriteResultSource : UpdateBehavior.NoChangesIfAlreadyExists;
+
+            res.Level = level;
+            res.Name = resultSourceName;
+            res.UpdateMode = updateMode;
+            res.Query = query;
+            res.SearchProvider = searchProvider;
+            res.SortSettings = new Dictionary<string, SortDirection>()
+            {
+                { sortField, direction }
+            };
+
+            return this.EnsureResultSource(
+                contextWeb.Site, res);
         }
 
         /// <summary>
@@ -220,6 +236,8 @@ namespace GSoft.Dynamite.Search
         public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
             Source resultSource = null;
+            bool overwrite = false;
+            var updateMode = resultSourceInfo.UpdateMode;
 
             var sortCollection = new SortCollection();
 
@@ -231,11 +249,54 @@ namespace GSoft.Dynamite.Search
                 }
             }
 
+            if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
+            {
+                overwrite = true;
+            }
+
+            var queryProperties = new QueryTransformProperties();
+            queryProperties["SortList"] = sortCollection;
+
             // Get the search service application for the current site
             var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
             if (searchServiceApplication != null)
             {
-                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, resultSourceInfo.Overwrite);
+                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, overwrite);
+
+                string searchQuery = string.Empty;
+
+                if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
+                {
+                    searchQuery = resultSourceInfo.Query;
+                }
+
+                if (updateMode.Equals(UpdateBehavior.AppendToQuery))
+                {
+                    if (resultSource.QueryTransform != null)
+                    {
+                        var rgx = new Regex(resultSourceInfo.Query);
+                        if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
+                        {
+                            searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
+                        }
+                    }
+                    else
+                    {
+                        searchQuery = resultSourceInfo.Query;
+                    }
+                }
+
+                if (updateMode.Equals(UpdateBehavior.RevertQuery))
+                {
+                    if (resultSource.QueryTransform != null)
+                    {
+                        var rgx = new Regex(resultSourceInfo.Query);
+                        searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
+                    }
+                }
+
+                resultSource.CreateQueryTransform(queryProperties, searchQuery);
+                resultSource.Commit();
             }
 
             return resultSource;
@@ -273,7 +334,15 @@ namespace GSoft.Dynamite.Search
         /// <returns>
         /// The result source.
         /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, SortCollection sortSettings, bool overwrite)
+        public Source EnsureResultSource(
+            SearchServiceApplication ssa,
+            string resultSourceName,
+            SearchObjectLevel level,
+            string searchProvider,
+            SPWeb contextWeb,
+            string query,
+            SortCollection sortSettings,
+            bool overwrite)
         {
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortSettings;
@@ -330,8 +399,8 @@ namespace GSoft.Dynamite.Search
         /// </returns>
         public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
         {
-            var s = new SearchService("OSearch15", SPFarm.Local);
-            var searchApplication = from SearchServiceApplication sapp in s.SearchApplications
+            var searchService = new SearchService("OSearch15", SPFarm.Local);
+            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
                                     where sapp.GetSearchApplicationDisplayName() == appName
                                     select sapp;
 
@@ -739,9 +808,10 @@ namespace GSoft.Dynamite.Search
         public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
         {
             ResultItemType resType = null;
-    
+
+            var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
-            var resultSource = this.EnsureResultSource(site, resultType.ResultSource);
+            var resultSource = this.GetResultSourceByName(ssa, resultType.ResultSource.Name, resultType.ResultSource.Level, site.RootWeb);
 
             var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);

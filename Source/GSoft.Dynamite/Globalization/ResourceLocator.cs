@@ -122,6 +122,12 @@ namespace GSoft.Dynamite.Globalization
                 }
             }
 
+            if (string.IsNullOrEmpty(found) || found.StartsWith("$Resources:", StringComparison.OrdinalIgnoreCase))
+            {
+                // Don't return a big dollar-sign resource string if we failed: just return the untouched resource key
+                found = resourceKey;
+            }
+
             return found;
         }
 
@@ -145,18 +151,23 @@ namespace GSoft.Dynamite.Globalization
         public string GetResourceString(string resourceKey)
         {
             string resourceString = null;
-            bool isFound = false;
 
             // Scan all the default resource files
             foreach (var fileName in this._defaultResourceFileNames)
             {
                 var resourceValue = this.Find(fileName, resourceKey);
 
-                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources", StringComparison.OrdinalIgnoreCase) && isFound == false)
+                if (!string.IsNullOrEmpty(resourceValue) && resourceValue != resourceKey && !resourceValue.StartsWith("$Resources", StringComparison.OrdinalIgnoreCase))
                 {
                     resourceString = string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", fileName, resourceKey);
-                    isFound = true;
+                    break;
                 }
+            }
+
+            if (string.IsNullOrEmpty(resourceString))
+            {
+                // We failed to figure out which file the resource key belongs to. Just return the resourceKey itself.
+                resourceString = resourceKey;
             }
 
             return resourceString;

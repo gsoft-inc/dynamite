@@ -66,21 +66,21 @@ namespace GSoft.Dynamite.Fields
         public int UserSelectionScope { get; set; }
 
         /// <summary>
-        /// The XML schema of the Note field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
-            {
-                var schema = this.BasicFieldSchema;
+            baseFieldSchema.Add(new XAttribute("List", "UserInfo"));
+            baseFieldSchema.Add(new XAttribute("ShowField", this.ShowField));
+            baseFieldSchema.Add(new XAttribute("UserSelectionMode", this.UserSelectionMode));
+            baseFieldSchema.Add(new XAttribute("UserSelectionScope", this.UserSelectionScope));
 
-                schema.Add(new XAttribute("List", "UserInfo"));
-                schema.Add(new XAttribute("ShowField", this.ShowField));
-                schema.Add(new XAttribute("UserSelectionMode", this.UserSelectionMode));
-                schema.Add(new XAttribute("UserSelectionScope", this.UserSelectionScope));
-
-                return schema;
-            }
+            return baseFieldSchema;
         }
     }
 }

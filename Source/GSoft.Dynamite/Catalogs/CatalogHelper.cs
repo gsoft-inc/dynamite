@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using GSoft.Dynamite.Catalogs;
+using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.Server.Search.Query;
@@ -22,16 +23,19 @@ namespace GSoft.Dynamite.Catalogs
     {
         private readonly ILogger logger;
         private readonly IListHelper listHelper;
+        private IResourceLocator resourceLocator;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="logger">The logger</param>
         /// <param name="listHelper">The list helper</param>
-        public CatalogHelper(ILogger logger, IListHelper listHelper)
+        /// <param name="resourceLocator">The resource locator</param>
+        public CatalogHelper(ILogger logger, IListHelper listHelper, IResourceLocator resourceLocator)
         {
             this.logger = logger;
             this.listHelper = listHelper;
+            this.resourceLocator = resourceLocator;
         }
 
         /// <summary>
@@ -331,7 +335,7 @@ namespace GSoft.Dynamite.Catalogs
                 // Rename the catalog (otherwise, can cause "The value must be at most 64 characters long" error 
                 // because of the name of the connection is generated automatically by SharePoint
                 connectionSettings.CatalogName = catalogConnectionInfo.SourceWeb.Title + " - " + catalogConnectionInfo.SourceWeb.Locale.Name + " - " +
-                                                 catalogConnectionInfo.Catalog.DisplayName;
+                                                 this.resourceLocator.Find(catalogConnectionInfo.Catalog.DisplayNameResourceKey);
 
                 connectionSettings.IsManualCatalogItemUrlRewriteTemplate =
                     catalogConnectionInfo.IsManualCatalogItemUrlRewriteTemplate;
@@ -348,7 +352,7 @@ namespace GSoft.Dynamite.Catalogs
             else
             {
                 this.logger.Info(
-                    "Connection information not found for the catalog {0}. Maybe you forgot to start a search crawl before?", catalog.DisplayName);
+                    "Connection information not found for the catalog {0}. Maybe you forgot to start a search crawl before?", this.resourceLocator.Find(catalog.DisplayNameResourceKey));
             }
         }
 

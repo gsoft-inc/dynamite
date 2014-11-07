@@ -59,32 +59,32 @@ namespace GSoft.Dynamite.Fields
         public string DefaultFormula { get; set; }
 
         /// <summary>
-        /// The XML schema of the Note field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
+            baseFieldSchema.Add(new XAttribute("Format", this.Format));
+
+            if (this.HasFriendlyRelativeDisplay)
             {
-                var schema = this.BasicFieldSchema;
-
-                schema.Add(new XAttribute("Format", this.Format));
-
-                if (this.HasFriendlyRelativeDisplay)
-                {
-                    schema.Add(new XAttribute("FriendlyDisplayFormat", "Relative"));
-                }
-                else
-                {
-                    schema.Add(new XAttribute("FriendlyDisplayFormat", "Disabled"));
-                }
-
-                if (!string.IsNullOrEmpty(this.DefaultFormula))
-                {
-                    schema.Add(new XElement("DefaultFormula", this.DefaultFormula));
-                }
-
-                return schema;
+                baseFieldSchema.Add(new XAttribute("FriendlyDisplayFormat", "Relative"));
             }
+            else
+            {
+                baseFieldSchema.Add(new XAttribute("FriendlyDisplayFormat", "Disabled"));
+            }
+
+            if (!string.IsNullOrEmpty(this.DefaultFormula))
+            {
+                baseFieldSchema.Add(new XElement("DefaultFormula", this.DefaultFormula));
+            }
+
+            return baseFieldSchema;
         }
     }
 }

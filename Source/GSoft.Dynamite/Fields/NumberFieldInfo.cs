@@ -65,37 +65,37 @@ namespace GSoft.Dynamite.Fields
         public int? Max { get; set; }
 
         /// <summary>
-        /// The XML schema of the Note field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
+            baseFieldSchema.Add(new XAttribute("Decimals", this.Decimals));
+
+            if (this.IsPercentage)
             {
-                var schema = this.BasicFieldSchema;
-
-                schema.Add(new XAttribute("Decimals", this.Decimals));
-
-                if (this.IsPercentage)
-                {
-                    schema.Add(new XAttribute("Percentage", "TRUE"));
-                }
-                else
-                {
-                    schema.Add(new XAttribute("Percentage", "FALSE"));
-                }
-
-                if (this.Min.HasValue)
-                {
-                    schema.Add(new XAttribute("Min", this.Min.Value));
-                }
-
-                if (this.Max.HasValue)
-                {
-                    schema.Add(new XAttribute("Max", this.Max.Value));
-                }
-
-                return schema;
+                baseFieldSchema.Add(new XAttribute("Percentage", "TRUE"));
             }
+            else
+            {
+                baseFieldSchema.Add(new XAttribute("Percentage", "FALSE"));
+            }
+
+            if (this.Min.HasValue)
+            {
+                baseFieldSchema.Add(new XAttribute("Min", this.Min.Value));
+            }
+
+            if (this.Max.HasValue)
+            {
+                baseFieldSchema.Add(new XAttribute("Max", this.Max.Value));
+            }
+
+            return baseFieldSchema;
         }
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.ServiceLocator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.Fields
@@ -76,9 +79,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("SomeInternalName", textFieldDefinition.InternalName);
             Assert.AreEqual("Text", textFieldDefinition.Type);
             Assert.AreEqual(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"), textFieldDefinition.Id);
-            Assert.AreEqual("SomeDisplayName", textFieldDefinition.DisplayName);
-            Assert.AreEqual("SomeDescription", textFieldDefinition.Description);
-            Assert.AreEqual("Test", textFieldDefinition.Group);
+            Assert.AreEqual("SomeDisplayName", textFieldDefinition.DisplayNameResourceKey);
+            Assert.AreEqual("SomeDescription", textFieldDefinition.DescriptionResourceKey);
+            Assert.AreEqual("Test", textFieldDefinition.GroupResourceKey);
             Assert.AreEqual(255, textFieldDefinition.MaxLength);
         }
 
@@ -88,27 +91,16 @@ namespace GSoft.Dynamite.UnitTests.Fields
         [TestMethod]
         public void Schema_ShouldOutputValidFieldXml()
         {
+            var fieldSchemaHelper = new FieldSchemaHelper(new ResourceLocator(new List<IResourceLocatorConfig>() { new DefaultResourceLocatorConfig() }));
+
             var textFieldDefinition = this.CreateTextFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
             textFieldDefinition.MaxLength = 400;    // test out the MaxLength param
 
             var validXml = "<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"400\" />";
 
-            Assert.AreEqual(validXml, textFieldDefinition.Schema.ToString());
+            Assert.AreEqual(validXml, fieldSchemaHelper.SchemaForField(textFieldDefinition).ToString());
         }
-
-        /// <summary>
-        /// Validates that XML definition can be printed as output through ToString
-        /// </summary>
-        [TestMethod]
-        public void ToString_ShouldOutputValidFieldXml()
-        {
-            var textFieldDefinition = this.CreateTextFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
-
-            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"255\" />";
-
-            Assert.AreEqual(validXml, textFieldDefinition.ToString());
-        }
-
+        
         private TextFieldInfo CreateTextFieldInfo(
             Guid id,
             string internalName = "SomeInternalName",

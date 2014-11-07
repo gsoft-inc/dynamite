@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.ServiceLocator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.Fields
@@ -76,9 +79,9 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("SomeInternalName", noteFieldDefinition.InternalName);
             Assert.AreEqual("Note", noteFieldDefinition.Type);
             Assert.AreEqual(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"), noteFieldDefinition.Id);
-            Assert.AreEqual("SomeDisplayName", noteFieldDefinition.DisplayName);
-            Assert.AreEqual("SomeDescription", noteFieldDefinition.Description);
-            Assert.AreEqual("Test", noteFieldDefinition.Group);
+            Assert.AreEqual("SomeDisplayName", noteFieldDefinition.DisplayNameResourceKey);
+            Assert.AreEqual("SomeDescription", noteFieldDefinition.DescriptionResourceKey);
+            Assert.AreEqual("Test", noteFieldDefinition.GroupResourceKey);
             Assert.AreEqual(6, noteFieldDefinition.NumLines);
         }
 
@@ -88,27 +91,15 @@ namespace GSoft.Dynamite.UnitTests.Fields
         [TestMethod]
         public void Schema_ShouldOutputValidFieldXml()
         {
+            var fieldSchemaHelper = new FieldSchemaHelper(new ResourceLocator(new List<IResourceLocatorConfig>() { new DefaultResourceLocatorConfig() }));
+
             var noteFieldDefinition = this.CreateNoteFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
             noteFieldDefinition.NumLines = 4;           // testing out the NumLines param
             noteFieldDefinition.HasRichText = true;     // testing out RichText=On, look out for RichTextMode="FullHtml"
 
             var validXml = "<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"4\" RichText=\"TRUE\" RichTextMode=\"FullHtml\" />";
 
-            Assert.AreEqual(validXml, noteFieldDefinition.Schema.ToString());
-        }
-
-        /// <summary>
-        /// Validates that XML definition can be printed as output through ToString
-        /// </summary>
-        [TestMethod]
-        public void ToString_ShouldOutputValidFieldXml()
-        {
-            var noteFieldDefinition = this.CreateNoteFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
-            
-            // testing out RichText=Off, look out for RichTextMode="Compatible"
-            var validXml = "<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" RichText=\"FALSE\" RichTextMode=\"Compatible\" />";
-
-            Assert.AreEqual(validXml, noteFieldDefinition.ToString());
+            Assert.AreEqual(validXml, fieldSchemaHelper.SchemaForField(noteFieldDefinition).ToString());
         }
 
         private NoteFieldInfo CreateNoteFieldInfo(

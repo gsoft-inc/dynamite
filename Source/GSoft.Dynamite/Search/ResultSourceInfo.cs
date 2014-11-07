@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
+using Microsoft.SharePoint.JSGrid;
 using Microsoft.SqlServer.Server;
 
 namespace GSoft.Dynamite.Search
@@ -12,6 +13,14 @@ namespace GSoft.Dynamite.Search
     public class ResultSourceInfo
     {
         private string _searchProvider;
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ResultSourceInfo()
+        {
+            this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
+        }
 
         /// <summary>
         /// Name of the result source
@@ -30,9 +39,9 @@ namespace GSoft.Dynamite.Search
         public IDictionary<string, SortDirection> SortSettings { get; set; }
 
         /// <summary>
-        /// If true, overwrite the result source if existing
+        /// Set the update behavior for the result source
         /// </summary>
-        public bool Overwrite { get; set; }
+        public UpdateBehavior UpdateMode { get; set; }
 
         /// <summary>
         /// The KQL Query

@@ -42,18 +42,18 @@ namespace GSoft.Dynamite.Fields
         public int MaxLength { get; set; }
 
         /// <summary>
-        /// The XML schema of the Text field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get
-            {
-                var schema = this.BasicFieldSchema;
+            baseFieldSchema.Add(new XAttribute("MaxLength", this.MaxLength));
 
-                schema.Add(new XAttribute("MaxLength", this.MaxLength));
-
-                return schema;
-            }
+            return baseFieldSchema;
         }
     }
 }

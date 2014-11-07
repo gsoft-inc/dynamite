@@ -23,11 +23,16 @@ namespace GSoft.Dynamite.Fields
         }
 
         /// <summary>
-        /// The XML schema of the field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        public override XElement Schema
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        public override XElement Schema(XElement baseFieldSchema)
         {
-            get { return this.BasicFieldSchema; }
+            return baseFieldSchema;
         }
     }
 }

@@ -27,17 +27,17 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Field display title
         /// </summary>
-        string DisplayName { get; }
+        string DisplayNameResourceKey { get; }
 
         /// <summary>
         /// Field description
         /// </summary>
-        string Description { get; }
+        string DescriptionResourceKey { get; }
 
         /// <summary>
         /// Content group in SharePoint definitions
         /// </summary>
-        string Group { get; }
+        string GroupResourceKey { get; }
         
         /// <summary>
         /// Indicates if the field is required
@@ -57,9 +57,9 @@ namespace GSoft.Dynamite.Fields
         Type AssociatedValueType { get; }
 
         /// <summary>
-        /// The XML schema of the field
+        /// Indicates if field is hidden by default
         /// </summary>
-        XElement Schema { get; }
+        bool IsHidden { get; set; }
 
         /// <summary>
         /// Indicates if field should be shown in the display form
@@ -82,9 +82,13 @@ namespace GSoft.Dynamite.Fields
         bool IsHiddenInListSettings { get; set; }
 
         /// <summary>
-        /// The string XML format of the field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
-        /// <returns>The XML schema of the field as string</returns>
-        string ToString();
+        /// <param name="baseFieldSchema">
+        /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
+        /// we want to add field type-specific attributes
+        /// </param>
+        /// <returns>The full field XML schema</returns>
+        XElement Schema(XElement baseFieldSchema);
     }
 }
