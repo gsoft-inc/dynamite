@@ -20,18 +20,10 @@ namespace GSoft.Dynamite.Navigation
         /// Get the pages tagged with terms across the search service
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
-        /// <param name="term">The current term</param>
-        /// <returns>Navigation node</returns>
-        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, NavigationTerm term);
-
-        /// <summary>
-        /// Get the pages tagged with terms across the search service
-        /// </summary>
-        /// <param name="properties">The Managed Properties</param>
         /// <param name="occurrenceValue">The location of items</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, NavigationLocation occurrenceValue, string term);
+        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string occurrenceValue, string term);
 
         /// <summary>
         /// Map nodes with items
