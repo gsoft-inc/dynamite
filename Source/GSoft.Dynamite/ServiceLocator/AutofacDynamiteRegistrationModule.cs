@@ -112,6 +112,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Fields
             builder.RegisterType<FieldHelper>().As<IFieldHelper>();
+            builder.RegisterType<FieldSchemaHelper>().As<IFieldSchemaHelper>();
 
             // Folders
             builder.RegisterType<FolderHelper>().As<IFolderHelper>();
