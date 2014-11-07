@@ -94,6 +94,7 @@
     <Compile Include="Fields\IFieldHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
+    <Compile Include="Navigation\NavigationLocation.cs" />
     <Compile Include="Pages\IPageHelper.cs" />
     <Compile Include="Search\ResultTypeInfo.cs" />
     <Compile Include="Search\ResultTypeRuleInfo.cs" />
