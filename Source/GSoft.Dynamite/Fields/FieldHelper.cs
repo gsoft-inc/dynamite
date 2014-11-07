@@ -10,6 +10,7 @@ using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
+using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Fields
@@ -199,9 +200,9 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="fieldCollection">The SPField collection.</param>
         /// <param name="fieldsXml">The field schema XMLs.</param>
-        /// <returns>A collection of strings that contain the internal name of the new fields.</returns>
+        /// <returns>A collection that contain the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
-        public IList<string> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml)
+        public IList<SPField> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml)
         {
             if (fieldsXml == null)
             {
@@ -210,7 +211,7 @@ namespace GSoft.Dynamite.Fields
 
             this.logger.Info("Start method 'EnsureFields'");
 
-            IList<string> internalNames = new List<string>();
+            IList<SPField> createdFields = new List<SPField>();
 
             // Get all the field declerations in the XmlDocument.
             var fields = fieldsXml.Root.Elements("Field");
@@ -220,17 +221,17 @@ namespace GSoft.Dynamite.Fields
             foreach (XElement field in fields)
             {
                 // Add the field to the collection.
-                string internalname = this.EnsureField(fieldCollection, field);
-                if (!string.IsNullOrEmpty(internalname))
+                SPField createdField = this.EnsureField(fieldCollection, field);
+                if (field != null)
                 {
-                    internalNames.Add(internalname);
+                    createdFields.Add(createdField);
                 }
             }
 
-            this.logger.Info("End method 'EnsureFields'. Returning '{0}' internal names.", internalNames.Count);
+            this.logger.Info("End method 'EnsureFields'. Returning '{0}' internal names.", createdFields.Count);
 
             // Return a list of the fields that where created.
-            return internalNames;
+            return createdFields;
         }
 
         /// <summary>
@@ -247,7 +248,7 @@ namespace GSoft.Dynamite.Fields
         /// fieldXml
         /// </exception>
         /// <exception cref="System.FormatException">Invalid xml.</exception>
-        public string EnsureField(SPFieldCollection fieldCollection, XElement fieldXml)
+        public SPField EnsureField(SPFieldCollection fieldCollection, XElement fieldXml)
         {
             if (fieldCollection == null)
             {
@@ -269,7 +270,7 @@ namespace GSoft.Dynamite.Fields
             if (this.IsFieldXmlValid(fieldXml, out id, out displayName, out internalName))
             {
                 // Check if the field already exists. Skip the creation if so.
-                if (!this.FieldExists(fieldCollection, displayName, id))
+                if (!this.FieldExists(fieldCollection, internalName, id))
                 {
                     // If its a lookup we need to fix up the xml.
                     if (this.IsLookup(fieldXml))
@@ -280,13 +281,10 @@ namespace GSoft.Dynamite.Fields
                     string addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
 
                     this.logger.Info("End method 'EnsureField'. Added field with internal name '{0}'", addedInternalName);
-
-                    return addedInternalName;
                 }
                 else
                 {
-                    this.logger.Warn("End method 'EnsureField'. Field with id '{0}' and display name '{1}' was not added because it already exists in the collection.", id, displayName);
-                    return string.Empty;
+                    this.logger.Info("End method 'EnsureField'. Field with id '{0}', display name '{1}' and internal name '{2}' was not added because it already exists in the collection.", id, displayName, internalName);
                 }
             }
             else
@@ -294,6 +292,17 @@ namespace GSoft.Dynamite.Fields
                 string msg = string.Format(CultureInfo.InvariantCulture, "Unable to create field. Invalid xml. id: '{0}' DisplayName: '{1}' Name: '{2}'", id, displayName, internalName);
                 throw new FormatException(msg);
             }
+
+            // Return the newly created or the existing field
+            var existingField = this.GetFieldById(fieldCollection, id);
+
+            if (existingField == null)
+            {
+                // Guid match failed. A field may already exist with the same internal name but a different Guid.
+                existingField = fieldCollection.GetFieldByInternalName(internalName);
+            }
+
+            return existingField;
         }
 
         /// <summary>
@@ -302,24 +311,30 @@ namespace GSoft.Dynamite.Fields
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfo">The field info configuration</param>
         /// <returns>The internal name of the field</returns>
-        public string EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        public SPField EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
         {
-            string field;
+            SPField field = null;
+            TaxonomyFieldInfo taxonomyField = fieldInfo as TaxonomyFieldInfo;
+            TaxonomyMultiFieldInfo taxonomyMultiField = fieldInfo as TaxonomyMultiFieldInfo;
 
-            if (fieldInfo.GetType() == typeof(TaxonomyFieldInfo))
+            if (taxonomyField != null)
             {
-                field = this.EnsureField(fieldCollection, fieldInfo as TaxonomyFieldInfo);
+                // Custom taxonomy single-value field init
+                field = this.EnsureField(fieldCollection, taxonomyField);
+            }
+            else if (taxonomyMultiField != null)
+            {
+                // Custom taxonomy multi-value field init
+                field = this.EnsureField(fieldCollection, taxonomyMultiField);
             }
             else
             {
+                // Default field creation process
                 field = this.EnsureField(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
             }
 
-            // Gets the created field
-            var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
-
             // Updates the visibility of the field
-            UpdateFieldVisibility(createdField, fieldInfo);
+            UpdateFieldVisibility(field, fieldInfo);
 
             return field;
         }
@@ -330,15 +345,12 @@ namespace GSoft.Dynamite.Fields
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfo">The field info configuration</param>
         /// <returns>The internal name of the field</returns>
-        public string EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
+        public TaxonomyField EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo)
         {
-            var field = this.EnsureField(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
-
-            // Gets the created field
-            var createdField = fieldCollection.GetFieldByInternalName(fieldInfo.InternalName);
+            var field = (TaxonomyField)this.EnsureField(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
 
             // Updates the visibility of the field
-            UpdateFieldVisibility(createdField, fieldInfo);
+            UpdateFieldVisibility(field, fieldInfo);
 
             // Get the term store default language for term set name
             var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
@@ -385,16 +397,16 @@ namespace GSoft.Dynamite.Fields
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfos">The field info configuration</param>
         /// <returns>The internal names of the field</returns>
-        public IEnumerable<string> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos)
+        public IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos)
         {
-            var fieldNames = new List<string>();
+            var createdFields = new List<SPField>();
 
             foreach (IFieldInfo fieldInfo in fieldInfos)
             {
-                fieldNames.Add(this.EnsureField(fieldCollection, fieldInfo));
+                createdFields.Add(this.EnsureField(fieldCollection, fieldInfo));
             }
 
-            return fieldNames;      // TODO: remove these returned internal name (that won't be used anyway - you have those internal names in the param collection of FieldInfos)
+            return createdFields;
         }
 
         private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
@@ -424,7 +436,7 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private bool FieldExists(SPFieldCollection fieldCollection, string displayName, Guid fieldId)
+        private bool FieldExists(SPFieldCollection fieldCollection, string internalName, Guid fieldId)
         {
             if (fieldCollection.Contains(fieldId))
             {
@@ -437,7 +449,7 @@ namespace GSoft.Dynamite.Fields
             try
             {
                 // Throws argument exception if not in collection.
-                field = fieldCollection.GetField(displayName);
+                field = fieldCollection.GetFieldByInternalName(internalName);
             }
             catch (ArgumentException)
             {
@@ -452,7 +464,7 @@ namespace GSoft.Dynamite.Fields
             else
             {
                 // We found it!
-                this.logger.Warn("Field with display name '{0}' is already in the collection.", displayName);
+                this.logger.Warn("Field with display name '{0}' is already in the collection.", internalName);
                 return true;
             }
         }
