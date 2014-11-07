@@ -12,9 +12,8 @@ using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Publishing.Navigation;
-using Microsoft.SharePoint.Utilities;
-using System.Globalization;
 using Microsoft.SharePoint.Taxonomy;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -48,7 +47,7 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="web">The Current web</param>
         /// <param name="properties">The navigation properties</param>
-        /// <returns></returns>
+        /// <returns>List of navigation node</returns>
         public IEnumerable<NavigationNode> GetAllNavigationNodes(SPWeb web, NavigationManagedProperties properties)
         {
             try
@@ -89,13 +88,13 @@ namespace GSoft.Dynamite.Navigation
                     using (new SPMonitoredScope("GetNavigationNodeTerms"))
                     {
                         // Get navigation terms from taxonomy
-                        terms = this.GetNavigationNodeTerms(web, navigationTermSet.Terms);
+                        terms = this.GetNavigationNodeTerms(web, properties, navigationTermSet.Terms);
 
                         // If the cache contains corrupted data,
                         // clear it and fetch the data again
                         if ((terms == null) || !terms.Any())
                         {
-                            terms = this.GetNavigationNodeTerms(web, navigationTermSet.Terms);
+                            terms = this.GetNavigationNodeTerms(web, properties, navigationTermSet.Terms);
                         }
                     }
 
@@ -121,12 +120,12 @@ namespace GSoft.Dynamite.Navigation
         /// Gets the navigation node terms.
         /// </summary>
         /// <param name="web">The web.</param>
+        /// <param name="properties">The Managed Properties</param>
         /// <param name="navigationTerms">The navigation terms.</param>
-        /// <param name="maxLevel">The maximum childs level.</param>
         /// <returns>A navigation node tree.</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms)
+        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms)
         {
-            return this.GetNavigationNodeTerms(web, navigationTerms, int.MaxValue);
+            return this.GetNavigationNodeTerms(web, properties, navigationTerms, int.MaxValue);
         }
 
         /// <summary>
@@ -136,9 +135,32 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>Navigation node</returns>
         public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
+            return this.GetNavigationNodeItems(properties, null, null);
+        }
+
+        /// <summary>
+        /// Get the pages tagged with terms across the search service
+        /// </summary>
+        /// <param name="properties">The Managed Properties</param>
+        /// <param name="term">The current term</param>
+        /// <returns>Navigation node</returns>
+        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, NavigationTerm term)
+        {
+            return this.GetNavigationNodeItems(properties, null, term.Title.ToString());
+        }
+
+        /// <summary>
+        /// Get the pages tagged with terms across the search service
+        /// </summary>
+        /// <param name="properties">The Managed Properties</param>
+        /// <param name="occurrenceValue">The location of items</param>
+        /// <param name="term">The current term</param>
+        /// <returns>Navigation node</returns>
+        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, NavigationLocation occurrenceValue, string term)
+        {
             // Use 'all menu items' result source for search query
             var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
-
+            
             // Check if find result source
             if (searchResultSource == null)
             {
@@ -151,16 +173,21 @@ namespace GSoft.Dynamite.Navigation
             var query = new KeywordQuery(SPContext.Current.Web)
             {
                 SourceId = searchResultSource.Id,
-                QueryText = string.Format("{0}:{1} {2}:{3}", properties.ItemLanguage, labelLocalAgnosticLanguage, "ContentTypeId:", properties.CatalogItemId + "*"),
+                QueryText = string.Format(CultureInfo.InvariantCulture, "{0}:{1} {2}:{3}", properties.ItemLanguage, labelLocalAgnosticLanguage, "ContentTypeId:", properties.CatalogItemId + "*"),
                 TrimDuplicates = false,
                 RowLimit = 500
             };
 
+            if (occurrenceValue != null)
+            {
+                query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.OccurrenceLinkLocation, properties.OccurrenceLinkLocationValue);
+            }
+
             query.SelectProperties.AddRange(new List<string>(properties.FriendlyUrlRequiredProperties) { properties.Title }.ToArray());
 
-            if (properties.queryProperties != null && properties.queryProperties.Any())
+            if (properties.QueryProperties != null && properties.QueryProperties.Any())
             {
-                query.SelectProperties.AddRange(properties.queryProperties.ToArray());
+                query.SelectProperties.AddRange(properties.QueryProperties.ToArray());
             }
 
             var tables = new SearchExecutor().ExecuteQuery(query);
@@ -190,19 +217,22 @@ namespace GSoft.Dynamite.Navigation
         /// Gets all navigation node terms
         /// </summary>
         /// <param name="web">The current web</param>
-        /// <param name="navigationTerms"></param>
-        /// <param name="maxLevel"></param>
-        /// <returns></returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, IEnumerable<NavigationTerm> navigationTerms, int maxLevel)
+        /// <param name="properties">The navigation managed properties</param>
+        /// <param name="navigationTerms">The navigation terms</param>
+        /// <param name="maxLevel">the max level</param>
+        /// <returns>The node terms</returns>
+        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms, int maxLevel)
         {
             // Navigation terms needs to be editable to get the taxonomy term
             var session = new TaxonomySession(web.Site);
 
             // Gets terms which are not excluded from global navigation
-            var filteredTerms = navigationTerms.Where(x => !x.ExcludeFromGlobalNavigation).Select(x => x.GetAsEditable(session)).ToList();
+            var filteredTerms = navigationTerms.Where(
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, x).Count() > 0).Select(x => x.GetAsEditable(session)).ToList();
 
             var terms = navigationTerms as NavigationTerm[] ?? navigationTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
-            var nodes = terms.Select(x => new NavigationNode(x)).ToArray();
+
+            var nodes = filteredTerms.Select(x => new NavigationNode(x)).ToArray();
 
             if (maxLevel > 0)
             {
@@ -214,7 +244,7 @@ namespace GSoft.Dynamite.Navigation
                     // If term contains children, recurvise call
                     if (term.Terms.Count > 0)
                     {
-                        node.ChildNodes = this.GetNavigationNodeTerms(web, term.Terms, maxLevel - 1);
+                        node.ChildNodes = this.GetNavigationNodeTerms(web, properties, term.Terms, maxLevel - 1);
                     }
                 }
             }

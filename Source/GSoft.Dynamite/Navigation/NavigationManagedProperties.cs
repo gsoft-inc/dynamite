@@ -59,9 +59,9 @@ namespace GSoft.Dynamite.Navigation
         public string TargetItemId { get; set; }
 
         /// <summary>
-        /// The Occurrence location property
+        /// The value of the managed property
         /// </summary>
-        public string OccurrenceLocation { get; set; }
+        public string OccurrenceLinkLocationValue { get; set; }
 
         /// <summary>
         /// The list of query properties 

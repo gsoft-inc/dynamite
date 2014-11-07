@@ -30,5 +30,9 @@ namespace GSoft.Dynamite.Navigation
         /// Refers to all items in the Featured part
         /// </summary>
         public static readonly string Featured = "Featured";
+
+        private NavigationLocation() 
+        { 
+        }
     }
 }
