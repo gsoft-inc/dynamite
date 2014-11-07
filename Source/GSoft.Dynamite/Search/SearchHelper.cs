@@ -249,11 +249,6 @@ namespace GSoft.Dynamite.Search
                 }
             }
 
-            if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
-            {
-                overwrite = true;
-            }
-
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortCollection;
 
@@ -261,42 +256,53 @@ namespace GSoft.Dynamite.Search
             var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
             if (searchServiceApplication != null)
             {
-                resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, overwrite);
-
-                string searchQuery = string.Empty;
-
-                if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
+                if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
                 {
-                    searchQuery = resultSourceInfo.Query;
+                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name,
+                        resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb,
+                        resultSourceInfo.Query, sortCollection, true);
                 }
-
-                if (updateMode.Equals(UpdateBehavior.AppendToQuery))
+                else
                 {
-                    if (resultSource.QueryTransform != null)
-                    {
-                        var rgx = new Regex(resultSourceInfo.Query);
-                        if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
-                        {
-                            searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
-                        }
-                    }
-                    else
+                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name,
+                        resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, 
+                        resultSourceInfo.Query, sortCollection, false);
+
+                    string searchQuery = string.Empty;
+
+                    if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
                     {
                         searchQuery = resultSourceInfo.Query;
                     }
-                }
 
-                if (updateMode.Equals(UpdateBehavior.RevertQuery))
-                {
-                    if (resultSource.QueryTransform != null)
+                    if (updateMode.Equals(UpdateBehavior.AppendToQuery))
                     {
-                        var rgx = new Regex(resultSourceInfo.Query);
-                        searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
+                        if (resultSource.QueryTransform != null)
+                        {
+                            var rgx = new Regex(resultSourceInfo.Query);
+                            if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
+                            {
+                                searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
+                            }
+                        }
+                        else
+                        {
+                            searchQuery = resultSourceInfo.Query;
+                        }
                     }
-                }
 
-                resultSource.CreateQueryTransform(queryProperties, searchQuery);
-                resultSource.Commit();
+                    if (updateMode.Equals(UpdateBehavior.RevertQuery))
+                    {
+                        if (resultSource.QueryTransform != null)
+                        {
+                            var rgx = new Regex(resultSourceInfo.Query);
+                            searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
+                        }
+                    }
+
+                    resultSource.CreateQueryTransform(queryProperties, searchQuery);
+                    resultSource.Commit();
+                }
             }
 
             return resultSource;
