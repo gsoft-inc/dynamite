@@ -76,6 +76,10 @@ namespace GSoft.Dynamite.Pages
                 // Only create the page if it doesn't exist yet and allow event firing on ItemAdded
                 publishingPage = publishingPages.Add(pageServerRelativeUrl, pageLayout);
             }
+            else
+            {
+                publishingPage.CheckOut();
+            }
 
             // Set the title
             if (!string.IsNullOrEmpty(page.Title))
@@ -83,7 +87,7 @@ namespace GSoft.Dynamite.Pages
                 publishingPage.Title = page.Title;
                 publishingPage.Update();
             }
-
+            
             // Insert WebParts
             foreach (WebPartInfo webPartSetting in page.WebParts)
             {
