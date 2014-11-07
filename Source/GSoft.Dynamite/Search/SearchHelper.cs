@@ -236,7 +236,6 @@ namespace GSoft.Dynamite.Search
         public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
             Source resultSource = null;
-            bool overwrite = false;
             var updateMode = resultSourceInfo.UpdateMode;
 
             var sortCollection = new SortCollection();
@@ -258,15 +257,11 @@ namespace GSoft.Dynamite.Search
             {
                 if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
                 {
-                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name,
-                        resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb,
-                        resultSourceInfo.Query, sortCollection, true);
+                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, true);
                 }
                 else
                 {
-                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name,
-                        resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, 
-                        resultSourceInfo.Query, sortCollection, false);
+                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, false);
 
                     string searchQuery = string.Empty;
 
