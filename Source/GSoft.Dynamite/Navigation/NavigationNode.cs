@@ -33,7 +33,7 @@ namespace GSoft.Dynamite.Navigation
             this.Id = term.Id;
             this.ParentNodeId = (term.Parent != null) ? term.Parent.Id : Guid.Empty;
             this.Title = term.Title.Value;
-            this.Url = new Uri(term.GetResolvedDisplayUrl(string.Empty));
+            this.Url = new Uri(term.GetResolvedDisplayUrl(string.Empty), UriKind.RelativeOrAbsolute);
         }
 
         /// <summary>
