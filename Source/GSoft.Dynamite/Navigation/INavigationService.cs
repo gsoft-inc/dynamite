@@ -20,6 +20,7 @@ namespace GSoft.Dynamite.Navigation
         /// Get the pages tagged with terms across the search service
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
+        /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="occurrenceValue">The location of items</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>

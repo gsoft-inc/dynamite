@@ -142,6 +142,7 @@ namespace GSoft.Dynamite.Navigation
         /// Get the pages tagged with terms across the search service
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
+        /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="occurrenceValue">The location of items</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
@@ -230,7 +231,7 @@ namespace GSoft.Dynamite.Navigation
 
             // Gets terms which are not excluded from global navigation
             var filteredTerms = navigationTerms.Where(
-                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemId ,properties.OccurrenceLinkLocationValue,x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemId, properties.OccurrenceLinkLocationValue, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
 
             var terms = filteredTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
 
