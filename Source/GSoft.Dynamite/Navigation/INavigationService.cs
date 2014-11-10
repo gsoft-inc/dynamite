@@ -21,10 +21,9 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
         /// <param name="filteredContentTypeId">The content type id</param>
-        /// <param name="occurrenceValue">The location of items</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string occurrenceValue, string term);
+        IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string term);
 
         /// <summary>
         /// Map nodes with items
