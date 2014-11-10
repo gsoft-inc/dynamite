@@ -13,55 +13,6 @@
     /// </summary>
     public interface IFieldHelper
     {
-        /// <summary>
-        /// Sets the lookup field to a list.
-        /// </summary>
-        /// <param name="web">The web the field and list will be in.</param>
-        /// <param name="fieldId">The lookup field id.</param>
-        /// <param name="listUrl">The list URL of the list we want to get the information from.</param>
-        /// <exception cref="System.ArgumentNullException">All null parameters.</exception>
-        /// <exception cref="System.ArgumentException">Unable to find the lookup field.;lookupField</exception>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "The GetList method for SP requires a string url.")]
-        [Obsolete("Use method 'SetLookupToList' with SPFieldCollection as first parameter.")]
-        void SetLookupToList(SPWeb web, Guid fieldId, string listUrl);
-
-        /// <summary>
-        /// Sets the lookup to a list.
-        /// </summary>
-        /// <param name="fieldCollection">The field collection.</param>
-        /// <param name="fieldId">The field identifier of the lookup field.</param>
-        /// <param name="lookupList">The lookup list.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// fieldCollection
-        /// or
-        /// fieldId
-        /// or
-        /// lookupList
-        /// </exception>
-        /// <exception cref="System.ArgumentException">Unable to find the lookup field.;fieldId</exception>
-        void SetLookupToList(SPFieldCollection fieldCollection, Guid fieldId, SPList lookupList);
-
-        /// <summary>
-        /// Sets the lookup to a list.
-        /// </summary>
-        /// <param name="lookupField">The lookup field.</param>
-        /// <param name="lookupList">The lookup list.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// The parameter 'lookupField' cannot be null.;lookupField
-        /// or
-        /// The parameter 'lookupList' cannot be null.;lookupList
-        /// </exception>
-        void SetLookupToList(SPFieldLookup lookupField, SPList lookupList);
-
-        /// <summary>
-        /// Gets the field by identifier.
-        /// Returns null if the field is not found in the collection.
-        /// </summary>
-        /// <param name="fieldCollection">The field collection.</param>
-        /// <param name="fieldId">The field identifier.</param>
-        /// <returns>The SPField.</returns>
-        SPField GetFieldById(SPFieldCollection fieldCollection, Guid fieldId);
-
         /// <summary>Adds a collection of fields defined in xml to a collection of fields.</summary>
         /// <param name="fieldCollection">The SPField collection.</param>
         /// <param name="fieldInfos">The fields' information.</param>
@@ -69,38 +20,10 @@
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
         IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos);
 
-        /// <summary>
-        /// Adds a field defined in xml to a collection of fields.
-        /// </summary>
-        /// <param name="fieldCollection">The SPField collection.</param>
-        /// <param name="fieldXml">The field XML schema.</param>
-        /// <returns>
-        /// The new field.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// fieldCollection
-        /// or
-        /// fieldXml
-        /// </exception>
-        /// <exception cref="System.FormatException">Invalid xml.</exception>
-        SPField EnsureField(SPFieldCollection fieldCollection, XElement fieldXml);
-
-        /// <summary>The ensure field.</summary>
-        /// <param name="fieldCollection">The field collection.</param>
-        /// <param name="fieldsXml">The fields xml.</param>
-        /// <returns>The field list.</returns>
-        IList<SPField> EnsureField(SPFieldCollection fieldCollection, XDocument fieldsXml);
-
         /// <summary>The ensure field.</summary>
         /// <param name="fieldCollection">The field collection.</param>
         /// <param name="fieldInfo">The field info.</param>
         /// <returns>The field.</returns>
         SPField EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo);
-
-        /// <summary>The ensure field.</summary>
-        /// <param name="fieldCollection">The field collection.</param>
-        /// <param name="fieldInfo">The field info.</param>
-        /// <returns>The field.</returns>
-        TaxonomyField EnsureField(SPFieldCollection fieldCollection, TaxonomyFieldInfo fieldInfo);
     }
 }

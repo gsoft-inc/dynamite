@@ -24,31 +24,31 @@ namespace GSoft.Dynamite.Lists
 
         private readonly IContentTypeHelper contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
+        private readonly IFieldLocator fieldLocator;
         private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
-        private readonly ITaxonomyHelper taxonomyHelper;
         private readonly IListLocator listLocator;
 
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
-        /// <param name="fieldHelper">The field helper.</param>
+        /// <param name="fieldLocator">The field locator.</param>
+        /// <param name="fieldHelper">Field creator utility</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
-        /// <param name="taxonomyHelper">The taxonomy Helper.</param>
         /// <param name="listLocator">List locator</param>
         public ListHelper(
             IContentTypeHelper contentTypeBuilder, 
-            IFieldHelper fieldHelper, 
+            IFieldLocator fieldLocator,
+            IFieldHelper fieldHelper,
             IResourceLocator resourceLocator, 
             ILogger logger, 
-            ITaxonomyHelper taxonomyHelper,
             IListLocator listLocator)
         {
             this.contentTypeBuilder = contentTypeBuilder;
+            this.fieldLocator = fieldLocator;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
-            this.taxonomyHelper = taxonomyHelper;
             this.listLocator = listLocator;
         }
 
@@ -273,8 +273,8 @@ namespace GSoft.Dynamite.Lists
             // Default View Fields
             this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
 
-            // Default Values
-            this.SetDefaultValues(list, listInfo);
+            // Ensure the field definitions to make sure that all fields are present and to override/apply column default Values
+            this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
             return list;
         }
@@ -368,7 +368,7 @@ namespace GSoft.Dynamite.Lists
         {
             if (list != null && field != null)
             {
-                var listField = this.fieldHelper.GetFieldById(list.Fields, field.Id);
+                var listField = this.fieldLocator.GetFieldById(list.Fields, field.Id);
 
                 if (listField != null)
                 {
@@ -464,57 +464,5 @@ namespace GSoft.Dynamite.Lists
             }
         }
         #endregion
-
-        /// <summary>
-        /// Set default values for a list info objects
-        /// </summary>
-        /// <param name="list">The list object to configure</param>
-        /// <param name="listInfo">The list configuration object</param>
-        public void SetDefaultValues(SPList list, ListInfo listInfo)
-        {
-            if (listInfo.FieldDefinitions.Count > 0)
-            {
-                foreach (IFieldInfo fieldDefinition in listInfo.FieldDefinitions)
-                {
-                    // Get the field in the list
-                    var field = list.Fields.GetFieldByInternalName(fieldDefinition.InternalName);
-                    if (field != null && field.GetType() == typeof(TaxonomyField) && fieldDefinition.GetType() == typeof(TaxonomyFieldInfo))
-                    {
-                        var taxonomyField = fieldDefinition as TaxonomyFieldInfo;
-                       
-                        // Get mapping informations
-                        var termGroupName = taxonomyField.TermStoreMapping.Group.Name;
-
-                        // Get the term sets according to the default term store language 
-                        var termStoreDefaultLanguage =
-                            this.taxonomyHelper.GetTermStoreDefaultLanguage(list.ParentWeb.Site);
-
-                        var termSetName = taxonomyField.TermStoreMapping.TermSet.Labels[new CultureInfo(termStoreDefaultLanguage)];
-                        var termSubsetName = taxonomyField.TermStoreMapping.TermSubset != null
-                            ? taxonomyField.TermStoreMapping.TermSubset.Labels[new CultureInfo(termStoreDefaultLanguage)]
-                            : string.Empty;
-
-                        // Get default value informations
-                        var taxonomyValue = taxonomyField.DefaultValue;
-
-                        // Change managed metadata mapping
-                        this.taxonomyHelper.AssignTermSetToListColumn(list, field.Id, termGroupName, termSetName, termSubsetName);
-
-                        // Set the default value for the field
-                        if (taxonomyValue != null)
-                        {
-                            this.taxonomyHelper.SetDefaultTaxonomyFieldValue(list.ParentWeb, field as TaxonomyField, taxonomyValue);
-                        }
-                    }
-                    else if (field.GetType() == typeof(SPFieldText) && (fieldDefinition.GetType() == typeof(TextFieldInfo)))
-                    {
-                        var textField = fieldDefinition as TextFieldInfo;
-
-                        field.DefaultValue = (string)textField.DefaultValue;
-                        field.Update();
-                    }
-                }
-            }
-        }
     }
 }

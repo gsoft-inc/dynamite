@@ -195,7 +195,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                     {
-                        DefaultValue = "SomeDefaultValue",
                         EnforceUniqueValues = true,
                         IsHidden = true,
                         IsHiddenInDisplayForm = true,
@@ -213,7 +212,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyAlt",
                     "GroupKey")
                     {
-                        DefaultValue = "SomeDefaultValueAlt",
                         EnforceUniqueValues = false,
                         IsHidden = false,
                         IsHiddenInDisplayForm = false,
@@ -259,6 +257,62 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(noOfFieldsBefore + 3, fieldsCollection.Count);
                     Assert.IsNotNull(defaultBasedEnsuredField);
                     this.ValidateFieldBasicValues(defaultsTextFieldInfo, defaultBasedEnsuredField);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validate that default value is set on TextFieldInfo type fields
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTextFieldInfo_ShouldApplyStringDefaultValues()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = "SomeDefaultValue"
+                };
+
+                TextFieldInfo alternateTextFieldInfo = new TextFieldInfo(
+                    "TestInternalNameAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = "SomeDefaultValueAlt"
+                };
+
+                TextFieldInfo noDefaultValueTextFieldInfo = new TextFieldInfo(
+                    "TestInternalNameDefaults",
+                    new Guid("{7BEB995F-C696-453B-BA86-09A32381C783}"),
+                    "NameKeyDefaults",
+                    "DescriptionKeyDefaults",
+                    "GroupKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) First field definition
+                    SPField originalField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                    Assert.AreEqual(textFieldInfo.DefaultValue, originalField.DefaultValue);    // TODO: test default value
+
+                    // 2) Alternate field definition
+                    SPField alternateEnsuredField = fieldHelper.EnsureField(fieldsCollection, alternateTextFieldInfo);
+                    this.ValidateFieldBasicValues(alternateTextFieldInfo, alternateEnsuredField);
+                    Assert.AreEqual(alternateTextFieldInfo.DefaultValue, alternateEnsuredField.DefaultValue);       // TODO: test default value
+
+                    // 3) No default value specified
+                    SPField noDefaultsEnsuredField = fieldHelper.EnsureField(fieldsCollection, noDefaultValueTextFieldInfo);
+                    Assert.IsTrue(string.IsNullOrEmpty(noDefaultsEnsuredField.DefaultValue));
                 }
             }
         }

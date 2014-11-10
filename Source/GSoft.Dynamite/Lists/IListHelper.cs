@@ -132,12 +132,5 @@
         /// </summary>
         /// <param name="list">List that should be added to Quick Launch</param>
         void AddtoQuickLaunch(SPList list);
-
-        /// <summary>
-        /// Updates the field default values for the specified list
-        /// </summary>
-        /// <param name="list">The SharePoint list to update</param>
-        /// <param name="listInfo">The list metadata, including the new default values for all fields.</param>
-        void SetDefaultValues(SPList list, ListInfo listInfo);
     }
 }

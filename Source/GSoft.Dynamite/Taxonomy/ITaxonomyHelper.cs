@@ -150,6 +150,14 @@ namespace GSoft.Dynamite.Taxonomy
         void SetDefaultTaxonomyFieldMultiValue(SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels);
 
         /// <summary>
+        /// Set default value for a multi valued taxonomy site column
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="field">The field.</param>
+        /// <param name="defaultValueCollection">The default value collection.</param>
+        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyFullValueCollection defaultValueCollection);
+
+        /// <summary>
         /// Gets the term group by name.
         /// </summary>
         /// <param name="termStore">The term store.</param>

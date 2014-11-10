@@ -112,14 +112,16 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Fields
             builder.RegisterType<FieldHelper>().As<IFieldHelper>();
+            builder.RegisterType<FieldLocator>().As<IFieldLocator>();
             builder.RegisterType<FieldSchemaHelper>().As<IFieldSchemaHelper>();
+            builder.RegisterType<FieldLookupHelper>().As<IFieldLookupHelper>();
 
             // Folders
             builder.RegisterType<FolderHelper>().As<IFolderHelper>();
             builder.RegisterType<FolderRepository>().As<IFolderRepository>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
-            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();     
+            builder.RegisterType<ResourceLocator>().As<IResourceLocator>(); 
 
             // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
             builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
