@@ -168,20 +168,20 @@ namespace GSoft.Dynamite.Navigation
                 RowLimit = 500
             };
 
-            // Adds a the filter on content type if the parameter is not null.
+            // Adds the filter on content type if the parameter is not null.
             if (!string.IsNullOrEmpty(filteredContentTypeId))
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", BuiltInManagedProperties.ContentTypeId, filteredContentTypeId + "*");
             }
 
-            // Adds a the filter on managed property OccurenceLinkLocation if the parameter is not null.
+            // Adds the filter on managed property OccurenceLinkLocation if the parameter is not null.
             if (occurrenceValue != null)
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.OccurrenceLinkLocation, properties.OccurrenceLinkLocationValue);
             }
 
-            // Adds a the filter on managed property OccurenceLinkLocation if the parameter is not null.
-            if (occurrenceValue != null)
+            // Adds the filter current navigation Term if the parameter is not null.
+            if (term != null)
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.Navigation, term);
             }
