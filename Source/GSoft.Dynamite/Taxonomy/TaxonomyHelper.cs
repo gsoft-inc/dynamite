@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Taxonomy;
@@ -281,6 +282,8 @@ namespace GSoft.Dynamite.Taxonomy
             var termGroup = termStore.Groups[termGroupName];
             var termSet = termGroup.TermSets[termSetName];
 
+            // TODO: rework this to work with termIds instead of termLabels, because this logic DOES NOT support duplicate labels (i.e. two separate
+            // terms CANNOT have a similar label with this logic)
             var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroup.Name, termSet.Name, termLabel);
 
             if (term != null)
@@ -336,24 +339,6 @@ namespace GSoft.Dynamite.Taxonomy
                 }
 
                 this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, label);
-
-                // TODO: add SetDefaultTaxonomyFieldValueMulti
-
-                ////if (defaultValue.Values.Length > 1)
-                ////{
-                ////    if (field.AllowMultipleValues)
-                ////    {
-                ////        this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, defaultValue.Values.Select(x => x.Label).ToArray());
-                ////    }
-                ////}
-                ////else
-                ////{
-                ////    var firstOrDefault = defaultValue.Values.FirstOrDefault();
-                ////    if (firstOrDefault != null)
-                ////    {
-                ////        this.SetDefaultTaxonomyFieldValue(web, field, termGroupName, termSetName, firstOrDefault.Label);
-                ////    }
-                ////}
             }     
         }
 
@@ -365,8 +350,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termGroupName">Term group name</param>
         /// <param name="termSetName">Term set name</param>
         /// <param name="termLabels">Term labels</param>
-        public void SetDefaultTaxonomyFieldMultiValue(
-            SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels)
+        public void SetDefaultTaxonomyFieldMultiValue(SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels)
         {
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
@@ -378,6 +362,8 @@ namespace GSoft.Dynamite.Taxonomy
 
             foreach (var label in termLabels)
             {
+                // TODO: rework this to work with termIds instead of termLabels, because this logic DOES NOT support duplicate labels (i.e. two separate
+                // terms CANNOT have a similar label with this logic)
                 var term = this.taxonomyService.GetTaxonomyValueForLabel(web.Site, termGroup.Name, termSet.Name, label);
 
                 if (term != null)
@@ -405,6 +391,46 @@ namespace GSoft.Dynamite.Taxonomy
                 var lookup = (SPFieldLookup)field;
                 lookup.DefaultValue = allvalues;
                 lookup.Update();
+            }
+        }
+
+        /// <summary>
+        /// Set default value for a multi valued taxonomy site column
+        /// </summary>
+        /// <param name="web">The web.</param>
+        /// <param name="field">The field.</param>
+        /// <param name="defaultValueCollection">The default value collection.</param>
+        public void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyFullValueCollection defaultValueCollection)
+        {
+            if (defaultValueCollection.Count > 0)
+            {
+                TaxonomyFullValue firstDefaultValue = defaultValueCollection[0];
+                var termGroupName = firstDefaultValue.Context.Group.Name;
+                var defaultLanguage = new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site));
+
+                // Get the term set name according to the default term store language
+                var termSetName = firstDefaultValue.Context.TermSet.Labels[defaultLanguage];
+
+                string[] labels = defaultValueCollection.Select(fullValue =>
+                    {
+                        string label;
+                        TermInfo fullValueTermInfo = fullValue.Term;
+
+                        // May arrive if the term label haven't been updated correctly on the source object for the current language
+                        if (string.IsNullOrEmpty(fullValueTermInfo.Label) && fullValueTermInfo.Labels.Count > 0)
+                        {
+                            // Trying to get the default language label
+                            label = fullValueTermInfo.Labels[defaultLanguage];
+                        }
+                        else
+                        {
+                            label = fullValueTermInfo.Label;
+                        }
+
+                        return label;
+                    }).ToArray();
+
+                this.SetDefaultTaxonomyFieldMultiValue(web, field, termGroupName, termSetName, labels);
             }
         }
 

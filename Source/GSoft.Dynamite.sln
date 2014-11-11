@@ -17,10 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{325B61
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite", "GSoft.Dynamite\GSoft.Dynamite.csproj", "{0A3EB4A1-3004-4F23-B046-6EF2E20F53A4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharePoint", "SharePoint", "{965F7147-7674-4FA1-BE48-F8EEF1FD8F08}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code", "Code", "{AC446A77-76B7-4201-B431-89CDCC57E6E4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.SP", "GSoft.Dynamite.SP\GSoft.Dynamite.SP.csproj", "{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD} = {B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD}
@@ -65,13 +61,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Workflow.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EF77EB75-7BB4-4DFC-B940-6F3EE9E61D8A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution items", ".solution items", "{EF77EB75-7BB4-4DFC-B940-6F3EE9E61D8A}"
 	ProjectSection(SolutionItems) = preProject
 		fxcop.FxCop = fxcop.FxCop
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.IntegrationTests", "GSoft.Dynamite.IntegrationTests\GSoft.Dynamite.IntegrationTests.csproj", "{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{13586D62-D483-4B4E-B13E-C344B9D457D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,7 +104,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{3F0EE7AF-FC86-4989-B3AB-29DF57138E4D} = {965F7147-7674-4FA1-BE48-F8EEF1FD8F08}
+		{B5CB8072-D8F4-4B4F-901F-785BFF0EC3AD} = {81F1B9A8-239C-4C04-9C76-150AE25D0039}
+		{7379FB7E-3334-4B1D-9991-D7FD7DB52EAF} = {13586D62-D483-4B4E-B13E-C344B9D457D7}
 		{084E468F-B518-4047-9FA8-F982B85316FE} = {81F1B9A8-239C-4C04-9C76-150AE25D0039}
+		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD} = {13586D62-D483-4B4E-B13E-C344B9D457D7}
 	EndGlobalSection
 EndGlobal

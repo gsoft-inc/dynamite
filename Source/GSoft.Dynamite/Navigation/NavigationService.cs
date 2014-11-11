@@ -135,7 +135,7 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>Navigation node</returns>
         public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
-            return this.GetNavigationNodeItems(properties, null, null, null);
+            return this.GetNavigationNodeItems(properties, null, null);
         }
         
         /// <summary>
@@ -143,10 +143,9 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
         /// <param name="filteredContentTypeId">The content type id</param>
-        /// <param name="occurrenceValue">The location of items</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string occurrenceValue, string term)
+        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string term)
         {
             // Use 'all menu items' result source for search query
             var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
@@ -175,7 +174,7 @@ namespace GSoft.Dynamite.Navigation
             }
 
             // Adds the filter on managed property OccurenceLinkLocation if the parameter is not null.
-            if (occurrenceValue != null)
+            if (properties.OccurrenceLinkLocationValue != null)
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.OccurrenceLinkLocation, properties.OccurrenceLinkLocationValue);
             }
@@ -231,7 +230,7 @@ namespace GSoft.Dynamite.Navigation
 
             // Gets terms which are not excluded from global navigation
             var filteredTerms = navigationTerms.Where(
-                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemId, properties.OccurrenceLinkLocationValue, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
 
             var terms = filteredTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
 

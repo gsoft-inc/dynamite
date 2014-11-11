@@ -91,8 +91,12 @@
     <Compile Include="Branding\DisplayTemplateInfo.cs" />
     <Compile Include="Events\EventReceiverInfo.cs" />
     <Compile Include="ContentTypes\IContentTypeHelper.cs" />
+    <Compile Include="Fields\FieldLocator.cs" />
+    <Compile Include="Fields\FieldLookupHelper.cs" />
     <Compile Include="Fields\IFieldHelper.cs" />
     <Compile Include="Fields\FieldSchemaHelper.cs" />
+    <Compile Include="Fields\IFieldLocator.cs" />
+    <Compile Include="Fields\IFieldLookupHelper.cs" />
     <Compile Include="Fields\IFieldSchemaHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
@@ -152,6 +156,7 @@
     <Compile Include="Fields\NoteFieldInfo.cs" />
     <Compile Include="Fields\TextFieldInfo.cs" />
     <Compile Include="Sites\WebInfo.cs" />
+    <Compile Include="ValueTypes\TaxonomyFullValueCollection.cs" />
     <Compile Include="WebParts\WebPartInfo.cs" />
     <Compile Include="Utils\CatchallExceptionHandler.cs" />
     <Compile Include="Utils\ICatchallExceptionHandler.cs" />
