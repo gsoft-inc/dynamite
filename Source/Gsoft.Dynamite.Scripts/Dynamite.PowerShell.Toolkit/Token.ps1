@@ -235,11 +235,11 @@ function Initialize-DSPTokens {
         Write-Host "DONE" -ForeGroundColor Green
     }
 
-    # 1 Copy and tokenize everything from source folder
-    Execute-DSPTransfer $SourcePath $DestinationPath
+    # 1 Copy everything from source folder
+    Copy-DSPFiles $SourcePath $DestinationPath
 
-    # 2 Copy and tokenize everything from customization folder
-    Execute-DSPTransfer $CustomizationPath $DestinationPath
+    # 2 Copy everything from customization folder
+    Copy-DSPFiles $CustomizationPath $DestinationPath
 
     # 3 Setup WSP Copy
     $wspPath = Join-Path $DestinationPath "\Solutions\WSP\"
@@ -274,21 +274,32 @@ function Initialize-DSPTokens {
 
 }
 
-function Execute-DSPTransfer {
+function Copy-DSPFiles {
 	param (
-		$Path,
-        $DestinationPath
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+		
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Match=@("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*", "*.psd1", "*.psm1")
 	)
     
     # Copy all .ps1 script inside $Path to $DestinationPath
-    Copy-DSPFile $Path $DestinationPath @("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*")
+    Copy-DSPFile $Path $DestinationPath $Match
 }
 
 function Copy-DSPFile {
 	param (
-		$Path,
-        $DestinationPath,
-		$Match
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+		
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Match=@("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*", "*.psd1", "*.psm1")
 	)
 
     if ((![String]::IsNullOrEmpty($DestinationPath)))

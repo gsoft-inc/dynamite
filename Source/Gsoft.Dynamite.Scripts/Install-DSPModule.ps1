@@ -72,15 +72,15 @@ if (($content -eq $null) -or !([string]::Join("`n", $content)).Contains("functio
 	Add-Content $PROFILE "`nfunction Get-DSPCommand(){Get-Command -Module (Get-DSPModuleName)}"
 }
 
-# Adding the PS-Snapin for Sharepoint
+# Adding the PS-Snapin for SharePoint
 if (($content -eq $null) -or !([string]::Join("`n", $content)).Contains("Add-PSSnapin Microsoft.SharePoint.PowerShell"))
 {
 	Write-Host ([string]::Format("[LOG] Adding Module Import to {0}", $PROFILE))
-  Add-Content $PROFILE "`nIf ((Get-PSSnapin |?{`$_.Name -eq `"Microsoft.SharePoint.PowerShell`"})-eq `$null)"
-  Add-Content $PROFILE "{"
-  Add-Content $PROFILE "`tWrite-Host `"Loading SharePoint PowerShell Snapin...`""
-  Add-Content $PROFILE "`tAdd-PSSnapin Microsoft.SharePoint.PowerShell"
-  Add-Content $PROFILE "}"
+	Add-Content $PROFILE "`nIf ((Get-PSSnapin |?{`$_.Name -eq `"Microsoft.SharePoint.PowerShell`"})-eq `$null)"
+	Add-Content $PROFILE "{"
+	Add-Content $PROFILE "`tWrite-Host `"Loading SharePoint PowerShell Snapin...`""
+	Add-Content $PROFILE "`tAdd-PSSnapin Microsoft.SharePoint.PowerShell"
+	Add-Content $PROFILE "}"
 }
 
 Write-Host ([string]::Format("[LOG] Installation finished. Module {0} is ready to use", $moduleName)) -ForegroundColor Green

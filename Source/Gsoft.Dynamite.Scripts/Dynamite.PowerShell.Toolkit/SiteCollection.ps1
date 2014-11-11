@@ -94,7 +94,7 @@ function New-DSPSiteCollectionRecusiveXml()
 	# Activate Features 
 	if($Site.Feature -ne $null)
 	{
-		Switch-DSPFeatures $Site $spSite.Url
+		Initialize-DSPFeatures $Site $spSite.Url
 	}
 }
 

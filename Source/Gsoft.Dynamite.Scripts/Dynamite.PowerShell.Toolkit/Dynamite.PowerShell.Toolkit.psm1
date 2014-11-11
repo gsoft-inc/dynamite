@@ -93,13 +93,13 @@ Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPM
 Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-SuggestedBrowserContentLocations
 
 # Tokenizer
-Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens, Execute-DSPTransfer, Copy-DSPFile, Copy-DSPSolution
+Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolution
 
 # Taxonomy
 Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup
 
 # Features
-Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Switch-DSPFeatures, Switch-DSPFeature
+Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Initialize-DSPFeatures, Initialize-DSPFeature
 
 # Managed Paths
 Export-ModuleMember New-DSPManagedPath
