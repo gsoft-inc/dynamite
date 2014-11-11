@@ -121,7 +121,7 @@ function New-DSPWebXml()
 		# Features 
 		if($web.Features -ne $null)
 		{
-			Switch-DSPFeatures $web.Features $newWeb.Url
+			Initialize-DSPFeatures $web.Features $newWeb.Url
 		}
 		
 		if($Web.Webs -ne $null)

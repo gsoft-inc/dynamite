@@ -26,8 +26,8 @@
 		The path of a XML file (schema defines in NOTES)
 
 	.PARAMETER  state
-		$true = enable feature
-    $false = disable feature
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
 
 	.EXAMPLE
 		PS C:\> Initialize-DSPFarmFeatures "c:\features.xml" $true
@@ -82,7 +82,7 @@ function Initialize-DSPFarmFeatures()
 	)
 
 	Write "Process farm features..."
-	Switch-DSPFeatures $xmlinput.Configuration.Farm "" $state
+	Initialize-DSPFeatures $xmlinput.Configuration.Farm "" $state
 }
 
 <#
@@ -104,8 +104,8 @@ function Initialize-DSPFarmFeatures()
 		The path of a XML file (schema defines in NOTES)
 
 	.PARAMETER  state
-		$true = enable feature
-    $false = disable feature
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
 
 	.EXAMPLE
 		PS C:\> Initialize-DSPSiteCollectionsFeatures "c:\features.xml" $true
@@ -158,7 +158,7 @@ function Initialize-DSPWebApplicationFeatures()
 		$spWebApp = Get-SPWebApplication -Identity $webApp.Url
 		if($spWebApp -ne $null)
 		{
-			Switch-DSPFeatures $webApp $webAppUrl $state
+			Initialize-DSPFeatures $webApp $webAppUrl $state
 		}
 		else
 		{
@@ -186,8 +186,8 @@ function Initialize-DSPWebApplicationFeatures()
 		The path of a XML file (schema defines in NOTES)
 
 	.PARAMETER  state
-		$true = enable feature
-    $false = disable feature
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
 
 	.EXAMPLE
 		PS C:\> Initialize-DSPSiteCollectionsFeatures "c:\features.xml" $true
@@ -240,7 +240,7 @@ function Initialize-DSPSiteCollectionsFeatures()
 		$spSite = Get-SPSite -Identity $Site.Url
 		if($spSite -ne $null)
 		{
-			Switch-DSPFeatures $Site $SiteUrl $state
+			Initialize-DSPFeatures $Site $SiteUrl $state
 		}
 		else
 		{
@@ -268,8 +268,8 @@ function Initialize-DSPSiteCollectionsFeatures()
 		The path of a XML file (schema defines in NOTES)
 
 	.PARAMETER  state
-		$true = enable feature
-    $false = disable feature
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
 
 	.EXAMPLE
 		PS C:\> Initialize-DSPSiteAllWebsFeatures "c:\features.xml" $true
@@ -333,7 +333,7 @@ Function Initialize-DSPSiteAllWebsFeatures()
 				
 					foreach($Web in $spSite.AllWebs)
 					{
-					  Switch-DSPFeatures $Site.Webs.AllWebs $Web.Url $state
+					  Initialize-DSPFeatures $Site.Webs.AllWebs $Web.Url $state
 					}
 				}
 			}     
@@ -364,8 +364,8 @@ Function Initialize-DSPSiteAllWebsFeatures()
 		The path of a XML file (schema defines in NOTES)
 
 	.PARAMETER  state
-		$true = enable feature
-    $false = disable feature
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
 
 	.EXAMPLE
 		PS C:\> Initialize-DSPSiteAllWebsFeatures "c:\features.xml" $true
@@ -426,7 +426,7 @@ Function Initialize-DSPWebFeatures()
 			
 			if($exists -eq $true)
 			{
-			  Switch-DSPFeatures $web $web.Url $state
+			  Initialize-DSPFeatures $web $web.Url $state
 			}
 		  }     
 		}
@@ -437,7 +437,57 @@ Function Initialize-DSPWebFeatures()
 	}
 }
 
-function Switch-DSPFeatures()
+<#
+	.SYNOPSIS
+		Toggle the features on at a particular URL. 
+
+	.DESCRIPTION
+		Toggle the features on at a particular URL. The features's scope must be valid
+		for the specified URL
+
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+    
+	.PARAMETER  Xmlinput
+		The path of a XML file (schema defines in NOTES)
+		
+	.PARAMETER  Url
+		The url of the web/site collection/web application where to initialize the features.
+		Empty string or missing parameter means Farm scope features.
+
+	.PARAMETER  State
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
+
+	.EXAMPLE
+		PS C:\> Initialize-DSPFeatures "c:\features.xml" "http://test.com"
+
+	.INPUTS
+		System.String,System.Boolean
+
+	.NOTES
+		Here is the XML schema
+    
+      <Feature GUID="12345678-350a-421b-bd8a-0b688956f183" Name="My first feature"/>
+      <Feature GUID="12345678-a710-473a-af3c-08d49ad2e0b4" Name="My second feature"/>
+    
+  .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Initialize-DSPFeatures()
 {
 	[CmdletBinding()]
 	param
@@ -445,8 +495,8 @@ function Switch-DSPFeatures()
 		[Parameter(Mandatory=$true, Position=0)]
 		[System.Xml.XmlElement]$Features,
 
-		[Parameter(Mandatory=$true, Position=1)]
-		$Url,
+		[Parameter(Mandatory=$false, Position=1)]
+		$Url="",
 		
 		[Parameter(Mandatory=$false, Position=2)]
 		$State=$true
@@ -457,95 +507,128 @@ function Switch-DSPFeatures()
 		if(!($Feature.GUID -eq $null))
 		{
 			$FeatureName = $Feature.Name
-		
-			if($State -eq $true)
-			{
-				if (![string]::IsNullOrEmpty($Url))
-				{
-					Write-Verbose "`tActivating web feature $FeatureName on $Url" 
-					Enable-SPFeature -Identity $Feature.GUID -Url $Url -Force:$true
-				}
-				else
-				{
-					Write-Verbose "`tActivating farm feature $FeatureName" 
-					Enable-SPFeature -Identity $Feature.GUID -Force:$true
-				}
-			}
-			else
-			{
-				$f = $spWeb.Features[$Feature.GUID]
-				if($f -ne $null)
-				{
-					if (![string]::IsNullOrEmpty($Url))
-					{
-						Write-Verbose "`tDeactivating web feature $FeatureName on $Url" 
-						Disable-SPFeature -Identity $Feature.GUID -Url $Url -Force:$true -Confirm:$false
-					}
-					else 
-					{
-						Write-Verbose "`tDeactivating farm feature $FeatureName" 
-						Disable-SPFeature -Identity $Feature.GUID -Force:$true -Confirm:$false
-					}
-				}
-				else
-				{
-					Write-Warning "`tFeature $FeatureName is already disabled on $Url"
-				} 					
-			}
+			
+			Initialize-DSPFeature $Id $Url $State $FeatureName
 		}
    }
 }
 
-function Switch-DSPFeature()
+<#
+	.SYNOPSIS
+		Toggle the feature on at a particular URL. 
+
+	.DESCRIPTION
+		Toggle the feature on at a particular URL. The features's scope must be valid
+		for the specified URL.
+		If already enabled, a feature will be first disabled then re-enabled.
+		Feature activation and deactivation is always done with the -Force parameter.
+
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+    
+	.PARAMETER  Url
+		Url of the web/site/web application on which to (re)enable the feature. Emtpy string
+		or missing parameter means Farm scope feature.
+
+	.PARAMETER  state
+		$true = enable feature (if already enabled, feature will be disabled then re-enabled)
+		$false = disable feature, if need be
+
+	.EXAMPLE
+		PS C:\> Initialize-DSPFeature "My.Package.NAmespace_My Feature Title" "http://test.com"
+
+	.INPUTS
+		System.String,System.Boolean
+    
+  .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Initialize-DSPFeature()
 {
 	[CmdletBinding()]
 	param
 	(
 		[Parameter(Mandatory=$true, Position=0)]
-		$Url,
-
-		[Parameter(Mandatory=$true, Position=1)]
 		$Id,
+
+		[Parameter(Mandatory=$false, Position=1)]
+		$Url="",
 		
 		[Parameter(Mandatory=$false, Position=2)]
-		$State=$true
+		$State=$true,
+
+		[Parameter(Mandatory=$false, Position=3)]
+		$FeatureDisplayName
 	)
 
-	if($Id -ne $null)
+	if ($FeatureDisplayName -eq $null)
 	{
-		if($State -eq $true)
+		$FeatureDisplayName = $Id
+	}
+
+	$isExistingWebFeature = (Get-SPFeature -Identity $Id -ErrorAction SilentlyContinue -Web $Url) -ne $null
+	$isExistingSiteFeature = (Get-SPFeature -Identity $Id -ErrorAction SilentlyContinue -Site $Url) -ne $null
+	$isExistingWebAppFeature = (Get-SPFeature -Identity $Id -ErrorAction SilentlyContinue -WebApplication $Url) -ne $null
+	$isExistingFarmFeature = (Get-SPFeature -Identity $Id -ErrorAction SilentlyContinue -Farm) -ne $null
+
+	$hasDisabled = $false;
+	
+	# 1) Disable any already-enabled feature
+	if($isExistingWebFeature -or $isExistingSiteFeature -or $isExistingWebAppFeature -or $isExistingFarmFeature)
+	{
+		if (![string]::IsNullOrEmpty($Url))
 		{
-			if (![string]::IsNullOrEmpty($Url))
-			{
-				Write-Verbose "`tActivating feature $Id on $Url" 
-				Enable-SPFeature -Identity $Id -Url $Url -Force:$true
-			}
-			else
-			{
-				Write-Verbose "`tActivating farm feature $FeatureName" 
-				Enable-SPFeature -Identity $Id -Force:$true
-			}
+			Write-Host "`tDeactivating feature $FeatureDisplayName on $Url..." -NoNewLine
+			Disable-SPFeature -Identity $Id -Url $Url -Force:$true -Confirm:$false
+			Write-Host "Done!" -ForeGroundColor Green
+		}
+		else 
+		{
+			Write-Host "`tDeactivating farm feature $FeatureDisplayName..." -NoNewLine
+			Disable-SPFeature -Identity $Id -Force:$true -Confirm:$false
+			Write-Host "Done!" -ForeGroundColor Green
+		}
+
+		$hasDisabled = $true;
+	}
+	elseif ($State -eq $false)
+	{
+		Write-Warning "`tFeature with Id $FeatureDisplayName is already disabled on $Url"
+	} 			
+
+	# 2) (Re)enable the feature
+	if($State -eq $true)
+	{
+		$activationVerb = "Activating"
+		if ($hasDisabled -eq $true)
+		{
+			$activationVerb = "Re-activating"
+		}
+
+		if (![string]::IsNullOrEmpty($Url))
+		{
+			Write-Host "`t$activationVerb feature $FeatureDisplayName on $Url..." -NoNewLine
+			Enable-SPFeature -Identity $Id -Url $Url -Force:$true
+			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else
 		{
-			$f = $spWeb.Features[$Id]
-			if($f -ne $null)
-			{
-				if (![string]::IsNullOrEmpty($Url))
-				{
-					Write-Verbose "`tDeactivating feature $Id on $Url" 
-					Disable-SPFeature -Identity $Id -Url $Url -Force:$true -Confirm:$false
-				}
-				else 
-				{
-					Write-Verbose "`tDeactivating feature $Id" 
-					Disable-SPFeature -Identity $Id -Force:$true -Confirm:$false
-				}
-			}
-			else
-			{
-				Write-Warning "`tFeature with Id $Id is already disabled on $Url"
-			} 					
+			Write-Host "`t$activationVerb farm feature $FeatureDisplayName..." -NoNewLine
+			Enable-SPFeature -Identity $Id -Force:$true
+			Write-Host "Done!" -ForeGroundColor Green
 		}
 	}
 }
