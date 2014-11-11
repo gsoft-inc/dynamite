@@ -1,3 +1,5 @@
+using GSoft.Dynamite.Taxonomy;
+
 namespace GSoft.Dynamite.Search
 {
     using System;
@@ -247,5 +249,19 @@ namespace GSoft.Dynamite.Search
         /// <param name="overwrite">True to overwrite.False otherwise</param>
         /// <returns>The managed property</returns>
         ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo, bool overwrite);
+
+        /// <summary>
+        /// Add faceted navigation refiners for a taxonomy term and its reuses
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="navigationInfo">The faceted navigation configuration object</param>
+        void AddFacetedRefinersForTerm(SPSite site, FacetedNavigationInfo navigationInfo);
+
+        /// <summary>
+        /// Deletes all refiners for the specified term and its reuses regardless previous configuration
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="term">The term info object</param>
+        void RemoveFacetedRefinersForTerm(SPSite site, TermInfo term);
     }
 }
