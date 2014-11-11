@@ -521,7 +521,6 @@ function Initialize-DSPFeatures()
 		Toggle the feature on at a particular URL. The features's scope must be valid
 		for the specified URL.
 		If already enabled, a feature will be first disabled then re-enabled.
-		Feature activation and deactivation is always done with the -Force parameter.
 
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -592,13 +591,13 @@ function Initialize-DSPFeature()
 		if (![string]::IsNullOrEmpty($Url))
 		{
 			Write-Host "`tDeactivating feature $FeatureDisplayName on $Url..." -NoNewLine
-			Disable-SPFeature -Identity $Id -Url $Url -Force:$true -Confirm:$false
+			Disable-SPFeature -Identity $Id -Url $Url -Confirm:$false
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else 
 		{
 			Write-Host "`tDeactivating farm feature $FeatureDisplayName..." -NoNewLine
-			Disable-SPFeature -Identity $Id -Force:$true -Confirm:$false
+			Disable-SPFeature -Identity $Id -Confirm:$false
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 
@@ -621,13 +620,13 @@ function Initialize-DSPFeature()
 		if (![string]::IsNullOrEmpty($Url))
 		{
 			Write-Host "`t$activationVerb feature $FeatureDisplayName on $Url..." -NoNewLine
-			Enable-SPFeature -Identity $Id -Url $Url -Force:$true
+			Enable-SPFeature -Identity $Id -Url $Url
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else
 		{
 			Write-Host "`t$activationVerb farm feature $FeatureDisplayName..." -NoNewLine
-			Enable-SPFeature -Identity $Id -Force:$true
+			Enable-SPFeature -Identity $Id
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 	}
