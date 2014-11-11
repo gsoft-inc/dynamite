@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Taxonomy;
 using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
@@ -14,6 +16,7 @@ using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.JSGrid;
+using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
@@ -28,14 +31,17 @@ namespace GSoft.Dynamite.Search
     public class SearchHelper : ISearchHelper
     {
         private readonly ILogger logger;
+        private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="logger">The logger</param>
-        public SearchHelper(ILogger logger)
+        /// <param name="taxonomyService">The taxonomy service instance</param>
+        public SearchHelper(ILogger logger, ITaxonomyService taxonomyService)
         {
             this.logger = logger;
+            this.taxonomyService = taxonomyService;
         }
 
         /// <summary>
@@ -43,8 +49,8 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The site collection</param>
         /// <param name="scopeName">The name of the search scope</param>
-        /// <param name="displayGroupName">The scope's display group</param>
-        /// <param name="searchPagePath">The scope's custom search page url (cannot be empty)</param>
+        /// <param name="displayGroupName">The scope\"s display group</param>
+        /// <param name="searchPagePath">The scope\"s custom search page url (cannot be empty)</param>
         /// <returns>The search scope</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public Scope EnsureSiteScope(SPSite site, string scopeName, string displayGroupName, string searchPagePath)
@@ -55,7 +61,7 @@ namespace GSoft.Dynamite.Search
             // see if there is an existing scope
             Scope scope = remoteScopes.GetScopesForSite(new Uri(site.Url)).Cast<Scope>().FirstOrDefault(s => s.Name == scopeName);
 
-            // only add if the scope doesn't exist already
+            // only add if the scope doesn\"t exist already
             if (scope == null)
             {
                 scope = remoteScopes.AllScopes.Create(scopeName, string.Empty, new Uri(site.Url), true, searchPagePath, ScopeCompilationType.AlwaysCompile);
@@ -64,7 +70,7 @@ namespace GSoft.Dynamite.Search
             // see if there is an existing display group         
             ScopeDisplayGroup displayGroup = remoteScopes.GetDisplayGroupsForSite(new Uri(site.Url)).Cast<ScopeDisplayGroup>().FirstOrDefault(d => d.Name == displayGroupName);
 
-            // add if the display group doesn't exist
+            // add if the display group doesn\"t exist
             if (displayGroup == null)
             {
                 displayGroup = remoteScopes.AllDisplayGroups.Create(displayGroupName, string.Empty, new Uri(site.Url), true);
@@ -100,7 +106,7 @@ namespace GSoft.Dynamite.Search
             // see if there is an existing scope
             Scope scope = remoteScopes.GetSharedScopes().Cast<Scope>().FirstOrDefault(s => s.Name == scopeName);
 
-            // only add if the scope doesn't exist already
+            // only add if the scope doesn\"t exist already
             if (scope == null)
             {
                 scope = remoteScopes.AllScopes.Create(scopeName, string.Empty, null, true, searchPagePath, ScopeCompilationType.AlwaysCompile);
@@ -109,7 +115,7 @@ namespace GSoft.Dynamite.Search
             // see if there is an existing display group         
             ScopeDisplayGroup displayGroup = remoteScopes.GetDisplayGroupsForSite(new Uri(site.Url)).Cast<ScopeDisplayGroup>().FirstOrDefault(d => d.Name == displayGroupName);
 
-            // add if the display group doesn't exist
+            // add if the display group doesn\"t exist
             if (displayGroup == null)
             {
                 displayGroup = remoteScopes.AllDisplayGroups.Create(displayGroupName, string.Empty, new Uri(site.Url), true);
@@ -129,7 +135,7 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Gets the result source by name using the default application name:'Search Service Application'.
+        /// Gets the result source by name using the default application name:\"Search Service Application\".
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="site">The site collection.</param>
@@ -189,10 +195,10 @@ namespace GSoft.Dynamite.Search
         /// Ensures the presence of the specified result source configuration in the search service
         /// </summary>
         /// <param name="ssa">The search service application to modify</param>
-        /// <param name="resultSourceName">The result source's name</param>
+        /// <param name="resultSourceName">The result source\"s name</param>
         /// <param name="level">The search object level</param>
         /// <param name="searchProvider">The search provider name</param>
-        /// <param name="contextWeb">The context's web</param>
+        /// <param name="contextWeb">The context\"s web</param>
         /// <param name="query">The query string for the result source</param>
         /// <param name="sortField">The sort field name</param>
         /// <param name="direction">The sort direction</param>
@@ -888,6 +894,90 @@ namespace GSoft.Dynamite.Search
                 PropertyValues = new List<string>(resultTypeRule.Values)
             };
             return rule;
+        }
+
+        /// <summary>
+        /// Add faceted navigation refiners for a taxonomy term and its reuses
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="navigationInfo">The faceted navigation configuration object</param>
+        public void AddFacetedRefinersForTerm(SPSite site, FacetedNavigationInfo navigationInfo)
+        {
+            // Get the term
+            var termItem = this.taxonomyService.GetTermForId(site, navigationInfo.Term.Id);
+
+            // Flag the term set to use faceted navigation
+            termItem.TermSet.SetCustomProperty("_Sys_Facet_IsFacetedTermSet", "True");
+            termItem.TermStore.CommitAll();
+
+            var termList = new List<Term>();
+
+            termList.Add(termItem);
+            termList.AddRange(termItem.ReusedTerms);
+
+            foreach (var term in termList)
+            {
+                var i = 0;
+                var fullRefinementString = new List<string>();
+                var refinementConfig = new List<string>();
+
+                foreach (var refiner in navigationInfo.Refiners)
+                {
+                    refinementConfig.Add("\"_Sys_Facet_RefinerConfig" + i + "\"");
+                    fullRefinementString.Add(refiner.RefinementString);
+
+                    var fp = CultureInfo.InvariantCulture;
+
+                    var sb = new List<string>
+                    {
+                        string.Format(fp, "\"sortBy\":{0}", Convert.ChangeType(refiner.SortBy, refiner.SortBy.GetTypeCode(), fp)),
+                        string.Format(fp, "\"sortOrder\":{0}", Convert.ChangeType(refiner.SortOrder, refiner.SortOrder.GetTypeCode(), fp)),
+                        string.Format(fp, "\"maxNumberRefinementOptions\":{0}", refiner.MaxNumberRefinementOptions),
+                        string.Format(fp, "\"propertyName\":\"{0}\"", refiner.ManagedPropertyName),
+                        string.Format(fp, "\"type\":\"{0}\"", refiner.RefinerType),
+                        string.Format(fp, "\"displayTemplate\":\"{0}\"", refiner.DisplayTemplateJsLocation),
+                        string.Format(fp, "\"displayName\":\"{0}\"", refiner.DisplayName),
+                        string.Format(fp, "\"useDefaultDateIntervals\":{0}", refiner.UseDefaultDateIntervals.ToString().ToLowerInvariant()),
+                        string.Format(fp, "\"aliases\":{0}", refiner.Alias),
+                        string.Format(fp, "\"refinerSpecStringOverride\":\"{0}\"", refiner.RefinerSpecStringOverride.ToLowerInvariant()),
+                        string.Format(fp, "\"intervals\":{0}", refiner.Intervals)
+                    };
+
+                    term.SetCustomProperty("_Sys_Facet_RefinerConfig" + i, "{" + string.Join(",", sb.ToArray()) + "}");
+
+                    i++;
+                }
+
+                term.SetCustomProperty("_Sys_Facet_FullRefinementString", string.Join(",", fullRefinementString.ToArray()));
+                term.SetCustomProperty("_Sys_Facet_RefinementConfig",  "[" + string.Join(",", refinementConfig.ToArray()) + "]");
+
+                term.TermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
+        /// Deletes all refiners for the specified term and its reuses regardless previous configuration
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="term">The term info object</param>
+        public void RemoveFacetedRefinersForTerm(SPSite site, TermInfo term)
+        {
+            // Get the term
+            var termItem = this.taxonomyService.GetTermForId(site, term.Id);
+
+            var properties = new[] { "_Sys_Facet_FullRefinementString", "_Sys_Facet_RefinementConfig", "_Sys_Facet_RefinerConfig" };
+
+            foreach (var prop in properties)
+            {
+                string tmp;
+                termItem.CustomProperties.TryGetValue(prop, out tmp);
+                if (tmp != null)
+                {
+                    termItem.DeleteCustomProperty(prop);
+                }
+            }
+
+            termItem.TermStore.CommitAll();
         }
 
         /// <summary>

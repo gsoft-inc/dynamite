@@ -102,6 +102,11 @@
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
     <Compile Include="Navigation\NavigationLocation.cs" />
     <Compile Include="Pages\IPageHelper.cs" />
+    <Compile Include="Search\FacetedNavigationInfo.cs" />
+    <Compile Include="Search\RefinerInfo.cs" />
+    <Compile Include="Search\Enums\RefinerSortOrder.cs" />
+    <Compile Include="Search\Enums\RefinerSortType.cs" />
+    <Compile Include="Search\Enums\RefinerType.cs" />
     <Compile Include="Search\ResultTypeInfo.cs" />
     <Compile Include="Search\ResultTypeRuleInfo.cs" />
     <Compile Include="Search\UpdateBehaviorEnum.cs" />
