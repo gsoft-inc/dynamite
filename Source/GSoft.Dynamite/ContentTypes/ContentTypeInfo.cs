@@ -29,7 +29,20 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
         public ContentTypeInfo(string contentTypeId, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
-            : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
+            : this(contentTypeId, displayNameResourceKey, descriptionResourceKey, groupResourceKey, string.Empty)
+        { 
+        }
+
+        /// <summary>
+        /// Initializes a new ContentTypeInfo
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
+        /// <param name="resourceFileName">Name of the resource file.</param>
+        public ContentTypeInfo(string contentTypeId, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey, string resourceFileName)
+            : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
         {
             this.ContentTypeId = contentTypeId;
             this.Fields = new List<IFieldInfo>();

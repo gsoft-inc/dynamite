@@ -83,9 +83,9 @@ namespace GSoft.Dynamite.ContentTypes
                 // by forcing the current thread's UI culture temporarily.
                 Thread.CurrentThread.CurrentUICulture = availableLanguage;
 
-                contentType.Name = this.resourceLocator.Find(contentTypeInfo.DisplayNameResourceKey);
-                contentType.Description = this.resourceLocator.Find(contentTypeInfo.DescriptionResourceKey);
-                contentType.Group = this.resourceLocator.Find(contentTypeInfo.GroupResourceKey);
+                contentType.Name = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
+                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey);
+                contentType.Group = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey);
 
                 // restore the MUI culture to the old value
                 Thread.CurrentThread.CurrentUICulture = currentCulture;

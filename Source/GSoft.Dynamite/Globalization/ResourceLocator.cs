@@ -48,21 +48,7 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The resource in the specified language</returns>
         public string Find(string resourceKey, int lcid)
         {
-            string resourceValue = null;
-
-            // Scan all the default resource files
-            foreach (var fileName in this._defaultResourceFileNames)
-            {
-                resourceValue = this.Find(fileName, resourceKey, new CultureInfo(lcid));
-
-                if (!string.IsNullOrEmpty(resourceValue) && resourceValue != resourceKey)
-                {
-                    // exit as soon as you find the resource in one of the default files
-                    break;
-                }
-            }
-
-            return resourceValue;
+            return this.Find(string.Empty, resourceKey, lcid);
         }
 
         /// <summary>
@@ -99,14 +85,36 @@ namespace GSoft.Dynamite.Globalization
         {
             string found = string.Empty;
 
-            try
+            if (string.IsNullOrEmpty(resourceFileName))
             {
-                // First, attempt to find the resource in VirtualDir/AppGlobalResources
-                found = HttpContext.GetGlobalResourceObject(resourceFileName, resourceKey, culture) as string;
+                // Scan all the default resource files
+                foreach (var fileName in this._defaultResourceFileNames)
+                {
+                    // Avoid an infinite loop
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        found = this.Find(fileName, resourceKey, culture);
+
+                        if (!string.IsNullOrEmpty(found) && found != resourceKey)
+                        {
+                            // exit as soon as you find the resource in one of the default files
+                            break;
+                        }
+                    }
+                }
             }
-            catch (MissingManifestResourceException)
+
+            if (string.IsNullOrEmpty(found))
             {
-                // Swallow the exception
+                try
+                {
+                    // First, attempt to find the resource in VirtualDir/AppGlobalResources
+                    found = HttpContext.GetGlobalResourceObject(resourceFileName, resourceKey, culture) as string;
+                }
+                catch (MissingManifestResourceException)
+                {
+                    // Swallow the exception
+                }
             }
 
             if (string.IsNullOrEmpty(found))
