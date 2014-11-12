@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.UI;
 using GSoft.Dynamite.Events;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.WebParts;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
@@ -14,14 +15,16 @@ namespace GSoft.Dynamite.Pages
     public class PageHelper : IPageHelper
     {
         private readonly IWebPartHelper webPartHelper;
+        private readonly ILogger logger;
 
         /// <summary>
         /// Initializes a new <see cref="PageHelper"/> instance
         /// </summary>
         /// <param name="webPartHelper">Web Part helper</param>
-        public PageHelper(IWebPartHelper webPartHelper)
+        public PageHelper(IWebPartHelper webPartHelper, ILogger logger)
         {
             this.webPartHelper = webPartHelper;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace GSoft.Dynamite.Pages
             }
             else
             {
-                publishingPage.CheckOut();
+                this.EnsurePageCheckOut(publishingPage);
             }
 
             // Set the title
@@ -95,11 +98,7 @@ namespace GSoft.Dynamite.Pages
             }
 
             // Publish
-            if (page.IsPublished)
-            {
-                publishingPage.ListItem.File.CheckIn("Dynamite Ensure Creation");
-                publishingPage.ListItem.File.Publish("Dynamite Ensure Creation");
-            }
+            PageHelper.EnsurePageCheckInAndPublish(publishingPage);
             
             return publishingPage;
         }
@@ -140,6 +139,48 @@ namespace GSoft.Dynamite.Pages
             }
 
             return pageLayout;
+        }
+
+        private void EnsurePageCheckOut(PublishingPage page)
+        {
+            if (page.ListItem.ParentList.ForceCheckout)
+            {
+                // Only check out if we are forced to do so
+                if (page.ListItem.File.CheckOutType == SPFile.SPCheckOutType.None)
+                {
+                    // Only check out if not already checked out
+                    page.CheckOut();
+                }
+                else
+                {
+                    this.logger.Warn("Page " + page.Uri.AbsoluteUri + " is already checked out - skipping FolderMaker checkout.");
+                }
+            }
+        }
+
+        private static void EnsurePageCheckInAndPublish(PublishingPage page)
+        {
+            string comment = "Dynamite Ensure Creation";
+
+            if (page.ListItem.File.CheckOutType != SPFile.SPCheckOutType.None)
+            {
+                // Only check in if already checked out
+                page.CheckIn(comment);
+            }
+
+            if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Draft)
+            {
+                // Create a major version (just like "submit for approval")
+                page.ListItem.File.Publish(comment);
+
+                // Status should now be Pending. Approve to make the major version visible to the public.
+                page.ListItem.File.Approve(comment);
+            }
+            else if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Pending)
+            {
+                // Technically, major version already exists, we just need to approve in order for the major version to be published
+                page.ListItem.File.Approve(comment);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
+using System.Linq;
 
 namespace GSoft.Dynamite.WebParts
 {
@@ -116,7 +117,7 @@ namespace GSoft.Dynamite.WebParts
             {
                 if (webPart != null)
                 {
-                    if (manager.WebParts[webPart.Title] == null)
+                    if (manager.WebParts.Cast<WebPart>().All(wp => wp.Title != webPart.Title))
                     {
                         manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
                         storageKey = manager.GetStorageKey(webPart);
