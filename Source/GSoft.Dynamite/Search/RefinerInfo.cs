@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using GSoft.Dynamite.Search.Enums;
 
@@ -122,6 +123,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The auto calculated refinement string for the term custom property
         /// </summary>
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "We want lowercase here.")]
         public string RefinementString
         {
             get
