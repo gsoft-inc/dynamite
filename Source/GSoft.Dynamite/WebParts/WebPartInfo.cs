@@ -15,7 +15,6 @@ namespace GSoft.Dynamite.WebParts
         /// </summary>
         /// <param name="name">The title of web part</param>
         /// <param name="zoneName">The name of zone in which the web part should be instantiated</param>
-        /// <param name="id">Unique identifier oft he web part</param>
         public WebPartInfo(string name, string zoneName)
         {
             this.Name = name;
