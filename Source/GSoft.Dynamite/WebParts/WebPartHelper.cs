@@ -116,7 +116,7 @@ namespace GSoft.Dynamite.WebParts
             {
                 if (webPart != null)
                 {
-                    if (manager.WebParts[webPart.ID] == null)
+                    if (manager.WebParts[webPart.Title] == null)
                     {
                         manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
                         storageKey = manager.GetStorageKey(webPart);
