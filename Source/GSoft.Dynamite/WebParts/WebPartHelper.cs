@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.WebPartPages;
-using System.Linq;
 
 namespace GSoft.Dynamite.WebParts
 {
     using System.Web.UI.WebControls.WebParts;
     using GSoft.Dynamite.Fields.Constants;
-    using GSoft.Dynamite.WebParts;
 
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff

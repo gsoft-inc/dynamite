@@ -18,9 +18,10 @@ namespace GSoft.Dynamite.Pages
         private readonly ILogger logger;
 
         /// <summary>
-        /// Initializes a new <see cref="PageHelper"/> instance
+        /// Initializes a new <see cref="PageHelper" /> instance
         /// </summary>
         /// <param name="webPartHelper">Web Part helper</param>
+        /// <param name="logger">The logger.</param>
         public PageHelper(IWebPartHelper webPartHelper, ILogger logger)
         {
             this.webPartHelper = webPartHelper;
