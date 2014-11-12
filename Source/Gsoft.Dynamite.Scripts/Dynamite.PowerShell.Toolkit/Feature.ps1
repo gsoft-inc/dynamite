@@ -507,6 +507,7 @@ function Initialize-DSPFeatures()
 		if(!($Feature.GUID -eq $null))
 		{
 			$FeatureName = $Feature.Name
+			$Id = $Feature.GUID
 			
 			Initialize-DSPFeature $Id $Url $State $FeatureName
 		}
