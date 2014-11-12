@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
+using Microsoft.Office.Server.Search.WebControls;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Taxonomy;
@@ -44,11 +45,10 @@ namespace GSoft.Dynamite.Fields
         {
             SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
 
+            UpdateFieldVisibility(field, fieldInfo, false);
+
             // Set default value if any, ensure other FieldType-specific properties
             this.ApplyFieldTypeSpecificValues(fieldCollection, field, fieldInfo);
-
-            // Updates the visibility of the field
-            UpdateFieldVisibility(field, fieldInfo);
 
             return field;
         }
@@ -166,7 +166,7 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
+        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo, bool updateField)
         {
             if (field != null)
             {
@@ -174,7 +174,11 @@ namespace GSoft.Dynamite.Fields
                 field.ShowInDisplayForm = !fieldInfo.IsHiddenInDisplayForm;
                 field.ShowInEditForm = !fieldInfo.IsHiddenInEditForm;
                 field.ShowInNewForm = !fieldInfo.IsHiddenInNewForm;
-                field.Update(true);
+
+                if (updateField)
+                {
+                    field.Update(true);
+                }
             }
 
             return field;
