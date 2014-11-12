@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Xml.Linq;
@@ -104,31 +105,43 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Search
                         {
                             var delimiter = new[] { ',', ';', ' ' };
                             var fields = sortFields.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
-                            var directions = sortDirectionsAsString.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(x => (SortDirection)Enum.Parse(typeof(SortDirection), x));
+                            var directions = sortDirectionsAsString.Split(delimiter, StringSplitOptions.RemoveEmptyEntries).Select(x => (SortDirection)Enum.Parse(typeof(SortDirection), x)).ToList();
+                            IDictionary<string, SortDirection> fieldSortDirections = new Dictionary<string, SortDirection>();
 
-                            searchHelper.EnsureResultSource(
-                                searchServiceApp,
-                                sourceName,
-                                sortObjectLevel,
-                                searchProvider,
-                                site.RootWeb,
-                                query,
-                                fields,
-                                directions,
-                                this.Overwrite);
+                            int i = 0;
+                            foreach (string fieldName in fields)
+                            {
+                                fieldSortDirections[fieldName] = directions[i];
+                                i++;
+                            }                                
+
+                            var resultSourceInfo = new ResultSourceInfo()
+                                {                                
+                                    Name = sourceName,
+                                    Level = sortObjectLevel,
+                                    SearchProvider = searchProvider,
+                                    Query = query,
+                                    SortSettings = fieldSortDirections
+                                };
+
+                            if (this.Overwrite) 
+                            {
+                                resultSourceInfo.UpdateMode = UpdateBehavior.OverwriteResultSource;
+                            }
+
+                            searchHelper.EnsureResultSource(site, resultSourceInfo);
                         }
                         else
                         {
-                            searchHelper.EnsureResultSource(
-                                searchServiceApp,
-                                sourceName,
-                                sortObjectLevel,
-                                searchProvider,
-                                site.RootWeb,
-                                query,
-                                null, 
-                                null,
-                                this.Overwrite);
+                            var resultSourceInfo = new ResultSourceInfo()
+                            {
+                                Name = sourceName,
+                                Level = sortObjectLevel,
+                                SearchProvider = searchProvider,
+                                Query = query
+                            };
+
+                            searchHelper.EnsureResultSource(site, resultSourceInfo);
                         }
                     }
                 }

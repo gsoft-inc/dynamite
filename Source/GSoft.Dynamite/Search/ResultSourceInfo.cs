@@ -20,6 +20,7 @@ namespace GSoft.Dynamite.Search
         public ResultSourceInfo()
         {
             this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
+            this.SortSettings = new Dictionary<string, SortDirection>();
         }
 
         /// <summary>
@@ -47,6 +48,12 @@ namespace GSoft.Dynamite.Search
         /// The KQL Query
         /// </summary>
         public string Query { get; set; }
+
+        /// <summary>
+        /// Whether this result source should be flagged as default result source
+        /// when registered on a particular owner (site or search service app).
+        /// </summary>
+        public bool IsDefaultResultSourceForOwner { get; set; }
 
         /// <summary>
         /// The Search Provider

@@ -32,12 +32,12 @@ function New-DSPSiteCollectionRecusiveXml()
 	$SiteAbsoluteUrl = if ($IsHostNamedSite) { "$SiteHostNamePath$SiteRelativeUrl" } else { "$WebApplicationUrl$SiteRelativeUrl" }
  
  	# Create the Content Database if they do not exist
-	New-DSPContentDatabase -ContentDatabaseName $ContentDatabaseName -WebApplicationUrl $WebApplicationUrl -Verbose:$Verbose
+	New-DSPContentDatabase -ContentDatabaseName $ContentDatabaseName -WebApplicationUrl $WebApplicationUrl
 	
 	if($SiteRelativePath -and $SiteRelativePath -ne "/")
 	{
 		# Create the Managed Path if they do not exist
-		New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl -Verbose:$Verbose
+		New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl
 	}
 
 	$spSite = Get-SPSite -Identity $SiteAbsoluteUrl -ErrorAction SilentlyContinue
@@ -70,7 +70,7 @@ function New-DSPSiteCollectionRecusiveXml()
 	}
 	else
 	{
-		Write-Warning "Another site already exists at $SiteAbsoluteUrl"
+		Write-Warning "Another site already exists at $SiteAbsoluteUrl! Use -Force parameter to delete (wiping out its content) and then re-create the site."
 	}
 	
 	$Group = $Site.Groups

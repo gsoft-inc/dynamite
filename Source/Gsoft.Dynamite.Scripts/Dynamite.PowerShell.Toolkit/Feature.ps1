@@ -591,7 +591,7 @@ function Initialize-DSPFeature()
 		if (![string]::IsNullOrEmpty($Url))
 		{
 			Write-Host "`tDeactivating feature $FeatureDisplayName on $Url..." -NoNewLine
-			Disable-SPFeature -Identity $Id -Url $Url -Confirm:$false
+			Disable-SPFeature -Identity $Id -URL $Url -Confirm:$false
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else 
@@ -620,7 +620,7 @@ function Initialize-DSPFeature()
 		if (![string]::IsNullOrEmpty($Url))
 		{
 			Write-Host "`t$activationVerb feature $FeatureDisplayName on $Url..." -NoNewLine
-			Enable-SPFeature -Identity $Id -Url $Url
+			Enable-SPFeature -Identity $Id -URL $Url
 			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else

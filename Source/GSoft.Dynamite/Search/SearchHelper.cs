@@ -154,86 +154,6 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Ensure a search result source
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="searchProvider">The search provider for the result source.</param>
-        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
-        /// <param name="query">The search query in KQL format.</param>
-        /// <param name="properties">Query properties.</param>
-        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
-        /// <returns>
-        /// The result source.
-        /// </returns>
-        public Source EnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite)
-        {
-            var federationManager = new FederationManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-
-            if (resultSource != null && overwrite)
-            {
-                federationManager.RemoveSource(resultSource);
-            }
-
-            if (resultSource == null || overwrite)
-            {
-                resultSource = federationManager.CreateSource(searchOwner);
-                resultSource.Name = resultSourceName;
-                resultSource.ProviderId = federationManager.ListProviders()[searchProvider].Id;
-                resultSource.CreateQueryTransform(properties, query);
-                resultSource.Commit();
-            }
-
-            return resultSource;
-        }
-
-        /// <summary>
-        /// Ensures the presence of the specified result source configuration in the search service
-        /// </summary>
-        /// <param name="ssa">The search service application to modify</param>
-        /// <param name="resultSourceName">The result source\"s name</param>
-        /// <param name="level">The search object level</param>
-        /// <param name="searchProvider">The search provider name</param>
-        /// <param name="contextWeb">The context\"s web</param>
-        /// <param name="query">The query string for the result source</param>
-        /// <param name="sortField">The sort field name</param>
-        /// <param name="direction">The sort direction</param>
-        /// <param name="overwrite">Whether the result source configuration should get overwritten if already present</param>
-        /// <returns>The newly created result source</returns>
-        public Source EnsureResultSource(
-            SearchServiceApplication ssa,
-            string resultSourceName,
-            SearchObjectLevel level,
-            string searchProvider,
-            SPWeb contextWeb,
-            string query,
-            string sortField,
-            SortDirection direction,
-            bool overwrite)
-        {
-            var res = new ResultSourceInfo();
-
-            var updateMode = overwrite ? UpdateBehavior.OverwriteResultSource : UpdateBehavior.NoChangesIfAlreadyExists;
-
-            res.Level = level;
-            res.Name = resultSourceName;
-            res.UpdateMode = updateMode;
-            res.Query = query;
-            res.SearchProvider = searchProvider;
-            res.SortSettings = new Dictionary<string, SortDirection>()
-            {
-                { sortField, direction }
-            };
-
-            return this.EnsureResultSource(
-                contextWeb.Site, res);
-        }
-
-        /// <summary>
         /// Ensure a result source
         /// </summary>
         /// <param name="contextSite">The context SPSite object</param>
@@ -263,11 +183,29 @@ namespace GSoft.Dynamite.Search
             {
                 if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
                 {
-                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, true);
+                    resultSource = InnerEnsureResultSource(
+                        searchServiceApplication, 
+                        resultSourceInfo.Name, 
+                        resultSourceInfo.Level, 
+                        resultSourceInfo.SearchProvider, 
+                        contextSite.RootWeb, 
+                        resultSourceInfo.Query,
+                        queryProperties, 
+                        true, 
+                        resultSourceInfo.IsDefaultResultSourceForOwner);
                 }
                 else
                 {
-                    resultSource = this.EnsureResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, resultSourceInfo.SearchProvider, contextSite.RootWeb, resultSourceInfo.Query, sortCollection, false);
+                    resultSource = InnerEnsureResultSource(
+                        searchServiceApplication, 
+                        resultSourceInfo.Name, 
+                        resultSourceInfo.Level, 
+                        resultSourceInfo.SearchProvider, 
+                        contextSite.RootWeb, 
+                        resultSourceInfo.Query,
+                        queryProperties, 
+                        false, 
+                        resultSourceInfo.IsDefaultResultSourceForOwner);
 
                     string searchQuery = string.Empty;
 
@@ -326,77 +264,7 @@ namespace GSoft.Dynamite.Search
 
             return resultSource;
         }
-
-        /// <summary>
-        /// Ensure a search result source
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="searchProvider">The search provider for this result source.</param>
-        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
-        /// <param name="query">The search query in KQL format.</param>
-        /// <param name="sortSettings">The sorting configuration foe the result source</param>
-        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
-        /// <returns>
-        /// The result source.
-        /// </returns>
-        public Source EnsureResultSource(
-            SearchServiceApplication ssa,
-            string resultSourceName,
-            SearchObjectLevel level,
-            string searchProvider,
-            SPWeb contextWeb,
-            string query,
-            SortCollection sortSettings,
-            bool overwrite)
-        {
-            var queryProperties = new QueryTransformProperties();
-            queryProperties["SortList"] = sortSettings;
-
-            return this.EnsureResultSource(ssa, resultSourceName, level, searchProvider, contextWeb, query, queryProperties, overwrite);
-        }
-
-        /// <summary>
-        /// Ensure a search result source
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="searchProvider">The search provider for this result source.</param>
-        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
-        /// <param name="query">The search query in KQL format.</param>
-        /// <param name="sortFields">The sort fields</param>
-        /// <param name="directions">The directions</param>
-        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
-        /// <returns>
-        /// The result source.
-        /// </returns>
-        public Source EnsureResultSource(
-            SearchServiceApplication ssa,
-            string resultSourceName,
-            SearchObjectLevel level,
-            string searchProvider,
-            SPWeb contextWeb,
-            string query,
-            IEnumerable<string> sortFields,
-            IEnumerable<SortDirection> directions,
-            bool overwrite)
-        {
-            var sortCollection = new SortCollection();
-
-            if (sortFields != null && directions != null)
-            {
-                var fields = sortFields.Select((field, index) => new { Field = field, Direction = directions.ElementAt(index) }).ToList();
-                fields.ForEach(f => sortCollection.Add(f.Field, f.Direction));  
-            }
-
-            var queryProperties = new QueryTransformProperties();
-            queryProperties["SortList"] = sortCollection;
-
-            return this.EnsureResultSource(ssa, resultSourceName, level, searchProvider, contextWeb, query, queryProperties, overwrite);
-        }
-
+        
         /// <summary>
         /// Get the service application by its name
         /// </summary>
@@ -901,6 +769,7 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The site</param>
         /// <param name="navigationInfo">The faceted navigation configuration object</param>
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "We want lowercase here.")]
         public void AddFacetedRefinersForTerm(SPSite site, FacetedNavigationInfo navigationInfo)
         {
             // Get the term
@@ -993,6 +862,50 @@ namespace GSoft.Dynamite.Search
             var searchOwner = new SearchObjectOwner(level, contextWeb);
 
             return queryRuleManager.GetQueryRules(new SearchObjectFilter(searchOwner));
+        }
+
+        /// <summary>
+        /// Ensure a search result source
+        /// </summary>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">The result source name</param>
+        /// <param name="level">The search object level.</param>
+        /// <param name="searchProvider">The search provider for the result source.</param>
+        /// <param name="contextWeb">The SPWeb to retrieve the search context.</param>
+        /// <param name="query">The search query in KQL format.</param>
+        /// <param name="properties">Query properties.</param>
+        /// <param name="overwrite">if set to <c>true</c> [overwrite].</param>
+        /// <param name="isDefaultResultSourceForOwner">Whether this result source will be flagged as the default for the current search owner</param>
+        /// <returns>
+        /// The result source.
+        /// </returns>
+        private static Source InnerEnsureResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, string searchProvider, SPWeb contextWeb, string query, QueryTransformProperties properties, bool overwrite, bool isDefaultResultSourceForOwner)
+        {
+            var federationManager = new FederationManager(ssa);
+            var searchOwner = new SearchObjectOwner(level, contextWeb);
+
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+
+            if (resultSource != null && overwrite)
+            {
+                federationManager.RemoveSource(resultSource);
+            }
+
+            if (resultSource == null || overwrite)
+            {
+                resultSource = federationManager.CreateSource(searchOwner);
+                resultSource.Name = resultSourceName;
+                resultSource.ProviderId = federationManager.ListProviders()[searchProvider].Id;
+                resultSource.CreateQueryTransform(properties, query);
+                resultSource.Commit();
+
+                if (isDefaultResultSourceForOwner)
+                {
+                    federationManager.UpdateDefaultSource(resultSource.Id, searchOwner);
+                }
+            }
+
+            return resultSource;
         }
     }
 }
