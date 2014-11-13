@@ -99,7 +99,7 @@ namespace GSoft.Dynamite.Pages
             }
 
             // Publish
-            PageHelper.EnsurePageCheckInAndPublish(publishingPage);
+            PageHelper.EnsurePageCheckInAndPublish(page, publishingPage);
             
             return publishingPage;
         }
@@ -159,7 +159,7 @@ namespace GSoft.Dynamite.Pages
             }
         }
 
-        private static void EnsurePageCheckInAndPublish(PublishingPage page)
+        private static void EnsurePageCheckInAndPublish(PageInfo pageinfo, PublishingPage page)
         {
             string comment = "Dynamite Ensure Creation";
 
@@ -169,18 +169,30 @@ namespace GSoft.Dynamite.Pages
                 page.CheckIn(comment);
             }
 
-            if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Draft)
+            // Are we publishing this page or not ?
+            if (pageinfo.IsPublished)
             {
-                // Create a major version (just like "submit for approval")
-                page.ListItem.File.Publish(comment);
+                if (page.ListItem.ParentList.EnableModeration)
+                {
+                    if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Draft)
+                    {
+                        // Create a major version (just like "submit for approval")
+                        page.ListItem.File.Publish(comment);
 
-                // Status should now be Pending. Approve to make the major version visible to the public.
-                page.ListItem.File.Approve(comment);
-            }
-            else if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Pending)
-            {
-                // Technically, major version already exists, we just need to approve in order for the major version to be published
-                page.ListItem.File.Approve(comment);
+                        // Status should now be Pending. Approve to make the major version visible to the public.
+                        page.ListItem.File.Approve(comment);
+                    }
+                    else if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Pending)
+                    {
+                        // Technically, major version already exists, we just need to approve in order for the major version to be published
+                        page.ListItem.File.Approve(comment);
+                    }
+                }
+                else if (page.ListItem.File.MinorVersion != 0)
+                {
+                    // Create a major version, No approval required for this case
+                    page.ListItem.File.Publish(comment);
+                }
             }
         }
     }
