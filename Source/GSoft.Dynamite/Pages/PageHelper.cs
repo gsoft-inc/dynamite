@@ -169,18 +169,27 @@ namespace GSoft.Dynamite.Pages
                 page.CheckIn(comment);
             }
 
-            if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Draft)
+            // If moderation is enabled in the pages library
+            if (page.ListItem.ModerationInformation != null)
+            {
+                if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Draft)
+                {
+                    // Create a major version (just like "submit for approval")
+                    page.ListItem.File.Publish(comment);
+
+                    // Status should now be Pending. Approve to make the major version visible to the public.
+                    page.ListItem.File.Approve(comment);
+                }
+                else if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Pending)
+                {
+                    // Technically, major version already exists, we just need to approve in order for the major version to be published
+                    page.ListItem.File.Approve(comment);
+                }
+            }
+            else
             {
                 // Create a major version (just like "submit for approval")
                 page.ListItem.File.Publish(comment);
-
-                // Status should now be Pending. Approve to make the major version visible to the public.
-                page.ListItem.File.Approve(comment);
-            }
-            else if (page.ListItem.ModerationInformation.Status == SPModerationStatusType.Pending)
-            {
-                // Technically, major version already exists, we just need to approve in order for the major version to be published
-                page.ListItem.File.Approve(comment);
             }
         }
     }
