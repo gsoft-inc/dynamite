@@ -28,11 +28,14 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
         /// <param name="contentTypeId">The content type id.</param>
-        /// <param name="contentTypeName">Name of the content type.</param>
-        /// <returns><c>True</c> if it was added, else <c>False</c>.</returns>
+        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found and applied.</param>
+        /// <param name="resourceFileName">Name of the resource file where the name resource key is located. Default string empty will check all default resource file names.</param>
+        /// <returns>
+        ///   The content type that was created.
+        /// </returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName);
+        SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName = "");
 
         /// <summary>The ensure content type.</summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
