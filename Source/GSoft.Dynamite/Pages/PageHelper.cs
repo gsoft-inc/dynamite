@@ -190,7 +190,7 @@ namespace GSoft.Dynamite.Pages
                 }
                 else if (page.ListItem.File.MinorVersion != 0)
                 {
-                    // Create a major version, No approval required for this case
+                    // Create a major version, No approval required for this case.
                     page.ListItem.File.Publish(comment);
                 }
             }
