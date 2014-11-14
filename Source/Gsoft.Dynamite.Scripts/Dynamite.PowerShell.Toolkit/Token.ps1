@@ -157,6 +157,7 @@ function script:Execute-TokenFile {
 }
 
 # Prepare package for use
+# Do Not Use!
 function Initialize-DSPTokens {
 	Param (   
         [Parameter(Mandatory=$false)]
@@ -181,6 +182,8 @@ function Initialize-DSPTokens {
 		[switch]$Demo
 	)
     
+	Write-Host -BackgroundColor Red "Initialize-DSPTokens: This cmdlet should NOT BE USED. May delete your files with no prior warning, is hardcoded for Cross site publishing, undocumented, misleading and should not exist in Dynamite."
+
     $SourceFilter = "GSoft.Dynamite.CrossSitePublishingCMS*"
     if($Release -eq $false)
     {
