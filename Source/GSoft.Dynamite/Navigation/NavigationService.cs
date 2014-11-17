@@ -75,7 +75,7 @@ namespace GSoft.Dynamite.Navigation
                     using (new SPMonitoredScope("GetNavigationNodeItems"))
                     {
                         // Get navigation items from search
-                        items = this.GetNavigationNodeItems(properties).ToArray();
+                        items = this.GetNavigationNodeItems(properties, properties.CatalogItemId, null).ToArray();
 
                         // If the cache contains corrupted data,
                         // clear it and fetch the data again
@@ -123,7 +123,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="properties">The Managed Properties</param>
         /// <param name="navigationTerms">The navigation terms.</param>
         /// <returns>A navigation node tree.</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms)
+        private IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms)
         {
             return this.GetNavigationNodeTerms(web, properties, navigationTerms, int.MaxValue);
         }
@@ -133,7 +133,7 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="properties">The Managed Properties</param>
         /// <returns>Navigation node</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
+        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
             return this.GetNavigationNodeItems(properties, null, null);
         }
@@ -145,7 +145,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string term)
+        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string term)
         {
             // Use 'all menu items' result source for search query
             var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
@@ -223,7 +223,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationTerms">The navigation terms</param>
         /// <param name="maxLevel">the max level</param>
         /// <returns>The node terms</returns>
-        public IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms, int maxLevel)
+        private IEnumerable<NavigationNode> GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable<NavigationTerm> navigationTerms, int maxLevel)
         {
             // Navigation terms needs to be editable to get the taxonomy term
             var session = new TaxonomySession(web.Site);
@@ -260,7 +260,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationTerms">Navigation terms</param>
         /// <param name="navigationItems">Navigation Items</param>
         /// <returns>Navigation nodes</returns>
-        public IEnumerable<NavigationNode> MapNavigationNodeTree(IEnumerable<NavigationNode> navigationTerms, IEnumerable<NavigationNode> navigationItems)
+        private IEnumerable<NavigationNode> MapNavigationNodeTree(IEnumerable<NavigationNode> navigationTerms, IEnumerable<NavigationNode> navigationItems)
         {
             // Initialize current navigation term, current navigation branch terms, navigation items and navigation terms
             var currentTerm = TaxonomyNavigationContext.Current.NavigationTerm;
