@@ -211,7 +211,7 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-1.10.2.min.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-noconflict.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery.html5-placeholder-shim.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.0.0.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.2.0.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\moment-with-langs.min.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.7.0.min.js" />
   </ItemGroup>

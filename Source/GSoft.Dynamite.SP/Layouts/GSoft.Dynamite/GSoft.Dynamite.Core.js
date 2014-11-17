@@ -25,22 +25,16 @@ moment.lang('fr', {
 
 moment.lang('en', {
     longDateFormat: {
-        // Use the Microsoft official fr-CA regional setting date format, for consistency between presentation and SharePoint backend format
+        // Use the Microsoft official en-US regional setting date format, for consistency between presentation and SharePoint backend format
         L: "DD/MM/YYYY"
     }
 });
-
 
 // GSoft namespace root
 window.GSoft = window.GSoft || {};
 
 // GSoft.Dynamite namespace root
 window.GSoft.Dynamite = window.GSoft.Dynamite || {};
-
-
-// GSoft.Dynamite Client namespace root
-window.GSoft.Dynamite = window.GSoft.Dynamite || {};
-
 
 // ====================
 // Core module
@@ -55,24 +49,26 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 // ====================
 // Resources module
 // ====================
-(function(Res, $, undefined) {
+(function(Resource, $, undefined) {
     // SharePoint resource files can be fetched through the OOTB ScriptResource.ashx HttpHandler.
-    // However, all resource files that get loaded tend to hog the Res namespace exclusivaly,
+    // However, all resource files that get loaded tend to hog the Resource namespace exclusivaly,
     // leading to problems when you wanna have multiple resources files loaded on the same page.
     //
     // The solution is that, before applying any KO bindings in your page, call this ensure method
     // which will sequentially load all the pre-req resourfiles (or at least confirm than they were 
     // already loaded) then execture your binding-applying snippet of code.
     //
-    // For example, IntactNet.Res.ensureResThenExecute(["IFC.IntactNet", "IFC.IntactNet.News"], function () { // apply some bindings here });
-    Res.ensureResThenExecute = function(prerequisiteResourceFiles, funcToExecute) {
-        innerEnsureResThenExecute(prerequisiteResourceFiles, prerequisiteResourceFiles, funcToExecute);
+    // For example, GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite", "GSoft.Dynamite.News"], function () { // apply some bindings here });
+    Resource.ensureResourceThenExecute = function (prerequisiteResourceFiles, functionToExecute) {
+        innerensureResourceThenExecute(prerequisiteResourceFiles, prerequisiteResourceFiles, functionToExecute);
     };
 
-    function innerEnsureResThenExecute(allPrerequisiteResourceFiles, restOfPrerequisiteResourceFiles, funcToExecute) {
-        if (!$.isArray(allPrerequisiteResourceFiles) || allPrerequisiteResourceFiles.length == 0
-            || !$.isArray(restOfPrerequisiteResourceFiles) || restOfPrerequisiteResourceFiles.length == 0) {
-            throw new Exception("Only call ensureResThenExecute with a non-empty array. E.g. ['IFC.IntactNet', 'IFC.IntactNet.News']");
+    function innerensureResourceThenExecute(allPrerequisiteResourceFiles, restOfPrerequisiteResourceFiles, functionToExecute) {
+        if (!$.isArray(allPrerequisiteResourceFiles) ||
+            allPrerequisiteResourceFiles.length == 0 ||
+            !$.isArray(restOfPrerequisiteResourceFiles) ||
+            restOfPrerequisiteResourceFiles.length == 0) {
+            throw new Exception("Only call ensureResourceThenExecute with a non-empty array. E.g. ['GSoft.Dynamite', 'GSoft.Dynamite.News']");
         }
 
         if (restOfPrerequisiteResourceFiles.length > 0) {
@@ -80,70 +76,72 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             var first = restOfPrerequisiteResourceFiles[0];
             var tail = _.tail(restOfPrerequisiteResourceFiles);
 
-            if (!Res[first]) {
+            if (!Resource[first]) {
                 // this file in particular was never fetched yet, wait for it
-                Res[first] = "fetching"; // flag this as "currently fetching" so that we don't attempt to fetch it multiple times (and wait for it to 
+                Resource[first] = "fetching"; // flag this as "currently fetching" so that we don't attempt to fetch it multiple times (and wait for it to 
 
                 $.getScript(formatScriptResxLink(first))
                     .done(function() {
                         // when we load the SharePoint Resx script from its dedicated handler,
-                        // it automatically assigns itself to the window.Res global object,
+                        // it automatically assigns itself to the window.Resource global object,
                         // wiping out any previously assigned value (which is why we're maintaining
-                        // references to those other resource data in our own Res object).
-                        Res[first] = window.Res;
+                        // references to those other resource data in our own Resource object).
+                        Resource[first] = window.Res;
                     })
                     .fail(function() { console.log("Failed to load resource file for module: " + first); });
             }
 
             if (tail.length > 0) {
-                innerEnsureResThenExecute(allPrerequisiteResourceFiles, tail, funcToExecute);
+                innerensureResourceThenExecute(allPrerequisiteResourceFiles, tail, functionToExecute);
             } else {
-                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute);
+                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
             }
         }
     }
 
-    function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute) {
+    function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute) {
             setTimeout(function() {
                 var allLoaded = _.all(allPrerequisiteResourceFiles, function(prereqFileKey) {
-                    return Res[prereqFileKey] && Res[prereqFileKey] != "fetching";
+                    return Resource[prereqFileKey] && Resource[prereqFileKey] != "fetching";
                 });
 
                 if (allLoaded) {
                     // We're ready, all resource file AJAX calls have come back
-                    funcToExecute();
+                    functionToExecute();
                 } else {
                     // still waiting for some resource file to load, try again a bit later
-                    waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute);
+                    waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
                 }
             }, 100);
         }
 
     function formatScriptResxLink(resourceFileName) {
-        return GSoft.Dynamite.Utils.CurrentWebUrl + "/_layouts/scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
+        return GSoft.Dynamite.Utilities.CurrentWebUrl + GSoft.Dynamite.Utilities.LayoutFolder() + "scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
     }
 
     function currentCulture() {
         if (_spPageContextInfo.currentLanguage == 1033) {
             return "en-US";
-        } else {
+        } else if (_spPageContextInfo.currentLanguage == 1036) {
             return "fr-FR";
+        } else {
+            return "en-US";
         }
     }
 
-    return Res;
-} (GSoft.Dynamite.Res = GSoft.Dynamite.Res || {}, jq110));
+    return Resource;
+}(GSoft.Dynamite.Resource = GSoft.Dynamite.Resource || {}, jq110));
 
 // ====================
 // File loader module
 // ====================
-(function (fileLoader, $, undefined) {
+(function (FileLoader, $, undefined) {
 
     // GET files and return deferred object when done.
     // See http://api.jquery.com/category/deferred-object/ for more information on deferred objects in jQuery.
     // Usage example: 
     // GSoft.Dynamite.FileLoader.load("/_layouts/folder/file1.html", "/_layouts/folder/file2.html").done(function(files) { /*Use files here*/});,
-    fileLoader.load = function () {
+    FileLoader.load = function () {
 
         // Build promises and resolve them when GET operation is done
         var promises = [];
@@ -245,17 +243,38 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 }(GSoft.Dynamite.MetadataPanel = GSoft.Dynamite.MetadataPanel || {}, jq110));
 
 // ====================
-// Utils module
+// Utilities module
 // ====================
-(function(Utils, $, undefined) {
-    Utils.CurrentWebUrl = null;
-    Utils.ParentFolderUrl = "#";
+(function(Utilities, $, undefined) {
+    Utilities.CurrentWebUrl = null;
+    Utilities.ParentFolderUrl = "#";
 
-    Utils.initialize = function(params) {
+    Utilities.initialize = function(params) {
 
     };
 
-    Utils.shortenAndEllipsis = function(text, size) {
+    Utilities.ExtractTaxonomyInfo = function (taxonomyValue) {
+        if (taxonomyValue) {
+            var regex = /L0\|#0([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})\|([\d \w \s áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ']*);/i;
+            var match = taxonomyValue.match(regex);
+            return {
+                id: match[1],
+                label: match[2]
+            };
+        }
+
+        return { id: undefined, label: undefined };
+    };
+
+    Utilities.LayoutFolder = function () {
+        if (_spPageContextInfo.webUIVersion === 15) {
+            return "/_layouts/15/";
+        }
+
+        return "/_layouts/";
+    }
+
+    Utilities.shortenAndEllipsis = function(text, size) {
         if (text != null && text.length > size) {
             text = text.substring(0, size);
 
@@ -266,34 +285,36 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return text;
     };
 
-    Utils.QueryObject = function() {
-        var result = {}, queryString = location.search.slice(1),
-            re = /([^&=]+)=([^&]*)/g, m;
+    Utilities.QueryObject = function() {
+        var result = {},
+            queryString = location.search.slice(1),
+            regex = /([^&=]+)=([^&]*)/g,
+            match;
 
-        while (m = re.exec(queryString)) {
-            result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        while (match = regex.exec(queryString)) {
+            result[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
         }
 
         return result;
     };
 
-    Utils.initializeParentFolderLink = function() {
-        if (Utils.ParentFolderUrl.length > 1) {
+    Utilities.initializeParentFolderLink = function() {
+        if (Utilities.ParentFolderUrl.length > 1) {
             ExecuteOrDelayUntilScriptLoaded(addLinkToSiteActions, "sp.js");
         }
     };
 
     function addLinkToSiteActions() {
-        GSoft.Dynamite.Res.ensureResThenExecute(["GSoft.Dynamite"], function() {
+        GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function() {
             var newLink = $('<div class="parent-folder-link"><a title="'
-                + GSoft.Dynamite.Res["GSoft.Dynamite"].siteAction_OpenParentFolder
-                + '" href="' + Utils.ParentFolderUrl
+                + GSoft.Dynamite.Resource["GSoft.Dynamite"].siteAction_OpenParentFolder
+                + '" href="' + Utilities.ParentFolderUrl
                 + '"><img /></a></div>');
             var img = newLink.find("img");
-            img.attr("src", "/_layouts/GSoft.Dynamite/Img/icon_open_parent.png");
+            img.attr("src", Utilities.LayoutFolder() + "GSoft.Dynamite/Img/icon_open_parent.png");
             $(".ms-siteactionscontainer .s4-breadcrumb-anchor").after(newLink);
         });
     };
-}(GSoft.Dynamite.Utils = GSoft.Dynamite.Utils || {}, jq110));
+}(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq110));
 
 

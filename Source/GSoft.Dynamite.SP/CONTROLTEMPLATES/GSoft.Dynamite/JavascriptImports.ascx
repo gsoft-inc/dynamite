@@ -12,7 +12,7 @@
 <SharePoint:ScriptLink ID="JqueryPlaceholderShim" Language="javascript" Name="GSoft.Dynamite/Lib/jquery.html5-placeholder-shim.js" Localizable="false" OnDemand="false" runat="server" />
 <SharePoint:ScriptLink ID="JqueryNoConflictScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-noconflict.js" Localizable="false" OnDemand="false" runat="server" />
 
-<SharePoint:ScriptLink ID="KnockoutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.0.0.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="KnockoutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.2.0.js" Localizable="false" OnDemand="false" runat="server"/>
 <SharePoint:ScriptLink ID="MomentScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/moment-with-langs.min.js" Localizable="false" OnDemand="false" runat="server"/>
 <SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-1.7.0.min.js" Localizable="false" OnDemand="false" runat="server"/>
 
@@ -40,7 +40,7 @@
 <%-- Global JS initialization --%>
 
 <script type="text/javascript">
-    GSoft.Dynamite.Utils.CurrentWebUrl = "<asp:Literal ID="CurrentWebUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utils.ParentFolderUrl = "<asp:Literal ID="ParentFolderUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utils.initializeParentFolderLink();
+    GSoft.Dynamite.Utilities.CurrentWebUrl = "<asp:Literal ID="CurrentWebUrlLiteral" runat="server" />";
+    GSoft.Dynamite.Utilities.ParentFolderUrl = "<asp:Literal ID="ParentFolderUrlLiteral" runat="server" />";
+    GSoft.Dynamite.Utilities.initializeParentFolderLink();
 </script>
