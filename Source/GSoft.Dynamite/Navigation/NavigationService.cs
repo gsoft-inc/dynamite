@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.Navigation
         private readonly ILogger logger;
         private readonly INavigationHelper navigationHelper;
         private readonly ISearchHelper searchHelper;
-        private readonly ICatalogNavigation catalogNavigation;
+        private readonly IVariationNavigationHelper catalogNavigation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationService" /> class.
@@ -34,7 +34,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationHelper">The navigation helper.</param>
         /// <param name="searchHelper">The search helper.</param>
         /// <param name="catalogNavigation">The catalog navigation.</param>
-        public NavigationService(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper, ICatalogNavigation catalogNavigation)
+        public NavigationService(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper, IVariationNavigationHelper catalogNavigation)
         {
             this.logger = logger;
             this.navigationHelper = navigationHelper;

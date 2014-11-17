@@ -22,7 +22,7 @@ namespace GSoft.Dynamite.Navigation
     /// <summary>
     /// Catalog navigation context utility. Depends on HttpContext.
     /// </summary>
-    public class CatalogNavigation : ICatalogNavigation
+    public class VariationNavigationHelper : IVariationNavigationHelper
     {
         private const string LocalSharePointResultsSourceName = "Local SharePoint Results";
         private readonly ILogger logger;
@@ -30,43 +30,16 @@ namespace GSoft.Dynamite.Navigation
         private readonly ISearchHelper searchHelper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CatalogNavigation" /> class.
+        /// Initializes a new instance of the <see cref="VariationNavigationHelper" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="navigationHelper">The navigation helper.</param>
         /// <param name="searchHelper">The search helper.</param>
-        public CatalogNavigation(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper)
+        public VariationNavigationHelper(ILogger logger, INavigationHelper navigationHelper, ISearchHelper searchHelper)
         {
             this.logger = logger;
             this.navigationHelper = navigationHelper;
             this.searchHelper = searchHelper;
-        }
-
-        /// <summary>
-        /// Gets or sets the type.
-        /// </summary>
-        /// <value>
-        /// The type.
-        /// </value>
-        public CatalogNavigationType Type
-        {
-            get
-            {
-                if (TaxonomyNavigationContext.Current != null)
-                {
-                    if (TaxonomyNavigationContext.Current.HasCatalogUrl)
-                    {
-                        return CatalogNavigationType.ItemPage;
-                    }
-
-                    if (TaxonomyNavigationContext.Current.NavigationTerm != null)
-                    {
-                        return CatalogNavigationType.CategoryPage;
-                    }
-                }
-
-                return CatalogNavigationType.None;
-            }
         }
 
         /// <summary>
@@ -83,72 +56,12 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
-        /// Gets the variation peer URL.
+        /// Get the peer url for a SharePoint page
         /// </summary>
-        /// <param name="label">The variation label.</param>
-        /// <returns>
-        /// The peer URL.
-        /// </returns>
-        public Uri GetVariationPeerUrl(VariationLabel label)
-        {
-            var cacheVariationLabel = new VariationLabelInfo(label);
-            return this.GetVariationPeerUrl(cacheVariationLabel);
-        }
-
-        /// <summary>
-        /// Gets the variation peer URL (for CategoryPage or undefined context).
-        /// </summary>
-        /// <param name="label">The variation label.</param>
-        /// <returns>
-        /// The peer URL.
-        /// </returns>
-        public Uri GetVariationPeerUrl(VariationLabelInfo label)
-        {
-            var currentUrl = HttpContext.Current.Request.Url;
-            switch (this.Type)
-            {
-                case CatalogNavigationType.CategoryPage:
-                    return this.GetPeerCatalogCategoryUrl(currentUrl, label);
-                case CatalogNavigationType.ItemPage:
-                    throw new InvalidOperationException("Missing information for a Catalog ItemPage context. Use GetVariationPeerUrlForCatalogItem instead.");
-                default:
-                    return this.GetPeerUrl(label, currentUrl);
-            }
-        }
-
-        /// <summary>
-        /// Gets the variation peer URL.
-        /// </summary>
-        /// <param name="label">The variation label.</param>
-        /// <param name="associationKeyManagedPropertyName">Managed property name for association key between variation peer items</param>
-        /// <param name="associationKeyValue">Value of the association key for the current item under variation</param>
-        /// <param name="languageManagedPropertyName">Managed property name for the language discriminator column</param>
-        /// <param name="catalogNavigationTermManagedPropertyName">Managed property name for the catalog navigation taxonomy column</param>
-        /// <returns>
-        /// The peer URL.
-        /// </returns>
-        public Uri GetVariationPeerUrlForCatalogItem(
-            VariationLabelInfo label, 
-            string associationKeyManagedPropertyName, 
-            string associationKeyValue, 
-            string languageManagedPropertyName, 
-            string catalogNavigationTermManagedPropertyName)
-        {
-            var currentUrl = HttpContext.Current.Request.Url;
-            switch (this.Type)
-            {
-                case CatalogNavigationType.CategoryPage:
-                    // Ignore the extra ItemPage parameters (because we aren't in ItemPage context, after all)
-                    return this.GetPeerCatalogCategoryUrl(currentUrl, label);
-                case CatalogNavigationType.ItemPage:
-                    return this.GetPeerCatalogItemUrl(currentUrl, label, associationKeyManagedPropertyName, associationKeyValue, languageManagedPropertyName, catalogNavigationTermManagedPropertyName);
-                default:
-                    // Ignore the extra ItemPage parameters (because we aren't in ItemPage context, after all)
-                    return this.GetPeerUrl(label, currentUrl);
-            }
-        }
-
-        private Uri GetPeerUrl(VariationLabelInfo label, Uri currentUrl)
+        /// <param name="currentUrl">The current page url</param>
+        /// <param name="label">The target label to resolve</param>
+        /// <returns>The url of the peer page</returns>
+        public Uri GetPeerPageUrl(Uri currentUrl, VariationLabelInfo label)
         {
             if (currentUrl.LocalPath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
@@ -186,7 +99,13 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogCategoryUrl(Uri currentUrl, VariationLabelInfo label)
+        /// <summary>
+        /// Get the peer url for a taxonomy navigation page (generated by a term set)
+        /// </summary>
+        /// <param name="currentUrl">The current page url</param>
+        /// <param name="label">The target label to resolve</param>
+        /// <returns>The url of the peer page</returns>
+        public Uri GetPeerCatalogCategoryUrl(Uri currentUrl, VariationLabelInfo label)
         {
             // Get current navigation term ID
             var termId = TaxonomyNavigationContext.Current.NavigationTerm.Id;
@@ -235,7 +154,17 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private Uri GetPeerCatalogItemUrl(
+        /// <summary>
+        /// Get the peer url for a page represents a cross site publishing catalog item 
+        /// </summary>
+        /// <param name="currentUrl">The current page url</param>
+        /// <param name="label">The target label to resolve</param>
+        /// <param name="associationKeyManagedPropertyName">The content association key search managed property name</param>
+        /// <param name="associationKeyValue">The value of the content association key for the current item</param>
+        /// <param name="languageManagedPropertyName">The language search managed property name</param>
+        /// <param name="catalogNavigationTermManagedPropertyName">The navigation search managed property name used for the friendly url generation</param>
+        /// <returns>The url of the peer page</returns>
+        public Uri GetPeerCatalogItemUrl(
             Uri currentUrl, 
             VariationLabelInfo label, 
             string associationKeyManagedPropertyName, 
@@ -277,6 +206,32 @@ namespace GSoft.Dynamite.Navigation
             }
 
             return url;
+        }
+
+        /// <summary>
+        /// Determine the current navigation context type
+        /// </summary>
+        /// <returns>The current variation navigation context</returns>
+        public VariationNavigationType GetCurrentNavigationContextType()
+        {
+            var navigationType = VariationNavigationType.None;
+
+            if (TaxonomyNavigationContext.Current != null)
+            {
+                if (TaxonomyNavigationContext.Current.HasCatalogUrl)
+                {
+                    navigationType = VariationNavigationType.ItemPage;
+                }
+                else
+                {
+                    if (TaxonomyNavigationContext.Current.NavigationTerm != null)
+                    {
+                        navigationType = VariationNavigationType.CategoryPage;
+                    } 
+                }
+            }
+
+            return navigationType;
         }
 
         private static void ValidateProperties(

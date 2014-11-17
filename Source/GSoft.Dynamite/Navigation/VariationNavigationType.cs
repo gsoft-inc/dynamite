@@ -3,7 +3,7 @@
     /// <summary>
     /// Catalog navigation type
     /// </summary>
-    public enum CatalogNavigationType
+    public enum VariationNavigationType
     {
         /// <summary>
         /// Type not determined

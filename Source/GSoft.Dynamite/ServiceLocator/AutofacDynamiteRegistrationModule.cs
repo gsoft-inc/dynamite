@@ -145,7 +145,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Navigation 
             builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
-            builder.RegisterType<CatalogNavigation>().As<ICatalogNavigation>();
+            builder.RegisterType<VariationNavigationHelper>().As<IVariationNavigationHelper>();
 
             // Pages
             builder.RegisterType<PageHelper>().As<IPageHelper>();
