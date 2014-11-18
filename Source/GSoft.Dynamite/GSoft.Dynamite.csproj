@@ -98,6 +98,9 @@
     <Compile Include="Fields\IFieldLocator.cs" />
     <Compile Include="Fields\IFieldLookupHelper.cs" />
     <Compile Include="Fields\IFieldSchemaHelper.cs" />
+    <Compile Include="Files\FileHelper.cs" />
+    <Compile Include="Files\FileInfo.cs" />
+    <Compile Include="Files\IFileHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
     <Compile Include="Navigation\NavigationLocation.cs" />
