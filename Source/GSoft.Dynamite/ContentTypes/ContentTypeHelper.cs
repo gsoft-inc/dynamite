@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.ContentTypes
 
             var pubWeb = PublishingWeb.GetPublishingWeb(web);
 
-            if (pubWeb != null)
+            if (pubWeb != null && this.variationHelper.IsVariationsEnabled(pubWeb.Web.Site))
             {
                 var labels = this.variationHelper.GetVariationLabels(pubWeb.Web.Site);
                 availableLanguages.AddRange(labels.Select(label => new CultureInfo(label.Language)));
