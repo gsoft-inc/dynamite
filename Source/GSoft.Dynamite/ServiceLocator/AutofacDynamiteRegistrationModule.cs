@@ -10,6 +10,7 @@ using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Documents;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Files;
 using GSoft.Dynamite.Folders;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
@@ -119,6 +120,9 @@ namespace GSoft.Dynamite.ServiceLocator
             // Folders
             builder.RegisterType<FolderHelper>().As<IFolderHelper>();
             builder.RegisterType<FolderRepository>().As<IFolderRepository>();
+            
+            // Files
+            builder.RegisterType<FileHelper>().As<IFileHelper>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
             builder.RegisterType<ResourceLocator>().As<IResourceLocator>(); 
