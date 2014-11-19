@@ -57,7 +57,13 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>A boolean value which indicates if the current site has variations enabled.</returns>
         public bool IsVariationsEnabled(SPSite site)
         {
-            bool isEnabled = Microsoft.SharePoint.Publishing.Variations.GetLabels(site).Count > 0;
+            var isEnabled = false;
+            var labels = Microsoft.SharePoint.Publishing.Variations.GetLabels(site);
+
+            if (labels != null)
+            {
+                isEnabled = labels.Count > 0;
+            }
 
             return isEnabled;
         }
