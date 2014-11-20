@@ -44,12 +44,12 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     Core.initialize = function (params) {
 
     };
-} (GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
+}(GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
 
 // ====================
 // Resources module
 // ====================
-(function(Resource, $, undefined) {
+(function (Resource, $, undefined) {
     // SharePoint resource files can be fetched through the OOTB ScriptResource.ashx HttpHandler.
     // However, all resource files that get loaded tend to hog the Resource namespace exclusivaly,
     // leading to problems when you wanna have multiple resources files loaded on the same page.
@@ -81,14 +81,14 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 Resource[first] = "fetching"; // flag this as "currently fetching" so that we don't attempt to fetch it multiple times (and wait for it to 
 
                 $.getScript(formatScriptResxLink(first))
-                    .done(function() {
+                    .done(function () {
                         // when we load the SharePoint Resx script from its dedicated handler,
                         // it automatically assigns itself to the window.Resource global object,
                         // wiping out any previously assigned value (which is why we're maintaining
                         // references to those other resource data in our own Resource object).
                         Resource[first] = window.Res;
                     })
-                    .fail(function() { console.log("Failed to load resource file for module: " + first); });
+                    .fail(function () { console.log("Failed to load resource file for module: " + first); });
             }
 
             if (tail.length > 0) {
@@ -100,20 +100,20 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     }
 
     function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute) {
-            setTimeout(function() {
-                var allLoaded = _.all(allPrerequisiteResourceFiles, function(prereqFileKey) {
-                    return Resource[prereqFileKey] && Resource[prereqFileKey] != "fetching";
-                });
+        setTimeout(function () {
+            var allLoaded = _.all(allPrerequisiteResourceFiles, function (prereqFileKey) {
+                return Resource[prereqFileKey] && Resource[prereqFileKey] != "fetching";
+            });
 
-                if (allLoaded) {
-                    // We're ready, all resource file AJAX calls have come back
-                    functionToExecute();
-                } else {
-                    // still waiting for some resource file to load, try again a bit later
-                    waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
-                }
-            }, 100);
-        }
+            if (allLoaded) {
+                // We're ready, all resource file AJAX calls have come back
+                functionToExecute();
+            } else {
+                // still waiting for some resource file to load, try again a bit later
+                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
+            }
+        }, 100);
+    }
 
     function formatScriptResxLink(resourceFileName) {
         return GSoft.Dynamite.Utilities.CurrentWebUrl + GSoft.Dynamite.Utilities.LayoutFolder() + "scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
@@ -164,11 +164,11 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 // ====================
 // Edit-mode Metadata Panel module
 // ====================
-(function(MetadataPanel, $, undefined) {
+(function (MetadataPanel, $, undefined) {
     MetadataPanel.viewModelInstance = null;
 
-    MetadataPanel.initialize = function(tabs) {
-        $(document).ready(function() {
+    MetadataPanel.initialize = function (tabs) {
+        $(document).ready(function () {
             if (MetadataPanel.viewModelInstance == null) {
                 if ($("#metadata-panel").length == 1) {
                     MetadataPanel.viewModelInstance = new MetadataPanel.MetadataPanelViewModel(tabs);
@@ -180,21 +180,21 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         });
     };
 
-    MetadataPanel.MetadataPanelViewModel = function(tabs) {
+    MetadataPanel.MetadataPanelViewModel = function (tabs) {
         var self = this;
 
         self.tabs = ko.observableArray(tabs);
 
-        self.findTab = function(tabId) {
-            return _.find(self.tabs(), function(oneTab) {
+        self.findTab = function (tabId) {
+            return _.find(self.tabs(), function (oneTab) {
                 return oneTab.id() == tabId;
             });
         };
 
-        self.toggleTab = function(tab) {
+        self.toggleTab = function (tab) {
             if (!tab.isSelected()) {
                 // un-select all the other tabs then activate the newly selected one
-                _.each(self.tabs(), function(oneOfTheTabs) {
+                _.each(self.tabs(), function (oneOfTheTabs) {
                     oneOfTheTabs.isSelected(false);
                 });
 
@@ -207,8 +207,8 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
         self.lastSelectedTab = null;
 
-        self.toggleAllTabs = function() {
-            var alreadySelected = _.find(self.tabs(), function(oneTab) {
+        self.toggleAllTabs = function () {
+            var alreadySelected = _.find(self.tabs(), function (oneTab) {
                 return oneTab.isSelected();
             });
 
@@ -218,7 +218,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 alreadySelected.isSelected(false);
 
                 // deselect all
-                _.each(self.tabs(), function(oneOfTheTabs) {
+                _.each(self.tabs(), function (oneOfTheTabs) {
                     oneOfTheTabs.isSelected(false);
                 });
             } else if (self.lastSelectedTab) {
@@ -231,7 +231,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         };
     };
 
-    MetadataPanel.Tab = function(id, res, isSelected) {
+    MetadataPanel.Tab = function (id, res, isSelected) {
         var self = this;
 
         self.id = ko.observable(id);
@@ -245,22 +245,25 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 // ====================
 // Utilities module
 // ====================
-(function(Utilities, $, undefined) {
+(function (Utilities, $, undefined) {
     Utilities.CurrentWebUrl = null;
     Utilities.ParentFolderUrl = "#";
 
-    Utilities.initialize = function(params) {
+    Utilities.initialize = function (params) {
 
     };
 
     Utilities.ExtractTaxonomyInfo = function (taxonomyValue) {
         if (taxonomyValue) {
-            var regex = /L0\|#0([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})\|([\d \w \s áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ']*);/i;
-            var match = taxonomyValue.match(regex);
-            return {
-                id: match[1],
-                label: match[2]
-            };
+
+            var results = [];
+            var regex = /L0\|#0([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})\|([\d \w \s áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ']*);/gi;
+
+            while ((match = regex.exec(taxonomyValue)) !== null) {
+                results.push({ id: match[1], label: match[2] });
+            }
+
+            return results;
         }
 
         return { id: undefined, label: undefined };
@@ -274,7 +277,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return "/_layouts/";
     }
 
-    Utilities.shortenAndEllipsis = function(text, size) {
+    Utilities.shortenAndEllipsis = function (text, size) {
         if (text != null && text.length > size) {
             text = text.substring(0, size);
 
@@ -285,7 +288,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return text;
     };
 
-    Utilities.QueryObject = function() {
+    Utilities.QueryObject = function () {
         var result = {},
             queryString = location.search.slice(1),
             regex = /([^&=]+)=([^&]*)/g,
@@ -298,14 +301,14 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return result;
     };
 
-    Utilities.initializeParentFolderLink = function() {
+    Utilities.initializeParentFolderLink = function () {
         if (Utilities.ParentFolderUrl.length > 1) {
             ExecuteOrDelayUntilScriptLoaded(addLinkToSiteActions, "sp.js");
         }
     };
 
     function addLinkToSiteActions() {
-        GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function() {
+        GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
             var newLink = $('<div class="parent-folder-link"><a title="'
                 + GSoft.Dynamite.Resource["GSoft.Dynamite"].siteAction_OpenParentFolder
                 + '" href="' + Utilities.ParentFolderUrl
