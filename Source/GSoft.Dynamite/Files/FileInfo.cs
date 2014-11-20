@@ -15,12 +15,12 @@ namespace GSoft.Dynamite.Files
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="filename">The filename</param>
+        /// <param name="fileName">The filename</param>
         /// <param name="data">The data stream</param>
         /// <param name="overwrite">If we overwrite the file</param>
-        public FileInfo(string filename, Stream data, bool overwrite)
+        public FileInfo(string fileName, Stream data, bool overwrite)
         {
-            this.Filename = filename;
+            this.FileName = fileName;
             this.Data = data;
             this.Overwrite = overwrite;
         }
@@ -28,17 +28,17 @@ namespace GSoft.Dynamite.Files
         /// <summary>
         /// Constructor with overwrite at false
         /// </summary>
-        /// <param name="filename">The filename</param>
+        /// <param name="fileName">The filename</param>
         /// <param name="data">The file data</param>
-        public FileInfo(string filename, Stream data)
-            : this(filename, data, false)
+        public FileInfo(string fileName, Stream data)
+            : this(fileName, data, false)
         {
         }
 
         /// <summary>
         /// The filename of the file. usually contain the extension
         /// </summary>
-        public string Filename { get; set; }
+        public string FileName { get; set; }
 
         /// <summary>
         /// The data stream to write in the file
@@ -53,6 +53,6 @@ namespace GSoft.Dynamite.Files
         /// <summary>
         /// The Url of the file, to check if exist
         /// </summary>
-        public string Url { get; set; }
+        public Uri Url { get; set; }
     }
 }

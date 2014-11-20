@@ -419,11 +419,11 @@ namespace GSoft.Dynamite.Lists
 
             if (settings.AddFolderDefaultHierarchy)
             {
-                this.SetHideFoldersNode(mdnSettings, false);
+                SetHideFoldersNode(mdnSettings, false);
             }
             else
             {
-                this.SetHideFoldersNode(mdnSettings, true);
+                SetHideFoldersNode(mdnSettings, true);
             }
 
             if (settings.AddContentTypeDefaultHierarchy)
@@ -554,10 +554,10 @@ namespace GSoft.Dynamite.Lists
         }
         #endregion
 
-        private void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
+        private static void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
         {
             var t = settings.GetType();
-            t.InvokeMember("HideFoldersNode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance, null, settings, new object[] { value });
+            t.InvokeMember("HideFoldersNode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance, null, settings, new object[] { value }, CultureInfo.InvariantCulture);
         }
     }
 }

@@ -21,8 +21,8 @@ namespace GSoft.Dynamite.Lists
             bool addFolderDefaultHierarchy,
             bool addContentTypeDefaultHierarchy,
             bool addContentTypeDefaultKeyFilter,
-            List<string> hierachies, 
-            List<string> keyFilters)
+            IList<string> hierachies,
+            IList<string> keyFilters)
         {
             this.List = list;
 
@@ -64,12 +64,12 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// Fields internal names act as key filters
         /// </summary>
-        public IList<string> KeyFilters { get; set; }
+        public IList<string> KeyFilters { get; private set; }
 
         /// <summary>
         /// Treeview hierachies to add based on fields internal names
         /// </summary>
-        public IList<string> Hierarchies { get;  set; }
+        public IList<string> Hierarchies { get; private set; }
 
         /// <summary>
         /// True to view the folder hierachy in the treeview. False otherwise
