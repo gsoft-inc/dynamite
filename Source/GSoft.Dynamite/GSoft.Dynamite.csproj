@@ -102,6 +102,7 @@
     <Compile Include="Files\FileInfo.cs" />
     <Compile Include="Files\IFileHelper.cs" />
     <Compile Include="Folders\IFolderHelper.cs" />
+    <Compile Include="Lists\MetadataNavigationSettingsInfo.cs" />
     <Compile Include="Navigation\ManagedNavigationInfo.cs" />
     <Compile Include="Navigation\NavigationLocation.cs" />
     <Compile Include="Pages\IPageHelper.cs" />

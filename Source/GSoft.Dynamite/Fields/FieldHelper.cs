@@ -45,11 +45,15 @@ namespace GSoft.Dynamite.Fields
         {
             SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
 
-            UpdateFieldVisibility(field, fieldInfo, false);
+            // Set the field visibility
+            field = UpdateFieldVisibility(field, fieldInfo, false);
+
+            // Set miscellaneous proeprties
+            field = SetFieldMiscProperties(field, fieldInfo, false);
 
             // Set default value if any, ensure other FieldType-specific properties
             this.ApplyFieldTypeSpecificValues(fieldCollection, field, fieldInfo);
-
+            
             return field;
         }
 
@@ -179,6 +183,51 @@ namespace GSoft.Dynamite.Fields
                 {
                     field.Update(true);
                 }
+            }
+
+            return field;
+        }
+
+        private static SPField SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo, bool updateField)
+        {
+            // Set field properties
+            var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
+            var asTaxonomyMultiFieldInfo = fieldInfo as TaxonomyMultiFieldInfo;
+
+            if (fieldInfo is TextFieldInfo
+                || fieldInfo is NoteFieldInfo
+                || fieldInfo is HtmlFieldInfo)
+            {
+                field.EnforceUniqueValues = fieldInfo.EnforceUniqueValues;
+            }
+            else if (asTaxonomyFieldInfo != null)
+            {
+                var taxonomyField = field as TaxonomyField;
+                if (taxonomyField != null)
+                {
+                    taxonomyField.CreateValuesInEditForm = asTaxonomyFieldInfo.CreateValuesInEditForm;
+                    taxonomyField.Open = asTaxonomyFieldInfo.CreateValuesInEditForm;                 
+                    taxonomyField.IsPathRendered = asTaxonomyFieldInfo.IsPathRendered;
+
+                    field = taxonomyField;
+                }
+            }
+            else if (asTaxonomyMultiFieldInfo != null)
+            {
+                var taxonomyField = field as TaxonomyField;
+                if (taxonomyField != null)
+                {
+                    taxonomyField.CreateValuesInEditForm = asTaxonomyMultiFieldInfo.CreateValuesInEditForm;
+                    taxonomyField.Open = asTaxonomyMultiFieldInfo.CreateValuesInEditForm;
+                    taxonomyField.IsPathRendered = asTaxonomyMultiFieldInfo.IsPathRendered;
+
+                    field = taxonomyField;
+                }              
+            }
+
+            if (updateField)
+            {
+                field.Update();
             }
 
             return field;

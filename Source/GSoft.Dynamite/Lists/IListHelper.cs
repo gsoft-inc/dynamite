@@ -106,6 +106,13 @@
         void RemoveItemContentType(SPList list);
 
         /// <summary>
+        /// Set the metadata navigation settings for the current list
+        /// </summary>
+        /// <param name="web">The web that store the list</param>
+        /// <param name="settings">The metadata settings</param>
+        void SetMetadataNavigation(SPWeb web, MetadataNavigationSettingsInfo settings);
+
+        /// <summary>
         /// Add fields in the default view of the list
         /// </summary>
         /// <param name="list">the current list</param>
