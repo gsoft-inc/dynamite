@@ -9,6 +9,7 @@ using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
+using Microsoft.Office.DocumentManagement.MetadataNavigation;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
 using Microsoft.SharePoint.Taxonomy;
@@ -393,6 +394,94 @@ namespace GSoft.Dynamite.Lists
             }
         }
 
+        /// <summary>
+        /// Set the metadata navigation settings for the current list
+        /// </summary>
+        /// <param name="web">The web that store the list</param>
+        /// <param name="settings">The metadata settings</param>
+        public void SetMetadataNavigation(SPWeb web, MetadataNavigationSettingsInfo settings)
+        {
+            // Get the list 
+            var list = this.EnsureList(web, settings.List);
+
+            // Get the MDN settings object for the SPList that was passed in.
+            var mdnSettings = MetadataNavigationSettings.GetMetadataNavigationSettings(list);
+
+            // Clear the hierarchy configuration
+            mdnSettings.ClearConfiguredHierarchies();
+
+            // Add the default folder hierarchy to get it work. It is mandatory to display the tree view. You can hide hide later with SetHideFoldersNode
+            var folderHierarchyToAdd = MetadataNavigationHierarchy.CreateFolderHierarchy();
+            if (mdnSettings.FindConfiguredHierarchy(folderHierarchyToAdd.FieldId) == null)
+            {
+                mdnSettings.AddConfiguredHierarchy(folderHierarchyToAdd);
+            }
+
+            if (settings.AddFolderDefaultHierarchy)
+            {
+                SetHideFoldersNode(mdnSettings, false);
+            }
+            else
+            {
+                SetHideFoldersNode(mdnSettings, true);
+            }
+
+            if (settings.AddContentTypeDefaultHierarchy)
+            {
+                // Remove the default folder hierarchy
+                var contentTypeHierarchyToAdd = MetadataNavigationHierarchy.CreateContentTypeHierarchy();
+                if (mdnSettings.FindConfiguredHierarchy(contentTypeHierarchyToAdd.FieldId) == null)
+                {
+                    mdnSettings.AddConfiguredHierarchy(contentTypeHierarchyToAdd);
+                }
+            }
+
+            if (settings.Hierarchies != null)
+            {
+                // Add custom hierachies
+                foreach (var fieldName in settings.Hierarchies)
+                {
+                    var field = list.Fields.TryGetFieldByStaticName(fieldName);
+                    if (field != null)
+                    {
+                        var hierarchy = new MetadataNavigationHierarchy(field);
+                        mdnSettings.AddConfiguredHierarchy(hierarchy);
+                    }
+                }
+            }
+
+            // Clear the key filters configuration
+            mdnSettings.ClearConfiguredKeyFilters();
+
+            if (settings.AddContentTypeDefaultKeyFilter)
+            {
+                var contentTypeKeyFilter = MetadataNavigationKeyFilter.CreateContentTypeKeyFilter();
+                if (null == mdnSettings.FindConfiguredKeyFilter(contentTypeKeyFilter.FieldId))
+                {
+                    mdnSettings.AddConfiguredKeyFilter(contentTypeKeyFilter);
+                }
+            }
+
+            if (settings.KeyFilters != null)
+            {
+                // Add custom key filters
+                foreach (var fieldName in settings.KeyFilters)
+                {
+                    var field = list.Fields.TryGetFieldByStaticName(fieldName);
+                    if (field != null)
+                    {
+                        var keyFilter = new MetadataNavigationKeyFilter(field);
+                        mdnSettings.AddConfiguredKeyFilter(keyFilter);
+                    }
+                }  
+            }   
+
+            // Set the MDN settings back into the list and automatically adjust indexing.
+            MetadataNavigationSettings.SetMetadataNavigationSettings(list, mdnSettings, true);
+
+            list.RootFolder.Update();
+        }
+
         #region List View
 
         /// <summary>
@@ -464,5 +553,11 @@ namespace GSoft.Dynamite.Lists
             }
         }
         #endregion
+
+        private static void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
+        {
+            var t = settings.GetType();
+            t.InvokeMember("HideFoldersNode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance, null, settings, new object[] { value }, CultureInfo.InvariantCulture);
+        }
     }
 }

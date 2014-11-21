@@ -40,14 +40,29 @@ namespace GSoft.Dynamite.Helpers
         /// <returns>A boolean value which indicates if the current web is the source variation label.</returns>
         public bool IsCurrentWebSourceLabel(SPWeb web)
         {
-            var sourceLabel = Microsoft.SharePoint.Publishing.Variations.GetLabels(web.Site).FirstOrDefault(x => x.IsSource);
-            if (sourceLabel != null)
+            var isSourceLabel = true;
+
+            // If the site doesn't have variatiosn enabled, by default the web is the source label
+            if (Microsoft.SharePoint.Publishing.Variations.Current != null)
             {
-                // Compare absolute URL values
-                return web.Url.StartsWith(sourceLabel.TopWebUrl, StringComparison.OrdinalIgnoreCase);
+                var labels = Microsoft.SharePoint.Publishing.Variations.GetLabels(web.Site);
+
+                if (labels.Count > 0)
+                {
+                    var sourceLabel = labels.FirstOrDefault(x => x.IsSource);
+                    if (sourceLabel != null)
+                    {
+                        // Compare absolute URL values
+                        return web.Url.StartsWith(sourceLabel.TopWebUrl, StringComparison.OrdinalIgnoreCase);
+                    }
+                    else
+                    {
+                        isSourceLabel = false;
+                    }
+                }
             }
 
-            return false;
+            return isSourceLabel;
         }
 
         /// <summary>

@@ -44,15 +44,15 @@ namespace GSoft.Dynamite.Files
             var list = this.listLocator.TryGetList(web, listTitle);
 
             // Go get the file if its url is not null
-            if (!string.IsNullOrEmpty(file.Url))
+            if (!string.IsNullOrEmpty(file.Url.ToString()))
             {
-                sharePointFile = web.GetFile(file.Url);
+                sharePointFile = web.GetFile(file.Url.ToString());
             }
 
             // If the file is not found, create it.
             if (sharePointFile == null || file.Overwrite)
             {
-                sharePointFile = list.RootFolder.Files.Add(file.Filename, file.Data, file.Overwrite);
+                sharePointFile = list.RootFolder.Files.Add(file.FileName, file.Data, file.Overwrite);
             }
 
             return sharePointFile;
