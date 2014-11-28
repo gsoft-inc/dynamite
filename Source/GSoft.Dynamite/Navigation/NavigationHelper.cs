@@ -76,6 +76,11 @@ namespace GSoft.Dynamite.Navigation
                 var termStore = taxonomySession.DefaultSiteCollectionTermStore;
                 var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroup.Name);
                 var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSet.Label);
+
+                // Flag the term set as a navigation term set
+                termSet.SetCustomProperty("_Sys_Nav_IsNavigationTermSet", "True");
+                termSet.TermStore.CommitAll();
+
                 var navigationSettings = new WebNavigationSettings(web);
 
                 navigationSettings.GlobalNavigation.Source = StandardNavigationSource.TaxonomyProvider;
@@ -93,20 +98,37 @@ namespace GSoft.Dynamite.Navigation
                 if (settings.PreserveTaggingOnTermSet)
                 {
                     termSet.IsAvailableForTagging = true;
-                    termStore.CommitAll();
+                    termSet.TermStore.CommitAll();
                 }
             }
         }
 
         /// <summary>
-        /// Reset web navigation to its default configuration
+        /// Reset web navigation to its default configuration. Disabled the term set as mavigation term set.
         /// </summary>
         /// <param name="web">The web</param>
-        public void ResetWebNavigationToDefault(SPWeb web)
+        /// <param name="settings">The managed navigation settings. Set null if you want to keep the associated termset unchanged</param>
+        public void ResetWebNavigationToDefault(SPWeb web, ManagedNavigationInfo settings)
         {
             var taxonomySession = new TaxonomySession(web.Site);
             if (taxonomySession.TermStores.Count > 0)
             {
+                if (settings != null)
+                {
+                    // Disable the navigation flag on the the term set
+                    var termStore = taxonomySession.DefaultSiteCollectionTermStore;
+                    var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroup.Name);
+                    var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSet.Label);
+
+                    const string PropertyName = "_Sys_Nav_IsNavigationTermSet";
+                    string propertyValue;
+                    if (termSet.CustomProperties.TryGetValue(PropertyName, out propertyValue))
+                    {
+                        termSet.DeleteCustomProperty(PropertyName);
+                        termSet.TermStore.CommitAll();
+                    }
+                }
+
                 var navigationSettings = new WebNavigationSettings(web);
                 navigationSettings.ResetToDefaults();
                 navigationSettings.Update(taxonomySession);
@@ -235,10 +257,6 @@ namespace GSoft.Dynamite.Navigation
                         {
                             termSet.SetCustomProperty("_Sys_Nav_CatalogTargetUrlForChildTerms", termDrivenPageInfo.CatalogTargetUrlForChildTerms);
                         }
-
-                        // Flag the term set as a navigation term set
-                        termSet.SetCustomProperty("_Sys_Nav_IsNavigationTermSet", "True");
-                        termSet.TermStore.CommitAll();
                     }
                 }
 
