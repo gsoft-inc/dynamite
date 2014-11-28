@@ -307,6 +307,23 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         }
     };
 
+    // When you are on a cross site publishing site, and you need to get the absolute picture file from a managed property of the type image field,
+    // this method returns an absolute path of the image.
+    // The method parses the value with a regex instead of jQuery because jq add an element to the DOM and so the browser gets the url with a 404.
+    // elementString : the string version of the html element of the image (the value of the image field type)
+    // spSiteUrl : The value of the managed property spSiteUrl
+    Utilities.GetAbsoluteImagePath = function (elementString, spSiteUrl) {
+        var sourceAttributeMatch = elementString.match(/src=\"(.+?)\"/i);
+        var imageSource = sourceAttributeMatch.length > 1 ? sourceAttributeMatch[1] : null;
+
+        // If the image URL is relative, prepend the site URL
+        if (imageSource && imageSource.startsWith("/")) {
+
+            return spSiteUrl + imageSource;
+        }
+        return "";
+    };
+
     function addLinkToSiteActions() {
         GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
             var newLink = $('<div class="parent-folder-link"><a title="'
