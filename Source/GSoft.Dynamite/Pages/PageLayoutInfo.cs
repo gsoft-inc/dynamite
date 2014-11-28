@@ -46,6 +46,6 @@ namespace GSoft.Dynamite.Pages
         ///// <summary>
         ///// The relative path of the preview picture of the page layout
         ///// </summary>
-        //public string PreviewImagePath { get; set; }
+        // public string PreviewImagePath { get; set; }
     }
 }
