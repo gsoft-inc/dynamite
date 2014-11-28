@@ -43,9 +43,9 @@ namespace GSoft.Dynamite.Pages
         /// </summary>
         public string AssociatedContentTypeId { get; set; }
 
-        /// <summary>
-        /// The relative path of the preview picture of the page layout
-        /// </summary>
-        public string PreviewImagePath { get; set; }
+        ///// <summary>
+        ///// The relative path of the preview picture of the page layout
+        ///// </summary>
+        //public string PreviewImagePath { get; set; }
     }
 }

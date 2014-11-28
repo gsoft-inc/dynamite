@@ -135,10 +135,10 @@ namespace GSoft.Dynamite.Pages
                 var ct = site.RootWeb.ContentTypes[contentTypeId];
 
                 // Applies the preview picture of the page layout
-                if (!string.IsNullOrEmpty(pageLayoutInfo.PreviewImagePath))
-                {
-                    pageLayout.PreviewImageUrl = SPContext.Current.Site.Url + pageLayoutInfo.PreviewImagePath;
-                }
+                //if (!string.IsNullOrEmpty(pageLayoutInfo.PreviewImagePath))
+                //{
+                //    pageLayout.PreviewImageUrl = SPContext.Current.Site.Url + pageLayoutInfo.PreviewImagePath;
+                //}
 
                 // Update the publishing associated content type
                 pageLayout.AssociatedContentType = ct;
