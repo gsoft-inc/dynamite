@@ -326,6 +326,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
     // Provides the mecanism to create a accordion and show/hide element when the click event is handled on the header's title.
     // clickableElement : represents the title of each section.
+    // visibleCssClass : The class added when the section below the clickable element is shown.
     // Exemple : 'div.experience-steps> h3' => represents all the sections' titles
     // <div class='experience-steps'>
     // <h3></h3>
@@ -333,13 +334,15 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     // <h3></h3>
     // <div></div>
     // </div>
-    Utilities.ToggleElement = function (clickableElement) {
+    Utilities.ToggleElement = function (clickableElement, visibleCssClass) {
         $(document).ready(function () {
             $(clickableElement).click(function () {
                 var $nextSection = $(this).next();
                 if ($nextSection.is(":hidden")) {
+                    $(this).addClass(visibleCssClass);
                     $nextSection.show("slow");
                 } else {
+                    $(this).removeClass(visibleCssClass);
                     $nextSection.slideUp();
                 }
             });
