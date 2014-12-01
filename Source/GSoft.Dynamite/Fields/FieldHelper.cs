@@ -135,9 +135,6 @@ namespace GSoft.Dynamite.Fields
 
         private void ApplyTermStoreMapping(SPFieldCollection fieldCollection, IFieldInfo fieldInfo, TaxonomyContext taxonomyMappingContext)
         {
-            // Get the term store default language for term set name
-            var termStoreDefaultLanguageLcid = this.taxonomyHelper.GetTermStoreDefaultLanguage(fieldCollection.Web.Site);
-
             string termSubsetName = string.Empty;
             if (taxonomyMappingContext.TermSubset != null)
             {
@@ -155,7 +152,7 @@ namespace GSoft.Dynamite.Fields
                             parentList,
                             fieldInfo.Id,
                             taxonomyMappingContext.Group.Name,
-                            taxonomyMappingContext.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
                             termSubsetName);
             }
             else
@@ -165,7 +162,7 @@ namespace GSoft.Dynamite.Fields
                             fieldCollection.Web,
                             fieldInfo.Id,
                             taxonomyMappingContext.Group.Name,
-                            taxonomyMappingContext.TermSet.Labels[new CultureInfo(termStoreDefaultLanguageLcid)],
+                            taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
                             termSubsetName);
             }
         }
