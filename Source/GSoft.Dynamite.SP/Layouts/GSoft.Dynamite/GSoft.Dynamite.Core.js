@@ -324,6 +324,28 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return "";
     };
 
+    // Provides the mecanism to create a accordion and show/hide element when the click event is handled on the header's title.
+    // clickableElement : represents the title of each section.
+    // Exemple : 'div.experience-steps> h3' => represents all the sections' titles
+    // <div class='experience-steps'>
+    // <h3></h3>
+    // <div></div>
+    // <h3></h3>
+    // <div></div>
+    // </div>
+    Utilities.ToggleElement = function (clickableElement) {
+        $(document).ready(function () {
+            $(clickableElement).click(function () {
+                var $nextSection = $(this).next();
+                if ($nextSection.is(":hidden")) {
+                    $nextSection.show("slow");
+                } else {
+                    $nextSection.slideUp();
+                }
+            });
+        });
+    }
+
     function addLinkToSiteActions() {
         GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
             var newLink = $('<div class="parent-folder-link"><a title="'
