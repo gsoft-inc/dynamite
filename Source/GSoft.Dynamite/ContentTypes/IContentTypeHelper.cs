@@ -20,7 +20,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <returns>
         /// The created and configured content type.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, ContentTypeInfo contentTypeInfo);
 
         /// <summary>
@@ -28,14 +27,25 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
         /// <param name="contentTypeId">The content type id.</param>
-        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found and applied.</param>
-        /// <param name="resourceFileName">Name of the resource file where the name resource key is located. Default string empty will check all default resource file names.</param>
+        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found (among all default resource file names) and applied.</param>
         /// <returns>
         ///   The content type that was created.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName = "");
+        SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName);
+
+        /// <summary>
+        /// Ensures the SPContentType is in the collection. If not, it will be created and added.
+        /// </summary>
+        /// <param name="contentTypeCollection">The content type collection.</param>
+        /// <param name="contentTypeId">The content type id.</param>
+        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found and applied.</param>
+        /// <param name="resourceFileName">Name of the resource file where the name resource key is located. If the string is empty, will check all default resource file names.</param>
+        /// <returns>
+        ///   The content type that was created.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
+        SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName);
 
         /// <summary>The ensure content type.</summary>
         /// <param name="contentTypeCollection">The content type collection.</param>
@@ -58,7 +68,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentTypeId">The content type id.</param>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         /// <exception cref="Microsoft.SharePoint.SPContentTypeReadOnlyException">If the contentype is readonly.</exception>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void DeleteContentTypeIfNotUsed(SPContentTypeCollection collection, SPContentTypeId contentTypeId);
 
         /// <summary>
@@ -67,7 +76,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">The content type.</param>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void DeleteContentTypeIfNotUsed(SPContentType contentType);
 
         /// <summary>
@@ -77,7 +85,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="fieldInfo">The field info.</param>
         /// <returns>Null if the field does not exist, else the field is returned.</returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPField EnsureFieldInContentType(SPContentType contentType, IFieldInfo fieldInfo);
 
         /// <summary>
@@ -86,7 +93,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentType">Type of the content.</param>
         /// <param name="fieldInfos">The field information.</param>
         /// <returns>IEnumerable of SPFields that where found.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos);
 
         /// <summary>
@@ -98,7 +104,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
         /// <returns>The event receiver definition</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
@@ -110,7 +115,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
         /// <returns>The event receiver definition</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
@@ -118,7 +122,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields);
 
         /// <summary>The delete event receiver definition.</summary>

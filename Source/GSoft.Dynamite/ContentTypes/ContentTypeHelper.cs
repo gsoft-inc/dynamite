@@ -78,18 +78,11 @@ namespace GSoft.Dynamite.ContentTypes
             // all alternate language labels for the Content Type
             foreach (var availableLanguage in availableLanguages)
             {
-                var currentCulture = CultureInfo.CurrentUICulture;
-
                 // make sure the ResourceLocator will fetch the correct culture's DisplayName values
-                // by forcing the current thread's UI culture temporarily.
-                Thread.CurrentThread.CurrentUICulture = availableLanguage;
-
-                contentType.Name = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
-                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey);
-                contentType.Group = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey);
-
-                // restore the MUI culture to the old value
-                Thread.CurrentThread.CurrentUICulture = currentCulture;
+                // by forwarding the CultureInfo
+                contentType.Name = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey, availableLanguage);
+                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage);
+                contentType.Group = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey, availableLanguage);
             }
 
             contentType.Update();
@@ -114,6 +107,22 @@ namespace GSoft.Dynamite.ContentTypes
 
             return contentTypes;
         }
+        
+        /// <summary>
+        /// Ensures the SPContentType is in the collection. If not, it will be created and added.
+        /// </summary>
+        /// <param name="contentTypeCollection">The content type collection.</param>
+        /// <param name="contentTypeId">The content type id.</param>
+        /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found (among all default resource file names) and applied.</param>
+        /// <returns>
+        ///   The content type that was created.
+        /// </returns>
+        /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName)
+        {
+            return this.EnsureContentType(contentTypeCollection, contentTypeId, contentTypeName, string.Empty);
+        }
 
         /// <summary>
         /// Ensures the SPContentType is in the collection. If not, it will be created and added.
@@ -121,13 +130,13 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentTypeCollection">The content type collection.</param>
         /// <param name="contentTypeId">The content type id.</param>
         /// <param name="contentTypeName">Name of the content type. If this is a resource key, the actual resource value will be found and applied.</param>
-        /// <param name="resourceFileName">Name of the resource file where the name resource key is located. Default string empty will check all default resource file names.</param>
+        /// <param name="resourceFileName">Name of the resource file where the name resource key is located. Is string is empty, will check all default resource file names.</param>
         /// <returns>
         ///   The content type that was created.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName = "")
+        public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName)
         {
             if (contentTypeCollection == null)
             {
@@ -141,11 +150,11 @@ namespace GSoft.Dynamite.ContentTypes
 
             if (string.IsNullOrEmpty(contentTypeName))
             {
-                throw new ArgumentNullException("contentTypeNameResourceKey");
+                throw new ArgumentNullException("contentTypeName");
             }
 
             // Try to find the CurrentUICulture's value for the content type name (it may be a resource string key)
-            string contentTypeNameResource = this.resourceLocator.Find(resourceFileName, contentTypeName);
+            string contentTypeNameResource = this.resourceLocator.Find(resourceFileName, contentTypeName, CultureInfo.CurrentUICulture);
 
             SPList list = null;
 
