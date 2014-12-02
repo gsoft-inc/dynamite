@@ -63,7 +63,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution items", ".solution items", "{EF77EB75-7BB4-4DFC-B940-6F3EE9E61D8A}"
 	ProjectSection(SolutionItems) = preProject
-		fxcop.FxCop = fxcop.FxCop
+		fxcop.Debug.FxCop = fxcop.Debug.FxCop
+		fxcop.Release.FxCop = fxcop.Release.FxCop
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject

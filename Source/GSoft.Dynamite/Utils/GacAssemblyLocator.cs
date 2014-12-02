@@ -6,8 +6,10 @@ using System.Text;
 namespace GSoft.Dynamite.Utils
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.IO;
     using System.Reflection;
+    using GSoft.Dynamite.Logging;
 
     /// <summary>
     /// The Gac assembly locator.
@@ -58,6 +60,7 @@ namespace GSoft.Dynamite.Utils
         public static IList<Assembly> GetAssemblies(IList<string> gacFolders, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition)
         {
             var assemblyList = new List<Assembly>();
+            var logger = new TraceLogger("GSoft.Dynamite", "GSoft.Dynamite", false);
 
             try
             {
@@ -70,24 +73,25 @@ namespace GSoft.Dynamite.Utils
 
                         foreach (string assemblyFolder in assemblyFolders)
                         {
-                            ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
+                            ProcessFolder(assemblyFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList, logger);
                         }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception error)
             {
-                // this.logger.Fatal(string.Format("{0} : {1}", err.Message, err.StackTrace));
+                logger.Fatal(string.Format(CultureInfo.InvariantCulture, "GACAssemblyLocator failed to scan GAC. Error: {0}", error.ToString()));
             }
 
             return assemblyList;
         }
 
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We really wish to ignore assembly scanning failures.")]
-        private static void ProcessFile(string file, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
+        private static void ProcessFile(string file, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList, ILogger logger)
         {
             try
             {
+                logger.Info(string.Format(CultureInfo.InvariantCulture, "GACAssemblyLocator filename match! Loading assembly {0}.", file));
                 Assembly a = Assembly.LoadFile(file);
 
                 if (assemblyVersionCondition != null)
@@ -103,24 +107,24 @@ namespace GSoft.Dynamite.Utils
                     assemblyList.Add(a);
                 }
             }
-            catch (Exception)
+            catch (Exception error)
             {
-                // do nothing, just logger a warning
-                // this.logger.Warn(string.Format("{0} : {1}", err.Message, err.StackTrace));
+                logger.Fatal(string.Format(CultureInfo.InvariantCulture, "GACAssemblyLocator failed to load assembly (file {0}). Error: {1}", file, error.ToString()));
             }
         }
 
-        private static void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList)
+        private static void ProcessFolder(string folder, Func<string, bool> assemblyNameCondition, Func<string, bool> assemblyVersionCondition, IList<Assembly> assemblyList, ILogger logger)
         {
-            // apply condition here
-            foreach (string file in Directory.GetFiles(folder).Where(assemblyNameCondition))
+            var filesPathsMatchingAssemblyNameCondition = Directory.GetFiles(folder).Where(assemblyNameCondition);
+
+            foreach (string file in filesPathsMatchingAssemblyNameCondition)
             {
-                ProcessFile(file, assemblyVersionCondition, assemblyList);
+                ProcessFile(file, assemblyVersionCondition, assemblyList, logger);
             }
 
             foreach (string subFolder in Directory.GetDirectories(folder))
             {
-                ProcessFolder(subFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList);
+                ProcessFolder(subFolder, assemblyNameCondition, assemblyVersionCondition, assemblyList, logger);
             }
         }
     }
