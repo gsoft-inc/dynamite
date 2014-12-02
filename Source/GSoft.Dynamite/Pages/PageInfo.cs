@@ -20,7 +20,7 @@ namespace GSoft.Dynamite.Pages
         }
 
         /// <summary>
-        /// Name of the file for the page
+        /// Name of the file for the page without the ".aspx" extension.
         /// </summary>
         public string FileName { get; set; }
 
