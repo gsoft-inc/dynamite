@@ -43,6 +43,35 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
+        /// Determine the current navigation context type
+        /// </summary>
+        /// <returns>The current variation navigation context</returns>
+        public VariationNavigationType CurrentNavigationContextType
+        {
+            get
+            {
+                var navigationType = VariationNavigationType.None;
+
+                if (TaxonomyNavigationContext.Current != null)
+                {
+                    if (TaxonomyNavigationContext.Current.HasCatalogUrl)
+                    {
+                        navigationType = VariationNavigationType.ItemPage;
+                    }
+                    else
+                    {
+                        if (TaxonomyNavigationContext.Current.NavigationTerm != null)
+                        {
+                            navigationType = VariationNavigationType.CategoryPage;
+                        }
+                    }
+                }
+
+                return navigationType;
+            }
+        }
+
+        /// <summary>
         /// Determines whether [is current item] [the specified item URL].
         /// </summary>
         /// <param name="itemUrl">The item URL.</param>
@@ -63,9 +92,11 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>The url of the peer page</returns>
         public Uri GetPeerPageUrl(Uri currentUrl, VariationLabelInfo label)
         {
-            if (currentUrl.LocalPath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
+            if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
-                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), currentUrl.PathAndQuery));
+                Uri relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
+                Uri fullAbsoluteUrl = new Uri(label.TopWebUrl, relativePart);
+                return fullAbsoluteUrl;
             }
             else
             {
@@ -77,6 +108,7 @@ namespace GSoft.Dynamite.Navigation
                 }
                 catch (ArgumentOutOfRangeException)
                 {
+                    // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
                     this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
                                         Using label web URL with path and query strings as navigation URL.");
 
@@ -94,7 +126,7 @@ namespace GSoft.Dynamite.Navigation
                         pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
                     }
 
-                    return new Uri(topWebUrl, string.Join(string.Empty, pathAndQuerySegments));
+                    return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
                 }
             }
         }
@@ -206,32 +238,6 @@ namespace GSoft.Dynamite.Navigation
             }
 
             return url;
-        }
-
-        /// <summary>
-        /// Determine the current navigation context type
-        /// </summary>
-        /// <returns>The current variation navigation context</returns>
-        public VariationNavigationType GetCurrentNavigationContextType()
-        {
-            var navigationType = VariationNavigationType.None;
-
-            if (TaxonomyNavigationContext.Current != null)
-            {
-                if (TaxonomyNavigationContext.Current.HasCatalogUrl)
-                {
-                    navigationType = VariationNavigationType.ItemPage;
-                }
-                else
-                {
-                    if (TaxonomyNavigationContext.Current.NavigationTerm != null)
-                    {
-                        navigationType = VariationNavigationType.CategoryPage;
-                    } 
-                }
-            }
-
-            return navigationType;
         }
 
         private static void ValidateProperties(

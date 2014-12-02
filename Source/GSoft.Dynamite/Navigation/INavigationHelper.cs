@@ -67,9 +67,10 @@ namespace GSoft.Dynamite.Navigation
         void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
 
         /// <summary>
-        /// Reset web navigation to its default configuration
+        /// Reset web navigation to its default configuration. Disabled the term set as mavigation term set.
         /// </summary>
         /// <param name="web">The web</param>
-        void ResetWebNavigationToDefault(SPWeb web);
+        /// <param name="settings">The managed navigation settings. Set null if you want to keep the associated termset unchanged</param>
+        void ResetWebNavigationToDefault(SPWeb web, ManagedNavigationInfo settings);
     }
 }

@@ -10,6 +10,12 @@ namespace GSoft.Dynamite.Navigation
     public interface IVariationNavigationHelper
     {
         /// <summary>
+        /// Determine the current navigation context type
+        /// </summary>
+        /// <returns>The current variation navigation context</returns>
+        VariationNavigationType CurrentNavigationContextType { get; }
+
+        /// <summary>
         /// Get the peer url for a SharePoint page
         /// </summary>
         /// <param name="currentUrl">The current page url</param>
@@ -42,12 +48,6 @@ namespace GSoft.Dynamite.Navigation
             string associationKeyValue,
             string languageManagedPropertyName,
             string catalogNavigationTermManagedPropertyName);
-
-        /// <summary>
-        /// Determine the current navigation context type
-        /// </summary>
-        /// <returns>The current variation navigation context</returns>
-        VariationNavigationType GetCurrentNavigationContextType();
 
         /// <summary>
         /// Determines whether [is current item] [the specified item URL].

@@ -307,6 +307,48 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         }
     };
 
+    // When you are on a cross site publishing site, and you need to get the absolute picture file from a managed property of the type image field,
+    // this method returns an absolute path of the image.
+    // The method parses the value with a regex instead of jQuery because jq add an element to the DOM and so the browser gets the url with a 404.
+    // elementString : the string version of the html element of the image (the value of the image field type)
+    // spSiteUrl : The value of the managed property spSiteUrl
+    Utilities.GetAbsoluteImagePath = function (elementString, spSiteUrl) {
+        var sourceAttributeMatch = elementString.match(/src=\"(.+?)\"/i);
+        var imageSource = sourceAttributeMatch.length > 1 ? sourceAttributeMatch[1] : null;
+
+        // If the image URL is relative, prepend the site URL
+        if (imageSource && imageSource.startsWith("/")) {
+
+            return spSiteUrl + imageSource;
+        }
+        return "";
+    };
+
+    // Provides the mecanism to create a accordion and show/hide element when the click event is handled on the header's title.
+    // clickableElement : represents the title of each section.
+    // visibleCssClass : The class added when the section below the clickable element is shown.
+    // Exemple : 'div.experience-steps> h3' => represents all the sections' titles
+    // <div class='experience-steps'>
+    // <h3></h3>
+    // <div></div>
+    // <h3></h3>
+    // <div></div>
+    // </div>
+    Utilities.ToggleElement = function (clickableElement, visibleCssClass) {
+        $(document).ready(function () {
+            $(clickableElement).click(function () {
+                var $nextSection = $(this).next();
+                if ($nextSection.is(":hidden")) {
+                    $(this).addClass(visibleCssClass);
+                    $nextSection.show("slow");
+                } else {
+                    $(this).removeClass(visibleCssClass);
+                    $nextSection.slideUp();
+                }
+            });
+        });
+    }
+
     function addLinkToSiteActions() {
         GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
             var newLink = $('<div class="parent-folder-link"><a title="'
