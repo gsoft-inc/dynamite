@@ -15,7 +15,7 @@ if (window.chrome) {
     });
 }*/
 
-moment.lang('fr', {
+moment.locale('fr', {
     longDateFormat: {
         // Use the Microsoft official fr-CA regional setting date format, for consistency between presentation and SharePoint backend format
         L: "YYYY-MM-DD"
@@ -23,7 +23,7 @@ moment.lang('fr', {
 });
 
 
-moment.lang('en', {
+moment.locale('en', {
     longDateFormat: {
         // Use the Microsoft official en-US regional setting date format, for consistency between presentation and SharePoint backend format
         L: "DD/MM/YYYY"
@@ -120,9 +120,9 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     }
 
     function currentCulture() {
-        if (_spPageContextInfo.currentLanguage == 1033) {
+        if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1033) {
             return "en-US";
-        } else if (_spPageContextInfo.currentLanguage == 1036) {
+        } else if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1036) {
             return "fr-FR";
         } else {
             return "en-US";
@@ -270,7 +270,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     };
 
     Utilities.LayoutFolder = function () {
-        if (_spPageContextInfo.webUIVersion === 15) {
+        if (_spPageContextInfo && _spPageContextInfo.webUIVersion === 15) {
             return "/_layouts/15/";
         }
 
