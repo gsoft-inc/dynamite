@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.Lists
             this.DefaultViewFields = new List<IFieldInfo>();
             this.FieldDefinitions = new List<IFieldInfo>();
         }
-        
+
         /// <summary>
         /// Initializes a new ListInfo
         /// </summary>
@@ -163,5 +163,12 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<IFieldInfo> FieldDefinitions { get; set; }
+
+        /// <summary>
+        /// The content types available on the new button of the list for the root folder.
+        /// The content types here need to exist on the list.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
+        public ICollection<ContentTypeInfo> UniqueContentTypeOrder { get; set; }
     }
 }

@@ -38,11 +38,11 @@ namespace GSoft.Dynamite.Lists
         /// <param name="logger">The logger</param>
         /// <param name="listLocator">List locator</param>
         public ListHelper(
-            IContentTypeHelper contentTypeBuilder, 
+            IContentTypeHelper contentTypeBuilder,
             IFieldLocator fieldLocator,
             IFieldHelper fieldHelper,
-            IResourceLocator resourceLocator, 
-            ILogger logger, 
+            IResourceLocator resourceLocator,
+            ILogger logger,
             IListLocator listLocator)
         {
             this.contentTypeBuilder = contentTypeBuilder;
@@ -206,7 +206,7 @@ namespace GSoft.Dynamite.Lists
             {
                 // If it isn't the pages library
                 if (string.CompareOrdinal(list.RootFolder.Name, PagesLibraryRootFolder) != 0)
-                {                            
+                {
                     this.logger.Info("List " + listInfo.WebRelativeUrl.ToString() + " already exists");
 
                     // If the Overwrite parameter is set to true, celete and recreate the catalog
@@ -216,7 +216,7 @@ namespace GSoft.Dynamite.Lists
 
                         list.Delete();
 
-                        // TODO: review ListInfo.WebRelativeUrl. RootFolderUrl used to be its name. Is it assumed that all lists live under /Lists/? Is it assumed that 
+                        // TODO: review ListInfo.WebRelativeUrl. RootFolderUrl used to be its name. Is it assumed that all lists live under /Lists/? Is it assumed that
                         // _no ListInfo EVER_ will ever ever be created with a WebRelativeUrl value of /Lists/SomeListName ??? This needs more review...
                         list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
                     }
@@ -239,6 +239,29 @@ namespace GSoft.Dynamite.Lists
 
             // Add All Content Types
             this.contentTypeBuilder.EnsureContentType(list.ContentTypes, listInfo.ContentTypes);
+
+            // Set the unique content type order on the root folder.
+            if (listInfo.UniqueContentTypeOrder != null && listInfo.UniqueContentTypeOrder.Count >= 1)
+            {
+                // Prepare the new collection
+                IList<SPContentType> contentTypeOrder = new List<SPContentType>();
+
+                foreach (var contentTypeInfo in listInfo.UniqueContentTypeOrder)
+                {
+                    var listContentType = GetListContentType(list, contentTypeInfo);
+                    if (listContentType != null)
+                    {
+                        // If we find a content type on the list that matches the content type info in the list info we add it to the collection.
+                        contentTypeOrder.Add(listContentType);
+                    }
+                }
+
+                if (contentTypeOrder.Count >= 1)
+                {
+                    // If we have content types in our new list, we set the new list.
+                    list.RootFolder.UniqueContentTypeOrder = contentTypeOrder;
+                }
+            }
 
             // Draft VisibilityType
             if (listInfo.HasDraftVisibilityType)
@@ -268,7 +291,7 @@ namespace GSoft.Dynamite.Lists
                 list.Update();
             }
 
-            // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).    
+            // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).
             list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
 
             // Default View Fields
@@ -401,7 +424,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="settings">The metadata settings</param>
         public void SetMetadataNavigation(SPWeb web, MetadataNavigationSettingsInfo settings)
         {
-            // Get the list 
+            // Get the list
             var list = this.EnsureList(web, settings.List);
 
             // Get the MDN settings object for the SPList that was passed in.
@@ -473,8 +496,8 @@ namespace GSoft.Dynamite.Lists
                         var keyFilter = new MetadataNavigationKeyFilter(field);
                         mdnSettings.AddConfiguredKeyFilter(keyFilter);
                     }
-                }  
-            }   
+                }
+            }
 
             // Set the MDN settings back into the list and automatically adjust indexing.
             MetadataNavigationSettings.SetMetadataNavigationSettings(list, mdnSettings, true);
@@ -552,12 +575,27 @@ namespace GSoft.Dynamite.Lists
                 }
             }
         }
-        #endregion
+
+        #endregion List View
 
         private static void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
         {
             var t = settings.GetType();
             t.InvokeMember("HideFoldersNode", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetProperty | BindingFlags.Instance, null, settings, new object[] { value }, CultureInfo.InvariantCulture);
+        }
+
+        private static SPContentType GetListContentType(SPList list, ContentTypeInfo contentTypeInfo)
+        {
+            var contentTypeId = new SPContentTypeId(contentTypeInfo.ContentTypeId);
+
+            // If content type is direct child of item, remove it
+            var bestMatchItem = list.ContentTypes.BestMatch(contentTypeId);
+            if (bestMatchItem.Parent == contentTypeId)
+            {
+                return list.ContentTypes[bestMatchItem];
+            }
+
+            return null;
         }
     }
 }

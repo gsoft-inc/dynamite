@@ -75,11 +75,11 @@ namespace GSoft.Dynamite.Navigation
                     using (new SPMonitoredScope("GetNavigationNodeItems"))
                     {
                         // Get navigation items from search
-                        items = this.GetNavigationNodeItems(properties, properties.CatalogItemId, null).ToArray();
+                        items = this.GetNavigationNodeItems(properties, properties.CatalogItemContentTypeId, null).ToArray();
 
                         // If the cache contains corrupted data,
                         // clear it and fetch the data again
-                        if (items == null)
+                        if (items == null || !items.Any())
                         {
                             items = this.GetNavigationNodeItems(properties);
                         }
@@ -174,13 +174,13 @@ namespace GSoft.Dynamite.Navigation
             }
 
             // Adds the filter on managed property OccurenceLinkLocation if the parameter is not null.
-            if (properties.OccurrenceLinkLocationValue != null)
+            if (!string.IsNullOrEmpty(properties.FilterManagedPropertyName) && !string.IsNullOrEmpty(properties.FilterManagedPropertyValue))
             {
-                query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.OccurrenceLinkLocation, properties.OccurrenceLinkLocationValue);
+                query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.FilterManagedPropertyName, properties.FilterManagedPropertyValue);
             }
 
             // Adds the filter current navigation Term if the parameter is not null.
-            if (term != null)
+            if (!string.IsNullOrEmpty(properties.Navigation) && !string.IsNullOrEmpty(term))
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", properties.Navigation, term);
             }
@@ -230,7 +230,7 @@ namespace GSoft.Dynamite.Navigation
 
             // Gets terms which are not excluded from global navigation
             var filteredTerms = navigationTerms.Where(
-                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemContentTypeId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
 
             var terms = filteredTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
 
