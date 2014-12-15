@@ -362,4 +362,36 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     };
 }(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq110));
 
+// ====================
+// DisplayTemplateHelper module
+// ====================
+(function (DisplayTemplateHelper, $, undefined) {
+    
+    DisplayTemplateHelper.ensureAbsoluteImageUrl = function (pictureUrlItemValue, spSiteUrl) {
+
+        // Get search item values
+        var siteUrlItemValue = spSiteUrl;
+
+        // Check if indexed values aren't null or empty
+        if ((pictureUrlItemValue != null) &&
+			(!siteUrlItemValue.isNull && !siteUrlItemValue.isEmpty)) {
+
+            // Get the image source attribute
+            var sourceAttributeMatch = pictureUrlItemValue.match(/src=\"(.+?)\"/i);
+            var imageSource = sourceAttributeMatch.length > 1 ? sourceAttributeMatch[1] : null;
+
+            // If the image URL is relative, prepend the site URL
+            if (imageSource.startsWith("/")) {
+                var siteUrl = siteUrlItemValue.value;
+
+                // Update the src attribute value
+                pictureUrlItemValue = pictureUrlItemValue.replace(sourceAttributeMatch[1], siteUrl + imageSource);
+            }
+        }
+
+        return pictureUrlItemValue;
+    };
+
+}(GSoft.Dynamite.DisplayTemplateHelper = GSoft.Dynamite.DisplayTemplateHelper || {}, jq110));
+
 
