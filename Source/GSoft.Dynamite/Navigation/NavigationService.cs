@@ -79,7 +79,8 @@ namespace GSoft.Dynamite.Navigation
 
                         // If the cache contains corrupted data,
                         // clear it and fetch the data again
-                        if (items == null || !items.Any())
+                        // If no items are returned, we do not make the query again since the items are not cached.
+                        if (items == null)
                         {
                             items = this.GetNavigationNodeItems(properties);
                         }
