@@ -85,6 +85,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
+    <Compile Include="Binding\IO\ISPItemValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemBaseValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemImageValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemLookupValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemPrincipalValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemTaxonomyMultiValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemTaxonomyValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemUrlValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemUserValueWriter.cs" />
+    <Compile Include="Binding\IO\SPItemValueWriter.cs" />
     <Compile Include="Branding\IDisplayTemplateHelper.cs" />
     <Compile Include="Branding\IImageRenditionHelper.cs" />
     <Compile Include="Catalogs\CatalogConnectionInfo.cs" />
@@ -93,6 +103,7 @@
     <Compile Include="ContentTypes\IContentTypeHelper.cs" />
     <Compile Include="Fields\FieldLocator.cs" />
     <Compile Include="Fields\FieldLookupHelper.cs" />
+    <Compile Include="Fields\FieldValueInfo.cs" />
     <Compile Include="Fields\IFieldHelper.cs" />
     <Compile Include="Fields\FieldSchemaHelper.cs" />
     <Compile Include="Fields\IFieldLocator.cs" />

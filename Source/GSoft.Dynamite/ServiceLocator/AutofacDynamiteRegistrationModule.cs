@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caml;
@@ -66,7 +67,7 @@ namespace GSoft.Dynamite.ServiceLocator
             var logger = new TraceLogger(this.logCategoryName, this.logCategoryName, false);    // Logger without debug output
             builder.RegisterInstance<ILogger>(logger);
 #endif
-            
+
             // Binding
             var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
             var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
@@ -78,6 +79,16 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyValueConverter>();
             builder.RegisterType<TaxonomyValueCollectionConverter>();
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
+
+            builder.RegisterType<SPItemValueWriter>().As<ISPItemValueWriter>();
+            builder.RegisterType<SPItemBaseValueWriter>();
+            builder.RegisterType<SPItemTaxonomyValueWriter>();
+            builder.RegisterType<SPItemTaxonomyMultiValueWriter>();
+            builder.RegisterType<SPItemLookupValueWriter>();
+            builder.RegisterType<SPItemPrincipalValueWriter>();
+            builder.RegisterType<SPItemUserValueWriter>();
+            builder.RegisterType<SPItemUrlValueWriter>();
+            builder.RegisterType<SPItemImageValueWriter>();
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
@@ -97,7 +108,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Catalogs
             builder.RegisterType<CatalogHelper>().As<ICatalogHelper>();
 
-            // Configuration 
+            // Configuration
             builder.RegisterType<PropertyBagHelper>().As<IPropertyBagHelper>();
             builder.RegisterType<PropertyBagConfiguration>().As<IConfiguration>();
             builder.RegisterType<WebConfigModificationHelper>().As<IWebConfigModificationHelper>();
@@ -120,14 +131,14 @@ namespace GSoft.Dynamite.ServiceLocator
             // Folders
             builder.RegisterType<FolderHelper>().As<IFolderHelper>();
             builder.RegisterType<FolderRepository>().As<IFolderRepository>();
-            
+
             // Files
             builder.RegisterType<FileHelper>().As<IFileHelper>();
 
             // Globalization + Variations (with default en-CA as source + fr-CA as destination implementation)
-            builder.RegisterType<ResourceLocator>().As<IResourceLocator>(); 
+            builder.RegisterType<ResourceLocator>().As<IResourceLocator>();
 
-            // It's the container user's responsibility to register a IResourceLocatorConfig implementation 
+            // It's the container user's responsibility to register a IResourceLocatorConfig implementation
             builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
             builder.RegisterType<MuiHelper>().As<IMuiHelper>();
             builder.RegisterType<DateHelper>().As<IDateHelper>();
@@ -142,11 +153,11 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ListLocator>().As<IListLocator>();
             builder.RegisterType<ListSecurityHelper>().As<IListSecurityHelper>();
             builder.RegisterType<PublishedLinksEditor>().As<IPublishedLinksEditor>();
-            
+
             // Monitoring
             builder.RegisterType<AggregateTimeTracker>().As<IAggregateTimeTracker>().InstancePerSite();
 
-            // Navigation 
+            // Navigation
             builder.RegisterType<NavigationService>().As<INavigationService>();
             builder.RegisterType<NavigationHelper>().As<INavigationHelper>();
             builder.RegisterType<VariationNavigationHelper>().As<IVariationNavigationHelper>();

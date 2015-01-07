@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
+using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.WebParts;
@@ -16,16 +17,18 @@ namespace GSoft.Dynamite.Pages
     {
         private readonly IWebPartHelper webPartHelper;
         private readonly ILogger logger;
+        private readonly ISPItemValueWriter itemValueWriter;
 
         /// <summary>
         /// Initializes a new <see cref="PageHelper" /> instance
         /// </summary>
         /// <param name="webPartHelper">Web Part helper</param>
         /// <param name="logger">The logger.</param>
-        public PageHelper(IWebPartHelper webPartHelper, ILogger logger)
+        public PageHelper(IWebPartHelper webPartHelper, ILogger logger, ISPItemValueWriter itemValueWriter)
         {
             this.webPartHelper = webPartHelper;
             this.logger = logger;
+            this.itemValueWriter = itemValueWriter;
         }
 
         /// <summary>
@@ -91,7 +94,11 @@ namespace GSoft.Dynamite.Pages
                 publishingPage.Title = page.Title;
                 publishingPage.Update();
             }
-            
+
+            // Set field Values
+            this.itemValueWriter.WriteValuesToSPListItem(publishingPage.ListItem, page.FieldValues);
+            publishingPage.ListItem.Update();
+
             // Insert WebParts
             foreach (WebPartInfo webPartSetting in page.WebParts)
             {
@@ -100,7 +107,7 @@ namespace GSoft.Dynamite.Pages
 
             // Publish
             PageHelper.EnsurePageCheckInAndPublish(page, publishingPage);
-            
+
             return publishingPage;
         }
 
