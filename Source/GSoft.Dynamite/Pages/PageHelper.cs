@@ -24,6 +24,7 @@ namespace GSoft.Dynamite.Pages
         /// </summary>
         /// <param name="webPartHelper">Web Part helper</param>
         /// <param name="logger">The logger.</param>
+        /// <param name="itemValueWriter">The item value writer.</param>
         public PageHelper(IWebPartHelper webPartHelper, ILogger logger, ISPItemValueWriter itemValueWriter)
         {
             this.webPartHelper = webPartHelper;

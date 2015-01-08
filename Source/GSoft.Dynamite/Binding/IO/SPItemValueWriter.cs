@@ -106,7 +106,7 @@ namespace GSoft.Dynamite.Binding.IO
             {
                 return this.itemLookupValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
             }
-            if (associatedValueType == typeof(LookupValueCollection))
+            else if (associatedValueType == typeof(LookupValueCollection))
             {
                 throw new NotSupportedException("The value type 'LookupValueCollection' is not yet supported when writing to a SPListItem.");                
             }

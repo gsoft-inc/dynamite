@@ -78,6 +78,7 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// The values to be assigned to the page when its created.
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store collection for more flexible object initialization.")]
         public IList<FieldValueInfo> FieldValues { get; set; }
     }
 }

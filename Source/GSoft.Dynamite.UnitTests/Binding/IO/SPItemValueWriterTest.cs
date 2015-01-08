@@ -12,10 +12,17 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.Binding.IO
 {
+    /// <summary>
+    /// Tests for the SPItemValueWriter class
+    /// </summary>
     [TestClass]
     public class SPItemValueWriterTest
     {
         #region WriteValuesToSPListItem
+        /// <summary>
+        /// Test for the WriteValuesToSPListItem method.
+        /// When updating five fields on a list item, the item is updated five times.
+        /// </summary>
         [TestMethod]
         public void WriteValuesToSPListItem_WhenGiven5FieldValues_ShouldCallWriteValueToSPListItem5Times()
         {
@@ -58,6 +65,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
         #endregion
 
         #region WriteValueToSPListItem
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Date time field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenDateTimeFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -90,6 +101,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Guid field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenGuidFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -122,6 +137,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Html field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenHtmlFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -154,6 +173,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Image field, use the Image value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenImageFieldInfo_ShouldUseSPItemImageValueWriter()
         {
@@ -186,6 +209,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Lookup field, use the Lookup value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenLookupFieldInfo_ShouldUseSPItemLookupValueWriter()
         {
@@ -218,6 +245,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Multi value lookup field, a not supported exception is thrown.
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void WriteValueToSPListItem_GivenLookupMultiFieldInfo_ExpectNotSupportedException()
@@ -242,6 +273,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a field with a MinimalFieldInfo, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenMinimalFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -274,6 +309,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Note field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenNoteFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -306,6 +345,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Number field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenNumberFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -338,6 +381,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Taxonomy field, use the Taxonomy value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenTaxonomyFieldInfo_ShouldUseSPItemTaxonomyValueWriter()
         {
@@ -370,6 +417,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Taxonomy Multi field, use the Taxonomy Multi value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenTaxonomyMultiFieldInfo_ShouldUseSPItemTaxonomyMultiValueWriter()
         {
@@ -402,6 +453,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Text field, use the Base value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenTextFieldInfo_ShouldUseSPItemBaseValueWriter()
         {
@@ -434,8 +489,12 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a Url field, use the url value writer.
+        /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenUrlFieldFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToSPListItem_GivenUrlFieldFieldInfo_ShouldUseSPItemUrlValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -466,6 +525,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a User field, use the User value writer.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_GivenUserFieldFieldInfo_ShouldUseSPItemUserValueWriter()
         {
@@ -498,6 +561,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating the value of a User Multi field, a not supported exception is thrown.
+        /// </summary>
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
         public void WriteValueToSPListItem_GivenUserMultiFieldFieldInfo_ExpectNotSupportedException()
@@ -522,6 +589,10 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             }
         }
 
+        /// <summary>
+        /// Test for the WriteValueToSPListItem method.
+        /// When updating a string field, the field is updated.
+        /// </summary>
         [TestMethod]
         public void WriteValueToSPListItem_WhenGivenFieldValue_ShouldUpdateFieldValue()
         {
