@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.Binding.IO
         /// </returns>
         public override SPListItem WriteValueToSPListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
-            var terms = fieldValueInfo.Value as TaxonomyValueCollection;
+            var termInfos = fieldValueInfo.Value as TaxonomyFullValueCollection;
             TaxonomyFieldValueCollection newTaxonomyFieldValueCollection = null;
 
             TaxonomyField taxonomyField = (TaxonomyField)item.Fields.GetField(fieldValueInfo.FieldInfo.InternalName);
@@ -33,9 +33,9 @@ namespace GSoft.Dynamite.Binding.IO
 
             var noteField = item.Fields[taxonomyField.TextField];
 
-            if (terms != null && terms.Count > 0)
+            if (termInfos != null && termInfos.Count > 0)
             {
-                string labelGuidPairs = string.Join(";", terms.Select(term => term.Label + "|" + term.Id).ToArray());
+                string labelGuidPairs = string.Join(";", termInfos.Where(termInfo => termInfo.Term != null).Select(termInfo => termInfo.Term.Label + "|" + termInfo.Term.Id).ToArray());
 
                 // PopulateFromLabelGuidPairs takes care of looking up the WssId values and creating new items in the TaxonomyHiddenList if needed.
                 // Main taxonomy field value format: WssID;#Label;WssID;#Label;WssID;#Label...

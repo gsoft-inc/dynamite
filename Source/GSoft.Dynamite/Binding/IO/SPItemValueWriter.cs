@@ -106,6 +106,10 @@ namespace GSoft.Dynamite.Binding.IO
             {
                 return this.itemLookupValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
             }
+            if (associatedValueType == typeof(LookupValueCollection))
+            {
+                throw new NotSupportedException("The value type 'LookupValueCollection' is not yet supported when writing to a SPListItem.");                
+            }
             else if (associatedValueType == typeof(PrincipalValue))
             {
                 return this.itemPrincipalValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
@@ -122,11 +126,11 @@ namespace GSoft.Dynamite.Binding.IO
             {
                 return this.itemUrlValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
             }
-            else if (associatedValueType == typeof(TaxonomyValue))
+            else if (associatedValueType == typeof(TaxonomyFullValue))
             {
                 return this.itemTaxonomyValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
             }
-            else if (associatedValueType == typeof(TaxonomyValueCollection))
+            else if (associatedValueType == typeof(TaxonomyFullValueCollection))
             {
                 return this.itemTaxonomyMultiValueWriter.WriteValueToSPListItem(item, fieldValueInfo);
             }
