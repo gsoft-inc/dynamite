@@ -3059,13 +3059,13 @@
             <summary>Sets the stub of ISPItemValueWriter.WriteValueToSPListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.IO.Fakes.StubISPItemValueWriter.gsd::GSoft#Dynamite#Binding#IO#ISPItemValueWriter#WriteValuesToSPListItem(Microsoft.SharePoint.SPListItem,System.Collections.Generic.IList{GSoft.Dynamite.Fields.FieldValueInfo})">
-            <summary>Sets the stub of ISPItemValueWriter.WriteValuesToSPListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValues)</summary>
+            <summary>Sets the stub of ISPItemValueWriter.WriteValuesToSPListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
         </member>
         <member name="F:GSoft.Dynamite.Binding.IO.Fakes.StubISPItemValueWriter.WriteValueToSPListItemSPListItemFieldValueInfo">
             <summary>Sets the stub of ISPItemValueWriter.WriteValueToSPListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
         <member name="F:GSoft.Dynamite.Binding.IO.Fakes.StubISPItemValueWriter.WriteValuesToSPListItemSPListItemIListOfFieldValueInfo">
-            <summary>Sets the stub of ISPItemValueWriter.WriteValuesToSPListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValues)</summary>
+            <summary>Sets the stub of ISPItemValueWriter.WriteValuesToSPListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.IO.Fakes.StubSPItemBaseValueWriter">
             <summary>Stub type of GSoft.Dynamite.Binding.IO.SPItemBaseValueWriter</summary>
