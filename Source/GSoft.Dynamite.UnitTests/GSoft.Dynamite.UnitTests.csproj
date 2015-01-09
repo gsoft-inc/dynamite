@@ -92,6 +92,12 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\GSoft.Dynamite.fakes" />
+    <None Include="FakesAssemblies\GSoft.Dynamite.Fakes.fakesconfig" />
+    <None Include="FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.fakesconfig" />
+    <None Include="FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.fakesconfig" />
+    <None Include="FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.messages" />
+    <None Include="FakesAssemblies\System.2.0.0.0.Fakes.fakesconfig" />
+    <None Include="FakesAssemblies\System.Web.2.0.0.0.Fakes.fakesconfig" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +108,18 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FakesAssemblies\GSoft.Dynamite.Fakes.dll" />
+    <Content Include="FakesAssemblies\GSoft.Dynamite.Fakes.xml" />
+    <Content Include="FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.dll" />
+    <Content Include="FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.xml" />
+    <Content Include="FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.dll" />
+    <Content Include="FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.xml" />
+    <Content Include="FakesAssemblies\System.2.0.0.0.Fakes.dll" />
+    <Content Include="FakesAssemblies\System.2.0.0.0.Fakes.xml" />
+    <Content Include="FakesAssemblies\System.Web.2.0.0.0.Fakes.dll" />
+    <Content Include="FakesAssemblies\System.Web.2.0.0.0.Fakes.xml" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
