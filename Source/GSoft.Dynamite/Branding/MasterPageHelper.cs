@@ -85,12 +85,12 @@ namespace GSoft.Dynamite.Branding
 
             if (!string.IsNullOrEmpty(systemMasterPageFileName))
             {
-                systemMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, systemMasterPageFileName).ServerRelativeUrl).AbsoluteUrl;
+                systemMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, systemMasterPageFileName).Url).AbsoluteUrl;
             }
 
             if (!string.IsNullOrEmpty(publishingMasterPageFileName))
             {
-                publishingMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, publishingMasterPageFileName).ServerRelativeUrl).AbsoluteUrl;
+                publishingMasterPageUri = new SPUrl(site.RootWeb, this.GetSiteRelativeMasterPageUrl(site, publishingMasterPageFileName).Url).AbsoluteUrl;
             }
 
             UpdateMasterPages(site, systemMasterPageUri, publishingMasterPageUri);
@@ -103,7 +103,7 @@ namespace GSoft.Dynamite.Branding
         public void RevertToSeattle(SPWeb web)
         {
             var masterPageFile = this.GetSiteRelativeMasterPageUrl(web.Site, this.seattleMasterPageFileName);
-            var seattleMasterPageUri = new SPUrl(web, masterPageFile.ServerRelativeUrl).AbsoluteUrl;
+            var seattleMasterPageUri = new SPUrl(web, masterPageFile.Url).AbsoluteUrl;
             UpdateMasterPages(web, seattleMasterPageUri, seattleMasterPageUri);
         }
 
@@ -114,7 +114,7 @@ namespace GSoft.Dynamite.Branding
         public void RevertToSeattle(SPSite site)
         {
             var masterPageFile = this.GetSiteRelativeMasterPageUrl(site, this.seattleMasterPageFileName);
-            var seattleMasterPageUri = new SPUrl(site.RootWeb, masterPageFile.ServerRelativeUrl).AbsoluteUrl;
+            var seattleMasterPageUri = new SPUrl(site.RootWeb, masterPageFile.Url).AbsoluteUrl;
             UpdateMasterPages(site, seattleMasterPageUri, seattleMasterPageUri);
         }
 
