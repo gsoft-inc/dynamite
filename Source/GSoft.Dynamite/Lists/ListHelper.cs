@@ -182,7 +182,7 @@ namespace GSoft.Dynamite.Lists
 
             list.Update();
 
-            return list;
+            return web.Lists[list.ID];
         }
 
         /// <summary>
@@ -372,14 +372,14 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
-        ///  Set WriteSecurity on a SPList
+        ///  Set WriteSecurity on a SPList.
+        ///  This method does not call SPList.Update(). Your code should handle this.
         /// </summary>
         /// <param name="list">The list.</param>
         /// <param name="writeSecurityOptions">The Write Security option</param>
         public void SetWriteSecurity(SPList list, WriteSecurityOptions writeSecurityOptions)
         {
             list.WriteSecurity = (int)writeSecurityOptions;
-            list.Update();
         }
 
         /// <summary>
