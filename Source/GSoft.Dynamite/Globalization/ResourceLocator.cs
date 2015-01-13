@@ -147,7 +147,12 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The resource string for the key and filename</returns>
         public string GetResourceString(string resourceFileName, string resourceKey)
         {
-            return this._defaultResourceFileNames.Contains(resourceFileName) ? string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", resourceFileName, resourceKey) : string.Empty;
+            if (string.IsNullOrEmpty(resourceFileName))
+            {
+                return this.GetResourceString(resourceKey);
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", resourceFileName, resourceKey);
         }
 
         /// <summary>

@@ -153,10 +153,9 @@ namespace GSoft.Dynamite.ContentTypes
                 throw new ArgumentNullException("contentTypeName");
             }
 
-            // Try to find the CurrentUICulture's value for the content type name (it may be a resource string key)
-            string contentTypeNameResource = this.resourceLocator.Find(resourceFileName, contentTypeName, CultureInfo.CurrentUICulture);
-
             SPList list = null;
+
+            var contentTypeResouceTitle = this.resourceLocator.GetResourceString(resourceFileName, contentTypeName);
 
             if (TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
@@ -185,7 +184,7 @@ namespace GSoft.Dynamite.ContentTypes
                         else
                         {
                             // Create the content type directly on the list
-                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
+                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
                             var returnedListContentType = list.ContentTypes.Add(newListContentType);
                             return returnedListContentType;
                         }
@@ -206,7 +205,7 @@ namespace GSoft.Dynamite.ContentTypes
                     if (contentTypeInWeb == null)
                     {
                         // Add the content type to the collection.
-                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
+                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
                         var returnedWebContentType = contentTypeCollection.Add(newWebContentType);
                         return returnedWebContentType;
                     }
@@ -217,7 +216,7 @@ namespace GSoft.Dynamite.ContentTypes
                 }
 
                 // Case if there is no Content Types in the Web (e.g single SPWeb)
-                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeNameResource);
+                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
                 var returnedContentType = contentTypeCollection.Add(newContentType);
                 return returnedContentType;
             }
