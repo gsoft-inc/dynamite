@@ -268,8 +268,6 @@ namespace GSoft.Dynamite.Lists
             {
                 list.EnableModeration = true;
                 list.DraftVersionVisibility = listInfo.DraftVisibilityType;
-
-                list.Update();
             }
 
             // Ratings
@@ -288,7 +286,6 @@ namespace GSoft.Dynamite.Lists
             if (!listInfo.EnableAttachements)
             {
                 list.EnableAttachments = listInfo.EnableAttachements;
-                list.Update();
             }
 
             // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).
@@ -299,6 +296,9 @@ namespace GSoft.Dynamite.Lists
 
             // Ensure the field definitions to make sure that all fields are present and to override/apply column default Values
             this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
+
+            // Save changes.
+            list.Update();
 
             return list;
         }
@@ -322,7 +322,8 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
-        /// Enable or disable ratings on a SPList
+        /// Enable or disable ratings on a SPList.
+        /// This method does not call SPList.Update(). Your code should handle this.
         /// </summary>
         /// <param name="list">The list.</param>
         /// <param name="ratingType">The rating type. Can be "Likes" or "Ratings" </param>
@@ -346,8 +347,6 @@ namespace GSoft.Dynamite.Lists
             {
                 disableMethod.Invoke(null, new object[] { list });
             }
-
-            list.Update();
         }
 
         /// <summary>
