@@ -318,7 +318,7 @@ namespace GSoft.Dynamite.Definitions
             }
 
             contentType.FieldLinks.Reorder(fieldInternalNames.ToArray());
-            contentType.Update();
+            contentType.Update(true);
         }
 
         #region Private methods
