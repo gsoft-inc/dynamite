@@ -114,7 +114,19 @@ function New-DSPWebXml()
 		# Groups
 		if ($web.Groups -ne $null)
 		{
-			Set-DSPWebPermissionInheritance -Web $Url -Break
+
+            $resetExistingPermissions = [System.Convert]::ToBoolean($web.Groups.ClearExistingPermissions)
+
+		    if([System.Convert]::ToBoolean($web.Groups.BreakRoleInheritance) -eq $true)
+		    {
+			    Set-DSPWebPermissionInheritance -Web $Url -Break -CopyRoleAssignments:(-not $clearExistingPermissions)
+		    } 
+		    elseif ($clearExistingPermissions -eq $true) 
+		    {
+			    Clear-DSPWebPermissions -Web $Url
+		    }
+
+
 			Add-DSPGroupByXml -Web $Url -Group $web.Groups
 		}
 		
