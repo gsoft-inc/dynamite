@@ -119,25 +119,15 @@ namespace GSoft.Dynamite.Lists
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
         {
-            var list = this.listLocator.TryGetList(web, name);
-
-            if (list != null)
+            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, (int)templateType);
+            if (listTemplate != null)
             {
-                // List already exists, check for correct template
-                if (list.BaseTemplate != templateType)
-                {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, templateType));
-                }
+                return this.EnsureList(web, name, description, listTemplate);
             }
             else
             {
-                // Create new list
-                var id = web.Lists.Add(name, description, templateType);
-
-                list = web.Lists[id];
-            }
-
-            return list;
+                return null;
+            }  
         }
 
         /// <summary>
@@ -151,20 +141,43 @@ namespace GSoft.Dynamite.Lists
         /// <returns>The list object</returns>
         public SPList EnsureList(SPWeb web, string webRelativePathToList, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
         {
+            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, (int)templateType);
+            if (listTemplate != null)
+            {
+                return this.EnsureList(web, webRelativePathToList, titleResourceKey, descriptionResourceKey, listTemplate);
+            }
+            else
+            {
+                return null;
+            }   
+        }
+
+        /// <summary>
+        /// Ensure the list in the web
+        /// </summary>
+        /// <remarks>The list name and description will not be translated</remarks>
+        /// <param name="web">The current web</param>
+        /// <param name="webRelativePathToList">The web-relative path to the list's root folder.</param>
+        /// <param name="titleResourceKey">Titles' resource key</param>
+        /// <param name="descriptionResourceKey">Descriptions' resource key</param>
+        /// <param name="template">Template for the list</param>
+        /// <returns>The new list or the existing list</returns>
+        public SPList EnsureList(SPWeb web, string webRelativePathToList, string titleResourceKey, string descriptionResourceKey, SPListTemplate template)
+        {
             var list = this.listLocator.TryGetList(web, webRelativePathToList);
 
             if (list != null)
             {
                 // List already exists, check for correct template
-                if (list.BaseTemplate != templateType)
+                if (list.BaseTemplate != template.Type)
                 {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", webRelativePathToList, list.BaseTemplate, templateType));
+                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", webRelativePathToList, list.BaseTemplate, template.Type));
                 }
             }
             else
             {
                 // Create new list
-                var id = web.Lists.Add(webRelativePathToList, string.Empty, templateType);
+                var id = web.Lists.Add(webRelativePathToList, string.Empty, template);
                 list = web.Lists[id];
             }
 
@@ -197,10 +210,12 @@ namespace GSoft.Dynamite.Lists
         {
             var list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
 
+            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, listInfo.ListTemplateId);
+
             // Ensure the list
             if (list == null)
             {
-                list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
             }
             else
             {
@@ -218,12 +233,12 @@ namespace GSoft.Dynamite.Lists
 
                         // TODO: review ListInfo.WebRelativeUrl. RootFolderUrl used to be its name. Is it assumed that all lists live under /Lists/? Is it assumed that
                         // _no ListInfo EVER_ will ever ever be created with a WebRelativeUrl value of /Lists/SomeListName ??? This needs more review...
-                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
                     }
                     else
                     {
                         // Get the existing list
-                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listInfo.ListTemplate);
+                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
                     }
                 }
             }
@@ -595,6 +610,18 @@ namespace GSoft.Dynamite.Lists
             }
 
             return null;
+        }
+
+        private SPListTemplate GetListTemplateFromTemplateId(SPWeb web, int id)
+        {
+            SPListTemplate listTemplate = (from SPListTemplate template in web.ListTemplates where template.Type_Client == id select template).FirstOrDefault();
+            if (listTemplate == null)
+            {
+                this.logger.Error("The list template with id '{0}' was not found in web '{1}'", id, web.Url);
+                return null;
+            }
+
+            return listTemplate;
         }
     }
 }

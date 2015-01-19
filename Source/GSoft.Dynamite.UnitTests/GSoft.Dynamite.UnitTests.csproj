@@ -74,6 +74,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Binding\Converters\LookupValueConverterTest.cs" />
+    <Compile Include="Binding\IO\SPItemUrlValueWriterTest.cs" />
     <Compile Include="Binding\IO\SPItemValueWriterTest.cs" />
     <Compile Include="Fields\NoteFieldInfoTest.cs" />
     <Compile Include="Fields\TextFieldInfoTest.cs" />

@@ -82,5 +82,16 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// URL of the top PublishingWeb in the variations hierarchy
         /// </summary>
         public Uri TopWebUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the custom title value. This value will be displayed instead of the default title value of the variation label. 
+        /// If the property is not set, the default value of the variation label is displayed.
+        /// </summary>
+        public string CustomTitleValue { get; set; }
+
+        /// <summary>
+        /// Gets or Sets the CssClass property. Add a css class to the label.
+        /// </summary>
+        public string CssClass { get; set; }
     }
 }

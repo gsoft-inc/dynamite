@@ -74,8 +74,14 @@ function New-DSPSiteCollectionRecusiveXml()
 	}
 	
 	$Group = $Site.Groups
-	if ($Group -ne $null)
-	{
+	if ($Group -ne $null) 
+    {
+		$ClearExistingPermissions = [System.Convert]::ToBoolean($Group.ClearExistingPermissions)
+		if ($ClearExistingPermissions -eq $true) 
+		{
+			Clear-DSPWebPermissions -Web $spSite.Url
+		}
+		
 		Add-DSPGroupByXml -Web $spSite.Url -Group $Group
 	}
 	

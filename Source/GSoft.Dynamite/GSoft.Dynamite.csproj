@@ -99,6 +99,7 @@
     <Compile Include="Branding\IImageRenditionHelper.cs" />
     <Compile Include="Catalogs\CatalogConnectionInfo.cs" />
     <Compile Include="Branding\DisplayTemplateInfo.cs" />
+    <Compile Include="ContentTypes\Constants\BuiltInContentTypes.cs" />
     <Compile Include="Events\EventReceiverInfo.cs" />
     <Compile Include="ContentTypes\IContentTypeHelper.cs" />
     <Compile Include="Fields\FieldLocator.cs" />
