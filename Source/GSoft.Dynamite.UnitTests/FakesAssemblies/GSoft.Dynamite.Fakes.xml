@@ -6994,6 +6994,45 @@
         <member name="P:GSoft.Dynamite.Configuration.Fakes.StubWebConfigModificationHelper.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes">
+            <summary>Shim type of GSoft.Dynamite.ContentTypes.Constants.BuiltInContentTypes</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.DocumentGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_Document()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.ImageGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_Image()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.ItemGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_Item()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.RichAudioGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_RichAudio()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.RichImageGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_RichImage()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.RichMediaAssetGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_RichMediaAsset()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.RichVideoRenditionGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_RichVideoRendition()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ContentTypes.Constants.Fakes.ShimBuiltInContentTypes.VideoGet">
+            <summary>Sets the shim of BuiltInContentTypes.get_Video()</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper">
             <summary>Shim type of GSoft.Dynamite.ContentTypes.ContentTypeHelper</summary>
         </member>
@@ -11809,6 +11848,18 @@
         <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.ConstructorVariationLabel">
             <summary>Sets the shim of VariationLabelInfo.VariationLabelInfo(VariationLabel variationLabel)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.CssClassGet">
+            <summary>Sets the shim of VariationLabelInfo.get_CssClass()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.CssClassSetString">
+            <summary>Sets the shim of VariationLabelInfo.set_CssClass(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.CustomTitleValueGet">
+            <summary>Sets the shim of VariationLabelInfo.get_CustomTitleValue()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.CustomTitleValueSetString">
+            <summary>Sets the shim of VariationLabelInfo.set_CustomTitleValue(String value)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.DescriptionGet">
             <summary>Sets the shim of VariationLabelInfo.get_Description()</summary>
         </member>
@@ -11859,6 +11910,18 @@
         </member>
         <member name="T:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances">
             <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances.CssClassGet">
+            <summary>Sets the shim of VariationLabelInfo.get_CssClass()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances.CssClassSetString">
+            <summary>Sets the shim of VariationLabelInfo.set_CssClass(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances.CustomTitleValueGet">
+            <summary>Sets the shim of VariationLabelInfo.get_CustomTitleValue()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances.CustomTitleValueSetString">
+            <summary>Sets the shim of VariationLabelInfo.set_CustomTitleValue(String value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Globalization.Variations.Fakes.ShimVariationLabelInfo.AllInstances.DescriptionGet">
             <summary>Sets the shim of VariationLabelInfo.get_Description()</summary>
@@ -12493,11 +12556,17 @@
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.EnsureListSPWebStringStringSPListTemplateType">
             <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String name, String description, SPListTemplateType templateType)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.EnsureListSPWebStringStringStringSPListTemplate">
+            <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String webRelativePathToList, String titleResourceKey, String descriptionResourceKey, SPListTemplate template)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.EnsureListSPWebStringStringStringSPListTemplateType">
             <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String webRelativePathToList, String titleResourceKey, String descriptionResourceKey, SPListTemplateType templateType)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListContentTypeSPListContentTypeInfo">
             <summary>Sets the shim of ListHelper.GetListContentType(SPList list, ContentTypeInfo contentTypeInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListTemplateFromTemplateIdSPWebInt32">
+            <summary>Sets the shim of ListHelper.GetListTemplateFromTemplateId(SPWeb web, Int32 id)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListTemplateSPWebString">
             <summary>Sets the shim of ListHelper.GetListTemplate(SPWeb web, String templateName)</summary>
@@ -12547,8 +12616,14 @@
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.EnsureListSPWebStringStringSPListTemplateType">
             <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String name, String description, SPListTemplateType templateType)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.EnsureListSPWebStringStringStringSPListTemplate">
+            <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String webRelativePathToList, String titleResourceKey, String descriptionResourceKey, SPListTemplate template)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.EnsureListSPWebStringStringStringSPListTemplateType">
             <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, String webRelativePathToList, String titleResourceKey, String descriptionResourceKey, SPListTemplateType templateType)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.GetListTemplateFromTemplateIdSPWebInt32">
+            <summary>Sets the shim of ListHelper.GetListTemplateFromTemplateId(SPWeb web, Int32 id)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.GetListTemplateSPWebString">
             <summary>Sets the shim of ListHelper.GetListTemplate(SPWeb web, String templateName)</summary>
@@ -12643,6 +12718,12 @@
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.ListTemplateGet">
             <summary>Sets the shim of ListInfo.get_ListTemplate()</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.ListTemplateIdGet">
+            <summary>Sets the shim of ListInfo.get_ListTemplateId()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.ListTemplateIdSetInt32">
+            <summary>Sets the shim of ListInfo.set_ListTemplateId(Int32 value)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.ListTemplateSetSPListTemplateType">
             <summary>Sets the shim of ListInfo.set_ListTemplate(SPListTemplateType value)</summary>
         </member>
@@ -12735,6 +12816,12 @@
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.AllInstances.ListTemplateGet">
             <summary>Sets the shim of ListInfo.get_ListTemplate()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.AllInstances.ListTemplateIdGet">
+            <summary>Sets the shim of ListInfo.get_ListTemplateId()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.AllInstances.ListTemplateIdSetInt32">
+            <summary>Sets the shim of ListInfo.set_ListTemplateId(Int32 value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListInfo.AllInstances.ListTemplateSetSPListTemplateType">
             <summary>Sets the shim of ListInfo.set_ListTemplate(SPListTemplateType value)</summary>
@@ -15361,6 +15448,9 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -15795,6 +15885,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>

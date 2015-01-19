@@ -13,6 +13,12 @@ namespace GSoft.Dynamite.Lists
     public class ListInfo : BaseTypeInfo
     {
         /// <summary>
+        /// Private variables to exchange values between ListTemplate and ListTemplateId
+        /// </summary>
+        private SPListTemplateType listTemplateType;
+        private int listTemplateId;
+
+        /// <summary>
         /// Default constructor for serialization purposes
         /// </summary>
         public ListInfo()
@@ -66,12 +72,44 @@ namespace GSoft.Dynamite.Lists
         public Uri WebRelativeUrl { get; set; }
 
         /// <summary>
-        /// Gets or sets the list template identifier.
+        /// Gets or sets the list template identifier by using the ENUM class provided by SP2013.
         /// </summary>
         /// <value>
         /// The list template identifier.
         /// </value>
-        public SPListTemplateType ListTemplate { get; set; }
+        public SPListTemplateType ListTemplate 
+        {
+            get
+            {
+                return this.listTemplateType;
+            }
+
+            set
+            {
+                this.listTemplateId = (int)value;
+                this.listTemplateType = value;
+            } 
+        }
+
+        /// <summary>
+        /// Gets or sets the list template identifier by using a real ID.
+        /// </summary>
+        /// <value>
+        /// The list template identifier.
+        /// </value>
+        public int ListTemplateId 
+        {
+            get
+            {
+                return this.listTemplateId;
+            }
+
+            set
+            {
+                this.listTemplateId = value;
+                this.listTemplateType = SPListTemplateType.InvalidType;
+            } 
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether [overwrite].
