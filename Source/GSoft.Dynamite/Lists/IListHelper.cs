@@ -20,7 +20,6 @@
         /// <param name="web">The current web</param>
         /// <param name="templateName">The list template name</param>
         /// <returns>The list template</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPListTemplate GetListTemplate(SPWeb web, string templateName);
 
         /// <summary>
@@ -33,7 +32,6 @@
         /// <param name="description">The description of the list</param>
         /// <param name="listTemplate">The desired list template to use to instantiate the list</param>
         /// <returns>The new list or the existing list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPList EnsureList(SPWeb web, string name, string description, SPListTemplate listTemplate);
 
         /// <summary>
@@ -46,7 +44,6 @@
         /// <param name="description">The description of the list</param>
         /// <param name="templateType">The desired list template type to use to instantiate the list</param>
         /// <returns>The new list or the existing list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType);
 
         /// <summary>Creates the list or returns the existing one.</summary>

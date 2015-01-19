@@ -134,7 +134,7 @@ namespace GSoft.Dynamite.Fields
             string displayName = string.Empty;
             string internalName = string.Empty;
 
-            // Validate the xml of the field and get its 
+            // Validate the xml of the field and get its properties
             if (this.IsFieldXmlValid(fieldXml, out id, out displayName, out internalName))
             {
                 // Check if the field already exists. Skip the creation if so.
@@ -151,7 +151,17 @@ namespace GSoft.Dynamite.Fields
                     this.logger.Info("End method 'EnsureField'. Added field with internal name '{0}'", addedInternalName);
                 }
                 else
-                {
+                { 
+                    // If its a lookup we need to fix up the xml.
+                    if (this.IsLookup(fieldXml))
+                    {
+                        fieldXml = this.FixLookupFieldXml(fieldCollection.Web, fieldXml);
+                    }
+
+                    var alreadyCreatedField = this.fieldLocator.GetFieldById(fieldCollection, id);
+                    alreadyCreatedField.SchemaXml = fieldXml.ToString();
+                    alreadyCreatedField.Update();
+
                     this.logger.Info("End method 'EnsureField'. Field with id '{0}', display name '{1}' and internal name '{2}' was not added because it already exists in the collection.", id, displayName, internalName);
                 }
             }

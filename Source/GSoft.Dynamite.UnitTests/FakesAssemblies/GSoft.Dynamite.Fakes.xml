@@ -8917,8 +8917,8 @@
         <member name="M:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.Bind(GSoft.Dynamite.Fields.IFieldHelper)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyFieldTypeSpecificValuesSPFieldCollectionSPFieldIFieldInfo">
-            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValues(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyFieldTypeSpecificValuesAndUpdateSPFieldCollectionSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyTaxonomyFieldValuesSPFieldCollectionSPFieldTaxonomyFieldInfo">
             <summary>Sets the shim of FieldHelper.ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)</summary>
@@ -8941,20 +8941,23 @@
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.EnsureFieldSPFieldCollectionIFieldInfo">
             <summary>Sets the shim of FieldHelper.EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.SetFieldMiscPropertiesSPFieldIFieldInfoBoolean">
-            <summary>Sets the shim of FieldHelper.SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo, Boolean updateField)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.InnerEnsureFieldSPFieldCollectionIFieldInfo">
+            <summary>Sets the shim of FieldHelper.InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.SetFieldMiscPropertiesSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.TryGetListFromFieldCollectionSPFieldCollectionSPListOut">
             <summary>Sets the shim of FieldHelper.TryGetListFromFieldCollection(SPFieldCollection collection, SPList&amp; list)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.UpdateFieldVisibilitySPFieldIFieldInfoBoolean">
-            <summary>Sets the shim of FieldHelper.UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo, Boolean updateField)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.UpdateFieldVisibilitySPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyFieldTypeSpecificValuesSPFieldCollectionSPFieldIFieldInfo">
-            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValues(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyFieldTypeSpecificValuesAndUpdateSPFieldCollectionSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyTaxonomyFieldValuesSPFieldCollectionSPFieldTaxonomyFieldInfo">
             <summary>Sets the shim of FieldHelper.ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)</summary>
@@ -8970,6 +8973,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.EnsureFieldSPFieldCollectionIFieldInfo">
             <summary>Sets the shim of FieldHelper.EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.InnerEnsureFieldSPFieldCollectionIFieldInfo">
+            <summary>Sets the shim of FieldHelper.InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Fakes.ShimFieldInfo`1">
             <summary>Shim type of GSoft.Dynamite.Fields.FieldInfo`1</summary>
@@ -15361,9 +15367,6 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
-        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -15798,9 +15801,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
@@ -19840,6 +19840,9 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumnSPSiteTermStoreGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumn(SPSite site, TermStore termStore, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
@@ -19914,6 +19917,9 @@
         </member>
         <member name="T:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
@@ -20536,6 +20542,9 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.#ctor">
             <summary>Initializes a new instance of type StubITaxonomyHelper</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
@@ -20563,6 +20572,9 @@
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.EnsureTaxonomyEventReceiversSPEventReceiverDefinitionCollection">
             <summary>Sets the stub of ITaxonomyHelper.EnsureTaxonomyEventReceivers(SPEventReceiverDefinitionCollection eventReceivers)</summary>
         </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
@@ -20575,11 +20587,11 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termSetName, String termSubsetName)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.Guid)">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
-        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.Guid)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>

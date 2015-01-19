@@ -165,7 +165,7 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Assigns a term set to a site column in the default site collection
+        /// Assigns a global farm-wide term set to a list column
         /// term store.
         /// </summary>
         /// <param name="list">The list containing the field.</param>
@@ -182,6 +182,27 @@ namespace GSoft.Dynamite.Taxonomy
                 TermStore termStore = session.DefaultSiteCollectionTermStore;
                 TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
+            }
+        }
+
+        /// <summary>
+        /// Assigns a local site-collection-specific term set to a list column
+        /// term store.
+        /// </summary>
+        /// <param name="list">The list containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AssignTermSetToListColumn(SPList list, Guid fieldId, string termSetName, string termSubsetName)
+        {
+            if (list.Fields.Contains(fieldId))
+            {
+                TaxonomySession session = new TaxonomySession(list.ParentWeb.Site);
+                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
+                Group siteCollectionGroup = termStore.GetSiteCollectionGroup(list.ParentWeb.Site);
+                InternalAssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
             }
         }
 

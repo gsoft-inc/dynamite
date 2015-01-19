@@ -1,5 +1,6 @@
 namespace GSoft.Dynamite.ContentTypes
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
@@ -32,6 +33,7 @@ namespace GSoft.Dynamite.ContentTypes
         ///   The content type that was created.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
+        [Obsolete("Prefer ensuring content types with content type info.")]
         SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName);
 
         /// <summary>
@@ -45,6 +47,7 @@ namespace GSoft.Dynamite.ContentTypes
         ///   The content type that was created.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
+        [Obsolete("Prefer ensuring content types with content type info.")]
         SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName);
 
         /// <summary>The ensure content type.</summary>
@@ -59,6 +62,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="collection">The collection.</param>
         /// <param name="contentType">The content type.</param>
         /// <returns>The <see cref="SPContentType"/>.</returns>
+        [Obsolete("Prefer ensuring content types with content type info.")]        
         SPContentType EnsureContentType(SPContentTypeCollection collection, SPContentType contentType);
 
         /// <summary>
@@ -68,6 +72,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentTypeId">The content type id.</param>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
         /// <exception cref="Microsoft.SharePoint.SPContentTypeReadOnlyException">If the contentype is readonly.</exception>
+        [Obsolete("This is a misleading method. Regardless of the collection, the content type will get deleted across the entire site collection. Use DeleteContentTypeIfNotUsed(SPContentType) instead.")]
         void DeleteContentTypeIfNotUsed(SPContentTypeCollection collection, SPContentTypeId contentTypeId);
 
         /// <summary>
@@ -85,6 +90,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="fieldInfo">The field info.</param>
         /// <returns>Null if the field does not exist, else the field is returned.</returns>
         /// <exception cref="System.ArgumentNullException">For any null parameter.</exception>
+        [Obsolete("Use EnsureContentType with the field added to the ContentTypeInfo definition instead. Or use IFieldHelper.EnsureField(SPFieldCollection, IFieldInfo).")]
         SPField EnsureFieldInContentType(SPContentType contentType, IFieldInfo fieldInfo);
 
         /// <summary>
@@ -93,6 +99,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentType">Type of the content.</param>
         /// <param name="fieldInfos">The field information.</param>
         /// <returns>IEnumerable of SPFields that where found.</returns>
+        [Obsolete("Use EnsureContentType with the fields added to the ContentTypeInfo definition instead. Or use IFieldHelper.EnsureField(SPFieldCollection, ILisT<IFieldInfo>).")]
         IEnumerable<SPField> EnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos);
 
         /// <summary>
@@ -104,6 +111,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
         /// <returns>The event receiver definition</returns>
+        [Obsolete("To be replaced by EventReceiverHelper.EnsureEventReceiverDefinition.")]
         SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
@@ -115,6 +123,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
         /// <returns>The event receiver definition</returns>
+        [Obsolete("To be replaced by EventReceiverHelper.EnsureEventReceiverDefinition.")]
         SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType);
 
         /// <summary>
@@ -122,12 +131,14 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
+        [Obsolete("Use EnsureContentType instead, with a correctly ordered inner list of IFieldInfos to re-order them.")]
         void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields);
 
         /// <summary>The delete event receiver definition.</summary>
         /// <param name="contentType">The content type.</param>
         /// <param name="type">The type.</param>
         /// <param name="className">The class name.</param>
+        [Obsolete("To be replaced by EventReceiverHelper.DeleteEventReceiver.")]
         void DeleteEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string className);
     }
 }

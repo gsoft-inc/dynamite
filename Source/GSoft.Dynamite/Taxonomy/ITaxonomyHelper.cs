@@ -22,7 +22,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreName, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -34,7 +33,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -45,7 +43,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="fieldId">The field to associate with the term set.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -57,7 +54,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
 
         /// <summary>
@@ -69,7 +65,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreName, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -81,11 +76,10 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
 
         /// <summary>
-        /// Assigns a term set to a site column in the default site collection
+        /// Assigns a global farm-wide term set to a list column
         /// term store.
         /// </summary>
         /// <param name="list">The list containing the field.</param>
@@ -93,8 +87,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName);
+
+        /// <summary>
+        /// Assigns a local site-collection-specific term set to a list column
+        /// term store.
+        /// </summary>
+        /// <param name="list">The list containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
+        void AssignTermSetToListColumn(SPList list, Guid fieldId, string termSetName, string termSubsetName);
 
         /// <summary>
         /// Ensures the taxonomy event receivers.
@@ -109,7 +112,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <remarks>To disable Enterprise Keywords, delete the field from the list manually.</remarks>
         /// <param name="list">The list</param>
         /// <param name="keywordsAsSocialTags">Whether the list's keywords should be used as MySite social tags</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void EnableListEnterpriseKeywordsSetting(SPList list, bool keywordsAsSocialTags);
 
         /// <summary>
@@ -165,7 +167,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// The term group.
         /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         Group GetTermGroupByName(TermStore termStore, string groupName);
 
         /// <summary>
@@ -175,7 +176,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="group">The term group.</param>
         /// <param name="termSetName">Name of the term set.</param>
         /// <returns>The term set.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         TermSet GetTermSetByName(TermStore termStore, Group group, string termSetName);
 
         /// <summary>

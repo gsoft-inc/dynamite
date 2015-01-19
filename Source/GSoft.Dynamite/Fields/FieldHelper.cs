@@ -43,18 +43,17 @@ namespace GSoft.Dynamite.Fields
         /// <returns>The internal name of the field</returns>
         public SPField EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
         {
-            SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
+            SPList parentList = null;
+            bool isListField = TryGetListFromFieldCollection(fieldCollection, out parentList);
+            bool alreadyExistsAsSiteColumn = fieldCollection.Web.Site.RootWeb.Fields.TryGetFieldByStaticName(fieldInfo.InternalName) != null;
 
-            // Set the field visibility
-            field = UpdateFieldVisibility(field, fieldInfo, false);
+            if (isListField && !alreadyExistsAsSiteColumn)
+            {
+                // By convention, we enfore creation of site column before using that field on a list
+                this.InnerEnsureField(fieldCollection.Web.Site.RootWeb.Fields, fieldInfo);
+            }
 
-            // Set miscellaneous proeprties
-            field = SetFieldMiscProperties(field, fieldInfo, false);
-
-            // Set default value if any, ensure other FieldType-specific properties
-            this.ApplyFieldTypeSpecificValues(fieldCollection, field, fieldInfo);
-            
-            return field;
+            return this.InnerEnsureField(fieldCollection, fieldInfo);
         }
 
         /// <summary>
@@ -75,7 +74,23 @@ namespace GSoft.Dynamite.Fields
             return createdFields;
         }
 
-        private void ApplyFieldTypeSpecificValues(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)
+        private SPField InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        {
+            SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
+
+            // Set the field visibility
+            field = UpdateFieldVisibility(field, fieldInfo);
+
+            // Set miscellaneous proeprties
+            field = SetFieldMiscProperties(field, fieldInfo);
+
+            // Set default value if any, ensure other FieldType-specific properties
+            this.ApplyFieldTypeSpecificValuesAndUpdate(fieldCollection, field, fieldInfo);
+
+            return field;
+        }
+
+        private void ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)
         {
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
             var asTaxonomyMultiFieldInfo = fieldInfo as TaxonomyMultiFieldInfo;
@@ -90,14 +105,24 @@ namespace GSoft.Dynamite.Fields
                 {
                     field.DefaultValue = stringBasedField.DefaultValue;
                 }
+
+                // don't forget to persist changes
+                field.Update();
             }
             else if (asTaxonomyFieldInfo != null)
             {
+                // this call will take care of calling Update() on field
                 this.ApplyTaxonomyFieldValues(fieldCollection, field, asTaxonomyFieldInfo);
             }
             else if (asTaxonomyMultiFieldInfo != null)
             {
+                // this call will take care of calling Update() on field
                 this.ApplyTaxonomyMultiFieldValues(fieldCollection, field, asTaxonomyMultiFieldInfo);
+            }
+            else
+            {
+                // Some preceding changed be need to be persisted
+                field.Update();
             }
 
             // TODO: support other field types (DateTimeFieldInfo, UrlFieldInfo, ImageFieldInfo, etc.)
@@ -147,27 +172,53 @@ namespace GSoft.Dynamite.Fields
             // Try to see if we're playing with a List-field collection or a Web-field collection context
             if (TryGetListFromFieldCollection(fieldCollection, out parentList))
             {
-                // Exure this term set mapping on the List-specific field only
-                this.taxonomyHelper.AssignTermSetToListColumn(
-                            parentList,
-                            fieldInfo.Id,
-                            taxonomyMappingContext.Group.Name,
-                            taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
-                            termSubsetName);
+                // Ensure this term set mapping on the List-specific field only
+                if (taxonomyMappingContext.Group != null)
+                {
+                    // Term set mapping on a global farm-wide term set.
+                    this.taxonomyHelper.AssignTermSetToListColumn(
+                        parentList,
+                        fieldInfo.Id,
+                        taxonomyMappingContext.Group.Name,
+                        taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
+                        termSubsetName);
+                }
+                else
+                {
+                    // Term set mapping on a local site-collection-specific term set.
+                    this.taxonomyHelper.AssignTermSetToListColumn(
+                        parentList,
+                        fieldInfo.Id,
+                        taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
+                        termSubsetName);
+                }
             }
-            else
+            else 
             {
                 // Ensure this field accross the web (i.e. site column + all usages of the field accross all the web's lists)
-                this.taxonomyHelper.AssignTermSetToSiteColumn(
-                            fieldCollection.Web,
-                            fieldInfo.Id,
-                            taxonomyMappingContext.Group.Name,
-                            taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
-                            termSubsetName);
+                if (taxonomyMappingContext.Group != null)
+                {
+                    // Term set mapping on a global farm-wide term set.
+                    this.taxonomyHelper.AssignTermSetToSiteColumn(
+                        fieldCollection.Web,
+                        fieldInfo.Id,
+                        taxonomyMappingContext.Group.Name,
+                        taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
+                        termSubsetName);
+                }
+                else
+                {
+                    // Term set mapping on a local site-collection-specific term set.
+                    this.taxonomyHelper.AssignTermSetToSiteColumn(
+                        fieldCollection.Web,
+                        fieldInfo.Id,
+                        taxonomyMappingContext.TermSet.Labels[fieldCollection.Web.UICulture],
+                        termSubsetName);
+                }
             }
         }
 
-        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo, bool updateField)
+        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
         {
             if (field != null)
             {
@@ -175,17 +226,12 @@ namespace GSoft.Dynamite.Fields
                 field.ShowInDisplayForm = !fieldInfo.IsHiddenInDisplayForm;
                 field.ShowInEditForm = !fieldInfo.IsHiddenInEditForm;
                 field.ShowInNewForm = !fieldInfo.IsHiddenInNewForm;
-
-                if (updateField)
-                {
-                    field.Update(true);
-                }
             }
 
             return field;
         }
 
-        private static SPField SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo, bool updateField)
+        private static SPField SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo)
         {
             // Set field properties
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
@@ -220,11 +266,6 @@ namespace GSoft.Dynamite.Fields
 
                     field = taxonomyField;
                 }              
-            }
-
-            if (updateField)
-            {
-                field.Update();
             }
 
             return field;

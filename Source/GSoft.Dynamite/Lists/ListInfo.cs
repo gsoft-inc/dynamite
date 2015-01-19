@@ -36,6 +36,7 @@ namespace GSoft.Dynamite.Lists
             : base(displayNameResourceKey, descriptionResourceKey, string.Empty)
         {
             this.WebRelativeUrl = webRelativeUrl;
+            this.ListTemplate = SPListTemplateType.GenericList;     // generic list by default
 
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
@@ -63,6 +64,10 @@ namespace GSoft.Dynamite.Lists
         /// <value>
         /// The root folder URL.
         /// </value>
+        /// TODO: the ListHelper doesn't use this property properly. Right now, setting something like "/Lists/MyListPath"
+        /// in this property will make the ListHelper fail horribly. The only thing that really works is a single token
+        /// like "MyListPath". I.E. our ListHelper doesn't help us creating lists in web sub-folders... it only works 
+        /// for lists that should be created exactly one level under the Web's URL.
         public Uri WebRelativeUrl { get; set; }
 
         /// <summary>
@@ -71,6 +76,7 @@ namespace GSoft.Dynamite.Lists
         /// <value>
         /// The list template identifier.
         /// </value>
+        // TODO: this is insufficient - we need a way to specify a custom SPListTemplate ID, not just the basic templates documented in the enum SPListTemplateType
         public SPListTemplateType ListTemplate { get; set; }
 
         /// <summary>
