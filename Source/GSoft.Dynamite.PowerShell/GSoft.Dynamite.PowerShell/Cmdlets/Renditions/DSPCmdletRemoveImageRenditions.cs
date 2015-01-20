@@ -68,7 +68,7 @@ namespace GSoft.Dynamite.PowerShell.Cmdlets.Renditions
                         {
                             imageRenditionHelper.RemoveImageRendition(
                                site,
-                               new ImageRendition()
+                               new ImageRenditionInfo()
                                {
                                    Name = renditionDefinition.Name,
                                    Height = renditionDefinition.Height,
