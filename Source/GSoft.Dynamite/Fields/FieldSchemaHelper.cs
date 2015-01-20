@@ -133,26 +133,73 @@ namespace GSoft.Dynamite.Fields
             Guid id = Guid.Empty;
             string displayName = string.Empty;
             string internalName = string.Empty;
+            string typeName = string.Empty;
 
-            // Validate the xml of the field and get its 
-            if (this.IsFieldXmlValid(fieldXml, out id, out displayName, out internalName))
+            // Validate the xml of the field and get its properties
+            if (this.IsFieldXmlValid(fieldXml, out id, out displayName, out internalName, out typeName))
             {
+                // If its a lookup we need to fix up the xml.
+                if (this.IsLookup(fieldXml))
+                {
+                    fieldXml = this.FixLookupFieldXml(fieldCollection.Web, fieldXml);
+                }
+
                 // Check if the field already exists. Skip the creation if so.
                 if (!this.FieldExists(fieldCollection, internalName, id))
                 {
-                    // If its a lookup we need to fix up the xml.
-                    if (this.IsLookup(fieldXml))
+                    // We want to create the field: if we're trying to add field on a list field collection,
+                    // then chances are the field is already defined on the parent root web (we actually enforce
+                    // this in the calling FieldHelper). In such a case, we need to re-use the existing field definition,
+                    // because using .AddFieldAsXml directly on the list field collection would cause a field
+                    // with an InternalName==ParentRootWebFieldDisplayName (weird bug, really - using AddFieldAsXml
+                    // on a list's SPFieldCollection is just a bad idea: use the already provisioned site column 
+                    // whenever possible). 
+                    string addedInternalName = string.Empty;
+                    if (!this.FieldExists(fieldCollection.Web.Site.RootWeb.Fields, internalName, id))
                     {
-                        fieldXml = this.FixLookupFieldXml(fieldCollection.Web, fieldXml);
+                        addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
+                    }
+                    else
+                    {
+                        // Re-use the parent field definition
+                        var parentRootWebExistingField = fieldCollection.Web.Site.RootWeb.Fields[id];
+                        addedInternalName = fieldCollection.Add(parentRootWebExistingField);
+
+                        // Then update the list column with the new list-specific definition
+                        var alreadyCreatedField = this.fieldLocator.GetFieldById(fieldCollection, id);
+                        alreadyCreatedField.SchemaXml = fieldXml.ToString();
+                        alreadyCreatedField.Update();
                     }
 
-                    string addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
+                    if (internalName != addedInternalName)
+                    {
+                        // Internal name changed abruptly! (probably ended up being set as DisplayName)
+                        // This can happen when .AddFieldAsXml is used directly on a list field collection.
+                        // Some code above tried to detect the situation and act accordingly.
+                        // It can be surprising, when this happens: so better to have it explode violently.
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture, 
+                                "Tried to add field with internal name {0}. Final field was created with internal name {1}.",
+                                internalName,
+                                addedInternalName));
+                    }
 
                     this.logger.Info("End method 'EnsureField'. Added field with internal name '{0}'", addedInternalName);
                 }
                 else
-                {
-                    this.logger.Info("End method 'EnsureField'. Field with id '{0}', display name '{1}' and internal name '{2}' was not added because it already exists in the collection.", id, displayName, internalName);
+                { 
+                    var alreadyCreatedField = this.fieldLocator.GetFieldById(fieldCollection, id);
+
+                    if (alreadyCreatedField != null && alreadyCreatedField.InternalName == internalName && alreadyCreatedField.TypeAsString == typeName)
+                    {
+                        // Only try updating if we managed to find the field by its ID and if 
+                        // the existing field has the same internal name (changing the internal
+                        // name should be impossible).
+                        alreadyCreatedField.SchemaXml = fieldXml.ToString();
+                        alreadyCreatedField.Update();
+                        this.logger.Info("End method 'EnsureField'. Field with id '{0}', display name '{1}' and internal name '{2}' was not added because it already exists in the collection.", id, displayName, internalName);
+                    }
                 }
             }
             else
@@ -173,11 +220,12 @@ namespace GSoft.Dynamite.Fields
             return existingField;
         }
 
-        private bool IsFieldXmlValid(XElement fieldXml, out Guid id, out string displayName, out string internalName)
+        private bool IsFieldXmlValid(XElement fieldXml, out Guid id, out string displayName, out string internalName, out string fieldTypeName)
         {
             id = Guid.Empty;
             displayName = string.Empty;
             internalName = string.Empty;
+            fieldTypeName = string.Empty;
 
             // Validate the ID attribute
             string strId = GetAttributeValue(fieldXml, "ID");
@@ -217,6 +265,14 @@ namespace GSoft.Dynamite.Fields
             if (string.IsNullOrEmpty(internalName))
             {
                 this.logger.Fatal("Attribute 'Name' is required for field with id: '{0}'.", id);
+                return false;
+            }
+            
+            // Validate internal name
+            fieldTypeName = GetAttributeValue(fieldXml, "Type");
+            if (string.IsNullOrEmpty(fieldTypeName))
+            {
+                this.logger.Fatal("Attribute 'Type' is required for field with id: '{0}'.", id);
                 return false;
             }
 

@@ -51,7 +51,8 @@ function Set-DSPWebPermissionInheritance() {
 	Param (
 		[Parameter(Mandatory=$true)]
 		[Microsoft.SharePoint.PowerShell.SPWebPipeBind]$Web,
-		[switch]$Break
+		[switch]$Break,
+		[switch]$CopyRoleAssignments = $true
 	)
 	
 	if ($Break)
@@ -63,7 +64,7 @@ function Set-DSPWebPermissionInheritance() {
 		}
 		else
 		{
-			$SPWeb.BreakRoleInheritance($true)
+			$SPWeb.BreakRoleInheritance($CopyRoleAssignments)
 			Write-Verbose ([string]::Format("Role Inheritance was broken for {0}", $SPWeb.Url))
 			$SPWeb.Update()
 			$SPWeb.Dispose()
@@ -184,6 +185,28 @@ function Add-DSPGroupByXml() {
 	}
 }
 
+function Clear-DSPWebPermissions()
+{
+	[CmdletBinding()]
+	Param
+	(		
+		[Parameter(Mandatory=$true, Position=1)]
+		[Microsoft.SharePoint.PowerShell.SPWebPipeBind]$Web
+	)
+	
+	$SPWeb = $Web.Read()
+	if ($SPWeb.HasUniqueRoleAssignments)
+	{		
+		for ($index = $SPWeb.RoleAssignments.Count - 1; $index -ge 0; $index--) {
+			Write-Host "Removing Role Assignment '$($SPWeb.RoleAssignments[$index].Member)'... " -NoNewline -ForegroundColor Green
+			$SPWeb.RoleAssignments.Remove($index)
+			Write-Host "Done!" -ForegroundColor Green
+		}		
+	} else {
+		Write-Host "Unable to remove web permissions on web '$($SPWeb.Url)' because it does not have unique role assignments." -ForegroundColor Red
+	}
+}
+
 function Set-DSPWebPermissions()
 {
 	[CmdletBinding()] 
@@ -199,10 +222,16 @@ function Set-DSPWebPermissions()
 	$Config.Configuration.Web | ForEach-Object {
 
 		$web = $_.Name
+		
+		$resetExistingPermissions = [System.Convert]::ToBoolean($_.ClearExistingPermissions)
 
 		if([System.Convert]::ToBoolean($_.BreakRoleInheritance) -eq $true)
-		{			
-			Set-DSPWebPermissionInheritance -Web $web -Break
+		{
+			Set-DSPWebPermissionInheritance -Web $web -Break -CopyRoleAssignments:(-not $clearExistingPermissions)
+		} 
+		elseif ($clearExistingPermissions -eq $true) 
+		{
+			Clear-DSPWebPermissions -Web $web
 		}
 
 		# Groups
