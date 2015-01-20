@@ -22,6 +22,19 @@ namespace GSoft.Dynamite.Branding
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageRenditionInfo"/> class.
         /// </summary>
+        /// <param name="name">The name</param>
+        /// <param name="width">The  Width</param>
+        /// <param name="height">The Height</param>
+        public ImageRenditionInfo(string name, int width, int height)
+        {
+            this.Name = name;
+            this.Width = width;
+            this.Height = height;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImageRenditionInfo"/> class.
+        /// </summary>
         /// <param name="imageRendition">The image rendition.</param>
         public ImageRenditionInfo(ImageRendition imageRendition)
         {
