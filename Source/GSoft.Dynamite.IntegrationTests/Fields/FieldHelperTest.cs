@@ -190,7 +190,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
         
-        #region Basic FieldInfo-to-SPField values should be mapped
+        #region Basic FieldInfo-to-SPField values should be mapped upon creation
 
         /// <summary>
         /// Validates that EnsureField intializes field definitions will all the FieldInfo's basic metadata
@@ -261,7 +261,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(alternateEnsuredField);
                     this.ValidateFieldBasicValues(alternateTextFieldInfo, alternateEnsuredField);
 
-                    // 3) Defautls-based field definition
+                    // 3) Defaults-based field definition
                     SPField defaultBasedEnsuredField = fieldHelper.EnsureField(fieldsCollection, defaultsTextFieldInfo);
 
                     Assert.AreEqual(noOfFieldsBefore + 3, fieldsCollection.Count);
@@ -275,13 +275,247 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #region "Ensure" should also mean "Update existing field definition when FieldInfo is different than already deployed column"
 
-        // TODO: add some tests here
+        /// <summary>
+        /// Validates that EnsureField takes care of updating property changes in the field definition.
+        /// I.E. "Ensure" means "1) create if not exist or 2) update and return updated existing"
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenFieldAlreadyExistsAndInfoObjectChanged_ShouldUpdateExistingBasicFieldProperties()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    IsHidden = true,
+                    IsHiddenInDisplayForm = true,
+                    IsHiddenInNewForm = false,
+                    IsHiddenInEditForm = false,
+                    IsHiddenInListSettings = false,
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyNote",
+                    "DescriptionKeyNote",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = false,
+                    IsHidden = false,
+                    IsHiddenInDisplayForm = false,
+                    IsHiddenInNewForm = true,
+                    IsHiddenInEditForm = true,
+                    IsHiddenInListSettings = true,
+                    Required = RequiredType.NotRequired,
+                    HasRichText = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Ensure the basic fields and the first version of their properties
+                    SPField textField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                    SPField noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
+
+                    this.ValidateFieldBasicValues(textFieldInfo, testScope.SiteCollection.RootWeb.Fields[textField.Id]);
+                    Assert.AreEqual(50, ((SPFieldText)textField).MaxLength);    // see MaxLength=50 above
+                    this.ValidateFieldBasicValues(noteFieldInfo, testScope.SiteCollection.RootWeb.Fields[noteField.Id]);
+                    Assert.IsTrue(((SPFieldMultiLineText)noteField).RichText);  // see HasRichText=true above
+
+                    // 2) Modify the FieldInfo values
+                    textFieldInfo.DisplayNameResourceKey = "NameKeyUpdated";
+                    textFieldInfo.DescriptionResourceKey = "DescriptionKeyUpdated";
+                    textFieldInfo.GroupResourceKey = "GroupKeyUpdated";
+                    textFieldInfo.EnforceUniqueValues = false;
+                    textFieldInfo.IsHidden = false;
+                    textFieldInfo.IsHiddenInDisplayForm = false;
+                    textFieldInfo.IsHiddenInNewForm = true;
+                    textFieldInfo.IsHiddenInEditForm = true;
+                    textFieldInfo.IsHiddenInListSettings = true;
+                    textFieldInfo.MaxLength = 500;
+                    textFieldInfo.Required = RequiredType.NotRequired;
+
+                    noteFieldInfo.DisplayNameResourceKey = "NameKeyNoteUpdated";
+                    noteFieldInfo.DescriptionResourceKey = "DescriptionKeyNoteUpdated";
+                    noteFieldInfo.GroupResourceKey = "GroupKeyNoteUpdated";
+                    noteFieldInfo.EnforceUniqueValues = true;
+                    noteFieldInfo.IsHidden = true;
+                    noteFieldInfo.IsHiddenInDisplayForm = true;
+                    noteFieldInfo.IsHiddenInNewForm = false;
+                    noteFieldInfo.IsHiddenInEditForm = false;
+                    noteFieldInfo.IsHiddenInListSettings = false;
+                    noteFieldInfo.Required = RequiredType.Required;
+                    noteFieldInfo.HasRichText = false;
+
+                    // Act
+                    // 3) Update the site columns by re-ensuring with the updated FieldInfo values
+                    fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+                    textField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                    noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
+
+                    // 4) Assert that the field contain the 2nd version's updates
+                    this.ValidateFieldBasicValues(textFieldInfo, testScope.SiteCollection.RootWeb.Fields[textField.Id]);
+                    Assert.AreEqual(500, ((SPFieldText)textField).MaxLength);    // see MaxLength=500 above
+                    this.ValidateFieldBasicValues(noteFieldInfo, testScope.SiteCollection.RootWeb.Fields[noteField.Id]);
+                    Assert.IsFalse(((SPFieldMultiLineText)noteField).RichText);  // see HasRichText=false above
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureField takes care of updating property changes in the Taxonomy field definitions.
+        /// I.E. "Ensure" means "1) create if not exist or 2) update and return updated existing".
+        /// Gotta make sure the taxonomy default value and term store mapping are updated.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomyFieldAlreadyExists_ShouldUpdateExistingTaxonomyFieldProperties()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    IsHidden = true,
+                    IsHiddenInDisplayForm = true,
+                    IsHiddenInNewForm = false,
+                    IsHiddenInEditForm = false,
+                    IsHiddenInListSettings = false,
+                    Required = RequiredType.Required,
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = false,
+                    IsHidden = false,
+                    IsHiddenInDisplayForm = false,
+                    IsHiddenInNewForm = true,
+                    IsHiddenInEditForm = true,
+                    IsHiddenInListSettings = true,
+                    Required = RequiredType.NotRequired,
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Ensure the basic fields and the first version of their properties
+                    SPField taxoField = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField taxoMultiField = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+                    TaxonomyField fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoFieldInfo.Id];
+                    TaxonomyField fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiFieldInfo.Id];
+
+                    this.ValidateFieldBasicValues(taxoFieldInfo, fieldSingleFetchedAgain);
+                    Assert.AreEqual(testTermSet.Id, fieldSingleFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingleFetchedAgain.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldSingleFetchedAgain.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+
+                    this.ValidateFieldBasicValues(taxoMultiFieldInfo, fieldMultiFetchedAgain);
+                    Assert.AreEqual(testTermSet.Id, fieldMultiFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMultiFetchedAgain.SspId);
+                    Assert.AreEqual(levelOneTermA.Id, fieldMultiFetchedAgain.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+
+                    // 2) Modify the FieldInfo values
+                    taxoFieldInfo.DisplayNameResourceKey = "NameKeyUpdated";
+                    taxoFieldInfo.DescriptionResourceKey = "DescriptionKeyUpdated";
+                    taxoFieldInfo.GroupResourceKey = "GroupKeyUpdated";
+                    taxoFieldInfo.EnforceUniqueValues = false;
+                    taxoFieldInfo.IsHidden = false;
+                    taxoFieldInfo.IsHiddenInDisplayForm = false;
+                    taxoFieldInfo.IsHiddenInNewForm = true;
+                    taxoFieldInfo.IsHiddenInEditForm = true;
+                    taxoFieldInfo.IsHiddenInListSettings = true;
+                    taxoFieldInfo.Required = RequiredType.NotRequired;
+                    taxoFieldInfo.TermStoreMapping = new TaxonomyContext(levelOneTermA);   // choices limited to children of a specific term, instead of having full term set choices
+
+                    taxoMultiFieldInfo.DisplayNameResourceKey = "NameKeyMultiUpdated";
+                    taxoMultiFieldInfo.DescriptionResourceKey = "DescriptionKeyMultiUpdated";
+                    taxoMultiFieldInfo.GroupResourceKey = "GroupKeyMultiUpdated";
+                    taxoMultiFieldInfo.EnforceUniqueValues = true;
+                    taxoMultiFieldInfo.IsHidden = true;
+                    taxoMultiFieldInfo.IsHiddenInDisplayForm = true;
+                    taxoMultiFieldInfo.IsHiddenInNewForm = false;
+                    taxoMultiFieldInfo.IsHiddenInEditForm = false;
+                    taxoMultiFieldInfo.IsHiddenInListSettings = false;
+                    taxoMultiFieldInfo.Required = RequiredType.Required;
+                    taxoMultiFieldInfo.TermStoreMapping = null;             // remove term store mapping
+
+                    // Act
+                    // 3) Update the site columns by re-ensuring with the updated FieldInfo values
+                    fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+                    taxoField = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    taxoMultiField = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    // 4) Assert that the field contain the 2nd version's updates
+                    fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoField.Id];
+                    this.ValidateFieldBasicValues(taxoFieldInfo, fieldSingleFetchedAgain);
+                    Assert.AreEqual(testTermSet.Id, fieldSingleFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingleFetchedAgain.SspId);
+                    Assert.AreEqual(levelOneTermA.Id, fieldSingleFetchedAgain.AnchorId);    // choices should be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+
+                    fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiField.Id];
+                    this.ValidateFieldBasicValues(taxoMultiFieldInfo, fieldMultiFetchedAgain);
+                    Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.TermSetId);          // term store mapping should've been removed
+                    Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.AnchorId);    
+                    Assert.IsFalse(fieldMultiFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+                }
+            }
+        }
+
+        //// TODO:
+        //// you shouldn't be able to update the InternalName of an existing field
+        //// you shouldn't be able to update the ID of an existing field
+        //// you shouldn't be able to update the Type of an existing field
 
         #endregion
 
         #region Ensuring a field directly on a content type should ensure site column is present and update CT field definition if needed
 
-        // TODO: add some tests here
+        //// TODO: add some tests here
 
         #endregion
 
@@ -492,7 +726,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
                     "TestInternalNameTaxo",
                     taxoFieldId,
-                    "NameKey",
+                    "NameKeyTaxo",
                     "DescriptionKey",
                     "GroupKey")
                 {
@@ -532,6 +766,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     taxoMultiFieldInfo.TermStoreMapping = new TaxonomyContext(testTermSet); // list column has a mapping, whereas the site column doesn't
 
+                    // Act
                     // 3) Ensure the modified field definitions on the list (second Ensure)
                     IListLocator listLocator = injectionScope.Resolve<IListLocator>();
                     list = listLocator.GetByUrl(testScope.SiteCollection.RootWeb, "Lists/sometestlistpath");
@@ -765,7 +1000,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     SPField defaultValueHtmlField = fieldHelper.EnsureField(fieldsCollection, noValueTextFieldInfo);
                     Assert.AreEqual(false, defaultValueHtmlField.EnforceUniqueValues);  // default should be false
-
                 }
             }
         }
@@ -773,6 +1007,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #region Taxonomy field type-specific values should be mapped
 
+        /// <summary>
+        /// Validated that the term store mapping is properly applied to taxonomy column
+        /// when we're dealing with Site Collection-specific term group (i.e. the kind of
+        /// term store group that is created with Publishing Site automatically and which 
+        /// is only visible from within that site's settings)
+        /// </summary>
         [TestMethod]
         public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_AndSiteCollectionSpecificTermSet_ShouldApplyTermSetMappingToSiteColumn()
         {
@@ -840,8 +1080,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(testTermSet.Id, fieldMultiFetchedAgain.TermSetId);
                     Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMultiFetchedAgain.SspId);
                     Assert.AreEqual(levelOneTermA.Id, fieldMultiFetchedAgain.AnchorId);    // choices should be constrained to a child term
-                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
-                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);                    
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsAnchorValid);                    
                 }
 
                 // Cleanup term set so that we don't pollute the metadata store
@@ -850,6 +1090,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
+        /// <summary>
+        /// Validated that the term store mapping is properly applied to taxonomy column
+        /// when we're dealing with Farm-wide term groups (i.e. the kind of
+        /// term store group that is created by a farm administrator and which is
+        /// visible from all site collections)
+        /// </summary>
         [TestMethod]
         public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_AndGlobalFarmWideTermSet_ShouldApplyTermSetMappingToSiteColumn()
         {
@@ -874,7 +1120,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
 
                 // Cleanup group (maybe the test failed last time and the old group ended up polluting the term store
-                DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
               
                 Group testGroup = defaultSiteCollectionTermStore.CreateGroup("Dynamite Test Group", testGroupId);
                 TermSet newTermSet = testGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
@@ -932,32 +1178,32 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 }
 
                 // Cleanup term group so that we don't pollute the metadata store
-                DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
             }
         }
 
-        [TestMethod]
-        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyTermSetMappingToListField()
-        {
-        }
+        ////[TestMethod]
+        ////public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyTermSetMappingToListField()
+        ////{
+        ////}
 
-        [TestMethod]
-        public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_ShouldApplyDefaultValue()
-        {
-        }
+        ////[TestMethod]
+        ////public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_ShouldApplyDefaultValue()
+        ////{
+        ////}
 
-        [TestMethod]
-        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyDefaultValue()
-        {
-        }
+        ////[TestMethod]
+        ////public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyDefaultValue()
+        ////{
+        ////}
 
         #endregion
 
         #region Ensuring fields directly on lists should make those fields work on the list's items
 
-        // new items should have field and be settable
+        //// new items should have field and be settable
 
-        // the new item's fields are filled with default values (number, text, html + taxonomy, taxonomy multi)
+        //// the new item's fields are filled with default values (number, text, html + taxonomy, taxonomy multi)
 
         #endregion
 
@@ -982,7 +1228,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             Group existingTestGroup = defaultSiteCollectionTermStore.GetGroup(testGroupId);
             if (existingTestGroup != null)
             {
-                // cleanup a 
                 foreach (var termSet in existingTestGroup.TermSets)
                 {
                     termSet.Delete();

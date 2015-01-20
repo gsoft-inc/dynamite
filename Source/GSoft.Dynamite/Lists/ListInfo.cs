@@ -26,6 +26,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.ListTemplate = SPListTemplateType.GenericList;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();
@@ -46,6 +47,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.ListTemplate = SPListTemplateType.GenericList;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
 using GSoft.Dynamite.Globalization.Variations;
@@ -23,16 +24,19 @@ namespace GSoft.Dynamite.Fields
     {
         private readonly ITaxonomyHelper taxonomyHelper;
         private readonly IFieldSchemaHelper fieldSchemaHelper;
+        private readonly ILogger log;
 
         /// <summary>
         /// Default constructor with dependency injection
         /// </summary>
         /// <param name="taxonomyHelper">The taxonomy helper</param>
         /// <param name="fieldSchemaHelper">Field schema builder</param>
-        public FieldHelper(ITaxonomyHelper taxonomyHelper, IFieldSchemaHelper fieldSchemaHelper)
+        /// <param name="log">Logging utility</param>
+        public FieldHelper(ITaxonomyHelper taxonomyHelper, IFieldSchemaHelper fieldSchemaHelper, ILogger log)
         {
             this.taxonomyHelper = taxonomyHelper;
             this.fieldSchemaHelper = fieldSchemaHelper;
+            this.log = log;
         }
 
         /// <summary>
@@ -79,7 +83,7 @@ namespace GSoft.Dynamite.Fields
             SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
 
             // Set the field visibility
-            field = UpdateFieldVisibility(field, fieldInfo);
+            field = this.UpdateFieldVisibility(field, fieldInfo);
 
             // Set miscellaneous proeprties
             field = SetFieldMiscProperties(field, fieldInfo);
@@ -135,6 +139,11 @@ namespace GSoft.Dynamite.Fields
             {
                 this.ApplyTermStoreMapping(fieldCollection, taxonomyFieldInfo, taxonomyFieldInfo.TermStoreMapping);
             }
+            else
+            {
+                // the term store mapping is null, we should make sure the field is unmapped
+                ClearTermStoreMapping(fieldCollection, taxonomyFieldInfo);
+            }
 
             // Set the default value for the field
             if (taxonomyFieldInfo.DefaultValue != null)
@@ -143,12 +152,26 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
+        private static void ClearTermStoreMapping(SPFieldCollection fieldCollection, IFieldInfo taxonomyFieldInfo)
+        {
+            var taxoField = (TaxonomyField)fieldCollection[taxonomyFieldInfo.Id];
+            taxoField.AnchorId = Guid.Empty;
+            taxoField.TermSetId = Guid.Empty;
+            taxoField.SspId = Guid.Empty;
+            taxoField.Update();
+        }
+
         private void ApplyTaxonomyMultiFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyMultiFieldInfo taxonomyMultiFieldInfo)
         {
             // Apply the term set mapping (taxonomy picker selection context) for the column
             if (taxonomyMultiFieldInfo.TermStoreMapping != null)
             {
                 this.ApplyTermStoreMapping(fieldCollection, taxonomyMultiFieldInfo, taxonomyMultiFieldInfo.TermStoreMapping);
+            }
+            else
+            {
+                // the term store mapping is null, we should make sure the field is unmapped
+                ClearTermStoreMapping(fieldCollection, taxonomyMultiFieldInfo);
             }
 
             // Set the default value for the field
@@ -218,7 +241,7 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private static SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
+        private SPField UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
         {
             if (field != null)
             {
@@ -226,6 +249,39 @@ namespace GSoft.Dynamite.Fields
                 field.ShowInDisplayForm = !fieldInfo.IsHiddenInDisplayForm;
                 field.ShowInEditForm = !fieldInfo.IsHiddenInEditForm;
                 field.ShowInNewForm = !fieldInfo.IsHiddenInNewForm;
+
+                // Apply Hidden here again (even through it's already set through the schema XML),
+                // because otherwise updates to Hidden will not work.
+                if (!field.CanToggleHidden)
+                {
+                    bool before = field.Hidden;
+
+                    // Use reflection to get around the CanToggleHidden constraint. Keep in mind that 
+                    // there may be some unintended consequenced from hiding/showing and previously
+                    // shown/hidden field (hence the logged warning).
+                    Type type = field.GetType();
+                    MethodInfo mi = type.GetMethod("SetFieldBoolValue", BindingFlags.NonPublic | BindingFlags.Instance); 
+                    mi.Invoke(field, new object[] { "CanToggleHidden", true });
+                    field.Hidden = fieldInfo.IsHidden;
+                    mi.Invoke(field, new object[] { "CanToggleHidden", false });
+
+                    this.log.Warn(
+                        string.Format(
+                            CultureInfo.InvariantCulture, 
+                            "FieldHelper.EnsureField - Forced field (id={0}, name={1}) from Hidden={2} to Hidden={3} even though it should've been impossible because CanToggleHidden=false.",
+                            field.Id,
+                            field.InternalName,
+                            before,
+                            fieldInfo.IsHidden));
+                }
+                else
+                {
+                    // No need to use reflection before being able to set the Hidden property
+                    field.Hidden = fieldInfo.IsHidden;
+                }
+
+                // TODO: call Update() from outside, maybe? not sure how we should be handling our commits...
+                field.Update();     
             }
 
             return field;
@@ -267,6 +323,8 @@ namespace GSoft.Dynamite.Fields
                     field = taxonomyField;
                 }              
             }
+
+            field.Update();
 
             return field;
         }
