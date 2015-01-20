@@ -97,6 +97,7 @@
     <Compile Include="Binding\IO\SPItemValueWriter.cs" />
     <Compile Include="Branding\IDisplayTemplateHelper.cs" />
     <Compile Include="Branding\IImageRenditionHelper.cs" />
+    <Compile Include="Branding\ImageRenditionInfo.cs" />
     <Compile Include="Catalogs\CatalogConnectionInfo.cs" />
     <Compile Include="Branding\DisplayTemplateInfo.cs" />
     <Compile Include="Events\EventReceiverInfo.cs" />
