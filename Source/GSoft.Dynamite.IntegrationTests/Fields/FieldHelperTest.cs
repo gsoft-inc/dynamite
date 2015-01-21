@@ -1102,13 +1102,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         }
 
         #endregion
-
-        #region Number+Guid+Url+Image field DefaultValue should be mapped
-
-        //// TODO: Support default value on all other field types (besides the string-based ones and Taxonomy single/multi)
-
-        #endregion
-
+        
         #region Text+Note+Html field type-specific values should be mapped (DefaultValue, EnforceUniqueValue, etc.)
 
         /// <summary>
@@ -2168,6 +2162,192 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
+        #region Other field types (Number+Guid+Url+Image+etc.) should get their field type-specific properties and DefaultValue mapped
+
+        /// <summary>
+        /// Validates that Number field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenNumberField_ShouldApplyNumberFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                NumberFieldInfo numberFieldInfoAlt = new NumberFieldInfo(
+                    "TestInternalNameNumberAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Decimals = 3,
+                    IsPercentage = true,
+                    Min = 5,
+                    Max = 500.555,
+                    DefaultValue = 77.77
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic nunber field definition (all default property values)
+                    SPFieldNumber numberField = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfo);
+                    this.ValidateFieldBasicValues(numberFieldInfo, numberField);
+                    Assert.AreEqual(SPNumberFormatTypes.NoDecimal, numberField.DisplayFormat);
+                    Assert.IsFalse(numberField.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(numberField.DefaultValue));
+
+                    SPFieldNumber numberFieldRefetched = (SPFieldNumber)testScope.SiteCollection.RootWeb.Fields[numberFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(numberFieldInfo, numberFieldRefetched);
+                    Assert.AreEqual(SPNumberFormatTypes.NoDecimal, numberFieldRefetched.DisplayFormat);
+                    Assert.IsFalse(numberFieldRefetched.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(numberFieldRefetched.DefaultValue));
+
+                    // 2) Alternate number field definition (with all property values customized and a default value assigned)
+                    SPFieldNumber numberFieldAlt = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfoAlt);
+                    this.ValidateFieldBasicValues(numberFieldInfoAlt, numberFieldAlt);
+                    Assert.AreEqual(SPNumberFormatTypes.ThreeDecimals, numberFieldAlt.DisplayFormat);
+                    Assert.IsTrue(numberFieldAlt.ShowAsPercentage);
+                    Assert.AreEqual(5, numberFieldAlt.MinimumValue);
+                    Assert.AreEqual(500.555, numberFieldAlt.MaximumValue);
+                    Assert.AreEqual("77.77", numberFieldAlt.DefaultValue);
+
+                    SPFieldNumber numberFieldAltRefetched = (SPFieldNumber)testScope.SiteCollection.RootWeb.Fields[numberFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(numberFieldInfoAlt, numberFieldAltRefetched);
+                    Assert.AreEqual(SPNumberFormatTypes.ThreeDecimals, numberFieldAltRefetched.DisplayFormat);
+                    Assert.IsTrue(numberFieldAltRefetched.ShowAsPercentage);
+                    Assert.AreEqual(5, numberFieldAltRefetched.MinimumValue);
+                    Assert.AreEqual(500.555, numberFieldAltRefetched.MaximumValue);
+                    Assert.AreEqual("77.77", numberFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that DateTime field type properties are mapped along with its formula or default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenDateTimeField_ShouldApplyNumberFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDateTime",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoWithFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultFormula = "=[Today]",
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoWithDefaultValue = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultValue = new DateTime(1999, 1, 28),
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic datetime field definition (all default property values)
+                    SPFieldDateTime dateTimeField = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfo);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfo, dateTimeField);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateOnly, dateTimeField.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Disabled, dateTimeField.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeField.DefaultFormula));
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeField.DefaultValue));
+
+                    SPFieldDateTime dateTimeFieldRefetched = (SPFieldDateTime)testScope.SiteCollection.RootWeb.Fields[dateTimeFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(dateTimeFieldInfo, dateTimeFieldRefetched);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateOnly, dateTimeFieldRefetched.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Disabled, dateTimeFieldRefetched.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldRefetched.DefaultFormula));
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldRefetched.DefaultValue));
+
+                    // 2) Alternate datetime field definition (with all property values customized and a Calculated Formula assigned)
+                    SPFieldDateTime dateTimeFieldWithFormula = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithFormula);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithFormula, dateTimeFieldWithFormula);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateTime, dateTimeFieldWithFormula.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Relative, dateTimeFieldWithFormula.FriendlyDisplayFormat);
+                    Assert.AreEqual("=[Today]", dateTimeFieldWithFormula.DefaultFormula);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldWithFormula.DefaultValue));
+
+                    // 3) Alternate datetime field definition #2 (with all property values customized and a Default Value assigned)
+                    SPFieldDateTime dateTimeFieldWithDefaultValue = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithDefaultValue);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithFormula, dateTimeFieldWithDefaultValue);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateTime, dateTimeFieldWithDefaultValue.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Relative, dateTimeFieldWithDefaultValue.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldWithDefaultValue.DefaultFormula));
+                    Assert.AreEqual("1999-01-28T00:00:00Z", dateTimeFieldWithDefaultValue.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that DateTime field type properties are mapped along with its formula or default value
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void EnsureField_WhenDateTimeField_AndBothFormulaAndDefaultValueSpecified_ShouldThrowExceptionToWarnYouThatYouShouldOnlySpecifyOneOfTheTwo()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                DateTimeFieldInfo dateTimeFieldInfoWithFormulaAndDefaultValue = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultFormula = "=[Today]",
+                    DefaultValue = new DateTime(1999, 1, 28),   // both formula and defaul val are specified
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Creating field should fail (only formula OR default value should be specified)
+                    SPFieldDateTime dateTimeField = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithFormulaAndDefaultValue);
+                }
+            }
+        }
+
+        #endregion
+
         #region Ensuring fields directly on lists should make those fields work on the list's items
 
         /// <summary>
@@ -2189,6 +2369,26 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "GroupKey")
                 {
                     DefaultValue = 5
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                    "NameKeyDateTimeFormula",
+                    "DescriptionKeyDateTimeFormula",
+                    "GroupKey")
+                {
+                    DefaultFormula = "=[Today]"
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoDefault = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey")
+                {
+                    DefaultValue = new DateTime(2005, 10, 21)
                 };
 
                 TextFieldInfo textFieldInfo = new TextFieldInfo(
@@ -2266,11 +2466,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                // TODO: Add User fields and other types...
+                //// TODO: Add User fields and other types...
 
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
                         numberFieldInfo,
+                        dateTimeFieldInfoFormula,
+                        dateTimeFieldInfoDefault,
                         textFieldInfo,
                         noteFieldInfo,
                         htmlFieldInfo,
@@ -2305,7 +2507,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // Assert
                     // List item #1 (fields on list ensured via FieldHelper.EnsureField)
-                    //Assert.AreEqual(5, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(5.0, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(DateTime.Today, itemOnList1["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList1["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList1["TestInternalNameText"]);
                     Assert.AreEqual("Note default value", itemOnList1["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList1["TestInternalNameHtml"]);
@@ -2324,7 +2528,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
 
                     // List item #2 (fields on list ensured via ListHelper.EnsureList)
-                    //Assert.AreEqual(5, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(5.0, itemOnList2["TestInternalNameNumber"]);
+                    Assert.AreEqual(DateTime.Today, itemOnList2["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList2["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList2["TestInternalNameText"]);
                     Assert.AreEqual("Note default value", itemOnList2["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList2["TestInternalNameHtml"]);

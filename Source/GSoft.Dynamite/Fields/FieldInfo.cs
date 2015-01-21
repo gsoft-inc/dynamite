@@ -120,6 +120,11 @@ namespace GSoft.Dynamite.Fields
             {
                 this.IsHiddenInListSettings = !bool.Parse(fieldSchemaXml.Attribute("ShowInListSettings").Value);
             }
+
+            if (fieldSchemaXml.Attribute("DefaultFormula") != null)
+            {
+                this.DefaultFormula = fieldSchemaXml.Attribute("DefaultFormula").Value;
+            }
         }
 
         /// <summary>
@@ -171,6 +176,11 @@ namespace GSoft.Dynamite.Fields
         /// Indicates if field should be shown in the list settings
         /// </summary>
         public bool IsHiddenInListSettings { get; set; }
+
+        /// <summary>
+        /// Default formula for the field
+        /// </summary>
+        public string DefaultFormula { get; set; }
 
         /// <summary>
         /// Returns the FieldInfo's associated ValueType.

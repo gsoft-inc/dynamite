@@ -143,7 +143,18 @@ namespace GSoft.Dynamite.Fields
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
             var asTaxonomyMultiFieldInfo = fieldInfo as TaxonomyMultiFieldInfo;
 
-            if (fieldInfo is TextFieldInfo
+            if (fieldInfo is NumberFieldInfo)
+            {
+                FieldInfo<double?> doubleBasedField = fieldInfo as FieldInfo<double?>;
+
+                if (doubleBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = doubleBasedField.DefaultValue.ToString();
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is TextFieldInfo
                 || fieldInfo is NoteFieldInfo
                 || fieldInfo is HtmlFieldInfo)
             {
@@ -167,9 +178,34 @@ namespace GSoft.Dynamite.Fields
                 // this call will take care of calling Update() on field
                 this.ApplyTaxonomyMultiFieldValues(fieldCollection, field, asTaxonomyMultiFieldInfo);
             }
+            else if (fieldInfo is DateTimeFieldInfo)
+            {
+                FieldInfo<DateTime?> doubleBasedField = fieldInfo as FieldInfo<DateTime?>;
+
+                if (doubleBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = SPUtility.CreateISO8601DateTimeFromSystemDateTime(doubleBasedField.DefaultValue.Value);
+                }
+
+                field.Update();
+            }
             else
             {
                 // Some preceding changed be need to be persisted
+                field.Update();
+            }
+
+            if (!string.IsNullOrEmpty(fieldInfo.DefaultFormula))
+            {
+                if (!string.IsNullOrEmpty(field.DefaultValue))
+                {
+                    // A default value was already specified, so setting a Formula makes no sense.
+                    throw new InvalidOperationException("Failed to ensure field " + fieldInfo.InternalName + " in its entirety because both DefaultFormula and DefaultValue properties were specified. Please only set Formula OR DefaultValue, not both. Also don't forget to clean up the partially created field " + fieldInfo.InternalName + ".");
+                }
+
+                // Setting the DefaultFormula through the SchemaXML doesn't work,
+                // so let's force it here.
+                field.DefaultFormula = fieldInfo.DefaultFormula;
                 field.Update();
             }
 

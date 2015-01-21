@@ -82,6 +82,11 @@ namespace GSoft.Dynamite.Fields
         bool IsHiddenInListSettings { get; set; }
 
         /// <summary>
+        /// Default formula for the field
+        /// </summary>
+        string DefaultFormula { get; set; }
+
+        /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
         /// <param name="baseFieldSchema">

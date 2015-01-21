@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields
     /// <summary>
     /// Definition of a DateTime info
     /// </summary>
-    public class DateTimeFieldInfo : FieldInfo<DateTime>
+    public class DateTimeFieldInfo : FieldInfo<DateTime?>
     {
         /// <summary>
         /// Initializes a new DateTimeFieldInfo
@@ -54,11 +54,6 @@ namespace GSoft.Dynamite.Fields
         public bool HasFriendlyRelativeDisplay { get; set; }
 
         /// <summary>
-        /// Default formula for the field
-        /// </summary>
-        public string DefaultFormula { get; set; }
-
-        /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
         /// <param name="baseFieldSchema">
@@ -77,11 +72,6 @@ namespace GSoft.Dynamite.Fields
             else
             {
                 baseFieldSchema.Add(new XAttribute("FriendlyDisplayFormat", "Disabled"));
-            }
-
-            if (!string.IsNullOrEmpty(this.DefaultFormula))
-            {
-                baseFieldSchema.Add(new XElement("DefaultFormula", this.DefaultFormula));
             }
 
             return baseFieldSchema;
