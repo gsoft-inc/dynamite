@@ -82,7 +82,18 @@ namespace GSoft.Dynamite.Lists
         /// <returns>The new list or the existing list</returns>
         public SPList EnsureList(SPWeb web, ListInfo listInfo)
         {
-            var list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
+            // First, try to find an already existing list with the same name but at a different Web-relative URL
+            var list = this.listLocator.GetByNameResourceKey(web, listInfo.DisplayNameResourceKey);
+            if (list != null)
+            {
+                if (!list.RootFolder.Url.Equals(listInfo.WebRelativeUrl.ToString()))
+                {
+                    // A list with the same name already exists on a different web relative Url, throwing exception
+                    throw new ArgumentException("A list with the same name already exists on a different web relative Url. Try using a different name.");
+                }
+            }
+
+            list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
             
             // Ensure the list
             if (list == null)
@@ -464,7 +475,17 @@ namespace GSoft.Dynamite.Lists
         /// <returns>The created SP List</returns>
         private SPList CreatList(SPWeb web, ListInfo listInfo)
         {
-            var id = web.Lists.Add("Default title", "Default Description", listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
+            // Throw an exception if the proposed web-relative URL conflicts with an existing subsite Url
+            Guid id;
+            try
+            {
+                id = web.Lists.Add("Default title", "Default Description", listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
+            }
+            catch (SPException)
+            {
+                throw new ArgumentException("The web-relative URL for the ensured list conflicts with an existing subsite Url. Try with a different Url.");
+            }
+            
             var list = web.Lists[id];
 
             var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
