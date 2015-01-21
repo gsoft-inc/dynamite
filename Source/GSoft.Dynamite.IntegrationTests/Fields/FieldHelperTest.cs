@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
@@ -30,6 +31,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
+                // Arrange
                 TextFieldInfo textFieldInfo = new TextFieldInfo(
                     "TestInternalName", 
                     new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
@@ -43,8 +45,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
                     int noOfFieldsBefore = fieldsCollection.Count;
+
+                    // Act
                     SPField field = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
 
+                    // Assert
                     Assert.AreEqual(noOfFieldsBefore + 1, fieldsCollection.Count);
                     Assert.IsNotNull(field);
                     Assert.AreEqual(textFieldInfo.Id, field.Id);
@@ -52,6 +57,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(textFieldInfo.DisplayNameResourceKey, field.TitleResource.Value);
                     Assert.AreEqual(textFieldInfo.DescriptionResourceKey, field.DescriptionResource.Value);
                     Assert.AreEqual(textFieldInfo.GroupResourceKey, field.Group);
+
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+                    Assert.AreEqual(textFieldInfo.Id, fieldRefetched.Id);
+                    Assert.AreEqual(textFieldInfo.InternalName, fieldRefetched.InternalName);
+                    Assert.AreEqual(textFieldInfo.DisplayNameResourceKey, fieldRefetched.TitleResource.Value);
+                    Assert.AreEqual(textFieldInfo.DescriptionResourceKey, fieldRefetched.DescriptionResource.Value);
+                    Assert.AreEqual(textFieldInfo.GroupResourceKey, fieldRefetched.Group);
                 }                
             }
         }
@@ -107,14 +119,22 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
                     "NameKey",
                     "DescriptionKey",
-                    "GroupKey");
+                    "GroupKey")
+                {
+                    Required = RequiredType.NotRequired,
+                    MaxLength = 50
+                };
 
                 TextFieldInfo alternateTextFieldInfo = new TextFieldInfo(
                     "TestInternalName",
                     new Guid("{9EBF5EC3-5FC4-4ACF-B404-AC0A2D74A10F}"),     // new GUID, but same internal name
                     "NameKeyAlt",
                     "DescriptionKeyAlt",
-                    "GroupKey");
+                    "GroupKey")
+                {
+                    Required = RequiredType.Required,
+                    MaxLength = 500
+                };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
@@ -137,6 +157,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(alternateEnsuredField);
                     Assert.AreEqual(textFieldInfo.Id, alternateEnsuredField.Id);               // metadata should be sane as original field, not alternate field
                     Assert.AreEqual(textFieldInfo.InternalName, alternateEnsuredField.InternalName);
+
+                    // The returned field shouldn't have gotten its properties updated
+                    // (as in this shouldn't happen: "Ensure and Update existing other
+                    // unrelated field which has clashing Guid/Internal name")
+                    Assert.IsFalse(alternateEnsuredField.Required);     // the original field was actually returned
+                    Assert.AreEqual(50, ((SPFieldText)alternateEnsuredField).MaxLength);
                 }
             }
         }
@@ -154,14 +180,22 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
                     "NameKey",
                     "DescriptionKey",
-                    "GroupKey");
+                    "GroupKey")
+                {
+                    Required = RequiredType.NotRequired,
+                    MaxLength = 50
+                };
 
                 TextFieldInfo alternateTextFieldInfo = new TextFieldInfo(
                     "TestInternalNameAlt",                                             // new internal name, but same Guid
                     new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),   
                     "NameKeyAlt",
                     "DescriptionKeyAlt",
-                    "GroupKey");
+                    "GroupKey")
+                {
+                    Required = RequiredType.Required,
+                    MaxLength = 500
+                };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
@@ -184,6 +218,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(alternateEnsuredField);
                     Assert.AreEqual(textFieldInfo.Id, alternateEnsuredField.Id);               // metadata should be same as original field, not alternate field
                     Assert.AreEqual(textFieldInfo.InternalName, alternateEnsuredField.InternalName);
+
+                    // The returned field shouldn't have gotten its properties updated
+                    // (as in this shouldn't happen: "Ensure and Update existing other
+                    // unrelated field which has clashing Guid/Internal name")
+                    Assert.IsFalse(alternateEnsuredField.Required);     // the original field was actually returned
+                    Assert.AreEqual(50, ((SPFieldText)alternateEnsuredField).MaxLength);
                 }
             }
         }
@@ -254,6 +294,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(originalField);
                     this.ValidateFieldBasicValues(textFieldInfo, originalField);
 
+                    SPField originalFieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+                    this.ValidateFieldBasicValues(textFieldInfo, originalFieldRefetched);
+
                     // 2) Alternate field definition
                     SPField alternateEnsuredField = fieldHelper.EnsureField(fieldsCollection, alternateTextFieldInfo);
 
@@ -261,12 +304,18 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(alternateEnsuredField);
                     this.ValidateFieldBasicValues(alternateTextFieldInfo, alternateEnsuredField);
 
+                    SPField alternateFieldRefetched = testScope.SiteCollection.RootWeb.Fields[alternateTextFieldInfo.Id];
+                    this.ValidateFieldBasicValues(alternateTextFieldInfo, alternateFieldRefetched);
+
                     // 3) Defaults-based field definition
                     SPField defaultBasedEnsuredField = fieldHelper.EnsureField(fieldsCollection, defaultsTextFieldInfo);
 
                     Assert.AreEqual(noOfFieldsBefore + 3, fieldsCollection.Count);
                     Assert.IsNotNull(defaultBasedEnsuredField);
                     this.ValidateFieldBasicValues(defaultsTextFieldInfo, defaultBasedEnsuredField);
+
+                    SPField defaultsFieldRefetched = testScope.SiteCollection.RootWeb.Fields[defaultsTextFieldInfo.Id];
+                    this.ValidateFieldBasicValues(defaultsTextFieldInfo, defaultsFieldRefetched);
                 }
             }
         }
@@ -327,11 +376,19 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // 1) Ensure the basic fields and the first version of their properties
                     SPField textField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
                     SPField noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
-
-                    this.ValidateFieldBasicValues(textFieldInfo, testScope.SiteCollection.RootWeb.Fields[textField.Id]);
+                    
+                    this.ValidateFieldBasicValues(textFieldInfo, textField);
                     Assert.AreEqual(50, ((SPFieldText)textField).MaxLength);    // see MaxLength=50 above
-                    this.ValidateFieldBasicValues(noteFieldInfo, testScope.SiteCollection.RootWeb.Fields[noteField.Id]);
+                    this.ValidateFieldBasicValues(noteFieldInfo, noteField);
                     Assert.IsTrue(((SPFieldMultiLineText)noteField).RichText);  // see HasRichText=true above
+
+                    SPField textFieldRefetched = testScope.SiteCollection.RootWeb.Fields[textField.Id];     // gotta make sure the re-fetched field has same definition as one returned by EnsureField
+                    SPField noteFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noteField.Id];
+
+                    this.ValidateFieldBasicValues(textFieldInfo, textFieldRefetched);
+                    Assert.AreEqual(50, ((SPFieldText)textFieldRefetched).MaxLength);    // see MaxLength=50 above
+                    this.ValidateFieldBasicValues(noteFieldInfo, noteFieldRefetched);
+                    Assert.IsTrue(((SPFieldMultiLineText)noteFieldRefetched).RichText);  // see HasRichText=true above
 
                     // 2) Modify the FieldInfo values
                     textFieldInfo.DisplayNameResourceKey = "NameKeyUpdated";
@@ -365,10 +422,19 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
 
                     // 4) Assert that the field contain the 2nd version's updates
-                    this.ValidateFieldBasicValues(textFieldInfo, testScope.SiteCollection.RootWeb.Fields[textField.Id]);
+                    this.ValidateFieldBasicValues(textFieldInfo, textField);
                     Assert.AreEqual(500, ((SPFieldText)textField).MaxLength);    // see MaxLength=500 above
-                    this.ValidateFieldBasicValues(noteFieldInfo, testScope.SiteCollection.RootWeb.Fields[noteField.Id]);
+                    this.ValidateFieldBasicValues(noteFieldInfo, noteField);
                     Assert.IsFalse(((SPFieldMultiLineText)noteField).RichText);  // see HasRichText=false above
+
+                    // gotta make sure the re-fetched field has same definition as one returned by EnsureField
+                    textFieldRefetched = testScope.SiteCollection.RootWeb.Fields[textField.Id];     
+                    noteFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noteField.Id];
+
+                    this.ValidateFieldBasicValues(textFieldInfo, textFieldRefetched);
+                    Assert.AreEqual(500, ((SPFieldText)textFieldRefetched).MaxLength);    // see MaxLength=500 above
+                    this.ValidateFieldBasicValues(noteFieldInfo, noteFieldRefetched);
+                    Assert.IsFalse(((SPFieldMultiLineText)noteFieldRefetched).RichText);  // see HasRichText=false above
                 }
             }
         }
@@ -398,8 +464,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                 TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
                     "TestInternalNameTaxo",
-                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
-                    "NameKey",
+                    new Guid("{00E3BCD8-3AD6-4259-BB7A-22808A92BD82}"),
+                    "NameKeyTaxo",
                     "DescriptionKey",
                     "GroupKey")
                 {
@@ -416,7 +482,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
                     "TestInternalNameMulti",
                     new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
-                    "NameKeyMulti",
+                    "NameKeyTaxoMulti",
                     "DescriptionKey",
                     "GroupKey")
                 {
@@ -436,8 +502,23 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
                     // 1) Ensure the basic fields and the first version of their properties
-                    SPField taxoField = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
-                    SPField taxoMultiField = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+                    TaxonomyField taxoField = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    TaxonomyField taxoMultiField = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    this.ValidateFieldBasicValues(taxoFieldInfo, taxoField);
+                    Assert.AreEqual(testTermSet.Id, taxoField.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, taxoField.SspId);
+                    Assert.AreEqual(Guid.Empty, taxoField.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(taxoField.IsTermSetValid);
+                    Assert.IsTrue(taxoField.IsAnchorValid);       // should always be valid
+
+                    this.ValidateFieldBasicValues(taxoMultiFieldInfo, taxoMultiField);
+                    Assert.AreEqual(testTermSet.Id, taxoMultiField.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, taxoMultiField.SspId);
+                    Assert.AreEqual(levelOneTermA.Id, taxoMultiField.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(taxoMultiField.IsTermSetValid);
+                    Assert.IsTrue(taxoMultiField.IsAnchorValid);       // should always be valid
+
                     TaxonomyField fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoFieldInfo.Id];
                     TaxonomyField fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiFieldInfo.Id];
 
@@ -452,8 +533,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(testTermSet.Id, fieldMultiFetchedAgain.TermSetId);
                     Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMultiFetchedAgain.SspId);
                     Assert.AreEqual(levelOneTermA.Id, fieldMultiFetchedAgain.AnchorId);    // choices should not be constrained to a child term
-                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
-                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsAnchorValid);       // should always be valid
 
                     // 2) Modify the FieldInfo values
                     taxoFieldInfo.DisplayNameResourceKey = "NameKeyUpdated";
@@ -483,11 +564,28 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // Act
                     // 3) Update the site columns by re-ensuring with the updated FieldInfo values
                     fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
-                    taxoField = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
-                    taxoMultiField = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+                    taxoField = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    taxoMultiField = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
 
                     // 4) Assert that the field contain the 2nd version's updates
+                    this.ValidateFieldBasicValues(taxoFieldInfo, taxoField);
+                    Assert.AreEqual(testTermSet.Id, taxoField.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, taxoField.SspId);
+                    Assert.AreEqual(levelOneTermA.Id, taxoField.AnchorId);    // choices should be constrained to a child term
+                    Assert.IsTrue(taxoField.IsTermSetValid);
+                    Assert.IsTrue(taxoField.IsAnchorValid);       // should always be valid
+
+                    this.ValidateFieldBasicValues(taxoMultiFieldInfo, taxoMultiField);
+                    Assert.AreEqual(Guid.Empty, taxoMultiField.TermSetId);          // term store mapping should've been removed
+                    Assert.AreEqual(Guid.Empty, taxoMultiField.SspId);
+                    Assert.AreEqual(Guid.Empty, taxoMultiField.AnchorId);
+                    Assert.IsFalse(taxoMultiField.IsTermSetValid);
+                    Assert.IsTrue(taxoMultiField.IsAnchorValid);       // should always be valid
+
+                    // gotta make sure the re-fetched field has same definition as one returned by EnsureField
                     fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoField.Id];
+                    fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiField.Id];
+
                     this.ValidateFieldBasicValues(taxoFieldInfo, fieldSingleFetchedAgain);
                     Assert.AreEqual(testTermSet.Id, fieldSingleFetchedAgain.TermSetId);
                     Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingleFetchedAgain.SspId);
@@ -495,13 +593,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
                     Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
 
-                    fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiField.Id];
                     this.ValidateFieldBasicValues(taxoMultiFieldInfo, fieldMultiFetchedAgain);
                     Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.TermSetId);          // term store mapping should've been removed
                     Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.SspId);
-                    Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.AnchorId);    
+                    Assert.AreEqual(Guid.Empty, fieldMultiFetchedAgain.AnchorId);
                     Assert.IsFalse(fieldMultiFetchedAgain.IsTermSetValid);
-                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);       // should always be valid
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsAnchorValid);       // should always be valid
                 }
             }
         }
@@ -513,9 +610,45 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
-        #region Ensuring a field directly on a content type should ensure site column is present and update CT field definition if needed
+        #region Ensuring a field directly on a content type should should fail (because only Web or List field collections are supported)
 
-        //// TODO: add some tests here
+        /// <summary>
+        /// Validates that EnsureField goes through site column creation when attempting to
+        /// add a field directly on a content type. There should always be a site column defined 
+        /// at site-collection level first.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureField_WhenContentTypeFieldCollection_ShouldThrowArgumentException()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeInfo = new ContentTypeInfo(SPBuiltInContentTypeId.BasicPage.ToString() + "01", "CTNameKey", "CTDescrKey", "GroupKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    SPContentType ensuredContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = ensuredContentType.Fields;
+
+                    SPField field = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                }
+            }
+        }
 
         #endregion
 
@@ -820,6 +953,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
+        #region Ensuring a field on a sub-web should ensure site column exists on root web and update web field definition if needed
+
+        //// TODO: Add some sub-web field provisioning scenarios here
+
+        #endregion
+
         #region Text+Note+Html field type-specific values should be mapped
 
         /// <summary>
@@ -888,28 +1027,34 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // 1) Text field definition (with/without default value)
                     SPField textField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                    Assert.AreEqual("Text default value", textField.DefaultValue);
                     SPField textFieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
                     Assert.AreEqual("Text default value", textFieldRefetched.DefaultValue);
 
                     SPField noDefaultValueTextField = fieldHelper.EnsureField(fieldsCollection, noValueTextFieldInfo);
+                    Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueTextField.DefaultValue));
                     SPField noDefaultValueTextFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noValueTextFieldInfo.Id];
                     Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueTextFieldRefetched.DefaultValue));
 
                     // 1) Note field definition (with/without default value)
                     SPField noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
+                    Assert.AreEqual("Note default value", noteField.DefaultValue);
                     SPField noteFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noteFieldInfo.Id];
                     Assert.AreEqual("Note default value", noteFieldRefetched.DefaultValue);
 
                     SPField noDefaultValueNoteField = fieldHelper.EnsureField(fieldsCollection, noValueNoteFieldInfo);
-                    SPField noDefaultValueNoteFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noValueNoteFieldInfo.Id];
                     Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueNoteField.DefaultValue));
+                    SPField noDefaultValueNoteFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noValueNoteFieldInfo.Id];
+                    Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueNoteFieldRefetched.DefaultValue));
 
                     // 3) HTML field definition (with/without default value)
                     SPField htmlField = fieldHelper.EnsureField(fieldsCollection, htmlFieldInfo);
+                    Assert.AreEqual("HTML default value", htmlField.DefaultValue);
                     SPField htmlFieldRefetched = testScope.SiteCollection.RootWeb.Fields[htmlFieldInfo.Id];
                     Assert.AreEqual("HTML default value", htmlFieldRefetched.DefaultValue);
 
                     SPField noDefaultValueHtmlField = fieldHelper.EnsureField(fieldsCollection, noValueHtmlFieldInfo);
+                    Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueHtmlField.DefaultValue));
                     SPField noDefaultValueHtmlFieldRefetched = testScope.SiteCollection.RootWeb.Fields[noValueHtmlFieldInfo.Id];
                     Assert.IsTrue(string.IsNullOrEmpty(noDefaultValueHtmlFieldRefetched.DefaultValue));
                 }
@@ -1063,10 +1208,24 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
                     // Act
-                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
-                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+                    TaxonomyField fieldSingle = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    TaxonomyField fieldMulti = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
 
                     // Assert
+                    Assert.IsNotNull(fieldSingle);
+                    Assert.AreEqual(testTermSet.Id, fieldSingle.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingle.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldSingle.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingle.IsTermSetValid);
+
+                    Assert.IsNotNull(fieldMulti);
+                    Assert.AreEqual(testTermSet.Id, fieldMulti.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMulti.SspId);
+                    Assert.AreEqual(levelOneTermA.Id, fieldMulti.AnchorId);    // choices should be constrained to a child term
+                    Assert.IsTrue(fieldMulti.IsTermSetValid);
+                    Assert.IsTrue(fieldMulti.IsAnchorValid);   
+
+                    // Gotta also make sure (by fetching the fields again) that the field properties were all persisted
                     TaxonomyField fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoFieldInfo.Id];
                     TaxonomyField fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Fields[taxoMultiFieldInfo.Id];
 

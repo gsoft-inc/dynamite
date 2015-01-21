@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -128,6 +129,16 @@ namespace GSoft.Dynamite.Fields
                 throw new ArgumentNullException("fieldXml");
             }
 
+            // Gotta use reflection to figure out if the field collection comes from
+            // a content type (and thus should be read-only)
+            bool isContentTypeFieldCollection = (bool)typeof(SPFieldCollection)
+                    .GetField("m_FromContentType", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(fieldCollection);
+            if (isContentTypeFieldCollection)
+            {
+                throw new ArgumentException("EnsureField - Impossible to ensure field on Content Type's field collection - it should be considered as read-only. Use IContentTypeHelper.EnsureContentType instead (which will update the content type's FieldRefs collection).");
+            }
+
             this.logger.Info("Start method 'EnsureField'");
 
             Guid id = Guid.Empty;
@@ -155,20 +166,34 @@ namespace GSoft.Dynamite.Fields
                     // on a list's SPFieldCollection is just a bad idea: use the already provisioned site column 
                     // whenever possible). 
                     string addedInternalName = string.Empty;
-                    if (!this.FieldExists(fieldCollection.Web.Site.RootWeb.Fields, internalName, id))
+                    SPField parentRootWebExistingField = null;
+                    SPWeb rootWeb = fieldCollection.Web.Site.RootWeb;
+                    SPFieldCollection rootWebFields = rootWeb.Fields;
+                    if (!this.FieldExists(rootWebFields, internalName, id))
                     {
-                        addedInternalName = fieldCollection.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
+                        if (fieldCollection.List == null && fieldCollection.Web.ID == rootWeb.ID)
+                        {
+                            rootWebFields = fieldCollection;
+                        }
+
+                        // Add on Root Web if it wasn't done before
+                        addedInternalName = rootWebFields.AddFieldAsXml(fieldXml.ToString(), false, SPAddFieldOptions.Default);
                     }
-                    else
+
+                    // Re-use the parent field definition
+                    parentRootWebExistingField = rootWebFields[id];
+
+                    // Make sure we're adding the field on a List or on a different web than the root web:
+                    // we don't want to ensure the field twice on the root web
+                    if (fieldCollection.List != null || fieldCollection.Web.ID != rootWeb.ID)
                     {
-                        // Re-use the parent field definition
-                        var parentRootWebExistingField = fieldCollection.Web.Site.RootWeb.Fields[id];
                         addedInternalName = fieldCollection.Add(parentRootWebExistingField);
 
-                        // Then update the list column with the new list-specific definition
-                        var alreadyCreatedField = this.fieldLocator.GetFieldById(fieldCollection, id);
-                        alreadyCreatedField.SchemaXml = fieldXml.ToString();
-                        alreadyCreatedField.Update();
+                        // Then update the list column with the new list-specific or web-specfic definition
+                        var createdField = this.fieldLocator.GetFieldById(fieldCollection, id);
+                        createdField.SchemaXml = fieldXml.ToString();   // TODO: we should probably do a more granular update (property by property, 
+                                                                        // only when needed) instead of brutally overwriting the schema XML like this.
+                        createdField.Update();
                     }
 
                     if (internalName != addedInternalName)
@@ -196,7 +221,8 @@ namespace GSoft.Dynamite.Fields
                         // Only try updating if we managed to find the field by its ID and if 
                         // the existing field has the same internal name (changing the internal
                         // name should be impossible).
-                        alreadyCreatedField.SchemaXml = fieldXml.ToString();
+                        alreadyCreatedField.SchemaXml = fieldXml.ToString();    // TODO: we should probably do a more granular update (property by property, 
+                                                                                // only when needed) instead of brutally overwriting the schema XML like this.
                         alreadyCreatedField.Update();
                         this.logger.Info("End method 'EnsureField'. Field with id '{0}', display name '{1}' and internal name '{2}' was not added because it already exists in the collection.", id, displayName, internalName);
                     }

@@ -91,6 +91,27 @@ namespace GSoft.Dynamite.Fields
             // Set default value if any, ensure other FieldType-specific properties
             this.ApplyFieldTypeSpecificValuesAndUpdate(fieldCollection, field, fieldInfo);
 
+            // Refetch latest version of field, because right now the SPField object
+            // doesn't hold the TermStore mapping information (see how TaxonomyHelper.AssignTermSetToColumn
+            // always re-fetches the SPField itself... TODO: this should be reworked)
+            if (fieldCollection.List != null)
+            {
+                fieldCollection = fieldCollection.List.Fields;
+            }
+            else
+            {
+                fieldCollection = fieldCollection.Web.Fields;
+            }
+
+            try
+            {
+                field = fieldCollection[fieldInfo.Id];
+            }
+            catch (ArgumentException)
+            {
+                field = fieldCollection.Cast<SPField>().First(f => f.InternalName == fieldInfo.InternalName);
+            }
+
             return field;
         }
 
