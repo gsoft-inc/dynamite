@@ -3682,26 +3682,98 @@
         <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.ConstructorILogger">
             <summary>Sets the shim of ImageRenditionHelper.ImageRenditionHelper(ILogger logger)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.EnsureImageRenditionSPSiteImageRendition">
-            <summary>Sets the shim of ImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.EnsureImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.RemoveImageRenditionSPSiteImageRendition">
-            <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.RemoveImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.RemoveImageRenditionSPSiteString">
             <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, String containsPattern)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.SetImageRenditionPropertiesImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.EnsureImageRenditionSPSiteImageRendition">
-            <summary>Sets the shim of ImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.EnsureImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.RemoveImageRenditionSPSiteImageRendition">
-            <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.RemoveImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.RemoveImageRenditionSPSiteString">
             <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, String containsPattern)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.SetImageRenditionPropertiesImageRenditionInfo">
+            <summary>Sets the shim of ImageRenditionHelper.SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo">
+            <summary>Shim type of GSoft.Dynamite.Branding.ImageRenditionInfo</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.#ctor(GSoft.Dynamite.Branding.ImageRenditionInfo)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.Constructor">
+            <summary>Sets the shim of ImageRenditionInfo.ImageRenditionInfo()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.ConstructorImageRendition">
+            <summary>Sets the shim of ImageRenditionInfo.ImageRenditionInfo(ImageRendition imageRendition)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.ConstructorStringInt32Int32">
+            <summary>Sets the shim of ImageRenditionInfo.ImageRenditionInfo(String name, Int32 width, Int32 height)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.HeightGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Height()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.HeightSetInt32">
+            <summary>Sets the shim of ImageRenditionInfo.set_Height(Int32 value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.NameGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Name()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.NameSetString">
+            <summary>Sets the shim of ImageRenditionInfo.set_Name(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.WidthGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Width()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.WidthSetInt32">
+            <summary>Sets the shim of ImageRenditionInfo.set_Width(Int32 value)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.HeightGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Height()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.HeightSetInt32">
+            <summary>Sets the shim of ImageRenditionInfo.set_Height(Int32 value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.NameGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Name()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.NameSetString">
+            <summary>Sets the shim of ImageRenditionInfo.set_Name(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.WidthGet">
+            <summary>Sets the shim of ImageRenditionInfo.get_Width()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo.AllInstances.WidthSetInt32">
+            <summary>Sets the shim of ImageRenditionInfo.set_Width(Int32 value)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Branding.Fakes.ShimMasterPageHelper">
             <summary>Shim type of GSoft.Dynamite.Branding.MasterPageHelper</summary>
@@ -4006,20 +4078,20 @@
         <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.#ctor">
             <summary>Initializes a new instance of type StubIImageRenditionHelper</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.EnsureImageRenditionSPSiteImageRendition">
-            <summary>Sets the stub of IImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="F:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.EnsureImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the stub of IImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.gsd::GSoft#Dynamite#Branding#IImageRenditionHelper#EnsureImageRendition(Microsoft.SharePoint.SPSite,Microsoft.SharePoint.Publishing.ImageRendition)">
-            <summary>Sets the stub of IImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.gsd::GSoft#Dynamite#Branding#IImageRenditionHelper#EnsureImageRendition(Microsoft.SharePoint.SPSite,GSoft.Dynamite.Branding.ImageRenditionInfo)">
+            <summary>Sets the stub of IImageRenditionHelper.EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.gsd::GSoft#Dynamite#Branding#IImageRenditionHelper#RemoveImageRendition(Microsoft.SharePoint.SPSite,Microsoft.SharePoint.Publishing.ImageRendition)">
-            <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.gsd::GSoft#Dynamite#Branding#IImageRenditionHelper#RemoveImageRendition(Microsoft.SharePoint.SPSite,GSoft.Dynamite.Branding.ImageRenditionInfo)">
+            <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.gsd::GSoft#Dynamite#Branding#IImageRenditionHelper#RemoveImageRendition(Microsoft.SharePoint.SPSite,System.String)">
             <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, String containsPattern)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.RemoveImageRenditionSPSiteImageRendition">
-            <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRendition imageRendition)</summary>
+        <member name="F:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.RemoveImageRenditionSPSiteImageRenditionInfo">
+            <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)</summary>
         </member>
         <member name="F:GSoft.Dynamite.Branding.Fakes.StubIImageRenditionHelper.RemoveImageRenditionSPSiteString">
             <summary>Sets the stub of IImageRenditionHelper.RemoveImageRendition(SPSite site, String containsPattern)</summary>
@@ -4094,6 +4166,30 @@
             <summary>Gets or sets the instance behavior.</summary>
         </member>
         <member name="P:GSoft.Dynamite.Branding.Fakes.StubImageRenditionHelper.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo">
+            <summary>Stub type of GSoft.Dynamite.Branding.ImageRenditionInfo</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.#ctor(Microsoft.SharePoint.Publishing.ImageRendition)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.InitializeStub">
+            <summary>Initializes a new instance of type StubImageRenditionInfo</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Branding.Fakes.StubImageRenditionInfo.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.Branding.Fakes.StubMasterPageHelper">
@@ -8956,8 +9052,8 @@
         <member name="M:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.Bind(GSoft.Dynamite.Fields.IFieldHelper)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyFieldTypeSpecificValuesSPFieldCollectionSPFieldIFieldInfo">
-            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValues(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyFieldTypeSpecificValuesAndUpdateSPFieldCollectionSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ApplyTaxonomyFieldValuesSPFieldCollectionSPFieldTaxonomyFieldInfo">
             <summary>Sets the shim of FieldHelper.ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)</summary>
@@ -8971,8 +9067,11 @@
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ConstructorITaxonomyHelperIFieldSchemaHelper">
-            <summary>Sets the shim of FieldHelper.FieldHelper(ITaxonomyHelper taxonomyHelper, IFieldSchemaHelper fieldSchemaHelper)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ClearTermStoreMappingSPFieldCollectionIFieldInfo">
+            <summary>Sets the shim of FieldHelper.ClearTermStoreMapping(SPFieldCollection fieldCollection, IFieldInfo taxonomyFieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.ConstructorITaxonomyHelperIFieldSchemaHelperILogger">
+            <summary>Sets the shim of FieldHelper.FieldHelper(ITaxonomyHelper taxonomyHelper, IFieldSchemaHelper fieldSchemaHelper, ILogger log)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.EnsureFieldSPFieldCollectionICollectionOfIFieldInfo">
             <summary>Sets the shim of FieldHelper.EnsureField(SPFieldCollection fieldCollection, ICollection`1&lt;IFieldInfo&gt; fieldInfos)</summary>
@@ -8980,20 +9079,23 @@
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.EnsureFieldSPFieldCollectionIFieldInfo">
             <summary>Sets the shim of FieldHelper.EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.SetFieldMiscPropertiesSPFieldIFieldInfoBoolean">
-            <summary>Sets the shim of FieldHelper.SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo, Boolean updateField)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.InnerEnsureFieldSPFieldCollectionIFieldInfo">
+            <summary>Sets the shim of FieldHelper.InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.SetFieldMiscPropertiesSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.SetFieldMiscProperties(SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.TryGetListFromFieldCollectionSPFieldCollectionSPListOut">
             <summary>Sets the shim of FieldHelper.TryGetListFromFieldCollection(SPFieldCollection collection, SPList&amp; list)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.UpdateFieldVisibilitySPFieldIFieldInfoBoolean">
-            <summary>Sets the shim of FieldHelper.UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo, Boolean updateField)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.UpdateFieldVisibilitySPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyFieldTypeSpecificValuesSPFieldCollectionSPFieldIFieldInfo">
-            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValues(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyFieldTypeSpecificValuesAndUpdateSPFieldCollectionSPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.ApplyTaxonomyFieldValuesSPFieldCollectionSPFieldTaxonomyFieldInfo">
             <summary>Sets the shim of FieldHelper.ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)</summary>
@@ -9009,6 +9111,12 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.EnsureFieldSPFieldCollectionIFieldInfo">
             <summary>Sets the shim of FieldHelper.EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.InnerEnsureFieldSPFieldCollectionIFieldInfo">
+            <summary>Sets the shim of FieldHelper.InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldHelper.AllInstances.UpdateFieldVisibilitySPFieldIFieldInfo">
+            <summary>Sets the shim of FieldHelper.UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Fakes.ShimFieldInfo`1">
             <summary>Shim type of GSoft.Dynamite.Fields.FieldInfo`1</summary>
@@ -9313,8 +9421,8 @@
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldSchemaHelper.AllInstances.FixLookupFieldXmlSPWebXElement">
             <summary>Sets the shim of FieldSchemaHelper.FixLookupFieldXml(SPWeb web, XElement fieldXml)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldSchemaHelper.AllInstances.IsFieldXmlValidXElementGuidOutStringOutStringOut">
-            <summary>Sets the shim of FieldSchemaHelper.IsFieldXmlValid(XElement fieldXml, Guid&amp; id, String&amp; displayName, String&amp; internalName)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldSchemaHelper.AllInstances.IsFieldXmlValidXElementGuidOutStringOutStringOutStringOut">
+            <summary>Sets the shim of FieldSchemaHelper.IsFieldXmlValid(XElement fieldXml, Guid&amp; id, String&amp; displayName, String&amp; internalName, String&amp; fieldTypeName)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Fakes.ShimFieldSchemaHelper.AllInstances.IsLookupXElement">
             <summary>Sets the shim of FieldSchemaHelper.IsLookup(XElement fieldXml)</summary>
@@ -10183,7 +10291,7 @@
         <member name="T:GSoft.Dynamite.Fields.Fakes.StubFieldHelper">
             <summary>Stub type of GSoft.Dynamite.Fields.FieldHelper</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Fakes.StubFieldHelper.#ctor(GSoft.Dynamite.Taxonomy.ITaxonomyHelper,GSoft.Dynamite.Fields.IFieldSchemaHelper)">
+        <member name="M:GSoft.Dynamite.Fields.Fakes.StubFieldHelper.#ctor(GSoft.Dynamite.Taxonomy.ITaxonomyHelper,GSoft.Dynamite.Fields.IFieldSchemaHelper,GSoft.Dynamite.Logging.ILogger)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Fields.Fakes.StubFieldHelper.InitializeStub">
@@ -19957,6 +20065,9 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumnSPSiteTermStoreGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumn(SPSite site, TermStore termStore, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
@@ -20031,6 +20142,9 @@
         </member>
         <member name="T:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
@@ -20653,6 +20767,9 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.#ctor">
             <summary>Initializes a new instance of type StubITaxonomyHelper</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
@@ -20680,6 +20797,9 @@
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.EnsureTaxonomyEventReceiversSPEventReceiverDefinitionCollection">
             <summary>Sets the stub of ITaxonomyHelper.EnsureTaxonomyEventReceivers(SPEventReceiverDefinitionCollection eventReceivers)</summary>
         </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
@@ -20692,11 +20812,11 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termSetName, String termSubsetName)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.Guid)">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
-        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.Guid)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>

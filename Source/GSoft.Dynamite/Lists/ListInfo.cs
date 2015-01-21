@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists.Constants;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Lists
@@ -20,6 +21,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();
@@ -40,6 +42,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();
