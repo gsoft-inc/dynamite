@@ -78,144 +78,16 @@ namespace GSoft.Dynamite.Lists
         /// <remarks>The list name and description will not be translated</remarks>
         /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
         /// <param name="web">The current web</param>
-        /// <param name="name">The name of the list</param>
-        /// <param name="description">The description of the list</param>
-        /// <param name="listTemplate">The desired list template to use to instantiate the list</param>
-        /// <returns>The new list or the existing list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplate listTemplate)
-        {
-            var list = this.listLocator.TryGetList(web, name);
-
-            if (list != null)
-            {
-                // List already exists, check for correct template
-                if (list.BaseTemplate != listTemplate.Type)
-                {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List {0} has list template type {1} but should have list template type {2}.", name, list.BaseTemplate, listTemplate.Type));
-                }
-            }
-            else
-            {
-                // Create new list
-                var id = web.Lists.Add(name, description, listTemplate);
-
-                list = web.Lists[id];
-            }
-
-            return list;
-        }
-
-        /// <summary>
-        /// Creates the list or returns the existing one.
-        /// </summary>
-        /// <remarks>The list name and description will not be translated</remarks>
-        /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
-        /// <param name="web">The current web</param>
-        /// <param name="name">The name of the list</param>
-        /// <param name="description">The description of the list</param>
-        /// <param name="templateType">The desired list template type to use to instantiate the list</param>
-        /// <returns>The new list or the existing list</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public SPList EnsureList(SPWeb web, string name, string description, SPListTemplateType templateType)
-        {
-            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, (int)templateType);
-            if (listTemplate != null)
-            {
-                return this.EnsureList(web, name, description, listTemplate);
-            }
-            else
-            {
-                return null;
-            }  
-        }
-
-        /// <summary>
-        /// Ensure the list in the web
-        /// </summary>
-        /// <param name="web">The web</param>
-        /// <param name="webRelativePathToList">The web-relative path to the list's root folder.</param>
-        /// <param name="titleResourceKey">Titles' resource key</param>
-        /// <param name="descriptionResourceKey">Descriptions' resource key</param>
-        /// <param name="templateType">The template type of the list</param>
-        /// <returns>The list object</returns>
-        public SPList EnsureList(SPWeb web, string webRelativePathToList, string titleResourceKey, string descriptionResourceKey, SPListTemplateType templateType)
-        {
-            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, (int)templateType);
-            if (listTemplate != null)
-            {
-                return this.EnsureList(web, webRelativePathToList, titleResourceKey, descriptionResourceKey, listTemplate);
-            }
-            else
-            {
-                return null;
-            }   
-        }
-
-        /// <summary>
-        /// Ensure the list in the web
-        /// </summary>
-        /// <remarks>The list name and description will not be translated</remarks>
-        /// <param name="web">The current web</param>
-        /// <param name="webRelativePathToList">The web-relative path to the list's root folder.</param>
-        /// <param name="titleResourceKey">Titles' resource key</param>
-        /// <param name="descriptionResourceKey">Descriptions' resource key</param>
-        /// <param name="template">Template for the list</param>
-        /// <returns>The new list or the existing list</returns>
-        public SPList EnsureList(SPWeb web, string webRelativePathToList, string titleResourceKey, string descriptionResourceKey, SPListTemplate template)
-        {
-            var list = this.listLocator.TryGetList(web, webRelativePathToList);
-
-            if (list != null)
-            {
-                // List already exists, check for correct template
-                if (list.BaseTemplate != template.Type)
-                {
-                    throw new SPException(string.Format(CultureInfo.InvariantCulture, "List with root folder url {0} has list template type {1} but should have list template type {2}.", webRelativePathToList, list.BaseTemplate, template.Type));
-                }
-            }
-            else
-            {
-                // Create new list
-                var id = web.Lists.Add(webRelativePathToList, string.Empty, template);
-                list = web.Lists[id];
-            }
-
-            // Update title and description
-            // Note that the variations synchronization process for a list doesn't copy the resources settings in the target sites
-            var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
-            foreach (var availableLanguage in availableLanguages)
-            {
-                var title = this.resourceLocator.Find(titleResourceKey, availableLanguage.LCID);
-                var description = this.resourceLocator.Find(descriptionResourceKey, availableLanguage.LCID);
-
-                list.TitleResource.SetValueForUICulture(availableLanguage, title);
-                list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
-            }
-
-            list.Update();
-
-            return web.Lists[list.ID];
-        }
-
-        /// <summary>
-        /// Creates the list or returns the existing one.
-        /// </summary>
-        /// <remarks>The list name and description will not be translated</remarks>
-        /// <exception cref="SPException">If the list already exists but doesn't have the specified list template.</exception>
-        /// <param name="web">The current web</param>
         /// <param name="listInfo">The list to create</param>
         /// <returns>The new list or the existing list</returns>
         public SPList EnsureList(SPWeb web, ListInfo listInfo)
         {
             var list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
-
-            SPListTemplate listTemplate = this.GetListTemplateFromTemplateId(web, listInfo.ListTemplateId);
-
+            
             // Ensure the list
             if (list == null)
             {
-                list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
+                list = this.CreatList(web, listInfo);
             }
             else
             {
@@ -230,17 +102,9 @@ namespace GSoft.Dynamite.Lists
                         this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.WebRelativeUrl.ToString());
 
                         list.Delete();
-
-                        // TODO: review ListInfo.WebRelativeUrl. RootFolderUrl used to be its name. Is it assumed that all lists live under /Lists/? Is it assumed that
-                        // _no ListInfo EVER_ will ever ever be created with a WebRelativeUrl value of /Lists/SomeListName ??? This needs more review...
-                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
+                        list = this.CreatList(web, listInfo);
                     }
-                    else
-                    {
-                        // Get the existing list
-                        list = this.EnsureList(web, listInfo.WebRelativeUrl.ToString(), listInfo.DisplayNameResourceKey, listInfo.DescriptionResourceKey, listTemplate);
-                    }
-                }
+                }                
             }
 
             // Remove Item Content Type
@@ -317,7 +181,7 @@ namespace GSoft.Dynamite.Lists
 
             return list;
         }
-
+                
         /// <summary>
         /// Ensure a list of lists in the web
         /// </summary>
@@ -592,6 +456,32 @@ namespace GSoft.Dynamite.Lists
 
         #endregion List View
 
+        /// <summary>
+        /// Actually creates a list in SharePoint. For internal use in this class only. 
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <param name="listInfo">The list information contains all the necessary data to create the list</param>
+        /// <returns>The created SP List</returns>
+        private SPList CreatList(SPWeb web, ListInfo listInfo)
+        {
+            var id = web.Lists.Add("Default title", "Default Description", listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
+            var list = web.Lists[id];
+
+            var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
+            foreach (var availableLanguage in availableLanguages)
+            {
+                var title = this.resourceLocator.Find(listInfo.DisplayNameResourceKey, availableLanguage.LCID);
+                var description = this.resourceLocator.Find(listInfo.DescriptionResourceKey, availableLanguage.LCID);
+
+                list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
+            }
+
+            list.Update();
+
+            return web.Lists[id];
+        }
+
         private static void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
         {
             var t = settings.GetType();
@@ -610,18 +500,6 @@ namespace GSoft.Dynamite.Lists
             }
 
             return null;
-        }
-
-        private SPListTemplate GetListTemplateFromTemplateId(SPWeb web, int id)
-        {
-            SPListTemplate listTemplate = (from SPListTemplate template in web.ListTemplates where template.Type_Client == id select template).FirstOrDefault();
-            if (listTemplate == null)
-            {
-                this.logger.Error("The list template with id '{0}' was not found in web '{1}'", id, web.Url);
-                return null;
-            }
-
-            return listTemplate;
-        }
+        }        
     }
 }

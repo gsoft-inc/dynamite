@@ -33,7 +33,7 @@ namespace GSoft.Dynamite.Branding
         /// <param name="imageRenditionInfo">The image matchingRenditions to add/update</param>
         public void EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)
         {
-            var imageRendition = this.SetImageRenditionProperties(imageRenditionInfo);
+            var imageRendition = SetImageRenditionProperties(imageRenditionInfo);
 
             // Error checking
             if (site == null || imageRendition == null || !imageRendition.IsValid)
@@ -70,7 +70,7 @@ namespace GSoft.Dynamite.Branding
         /// <param name="imageRenditionInfo">The image matchingRenditions to remove</param>
         public void RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)
         {
-            var imageRendition = this.SetImageRenditionProperties(imageRenditionInfo);
+            var imageRendition = SetImageRenditionProperties(imageRenditionInfo);
 
             if (site == null || imageRendition == null || !imageRendition.IsValid)
             {
@@ -122,7 +122,7 @@ namespace GSoft.Dynamite.Branding
             imageRenditionCollection.Update();
         }
 
-        private ImageRendition SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)
+        private static ImageRendition SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)
         {
             var imageRendition = new ImageRendition();
             imageRendition.Name = imageRenditionInfo.Name;
