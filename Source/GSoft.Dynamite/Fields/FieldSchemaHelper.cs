@@ -185,7 +185,7 @@ namespace GSoft.Dynamite.Fields
 
                     // Make sure we're adding the field on a List or on a different web than the root web:
                     // we don't want to ensure the field twice on the root web
-                    if (fieldCollection.List != null || fieldCollection.Web.ID != rootWeb.ID)
+                    if (fieldCollection.List != null)
                     {
                         addedInternalName = fieldCollection.Add(parentRootWebExistingField);
 
@@ -194,6 +194,22 @@ namespace GSoft.Dynamite.Fields
                         createdField.SchemaXml = fieldXml.ToString();   // TODO: we should probably do a more granular update (property by property, 
                                                                         // only when needed) instead of brutally overwriting the schema XML like this.
                         createdField.Update();
+                    }
+                    else if (fieldCollection.Web.ID != rootWeb.ID)
+                    {
+                        if (!string.IsNullOrEmpty(addedInternalName))
+                        {
+                            // We just added the site column on the RootWeb moments ago. Adding the same field on any sub-web will
+                            // be impossible (will trigger "Same internal name already exist" kindof error).
+                            // This may be a bit misleading but really enforces the "always provision site columns on RootWeb" motto
+                            this.logger.Warn("EnsureFieldFromSchema - Field was ensured on RootWeb instead of sub-web. Best practice: keep your site column definitions on the root web / avoid scattering them across your sub-webs.");
+                        }
+                        else
+                        {
+                            // User was trying to define a custom field definition on a subweb, while that site column
+                            // is already defined on root web - which is impossible.
+                            throw new InvalidOperationException("EnsureFieldFromSchema - Cannot ensure field on sub-web if site column already exists at root web-level. Best practive: create all your site columns on the RootWeb only.");
+                        }
                     }
 
                     if (internalName != addedInternalName)
@@ -239,8 +255,22 @@ namespace GSoft.Dynamite.Fields
 
             if (existingField == null)
             {
-                // Guid match failed. A field may already exist with the same internal name but a different Guid.
-                existingField = fieldCollection.GetFieldByInternalName(internalName);
+                try
+                {
+                    // Guid match failed. A field may already exist with the same internal name but a different Guid.
+                    existingField = fieldCollection.GetFieldByInternalName(internalName);
+                }
+                catch (ArgumentException)
+                {
+                    // We're probably on a sub-web's field collection, and we just sneakily created
+                    // the site column on the RootWeb instead of on the web the user actually wanted.
+                    existingField = fieldCollection.Web.Site.RootWeb.Fields[id];
+
+                    if (existingField == null)
+                    {
+                        existingField = fieldCollection.Web.Site.RootWeb.Fields.GetFieldByInternalName(internalName);
+                    }
+                }
             }
 
             return existingField;

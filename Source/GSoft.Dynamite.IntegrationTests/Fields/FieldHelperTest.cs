@@ -322,7 +322,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
-        #region "Ensure" should also mean "Update existing field definition when FieldInfo is different than already deployed column"
+        #region "Ensure" should also mean "Update existing field definition when FieldInfo is different than already deployed column" (Potentially bad idea?)
 
         /// <summary>
         /// Validates that EnsureField takes care of updating property changes in the field definition.
@@ -603,10 +603,59 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
-        //// TODO:
-        //// you shouldn't be able to update the InternalName of an existing field
-        //// you shouldn't be able to update the ID of an existing field
-        //// you shouldn't be able to update the Type of an existing field
+        /// <summary>
+        /// Validates that EnsureField doesn't allow you to change the type of a field
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenAttemptingToChangeFieldType_ShouldFailToUpdateAndReturnExistingField()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    Required = RequiredType.NotRequired,
+                    MaxLength = 50
+                };
+
+                NoteFieldInfo noteFieldInfoWithSameNameAndId = new NoteFieldInfo(   // different type
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),  // same GUID and same internal name
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Required = RequiredType.Required
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // STEP 1: Create the first field
+                    int noOfFieldsBefore = fieldsCollection.Count;
+                    SPField originalField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+
+                    Assert.AreEqual(textFieldInfo.Id, originalField.Id);
+                    Assert.AreEqual(textFieldInfo.InternalName, originalField.InternalName);
+
+                    // STEP 2: Try to create the type-switching evil alternate field
+                    SPField alternateEnsuredField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfoWithSameNameAndId);
+
+                    Assert.AreEqual("Text", alternateEnsuredField.TypeAsString);   // not a Note/SPFieldMultilineText
+
+                    // The returned field shouldn't have gotten its properties updated
+                    // (as in this shouldn't happen: "Ensure and Update existing other
+                    // unrelated field which has clashing Guid/Internal name")
+                    Assert.IsFalse(alternateEnsuredField.Required);     // false like original Text field (fail update Note was Required=True)
+                }
+            }
+        }
 
         #endregion
 
@@ -953,9 +1002,101 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
-        #region Ensuring a field on a sub-web should ensure site column exists on root web and update web field definition if needed
+        #region Ensuring a field on a sub-web should ensure site column exists on root web instead and prevent you from defining subweb-specific fields
 
-        //// TODO: Add some sub-web field provisioning scenarios here
+        /// <summary>
+        /// Validates that EnsureField goes through site column creation when attempting to
+        /// add a field directly on a sub-web (sneaky, sneaky). I.E. to avoid "orphaned" sub-web-only field definitions,
+        /// there should always be a site column defined at site-collection level first.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenSubWebFieldCollection_AndSiteColumnDoesntExist_ShouldAddFieldParentRootWebInAReallySneakyWay()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    SPWeb subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+                    
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = subWeb.Fields;
+
+                    SPField field = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+
+                    SPWeb testSubWeb = testScope.SiteCollection.RootWeb.Webs["subweb"];
+
+                    try
+                    {
+                        var shouldBeMissingAndThrowException = testSubWeb.Fields[fieldId];
+                        Assert.Fail();
+                    }
+                    catch (ArgumentException) 
+                    { 
+                        // we got sneaky and created the site column on the root web instead 
+                        // (customizing a field definition in a sub-web is impossible once the rootweb
+                        // column exists)
+                    }
+
+                    Assert.IsNotNull(testScope.SiteCollection.RootWeb.Fields[fieldId]);    // would be null if we hadn't bothered ensuring the field on the root web
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureField doesn't allow you to re-define a site column in a sub-web
+        /// when the RootWeb field already exists.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void EnsureField_WhenSubWebFieldCollection_AndSiteColumnAlreadyExist_ShouldThrowExceptionToShowHowImpossibleThisIs()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    SPWeb subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var rootWebFields = testScope.SiteCollection.RootWeb.Fields;
+                    var subWebFields = subWeb.Fields;
+
+                    SPField field = fieldHelper.EnsureField(rootWebFields, textFieldInfo);
+                    textFieldInfo.Required = RequiredType.NotRequired;
+
+                    // Act + Assert
+                    // Should be impossible to re-define a field that already exists on root web
+                    SPField sameSubWebFieldShouldThrowException = fieldHelper.EnsureField(subWebFields, textFieldInfo);
+                }
+            }
+        }
 
         #endregion
 
@@ -1362,7 +1503,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         //// new items should have field and be settable
 
-        //// the new item's fields are filled with default values (number, text, html + taxonomy, taxonomy multi)
+        //// the new item's fields are filled with default values (number, text, html + taxonomy, taxonomy multi, user, user multi, choice... ???)
 
         #endregion
 

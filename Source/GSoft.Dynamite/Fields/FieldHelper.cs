@@ -109,7 +109,21 @@ namespace GSoft.Dynamite.Fields
             }
             catch (ArgumentException)
             {
-                field = fieldCollection.Cast<SPField>().First(f => f.InternalName == fieldInfo.InternalName);
+                field = fieldCollection.Cast<SPField>().FirstOrDefault(f => f.InternalName == fieldInfo.InternalName);
+
+                if (field == null)
+                {
+                    try
+                    {
+                        // maybe we're in the sub-web scenario, where we sneakily created the site column
+                        // on the root web instead
+                        field = fieldCollection.Web.Site.RootWeb.Fields[fieldInfo.Id];
+                    }
+                    catch (ArgumentException)
+                    {
+                        field = fieldCollection.Web.Site.RootWeb.Fields.Cast<SPField>().FirstOrDefault(f => f.InternalName == fieldInfo.InternalName);
+                    }
+                }
             }
 
             return field;
