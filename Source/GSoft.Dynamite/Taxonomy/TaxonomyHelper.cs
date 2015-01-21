@@ -376,7 +376,7 @@ namespace GSoft.Dynamite.Taxonomy
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
 
-            var multipleterms = new List<string>();
+            var labelGuidPairs = new List<string>();
 
             var termGroup = termStore.Groups[termGroupName];
             var termSet = termGroup.TermSets[termSetName];
@@ -389,28 +389,30 @@ namespace GSoft.Dynamite.Taxonomy
 
                 if (term != null)
                 {
-                    int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
-
-                    int wssId = -1;
-
-                    if (ids.Length >= 1)
-                    {
-                        wssId = ids[0];
-                    }
-
-                    string path = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                    string labelGuidPair = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
                                  + term.Id.ToString();
 
-                    multipleterms.Add(wssId + ";#" + path);
+                    labelGuidPairs.Add(labelGuidPair);
                 }
             }
 
-            if (multipleterms.Count >= 1)
+            if (labelGuidPairs.Count >= 1)
             {
-                string allvalues = string.Join(";#", multipleterms.ToArray());
+                var validatedStrings = new List<string>();
+                var taxonomyFieldValueCollection = new TaxonomyFieldValueCollection(field);
+
+                labelGuidPairs.ForEach(labelGuidPair =>
+                    {
+                        TaxonomyFieldValue taxoFieldValue = new TaxonomyFieldValue(field);
+                        taxoFieldValue.PopulateFromLabelGuidPair(labelGuidPair);
+
+                        taxonomyFieldValueCollection.Add(taxoFieldValue);
+                    });
+
+                string collectionValidatedString = field.GetValidatedString(taxonomyFieldValueCollection);
 
                 var lookup = (SPFieldLookup)field;
-                lookup.DefaultValue = allvalues;
+                lookup.DefaultValue = collectionValidatedString;
                 lookup.Update();
             }
         }

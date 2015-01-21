@@ -94,6 +94,15 @@ namespace GSoft.Dynamite.Fields
             // Refetch latest version of field, because right now the SPField object
             // doesn't hold the TermStore mapping information (see how TaxonomyHelper.AssignTermSetToColumn
             // always re-fetches the SPField itself... TODO: this should be reworked)
+            field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, fieldInfo);
+
+            return field;
+        }
+
+        private SPField RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        {
+            SPField field = null;
+
             if (fieldCollection.List != null)
             {
                 fieldCollection = fieldCollection.List.Fields;
@@ -183,6 +192,9 @@ namespace GSoft.Dynamite.Fields
             // Set the default value for the field
             if (taxonomyFieldInfo.DefaultValue != null)
             {
+                // If term store mapping was applied, the field instance is now stale (the field definition got updated 
+                // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
+                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldValue(fieldCollection.Web, field as TaxonomyField, taxonomyFieldInfo.DefaultValue);
             }
         }
@@ -212,6 +224,9 @@ namespace GSoft.Dynamite.Fields
             // Set the default value for the field
             if (taxonomyMultiFieldInfo.DefaultValue != null)
             {
+                // If term store mapping was applied, the field instance is now stale (the field definition got updated 
+                // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
+                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyMultiFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldMultiValue(fieldCollection.Web, field as TaxonomyField, taxonomyMultiFieldInfo.DefaultValue);
             }
         }
