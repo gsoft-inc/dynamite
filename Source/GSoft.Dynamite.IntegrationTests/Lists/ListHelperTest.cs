@@ -30,7 +30,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             using (var testScope = SiteTestScope.BlankSite())
             {
-                
                 var listInfo = new ListInfo(Url, "nameKey", "descriptionKey");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
