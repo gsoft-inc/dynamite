@@ -521,18 +521,6 @@ namespace GSoft.Dynamite.Lists
             }
 
             return null;
-        }
-
-        private SPListTemplate GetListTemplateFromTemplateId(SPWeb web, int id)
-        {
-            SPListTemplate listTemplate = (from SPListTemplate template in web.ListTemplates where template.Type_Client == id select template).FirstOrDefault();
-            if (listTemplate == null)
-            {
-                this.logger.Error("The list template with id '{0}' was not found in web '{1}'", id, web.Url);
-                return null;
-            }
-
-            return listTemplate;
-        }
+        }        
     }
 }

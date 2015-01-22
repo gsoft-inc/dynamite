@@ -3706,9 +3706,6 @@
         <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.RemoveImageRenditionSPSiteString">
             <summary>Sets the shim of ImageRenditionHelper.RemoveImageRendition(SPSite site, String containsPattern)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionHelper.AllInstances.SetImageRenditionPropertiesImageRenditionInfo">
-            <summary>Sets the shim of ImageRenditionHelper.SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)</summary>
-        </member>
         <member name="T:GSoft.Dynamite.Branding.Fakes.ShimImageRenditionInfo">
             <summary>Shim type of GSoft.Dynamite.Branding.ImageRenditionInfo</summary>
         </member>
@@ -12547,11 +12544,296 @@
         <member name="M:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BehaveAsNotImplemented">
             <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AbuseReportsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AbuseReportsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AccessRequestsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AccessRequests()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AccessServicesRestrictedListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AccessServicesRestrictedList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AccessServicesSystemObjectsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AccessServicesSystemObjects()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AccessServicesUserApplicationLogGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AccessServicesUserApplicationLog()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AcquisitionHistoryListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AcquisitionHistoryList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AnnouncementsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AnnouncementsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AppRequestListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AppRequestList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.AssetLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_AssetLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BIDashboardsLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_BIDashboardsLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BIDataConnectionsLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_BIDataConnectionsLibrary()</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.StaticConstructor">
-            <summary>Sets the shim of BuiltInListTemplates.BuiltInListTemplates()</summary>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BlogSiteCategorieslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_BlogSiteCategorieslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BlogSiteCommentslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_BlogSiteCommentslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.BlogSitePostslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_BlogSitePostslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.CategorieslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Categorieslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.CirculationListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_CirculationList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ContactslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Contactslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ContentFollowingListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ContentFollowingList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.CorporateCatalogGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_CorporateCatalog()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.CustomListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_CustomList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.DataConnectionLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_DataConnectionLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.DataSourceLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_DataSourceLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.DiscussionsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_DiscussionsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.DocumentLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_DocumentLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.DraftAppsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_DraftAppsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoveryCustodiansGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoveryCustodians()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoveryExportsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoveryExports()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoverySavedSearchesGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoverySavedSearches()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoverySourceGroupsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoverySourceGroups()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoverySourceInstancesGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoverySourceInstances()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EDiscoverySourcesGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EDiscoverySources()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduQuizGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EduQuiz()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduWorkItemGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EduWorkItem()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.Eduannouncement1Get">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduannouncement1()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduannouncementGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduannouncement()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EducalendarGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Educalendar()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EdudocumentGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Edudocument()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.Eduentity1Get">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduentity1()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduentityGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduentity()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduexternalsyncsettingGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduexternalsyncsetting()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EduusersettingGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Eduusersetting()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.EventsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_EventsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ExternalListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ExternalList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ExternalSubscriptionsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ExternalSubscriptions()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.FCGroupsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_FCGroupsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.FacilityListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_FacilityList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.GanttTasksListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_GanttTasksList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.GridListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_GridList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.HelpLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_HelpLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.HierarchyTasksListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_HierarchyTasksList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.HolidaysListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_HolidaysList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.InPlaceRecordslibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_InPlaceRecordslibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.InputMethodEditorDictionaryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_InputMethodEditorDictionary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.IssueslistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Issueslist()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.LegacyDocumentLibrary2010Get">
+            <summary>Sets the shim of BuiltInListTemplates.get_LegacyDocumentLibrary2010()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.LegacyDocumentLibrary2013Get">
+            <summary>Sets the shim of BuiltInListTemplates.get_LegacyDocumentLibrary2013()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.LinksGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Links()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MaintenanceLogsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MaintenanceLogs()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MembershipListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MembershipList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MonitoredAppsListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MonitoredAppsList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteDocumentLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MySiteDocumentLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteMicroBloggingListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MySiteMicroBloggingList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.NoCodePublicWorkflowGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_NoCodePublicWorkflow()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.NoCodeWorkflowGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_NoCodeWorkflow()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.OfficeExtensionCatalogGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_OfficeExtensionCatalog()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PagesGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Pages()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PerformancepointServicesDatasourceGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PerformancepointServicesDatasource()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PerformancepointServicesWorkspaceGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PerformancepointServicesWorkspace()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PhoneCallMemoListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PhoneCallMemoList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PhonePNSubscribersGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PhonePNSubscribers()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PictureLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PictureLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PreservationGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Preservation()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ProductCatalogGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ProductCatalog()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.PromotedLinksGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_PromotedLinks()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ReportDocumentLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ReportDocumentLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ReportListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_ReportList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.ScheduleGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Schedule()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SearchConfigGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_SearchConfig()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SharePointPortalServerStatusIndicatorListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_SharePointPortalServerStatusIndicatorList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SlideLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_SlideLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SocialDataStoreGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_SocialDataStore()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SupportFeatureConvertedListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_SupportFeatureConvertedList()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.SurveyGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Survey()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.TasksLegacyGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_TasksLegacy()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.TimecardGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Timecard()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.TransMgmtLibGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_TransMgmtLib()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.VisioProcessRepositoryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_VisioProcessRepository()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.VisioProcessRepositoryUsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_VisioProcessRepositoryUs()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WebpageLibraryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_WebpageLibrary()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WhatsNewGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_WhatsNew()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WhereaboutsGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Whereabouts()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WorkflowHistoryGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_WorkflowHistory()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WorkflowProcessGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_WorkflowProcess()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.WorkflowServiceStoreGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_WorkflowServiceStore()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.XMLFormGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_XMLForm()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.XlatelistGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_Xlatelist()</summary>
         </member>
         <member name="T:GSoft.Dynamite.Lists.Entities.Fakes.ShimPublishedLink">
             <summary>Shim type of GSoft.Dynamite.Lists.Entities.PublishedLink</summary>
@@ -12682,9 +12964,6 @@
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListContentTypeSPListContentTypeInfo">
             <summary>Sets the shim of ListHelper.GetListContentType(SPList list, ContentTypeInfo contentTypeInfo)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListTemplateFromTemplateIdSPWebInt32">
-            <summary>Sets the shim of ListHelper.GetListTemplateFromTemplateId(SPWeb web, Int32 id)</summary>
-        </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.GetListTemplateSPWebString">
             <summary>Sets the shim of ListHelper.GetListTemplate(SPWeb web, String templateName)</summary>
         </member>
@@ -12729,9 +13008,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.EnsureListSPWebListInfo">
             <summary>Sets the shim of ListHelper.EnsureList(SPWeb web, ListInfo listInfo)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.GetListTemplateFromTemplateIdSPWebInt32">
-            <summary>Sets the shim of ListHelper.GetListTemplateFromTemplateId(SPWeb web, Int32 id)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Fakes.ShimListHelper.AllInstances.GetListTemplateSPWebString">
             <summary>Sets the shim of ListHelper.GetListTemplate(SPWeb web, String templateName)</summary>

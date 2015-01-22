@@ -300,7 +300,18 @@ namespace GSoft.Dynamite.Taxonomy
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
 
-            var termGroup = termStore.Groups[termGroupName];
+            Group termGroup = null;
+
+            if (!string.IsNullOrEmpty(termGroupName))
+            {
+                termGroup = termStore.Groups[termGroupName];
+            }
+            else
+            {
+                // we're dealing with a site-collection-specifc term group
+                termGroup = termStore.GetSiteCollectionGroup(web.Site);
+            }
+
             var termSet = termGroup.TermSets[termSetName];
 
             // TODO: rework this to work with termIds instead of termLabels, because this logic DOES NOT support duplicate labels (i.e. two separate
@@ -336,7 +347,13 @@ namespace GSoft.Dynamite.Taxonomy
         public void SetDefaultTaxonomyFieldValue(
             SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue)
         {
-            var termGroupName = defaultValue.Context.Group.Name;
+            var termGroupName = string.Empty;
+            if (defaultValue.Context.Group != null)
+            {
+                // null Group means we're dealing with a site-collection-specific term group
+                termGroupName = defaultValue.Context.Group.Name;
+            }
+
             var defaultLanguage = new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site));
 
             // Get the term set name according to the default term store language
@@ -376,9 +393,20 @@ namespace GSoft.Dynamite.Taxonomy
             var taxonomySession = new TaxonomySession(web.Site);
             TermStore termStore = taxonomySession.DefaultSiteCollectionTermStore;
 
-            var multipleterms = new List<string>();
+            var labelGuidPairs = new List<string>();
 
-            var termGroup = termStore.Groups[termGroupName];
+            Group termGroup = null;
+
+            if (!string.IsNullOrEmpty(termGroupName))
+            {
+                termGroup = termStore.Groups[termGroupName];
+            }
+            else
+            {
+                // we're dealing with a site-collection-specifc term group
+                termGroup = termStore.GetSiteCollectionGroup(web.Site);
+            }
+
             var termSet = termGroup.TermSets[termSetName];
 
             foreach (var label in termLabels)
@@ -389,28 +417,30 @@ namespace GSoft.Dynamite.Taxonomy
 
                 if (term != null)
                 {
-                    int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
-
-                    int wssId = -1;
-
-                    if (ids.Length >= 1)
-                    {
-                        wssId = ids[0];
-                    }
-
-                    string path = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                    string labelGuidPair = TaxonomyItem.NormalizeName(term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
                                  + term.Id.ToString();
 
-                    multipleterms.Add(wssId + ";#" + path);
+                    labelGuidPairs.Add(labelGuidPair);
                 }
             }
 
-            if (multipleterms.Count >= 1)
+            if (labelGuidPairs.Count >= 1)
             {
-                string allvalues = string.Join(";#", multipleterms.ToArray());
+                var validatedStrings = new List<string>();
+                var taxonomyFieldValueCollection = new TaxonomyFieldValueCollection(field);
+
+                labelGuidPairs.ForEach(labelGuidPair =>
+                    {
+                        TaxonomyFieldValue taxoFieldValue = new TaxonomyFieldValue(field);
+                        taxoFieldValue.PopulateFromLabelGuidPair(labelGuidPair);
+
+                        taxonomyFieldValueCollection.Add(taxoFieldValue);
+                    });
+
+                string collectionValidatedString = field.GetValidatedString(taxonomyFieldValueCollection);
 
                 var lookup = (SPFieldLookup)field;
-                lookup.DefaultValue = allvalues;
+                lookup.DefaultValue = collectionValidatedString;
                 lookup.Update();
             }
         }
@@ -426,7 +456,14 @@ namespace GSoft.Dynamite.Taxonomy
             if (defaultValueCollection.Count > 0)
             {
                 TaxonomyFullValue firstDefaultValue = defaultValueCollection[0];
-                var termGroupName = firstDefaultValue.Context.Group.Name;
+
+                var termGroupName = string.Empty;
+                if (firstDefaultValue.Context.Group != null)
+                {
+                    // null Group means we're dealing with a site-collection-specific term group
+                    termGroupName = firstDefaultValue.Context.Group.Name;
+                }
+
                 var defaultLanguage = new CultureInfo(this.GetTermStoreDefaultLanguage(web.Site));
 
                 // Get the term set name according to the default term store language

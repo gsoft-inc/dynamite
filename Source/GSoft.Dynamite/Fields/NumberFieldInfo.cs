@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields
     /// <summary>
     /// Definition of a NumberFieldInfo info
     /// </summary>
-    public class NumberFieldInfo : FieldInfo<float>
+    public class NumberFieldInfo : FieldInfo<double?>
     {
         /// <summary>
         /// Initializes a new NumberFieldInfo
@@ -20,8 +20,8 @@ namespace GSoft.Dynamite.Fields
         public NumberFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "Number", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
-            // default number of lines shown when editing
-            this.Decimals = 6;
+            // default number of decimals places to keep on number field
+            this.Decimals = 0;
             this.IsPercentage = false;
         }
 
@@ -57,12 +57,12 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Minimum value allowed
         /// </summary>
-        public int? Min { get; set; }
+        public double? Min { get; set; }
 
         /// <summary>
         /// Maximum value allowed
         /// </summary>
-        public int? Max { get; set; }
+        public double? Max { get; set; }
 
         /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes

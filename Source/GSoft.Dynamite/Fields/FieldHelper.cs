@@ -94,6 +94,15 @@ namespace GSoft.Dynamite.Fields
             // Refetch latest version of field, because right now the SPField object
             // doesn't hold the TermStore mapping information (see how TaxonomyHelper.AssignTermSetToColumn
             // always re-fetches the SPField itself... TODO: this should be reworked)
+            field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, fieldInfo);
+
+            return field;
+        }
+
+        private SPField RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        {
+            SPField field = null;
+
             if (fieldCollection.List != null)
             {
                 fieldCollection = fieldCollection.List.Fields;
@@ -134,7 +143,18 @@ namespace GSoft.Dynamite.Fields
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
             var asTaxonomyMultiFieldInfo = fieldInfo as TaxonomyMultiFieldInfo;
 
-            if (fieldInfo is TextFieldInfo
+            if (fieldInfo is NumberFieldInfo)
+            {
+                FieldInfo<double?> doubleBasedField = fieldInfo as FieldInfo<double?>;
+
+                if (doubleBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = doubleBasedField.DefaultValue.ToString();
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is TextFieldInfo
                 || fieldInfo is NoteFieldInfo
                 || fieldInfo is HtmlFieldInfo)
             {
@@ -158,9 +178,34 @@ namespace GSoft.Dynamite.Fields
                 // this call will take care of calling Update() on field
                 this.ApplyTaxonomyMultiFieldValues(fieldCollection, field, asTaxonomyMultiFieldInfo);
             }
+            else if (fieldInfo is DateTimeFieldInfo)
+            {
+                FieldInfo<DateTime?> doubleBasedField = fieldInfo as FieldInfo<DateTime?>;
+
+                if (doubleBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = SPUtility.CreateISO8601DateTimeFromSystemDateTime(doubleBasedField.DefaultValue.Value);
+                }
+
+                field.Update();
+            }
             else
             {
                 // Some preceding changed be need to be persisted
+                field.Update();
+            }
+
+            if (!string.IsNullOrEmpty(fieldInfo.DefaultFormula))
+            {
+                if (!string.IsNullOrEmpty(field.DefaultValue))
+                {
+                    // A default value was already specified, so setting a Formula makes no sense.
+                    throw new InvalidOperationException("Failed to ensure field " + fieldInfo.InternalName + " in its entirety because both DefaultFormula and DefaultValue properties were specified. Please only set Formula OR DefaultValue, not both. Also don't forget to clean up the partially created field " + fieldInfo.InternalName + ".");
+                }
+
+                // Setting the DefaultFormula through the SchemaXML doesn't work,
+                // so let's force it here.
+                field.DefaultFormula = fieldInfo.DefaultFormula;
                 field.Update();
             }
 
@@ -183,6 +228,9 @@ namespace GSoft.Dynamite.Fields
             // Set the default value for the field
             if (taxonomyFieldInfo.DefaultValue != null)
             {
+                // If term store mapping was applied, the field instance is now stale (the field definition got updated 
+                // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
+                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldValue(fieldCollection.Web, field as TaxonomyField, taxonomyFieldInfo.DefaultValue);
             }
         }
@@ -212,6 +260,9 @@ namespace GSoft.Dynamite.Fields
             // Set the default value for the field
             if (taxonomyMultiFieldInfo.DefaultValue != null)
             {
+                // If term store mapping was applied, the field instance is now stale (the field definition got updated 
+                // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
+                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyMultiFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldMultiValue(fieldCollection.Web, field as TaxonomyField, taxonomyMultiFieldInfo.DefaultValue);
             }
         }

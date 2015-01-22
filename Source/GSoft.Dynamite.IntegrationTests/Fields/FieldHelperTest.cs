@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
@@ -6,6 +8,7 @@ using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -951,7 +954,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // Act
                     // 3) Ensure the modified field definitions on the list (second Ensure)
                     IListLocator listLocator = injectionScope.Resolve<IListLocator>();
-                    list = listLocator.GetByUrl(testScope.SiteCollection.RootWeb, "Lists/sometestlistpath");
+                    list = listLocator.GetByUrl(testScope.SiteCollection.RootWeb, "sometestlistpath");
                     listFields = list.Fields;   // refetch the fields (to detect any missing Update() calls)
                     textListColumn = fieldHelper.EnsureField(listFields, textFieldInfo);
                     taxoListColumn = fieldHelper.EnsureField(listFields, taxoFieldInfo);
@@ -1099,8 +1102,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         }
 
         #endregion
-
-        #region Text+Note+Html field type-specific values should be mapped
+        
+        #region Text+Note+Html field type-specific values should be mapped (DefaultValue, EnforceUniqueValue, etc.)
 
         /// <summary>
         /// Validate that default value is set on Text+Note+HtmlFieldInfo type fields
@@ -1291,7 +1294,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         }
         #endregion
 
-        #region Taxonomy field type-specific values should be mapped
+        #region Taxonomy field type-specific values should be mapped (DefaultValue, TermStoreMapping, etc.)
 
         /// <summary>
         /// Validated that the term store mapping is properly applied to taxonomy column
@@ -1482,28 +1485,1081 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
-        ////[TestMethod]
-        ////public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyTermSetMappingToListField()
-        ////{
-        ////}
+        /// <summary>
+        /// Validated that the term store mapping is properly applied to list-specifc taxonomy column
+        /// when we're dealing with Site Collection-specific term group (i.e. the kind of
+        /// term store group that is created with Publishing Site automatically and which 
+        /// is only visible from within that site's settings)
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_AndSiteCollectionSpecificTermSet_ShouldApplyTermSetMappingToListColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
 
-        ////[TestMethod]
-        ////public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_ShouldApplyDefaultValue()
-        ////{
-        ////}
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
 
-        ////[TestMethod]
-        ////public void EnsureField_WhenTaxonomySingleOrMultiAndListField_ShouldApplyDefaultValue()
-        ////{
-        ////}
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = list.Fields;
+
+                    // Ensure one of the two on the root web (tweak the definition a little bit on the list def)
+                    fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, taxoMultiFieldInfo);
+                    taxoMultiFieldInfo.Required = RequiredType.Required;
+                    taxoMultiFieldInfo.TermStoreMapping = new TaxonomyContext(levelTwoTermAB);
+
+                    // Act
+                    TaxonomyField fieldSingle = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    TaxonomyField fieldMulti = (TaxonomyField)fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    // Assert
+                    Assert.AreEqual(testTermSet.Id, fieldSingle.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingle.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldSingle.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingle.IsTermSetValid);
+
+                    Assert.AreEqual(testTermSet.Id, fieldMulti.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMulti.SspId);
+                    Assert.AreEqual(levelTwoTermAB.Id, fieldMulti.AnchorId);    // choices should be constrained to a 2nd level child term
+                    Assert.IsTrue(fieldMulti.IsTermSetValid);
+                    Assert.IsTrue(fieldMulti.IsAnchorValid);
+                    Assert.IsTrue(fieldMulti.Required);
+
+                    // Gotta also make sure (by fetching the fields again) that the field properties were all persisted
+                    TaxonomyField fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoFieldInfo.Id];
+                    TaxonomyField fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoMultiFieldInfo.Id];
+
+                    Assert.AreEqual(testTermSet.Id, fieldSingleFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingleFetchedAgain.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldSingleFetchedAgain.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+
+                    Assert.AreEqual(testTermSet.Id, fieldMultiFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMultiFetchedAgain.SspId);
+                    Assert.AreEqual(levelTwoTermAB.Id, fieldMultiFetchedAgain.AnchorId);    // choices should be constrained to a 2nd level child term
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldMultiFetchedAgain.IsAnchorValid);
+                    Assert.IsTrue(fieldMultiFetchedAgain.Required);
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
+        /// Validated that the term store mapping is properly applied to list-specific taxonomy column
+        /// when we're dealing with Farm-wide term groups (i.e. the kind of
+        /// term store group that is created by a farm administrator and which is
+        /// visible from all site collections)
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_AndGlobalFarmWideTermSet_ShouldApplyTermSetMappingToListColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                Guid testGroupId = new Guid("{B7B56932-E191-46C7-956F-4C6E5E4F6020}");
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set") // keep Ids random because, if this test fails midway, the term
+                {
+                    // must specify group, otherwise we would be describing a term set belonging to a site-specific group
+                    Group = new TermGroupInfo(testGroupId, "Dynamite Test Group")
+                };
+
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+
+                // Cleanup group (maybe the test failed last time and the old group ended up polluting the term store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+
+                Group testGroup = defaultSiteCollectionTermStore.CreateGroup("Dynamite Test Group", testGroupId);
+                TermSet newTermSet = testGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = list.Fields;
+
+                    // Ensure one of the two on the root web (tweak the definition a little bit on the list def)
+                    fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, taxoMultiFieldInfo);
+                    taxoMultiFieldInfo.Required = RequiredType.Required;
+                    taxoMultiFieldInfo.TermStoreMapping = new TaxonomyContext(levelTwoTermAB);
+
+                    // Act
+                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    // Assert
+                    TaxonomyField fieldSingleFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoFieldInfo.Id];
+                    TaxonomyField fieldMultiFetchedAgain = (TaxonomyField)testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoMultiFieldInfo.Id];
+
+                    Assert.IsNotNull(fieldSingleFetchedAgain);
+                    Assert.AreEqual(testTermSet.Id, fieldSingleFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldSingleFetchedAgain.SspId);
+                    Assert.AreEqual(Guid.Empty, fieldSingleFetchedAgain.AnchorId);    // choices should not be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+
+                    Assert.IsNotNull(fieldMultiFetchedAgain);
+                    Assert.AreEqual(testTermSet.Id, fieldMultiFetchedAgain.TermSetId);
+                    Assert.AreEqual(defaultSiteCollectionTermStore.Id, fieldMultiFetchedAgain.SspId);
+                    Assert.AreEqual(levelTwoTermAB.Id, fieldMultiFetchedAgain.AnchorId);    // choices should be constrained to a child term
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsTermSetValid);
+                    Assert.IsTrue(fieldSingleFetchedAgain.IsAnchorValid);
+                }
+
+                // Cleanup term group so that we don't pollute the metadata store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+            }
+        }
+
+        /// <summary>
+        /// Validates that Taxonomy (single and multi) default value is set properly (with fully initialized lookup IDs to TaxonomyHiddenList) 
+        /// on Web fields when linking to a term set belonging to a farm-wide term group.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_AndGlobalTermSet_ShouldApplyDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                Guid testGroupId = new Guid("{B7B56932-E191-46C7-956F-4C6E5E4F6020}");
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set") // keep Ids random because, if this test fails midway, the term
+                {
+                    // must specify group, otherwise we would be describing a term set belonging to a site-specific group
+                    Group = new TermGroupInfo(testGroupId, "Dynamite Test Group")
+                };
+
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+
+                // Cleanup group (maybe the test failed last time and the old group ended up polluting the term store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+
+                Group testGroup = defaultSiteCollectionTermStore.CreateGroup("Dynamite Test Group", testGroupId);
+                TermSet newTermSet = testGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(levelTwoTermAA), 
+                                new TaxonomyFullValue(levelTwoTermAB)
+                            }),
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Act
+                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    var fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    var fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    // Assert
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    // Same asserts, but on re-fetched field (to make sure DefaultValue was persisted properly)
+                    SPField fieldSingleRefetched = testScope.SiteCollection.RootWeb.Fields[taxoFieldInfo.Id];
+                    SPField fieldMultiRefetched = testScope.SiteCollection.RootWeb.Fields[taxoMultiFieldInfo.Id];
+
+                    fieldValue = new TaxonomyFieldValue(fieldSingleRefetched.DefaultValue);
+                    fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMultiRefetched.DefaultValue);
+
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+                }
+
+                // Cleanup term group so that we don't pollute the metadata store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+            }
+        }
+
+        /// <summary>
+        /// Validates that Taxonomy (single and multi) default value is set properly (with fully initialized lookup IDs to TaxonomyHiddenList) 
+        /// on List fields when linking to a term set belonging to a farm-wide term group.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_AndGlobalTermSet_ShouldApplyDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                Guid testGroupId = new Guid("{B7B56932-E191-46C7-956F-4C6E5E4F6020}");
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set") // keep Ids random because, if this test fails midway, the term
+                {
+                    // must specify group, otherwise we would be describing a term set belonging to a site-specific group
+                    Group = new TermGroupInfo(testGroupId, "Dynamite Test Group")
+                };
+
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+
+                // Cleanup group (maybe the test failed last time and the old group ended up polluting the term store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+
+                Group testGroup = defaultSiteCollectionTermStore.CreateGroup("Dynamite Test Group", testGroupId);
+                TermSet newTermSet = testGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(levelTwoTermAA), 
+                                new TaxonomyFullValue(levelTwoTermAB)
+                            }),
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = list.Fields;
+
+                    // Ensure one of the two on the root web (tweak the definition a little bit on the list def)
+                    fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, taxoMultiFieldInfo);
+                    taxoMultiFieldInfo.Required = RequiredType.Required;
+
+                    // Act
+                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    var fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    var fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    // Assert
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    Assert.IsTrue(fieldMulti.Required);
+
+                    // Same asserts, but on re-fetched field (to make sure DefaultValue was persisted properly)
+                    SPField fieldSingleRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoFieldInfo.Id];
+                    SPField fieldMultiRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoMultiFieldInfo.Id];
+
+                    fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    Assert.IsTrue(fieldMultiRefetched.Required);
+                }
+
+                // Cleanup term group so that we don't pollute the metadata store
+                this.DeleteGroupIfExists(defaultSiteCollectionTermStore, testGroupId);
+            }
+        }
+
+        /// <summary>
+        /// Validates that Taxonomy (single and multi) default value is set properly (with fully initialized lookup IDs to TaxonomyHiddenList) 
+        /// on Web fields when linking to a term set belonging to a local site-collection-specific term group.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndWebField_AndSiteCollectionSpecificTermSet_ShouldApplyDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(levelTwoTermAA), 
+                                new TaxonomyFullValue(levelTwoTermAB)
+                            }),
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Act
+                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    var fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    var fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    // Assert
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    // Same asserts, but on re-fetched field (to make sure DefaultValue was persisted properly)
+                    SPField fieldSingleRefetched = testScope.SiteCollection.RootWeb.Fields[taxoFieldInfo.Id];
+                    SPField fieldMultiRefetched = testScope.SiteCollection.RootWeb.Fields[taxoMultiFieldInfo.Id];
+
+                    fieldValue = new TaxonomyFieldValue(fieldSingleRefetched.DefaultValue);
+                    fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMultiRefetched.DefaultValue);
+
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
+        /// Validates that Taxonomy (single and multi) default value is set properly (with fully initialized lookup IDs to TaxonomyHiddenList) 
+        /// on List fields when linking to a term set belonging to a local site-collection-specific term group.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenTaxonomySingleOrMultiAndListField_AndSiteCollectionSpecificTermSet_ShouldApplyDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{B2517ECF-819E-4F75-88AF-18E926AD30BD}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(levelTwoTermAA), 
+                                new TaxonomyFullValue(levelTwoTermAB)
+                            }),
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = list.Fields;
+
+                    // Ensure one of the two on the root web (tweak the definition a little bit on the list def)
+                    fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, taxoMultiFieldInfo);
+                    taxoMultiFieldInfo.Required = RequiredType.Required;
+
+                    // Act
+                    SPField fieldSingle = fieldHelper.EnsureField(fieldsCollection, taxoFieldInfo);
+                    SPField fieldMulti = fieldHelper.EnsureField(fieldsCollection, taxoMultiFieldInfo);
+
+                    var fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    var fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    // Assert
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    Assert.IsTrue(fieldMulti.Required);
+
+                    // Same asserts, but on re-fetched field (to make sure DefaultValue was persisted properly)
+                    SPField fieldSingleRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoFieldInfo.Id];
+                    SPField fieldMultiRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID].Fields[taxoMultiFieldInfo.Id];
+
+                    fieldValue = new TaxonomyFieldValue(fieldSingle.DefaultValue);
+                    fieldMultiValueCollection = new TaxonomyFieldValueCollection(fieldMulti.DefaultValue);
+
+                    Assert.AreNotEqual(-1, fieldValue.WssId);   // a lookup ID to the TaxonomyHiddenList should be properly initialized at all times (lookup ID == -1 means you're depending on too much magic)
+                    Assert.AreEqual("Term A", fieldValue.Label);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(fieldValue.TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[0].WssId);     // lookup ID to TaxoHiddenList should also be initialized on multi-values
+                    Assert.AreEqual("Term A-A", fieldMultiValueCollection[0].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(fieldMultiValueCollection[0].TermGuid));
+
+                    Assert.AreNotEqual(-1, fieldMultiValueCollection[1].WssId);
+                    Assert.AreEqual("Term A-B", fieldMultiValueCollection[1].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(fieldMultiValueCollection[1].TermGuid));
+
+                    Assert.IsTrue(fieldMultiRefetched.Required);
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        #endregion
+
+        #region Other field types (Number+Guid+Url+Image+etc.) should get their field type-specific properties and DefaultValue mapped
+
+        /// <summary>
+        /// Validates that Number field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenNumberField_ShouldApplyNumberFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                NumberFieldInfo numberFieldInfoAlt = new NumberFieldInfo(
+                    "TestInternalNameNumberAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Decimals = 3,
+                    IsPercentage = true,
+                    Min = 5,
+                    Max = 500.555,
+                    DefaultValue = 77.77
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic nunber field definition (all default property values)
+                    SPFieldNumber numberField = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfo);
+                    this.ValidateFieldBasicValues(numberFieldInfo, numberField);
+                    Assert.AreEqual(SPNumberFormatTypes.NoDecimal, numberField.DisplayFormat);
+                    Assert.IsFalse(numberField.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(numberField.DefaultValue));
+
+                    SPFieldNumber numberFieldRefetched = (SPFieldNumber)testScope.SiteCollection.RootWeb.Fields[numberFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(numberFieldInfo, numberFieldRefetched);
+                    Assert.AreEqual(SPNumberFormatTypes.NoDecimal, numberFieldRefetched.DisplayFormat);
+                    Assert.IsFalse(numberFieldRefetched.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(numberFieldRefetched.DefaultValue));
+
+                    // 2) Alternate number field definition (with all property values customized and a default value assigned)
+                    SPFieldNumber numberFieldAlt = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfoAlt);
+                    this.ValidateFieldBasicValues(numberFieldInfoAlt, numberFieldAlt);
+                    Assert.AreEqual(SPNumberFormatTypes.ThreeDecimals, numberFieldAlt.DisplayFormat);
+                    Assert.IsTrue(numberFieldAlt.ShowAsPercentage);
+                    Assert.AreEqual(5, numberFieldAlt.MinimumValue);
+                    Assert.AreEqual(500.555, numberFieldAlt.MaximumValue);
+                    Assert.AreEqual("77.77", numberFieldAlt.DefaultValue);
+
+                    SPFieldNumber numberFieldAltRefetched = (SPFieldNumber)testScope.SiteCollection.RootWeb.Fields[numberFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(numberFieldInfoAlt, numberFieldAltRefetched);
+                    Assert.AreEqual(SPNumberFormatTypes.ThreeDecimals, numberFieldAltRefetched.DisplayFormat);
+                    Assert.IsTrue(numberFieldAltRefetched.ShowAsPercentage);
+                    Assert.AreEqual(5, numberFieldAltRefetched.MinimumValue);
+                    Assert.AreEqual(500.555, numberFieldAltRefetched.MaximumValue);
+                    Assert.AreEqual("77.77", numberFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that DateTime field type properties are mapped along with its formula or default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenDateTimeField_ShouldApplyNumberFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDateTime",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoWithFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultFormula = "=[Today]",
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoWithDefaultValue = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultValue = new DateTime(1999, 1, 28),
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic datetime field definition (all default property values)
+                    SPFieldDateTime dateTimeField = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfo);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfo, dateTimeField);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateOnly, dateTimeField.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Disabled, dateTimeField.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeField.DefaultFormula));
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeField.DefaultValue));
+
+                    SPFieldDateTime dateTimeFieldRefetched = (SPFieldDateTime)testScope.SiteCollection.RootWeb.Fields[dateTimeFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(dateTimeFieldInfo, dateTimeFieldRefetched);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateOnly, dateTimeFieldRefetched.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Disabled, dateTimeFieldRefetched.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldRefetched.DefaultFormula));
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldRefetched.DefaultValue));
+
+                    // 2) Alternate datetime field definition (with all property values customized and a Calculated Formula assigned)
+                    SPFieldDateTime dateTimeFieldWithFormula = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithFormula);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithFormula, dateTimeFieldWithFormula);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateTime, dateTimeFieldWithFormula.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Relative, dateTimeFieldWithFormula.FriendlyDisplayFormat);
+                    Assert.AreEqual("=[Today]", dateTimeFieldWithFormula.DefaultFormula);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldWithFormula.DefaultValue));
+
+                    // 3) Alternate datetime field definition #2 (with all property values customized and a Default Value assigned)
+                    SPFieldDateTime dateTimeFieldWithDefaultValue = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithDefaultValue);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithFormula, dateTimeFieldWithDefaultValue);
+                    Assert.AreEqual(SPDateTimeFieldFormatType.DateTime, dateTimeFieldWithDefaultValue.DisplayFormat);
+                    Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Relative, dateTimeFieldWithDefaultValue.FriendlyDisplayFormat);
+                    Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldWithDefaultValue.DefaultFormula));
+                    Assert.AreEqual("1999-01-28T00:00:00Z", dateTimeFieldWithDefaultValue.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that DateTime field type properties are mapped along with its formula or default value
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void EnsureField_WhenDateTimeField_AndBothFormulaAndDefaultValueSpecified_ShouldThrowExceptionToWarnYouThatYouShouldOnlySpecifyOneOfTheTwo()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                DateTimeFieldInfo dateTimeFieldInfoWithFormulaAndDefaultValue = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "DateTime",
+                    DefaultFormula = "=[Today]",
+                    DefaultValue = new DateTime(1999, 1, 28),   // both formula and defaul val are specified
+                    HasFriendlyRelativeDisplay = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Creating field should fail (only formula OR default value should be specified)
+                    SPFieldDateTime dateTimeField = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithFormulaAndDefaultValue);
+                }
+            }
+        }
 
         #endregion
 
         #region Ensuring fields directly on lists should make those fields work on the list's items
 
-        //// new items should have field and be settable
+        /// <summary>
+        /// Validates that list field default values are applied on new items created directly on that list.
+        /// Doing so for Number, Text, Note, Html, Taxonomy and TaxonomyMulti field types.
+        /// TODO: validated the behavior for other field types like Choice, User and UserMulti, etc.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenFieldAddedToListWithDefaultValue_NewItemsCreatedOnListShouldHaveDefaultValues()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey")
+                {
+                    DefaultValue = 5
+                };
 
-        //// the new item's fields are filled with default values (number, text, html + taxonomy, taxonomy multi, user, user multi, choice... ???)
+                DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                    "NameKeyDateTimeFormula",
+                    "DescriptionKeyDateTimeFormula",
+                    "GroupKey")
+                {
+                    DefaultFormula = "=[Today]"
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoDefault = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey")
+                {
+                    DefaultValue = new DateTime(2005, 10, 21)
+                };
+
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = "Text default value"
+                };
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = "Note default value"
+                };
+
+                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
+                    "TestInternalNameHtml",
+                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = "<p class=\"some-css-class\">HTML default value</p>"
+                };
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValue(levelOneTermB),
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{2F49D362-B014-41BB-9959-1000C9A7FFA0}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(levelTwoTermAA), 
+                                new TaxonomyFullValue(levelTwoTermAB)
+                            }),
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                //// TODO: Add User fields and other types...
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        numberFieldInfo,
+                        dateTimeFieldInfoFormula,
+                        dateTimeFieldInfoDefault,
+                        textFieldInfo,
+                        noteFieldInfo,
+                        htmlFieldInfo,
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
+                    };
+
+                ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+                ListInfo listInfo2 = new ListInfo("sometestlistpathalt", "DynamiteTestListNameKeyAlt", "DynamiteTestListDescriptionKeyAlt")
+                {
+                    FieldDefinitions = fieldsToEnsure
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList list1 = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
+
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+                    // we need to ensure all fields on first list directly
+                    IList<SPField> ensuredFieldsOnList1 = fieldHelper.EnsureField(list1.Fields, fieldsToEnsure).ToList();
+
+                    // second ListInfo object holds its own field definitions (which should be ensured at same time as list through listHelper)
+                    SPList list2 = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo2);
+
+                    // Act
+                    var itemOnList1 = list1.AddItem();
+                    itemOnList1.Update();
+                    var itemOnList2 = list2.AddItem();
+                    itemOnList2.Update();
+
+                    // Assert
+                    // List item #1 (fields on list ensured via FieldHelper.EnsureField)
+                    Assert.AreEqual(5.0, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(DateTime.Today, itemOnList1["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList1["TestInternalNameDateDefault"]);
+                    Assert.AreEqual("Text default value", itemOnList1["TestInternalNameText"]);
+                    Assert.AreEqual("Note default value", itemOnList1["TestInternalNameNote"]);
+                    Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList1["TestInternalNameHtml"]);
+
+                    var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+
+                    var taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemOnList1["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+
+                    // List item #2 (fields on list ensured via ListHelper.EnsureList)
+                    Assert.AreEqual(5.0, itemOnList2["TestInternalNameNumber"]);
+                    Assert.AreEqual(DateTime.Today, itemOnList2["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList2["TestInternalNameDateDefault"]);
+                    Assert.AreEqual("Text default value", itemOnList2["TestInternalNameText"]);
+                    Assert.AreEqual("Note default value", itemOnList2["TestInternalNameNote"]);
+                    Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList2["TestInternalNameHtml"]);
+
+                    taxoFieldValue = (TaxonomyFieldValue)itemOnList2["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+
+                    taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemOnList2["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        #endregion
+
+        #region Field Title, Description and Group properties should be localized (if you configure ResourceLocator to access your RESX file)
+
+        //// TODO: figure out a way to deploy a few resource and a ResourceLocatorConfig with the IntergrationTests project
 
         #endregion
 
