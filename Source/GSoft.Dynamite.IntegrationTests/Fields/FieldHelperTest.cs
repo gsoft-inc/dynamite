@@ -12,6 +12,7 @@ using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -2539,6 +2540,165 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
+        /// <summary>
+        /// Validates that Image field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenImageField_ShouldApplyImageFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                ImageFieldInfo imageFieldInfoAlt = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic nunber field definition (all default property values)
+                    SPField imageField = fieldHelper.EnsureField(fieldsCollection, imageFieldInfo);
+                    this.ValidateFieldBasicValues(imageFieldInfo, imageField);
+                    Assert.IsTrue(string.IsNullOrEmpty(imageField.DefaultValue));
+
+                    SPField imageFieldRefetched = testScope.SiteCollection.RootWeb.Fields[imageFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(imageFieldInfo, imageFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(imageFieldRefetched.DefaultValue));
+
+                    // 2) Alternate image field definition (with all property values customized and a default value assigned)
+                    SPField imageFieldAlt = fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAlt);
+                    this.ValidateFieldBasicValues(imageFieldInfoAlt, imageFieldAlt);
+                    Assert.AreEqual(
+                        "<a href=\"http://github.com/GSoft-SharePoint/\"><img alt=\"\" src=\"/_layouts/15/MyFolder/MyImage.png\" style=\"BORDER: 0px solid; \"></a>", 
+                        imageFieldAlt.DefaultValue);
+
+                    SPField imageFieldAltRefetched = testScope.SiteCollection.RootWeb.Fields[imageFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(imageFieldInfoAlt, imageFieldAltRefetched);
+                    Assert.AreEqual(
+                        "<a href=\"http://github.com/GSoft-SharePoint/\"><img alt=\"\" src=\"/_layouts/15/MyFolder/MyImage.png\" style=\"BORDER: 0px solid; \"></a>",
+                        imageFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Image field type forces you to give either a) a full absolute ImageUrl with domain
+        /// or b) a relative URL that begins with a forward slash. If the slash is ommitted, the field value will
+        /// not work.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenImageField_ShouldThrowExceptionIfYouUseARelativeImageUrlWithoutSlashInFront()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                try
+                {
+                    ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                        "TestInternalNameImage",
+                        new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                        "NameKey",
+                        "DescriptionKey",
+                        "GroupKey")
+                    {
+                        DefaultValue = new ImageValue()
+                        {
+                            Hyperlink = "http://github.com/GSoft-SharePoint/",
+                            ImageUrl = "_layouts/15/MyFolder/MyImage.png"
+                        }
+                    };
+
+                    Assert.Fail("Should've trown exception because forgetting the leading slash on a relative ImageUrl would break.");
+                }
+                catch (ArgumentException)
+                {
+                }
+
+                try
+                {
+                    ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                        "TestInternalNameImage",
+                        new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                        "NameKey",
+                        "DescriptionKey",
+                        "GroupKey")
+                    {
+                        DefaultValue = new ImageValue()
+                        {
+                            Hyperlink = "http://github.com/GSoft-SharePoint/",
+                            ImageUrl = "\\\\\\bad    \\Url/yeah#?  123"
+                        }
+                    };
+
+                    Assert.Fail("Should've trown exception because that string should never be able to initalize a proper Uri.");
+                }
+                catch (ArgumentException)
+                {
+                }
+
+                ImageFieldInfo imageFieldInfoAltRelative = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                ImageFieldInfo imageFieldInfoAltAbsolute = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "http://github.com/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Make sure the two valid image field are ensurable without drama
+                    fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAltRelative);
+                    fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAltAbsolute);
+                }
+            }
+        }
+
+        //// TODO: Url
+        //// TODO: Lookup, LookupMulti
+        //// TODO: User, UserMulti
+
         #endregion
 
         #region Ensuring fields directly on lists should make those fields work on the list's items
@@ -2652,6 +2812,20 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     DefaultValue = "<p class=\"some-css-class\">HTML default value</p>"
                 };
 
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
                 var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
                 // set will not be cleaned up and upon next test run we will
                 // run into a term set and term ID conflicts.
@@ -2711,6 +2885,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         textFieldInfo,
                         noteFieldInfo,
                         htmlFieldInfo,
+                        imageFieldInfo,
                         taxoFieldInfo,
                         taxoMultiFieldInfo
                     };
@@ -2753,6 +2928,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("Note default value", itemOnList1["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList1["TestInternalNameHtml"]);
 
+                    var imageFieldVal = (ImageFieldValue)itemOnList1["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
                     var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);
                     Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
@@ -2777,6 +2957,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("Text default value", itemOnList2["TestInternalNameText"]);
                     Assert.AreEqual("Note default value", itemOnList2["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList2["TestInternalNameHtml"]);
+
+                    imageFieldVal = (ImageFieldValue)itemOnList2["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
 
                     taxoFieldValue = (TaxonomyFieldValue)itemOnList2["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);

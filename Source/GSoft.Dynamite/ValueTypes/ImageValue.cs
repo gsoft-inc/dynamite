@@ -1,3 +1,4 @@
+using System;
 using Microsoft.SharePoint.Publishing.Fields;
 
 namespace GSoft.Dynamite.ValueTypes
@@ -7,10 +8,12 @@ namespace GSoft.Dynamite.ValueTypes
     /// </summary>
     public class ImageValue
     {
+        private string imageUrl;
+
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UrlValue"/> class.
+        /// Initializes a new instance of the <see cref="ImageValue"/> class.
         /// </summary>
         public ImageValue()
         {
@@ -72,7 +75,54 @@ namespace GSoft.Dynamite.ValueTypes
         /// Gets or sets image url
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Meant for direct mapping from pre-validated ImageFieldValue in ListItem.")]
-        public string ImageUrl { get; set; }
+        public string ImageUrl 
+        { 
+            get
+            {
+                return this.imageUrl;
+            }
+
+            set
+            {
+                bool worksAsAbsolute = false;
+                bool worksAsRelative = false;
+
+                try
+                {
+                    var absolute = new Uri(value, UriKind.Absolute);
+                    worksAsAbsolute = true;
+                }
+                catch (UriFormatException)
+                {
+                }
+
+                if (!worksAsAbsolute)
+                {
+                    try
+                    {
+                        var relative = new Uri(value, UriKind.Relative);
+                        worksAsRelative = true;
+                    }
+                    catch (UriFormatException)
+                    {
+                    }
+                }
+
+                var exception = new ArgumentException("Specific invalid ImageUrl value '{0}'. Please give a full absolute URL or a relative URL that starts with a forward slash.", value);
+                if (!worksAsAbsolute && !worksAsRelative)
+                {
+                    // Bad Uri format, absolute or relative
+                    throw exception;
+                }
+                else if (!worksAsAbsolute && worksAsRelative && !value.StartsWith("/"))
+                {
+                    // Works as relative, but missing forward slash (essential for ImageFieldValue formatting)
+                    throw exception;
+                }
+
+                this.imageUrl = value;
+            }
+        }
         
         /// <summary>
         /// Gets or sets whether hyperlink should open in new window

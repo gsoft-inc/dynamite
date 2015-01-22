@@ -10,9 +10,11 @@ using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.ValueTypes;
 using Microsoft.Office.Server.Search.WebControls;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
+using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 
@@ -139,6 +141,7 @@ namespace GSoft.Dynamite.Fields
             return field;
         }
 
+        // TODO: consolidate this DefaultValue setter logic with the normal setter logic in Binding.Writer utilities
         private void ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)
         {
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
@@ -199,6 +202,33 @@ namespace GSoft.Dynamite.Fields
                 if (!string.IsNullOrEmpty(stringBasedField.DefaultValue))
                 {
                     field.DefaultValue = stringBasedField.DefaultValue;
+                }
+
+                // don't forget to persist changes
+                field.Update();
+            }
+            else if (fieldInfo is ImageFieldInfo)
+            {
+                FieldInfo<ImageValue> imageBasedField = fieldInfo as FieldInfo<ImageValue>;
+
+                if (imageBasedField.DefaultValue != null)
+                {
+                    var imageValue = imageBasedField.DefaultValue;
+                    var fieldImageValue = new ImageFieldValue()
+                    {
+                        Alignment = imageValue.Alignment,
+                        AlternateText = imageValue.AlternateText,
+                        BorderWidth = imageValue.BorderWidth,
+                        Height = imageValue.Height,
+                        HorizontalSpacing = imageValue.HorizontalSpacing,
+                        Hyperlink = imageValue.Hyperlink,
+                        ImageUrl = imageValue.ImageUrl,
+                        OpenHyperlinkInNewWindow = imageValue.OpenHyperlinkInNewWindow,
+                        VerticalSpacing = imageValue.VerticalSpacing,
+                        Width = imageValue.Width,
+                    };
+
+                    field.DefaultValue = fieldImageValue.ToString();
                 }
 
                 // don't forget to persist changes
