@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Xml.Linq;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
     /// Definition of a NumberFieldInfo info
@@ -41,6 +41,16 @@ namespace GSoft.Dynamite.Fields
                 && bool.Parse(fieldSchemaXml.Attribute("Percentage").Value))
             {
                 this.IsPercentage = true;
+            }
+
+            if (fieldSchemaXml.Attribute("Min") != null)
+            {
+                this.Min = double.Parse(fieldSchemaXml.Attribute("Min").Value, CultureInfo.InvariantCulture);
+            }
+
+            if (fieldSchemaXml.Attribute("Max") != null)
+            {
+                this.Max = double.Parse(fieldSchemaXml.Attribute("Max").Value, CultureInfo.InvariantCulture);
             }
         }
 

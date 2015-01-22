@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
@@ -2346,6 +2348,197 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
+        /// <summary>
+        /// Validates that Number field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenGuidField_ShouldApplyGuidFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                GuidFieldInfo guidFieldInfo = new GuidFieldInfo(
+                    "TestInternalNameGuid",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                GuidFieldInfo guidFieldInfoAlt = new GuidFieldInfo(
+                    "TestInternalNameGuidAlt",
+                    new Guid("{04EDC708-CD42-434D-860D-85D8CF09AE3D}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}")
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic guid field definition (all default property values)
+                    SPFieldGuid guidField = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfo);
+                    this.ValidateFieldBasicValues(guidFieldInfo, guidField);
+                    Assert.AreEqual(Guid.Empty, new Guid(guidField.DefaultValue));
+
+                    SPFieldGuid guidFieldRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfo.Id];
+                    this.ValidateFieldBasicValues(guidFieldInfo, guidFieldRefetched);
+                    Assert.AreEqual(Guid.Empty, new Guid(guidFieldRefetched.DefaultValue));
+
+                    // 2) Guid field with a default value
+                    SPFieldGuid guidFieldAlt = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfoAlt);
+                    this.ValidateFieldBasicValues(guidFieldInfoAlt, guidFieldAlt);
+                    Assert.AreEqual(new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}"), new Guid(guidFieldAlt.DefaultValue));
+
+                    SPFieldGuid guidFieldAltRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(guidFieldInfoAlt, guidFieldAltRefetched);
+                    Assert.AreEqual(new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}"), new Guid(guidFieldAltRefetched.DefaultValue));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Boolean field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenBooleanField_ShouldApplyBooleanFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                BooleanFieldInfo booleanFieldInfo = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                BooleanFieldInfo booleanFieldInfoTrue = new BooleanFieldInfo(
+                    "TestInternalNameBoolTrue",
+                    new Guid("{0645A21C-4D08-4EDF-8618-55DC46CA0842}"),
+                    "NameKeyTrue",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo booleanFieldInfoFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{34006DFA-3EE0-4471-9076-B2B940F350F6}"),
+                    "NameKeyFalse",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = false
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic boolean field definition (all default property values)
+                    SPFieldBoolean booleanField = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfo);
+                    this.ValidateFieldBasicValues(booleanFieldInfo, booleanField);
+
+                    SPFieldBoolean booleanFieldRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfo.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfo, booleanFieldRefetched);
+
+                    // 2) Boolean field with a default value = TRUE
+                    SPFieldBoolean booleanFieldTrue = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfoTrue);
+                    this.ValidateFieldBasicValues(booleanFieldInfoTrue, booleanFieldTrue);
+                    Assert.AreEqual("True", booleanFieldTrue.DefaultValue);
+
+                    SPFieldBoolean booleanFieldTrueRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfoTrue.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfoTrue, booleanFieldTrueRefetched);
+                    Assert.AreEqual("True", booleanFieldTrueRefetched.DefaultValue);
+
+                    // 3) Boolean field with a default value = FALSE
+                    SPFieldBoolean booleanFieldFalse = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfoFalse);
+                    this.ValidateFieldBasicValues(booleanFieldInfoFalse, booleanFieldFalse);
+                    Assert.AreEqual("False", booleanFieldFalse.DefaultValue);
+
+                    SPFieldBoolean booleanFieldFalseRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfoFalse.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfoFalse, booleanFieldFalseRefetched);
+                    Assert.AreEqual("False", booleanFieldFalseRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Currency field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenCurrencyField_ShouldApplyCurrencyFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                CurrencyFieldInfo currencyFieldInfoAlt = new CurrencyFieldInfo(
+                    "TestInternalNameCurrencyAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    LocaleId = new CultureInfo("fr-CA").LCID,
+                    Min = 5,
+                    Max = 500.99,
+                    DefaultValue = 77.77
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic nunber field definition (all default property values)
+                    SPFieldCurrency currencyField = (SPFieldCurrency)fieldHelper.EnsureField(fieldsCollection, currencyFieldInfo);
+                    this.ValidateFieldBasicValues(currencyFieldInfo, currencyField);
+                    Assert.AreEqual(1033, currencyField.CurrencyLocaleId);
+                    Assert.IsFalse(currencyField.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(currencyField.DefaultValue));
+
+                    SPFieldCurrency currencyFieldRefetched = (SPFieldCurrency)testScope.SiteCollection.RootWeb.Fields[currencyFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(currencyFieldInfo, currencyFieldRefetched);
+                    Assert.AreEqual(1033, currencyFieldRefetched.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldRefetched.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(currencyFieldRefetched.DefaultValue));
+
+                    // 2) Alternate currency field definition (with all property values customized and a default value assigned)
+                    SPFieldCurrency currencyFieldAlt = (SPFieldCurrency)fieldHelper.EnsureField(fieldsCollection, currencyFieldInfoAlt);
+                    this.ValidateFieldBasicValues(currencyFieldInfoAlt, currencyFieldAlt);
+                    Assert.AreEqual(3084, currencyFieldAlt.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldAlt.ShowAsPercentage);
+                    Assert.AreEqual(5, currencyFieldAlt.MinimumValue);
+                    Assert.AreEqual(500.99, currencyFieldAlt.MaximumValue);
+                    Assert.AreEqual("77.77", currencyFieldAlt.DefaultValue);
+
+                    SPFieldCurrency currencyFieldAltRefetched = (SPFieldCurrency)testScope.SiteCollection.RootWeb.Fields[currencyFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(currencyFieldInfoAlt, currencyFieldAltRefetched);
+                    Assert.AreEqual(3084, currencyFieldAltRefetched.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldAltRefetched.ShowAsPercentage);
+                    Assert.AreEqual(5, currencyFieldAltRefetched.MinimumValue);
+                    Assert.AreEqual(500.99, currencyFieldAltRefetched.MaximumValue);
+                    Assert.AreEqual("77.77", currencyFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
         #endregion
 
         #region Ensuring fields directly on lists should make those fields work on the list's items
@@ -2369,6 +2562,44 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "GroupKey")
                 {
                     DefaultValue = 5
+                };
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    DefaultValue = 500.95,
+                    LocaleId = 3084 // fr-CA
+                };
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoDefaultTrue = new BooleanFieldInfo(
+                    "TestInternalNameBoolTrue",
+                    new Guid("{0D0289AD-C5FB-495B-96C6-48CC46737D08}"),
+                    "NameKeyBoolTrue",
+                    "DescriptionKeyBoolTrue",
+                    "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo boolFieldInfoDefaultFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{628181BD-9B0B-4B7E-934F-1CF1796EA4E4}"),
+                    "NameKeyBoolFalse",
+                    "DescriptionKeyBoolFalse",
+                    "GroupKey")
+                {
+                    DefaultValue = false
                 };
 
                 DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
@@ -2471,6 +2702,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
                         numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        boolFieldInfoDefaultTrue,
+                        boolFieldInfoDefaultFalse,
                         dateTimeFieldInfoFormula,
                         dateTimeFieldInfoDefault,
                         textFieldInfo,
@@ -2508,6 +2743,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // Assert
                     // List item #1 (fields on list ensured via FieldHelper.EnsureField)
                     Assert.AreEqual(5.0, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(500.95, itemOnList1["TestInternalNameCurrency"]);
+                    Assert.IsNull(itemOnList1["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemOnList1["TestInternalNameBoolTrue"]);
+                    Assert.IsFalse((bool)itemOnList1["TestInternalNameBoolFalse"]);
                     Assert.AreEqual(DateTime.Today, itemOnList1["TestInternalNameDateFormula"]);
                     Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList1["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList1["TestInternalNameText"]);
@@ -2529,6 +2768,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // List item #2 (fields on list ensured via ListHelper.EnsureList)
                     Assert.AreEqual(5.0, itemOnList2["TestInternalNameNumber"]);
+                    Assert.AreEqual(500.95, itemOnList2["TestInternalNameCurrency"]);
+                    Assert.IsNull(itemOnList2["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemOnList2["TestInternalNameBoolTrue"]);
+                    Assert.IsFalse((bool)itemOnList2["TestInternalNameBoolFalse"]);
                     Assert.AreEqual(DateTime.Today, itemOnList2["TestInternalNameDateFormula"]);
                     Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList2["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList2["TestInternalNameText"]);

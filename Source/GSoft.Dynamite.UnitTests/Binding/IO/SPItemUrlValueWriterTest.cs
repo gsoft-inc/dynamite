@@ -2,6 +2,7 @@
 using Autofac;
 using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;

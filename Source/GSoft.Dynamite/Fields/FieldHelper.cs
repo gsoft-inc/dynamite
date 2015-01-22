@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Linq;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
@@ -150,6 +151,41 @@ namespace GSoft.Dynamite.Fields
                 if (doubleBasedField.DefaultValue.HasValue)
                 {
                     field.DefaultValue = doubleBasedField.DefaultValue.ToString();
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is CurrencyFieldInfo)
+            {
+                FieldInfo<double?> doubleBasedField = fieldInfo as FieldInfo<double?>;
+
+                if (doubleBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = doubleBasedField.DefaultValue.ToString();
+                }
+
+                ((SPFieldCurrency)field).CurrencyLocaleId = ((CurrencyFieldInfo)fieldInfo).LocaleId;        // gotta set locale here because it doesn't get persisted through schema XML
+
+                field.Update();
+            }
+            else if (fieldInfo is BooleanFieldInfo)
+            {
+                FieldInfo<bool?> booleanBasedField = fieldInfo as FieldInfo<bool?>;
+
+                if (booleanBasedField.DefaultValue.HasValue)
+                {
+                    field.DefaultValue = booleanBasedField.DefaultValue.ToString();
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is GuidFieldInfo)
+            {
+                FieldInfo<Guid> guidBasedField = fieldInfo as FieldInfo<Guid>;
+
+                if (guidBasedField.DefaultValue != null)
+                {
+                    field.DefaultValue = guidBasedField.DefaultValue.ToString();
                 }
 
                 field.Update();

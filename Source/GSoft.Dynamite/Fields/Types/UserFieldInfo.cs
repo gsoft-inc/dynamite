@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Xml.Linq;
 using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
     /// Definition of a UserField info

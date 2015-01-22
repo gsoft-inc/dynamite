@@ -5,6 +5,7 @@ using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Binding.IO.Fakes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
+using GSoft.Dynamite.Fields.Types;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Fakes;

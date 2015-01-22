@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Xml.Linq;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.ServiceLocator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
