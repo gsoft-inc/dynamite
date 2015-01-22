@@ -426,7 +426,6 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (labelGuidPairs.Count >= 1)
             {
-                var validatedStrings = new List<string>();
                 var taxonomyFieldValueCollection = new TaxonomyFieldValueCollection(field);
 
                 labelGuidPairs.ForEach(labelGuidPair =>

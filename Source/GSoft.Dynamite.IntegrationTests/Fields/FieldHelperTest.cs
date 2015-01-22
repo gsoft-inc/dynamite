@@ -2576,7 +2576,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
-                    // 1) Basic nunber field definition (all default property values)
+                    // 1) Basic image field definition (all default property values)
                     SPField imageField = fieldHelper.EnsureField(fieldsCollection, imageFieldInfo);
                     this.ValidateFieldBasicValues(imageFieldInfo, imageField);
                     Assert.IsTrue(string.IsNullOrEmpty(imageField.DefaultValue));
@@ -2695,7 +2695,99 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
-        //// TODO: Url
+        /// <summary>
+        /// Validates that URL field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenUrlField_ShouldApplyUrlFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                UrlFieldInfo urlFieldInfoAlt = new UrlFieldInfo(
+                    "TestInternalNameUrlAlt",
+                    new Guid("{E5157693-43E2-4651-8A60-C0B96AF25A4F}"),
+                    "NameKeyAlt",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/somethingsomething",
+                        Description = "Lalalalala description"
+                    }
+                };
+
+                UrlFieldInfo urlFieldInfoAlt2 = new UrlFieldInfo(
+                    "TestInternalNameUrlAlt2",
+                    new Guid("{2A3DAD08-F9F7-4BF7-82D5-9E490DAEC242}"),
+                    "NameKeyAlt2",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "Image",
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/somethingsomething",
+                        Description = "Lalalalala description"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic URL field definition (all default property values)
+                    SPFieldUrl urlField = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfo);
+                    this.ValidateFieldBasicValues(urlFieldInfo, urlField);
+                    Assert.IsTrue(string.IsNullOrEmpty(urlField.DefaultValue));
+
+                    SPFieldUrl urlFieldRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(urlFieldInfo, urlFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(urlFieldRefetched.DefaultValue));
+
+                    // 2) Alternate URL field definition
+                    SPFieldUrl urlFieldAlt = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfoAlt);
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAlt);
+                    Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAlt.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        urlFieldAlt.DefaultValue);
+
+                    SPFieldUrl urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAltRefetched);
+                    Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAltRefetched.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        urlFieldAltRefetched.DefaultValue);
+
+                    // 3) Alternate URL field definition (as Image)
+                    urlFieldAlt = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfoAlt2);
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAlt);
+                    Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAlt.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        urlFieldAlt.DefaultValue);
+
+                    urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt2.Id];
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAltRefetched);
+                    Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAltRefetched.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        urlFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
         //// TODO: Lookup, LookupMulti
         //// TODO: User, UserMulti
 
@@ -2826,6 +2918,35 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     }
                 };
 
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey")
+                {
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    }
+                };
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = "Image",
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    }
+                };
+
                 var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
                 // set will not be cleaned up and upon next test run we will
                 // run into a term set and term ID conflicts.
@@ -2886,6 +3007,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         noteFieldInfo,
                         htmlFieldInfo,
                         imageFieldInfo,
+                        urlFieldInfo,
+                        urlFieldInfoImage,
                         taxoFieldInfo,
                         taxoMultiFieldInfo
                     };
@@ -2933,6 +3056,14 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
                     Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
 
+                    var urlFieldVal = new SPFieldUrlValue(itemOnList1["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+            
+                    var urlImageFieldVal = new SPFieldUrlValue(itemOnList1["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+
                     var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);
                     Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
@@ -2962,6 +3093,14 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsNotNull(imageFieldVal);
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
                     Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
+                    urlFieldVal = new SPFieldUrlValue(itemOnList2["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+
+                    urlImageFieldVal = new SPFieldUrlValue(itemOnList2["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
 
                     taxoFieldValue = (TaxonomyFieldValue)itemOnList2["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);

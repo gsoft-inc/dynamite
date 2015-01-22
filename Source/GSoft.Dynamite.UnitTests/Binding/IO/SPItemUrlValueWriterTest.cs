@@ -28,7 +28,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             using (ShimsContext.Create())
             {
                 // Arrange
-                var expectedField = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
+                var expectedField = new UrlFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
                 var actualUrlValue = new SPFieldUrlValue();
 
                 var fakeListItemShim = new ShimSPListItem()
@@ -67,7 +67,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             {
                 // Arrange
                 var actualFieldName = string.Empty;
-                var expectedField = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
+                var expectedField = new UrlFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
 
                 var actualUrlValue = new SPFieldUrlValue();
                 var expectedUrlValue = new UrlValue()

@@ -81,28 +81,7 @@ namespace GSoft.Dynamite.Fields
             return createdFields;
         }
 
-        private SPField InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
-        {
-            SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
-
-            // Set the field visibility
-            field = this.UpdateFieldVisibility(field, fieldInfo);
-
-            // Set miscellaneous proeprties
-            field = SetFieldMiscProperties(field, fieldInfo);
-
-            // Set default value if any, ensure other FieldType-specific properties
-            this.ApplyFieldTypeSpecificValuesAndUpdate(fieldCollection, field, fieldInfo);
-
-            // Refetch latest version of field, because right now the SPField object
-            // doesn't hold the TermStore mapping information (see how TaxonomyHelper.AssignTermSetToColumn
-            // always re-fetches the SPField itself... TODO: this should be reworked)
-            field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, fieldInfo);
-
-            return field;
-        }
-
-        private SPField RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        private static SPField RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
         {
             SPField field = null;
 
@@ -141,7 +120,29 @@ namespace GSoft.Dynamite.Fields
             return field;
         }
 
+        private SPField InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        {
+            SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
+
+            // Set the field visibility
+            field = this.UpdateFieldVisibility(field, fieldInfo);
+
+            // Set miscellaneous proeprties
+            field = SetFieldMiscProperties(field, fieldInfo);
+
+            // Set default value if any, ensure other FieldType-specific properties
+            this.ApplyFieldTypeSpecificValuesAndUpdate(fieldCollection, field, fieldInfo);
+
+            // Refetch latest version of field, because right now the SPField object
+            // doesn't hold the TermStore mapping information (see how TaxonomyHelper.AssignTermSetToColumn
+            // always re-fetches the SPField itself... TODO: this should be reworked)
+            field = RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, fieldInfo);
+
+            return field;
+        }
+
         // TODO: consolidate this DefaultValue setter logic with the normal setter logic in Binding.Writer utilities
+        [SuppressMessage("Microsoft.Performance", "CA1800:DoNotCastUnnecessarily", Justification = "Currency and Number field handling should stay separate, even though they both can be cast to FieldInfo<double?>")]
         private void ApplyFieldTypeSpecificValuesAndUpdate(SPFieldCollection fieldCollection, SPField field, IFieldInfo fieldInfo)
         {
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;
@@ -234,6 +235,31 @@ namespace GSoft.Dynamite.Fields
                 // don't forget to persist changes
                 field.Update();
             }
+            else if (fieldInfo is UrlFieldInfo)
+            {
+                FieldInfo<UrlValue> urlBasedField = fieldInfo as FieldInfo<UrlValue>;
+
+                if (urlBasedField.DefaultValue != null)
+                {
+                    var urlValue = urlBasedField.DefaultValue;
+
+                    var newUrlValue = new SPFieldUrlValue { Url = urlValue.Url, Description = urlValue.Description };
+
+                    // Avoid setting the Description as well, otherwise all
+                    // new items created with that field will have both the URL
+                    // and Description in their URL and Description fields (weird lack
+                    // of OOTB support for Url default values).
+                    field.DefaultValue = newUrlValue.Url;   
+
+                    if (!string.IsNullOrEmpty(urlValue.Description))
+                    {
+                        this.log.Warn("Skipped initialization of Description property (val={0}) on Url field value (urlval={1}). A SPFieldUrlValue cannot support more than a simple URL string as default value.", urlValue.Description, urlValue.Url);
+                    }
+                }
+
+                // don't forget to persist changes
+                field.Update();
+            }
             else if (asTaxonomyFieldInfo != null)
             {
                 // this call will take care of calling Update() on field
@@ -296,7 +322,7 @@ namespace GSoft.Dynamite.Fields
             {
                 // If term store mapping was applied, the field instance is now stale (the field definition got updated 
                 // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
-                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyFieldInfo);
+                field = RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldValue(fieldCollection.Web, field as TaxonomyField, taxonomyFieldInfo.DefaultValue);
             }
         }
@@ -328,7 +354,7 @@ namespace GSoft.Dynamite.Fields
             {
                 // If term store mapping was applied, the field instance is now stale (the field definition got updated 
                 // through another instance of the same SPField). We need to re-fetch the field to get the very latest.
-                field = this.RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyMultiFieldInfo);
+                field = RefetchFieldToGetLatestVersionAndAvoidUpdateConflicts(fieldCollection, taxonomyMultiFieldInfo);
                 this.taxonomyHelper.SetDefaultTaxonomyFieldMultiValue(fieldCollection.Web, field as TaxonomyField, taxonomyMultiFieldInfo.DefaultValue);
             }
         }

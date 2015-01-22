@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint.Publishing.Fields;
 
 namespace GSoft.Dynamite.ValueTypes
@@ -74,7 +75,8 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Gets or sets image url
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Meant for direct mapping from pre-validated ImageFieldValue in ListItem.")]
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Meant for direct mapping from pre-validated ImageFieldValue in ListItem.")]
+        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults", MessageId = "System.Uri", Justification = "We just want to use the Uri constructors to trigger UriFormatExceptions. No need to use the resulting Uri objects.")]
         public string ImageUrl 
         { 
             get
@@ -89,7 +91,7 @@ namespace GSoft.Dynamite.ValueTypes
 
                 try
                 {
-                    var absolute = new Uri(value, UriKind.Absolute);
+                    new Uri(value, UriKind.Absolute);
                     worksAsAbsolute = true;
                 }
                 catch (UriFormatException)
@@ -100,7 +102,7 @@ namespace GSoft.Dynamite.ValueTypes
                 {
                     try
                     {
-                        var relative = new Uri(value, UriKind.Relative);
+                        new Uri(value, UriKind.Relative);
                         worksAsRelative = true;
                     }
                     catch (UriFormatException)
@@ -114,7 +116,7 @@ namespace GSoft.Dynamite.ValueTypes
                     // Bad Uri format, absolute or relative
                     throw exception;
                 }
-                else if (!worksAsAbsolute && worksAsRelative && !value.StartsWith("/"))
+                else if (!worksAsAbsolute && worksAsRelative && !value.StartsWith("/", StringComparison.OrdinalIgnoreCase))
                 {
                     // Works as relative, but missing forward slash (essential for ImageFieldValue formatting)
                     throw exception;

@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UrlField info
     /// </summary>
-    public class UrlFieldFieldInfo : FieldInfo<UrlValue>
+    public class UrlFieldInfo : FieldInfo<UrlValue>
     {
         /// <summary>
         /// Initializes a new UrlFieldFieldInfo
@@ -17,7 +17,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public UrlFieldFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        public UrlFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "URL", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // default format
@@ -28,7 +28,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public UrlFieldFieldInfo(XElement fieldSchemaXml)
+        public UrlFieldInfo(XElement fieldSchemaXml)
             : base(fieldSchemaXml)
         {
             if (fieldSchemaXml.Attribute("Format") != null)

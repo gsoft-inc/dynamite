@@ -501,7 +501,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             {
                 // Arrange
                 var correctWriterWasUsed = false;
-                var fieldInfo = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+                var fieldInfo = new UrlFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
                 ShimSPItemUrlValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
