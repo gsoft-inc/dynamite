@@ -274,7 +274,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             using (var testScope = SiteTestScope.BlankSite())
             {
-                // First, create the subsite
+                // First, create the subweb
                 var rootWeb = testScope.SiteCollection.RootWeb;
                 var subWeb = rootWeb.Webs.Add(Url);
 

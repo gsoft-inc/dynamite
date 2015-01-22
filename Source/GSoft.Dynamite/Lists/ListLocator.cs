@@ -4,6 +4,8 @@ using System.IO;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Utils;
+
+using Microsoft.Office.RecordsManagement.PolicyFeatures;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
@@ -108,6 +110,7 @@ namespace GSoft.Dynamite.Lists
         /// resource key (i.e. TitleResource.Key only).
         /// </param>
         /// <returns>The list if it was found, null otherwise.</returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Hungarian notation for SharePoint objects is OK.")]
         public SPList TryGetList(SPWeb web, string titleOrUrlOrResourceString)
         {
             // first try finding the list by name, simple
@@ -123,6 +126,19 @@ namespace GSoft.Dynamite.Lists
                 catch (FileNotFoundException)
                 {
                     // ignore exception, we need to try a third attempt that assumes the string parameter represents a resource string
+                }
+                catch (SPException spException)
+                {
+                    // this extra catch has been added for the particular case where GetList searches for a URL but that URL refers not to a list,
+                    // but to a sub-web URL.
+                    if (spException.ErrorCode == -2147024895)
+                    {
+                        this.logger.Warn("GetList was passed a URL corresponding to a sub-web, and threw a SPException.");
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 if (list == null && !titleOrUrlOrResourceString.Contains("Lists"))

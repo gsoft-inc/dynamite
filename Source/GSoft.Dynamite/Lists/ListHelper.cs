@@ -98,7 +98,7 @@ namespace GSoft.Dynamite.Lists
             // Ensure the list
             if (list == null)
             {
-                list = this.CreatList(web, listInfo);
+                list = this.CreateList(web, listInfo);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace GSoft.Dynamite.Lists
                         this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.WebRelativeUrl.ToString());
 
                         list.Delete();
-                        list = this.CreatList(web, listInfo);
+                        list = this.CreateList(web, listInfo);
                     }
                 }                
             }
@@ -473,7 +473,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="web">The current web</param>
         /// <param name="listInfo">The list information contains all the necessary data to create the list</param>
         /// <returns>The created SP List</returns>
-        private SPList CreatList(SPWeb web, ListInfo listInfo)
+        private SPList CreateList(SPWeb web, ListInfo listInfo)
         {
             // Throw an exception if the proposed web-relative URL conflicts with an existing subsite Url
             Guid id;
