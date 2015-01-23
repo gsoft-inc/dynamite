@@ -2,45 +2,56 @@
 using System.Xml.Linq;
 using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
-    /// Definition of a UrlField info
+    /// Definition of a LookupFieldInfo
     /// </summary>
-    public class UrlFieldFieldInfo : FieldInfo<UrlValue>
+    public class LookupFieldInfo : FieldInfo<LookupValue>
     {
         /// <summary>
-        /// Initializes a new UrlFieldFieldInfo
+        /// Initializes a new LookupFieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public UrlFieldFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
-            : base(internalName, id, "URL", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
+        public LookupFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(internalName, id, "Lookup", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
-            // default format
-            this.Format = "Hyperlink";
+            // default lookup displayed field
+            this.ShowField = "Title";
+            this.ListId = Guid.Empty;
         }
 
         /// <summary>
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public UrlFieldFieldInfo(XElement fieldSchemaXml)
+        public LookupFieldInfo(XElement fieldSchemaXml)
             : base(fieldSchemaXml)
         {
-            if (fieldSchemaXml.Attribute("Format") != null)
+            if (fieldSchemaXml.Attribute("ShowField") != null)
             {
-                this.Format = fieldSchemaXml.Attribute("Format").Value;
+                this.ShowField = fieldSchemaXml.Attribute("ShowField").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("List") != null)
+            {
+                this.ListId = Guid.Parse(fieldSchemaXml.Attribute("List").Value);
             }
         }
 
         /// <summary>
-        /// Hyperlink or Image
+        /// The internal name of the field of which we want to see the value in the lookup
         /// </summary>
-        public string Format { get; set; }
+        public string ShowField { get; set; }
+
+        /// <summary>
+        /// The looked-up list identifier
+        /// </summary>
+        public Guid ListId { get; set; }
 
         /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes
@@ -52,7 +63,8 @@ namespace GSoft.Dynamite.Fields
         /// <returns>The full field XML schema</returns>
         public override XElement Schema(XElement baseFieldSchema)
         {
-            baseFieldSchema.Add(new XAttribute("Format", this.Format));
+            baseFieldSchema.Add(new XAttribute("List", "{" + this.ListId + "}"));
+            baseFieldSchema.Add(new XAttribute("ShowField", this.ShowField));
 
             return baseFieldSchema;
         }

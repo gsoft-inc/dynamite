@@ -1,4 +1,5 @@
 ﻿using System;
+using GSoft.Dynamite.Fields.Types;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Fields.Constants

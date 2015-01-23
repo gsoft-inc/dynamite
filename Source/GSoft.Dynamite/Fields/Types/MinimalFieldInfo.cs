@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
     /// Field Info type mostly used to document SharePoint OOTB (built-in) field definitions
@@ -32,7 +32,7 @@ namespace GSoft.Dynamite.Fields
         /// <returns>The full field XML schema</returns>
         public override XElement Schema(XElement baseFieldSchema)
         {
-            return baseFieldSchema;
+            throw new NotSupportedException("A MinimalFieldInfo does not contain enough data to generate a SchemaXML.");
         }
     }
 }

@@ -5,6 +5,7 @@ using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Binding.IO.Fakes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
+using GSoft.Dynamite.Fields.Types;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Fakes;
@@ -500,7 +501,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             {
                 // Arrange
                 var correctWriterWasUsed = false;
-                var fieldInfo = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+                var fieldInfo = new UrlFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
                 ShimSPItemUrlValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {

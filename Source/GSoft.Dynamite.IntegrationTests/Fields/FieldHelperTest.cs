@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -2346,6 +2349,592 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             }
         }
 
+        /// <summary>
+        /// Validates that Number field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenGuidField_ShouldApplyGuidFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                GuidFieldInfo guidFieldInfo = new GuidFieldInfo(
+                    "TestInternalNameGuid",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                GuidFieldInfo guidFieldInfoAlt = new GuidFieldInfo(
+                    "TestInternalNameGuidAlt",
+                    new Guid("{04EDC708-CD42-434D-860D-85D8CF09AE3D}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}")
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic guid field definition (all default property values)
+                    SPFieldGuid guidField = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfo);
+                    this.ValidateFieldBasicValues(guidFieldInfo, guidField);
+                    Assert.IsNull(guidField.DefaultValue);
+
+                    SPFieldGuid guidFieldRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfo.Id];
+                    this.ValidateFieldBasicValues(guidFieldInfo, guidFieldRefetched);
+                    Assert.IsNull(guidFieldRefetched.DefaultValue);
+
+                    // 2) Guid field with a default value
+                    SPFieldGuid guidFieldAlt = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfoAlt);
+                    this.ValidateFieldBasicValues(guidFieldInfoAlt, guidFieldAlt);
+                    Assert.AreEqual(new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}"), new Guid(guidFieldAlt.DefaultValue));
+
+                    SPFieldGuid guidFieldAltRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(guidFieldInfoAlt, guidFieldAltRefetched);
+                    Assert.AreEqual(new Guid("{365193B4-77F9-4C69-A131-6963B3DE3C38}"), new Guid(guidFieldAltRefetched.DefaultValue));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Boolean field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenBooleanField_ShouldApplyBooleanFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                BooleanFieldInfo booleanFieldInfo = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                BooleanFieldInfo booleanFieldInfoTrue = new BooleanFieldInfo(
+                    "TestInternalNameBoolTrue",
+                    new Guid("{0645A21C-4D08-4EDF-8618-55DC46CA0842}"),
+                    "NameKeyTrue",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo booleanFieldInfoFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{34006DFA-3EE0-4471-9076-B2B940F350F6}"),
+                    "NameKeyFalse",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = false
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic boolean field definition (all default property values)
+                    SPFieldBoolean booleanField = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfo);
+                    this.ValidateFieldBasicValues(booleanFieldInfo, booleanField);
+
+                    SPFieldBoolean booleanFieldRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfo.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfo, booleanFieldRefetched);
+
+                    // 2) Boolean field with a default value = TRUE
+                    SPFieldBoolean booleanFieldTrue = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfoTrue);
+                    this.ValidateFieldBasicValues(booleanFieldInfoTrue, booleanFieldTrue);
+                    Assert.AreEqual("True", booleanFieldTrue.DefaultValue);
+
+                    SPFieldBoolean booleanFieldTrueRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfoTrue.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfoTrue, booleanFieldTrueRefetched);
+                    Assert.AreEqual("True", booleanFieldTrueRefetched.DefaultValue);
+
+                    // 3) Boolean field with a default value = FALSE
+                    SPFieldBoolean booleanFieldFalse = (SPFieldBoolean)fieldHelper.EnsureField(fieldsCollection, booleanFieldInfoFalse);
+                    this.ValidateFieldBasicValues(booleanFieldInfoFalse, booleanFieldFalse);
+                    Assert.AreEqual("False", booleanFieldFalse.DefaultValue);
+
+                    SPFieldBoolean booleanFieldFalseRefetched = (SPFieldBoolean)testScope.SiteCollection.RootWeb.Fields[booleanFieldInfoFalse.Id];
+                    this.ValidateFieldBasicValues(booleanFieldInfoFalse, booleanFieldFalseRefetched);
+                    Assert.AreEqual("False", booleanFieldFalseRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Currency field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenCurrencyField_ShouldApplyCurrencyFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                CurrencyFieldInfo currencyFieldInfoAlt = new CurrencyFieldInfo(
+                    "TestInternalNameCurrencyAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    LocaleId = new CultureInfo("fr-CA").LCID,
+                    Min = 5,
+                    Max = 500.99,
+                    DefaultValue = 77.77
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic nunber field definition (all default property values)
+                    SPFieldCurrency currencyField = (SPFieldCurrency)fieldHelper.EnsureField(fieldsCollection, currencyFieldInfo);
+                    this.ValidateFieldBasicValues(currencyFieldInfo, currencyField);
+                    Assert.AreEqual(1033, currencyField.CurrencyLocaleId);
+                    Assert.IsFalse(currencyField.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(currencyField.DefaultValue));
+
+                    SPFieldCurrency currencyFieldRefetched = (SPFieldCurrency)testScope.SiteCollection.RootWeb.Fields[currencyFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(currencyFieldInfo, currencyFieldRefetched);
+                    Assert.AreEqual(1033, currencyFieldRefetched.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldRefetched.ShowAsPercentage);
+                    Assert.IsTrue(string.IsNullOrEmpty(currencyFieldRefetched.DefaultValue));
+
+                    // 2) Alternate currency field definition (with all property values customized and a default value assigned)
+                    SPFieldCurrency currencyFieldAlt = (SPFieldCurrency)fieldHelper.EnsureField(fieldsCollection, currencyFieldInfoAlt);
+                    this.ValidateFieldBasicValues(currencyFieldInfoAlt, currencyFieldAlt);
+                    Assert.AreEqual(3084, currencyFieldAlt.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldAlt.ShowAsPercentage);
+                    Assert.AreEqual(5, currencyFieldAlt.MinimumValue);
+                    Assert.AreEqual(500.99, currencyFieldAlt.MaximumValue);
+                    Assert.AreEqual("77.77", currencyFieldAlt.DefaultValue);
+
+                    SPFieldCurrency currencyFieldAltRefetched = (SPFieldCurrency)testScope.SiteCollection.RootWeb.Fields[currencyFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(currencyFieldInfoAlt, currencyFieldAltRefetched);
+                    Assert.AreEqual(3084, currencyFieldAltRefetched.CurrencyLocaleId);
+                    Assert.IsFalse(currencyFieldAltRefetched.ShowAsPercentage);
+                    Assert.AreEqual(5, currencyFieldAltRefetched.MinimumValue);
+                    Assert.AreEqual(500.99, currencyFieldAltRefetched.MaximumValue);
+                    Assert.AreEqual("77.77", currencyFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Image field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenImageField_ShouldApplyImageFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                ImageFieldInfo imageFieldInfoAlt = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic image field definition (all default property values)
+                    SPField imageField = fieldHelper.EnsureField(fieldsCollection, imageFieldInfo);
+                    this.ValidateFieldBasicValues(imageFieldInfo, imageField);
+                    Assert.IsTrue(string.IsNullOrEmpty(imageField.DefaultValue));
+
+                    SPField imageFieldRefetched = testScope.SiteCollection.RootWeb.Fields[imageFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(imageFieldInfo, imageFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(imageFieldRefetched.DefaultValue));
+
+                    // 2) Alternate image field definition (with all property values customized and a default value assigned)
+                    SPField imageFieldAlt = fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAlt);
+                    this.ValidateFieldBasicValues(imageFieldInfoAlt, imageFieldAlt);
+                    Assert.AreEqual(
+                        "<a href=\"http://github.com/GSoft-SharePoint/\"><img alt=\"\" src=\"/_layouts/15/MyFolder/MyImage.png\" style=\"BORDER: 0px solid; \"></a>", 
+                        imageFieldAlt.DefaultValue);
+
+                    SPField imageFieldAltRefetched = testScope.SiteCollection.RootWeb.Fields[imageFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(imageFieldInfoAlt, imageFieldAltRefetched);
+                    Assert.AreEqual(
+                        "<a href=\"http://github.com/GSoft-SharePoint/\"><img alt=\"\" src=\"/_layouts/15/MyFolder/MyImage.png\" style=\"BORDER: 0px solid; \"></a>",
+                        imageFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Image field type forces you to give either a) a full absolute ImageUrl with domain
+        /// or b) a relative URL that begins with a forward slash. If the slash is ommitted, the field value will
+        /// not work.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenImageField_ShouldThrowExceptionIfYouUseARelativeImageUrlWithoutSlashInFront()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                try
+                {
+                    ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                        "TestInternalNameImage",
+                        new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                        "NameKey",
+                        "DescriptionKey",
+                        "GroupKey")
+                    {
+                        DefaultValue = new ImageValue()
+                        {
+                            Hyperlink = "http://github.com/GSoft-SharePoint/",
+                            ImageUrl = "_layouts/15/MyFolder/MyImage.png"
+                        }
+                    };
+
+                    Assert.Fail("Should've trown exception because forgetting the leading slash on a relative ImageUrl would break.");
+                }
+                catch (ArgumentException)
+                {
+                }
+
+                try
+                {
+                    ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                        "TestInternalNameImage",
+                        new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                        "NameKey",
+                        "DescriptionKey",
+                        "GroupKey")
+                    {
+                        DefaultValue = new ImageValue()
+                        {
+                            Hyperlink = "http://github.com/GSoft-SharePoint/",
+                            ImageUrl = "\\\\\\bad    \\Url/yeah#?  123"
+                        }
+                    };
+
+                    Assert.Fail("Should've trown exception because that string should never be able to initalize a proper Uri.");
+                }
+                catch (ArgumentException)
+                {
+                }
+
+                ImageFieldInfo imageFieldInfoAltRelative = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                ImageFieldInfo imageFieldInfoAltAbsolute = new ImageFieldInfo(
+                    "TestInternalNameImageAlt",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "http://github.com/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // Make sure the two valid image field are ensurable without drama
+                    fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAltRelative);
+                    fieldHelper.EnsureField(fieldsCollection, imageFieldInfoAltAbsolute);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that URL field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenUrlField_ShouldApplyUrlFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                };
+
+                UrlFieldInfo urlFieldInfoAlt = new UrlFieldInfo(
+                    "TestInternalNameUrlAlt",
+                    new Guid("{E5157693-43E2-4651-8A60-C0B96AF25A4F}"),
+                    "NameKeyAlt",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/somethingsomething",
+                        Description = "Lalalalala description"
+                    }
+                };
+
+                UrlFieldInfo urlFieldInfoAlt2 = new UrlFieldInfo(
+                    "TestInternalNameUrlAlt2",
+                    new Guid("{2A3DAD08-F9F7-4BF7-82D5-9E490DAEC242}"),
+                    "NameKeyAlt2",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    Format = "Image",
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/somethingsomething",
+                        Description = "Lalalalala description"
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic URL field definition (all default property values)
+                    SPFieldUrl urlField = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfo);
+                    this.ValidateFieldBasicValues(urlFieldInfo, urlField);
+                    Assert.IsTrue(string.IsNullOrEmpty(urlField.DefaultValue));
+
+                    SPFieldUrl urlFieldRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(urlFieldInfo, urlFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(urlFieldRefetched.DefaultValue));
+
+                    // 2) Alternate URL field definition
+                    SPFieldUrl urlFieldAlt = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfoAlt);
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAlt);
+                    Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAlt.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
+                        urlFieldAlt.DefaultValue);      // Description should be missing (i.e. ignored by field helper), since OOTB url field don't support it properly
+
+                    SPFieldUrl urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt.Id];
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAltRefetched);
+                    Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAltRefetched.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
+                        urlFieldAltRefetched.DefaultValue);
+
+                    // 3) Alternate URL field definition (as Image)
+                    urlFieldAlt = (SPFieldUrl)fieldHelper.EnsureField(fieldsCollection, urlFieldInfoAlt2);
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAlt);
+                    Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAlt.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
+                        urlFieldAlt.DefaultValue);
+
+                    urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt2.Id];
+                    this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAltRefetched);
+                    Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAltRefetched.DisplayFormat);
+                    Assert.AreEqual(
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
+                        urlFieldAltRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that Lookup field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenLookupField_ShouldApplyLookupFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Gotta create the list before we even think about provisionning a lookup
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    // ListId will be known only once the SPList is created
+                };
+
+                LookupFieldInfo lookupFieldInfoWithDefault = new LookupFieldInfo(
+                    "TestInternalNameLookupD",
+                    new Guid("{0F413213-9B75-49AD-850E-38EF551B1D1F}"),
+                    "NameKeyDef",
+                    "DescriptionKeyDef",
+                    "GroupKey")
+                {
+                    // Default value will be assigned below once the list and the lookup item are created
+                    ShowField = "ID"
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2A3DAD08-F9F7-4BF7-82D5-9E490DAEC242}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey")
+                {
+                    ShowField = "ID"
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfoWithDefault = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupMD",
+                    new Guid("{9ACF13BF-F42C-4488-AE54-5E971B7619AB}"),
+                    "NameKeyMultiDef",
+                    "DescriptionKeyMultiDef",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    // Default value will be assigned below once the list and the lookup items are created
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    // Create the lookup list
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Add an item to lookup list to act as default lookup field value
+                    SPListItem item1 = list.Items.Add();
+                    item1["Title"] = "Test Item 1";
+                    item1.Update();
+                    SPListItem item2 = list.Items.Add();
+                    item2["Title"] = "Test Item 2";
+                    item2.Update();
+
+                    // Add the list ID to the Lookup field definitions
+                    lookupFieldInfo.ListId = list.ID;
+
+                    lookupFieldInfoWithDefault.ListId = list.ID;
+                    lookupFieldInfoWithDefault.DefaultValue = new LookupValue(item1.ID, item1.ID.ToString());
+
+                    lookupMultiFieldInfo.ListId = list.ID;
+
+                    lookupMultiFieldInfoWithDefault.ListId = list.ID;
+                    lookupMultiFieldInfoWithDefault.DefaultValue = new LookupValueCollection() { new LookupValue(item1.ID, "Test Item 1"), new LookupValue(item2.ID, "Test Item 2") };
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic lookup field (no default value)
+                    SPFieldLookup lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupFieldInfo);
+                    this.ValidateFieldBasicValues(lookupFieldInfo, lookupField);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupField.DefaultValue));
+                    Assert.AreEqual("Title", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsFalse(lookupField.AllowMultipleValues);
+
+                    SPFieldLookup lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupFieldInfo, lookupFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupFieldRefetched.DefaultValue));
+                    Assert.AreEqual("Title", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsFalse(lookupFieldRefetched.AllowMultipleValues);
+
+                    // 2) Basic lookup field (with default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupFieldInfoWithDefault);
+                    this.ValidateFieldBasicValues(lookupFieldInfoWithDefault, lookupField);
+                    Assert.AreEqual("ID", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsFalse(lookupField.AllowMultipleValues);
+                    Assert.AreEqual("1;#1", lookupField.DefaultValue);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupFieldInfoWithDefault.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupFieldInfoWithDefault, lookupFieldRefetched);
+                    Assert.AreEqual("ID", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsFalse(lookupFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("1;#1", lookupFieldRefetched.DefaultValue);
+
+                    // 3) Basic lookup multi field (no default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupMultiFieldInfo);
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfo, lookupField);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupField.DefaultValue));
+                    Assert.AreEqual("ID", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsTrue(lookupField.AllowMultipleValues);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupMultiFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfo, lookupFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupFieldRefetched.DefaultValue));
+                    Assert.AreEqual("ID", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsTrue(lookupFieldRefetched.AllowMultipleValues);
+
+                    // 4) Basic lookup multi field (with default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupMultiFieldInfoWithDefault);
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfoWithDefault, lookupField);
+                    Assert.AreEqual("Title", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsTrue(lookupField.AllowMultipleValues);
+                    Assert.AreEqual("1;#Test Item 1;#2;#Test Item 2", lookupField.DefaultValue);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupMultiFieldInfoWithDefault.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfoWithDefault, lookupFieldRefetched);
+                    Assert.AreEqual("Title", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsTrue(lookupFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("1;#Test Item 1;#2;#Test Item 2", lookupFieldRefetched.DefaultValue);
+                }
+            }
+        }
+
+        //// TODO: User, UserMulti
+
         #endregion
 
         #region Ensuring fields directly on lists should make those fields work on the list's items
@@ -2369,6 +2958,44 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "GroupKey")
                 {
                     DefaultValue = 5
+                };
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    DefaultValue = 500.95,
+                    LocaleId = 3084 // fr-CA
+                };
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoDefaultTrue = new BooleanFieldInfo(
+                    "TestInternalNameBoolTrue",
+                    new Guid("{0D0289AD-C5FB-495B-96C6-48CC46737D08}"),
+                    "NameKeyBoolTrue",
+                    "DescriptionKeyBoolTrue",
+                    "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo boolFieldInfoDefaultFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{628181BD-9B0B-4B7E-934F-1CF1796EA4E4}"),
+                    "NameKeyBoolFalse",
+                    "DescriptionKeyBoolFalse",
+                    "GroupKey")
+                {
+                    DefaultValue = false
                 };
 
                 DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
@@ -2421,6 +3048,81 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     DefaultValue = "<p class=\"some-css-class\">HTML default value</p>"
                 };
 
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey")
+                {
+                    DefaultValue = new ImageValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    }
+                };
+
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey")
+                {
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    }
+                };
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = "Image",
+                    DefaultValue = new UrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    }
+                };
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{62F8127C-4A8C-4217-8BD8-C6712753AFCE}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    DefaultValue = new LookupValue(1, "Test Item 1")
+                };
+
+                LookupFieldInfo lookupFieldInfoAlt = new LookupFieldInfo(
+                    "TestInternalNameLookupAlt",
+                    new Guid("{1F05DFFA-6396-4AEF-AD23-72217206D35E}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    ShowField = "ID",
+                    DefaultValue = new LookupValue(2, "2")
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2C9D4C0E-21EB-4742-8C6C-4C30DCD08A05}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey")
+                {
+                    DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
+                };
+
                 var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
                 // set will not be cleaned up and upon next test run we will
                 // run into a term set and term ID conflicts.
@@ -2471,14 +3173,26 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
                         numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        boolFieldInfoDefaultTrue,
+                        boolFieldInfoDefaultFalse,
                         dateTimeFieldInfoFormula,
                         dateTimeFieldInfoDefault,
                         textFieldInfo,
                         noteFieldInfo,
                         htmlFieldInfo,
+                        imageFieldInfo,
+                        urlFieldInfo,
+                        urlFieldInfoImage,
+                        lookupFieldInfo,
+                        lookupFieldInfoAlt,
+                        lookupMultiFieldInfo,
                         taxoFieldInfo,
                         taxoMultiFieldInfo
                     };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
 
                 ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
                 ListInfo listInfo2 = new ListInfo("sometestlistpathalt", "DynamiteTestListNameKeyAlt", "DynamiteTestListDescriptionKeyAlt")
@@ -2489,6 +3203,23 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupFieldInfo.ListId = lookupList.ID;
+                    lookupFieldInfoAlt.ListId = lookupList.ID;
+                    lookupMultiFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the first test list
                     SPList list1 = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
 
                     var fieldHelper = injectionScope.Resolve<IFieldHelper>();
@@ -2508,11 +3239,42 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // Assert
                     // List item #1 (fields on list ensured via FieldHelper.EnsureField)
                     Assert.AreEqual(5.0, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(500.95, itemOnList1["TestInternalNameCurrency"]);
+                    Assert.IsNull(itemOnList1["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemOnList1["TestInternalNameBoolTrue"]);
+                    Assert.IsFalse((bool)itemOnList1["TestInternalNameBoolFalse"]);
                     Assert.AreEqual(DateTime.Today, itemOnList1["TestInternalNameDateFormula"]);
                     Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList1["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList1["TestInternalNameText"]);
                     Assert.AreEqual("Note default value", itemOnList1["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList1["TestInternalNameHtml"]);
+
+                    var imageFieldVal = (ImageFieldValue)itemOnList1["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
+                    var urlFieldVal = new SPFieldUrlValue(itemOnList1["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+            
+                    var urlImageFieldVal = new SPFieldUrlValue(itemOnList1["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+
+                    var lookupFieldVal = new SPFieldLookupValue(itemOnList1["TestInternalNameLookup"].ToString());
+                    Assert.AreEqual(1, lookupFieldVal.LookupId);
+                    Assert.AreEqual("Test Item 1", lookupFieldVal.LookupValue);
+
+                    var lookupAltFieldVal = new SPFieldLookupValue(itemOnList1["TestInternalNameLookupAlt"].ToString());
+                    Assert.AreEqual(2, lookupAltFieldVal.LookupId);
+                    Assert.AreEqual("2", lookupAltFieldVal.LookupValue); // ShowField/LookupField is ID
+
+                    var lookupMultiFieldVal = new SPFieldLookupValueCollection(itemOnList1["TestInternalNameLookupM"].ToString());
+                    Assert.AreEqual(1, lookupMultiFieldVal[0].LookupId);
+                    Assert.AreEqual("Test Item 1", lookupMultiFieldVal[0].LookupValue);
+                    Assert.AreEqual(2, lookupMultiFieldVal[1].LookupId);
+                    Assert.AreEqual("Test Item 2", lookupMultiFieldVal[1].LookupValue);
 
                     var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);
@@ -2529,11 +3291,28 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // List item #2 (fields on list ensured via ListHelper.EnsureList)
                     Assert.AreEqual(5.0, itemOnList2["TestInternalNameNumber"]);
+                    Assert.AreEqual(500.95, itemOnList2["TestInternalNameCurrency"]);
+                    Assert.IsNull(itemOnList2["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemOnList2["TestInternalNameBoolTrue"]);
+                    Assert.IsFalse((bool)itemOnList2["TestInternalNameBoolFalse"]);
                     Assert.AreEqual(DateTime.Today, itemOnList2["TestInternalNameDateFormula"]);
                     Assert.AreEqual(new DateTime(2005, 10, 21), itemOnList2["TestInternalNameDateDefault"]);
                     Assert.AreEqual("Text default value", itemOnList2["TestInternalNameText"]);
                     Assert.AreEqual("Note default value", itemOnList2["TestInternalNameNote"]);
                     Assert.AreEqual("<p class=\"some-css-class\">HTML default value</p>", itemOnList2["TestInternalNameHtml"]);
+
+                    imageFieldVal = (ImageFieldValue)itemOnList2["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
+                    urlFieldVal = new SPFieldUrlValue(itemOnList2["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+
+                    urlImageFieldVal = new SPFieldUrlValue(itemOnList2["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
 
                     taxoFieldValue = (TaxonomyFieldValue)itemOnList2["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);

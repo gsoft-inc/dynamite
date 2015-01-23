@@ -1,4 +1,5 @@
 ﻿using System;
+using GSoft.Dynamite.Fields.Types;
 
 namespace GSoft.Dynamite.Fields.Constants
 {

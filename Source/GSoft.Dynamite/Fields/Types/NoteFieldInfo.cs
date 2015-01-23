@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Xml.Linq;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
     /// Definition of a NoteField info

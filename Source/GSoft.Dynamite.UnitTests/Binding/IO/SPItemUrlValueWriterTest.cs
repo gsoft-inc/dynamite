@@ -2,6 +2,7 @@
 using Autofac;
 using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;
@@ -27,7 +28,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             using (ShimsContext.Create())
             {
                 // Arrange
-                var expectedField = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
+                var expectedField = new UrlFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
                 var actualUrlValue = new SPFieldUrlValue();
 
                 var fakeListItemShim = new ShimSPListItem()
@@ -66,7 +67,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             {
                 // Arrange
                 var actualFieldName = string.Empty;
-                var expectedField = new UrlFieldFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
+                var expectedField = new UrlFieldInfo("InternalName", Guid.NewGuid(), null, null, null);
 
                 var actualUrlValue = new SPFieldUrlValue();
                 var expectedUrlValue = new UrlValue()

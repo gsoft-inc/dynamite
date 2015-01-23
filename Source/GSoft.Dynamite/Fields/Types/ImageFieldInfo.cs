@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Xml.Linq;
+using GSoft.Dynamite.ValueTypes;
 
-namespace GSoft.Dynamite.Fields
+namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
-    /// Definition of a HtmlFieldInfo info
+    /// Definition of a ImageFieldInfo info
     /// </summary>
-    public class HtmlFieldInfo : FieldInfo<string>
+    public class ImageFieldInfo : FieldInfo<ImageValue>
     {
         /// <summary>
         /// Initializes a new HtmlFieldInfo
@@ -16,8 +17,8 @@ namespace GSoft.Dynamite.Fields
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public HtmlFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
-            : base(internalName, id, "HTML", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
+        public ImageFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : base(internalName, id, "Image", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
         }
 
@@ -25,7 +26,8 @@ namespace GSoft.Dynamite.Fields
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public HtmlFieldInfo(XElement fieldSchemaXml) : base(fieldSchemaXml)
+        public ImageFieldInfo(XElement fieldSchemaXml)
+            : base(fieldSchemaXml)
         {
         }
 
@@ -40,8 +42,8 @@ namespace GSoft.Dynamite.Fields
         public override XElement Schema(XElement baseFieldSchema)
         {
             baseFieldSchema.Add(new XAttribute("RichText", "TRUE"));
-            baseFieldSchema.Add(new XAttribute("RichTextMode", "ThemHtml"));
-                
+            baseFieldSchema.Add(new XAttribute("RichTextMode", "ThemeHtml"));
+
             return baseFieldSchema;
         }
     }
