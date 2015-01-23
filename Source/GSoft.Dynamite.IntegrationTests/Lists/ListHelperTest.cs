@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Autofac;
 using GSoft.Dynamite.Lists;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Web.Hosting.Administration;
@@ -584,9 +585,91 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// The option "RemoveDefaultContentType" should delete the Item content type when ensuring a list.
         /// In this case, the list will created with this option set to true.
         /// </summary>
+        [TestMethod]
         public void EnsureList_WhenCreatingANewListAndWeWantToRemoveTheItemContentType_ShouldRemoveIt()
         {
             // Arrange
+            const string Url = "testUrl";
+            const string NameKey = "Name Key";
+            const string DescKey = "DescriptionKey";
+            var listInfo = new ListInfo(Url, NameKey, DescKey);
+            listInfo.RemoveDefaultContentType = true;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsNotNull(list);
+
+                    // Fetch the list to make sure it persisted on the web
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+
+                    // Check the number of content types associated to the newly created custom list
+                    // The default is 2 (Item and Folder).... expecting only one since Item should not be there.
+                    Assert.AreEqual(list.ContentTypes.Count, 1);
+                    Assert.IsNull(list.ContentTypes["Item"]);
+                    Assert.IsNotNull(list.ContentTypes["Folder"]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// A custom list is first created with property "RemoveDefaultContentType" set to false. Then,
+        /// anoter EnsureList is called on the same list, with the property now set to true. The content type
+        /// "Item" is expected to be removed.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenUpdatingAListWithAContentTypeItemWithRemoveDefaultContentTypeOn_ShouldDeleteItemContentType()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string NameKey = "Name Key";
+            const string DescKey = "DescriptionKey";
+            var listInfo = new ListInfo(Url, NameKey, DescKey);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    Assert.IsNotNull(list);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.AreEqual(list.ContentTypes.Count, 2);
+                    Assert.IsNotNull(list.ContentTypes["Item"]);
+
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+                    var listInfoRemoveItemContentType = new ListInfo(Url, NameKey, DescKey);
+                    listInfoRemoveItemContentType.RemoveDefaultContentType = true;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfoRemoveItemContentType);
+
+                    // Assert
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBefore, rootWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    Assert.AreEqual(updatedList.ContentTypes.Count, 1);
+                    Assert.IsNull(updatedList.ContentTypes["Item"]);
+                }
+            }
         }
 
         #endregion
