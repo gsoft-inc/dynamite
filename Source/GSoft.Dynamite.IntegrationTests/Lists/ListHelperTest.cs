@@ -5,6 +5,7 @@ using GSoft.Dynamite.Lists;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Web.Hosting.Administration;
 
 namespace GSoft.Dynamite.IntegrationTests.Lists
 {
@@ -26,6 +27,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         [TestMethod]
         public void EnsureList_WhenNotAlreadyExists_ShouldCreateNewOneAtListsPath()
         {
+            // Arrange
             const string Url = "Lists/testUrl";
 
             using (var testScope = SiteTestScope.BlankSite())
@@ -34,12 +36,14 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var testRootWeb = testScope.SiteCollection.RootWeb;
                     var numberOfListsBefore = testRootWeb.Lists.Count;
 
-                    SPList list = listHelper.EnsureList(testRootWeb, listInfo);
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
 
+                    // Assert
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(list);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
@@ -61,18 +65,21 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         [TestMethod]
         public void EnsureList_WhenNotAlreadyExists_ShouldCreateANewOneNOTListsPath()
         {
+            // Arrange
             using (var testScope = SiteTestScope.BlankSite())
             {
                 var listInfo = new ListInfo("testUrl", "nameKey", "descriptionKey");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var testRootWeb = testScope.SiteCollection.RootWeb;
                     var numberOfListsBefore = testRootWeb.Lists.Count;
 
-                    SPList list = listHelper.EnsureList(testRootWeb, listInfo);
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
 
+                    // Assert
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(list);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
@@ -93,18 +100,19 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         [TestMethod]
         public void EnsureList_WhenListWithSameNameAlreadyExistsAtThatURL_ShouldReturnExistingOne()
         {
+            // Arrange
             using (var testScope = SiteTestScope.BlankSite())
             {
                 var listInfo = new ListInfo("testUrl", "nameKey", "descriptionKey");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var testRootWeb = testScope.SiteCollection.RootWeb;
 
                     // 1- Create the list
                     var numberOfListsBefore = testRootWeb.Lists.Count;
-                    SPList list = listHelper.EnsureList(testRootWeb, listInfo);
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
 
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(list);
@@ -113,9 +121,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.IsNotNull(newlyCreatedList);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, newlyCreatedList.TitleResource.Value);
 
+                    // Act
                     // 2- Ensure the list a second time, now that it's been created
-                    SPList expectingListCreatedAtStep1 = listHelper.EnsureList(testRootWeb, listInfo);
+                    var expectingListCreatedAtStep1 = listHelper.EnsureList(testRootWeb, listInfo);
 
+                    // Assert
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(newlyCreatedList);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, expectingListCreatedAtStep1.TitleResource.Value);
@@ -134,23 +144,26 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void EnsureList_WhenListWithSameNameExistsButDifferentUrl_ShouldThrowException()
+        public void EnsureList_WhenListWithSameNameExistsButDifferentURL_ShouldThrowException()
         {
+            // Arrange
             using (var testScope = SiteTestScope.BlankSite())
             {
                 const string SameNameKey = "nameKey";
                 const string SameDescriptionKey = "descriptionKey";
                 const string Url = "testUrl";
+                const string SecondUrl = "Lists/" + Url;
                 var listInfo = new ListInfo(Url, SameNameKey, SameDescriptionKey);
+                var secondListInfo = new ListInfo(SecondUrl, SameNameKey, SameDescriptionKey);
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var testRootWeb = testScope.SiteCollection.RootWeb;
 
                     // 1- Create (by EnsureList) a first list at "testUrl"
                     var numberOfListsBefore = testRootWeb.Lists.Count;
-                    SPList list = listHelper.EnsureList(testRootWeb, listInfo);
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
 
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(list);
@@ -159,11 +172,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.IsNotNull(newlyCreatedList);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, newlyCreatedList.TitleResource.Value);
 
+                    // Act
                     // 2- Now, attempt to create a list with the same name at a different URL ("/Lists/secondUrl")
-                    const string SecondUrl = "Lists/" + Url;
-                    var secondListInfo = new ListInfo(SecondUrl, SameNameKey, SameDescriptionKey);
-                    SPList secondListShouldThrowException = listHelper.EnsureList(testRootWeb, secondListInfo);
+                    var secondListShouldThrowException = listHelper.EnsureList(testRootWeb, secondListInfo);
 
+                    // Assert
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNull(secondListShouldThrowException);
 
@@ -183,23 +196,26 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// level under the root web, when no list with that name already exist there.
         /// </summary>
         [TestMethod]
-        public void EnsureList_ListDoesntExistAndWantToCreateOnASubWebOneLevelUnderRoot_ShouldCreateAtCorrectUrl()
+        public void EnsureList_ListDoesntExistAndWantToCreateOnASubWebOneLevelUnderRoot_ShouldCreateAtCorrectURL()
         {
+            // Arrange
             const string Url = "some/random/path";
 
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Creating the ListInfo and the sub-web
                 var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
-                SPWeb subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+                var subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var numberOfListsOnSubWebBefore = subWeb.Lists.Count;
 
-                    SPList list = listHelper.EnsureList(subWeb, listInfo);
+                    // Act
+                    var list = listHelper.EnsureList(subWeb, listInfo);
 
+                    // Assert
                     Assert.AreEqual(numberOfListsOnSubWebBefore + 1, subWeb.Lists.Count);
                     Assert.IsNotNull(list);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
@@ -218,6 +234,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         [TestMethod]
         public void EnsureList_AListWithSameNameExistsOnDifferentWeb_ShouldCreateListAtSpecifiedWebAndURL()
         {
+            // Arrange
             const string Url = "testUrl";
             const string NameKey = "NameKey";
             const string DescKey = "DescriptionKey";
@@ -229,11 +246,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var rootWeb = testScope.SiteCollection.RootWeb;
                     var numberOfListsOnRootWebBefore = rootWeb.Lists.Count;
 
-                    SPList listRootWeb = listHelper.EnsureList(rootWeb, listInfo);
+                    var listRootWeb = listHelper.EnsureList(rootWeb, listInfo);
                     
                     Assert.AreEqual(numberOfListsOnRootWebBefore + 1, rootWeb.Lists.Count);
                     Assert.IsNotNull(listRootWeb);
@@ -243,8 +260,10 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     var subWeb = rootWeb.Webs.Add("subweb");
                     var numberOfListsOnSubWebBefore = subWeb.Lists.Count;
 
-                    SPList listSubWeb = listHelper.EnsureList(subWeb, listInfo);
+                    // Act
+                    var listSubWeb = listHelper.EnsureList(subWeb, listInfo);
                     
+                    // Assert
                     Assert.AreEqual(numberOfListsOnSubWebBefore + 1, subWeb.Lists.Count);
                     Assert.IsNotNull(listSubWeb);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, listSubWeb.TitleResource.Value);
@@ -262,13 +281,14 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         }
 
         /// <summary>
-        /// When EnsureList is used with a web-relative url (for example, "testurl"), and a sub-site already exists with the
-        /// same relative url, it should throw an exception because of a Url conflict.
+        /// When EnsureList is used with a web-relative URL (for example, "testurl"), and a sub-site already exists with the
+        /// same relative URL, it should throw an exception because of a URL conflict.
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void EnsureList_TryingToEnsureAListWithRelativeUrlCorrespondingToSubSiteUrl_ShouldThrowException()
+        public void EnsureList_TryingToEnsureAListWithRelativeURLCorrespondingToSubSiteURL_ShouldThrowException()
         {
+            // Arrange
             const string Url = "testUrl";
 
             using (var testScope = SiteTestScope.BlankSite())
@@ -277,15 +297,16 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 var rootWeb = testScope.SiteCollection.RootWeb;
                 var subWeb = rootWeb.Webs.Add(Url);
 
-                // Now, attempt to create the list which should result in a conflicting relative Url, thus, an exception thrown.
+                // Now, attempt to create the list which should result in a conflicting relative URL, thus, an exception thrown.
                 var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
                     var numberOfListsOnRootWebBefore = rootWeb.Lists.Count;
 
-                    SPList list = listHelper.EnsureList(rootWeb, listInfo);
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
 
                     // Asserting that the list wasn't created
                     Assert.AreEqual(numberOfListsOnRootWebBefore, rootWeb.Lists.Count);
@@ -293,6 +314,275 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 }
             }
         }
+
+        /// <summary>
+        /// When EnsureList is used with a web-relative URL (for example, "testurl"), and a folder already exists with the
+        /// same relative URL, it should throw an exception because of a URL conflict.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_TryingToEnsureAListWithRelativeURLCorrespondingToAFolder_ShouldThrowException()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // First, create the folder
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var folder = rootWeb.RootFolder.SubFolders.Add(Url);
+
+                // Now, attempt to create a list which should result in a conflicting relative URL and a thrown exception.
+                var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsOnRootWebBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var listThatShouldNotBeCreated = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (list should not have been created, and an exception thrown)
+                    Assert.AreEqual(numberOfListsOnRootWebBefore, rootWeb.Lists.Count);
+                    Assert.IsNull(listThatShouldNotBeCreated);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Make sure everything works fine when using sites managed paths
+
+        /// <summary>
+        /// Making sure EnsureList works fine when site collection is on a managed path.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenListDoesntExistTryingToCreateOnSiteManagedPath_ShouldCreateList()
+        {
+            // Arrange
+            const string ManagedPath = "managed";
+            const string ListUrl = "some/random/path";
+
+            using (var testScope = SiteTestScope.ManagedPathSite(ManagedPath))
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var listInfo = new ListInfo(ListUrl, "NameKey", "DescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsOnRootWebBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsOnRootWebBefore + 1, rootWeb.Lists.Count);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+
+                    // Fetching the list, to make sure it persists on the web
+                    var newlyCreatedList = rootWeb.GetList(ManagedPath + "/" + ListUrl);
+                    Assert.IsNotNull(newlyCreatedList);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, newlyCreatedList.TitleResource.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Case when trying to create a list with a path/URL that's already taken by a site managed path.
+        /// It should throw an exception. For example, trying to create a list with URL "managed" under the root web
+        /// of a site located at server-relative path "/", but the "managed" path is already taken by a site managed path.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenPathReservedForSiteManagedPathTryingToBeUsedAsAListPath_ShouldThrowException()
+        {
+            // Arrange
+            const string ManagedPath = "managed";
+            var listInfo = new ListInfo(ManagedPath, "NameKey", "DescriptionKey");
+
+            using (var managedPathSite = SiteTestScope.ManagedPathSite(ManagedPath))
+            {
+                using (var siteAtServerRoot = SiteTestScope.BlankSite())
+                {
+                    var rootSiteRootWeb = siteAtServerRoot.SiteCollection.RootWeb;
+                    var numberOfListsOnRootSiteRootWeb = rootSiteRootWeb.Lists.Count;
+
+                    using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                    {
+                        var listHelper = injectionScope.Resolve<IListHelper>();
+
+                        // Act
+                        var list = listHelper.EnsureList(rootSiteRootWeb, listInfo);
+
+                        // Assert (exception expected)
+                        Assert.AreEqual(numberOfListsOnRootSiteRootWeb, rootSiteRootWeb.Lists.Count);
+                        Assert.IsNull(list);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Make sure EnsureList updates the different properties of a list if it already exists (and make sure overwrite works fine)
+
+        /// <summary>
+        /// In the case the list already exists (based on the URL), and Overwrite property is at true,
+        /// EnsureList should delete the existing list and create a new one.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenListExistsBasedOnURLAndOverwriteIsTrue_ItShouldRecreateTheList()
+        {
+            // Arrange (create the initial list so we can test the overwrite property)
+            const string Url = "testUrl";
+            const string NameKey = "nameKey";
+            const string DescKey = "DescriptionKey";
+            var listInfo = new ListInfo(Url, NameKey, DescKey);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Making sure the initial list got created
+                    Assert.IsNotNull(initialList);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, initialList.TitleResource.Value);
+                    initialList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(initialList);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, initialList.TitleResource.Value);
+
+                    // Setting up the second list info
+                    var listInfoForOverwrite = new ListInfo(Url, "SecondList", "DescSecondList");
+                    listInfoForOverwrite.Overwrite = true;
+
+                    // Act
+                    var secondList = listHelper.EnsureList(rootWeb, listInfoForOverwrite);
+
+                    // Assert
+                    Assert.IsNotNull(secondList);
+                    Assert.AreEqual(listInfoForOverwrite.DisplayNameResourceKey, secondList.TitleResource.Value);
+                    secondList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(secondList);
+                    Assert.AreEqual(listInfoForOverwrite.DisplayNameResourceKey, secondList.TitleResource.Value);
+                    Assert.AreEqual(listInfoForOverwrite.DescriptionResourceKey, secondList.DescriptionResource.Value);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Using EnsureList to update the name of an existing list. The item already created on the list, and everything else
+        /// besides the name should stay the same.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_ExistingListWithItemCreatedThenEnsuringThatSameListToUpdateName_ShouldKeepSameListWithUpdatedName()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string DescKey = "DescriptionKey";
+            var listName = "InitialName";
+
+            var listInfo = new ListInfo(Url, listName, DescKey);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var numberOfListsBefore = rootWeb.Lists.Count;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    
+                    // Creating the list and adding one item in it
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+                    Assert.IsNotNull(initialList);
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Update();
+
+                    var listWithItem = rootWeb.GetList(Url);
+                    Assert.IsNotNull(listWithItem);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, listWithItem.TitleResource.Value);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listWithItem.ItemCount, 1);
+
+                    // Act
+                    var updatedListInfo = new ListInfo(Url, "Test_ListDisplayName", DescKey);
+                    var expectedDisplayName = "EN List Name";
+                    var updatedList = listHelper.EnsureList(rootWeb, updatedListInfo);
+
+                    // Assert
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.AreEqual(expectedDisplayName, updatedList.TitleResource.Value);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listWithItem.ItemCount, 1);
+                    Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Using EnsureList to update the description of an existing list. The item already created on the list, and everything else
+        /// besides the description should stay the same.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_ExistingListWithItemCreatedThenEnsuringThatSameListToUpdateDescription_ShouldKeepSameListWithUpdatedDesc()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string ListName = "NameKey";
+            var initialDescription = "Initial Description";      
+
+            var listInfo = new ListInfo(Url, ListName, initialDescription);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var numberOfListsBefore = rootWeb.Lists.Count;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Creating the list and adding one item in it
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+                    Assert.IsNotNull(initialList);
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Update();
+
+                    var listWithItem = rootWeb.GetList(Url);
+                    Assert.IsNotNull(listWithItem);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, listWithItem.TitleResource.Value);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listWithItem.ItemCount, 1);
+
+                    // Act
+                    var updatedListInfo = new ListInfo(Url, ListName, "Test_ListDescription");
+                    var expectedDescription = "EN List Description";
+                    var updatedList = listHelper.EnsureList(rootWeb, updatedListInfo);
+
+                    // Assert
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.AreEqual(expectedDescription, updatedList.DescriptionResource.Value);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listWithItem.ItemCount, 1);
+                    Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
+                }
+            }
+        }
+
+        #endregion
+
+        #region Make sure fields and/or content types are correctly created and saved on a list when ensuring that list.
 
         #endregion
     }

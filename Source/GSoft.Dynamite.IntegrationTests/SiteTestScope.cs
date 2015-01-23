@@ -25,6 +25,7 @@ namespace GSoft.Dynamite.IntegrationTests
         public SiteTestScope()
         {
             // Team site by default
+            this.ManagedPathCreated = string.Empty;
             this.InitializeSite(DefaultSiteCollectionHostName, SPWebTemplate.WebTemplateSTS + "#1");
         }
 
@@ -35,13 +36,29 @@ namespace GSoft.Dynamite.IntegrationTests
         /// <param name="templateName">Web template string identifier (see http://www.eblogin.com/eblogin/post/2011/04/13/sp-createSubSite.aspx#.VFz2LPnF8Ws) for full list.</param>
         public SiteTestScope(string siteCollectionHostName, string templateName)
         {
+            this.ManagedPathCreated = string.Empty;
             this.InitializeSite(siteCollectionHostName, templateName);
+        }
+
+        /// <summary>
+        /// Creates a temporary site collection (default), at the specified managed path
+        /// </summary>
+        /// <param name="managedPath">Path to be added as an explicit managed path for this Web App</param>
+        public SiteTestScope(string managedPath)
+        {
+            this.ManagedPathCreated = string.Empty;
+            this.InitializeSiteAtManagedPath(managedPath);
         }
 
         /// <summary>
         /// The temporary test site collection
         /// </summary>
         public SPSite SiteCollection { get; private set; }
+
+        /// <summary>
+        /// If managedPath is not empty when calling Dispose, it will remove the managed path from the prefixes collection
+        /// </summary>
+        public string ManagedPathCreated { get; private set; } 
 
         /// <summary>
         /// Creates a new temporary team site. Please dispose of this instance once you are done with it.
@@ -59,6 +76,16 @@ namespace GSoft.Dynamite.IntegrationTests
         public static SiteTestScope BlankSite()
         {
             return new SiteTestScope();
+        }
+
+        /// <summary>
+        /// Creates a new temporary team site at the specified managed path. Please dispose of this instance once you are done with it.
+        /// </summary>
+        /// <param name="managedPath">The managed path</param>
+        /// <returns>A brand new blank site at a managed path test scope</returns>
+        public static SiteTestScope ManagedPathSite(string managedPath)
+        {
+            return new SiteTestScope(managedPath);
         }
 
         /// <summary>
@@ -87,21 +114,20 @@ namespace GSoft.Dynamite.IntegrationTests
         {
             // Completely wipe out the temp site collection
             this.SiteCollection.Delete();
+
+            // Delete the test managed path if one was added
+            if (this.ManagedPathCreated != string.Empty)
+            {
+                this.SiteCollection.WebApplication.Prefixes.Delete(this.ManagedPathCreated);
+            }
+
             this.SiteCollection.Dispose();
             this.SiteCollection = null;
         }
 
         private void InitializeSite(string hostName, string templateName)
         {
-            SPFarm farm = SPFarm.Local;
-            SPWebService service = farm.Services.GetValue<SPWebService>(string.Empty);
-
-            SPWebApplication defaultPortWebApp = service.WebApplications.FirstOrDefault(wa => wa.GetResponseUri(SPUrlZone.Default).Port == 80);
-
-            if (defaultPortWebApp == null)
-            {
-                throw new InvalidOperationException("Failed to initialize temporary test SPSite! Can't find default port 80 web application on which to create site.");
-            }
+            var defaultPortWebApp = this.GetDefaultPortWebApp();
 
             SPSiteCollection sites = defaultPortWebApp.Sites;
 
@@ -131,6 +157,41 @@ namespace GSoft.Dynamite.IntegrationTests
                 true);
 
             this.SiteCollection = newSite;
+        }
+
+        private void InitializeSiteAtManagedPath(string managedPath)
+        {
+            var defaultPortWebApp = this.GetDefaultPortWebApp();
+
+            var prefixCollection = defaultPortWebApp.Prefixes;
+
+            if (!prefixCollection.Contains(managedPath))
+            {
+                prefixCollection.Add(managedPath, SPPrefixType.ExplicitInclusion);                
+            }
+
+            // Flag so dispose will remove the managed path when the site collection is deleted
+            this.ManagedPathCreated = managedPath;
+
+            var siteUrl = defaultPortWebApp.GetResponseUri(SPUrlZone.Default) + managedPath;
+
+            var newSite = defaultPortWebApp.Sites.Add(siteUrl, Environment.UserName, "test@test.com");
+            this.SiteCollection = newSite;
+        }
+
+        private SPWebApplication GetDefaultPortWebApp()
+        {
+            SPFarm farm = SPFarm.Local;
+            SPWebService service = farm.Services.GetValue<SPWebService>(string.Empty);
+
+            SPWebApplication defaultPortWebApp = service.WebApplications.FirstOrDefault(wa => wa.GetResponseUri(SPUrlZone.Default).Port == 80);
+
+            if (defaultPortWebApp == null)
+            {
+                throw new InvalidOperationException("Failed to initialize temporary test SPSite! Can't find default port 80 web application on which to create site.");
+            }
+
+            return defaultPortWebApp;
         }
     }
 }

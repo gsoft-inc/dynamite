@@ -88,8 +88,9 @@ namespace GSoft.Dynamite.Lists
             {
                 if (!list.RootFolder.Url.Equals(listInfo.WebRelativeUrl.ToString()))
                 {
-                    // A list with the same name already exists on a different web relative Url, throwing exception
-                    throw new ArgumentException("A list with the same name already exists on a different web relative Url. Try using a different name.");
+                    // A list with the same name already exists on a different web relative URL, throwing exception
+                    throw new ArgumentException(
+                        string.Format("A list with the name {0} already exists on a different web relative URL. Try using a different name.", listInfo.DisplayNameResourceKey));
                 }
             }
 
@@ -117,6 +118,9 @@ namespace GSoft.Dynamite.Lists
                     }
                 }                
             }
+
+            // Update the display name and description, if need be
+            this.SetTitleAndDescriptionValues(web, listInfo, list);
 
             // Remove Item Content Type
             if (listInfo.RemoveDefaultContentType)
@@ -472,35 +476,45 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         /// <param name="web">The current web</param>
         /// <param name="listInfo">The list information contains all the necessary data to create the list</param>
-        /// <returns>The created SP List</returns>
+        /// <returns>The created List</returns>
         private SPList CreateList(SPWeb web, ListInfo listInfo)
         {
-            // Throw an exception if the proposed web-relative URL conflicts with an existing subsite Url
+            // Throw an exception if the proposed web-relative URL conflicts with an existing subsite/folder URL or a managed path
             Guid id;
             try
             {
                 id = web.Lists.Add("Default title", "Default Description", listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
             }
-            catch (SPException)
+            catch (SPException sharepointException)
             {
-                throw new ArgumentException("The web-relative URL for the ensured list conflicts with an existing subsite Url. Try with a different Url.");
+                throw new ArgumentException(
+                    string.Format("The web-relative URL '{0}' for the ensured list conflicts with an existing URL (subweb, folder, ...). Try with a different one.", listInfo.WebRelativeUrl), sharepointException);
             }
-            
+
             var list = web.Lists[id];
 
-            var availableLanguages = web.SupportedUICultures.Reverse();   // end with the main language
+            this.SetTitleAndDescriptionValues(web, listInfo, list);
+
+            list.Update();
+
+            return web.Lists[id];
+        }
+
+        private void SetTitleAndDescriptionValues(SPWeb web, ListInfo listInfo, SPList list)
+        {
+            // end with the main language
+            var availableLanguages = web.SupportedUICultures.Reverse();
             foreach (var availableLanguage in availableLanguages)
             {
                 var title = this.resourceLocator.Find(listInfo.DisplayNameResourceKey, availableLanguage.LCID);
                 var description = this.resourceLocator.Find(listInfo.DescriptionResourceKey, availableLanguage.LCID);
 
                 list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                list.TitleResource.Update();
+
                 list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
+                list.DescriptionResource.Update();
             }
-
-            list.Update();
-
-            return web.Lists[id];
         }
 
         private static void SetHideFoldersNode(MetadataNavigationSettings settings, bool value)
