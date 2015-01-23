@@ -185,11 +185,11 @@ namespace GSoft.Dynamite.Fields
             }
             else if (fieldInfo is GuidFieldInfo)
             {
-                FieldInfo<Guid> guidBasedField = fieldInfo as FieldInfo<Guid>;
+                FieldInfo<Guid?> guidBasedField = fieldInfo as FieldInfo<Guid?>;
 
-                if (guidBasedField.DefaultValue != null)
+                if (guidBasedField.DefaultValue.HasValue)
                 {
-                    field.DefaultValue = guidBasedField.DefaultValue.ToString();
+                    field.DefaultValue = guidBasedField.DefaultValue.Value.ToString();
                 }
 
                 field.Update();
@@ -277,6 +277,36 @@ namespace GSoft.Dynamite.Fields
                 if (doubleBasedField.DefaultValue.HasValue)
                 {
                     field.DefaultValue = SPUtility.CreateISO8601DateTimeFromSystemDateTime(doubleBasedField.DefaultValue.Value);
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is LookupFieldInfo)
+            {
+                FieldInfo<LookupValue> lookupBasedField = fieldInfo as FieldInfo<LookupValue>;
+
+                if (lookupBasedField.DefaultValue != null)
+                {
+                    field.DefaultValue = new SPFieldLookupValue(lookupBasedField.DefaultValue.Id, lookupBasedField.DefaultValue.Value).ToString();
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is LookupMultiFieldInfo)
+            {
+                FieldInfo<LookupValueCollection> lookupCollectionBasedField = fieldInfo as FieldInfo<LookupValueCollection>;
+
+                if (lookupCollectionBasedField.DefaultValue != null)
+                {
+                    LookupValueCollection defaultCollection = lookupCollectionBasedField.DefaultValue;
+                    SPFieldLookupValueCollection tempSharePointCollection = new SPFieldLookupValueCollection();
+                    
+                    foreach (LookupValue defaultVal in defaultCollection)
+                    {
+                        tempSharePointCollection.Add(new SPFieldLookupValue(defaultVal.Id, defaultVal.Value));
+                    }
+
+                    field.DefaultValue = tempSharePointCollection.ToString();
                 }
 
                 field.Update();

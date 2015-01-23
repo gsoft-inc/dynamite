@@ -403,8 +403,24 @@ namespace GSoft.Dynamite.Fields
             }
 
             // Get the lookup list in the current web.
-            string listPath = SPUtility.ConcatUrls(web.ServerRelativeUrl, list);
-            SPList lookupList = web.GetList(listPath);
+            SPList lookupList = null;
+            Guid listGuid = Guid.Empty;
+            if (Guid.TryParse(list, out listGuid))
+            {
+                if (Guid.Empty == listGuid)
+                {
+                    throw new ArgumentException("You need to specify a non-empty list Guid for your lookup field definition.");
+                }
+
+                // Fetch list by its ID
+                lookupList = web.Lists[listGuid];
+            }
+            else
+            {
+                // Fetch list by its web-relative URL
+                string listPath = SPUtility.ConcatUrls(web.ServerRelativeUrl, list);
+                lookupList = web.GetList(listPath);
+            }
 
             // Get the required attribute.
             bool required;

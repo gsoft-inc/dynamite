@@ -2384,11 +2384,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // 1) Basic guid field definition (all default property values)
                     SPFieldGuid guidField = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfo);
                     this.ValidateFieldBasicValues(guidFieldInfo, guidField);
-                    Assert.AreEqual(Guid.Empty, new Guid(guidField.DefaultValue));
+                    Assert.IsNull(guidField.DefaultValue);
 
                     SPFieldGuid guidFieldRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfo.Id];
                     this.ValidateFieldBasicValues(guidFieldInfo, guidFieldRefetched);
-                    Assert.AreEqual(Guid.Empty, new Guid(guidFieldRefetched.DefaultValue));
+                    Assert.IsNull(guidFieldRefetched.DefaultValue);
 
                     // 2) Guid field with a default value
                     SPFieldGuid guidFieldAlt = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfoAlt);
@@ -2760,14 +2760,14 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAlt);
                     Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAlt.DisplayFormat);
                     Assert.AreEqual(
-                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
-                        urlFieldAlt.DefaultValue);
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
+                        urlFieldAlt.DefaultValue);      // Description should be missing (i.e. ignored by field helper), since OOTB url field don't support it properly
 
                     SPFieldUrl urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt.Id];
                     this.ValidateFieldBasicValues(urlFieldInfoAlt, urlFieldAltRefetched);
                     Assert.AreEqual(SPUrlFieldFormatType.Hyperlink, urlFieldAltRefetched.DisplayFormat);
                     Assert.AreEqual(
-                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
                         urlFieldAltRefetched.DefaultValue);
 
                     // 3) Alternate URL field definition (as Image)
@@ -2775,20 +2775,164 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAlt);
                     Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAlt.DisplayFormat);
                     Assert.AreEqual(
-                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
                         urlFieldAlt.DefaultValue);
 
                     urlFieldAltRefetched = (SPFieldUrl)testScope.SiteCollection.RootWeb.Fields[urlFieldInfoAlt2.Id];
                     this.ValidateFieldBasicValues(urlFieldInfoAlt2, urlFieldAltRefetched);
                     Assert.AreEqual(SPUrlFieldFormatType.Image, urlFieldAltRefetched.DisplayFormat);
                     Assert.AreEqual(
-                        "http://github.com/GSoft-SharePoint/somethingsomething, Lalalalala description",
+                        "http://github.com/GSoft-SharePoint/somethingsomething",
                         urlFieldAltRefetched.DefaultValue);
                 }
             }
         }
 
-        //// TODO: Lookup, LookupMulti
+        /// <summary>
+        /// Validates that Lookup field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenLookupField_ShouldApplyLookupFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Gotta create the list before we even think about provisionning a lookup
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    // ListId will be known only once the SPList is created
+                };
+
+                LookupFieldInfo lookupFieldInfoWithDefault = new LookupFieldInfo(
+                    "TestInternalNameLookupD",
+                    new Guid("{0F413213-9B75-49AD-850E-38EF551B1D1F}"),
+                    "NameKeyDef",
+                    "DescriptionKeyDef",
+                    "GroupKey")
+                {
+                    // Default value will be assigned below once the list and the lookup item are created
+                    ShowField = "ID"
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2A3DAD08-F9F7-4BF7-82D5-9E490DAEC242}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey")
+                {
+                    ShowField = "ID"
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfoWithDefault = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupMD",
+                    new Guid("{9ACF13BF-F42C-4488-AE54-5E971B7619AB}"),
+                    "NameKeyMultiDef",
+                    "DescriptionKeyMultiDef",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    // Default value will be assigned below once the list and the lookup items are created
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    // Create the lookup list
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Add an item to lookup list to act as default lookup field value
+                    SPListItem item1 = list.Items.Add();
+                    item1["Title"] = "Test Item 1";
+                    item1.Update();
+                    SPListItem item2 = list.Items.Add();
+                    item2["Title"] = "Test Item 2";
+                    item2.Update();
+
+                    // Add the list ID to the Lookup field definitions
+                    lookupFieldInfo.ListId = list.ID;
+
+                    lookupFieldInfoWithDefault.ListId = list.ID;
+                    lookupFieldInfoWithDefault.DefaultValue = new LookupValue(item1.ID, item1.ID.ToString());
+
+                    lookupMultiFieldInfo.ListId = list.ID;
+
+                    lookupMultiFieldInfoWithDefault.ListId = list.ID;
+                    lookupMultiFieldInfoWithDefault.DefaultValue = new LookupValueCollection() { new LookupValue(item1.ID, "Test Item 1"), new LookupValue(item2.ID, "Test Item 2") };
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic lookup field (no default value)
+                    SPFieldLookup lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupFieldInfo);
+                    this.ValidateFieldBasicValues(lookupFieldInfo, lookupField);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupField.DefaultValue));
+                    Assert.AreEqual("Title", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsFalse(lookupField.AllowMultipleValues);
+
+                    SPFieldLookup lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupFieldInfo, lookupFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupFieldRefetched.DefaultValue));
+                    Assert.AreEqual("Title", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsFalse(lookupFieldRefetched.AllowMultipleValues);
+
+                    // 2) Basic lookup field (with default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupFieldInfoWithDefault);
+                    this.ValidateFieldBasicValues(lookupFieldInfoWithDefault, lookupField);
+                    Assert.AreEqual("ID", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsFalse(lookupField.AllowMultipleValues);
+                    Assert.AreEqual("1;#1", lookupField.DefaultValue);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupFieldInfoWithDefault.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupFieldInfoWithDefault, lookupFieldRefetched);
+                    Assert.AreEqual("ID", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsFalse(lookupFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("1;#1", lookupFieldRefetched.DefaultValue);
+
+                    // 3) Basic lookup multi field (no default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupMultiFieldInfo);
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfo, lookupField);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupField.DefaultValue));
+                    Assert.AreEqual("ID", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsTrue(lookupField.AllowMultipleValues);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupMultiFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfo, lookupFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(lookupFieldRefetched.DefaultValue));
+                    Assert.AreEqual("ID", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsTrue(lookupFieldRefetched.AllowMultipleValues);
+
+                    // 4) Basic lookup multi field (with default value)
+                    lookupField = (SPFieldLookup)fieldHelper.EnsureField(fieldsCollection, lookupMultiFieldInfoWithDefault);
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfoWithDefault, lookupField);
+                    Assert.AreEqual("Title", lookupField.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupField.LookupList));
+                    Assert.IsTrue(lookupField.AllowMultipleValues);
+                    Assert.AreEqual("1;#Test Item 1;#2;#Test Item 2", lookupField.DefaultValue);
+
+                    lookupFieldRefetched = (SPFieldLookup)testScope.SiteCollection.RootWeb.Fields[lookupMultiFieldInfoWithDefault.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(lookupMultiFieldInfoWithDefault, lookupFieldRefetched);
+                    Assert.AreEqual("Title", lookupFieldRefetched.LookupField);
+                    Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
+                    Assert.IsTrue(lookupFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("1;#Test Item 1;#2;#Test Item 2", lookupFieldRefetched.DefaultValue);
+                }
+            }
+        }
+
         //// TODO: User, UserMulti
 
         #endregion
@@ -2947,6 +3091,38 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     }
                 };
 
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{62F8127C-4A8C-4217-8BD8-C6712753AFCE}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    DefaultValue = new LookupValue(1, "Test Item 1")
+                };
+
+                LookupFieldInfo lookupFieldInfoAlt = new LookupFieldInfo(
+                    "TestInternalNameLookupAlt",
+                    new Guid("{1F05DFFA-6396-4AEF-AD23-72217206D35E}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    ShowField = "ID",
+                    DefaultValue = new LookupValue(2, "2")
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2C9D4C0E-21EB-4742-8C6C-4C30DCD08A05}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey")
+                {
+                    DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
+                };
+
                 var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
                 // set will not be cleaned up and upon next test run we will
                 // run into a term set and term ID conflicts.
@@ -3009,9 +3185,14 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         imageFieldInfo,
                         urlFieldInfo,
                         urlFieldInfoImage,
+                        lookupFieldInfo,
+                        lookupFieldInfoAlt,
+                        lookupMultiFieldInfo,
                         taxoFieldInfo,
                         taxoMultiFieldInfo
                     };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
 
                 ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
                 ListInfo listInfo2 = new ListInfo("sometestlistpathalt", "DynamiteTestListNameKeyAlt", "DynamiteTestListDescriptionKeyAlt")
@@ -3022,6 +3203,23 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupFieldInfo.ListId = lookupList.ID;
+                    lookupFieldInfoAlt.ListId = lookupList.ID;
+                    lookupMultiFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the first test list
                     SPList list1 = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
 
                     var fieldHelper = injectionScope.Resolve<IFieldHelper>();
@@ -3063,6 +3261,20 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     var urlImageFieldVal = new SPFieldUrlValue(itemOnList1["TestInternalNameUrlImg"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
                     ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+
+                    var lookupFieldVal = new SPFieldLookupValue(itemOnList1["TestInternalNameLookup"].ToString());
+                    Assert.AreEqual(1, lookupFieldVal.LookupId);
+                    Assert.AreEqual("Test Item 1", lookupFieldVal.LookupValue);
+
+                    var lookupAltFieldVal = new SPFieldLookupValue(itemOnList1["TestInternalNameLookupAlt"].ToString());
+                    Assert.AreEqual(2, lookupAltFieldVal.LookupId);
+                    Assert.AreEqual("2", lookupAltFieldVal.LookupValue); // ShowField/LookupField is ID
+
+                    var lookupMultiFieldVal = new SPFieldLookupValueCollection(itemOnList1["TestInternalNameLookupM"].ToString());
+                    Assert.AreEqual(1, lookupMultiFieldVal[0].LookupId);
+                    Assert.AreEqual("Test Item 1", lookupMultiFieldVal[0].LookupValue);
+                    Assert.AreEqual(2, lookupMultiFieldVal[1].LookupId);
+                    Assert.AreEqual("Test Item 2", lookupMultiFieldVal[1].LookupValue);
 
                     var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);

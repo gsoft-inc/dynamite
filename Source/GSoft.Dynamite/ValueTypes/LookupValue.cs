@@ -13,9 +13,11 @@ namespace GSoft.Dynamite.ValueTypes
         /// Initializes a new instance of the <see cref="LookupValue"/> class.
         /// </summary>
         /// <param name="lookupId">The lookup id.</param>
-        public LookupValue(int lookupId)
+        /// <param name="value">The value of the looked-up item for the ShowField/LookupField field</param>
+        public LookupValue(int lookupId, string value)
         {
             this.Id = lookupId;
+            this.Value = value;
         }
 
         /// <summary>
