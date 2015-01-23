@@ -427,7 +427,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion
 
-        #region Make sure EnsureList updates the different properties of a list if it already exists (and make sure overwrite works fine)
+        #region Make sure EnsureList updates and/or applies correctly the different properties of a list (and make sure overwrite works fine)
 
         /// <summary>
         /// In the case the list already exists (based on the URL), and Overwrite property is at true,
@@ -578,6 +578,15 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
                 }
             }
+        }
+
+        /// <summary>
+        /// The option "RemoveDefaultContentType" should delete the Item content type when ensuring a list.
+        /// In this case, the list will created with this option set to true.
+        /// </summary>
+        public void EnsureList_WhenCreatingANewListAndWeWantToRemoveTheItemContentType_ShouldRemoveIt()
+        {
+            // Arrange
         }
 
         #endregion

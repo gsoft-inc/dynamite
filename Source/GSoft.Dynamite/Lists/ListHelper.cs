@@ -90,7 +90,7 @@ namespace GSoft.Dynamite.Lists
                 {
                     // A list with the same name already exists on a different web relative URL, throwing exception
                     throw new ArgumentException(
-                        string.Format("A list with the name {0} already exists on a different web relative URL. Try using a different name.", listInfo.DisplayNameResourceKey));
+                        string.Format(CultureInfo.InvariantCulture, "A list with the name {0} already exists on a different web relative URL. Try using a different name.", listInfo.DisplayNameResourceKey));
                 }
             }
 
@@ -488,7 +488,7 @@ namespace GSoft.Dynamite.Lists
             catch (SPException sharepointException)
             {
                 throw new ArgumentException(
-                    string.Format("The web-relative URL '{0}' for the ensured list conflicts with an existing URL (subweb, folder, ...). Try with a different one.", listInfo.WebRelativeUrl), sharepointException);
+                    string.Format(CultureInfo.InvariantCulture, "The web-relative URL '{0}' for the ensured list conflicts with an existing URL (subweb, folder, ...). Try with a different one.", listInfo.WebRelativeUrl), sharepointException);
             }
 
             var list = web.Lists[id];
