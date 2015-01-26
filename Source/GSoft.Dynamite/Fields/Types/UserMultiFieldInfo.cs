@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UserMultiField info
     /// </summary>
-    public class UserMultiFieldFieldInfo : FieldInfo<UserValueCollection>
+    public class UserMultiFieldInfo : FieldInfo<UserValueCollection>
     {
         /// <summary>
         /// Initializes a new UserMultiFieldFieldInfo
@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public UserMultiFieldFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        public UserMultiFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "UserMulti", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // default person name
@@ -31,7 +31,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public UserMultiFieldFieldInfo(XElement fieldSchemaXml)
+        public UserMultiFieldInfo(XElement fieldSchemaXml)
             : base(fieldSchemaXml)
         {
             if (fieldSchemaXml.Attribute("ShowField") != null)

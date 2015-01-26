@@ -537,7 +537,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             {
                 // Arrange
                 var correctWriterWasUsed = false;
-                var fieldInfo = new UserFieldFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+                var fieldInfo = new UserFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
                 ShimSPItemUserValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
@@ -573,7 +573,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
             using (ShimsContext.Create())
             {
                 // Arrange
-                var fieldInfo = new UserMultiFieldFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+                var fieldInfo = new UserMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
                 var fakeListItem = new ShimSPListItem().Instance;
 
                 ISPItemValueWriter writer;

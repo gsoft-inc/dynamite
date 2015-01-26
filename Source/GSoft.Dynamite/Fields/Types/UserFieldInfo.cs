@@ -8,17 +8,17 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UserField info
     /// </summary>
-    public class UserFieldFieldInfo : FieldInfo<UserValue>
+    public class UserFieldInfo : FieldInfo<UserValue>
     {
         /// <summary>
-        /// Initializes a new UserFieldFieldInfo
+        /// Initializes a new UserFieldInfo
         /// </summary>
         /// <param name="internalName">The internal name of the field</param>
         /// <param name="id">The field identifier</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content group resource key</param>
-        public UserFieldFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        public UserFieldInfo(string internalName, Guid id, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, "User", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // default person name
@@ -31,7 +31,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public UserFieldFieldInfo(XElement fieldSchemaXml)
+        public UserFieldInfo(XElement fieldSchemaXml)
             : base(fieldSchemaXml)
         {
             if (fieldSchemaXml.Attribute("ShowField") != null)
