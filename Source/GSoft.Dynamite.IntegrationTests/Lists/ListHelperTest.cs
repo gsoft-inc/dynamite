@@ -672,6 +672,509 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             }
         }
 
+        /// <summary>
+        /// Make sure that when Ensuring a list that already exists and contains one or more items using de Item content type,
+        /// and trying to remove that content type with the property RemoveDefaultContentType, it should throw an exception.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(SPException))]
+        public void EnsureList_WhenEnsuringExistingListWithRemoveDefContTypeButItemsUsingIt_ShouldThrowException()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    Assert.IsNotNull(list);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.AreEqual(list.ContentTypes.Count, 2);
+                    Assert.IsNotNull(list.ContentTypes["Item"]);
+
+                    // Creating an item on the list
+                    var item = list.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Update();
+
+                    // Act
+                    listInfo.RemoveDefaultContentType = true;
+                    var listAfter = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (exception should have been thrown...)
+                    Assert.IsTrue(false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring a non-existant list (so when creating a list) with the property HasDraftVisibilityType
+        /// set to true, the list should be set to EnableModeration = true and DraftVersionVisibility to Reader (Value = 0).
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_CreatingAListWithADraftVisibilityType_ShouldCreateListWithProperType()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.HasDraftVisibilityType = true;
+
+            var expectedDraftVersionVisibility = DraftVisibilityType.Reader;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.IsTrue(list.EnableModeration);
+                    Assert.AreEqual(list.DraftVersionVisibility, expectedDraftVersionVisibility);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list (so when updating a list) with the property HasDraftVisibilityType
+        /// set to true, the list should be set to EnableModeration = true. The DraftVisibilityType will be set to Approver.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_UpdatingAListWithADraftVisibilityType_ShouldUpdateListWithProperType()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            var expectedDraftVisibilityType = DraftVisibilityType.Approver;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Creating the initial list with EnableModeration = false (Default value)
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Creating an item on the list
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Update();
+
+                    // Act
+                    listInfo.HasDraftVisibilityType = true;
+                    listInfo.DraftVisibilityType = DraftVisibilityType.Approver;
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.AreEqual(updatedList.ItemCount, 1);
+                    Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
+                    Assert.IsTrue(updatedList.EnableModeration);
+                    Assert.AreEqual(updatedList.DraftVersionVisibility, expectedDraftVisibilityType);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when ensuring a non-existant list, with property EnableRatings set to true, and with a valid
+        /// RatingType specified, the list is properly created (needs a publishing site).
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithEnableRatingsAndARatingType_ShouldEnableRatingsWithThatType()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.EnableRatings = true;
+            listInfo.RatingType = "Ratings";
+
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsNotNull(list);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(list.RootFolder.Properties["Ratings_VotingExperience"], "Ratings");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when ensuring an existing list, with property EnableRatings set to true, and with a valid
+        /// RatingType specified, the list is properly updated (needs a publishing site).
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListAndWantToEnableRatingsWithProperType_ShouldKeepListAndEnableRatingsOnIt()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Make sure everything was correctly set up
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+
+                    // Ratings are not enabled yet
+                    Assert.AreEqual(initialList.RootFolder.Properties["Ratings_VotingExperience"], string.Empty);
+
+                    // Prepare the update
+                    listInfo.EnableRatings = true;
+                    listInfo.RatingType = "Likes";
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    Assert.AreEqual(updatedList.RootFolder.Properties["Ratings_VotingExperience"], "Likes");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when ensuring a list, with property EnableRatings set to true, and with a valid
+        /// RatingType specified, but with a non-valid site, i.e, not a publishing site, an exception is thrown.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(SPException))]
+        public void EnsureList_WhenTryingToEnableRatingsButTheSiteIsNotOfTypePublishing_ShouldThrowAnException()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.EnableRatings = true;
+            listInfo.RatingType = "Ratings";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (an exception should have been thrown...)
+                    Assert.IsTrue(false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make that when Ensuring a new list, if the WriteSecurity property specifies a value (default is 1 - all users),
+        /// the list is created with the correct value.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListAndWithAWriteSecuritySpecified_ItShouldCreateTheListWithTheRightPermission()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            // OwnerOnly = 2
+            listInfo.WriteSecurity = WriteSecurityOptions.OwnerOnly;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(list.WriteSecurity, 2);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make that when Ensuring an existing list, if the WriteSecurity property specifies a value (default is 1 - all users),
+        /// the list is updated with the correct value.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListAndWithAWriteSecuritySpecified_ItShouldUpdateTheListWithTheRightPermission()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+
+                    // Nobody = 4
+                    listInfo.WriteSecurity = WriteSecurityOptions.Nobody;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.AreEqual(updatedList.WriteSecurity, 4);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring a new list and the AddToQuickLaunch property is set to true,
+        /// a shortcut to the list is added to quick launch.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListWithAddToQuickLauchSetToTrue_ItShouldAddTheNewListToQuickLaunch()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.AddToQuickLaunch = true;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+                    var pathToListsInQuickLaunch = rootWeb.Navigation.QuickLaunch[0].Children;
+                    var numberOfItemsOnListsQuickLaunch = pathToListsInQuickLaunch.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Get the updated nav bar
+                    pathToListsInQuickLaunch = rootWeb.Navigation.QuickLaunch[0].Children;
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.IsTrue(list.OnQuickLaunch);
+                    Assert.AreEqual(numberOfItemsOnListsQuickLaunch + 1, pathToListsInQuickLaunch.Count);
+                    Assert.AreEqual(pathToListsInQuickLaunch[0].Title, listInfo.DisplayNameResourceKey);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make that when Ensuring an existing list, if the AddToQuickLaunch property specifies is set to true,
+        /// the list is added to quick launch bar.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListAndWithAddToQuickLaunchToTrue_ItShouldUpdateTheQuickLaunchBar()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+
+                    listInfo.AddToQuickLaunch = true;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+                    var pathToListsInQuickLaunch = rootWeb.Navigation.QuickLaunch[0].Children;
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.IsTrue(updatedList.OnQuickLaunch);
+                    Assert.AreEqual(pathToListsInQuickLaunch.Count, 1);
+                    Assert.AreEqual(pathToListsInQuickLaunch[0].Title, listInfo.DisplayNameResourceKey);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring a new list and the EnableAttachments property is set to false,
+        /// it is disabled.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListWithEnableAttachmentsSetToFalse_ItShouldDisableThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.EnableAttachements = false;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.IsFalse(list.EnableAttachments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Case where you have an existing list with attachments disabled. You want to ensure/update it
+        /// to enable attachments.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListWithEnableAttachmentsSetToFalse_ItShouldEnableThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+            listInfo.EnableAttachements = false;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+                    Assert.IsFalse(list.EnableAttachments);
+
+                    listInfo.EnableAttachements = true;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.IsNotNull(updatedList);
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.IsTrue(updatedList.EnableAttachments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list with item(s) on it, and the new list info has
+        /// property EnableAttachments set to false, it doesn't allow you to disable them to prevent from deleting attachments.
+        /// An ArgumentException is thrown.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenEnsuringAnExistingListWithItemsOnItAndYouWantToDisableAttachments_ItShouldNotAllowYou()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Creating an item on the list
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Update();
+
+                    listInfo.EnableAttachements = false;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (exception should have been thrown...)
+                    Assert.IsTrue(false);
+                }
+            }
+        }
+
         #endregion
 
         #region Make sure fields and/or content types are correctly created and saved on a list when ensuring that list.

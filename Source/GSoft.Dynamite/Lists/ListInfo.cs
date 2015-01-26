@@ -43,6 +43,7 @@ namespace GSoft.Dynamite.Lists
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
+            this.EnableAttachements = true;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<IFieldInfo>();
