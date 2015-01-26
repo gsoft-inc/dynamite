@@ -20,7 +20,7 @@ namespace GSoft.Dynamite.ServiceLocator
             get 
             { 
                 // By default, only match on resource files provisionned by the GSoft.Dynamite.WSP solution package
-                return new List<string>() { "GSoft.Dynamite" }; 
+                return new List<string>() { "GSoft.Dynamite" };
             }
         }
     }

@@ -2792,7 +2792,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that Lookup field type properties are mapped along with its default value
         /// </summary>
         [TestMethod]
-        public void EnsureField_WhenLookupField_ShouldApplyLookupFieldDefinitionAndDefaultValue()
+        public void EnsureField_WhenLookupSingleOrMultiField_ShouldApplyLookupFieldDefinitionAndDefaultValue()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -2929,6 +2929,109 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(list.ID, new Guid(lookupFieldRefetched.LookupList));
                     Assert.IsTrue(lookupFieldRefetched.AllowMultipleValues);
                     Assert.AreEqual("1;#Test Item 1;#2;#Test Item 2", lookupFieldRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that User field type properties are mapped along with its default value
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenUserSingleOrMultiField_ShouldApplyUserFieldDefinitionAndDefaultValue()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserName);
+                var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
+
+                UserFieldInfo userFieldInfo = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey")
+                {
+                    // ShowField should be Title by default
+                    UserSelectionMode = "PeopleAndGroups"
+                };
+
+                UserFieldInfo userFieldInfoAlt = new UserFieldInfo(
+                    "TestInternalNameUserAlt",
+                    new Guid("{0F413213-9B75-49AD-850E-38EF551B1D1F}"),
+                    "NameKeyUserAlt",
+                    "DescriptionKeyUserAlt",
+                    "GroupKey")
+                {
+                    ShowField = "ID",
+                    UserSelectionScope = 1,
+                    DefaultValue = new UserValue(ensuredUser1)
+                };
+
+                UserMultiFieldInfo userMultiFieldInfo = new UserMultiFieldInfo(
+                    "TestInternalNameUserMulti",
+                    new Guid("{9ACF13BF-F42C-4488-AE54-5E971B7619AB}"),
+                    "NameKeyUserMulti",
+                    "DescriptionKeyUserMulti",
+                    "GroupKey")
+                {
+                    DefaultValue = new UserValueCollection() { new UserValue(ensuredUser1), new UserValue(ensuredUser2) }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    // 1) Basic user field (no default value)
+                    SPFieldUser userField = (SPFieldUser)fieldHelper.EnsureField(fieldsCollection, userFieldInfo);
+                    this.ValidateFieldBasicValues(userFieldInfo, userField);
+                    Assert.IsTrue(string.IsNullOrEmpty(userField.DefaultValue));
+                    Assert.IsFalse(userField.AllowMultipleValues);
+                    Assert.AreEqual("ImnName", userField.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleAndGroups, userField.SelectionMode);
+                    Assert.AreEqual(0, userField.SelectionGroup);
+
+                    SPFieldUser userFieldRefetched = (SPFieldUser)testScope.SiteCollection.RootWeb.Fields[userFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(userFieldInfo, userFieldRefetched);
+                    Assert.IsTrue(string.IsNullOrEmpty(userFieldRefetched.DefaultValue));
+                    Assert.IsFalse(userFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("ImnName", userFieldRefetched.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleAndGroups, userFieldRefetched.SelectionMode);
+                    Assert.AreEqual(0, userFieldRefetched.SelectionGroup);
+
+                    // 2) Basic user field (with default value)
+                    userField = (SPFieldUser)fieldHelper.EnsureField(fieldsCollection, userFieldInfoAlt);
+                    this.ValidateFieldBasicValues(userFieldInfoAlt, userField);
+                    Assert.AreEqual("1;#" + ensuredUser1.Name, userField.DefaultValue);
+                    Assert.IsFalse(userField.AllowMultipleValues);
+                    Assert.AreEqual("ID", userField.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleOnly, userField.SelectionMode);
+                    Assert.AreEqual(1, userField.SelectionGroup);
+
+                    userFieldRefetched = (SPFieldUser)testScope.SiteCollection.RootWeb.Fields[userFieldInfoAlt.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(userFieldInfoAlt, userFieldRefetched);
+                    Assert.AreEqual("1;#" + ensuredUser1.Name, userFieldRefetched.DefaultValue);
+                    Assert.IsFalse(userField.AllowMultipleValues);
+                    Assert.AreEqual("ID", userFieldRefetched.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleOnly, userFieldRefetched.SelectionMode);
+                    Assert.AreEqual(1, userFieldRefetched.SelectionGroup);
+
+                    // 3) Basic user multi field (with default value)
+                    userField = (SPFieldUser)fieldHelper.EnsureField(fieldsCollection, userMultiFieldInfo);
+                    this.ValidateFieldBasicValues(userMultiFieldInfo, userField);
+                    Assert.AreEqual("1;#" + ensuredUser1.Name + ";#5;#Maxime Boissonneault", userField.DefaultValue);
+                    Assert.IsTrue(userField.AllowMultipleValues);
+                    Assert.AreEqual("ImnName", userField.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleOnly, userField.SelectionMode);
+                    Assert.AreEqual(0, userField.SelectionGroup);
+
+                    userFieldRefetched = (SPFieldUser)testScope.SiteCollection.RootWeb.Fields[userMultiFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(userMultiFieldInfo, userFieldRefetched);
+                    Assert.AreEqual("1;#" + ensuredUser1.Name + ";#5;#Maxime Boissonneault", userFieldRefetched.DefaultValue);
+                    Assert.IsTrue(userFieldRefetched.AllowMultipleValues);
+                    Assert.AreEqual("ImnName", userFieldRefetched.LookupField);
+                    Assert.AreEqual(SPFieldUserSelectionMode.PeopleOnly, userFieldRefetched.SelectionMode);
+                    Assert.AreEqual(0, userFieldRefetched.SelectionGroup);
                 }
             }
         }
@@ -3123,6 +3226,29 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
                 };
 
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\" + Environment.UserName);
+                var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
+
+                UserFieldInfo userFieldInfo = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey")
+                {
+                    DefaultValue = new UserValue(ensuredUser1)
+                };
+
+                UserMultiFieldInfo userMultiFieldInfo = new UserMultiFieldInfo(
+                    "TestInternalNameUserMulti",
+                    new Guid("{8C662588-D54E-4905-B232-856C2239B036}"),
+                    "NameKeyUserMulti",
+                    "DescriptionKeyUserMulti",
+                    "GroupKey")
+                {
+                    DefaultValue = new UserValueCollection() { new UserValue(ensuredUser1), new UserValue(ensuredUser2) }
+                };
+
                 var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
                 // set will not be cleaned up and upon next test run we will
                 // run into a term set and term ID conflicts.
@@ -3168,8 +3294,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                //// TODO: Add User fields and other types...
-
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
                         numberFieldInfo,
@@ -3188,6 +3312,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         lookupFieldInfo,
                         lookupFieldInfoAlt,
                         lookupMultiFieldInfo,
+                        userFieldInfo,
+                        userMultiFieldInfo,
                         taxoFieldInfo,
                         taxoMultiFieldInfo
                     };
@@ -3276,6 +3402,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(2, lookupMultiFieldVal[1].LookupId);
                     Assert.AreEqual("Test Item 2", lookupMultiFieldVal[1].LookupValue);
 
+                    var userFieldVal = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList1["TestInternalNameUser"].ToString());
+                    Assert.AreEqual(ensuredUser1.Name, userFieldVal.User.Name);
+
+                    var userMultiFieldVal = new SPFieldUserValueCollection(testScope.SiteCollection.RootWeb, itemOnList1["TestInternalNameUserMulti"].ToString());
+                    Assert.AreEqual(ensuredUser1.Name, userMultiFieldVal[0].User.Name);
+                    Assert.AreEqual("Maxime Boissonneault", userMultiFieldVal[1].User.Name);
+
                     var taxoFieldValue = (TaxonomyFieldValue)itemOnList1["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);
                     Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
@@ -3313,6 +3446,27 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     urlImageFieldVal = new SPFieldUrlValue(itemOnList2["TestInternalNameUrlImg"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
                     ////Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+
+                    lookupFieldVal = new SPFieldLookupValue(itemOnList2["TestInternalNameLookup"].ToString());
+                    Assert.AreEqual(1, lookupFieldVal.LookupId);
+                    Assert.AreEqual("Test Item 1", lookupFieldVal.LookupValue);
+
+                    lookupAltFieldVal = new SPFieldLookupValue(itemOnList2["TestInternalNameLookupAlt"].ToString());
+                    Assert.AreEqual(2, lookupAltFieldVal.LookupId);
+                    Assert.AreEqual("2", lookupAltFieldVal.LookupValue); // ShowField/LookupField is ID
+
+                    lookupMultiFieldVal = new SPFieldLookupValueCollection(itemOnList2["TestInternalNameLookupM"].ToString());
+                    Assert.AreEqual(1, lookupMultiFieldVal[0].LookupId);
+                    Assert.AreEqual("Test Item 1", lookupMultiFieldVal[0].LookupValue);
+                    Assert.AreEqual(2, lookupMultiFieldVal[1].LookupId);
+                    Assert.AreEqual("Test Item 2", lookupMultiFieldVal[1].LookupValue);
+
+                    userFieldVal = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList2["TestInternalNameUser"].ToString());
+                    Assert.AreEqual(ensuredUser1.Name, userFieldVal.User.Name);
+
+                    userMultiFieldVal = new SPFieldUserValueCollection(testScope.SiteCollection.RootWeb, itemOnList2["TestInternalNameUserMulti"].ToString());
+                    Assert.AreEqual(ensuredUser1.Name, userMultiFieldVal[0].User.Name);
+                    Assert.AreEqual("Maxime Boissonneault", userMultiFieldVal[1].User.Name);
 
                     taxoFieldValue = (TaxonomyFieldValue)itemOnList2["TestInternalNameTaxo"];
                     Assert.AreNotEqual(-1, taxoFieldValue.WssId);

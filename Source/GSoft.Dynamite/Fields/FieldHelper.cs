@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Web;
 using System.Xml.Linq;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Globalization.Variations;
@@ -179,6 +180,11 @@ namespace GSoft.Dynamite.Fields
                 if (booleanBasedField.DefaultValue.HasValue)
                 {
                     field.DefaultValue = booleanBasedField.DefaultValue.ToString();
+
+                    this.log.Warn(
+                        "Default value ({0}) set on field {1} with type Boolean. SharePoint does not support default values on Boolean fields. Only list items created programmatically will get the default value properly set. Setting a Boolean-field default value will not be respected in your lists' NewForm.aspx item creation form.",
+                        field.DefaultValue,
+                        field.InternalName);
                 }
 
                 field.Update();
@@ -288,6 +294,11 @@ namespace GSoft.Dynamite.Fields
                 if (lookupBasedField.DefaultValue != null)
                 {
                     field.DefaultValue = new SPFieldLookupValue(lookupBasedField.DefaultValue.Id, lookupBasedField.DefaultValue.Value).ToString();
+
+                    this.log.Warn(
+                        "Default value ({0}) set on field {1} with type Lookup. SharePoint does not support default values on Lookup fields. Only list items created programmatically will get the default value properly set. Setting a Lookup-field default value will not be respected by your lists' NewForm.aspx item creation form.",
+                        field.DefaultValue,
+                        field.InternalName);
                 }
 
                 field.Update();
@@ -307,6 +318,51 @@ namespace GSoft.Dynamite.Fields
                     }
 
                     field.DefaultValue = tempSharePointCollection.ToString();
+
+                    this.log.Warn(
+                        "Default value ({0}) set on field {1} with type LookupMulti. SharePoint does not support default values on Lookup fields. Only list items created programmatically will get the default value properly set. Setting a Lookup-field default value will not be respected by your lists' NewForm.aspx item creation form.",
+                        field.DefaultValue,
+                        field.InternalName);
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is UserFieldInfo)
+            {
+                FieldInfo<UserValue> userBasedField = fieldInfo as FieldInfo<UserValue>;
+
+                if (userBasedField.DefaultValue != null)
+                {
+                    field.DefaultValue = new SPFieldUserValue(fieldCollection.Web, userBasedField.DefaultValue.Id, HttpUtility.HtmlEncode(userBasedField.DefaultValue.DisplayName)).ToString();
+                    
+                    this.log.Warn(
+                        "Default value ({0}) set on field {1} with type User. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
+                        field.DefaultValue,
+                        field.InternalName);
+                }
+
+                field.Update();
+            }
+            else if (fieldInfo is UserMultiFieldInfo)
+            {
+                FieldInfo<UserValueCollection> userlookupCollectionBasedField = fieldInfo as FieldInfo<UserValueCollection>;
+
+                if (userlookupCollectionBasedField.DefaultValue != null)
+                {
+                    UserValueCollection defaultCollection = userlookupCollectionBasedField.DefaultValue;
+                    SPFieldUserValueCollection tempSharePointCollection = new SPFieldUserValueCollection();
+
+                    foreach (UserValue defaultVal in defaultCollection)
+                    {
+                        tempSharePointCollection.Add(new SPFieldUserValue(fieldCollection.Web, defaultVal.Id, HttpUtility.HtmlEncode(defaultVal.DisplayName)));
+                    }
+
+                    field.DefaultValue = tempSharePointCollection.ToString();
+
+                    this.log.Warn(
+                        "Default value ({0}) set on field {1} with type UserMulti. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
+                        field.DefaultValue,
+                        field.InternalName);
                 }
 
                 field.Update();
