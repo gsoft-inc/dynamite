@@ -133,7 +133,7 @@ namespace GSoft.Dynamite.Lists
                     // but to a sub-web URL.
                     if (spException.ErrorCode == -2147024895)
                     {
-                        this.logger.Warn("GetList was passed a URL corresponding to a sub-web, and threw a SPException.");
+                        this.logger.Warn("GetList was passed the URL '{0}' which corresponds to a sub-web, and threw a SPException.", titleOrUrlOrResourceString);
                     }
                     else
                     {

@@ -45,7 +45,7 @@ namespace GSoft.Dynamite.ContentTypes
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, ContentTypeInfo contentTypeInfo)
         {
-            SPContentType contentType = this.EnsureContentType(
+            var contentType = this.EnsureContentType(
                 contentTypeCollection,
                 new SPContentTypeId(contentTypeInfo.ContentTypeId),
                 contentTypeInfo.DisplayNameResourceKey,
@@ -53,33 +53,35 @@ namespace GSoft.Dynamite.ContentTypes
 
             this.EnsureFieldInContentType(contentType, contentTypeInfo.Fields);
 
+            // Get a list of the available languages and end with the main language
             var web = contentType.ParentWeb;
+            var availableLanguages = web.SupportedUICultures.Reverse().ToList();
 
-            var availableLanguages = new List<CultureInfo>();
-
-            var pubWeb = PublishingWeb.GetPublishingWeb(web);
-
-            if (pubWeb != null && this.variationHelper.IsVariationsEnabled(pubWeb.Web.Site))
+            // If it's a publishing web, add the variation labels as available languages
+            if (PublishingWeb.IsPublishingWeb(web) && this.variationHelper.IsVariationsEnabled(web.Site))
             {
-                var labels = this.variationHelper.GetVariationLabels(pubWeb.Web.Site);
-                availableLanguages.AddRange(labels.Select(label => new CultureInfo(label.Language)));
-
-                if (availableLanguages.Count == 0)
+                var labels = this.variationHelper.GetVariationLabels(web.Site);
+                if (labels.Count > 0)
                 {
-                    availableLanguages = pubWeb.Web.SupportedUICultures.Reverse().ToList();
+                   // Predicate to check if the web contains the label language in it's available languages
+                   Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) => 
+                       !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
+
+                    // Get the label languages that aren't already in the web's available languages
+                    var labelLanguages = labels
+                        .Where(notAvailableWebLanguageFunc)
+                        .Select(label => new CultureInfo(label.Language));
+
+                    availableLanguages.AddRange(labelLanguages);
                 }
-            }
-            else
-            {
-                availableLanguages = web.SupportedUICultures.Reverse().ToList();   // end with the main language
             }
 
             // If multiple languages are enabled, since we have a full ContentTypeInfo object, we want to populate 
             // all alternate language labels for the Content Type
             foreach (var availableLanguage in availableLanguages)
             {
-                // make sure the ResourceLocator will fetch the correct culture's DisplayName values
-                // by forwarding the CultureInfo
+                // Make sure the ResourceLocator will fetch the correct culture's DisplayName values
+                // by forwarding the CultureInfo.
                 contentType.Name = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey, availableLanguage);
                 contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage);
                 contentType.Group = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey, availableLanguage);
