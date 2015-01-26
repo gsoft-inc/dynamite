@@ -26,7 +26,7 @@ namespace GSoft.Dynamite.IntegrationTests
         {
             // Team site by default
             this.ManagedPathCreated = string.Empty;
-            this.InitializeSite(DefaultSiteCollectionHostName, SPWebTemplate.WebTemplateSTS + "#1");
+            this.InitializeSite(DefaultSiteCollectionHostName, SPWebTemplate.WebTemplateSTS + "#1", (uint)1033);
         }
 
         /// <summary>
@@ -37,7 +37,19 @@ namespace GSoft.Dynamite.IntegrationTests
         public SiteTestScope(string siteCollectionHostName, string templateName)
         {
             this.ManagedPathCreated = string.Empty;
-            this.InitializeSite(siteCollectionHostName, templateName);
+            this.InitializeSite(siteCollectionHostName, templateName, (uint)1033);
+        }
+
+        /// <summary>
+        /// Creates a temporary site collection on the local Farm's default port 80 web application
+        /// </summary>
+        /// <param name="siteCollectionHostName">Host name for the site collection on the default port 80 web application</param>
+        /// <param name="templateName">Web template string identifier (see http://www.eblogin.com/eblogin/post/2011/04/13/sp-createSubSite.aspx#.VFz2LPnF8Ws) for full list.</param>
+        /// <param name="lcid">The site language</param>
+        public SiteTestScope(string siteCollectionHostName, string templateName, uint lcid)
+        {
+            this.ManagedPathCreated = string.Empty;
+            this.InitializeSite(siteCollectionHostName, templateName, lcid);
         }
 
         /// <summary>
@@ -76,6 +88,26 @@ namespace GSoft.Dynamite.IntegrationTests
         public static SiteTestScope BlankSite()
         {
             return new SiteTestScope();
+        }
+
+        /// <summary>
+        /// Creates a new temporary team site. Please dispose of this instance once you are done with it.
+        /// </summary>
+        /// <param name="lcid">Language of the site collection to create</param>
+        /// <returns>A brand new team site test scope</returns>
+        public static SiteTestScope TeamSite(int lcid)
+        {
+            return new SiteTestScope(DefaultSiteCollectionHostName, "STS#0", (uint)lcid);
+        }
+
+        /// <summary>
+        /// Creates a new temporary blank site. Please dispose of this instance once you are done with it.
+        /// </summary>
+        /// <param name="lcid">Language of the site collection to create</param>
+        /// <returns>A brand new team site test scope</returns>
+        public static SiteTestScope BlankSite(int lcid)
+        {
+            return new SiteTestScope(DefaultSiteCollectionHostName, "STS#1", (uint)lcid);
         }
 
         /// <summary>
@@ -125,7 +157,7 @@ namespace GSoft.Dynamite.IntegrationTests
             this.SiteCollection = null;
         }
 
-        private void InitializeSite(string hostName, string templateName)
+        private void InitializeSite(string hostName, string templateName, uint lcid)
         {
             var defaultPortWebApp = this.GetDefaultPortWebApp();
 
@@ -146,7 +178,7 @@ namespace GSoft.Dynamite.IntegrationTests
                 hostName, 
                 "Dynamite Test", 
                 "Integration test temporary site", 
-                1033, 
+                lcid, 
                 templateName, 
                 Environment.UserName, 
                 "Dynamite Test Agent", 

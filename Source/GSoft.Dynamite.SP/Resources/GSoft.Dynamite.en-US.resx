@@ -120,6 +120,15 @@
   <data name="SiteAction_OpenParentFolder" xml:space="preserve">
     <value>Open parent folder</value>
   </data>
+  <data name="Test_ContentGroup" xml:space="preserve">
+    <value>EN Content Group</value>
+  </data>
+  <data name="Test_FieldDescription" xml:space="preserve">
+    <value>EN Field Description</value>
+  </data>
+  <data name="Test_FieldTitle" xml:space="preserve">
+    <value>EN Field Title</value>
+  </data>
   <data name="Test_ListDescription" xml:space="preserve">
     <value>EN List Description</value>
   </data>

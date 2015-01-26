@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web;
 using System.Xml.Linq;
 using Autofac;
@@ -3090,14 +3091,14 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     SPField mediaFieldAlt = fieldHelper.EnsureField(fieldsCollection, mediaFieldInfoAlt);
                     this.ValidateFieldBasicValues(mediaFieldInfoAlt, mediaFieldAlt);
                     Assert.AreEqual(
-                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", ""),
-                        mediaFieldAlt.DefaultValue.Replace(Environment.NewLine, "").Replace(" ", ""));
+                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty),
+                        mediaFieldAlt.DefaultValue.Replace(Environment.NewLine, string.Empty).Replace(" ", string.Empty));
 
                     SPField mediaFieldAltRefetched = testScope.SiteCollection.RootWeb.Fields[mediaFieldInfoAlt.Id];
                     this.ValidateFieldBasicValues(mediaFieldInfoAlt, mediaFieldAltRefetched);
                     Assert.AreEqual(
-                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", ""),
-                        mediaFieldAltRefetched.DefaultValue.Replace(Environment.NewLine, "").Replace(" ", ""));
+                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty),
+                        mediaFieldAltRefetched.DefaultValue.Replace(Environment.NewLine, string.Empty).Replace(" ", string.Empty));
                 }
             }
         }
@@ -3588,7 +3589,260 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #region Field Title, Description and Group properties should be localized (if you configure ResourceLocator to access your RESX file)
 
-        //// TODO: figure out a way to deploy a few resource and a ResourceLocatorConfig with the IntergrationTests project
+        /// <summary>
+        /// Validates that English field name is initialized on English-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnglishOnlySiteCollection_ShouldCreateFieldWithEnglishDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+
+                    Assert.AreEqual("EN Field Title", field.Title);
+                    Assert.AreEqual("EN Field Description", field.Description);
+                    Assert.AreEqual("EN Content Group", field.Group);
+
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+
+                    Assert.AreEqual("EN Field Title", fieldRefetched.Title);
+                    Assert.AreEqual("EN Field Description", fieldRefetched.Description);
+                    Assert.AreEqual("EN Content Group", fieldRefetched.Group);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that French field name is initialized on French-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenFrenchOnlySiteCollection_ShouldCreateFieldWithEnglishDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.French.Culture.LCID))
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+
+                    // Set MUI to french
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de champ", field.Title);
+                    Assert.AreEqual("FR Description de champ", field.Description);
+                    Assert.AreEqual("FR Groupe de contenu", field.Group);
+
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+
+                    Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
+                    Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that display names for field in both languages is initialized on Enlish-and-French-languages web
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnglishAndFrenchSiteCollection_ShouldCreateFieldWithDisplayNameAvailableInBothLanguages()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                // Add French so that both languages are supported
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                rootWeb.AddSupportedUICulture(Language.French.Culture);
+                rootWeb.Update();
+
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+
+                    // Set MUI to english
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.English.Culture;
+
+                    Assert.AreEqual("EN Field Title", field.Title);
+                    Assert.AreEqual("EN Field Description", field.Description);
+                    Assert.AreEqual("EN Content Group", field.Group);
+
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+
+                    Assert.AreEqual("EN Field Title", fieldRefetched.Title);
+                    Assert.AreEqual("EN Field Description", fieldRefetched.Description);
+                    Assert.AreEqual("EN Content Group", fieldRefetched.Group);
+
+                    // Set MUI to french
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de champ", field.Title);
+                    Assert.AreEqual("FR Description de champ", field.Description);
+                    Assert.AreEqual("FR Groupe de contenu", field.Group);
+
+                    Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
+                    Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that field localization works on French sub-web lists
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenOnListInFrenchSubWeb_ShouldCreateListFieldWithFrenchDisplayName()
+        {
+            // English root web
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    SPWeb frenchSubWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb", "French sub-web", string.Empty, (uint)Language.French.Culture.LCID, "STS#1", false, false);
+
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList subWebList = listHelper.EnsureList(frenchSubWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    SPFieldCollection listFields = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields;
+
+                    SPField field = fieldHelper.EnsureField(listFields, textFieldInfo);
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields[textFieldInfo.Id];
+
+                    // Set MUI to french
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de champ", field.Title);
+                    Assert.AreEqual("FR Description de champ", field.Description);
+                    Assert.AreEqual("FR Groupe de contenu", field.Group);
+
+                    Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
+                    Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that field localization works on Enlish sub-web lists
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenOnListInEnglishSubWeb_ShouldCreateListFieldWithEnglishDisplayName()
+        {
+            // French root web
+            using (var testScope = SiteTestScope.BlankSite(Language.French.Culture.LCID))
+            {
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    SPWeb frenchSubWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb", "English sub-web", string.Empty, (uint)Language.English.Culture.LCID, "STS#1", false, false);
+
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList subWebList = listHelper.EnsureList(frenchSubWeb, listInfo);
+
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    SPFieldCollection listFields = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields;
+
+                    SPField field = fieldHelper.EnsureField(listFields, textFieldInfo);
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields[textFieldInfo.Id];
+
+                    // Set MUI to english
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture; 
+                    Thread.CurrentThread.CurrentUICulture = Language.English.Culture;
+
+                    Assert.AreEqual("EN Field Title", field.Title);
+                    Assert.AreEqual("EN Field Description", field.Description);
+                    Assert.AreEqual("EN Content Group", field.Group);
+
+                    Assert.AreEqual("EN Field Title", fieldRefetched.Title);
+                    Assert.AreEqual("EN Field Description", fieldRefetched.Description);
+                    Assert.AreEqual("EN Content Group", fieldRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
 
         #endregion
 

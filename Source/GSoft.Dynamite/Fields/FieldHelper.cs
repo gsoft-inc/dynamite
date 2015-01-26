@@ -412,8 +412,6 @@ namespace GSoft.Dynamite.Fields
                 field.DefaultFormula = fieldInfo.DefaultFormula;
                 field.Update();
             }
-
-            // TODO: support other field types (DateTimeFieldInfo, UrlFieldInfo, ImageFieldInfo, etc.)
         }
 
         private void ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)
