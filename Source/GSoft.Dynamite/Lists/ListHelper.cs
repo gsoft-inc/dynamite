@@ -177,10 +177,27 @@ namespace GSoft.Dynamite.Lists
             }
 
             // Attachements
-            if (!listInfo.EnableAttachements)
+            if (listInfo.EnableAttachements)
             {
                 list.EnableAttachments = listInfo.EnableAttachements;
             }
+            else if (list.ItemCount == 0)
+            {
+                // Want to disable attachments on an empty list.
+                list.EnableAttachments = listInfo.EnableAttachements;
+            }
+            else
+            {
+                // Case where you would like to disable attachments on a list with one or more items. It is not allowed
+                // because it could delete all attachments.
+                throw new ArgumentException(
+                    string.Format(
+                    CultureInfo.InvariantCulture, 
+                    "Not allowed to disable attachments on list '{0}' because it contains item(s). Attachments on it would be lost.", 
+                    list.TitleResource.Value));
+            }
+
+            list.Update();
 
             // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).
             list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
@@ -235,7 +252,15 @@ namespace GSoft.Dynamite.Lists
 
             if (ratingStatus && !string.IsNullOrEmpty(ratingType))
             {
-                enableMethod.Invoke(null, new object[] { list, ratingType, false });
+                try
+                {
+                    enableMethod.Invoke(null, new object[] { list, ratingType, false });
+                }
+                catch (TargetInvocationException targetInvocationException)
+                {
+                    throw new SPException(
+                        "Could not enable ratings on this list. Make sure the Ratings Feature is enabled on your site, by using a Publishing Site for example.", targetInvocationException);
+                }
             }
             else
             {
