@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+
 using Autofac;
+
+using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.JSGrid;
@@ -1178,6 +1183,253 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         #endregion
 
         #region Make sure fields and/or content types are correctly created and saved on a list when ensuring that list.
+
+        /// <summary>
+        /// Make sure that when Ensuring a new list with a field definitions specified, those fields are applied to the list
+        /// and persisted on the web.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenCreatingANewListWithSpecifiedFieldDefinitions_ItShouldAddAndPersistThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            const string Desc = "DescriptionFieldKey";
+            const string Name = "NameFieldKey";
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            listInfo.FieldDefinitions.Add(textFieldInfo);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.IsNotNull(list);
+                    list = rootWeb.GetList(Url);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.IsNotNull(list.Fields[Name]);
+                    Assert.AreEqual(list.Fields[Name].DescriptionResource.Value, Desc);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list, and you have a field definitions specified, 
+        /// those fields are applied to the list and persisted on the web.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenUpdatingAListWithSpecifiedFieldDefinitions_ItShouldAddAndPersistThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            const string Desc = "DescriptionFieldKey";
+            const string Name = "NameFieldKey";
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+                    var numberOfFieldsOnListBefore = list.Fields.Count;
+                    var numberOfSiteColumnsBefore = rootWeb.Fields.Count;
+
+                    // Act
+                    listInfo.FieldDefinitions.Add(textFieldInfo);
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    Assert.AreEqual(updatedList.Fields.Count, numberOfFieldsOnListBefore + 1);
+                    Assert.AreEqual(numberOfSiteColumnsBefore + 1, rootWeb.Fields.Count);
+                    Assert.IsNotNull(updatedList.Fields[Name]);
+                    Assert.AreEqual(updatedList.Fields[Name].DescriptionResource.Value, Desc);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring a new list with a field collection specified, the field(s) added to the Default View
+        /// property should correctly be added to the view.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListAndAddingAFieldAndWantItToBeInDefaultView_ShouldBeAddedToDefaultView()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            const string Desc = "DescriptionFieldKey";
+            const string Name = "NameFieldKey";
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            listInfo.FieldDefinitions.Add(textFieldInfo);
+            listInfo.DefaultViewFields.Add(textFieldInfo);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.IsNotNull(list);
+                    list = rootWeb.GetList(Url);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    Assert.IsNotNull(list.Fields[Name]);
+                    Assert.AreEqual(list.Fields[Name].DescriptionResource.Value, Desc);
+                    Assert.IsTrue(list.DefaultView.ViewFields.Exists("TestInternalName"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list with a field collection to be added to the Default View
+        /// specified, thoses fields should be correctly added to the view.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenUpdatingAListToAddFieldsToDefaultView_TheDefaultViewShouldBeModifiedAccordingly()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            const string Desc = "DescriptionFieldKey";
+            const string Name = "NameFieldKey";
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var numberFieldInfo = new NumberFieldInfo(
+                    "NumberInternalName",
+                    new Guid("{953D865E-7C19-4961-9643-1BFCE3AC3889}"),
+                    "NameKey2",
+                    "DescKey2",
+                    "GroupKey2");
+
+            listInfo.FieldDefinitions.Add(textFieldInfo);
+            listInfo.FieldDefinitions.Add(numberFieldInfo);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var numberOfListsBeforeUpdate = rootWeb.Lists.Count;
+
+                    // Act
+                    listInfo.DefaultViewFields.Add(numberFieldInfo);
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBeforeUpdate, rootWeb.Lists.Count);
+                    Assert.IsNotNull(updatedList);
+                    updatedList = rootWeb.GetList(Url);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, updatedList.TitleResource.Value);
+                    Assert.IsNotNull(updatedList.Fields[Name]);
+                    Assert.IsNotNull(updatedList.Fields["NameKey2"]);
+                    Assert.IsTrue(list.DefaultView.ViewFields.Exists("NumberInternalName"));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when you use List Info to ensure a list, and you specifiy a content type collection,
+        /// the list is created with those content types and of course they are enabled.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListWithSpecifiedContentTypes_ItShouldApplyThemToTheList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey");
+            
+            listInfo.ContentTypes.Add(contentTypeInfo);
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+                    var numberOfContentTypesBefore = rootWeb.ContentTypes.Count;
+                    
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.IsNotNull(list.ContentTypes["ContentTypeNameKey"]);
+
+                    // TODO:This assert fails... add ContentType to RootWeb ?
+                    Assert.AreEqual(numberOfContentTypesBefore + 1, rootWeb.ContentTypes.Count);
+                }
+            }
+        }
 
         #endregion
     }

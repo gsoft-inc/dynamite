@@ -202,11 +202,11 @@ namespace GSoft.Dynamite.Lists
             // Get the updated list object because we have to reference previous added fields that the old list object didn't have (cause NullReferenceException).
             list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
 
-            // Default View Fields
-            this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
-
             // Ensure the field definitions to make sure that all fields are present and to override/apply column default Values
             this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
+
+            // Default View Fields
+            this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
 
             // Save changes.
             list.Update();
