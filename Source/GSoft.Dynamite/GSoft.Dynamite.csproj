@@ -113,6 +113,7 @@
     <Compile Include="Fields\IFieldSchemaHelper.cs" />
     <Compile Include="Fields\Types\BooleanFieldInfo.cs" />
     <Compile Include="Fields\Types\CurrencyFieldInfo.cs" />
+    <Compile Include="Fields\Types\MediaFieldInfo.cs" />
     <Compile Include="Files\FileHelper.cs" />
     <Compile Include="Files\FileInfo.cs" />
     <Compile Include="Files\IFileHelper.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Fields\Types\TextFieldInfo.cs" />
     <Compile Include="Sites\WebInfo.cs" />
     <Compile Include="ValueTypes\TaxonomyFullValueCollection.cs" />
+    <Compile Include="ValueTypes\MediaValue.cs" />
     <Compile Include="WebParts\WebPartInfo.cs" />
     <Compile Include="Utils\CatchallExceptionHandler.cs" />
     <Compile Include="Utils\ICatchallExceptionHandler.cs" />

@@ -120,6 +120,15 @@
   <data name="SiteAction_OpenParentFolder" xml:space="preserve">
     <value>Ouvrir le dossier parent</value>
   </data>
+  <data name="Test_ContentGroup" xml:space="preserve">
+    <value>FR Groupe de contenu</value>
+  </data>
+  <data name="Test_FieldDescription" xml:space="preserve">
+    <value>FR Description de champ</value>
+  </data>
+  <data name="Test_FieldTitle" xml:space="preserve">
+    <value>FR Nom de champ</value>
+  </data>
   <data name="Test_ListDescription" xml:space="preserve">
     <value>FR Description de la liste</value>
   </data>

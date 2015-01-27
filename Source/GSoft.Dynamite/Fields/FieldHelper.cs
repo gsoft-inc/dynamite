@@ -367,6 +367,32 @@ namespace GSoft.Dynamite.Fields
 
                 field.Update();
             }
+            else if (fieldInfo is MediaFieldInfo)
+            {
+                FieldInfo<MediaValue> mediaBasedField = fieldInfo as FieldInfo<MediaValue>;
+
+                if (mediaBasedField.DefaultValue != null)
+                {
+                    var defaultVal = mediaBasedField.DefaultValue;
+
+                    var fieldValue = new MediaFieldValue()
+                    {
+                        Title = defaultVal.Title,
+                        MediaSource = defaultVal.Url,
+                        PreviewImageSource = defaultVal.PreviewImageUrl,
+                        DisplayMode = defaultVal.DisplayMode,
+                        TemplateSource = defaultVal.XamlTemplateUrl,
+                        InlineHeight = defaultVal.InlineHeight,
+                        InlineWidth = defaultVal.InlineWidth,
+                        AutoPlay = defaultVal.IsAutoPlay,
+                        Loop = defaultVal.IsLoop
+                    };
+
+                    field.DefaultValue = fieldValue.ToString();
+                }
+
+                field.Update();
+            }
             else
             {
                 // Some preceding changed be need to be persisted
@@ -386,8 +412,6 @@ namespace GSoft.Dynamite.Fields
                 field.DefaultFormula = fieldInfo.DefaultFormula;
                 field.Update();
             }
-
-            // TODO: support other field types (DateTimeFieldInfo, UrlFieldInfo, ImageFieldInfo, etc.)
         }
 
         private void ApplyTaxonomyFieldValues(SPFieldCollection fieldCollection, SPField field, TaxonomyFieldInfo taxonomyFieldInfo)
