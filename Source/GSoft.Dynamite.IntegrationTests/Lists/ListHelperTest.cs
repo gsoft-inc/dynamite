@@ -134,11 +134,13 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     // Assert
                     Assert.AreEqual(numberOfListsBefore + 1, testRootWeb.Lists.Count);
                     Assert.IsNotNull(newlyCreatedList);
+                    Assert.AreEqual(list.ID, expectingListCreatedAtStep1.ID);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, expectingListCreatedAtStep1.TitleResource.Value);
                     Assert.AreEqual(listInfo.DescriptionResourceKey, expectingListCreatedAtStep1.DescriptionResource.Value);
 
                     var listCreatedAtStep1 = testRootWeb.GetList("testUrl");
                     Assert.IsNotNull(listCreatedAtStep1);
+                    Assert.AreEqual(list.ID, listCreatedAtStep1.ID);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, listCreatedAtStep1.TitleResource.Value);
                 }
             }
@@ -456,6 +458,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 {
                     var listHelper = injectionScope.Resolve<IListHelper>();
                     var initialList = listHelper.EnsureList(rootWeb, listInfo);
+                    var initialListID = initialList.ID;
 
                     // Making sure the initial list got created
                     Assert.IsNotNull(initialList);
@@ -463,6 +466,9 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     initialList = rootWeb.GetList(Url);
                     Assert.IsNotNull(initialList);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, initialList.TitleResource.Value);
+
+                    var oneEmptyItem = initialList.Items.Add();
+                    oneEmptyItem.Update();
 
                     // Setting up the second list info
                     var listInfoForOverwrite = new ListInfo(Url, "SecondList", "DescSecondList");
@@ -478,6 +484,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.IsNotNull(secondList);
                     Assert.AreEqual(listInfoForOverwrite.DisplayNameResourceKey, secondList.TitleResource.Value);
                     Assert.AreEqual(listInfoForOverwrite.DescriptionResourceKey, secondList.DescriptionResource.Value);
+
+                    Assert.AreNotEqual(initialListID, secondList.ID);
                 }
             }
         }
@@ -530,6 +538,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
                     Assert.AreEqual(listWithItem.ItemCount, 1);
                     Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
+
+                    Assert.AreEqual(initialList.ID, updatedList.ID);
                 }
             }
         }
@@ -582,6 +592,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
                     Assert.AreEqual(listWithItem.ItemCount, 1);
                     Assert.AreEqual(updatedList.Items[0]["Title"], "Item Title");
+
+                    Assert.AreEqual(initialList.ID, updatedList.ID);
                 }
             }
         }
@@ -1182,7 +1194,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion
 
-        #region Make sure fields and/or content types are correctly created and saved on a list when ensuring that list.
+        #region Make sure fields definitions defined on ListInfo are correctly created and saved on a list when ensuring that list.
 
         /// <summary>
         /// Make sure that when Ensuring a new list with a field definitions specified, those fields are applied to the list
@@ -1279,6 +1291,10 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 }
             }
         }
+
+        #endregion
+
+        #region Default view fields should be updated during ensure
 
         /// <summary>
         /// Make sure that when Ensuring a new list with a field collection specified, the field(s) added to the Default View
@@ -1385,25 +1401,37 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             }
         }
 
+        #endregion 
+
+        #region Ensuring content types on a list should provision the content types properly
+
         /// <summary>
         /// Make sure that when you use List Info to ensure a list, and you specifiy a content type collection,
         /// the list is created with those content types and of course they are enabled.
+        /// In this case, if the content types didn't already exist on the root web, it should be ensured there
+        /// beforehand, as a convenience/bit of magic. We want to enforce the convention of "don't define CTs
+        /// directly on list, re-use site collection CTs instead".
         /// </summary>
         [TestMethod]
-        public void EnsureList_WhenEnsuringANewListWithSpecifiedContentTypes_ItShouldApplyThemToTheList()
+        public void EnsureList_WhenEnsuringANewListInRootWebWithSpecifiedContentTypes_AndContentTypeDoesntExistOnRootWebYet_ItShouldAddThemToBothRootWebAndList()
         {
             // Arrange
             const string Url = "testUrl";
-            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
-
+            
             var contentTypeId = string.Format(
                     CultureInfo.InvariantCulture,
                     "0x0100{0:N}",
                     new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
 
             var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey");
-            
-            listInfo.ContentTypes.Add(contentTypeInfo);
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+                {
+                    ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo
+                    }
+                };
 
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1423,13 +1451,220 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
                     list = rootWeb.GetList(Url);
                     Assert.IsNotNull(list);
-                    Assert.IsNotNull(list.ContentTypes["ContentTypeNameKey"]);
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+                    Assert.IsTrue(list.ContentTypesEnabled);
 
-                    // TODO:This assert fails... add ContentType to RootWeb ?
+                    // Make sure CT was provisionned on root web and that list CT is child of root web CT
                     Assert.AreEqual(numberOfContentTypesBefore + 1, rootWeb.ContentTypes.Count);
+                    var rootWebContentType = rootWeb.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(rootWebContentType);
+                    Assert.AreEqual(contentTypeInfo.DisplayNameResourceKey, rootWebContentType.NameResource.Value);
+
+                    Assert.IsTrue(listContentType.Id.IsChildOf(rootWebContentType.Id));
                 }
             }
         }
+
+        /// <summary>
+        /// Make sure that when you use List Info to ensure a list, and you specifiy a content type collection,
+        /// the list is created with those content types and of course they are enabled.
+        /// In this case, if the content types already existed on the root web, the list content types should
+        /// be created as children on the root web content type.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListInRootWebWithSpecifiedContentTypes_AndContentTypeAlreadyExistsOnRootWeb_ItShouldAddChildOfRootWebContentTypeToList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Add the content type to the root web beforehand
+                    contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+                    var numberOfContentTypesBefore = rootWeb.ContentTypes.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+
+                    // Make sure CT was not re-provisionned on root web and that list CT is child of root web CT
+                    Assert.AreEqual(numberOfContentTypesBefore, rootWeb.ContentTypes.Count);    // same number before/after because initial count was take after CT was ensured on root web
+                    var rootWebContentType = rootWeb.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(rootWebContentType);
+
+                    Assert.IsTrue(listContentType.Id.IsChildOf(rootWebContentType.Id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when you use List Info to ensure a list on a sub-web, and you specifiy a content type collection,
+        /// the list is created with those content types and of course they are enabled.
+        /// In this case, if the content types already existed on the root web, the list content types should
+        /// be created as children on the root web content type.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListInSubWeWithSpecifiedContentTypes_AndContentTypeDoesntExistOnRootWebYet_ItShouldAddThemToBothRootWebAndList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = subWeb.Lists.Count;
+                    var numberOfContentTypesBefore = rootWeb.ContentTypes.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(subWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, subWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = subWeb.GetList("subweb/" + Url);
+                    Assert.IsNotNull(list);
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+                    Assert.IsTrue(list.ContentTypesEnabled);
+
+                    // Make sure CT was provisionned on root web and that list CT is child of root web CT
+                    Assert.AreEqual(numberOfContentTypesBefore + 1, rootWeb.ContentTypes.Count);
+                    var rootWebContentType = rootWeb.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(rootWebContentType);
+                    Assert.AreEqual(contentTypeInfo.DisplayNameResourceKey, rootWebContentType.NameResource.Value);
+
+                    Assert.IsTrue(listContentType.Id.IsChildOf(rootWebContentType.Id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when you use List Info to ensure a list on a sub-web, and you specifiy a content type collection,
+        /// the list is created with those content types and of course they are enabled.
+        /// In this case, if the content types already existed on the root web, the list content types should
+        /// be created as children on the root web content type.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANewListInSubWebWithSpecifiedContentTypes_AndContentTypeAlreadyExistsOnRootWeb_ItShouldAddChildOfRootWebContentTypeToList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                var subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Add the content type to the root web beforehand
+                    contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    var numberOfListsBefore = subWeb.Lists.Count;
+                    var numberOfContentTypesBefore = rootWeb.ContentTypes.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(subWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(numberOfListsBefore + 1, subWeb.Lists.Count);
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = subWeb.GetList("subweb/" + Url);
+                    Assert.IsNotNull(list);
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+
+                    // Make sure CT was not re-provisionned on root web and that list CT is child of root web CT
+                    Assert.AreEqual(numberOfContentTypesBefore, rootWeb.ContentTypes.Count);    // same number before/after because initial count was take after CT was ensured on root web
+                    var rootWebContentType = rootWeb.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(rootWebContentType);
+
+                    Assert.IsTrue(listContentType.Id.IsChildOf(rootWebContentType.Id));
+                }
+            }
+        }
+
+        #endregion
+
+        #region When both Content Types and Field Definitions are specified on list info, field definitions should be used to update the list fields
+
+        //// TODO: add field definition override tests here
+        
+        #endregion
+
+        #region The UniqueContentTypeOrder should be respected during initial provisionning and updates
+        
+        //// TODO: add UniqueContentTypeOrder tests here
 
         #endregion
     }

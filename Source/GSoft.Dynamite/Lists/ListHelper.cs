@@ -108,13 +108,19 @@ namespace GSoft.Dynamite.Lists
                 {
                     this.logger.Info("List " + listInfo.WebRelativeUrl.ToString() + " already exists");
 
-                    // If the Overwrite parameter is set to true, celete and recreate the catalog
+                    // If the Overwrite parameter is set to true, delete and recreate the catalog
                     if (listInfo.Overwrite)
                     {
                         this.logger.Info("Overwrite is set to true, recreating the list " + listInfo.WebRelativeUrl.ToString());
 
-                        list.Delete();
-                        list = this.CreateList(web, listInfo);
+                        web.Lists.Delete(list.ID);
+                        
+                        // gotta force a re-fetch on the parent SPWeb, otherwise the 
+                        // the new list will be create with the same ID as the old one (don't ask, weird SP API behavior).
+                        using (var freshWebToMakeSureNewListGuidIsGiven = web.Site.OpenWeb(web.ID))
+                        {
+                            list = this.CreateList(freshWebToMakeSureNewListGuidIsGiven, listInfo);
+                        }
                     }
                 }                
             }
@@ -517,9 +523,7 @@ namespace GSoft.Dynamite.Lists
             }
 
             var list = web.Lists[id];
-
             this.SetTitleAndDescriptionValues(web, listInfo, list);
-
             list.Update();
 
             return web.Lists[id];

@@ -9,6 +9,7 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
+using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
@@ -21,16 +22,19 @@ namespace GSoft.Dynamite.ContentTypes
     {
         private readonly IVariationHelper variationHelper;
         private readonly IResourceLocator resourceLocator;
+        private readonly ILogger log;
 
         /// <summary>
         /// Initializes a new <see cref="ContentTypeHelper"/> instance
         /// </summary>
         /// <param name="variationHelper">Variations helper</param>
         /// <param name="resourceLocator">The resource locator</param>
-        public ContentTypeHelper(IVariationHelper variationHelper, IResourceLocator resourceLocator)
+        /// <param name="log">Logging utility</param>
+        public ContentTypeHelper(IVariationHelper variationHelper, IResourceLocator resourceLocator, ILogger log)
         {
             this.variationHelper = variationHelper;
             this.resourceLocator = resourceLocator;
+            this.log = log;
         }
 
         /// <summary>
@@ -176,20 +180,26 @@ namespace GSoft.Dynamite.ContentTypes
                         }
 
                         // Try to use the list's web's content type if it already exists
-                        var contentTypeInWeb = list.ParentWeb.AvailableContentTypes[contentTypeId];
+                        var contentTypeInWeb = list.ParentWeb.Site.RootWeb.AvailableContentTypes[contentTypeId];
 
-                        if (contentTypeInWeb != null)
+                        if (contentTypeInWeb == null)
                         {
-                            // Add the web content type to the collection.
-                            return list.ContentTypes.Add(contentTypeInWeb);
+                            // By convention, content types should always exist on root web as site-collection-wide
+                            // content types before they get linked on a specific list.
+                            var rootWebContentTypeCollection = list.ParentWeb.Site.RootWeb.ContentTypes;
+                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResouceTitle);
+                            contentTypeInWeb = rootWebContentTypeCollection.Add(newWebContentType);
+
+                            this.log.Warn(
+                                "EnsureContentType - Forced the creation of Content Type (name={0} ctid={1}) on the root web (url=) instead of adding the CT directly on the list (id={2} title={3}). By convention, all CTs should be provisonned on RootWeb before being re-used in lists.",
+                                contentTypeInWeb.Name,
+                                contentTypeInWeb.Id.ToString(),
+                                list.ID,
+                                list.Title);
                         }
-                        else
-                        {
-                            // Create the content type directly on the list
-                            var newListContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
-                            var returnedListContentType = list.ContentTypes.Add(newListContentType);
-                            return returnedListContentType;
-                        }
+                            
+                        // Add the web content type to the collection.
+                        return list.ContentTypes.Add(contentTypeInWeb);
                     }
                 }
                 else
