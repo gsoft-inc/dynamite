@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-
 using Autofac;
-
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
 using Microsoft.SharePoint;
@@ -1656,15 +1656,202 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion
 
-        #region When both Content Types and Field Definitions are specified on list info, field definitions should be used to update the list fields
+        #region When both Content Types and Field Definitions are specified, field definitions should be used to update the list fields (and site columns and content types should get ensured, if needed)
 
-        //// TODO: add field definition override tests here
-        
+        /// <summary>
+        /// Validates that field definitions can override the CT's original field definitions.
+        /// This is the case where the site column and site content type hadn't been deployed yet (the ListHelper should auto-magically
+        /// provision those for you)
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenSpecifyingBothContentTypesAndFieldDefinitions_AndNoneOfThemAreProvisionnedYet_ShouldProvisionSiteColumnAndContentType_ThenOverrideFieldDefinitionOnTheList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            
+            var testFieldInfoRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Required = RequiredType.Required
+                };
+
+            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Required = RequiredType.NotRequired
+                };
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfoRequired
+                    }
+                };
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo     // this includes testFieldInfoRequired 
+                    },
+                FieldDefinitions = new List<IFieldInfo>()
+                    {
+                        sameTestFieldInfoButNotRequired     // this is the list-specific field definition override
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                                        
+                    // Act: Provision the list with an alternate field definition (NotRequired)
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var listRefetched = rootWeb.Lists[list.ID];
+
+                    // Assert
+
+                    // Site column should've been added to root web
+                    var siteColumn = rootWeb.Fields[testFieldInfoRequired.Id];
+                    Assert.IsNotNull(siteColumn);
+                    Assert.IsTrue(siteColumn.Required);
+
+                    // Content type should've been added to root web
+                    var siteContentType = rootWeb.ContentTypes[new SPContentTypeId(contentTypeId)];
+                    Assert.IsNotNull(siteContentType);
+                    Assert.IsNotNull(siteContentType.Fields[testFieldInfoRequired.Id]);
+
+                    // Content type should've been added to new list
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+                    Assert.IsNotNull(listContentType.Fields[testFieldInfoRequired.Id]);
+
+                    var listContentTypeRefetched = rootWeb.Lists[list.ID].ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentTypeRefetched);
+                    Assert.IsNotNull(listContentTypeRefetched.Fields[testFieldInfoRequired.Id]);
+
+                    // New list should hold a NotRequired variant of the site column
+                    var listColumn = list.Fields[sameTestFieldInfoButNotRequired.Id];
+                    Assert.IsFalse(listColumn.Required);
+
+                    var listColumnRefetched = rootWeb.Lists[list.ID].Fields[sameTestFieldInfoButNotRequired.Id];
+                    Assert.IsFalse(listColumnRefetched.Required);    // definition should've been overriden for the list only
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that field definitions can override the CT's original field definitions.
+        /// This is the case where the site column and site content type had already been deployed.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenSpecifyingBothContentTypesAndFieldDefinitions_AndSiteColumnAndContenTypeAlreadyThere_ShouldProvisionListContentType_ThenOverrideFieldDefinitionOnTheList()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var testFieldInfoRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Required = RequiredType.Required
+            };
+
+            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Required = RequiredType.NotRequired
+            };
+
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey")
+            {
+                Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfoRequired
+                    }
+            };
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo     // this includes testFieldInfoRequired 
+                    },
+                FieldDefinitions = new List<IFieldInfo>()
+                    {
+                        sameTestFieldInfoButNotRequired     // this is the list-specific field definition override
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Provision the site column and site content type first
+                    var siteColumn = fieldHelper.EnsureField(rootWeb.Fields, testFieldInfoRequired);
+                    var siteContentType = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    // Act: Provision the list with an alternate field definition (NotRequired)
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var listRefetched = rootWeb.Lists[list.ID];
+
+                    // Assert
+
+                    // Site column should've been added to root web
+                    var siteColumnRefetched = rootWeb.Fields[testFieldInfoRequired.Id];
+                    Assert.IsNotNull(siteColumnRefetched);
+                    Assert.IsTrue(siteColumnRefetched.Required);
+
+                    // Content type should've been added to root web
+                    var siteContentTypeRefetched = rootWeb.ContentTypes[new SPContentTypeId(contentTypeId)];
+                    Assert.IsNotNull(siteContentTypeRefetched);
+                    Assert.IsNotNull(siteContentTypeRefetched.Fields[testFieldInfoRequired.Id]);
+
+                    // Content type should've been added to new list
+                    var listContentType = list.ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentType);
+                    Assert.IsNotNull(listContentType.Fields[testFieldInfoRequired.Id]);
+
+                    var listContentTypeRefetched = rootWeb.Lists[list.ID].ContentTypes["ContentTypeNameKey"];
+                    Assert.IsNotNull(listContentTypeRefetched);
+                    Assert.IsNotNull(listContentTypeRefetched.Fields[testFieldInfoRequired.Id]);
+
+                    // New list should hold a NotRequired variant of the site column
+                    var listColumn = list.Fields[sameTestFieldInfoButNotRequired.Id];
+                    Assert.IsFalse(listColumn.Required);
+
+                    var listColumnRefetched = rootWeb.Lists[list.ID].Fields[sameTestFieldInfoButNotRequired.Id];
+                    Assert.IsFalse(listColumnRefetched.Required);    // definition should've been overriden for the list only
+                }
+            }
+        }
+
         #endregion
 
         #region The UniqueContentTypeOrder should be respected during initial provisionning and updates
         
         //// TODO: add UniqueContentTypeOrder tests here
+
+        #endregion
+
+        #region Content Type title, description and content group should be localizable
+
+        //// TODO: add en/fr Resource tests here
 
         #endregion
     }
