@@ -3632,7 +3632,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that French field name is initialized on French-language web
         /// </summary>
         [TestMethod]
-        public void EnsureField_WhenFrenchOnlySiteCollection_ShouldCreateFieldWithEnglishDisplayName()
+        public void EnsureField_WhenFrenchOnlySiteCollection_ShouldCreateFieldWithFrenchDisplayName()
         {
             using (var testScope = SiteTestScope.BlankSite(Language.French.Culture.LCID))
             {

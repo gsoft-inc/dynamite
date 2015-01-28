@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
@@ -1674,7 +1675,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Required = RequiredType.Required
                 };
 
-            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKeyAlt", "GroupKey")
                 {
                     Required = RequiredType.NotRequired
                 };
@@ -1722,6 +1723,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     var siteColumn = rootWeb.Fields[testFieldInfoRequired.Id];
                     Assert.IsNotNull(siteColumn);
                     Assert.IsTrue(siteColumn.Required);
+                    Assert.AreEqual("DescriptionKey", siteColumn.Description);
 
                     // Content type should've been added to root web
                     var siteContentType = rootWeb.ContentTypes[new SPContentTypeId(contentTypeId)];
@@ -1740,9 +1742,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     // New list should hold a NotRequired variant of the site column
                     var listColumn = list.Fields[sameTestFieldInfoButNotRequired.Id];
                     Assert.IsFalse(listColumn.Required);
+                    Assert.AreEqual("DescriptionKeyAlt", listColumn.Description);
 
                     var listColumnRefetched = rootWeb.Lists[list.ID].Fields[sameTestFieldInfoButNotRequired.Id];
                     Assert.IsFalse(listColumnRefetched.Required);    // definition should've been overriden for the list only
+                    Assert.AreEqual("DescriptionKeyAlt", listColumnRefetched.Description);
                 }
             }
         }
@@ -1762,7 +1766,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 Required = RequiredType.Required
             };
 
-            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            var sameTestFieldInfoButNotRequired = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKeyAlt", "DescriptionKey", "GroupKey")
             {
                 Required = RequiredType.NotRequired
             };
@@ -1816,6 +1820,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     var siteColumnRefetched = rootWeb.Fields[testFieldInfoRequired.Id];
                     Assert.IsNotNull(siteColumnRefetched);
                     Assert.IsTrue(siteColumnRefetched.Required);
+                    Assert.AreEqual("NameKey", siteColumnRefetched.Title);
 
                     // Content type should've been added to root web
                     var siteContentTypeRefetched = rootWeb.ContentTypes[new SPContentTypeId(contentTypeId)];
@@ -1834,9 +1839,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     // New list should hold a NotRequired variant of the site column
                     var listColumn = list.Fields[sameTestFieldInfoButNotRequired.Id];
                     Assert.IsFalse(listColumn.Required);
+                    Assert.AreEqual("NameKeyAlt", listColumn.Title);
 
                     var listColumnRefetched = rootWeb.Lists[list.ID].Fields[sameTestFieldInfoButNotRequired.Id];
                     Assert.IsFalse(listColumnRefetched.Required);    // definition should've been overriden for the list only
+                    Assert.AreEqual("NameKeyAlt", listColumnRefetched.Title);
                 }
             }
         }
@@ -2003,9 +2010,118 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion
 
-        #region Content Type title, description and content group should be localizable
+        #region List Title, Description should be localized (if you configure ResourceLocator to access your RESX file)
 
-        //// TODO: add en/fr Resource tests here
+        /// <summary>
+        /// Validates that English list name is initialized on English-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnglishOnlySiteCollection_ShouldCreateListWithEnglishDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                ListInfo listInfo = new ListInfo(
+                    "testUrlPath",
+                    "Test_ListDisplayName",
+                    "Test_ListDescription");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    Assert.AreEqual("EN List Name", list.Title);
+                    Assert.AreEqual("EN List Description", list.Description);
+
+                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
+
+                    Assert.AreEqual("EN List Name", listRefetched.Title);
+                    Assert.AreEqual("EN List Description", listRefetched.Description);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that French list name is initialized on French-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenFrenchOnlySiteCollection_ShouldCreateListWithFrenchDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.French.Culture.LCID))
+            {
+                ListInfo listInfo = new ListInfo(
+                    "testUrlPath",
+                    "Test_ListDisplayName",
+                    "Test_ListDescription");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    Assert.AreEqual("FR Nom de la liste", list.Title);
+                    Assert.AreEqual("FR Description de la liste", list.Description);
+
+                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
+
+                    Assert.AreEqual("FR Nom de la liste", listRefetched.Title);
+                    Assert.AreEqual("FR Description de la liste", listRefetched.Description);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that list title in both language are initialized on English-and-French site
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnlishgAndFrenchSiteCollection_ShouldCreateListWithBothDisplayNames()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                // Add French so that both languages are supported
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                rootWeb.AddSupportedUICulture(Language.French.Culture);
+                rootWeb.Update();
+
+                ListInfo listInfo = new ListInfo(
+                    "testUrlPath",
+                    "Test_ListDisplayName",
+                    "Test_ListDescription");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Set MUI to english
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.English.Culture;
+
+                    Assert.AreEqual("EN List Name", list.Title);
+                    Assert.AreEqual("EN List Description", list.Description);
+
+                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
+
+                    Assert.AreEqual("EN List Name", listRefetched.Title);
+                    Assert.AreEqual("EN List Description", listRefetched.Description);
+
+                    // Set MUI to french
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de la liste", list.Title);
+                    Assert.AreEqual("FR Description de la liste", list.Description);
+
+                    Assert.AreEqual("FR Nom de la liste", listRefetched.Title);
+                    Assert.AreEqual("FR Description de la liste", listRefetched.Description);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
 
         #endregion
     }
