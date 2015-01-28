@@ -1844,8 +1844,162 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         #endregion
 
         #region The UniqueContentTypeOrder should be respected during initial provisionning and updates
-        
-        //// TODO: add UniqueContentTypeOrder tests here
+
+        /// <summary>
+        /// Validates that the ordering of content types on ListInfo determines the UniqueContentTypeOrder on the list's root folder.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenAddingContentTypesToList_ShouldInitializeUniqueContentTypeOrderToFollowInputOrder()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var testFieldInfo = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Required = RequiredType.Required
+            };
+
+            var contentTypeId1 = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeId2 = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+
+            var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
+            {
+                Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfo
+                    }
+            };
+
+            var contentTypeInfo2 = new ContentTypeInfo(contentTypeId2, "ContentTypeNameKey2", "ContentTypeDescKey2", "GroupKey")
+            {
+                Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfo
+                    }
+            };
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo1,
+                        contentTypeInfo2
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Act: Provision the list with 2 CTs
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var listRefetched = rootWeb.Lists[list.ID];
+
+                    // Assert
+                    var listUniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
+                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+
+                    var listUniqueContentTypeOrderRefetched = listRefetched.RootFolder.UniqueContentTypeOrder;
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that the ordering of content types on ListInfo determines the UniqueContentTypeOrder on the list's root folder.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenUpdateingContentTypesOnList_ShouldUpdateUniqueContentTypeOrderToFollowInputOrder()
+        {
+            // Arrange
+            const string Url = "testUrl";
+
+            var testFieldInfo = new TextFieldInfo("TestFieldInfoText", new Guid("{3AB6C2FB-DA24-4C67-A4CC-7FA4CE07A03F}"), "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Required = RequiredType.Required
+            };
+
+            var contentTypeId1 = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeId2 = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+
+            var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
+            {
+                Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfo
+                    }
+            };
+
+            var contentTypeInfo2 = new ContentTypeInfo(contentTypeId2, "ContentTypeNameKey2", "ContentTypeDescKey2", "GroupKey")
+            {
+                Fields = new List<IFieldInfo>()
+                    {
+                        testFieldInfo
+                    }
+            };
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                    {
+                        contentTypeInfo1,
+                        contentTypeInfo2
+                    }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    
+                    // Ensure a first time with ordering #1 > #2
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Change the ordering
+                    listInfo.ContentTypes = new List<ContentTypeInfo>()
+                        {
+                            contentTypeInfo2,
+                            contentTypeInfo1
+                        };
+
+                    // Act: Re-provision to update the ordering
+                    list = listHelper.EnsureList(rootWeb, listInfo);
+                    var listRefetched = rootWeb.Lists[list.ID];
+
+                    // Assert
+                    var listUniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
+                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+
+                    var listUniqueContentTypeOrderRefetched = listRefetched.RootFolder.UniqueContentTypeOrder;
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+                }
+            }
+        }
 
         #endregion
 

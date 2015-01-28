@@ -138,15 +138,17 @@ namespace GSoft.Dynamite.Lists
             }
 
             // Add All Content Types
-            this.contentTypeBuilder.EnsureContentType(list.ContentTypes, listInfo.ContentTypes);
-
-            // Set the unique content type order on the root folder.
-            if (listInfo.UniqueContentTypeOrder != null && listInfo.UniqueContentTypeOrder.Count >= 1)
+            if (listInfo.ContentTypes != null && listInfo.ContentTypes.Count >= 1)
             {
-                // Prepare the new collection
+                this.contentTypeBuilder.EnsureContentType(list.ContentTypes, listInfo.ContentTypes);
+
+                // Re-fetch, list was updated through another object instance, so we gotta refresh our object instance
+                list = web.Lists[list.ID];
+
+                // Set the unique content type order on the root folder.
                 IList<SPContentType> contentTypeOrder = new List<SPContentType>();
 
-                foreach (var contentTypeInfo in listInfo.UniqueContentTypeOrder)
+                foreach (var contentTypeInfo in listInfo.ContentTypes)
                 {
                     var listContentType = GetListContentType(list, contentTypeInfo);
                     if (listContentType != null)
@@ -160,8 +162,13 @@ namespace GSoft.Dynamite.Lists
                 {
                     // If we have content types in our new list, we set the new list.
                     list.RootFolder.UniqueContentTypeOrder = contentTypeOrder;
+                    list.RootFolder.Update();
                 }
+
+                list.Update();
             }
+
+            list = web.Lists[list.ID];
 
             // Draft VisibilityType
             if (listInfo.HasDraftVisibilityType)
