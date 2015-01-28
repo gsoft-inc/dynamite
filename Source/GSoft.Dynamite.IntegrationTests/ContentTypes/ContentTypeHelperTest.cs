@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Autofac;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.Lists;
 using Microsoft.SharePoint;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -53,6 +58,13 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                     Assert.AreEqual(expectedDisplayName, actualContentType.NameResource.Value);
                     Assert.AreEqual(expectedDescription, actualContentType.DescriptionResource.Value);
                     Assert.AreEqual(expectedGroup, actualContentType.Group);
+
+                    var contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+                    Assert.IsNotNull(contentTypeRefetched);
+                    Assert.AreEqual(expectedContentTypeId, contentTypeRefetched.Id);
+                    Assert.AreEqual(expectedDisplayName, contentTypeRefetched.NameResource.Value);
+                    Assert.AreEqual(expectedDescription, contentTypeRefetched.DescriptionResource.Value);
+                    Assert.AreEqual(expectedGroup, contentTypeRefetched.Group);
                 }
             }
         }
@@ -167,6 +179,13 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                     Assert.AreEqual(expectedDisplayName, actualContentType.NameResource.Value);
                     Assert.AreEqual(expectedDescription, actualContentType.DescriptionResource.Value);
                     Assert.AreEqual(expectedGroup, actualContentType.Group);
+
+                    var contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+                    Assert.IsNotNull(contentTypeRefetched);
+                    Assert.AreEqual(expectedContentTypeId, contentTypeRefetched.Id);
+                    Assert.AreEqual(expectedDisplayName, contentTypeRefetched.NameResource.Value);
+                    Assert.AreEqual(expectedDescription, contentTypeRefetched.DescriptionResource.Value);
+                    Assert.AreEqual(expectedGroup, contentTypeRefetched.Group);
                 }
             }
         }
@@ -253,7 +272,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
         #endregion
 
-        #region Update existing content type(s)
+        #region "Ensure" should also mean "Update existing content type(s) if definition in ContentTypeInfo changed since first provisioning"
 
         /// <summary>
         /// Validates that EnsureContentType returns the existing content type to the site collection with updated resources, if a content type with the same ID previously existed
@@ -379,6 +398,505 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                 }
             }
         }
+        #endregion
+
+        #region CT's fields should be provisioned as site columns before being associated to content type
+
+        /// <summary>
+        /// Validates that EnsureContentType provisions the missing fields as site column (root web CT creation scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenCreatingRootWebCT_AndFieldsNotAlreadyExists_ShouldProvisionFieldsAsSiteColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    var contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+
+                    // Field should be on ensured CT
+                    Assert.IsNotNull(actualContentType.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeRefetched.Fields[fieldId]);
+
+                    // Field should be a site column now also
+                    Assert.IsNotNull(testScope.SiteCollection.RootWeb.Fields[fieldId]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType provisions the missing fields as site column (root web CT update scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenUpdatingRootWebCT_AndFieldsNotAlreadyExists_ShouldProvisionFieldsAsSiteColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Provision the CT a first time, without the field
+                    var actualContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
+
+                    // Change the CTInfo to add field
+                    contentTypeInfo.Fields = new List<IFieldInfo>() { textFieldInfo };
+
+                    // Act
+                    var ensuredContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    var contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+
+                    // Field should be on ensured CT
+                    Assert.IsNotNull(ensuredContentType.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeRefetched.Fields[fieldId]);
+
+                    // Field should be a site column now also
+                    Assert.IsNotNull(testScope.SiteCollection.RootWeb.Fields[fieldId]);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Attaching a CT directly on a list should provision CT on RootWeb beforehand, by convention
+
+        /// <summary>
+        /// Validates that EnsureContentType provisions the missing CT on root web and fields as site column (root web list CT creation scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenCreatingRootWebListCT_ShouldProvisionContentTypeOnRootWebAndFieldsAsSiteColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var rootWeb = testScope.SiteCollection.RootWeb;
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Start by provisioning a list without CT
+                    var ensuredList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Act
+                    var ensuredListContentType = contentTypeHelper.EnsureContentType(ensuredList.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    var contentTypeWebRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+                    var contentTypeListRefetched = testScope.SiteCollection.RootWeb.Lists[ensuredList.ID].ContentTypes["NameKey"];
+
+                    // CT should be on RootWeb
+                    Assert.IsNotNull(contentTypeWebRefetched);
+
+                    // CT should be on List
+                    Assert.IsNotNull(ensuredList.ContentTypes["NameKey"]);
+                    Assert.IsNotNull(contentTypeWebRefetched);
+
+                    // Field should be on ensured CTs (web + list)
+                    Assert.IsNotNull(ensuredListContentType.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeListRefetched.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeWebRefetched.Fields[fieldId]);
+
+                    // Field should be a site column now also
+                    Assert.IsNotNull(testScope.SiteCollection.RootWeb.Fields[fieldId]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType provisions the missing CT on root web and fields as site column (sub-web list CT creation scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenCreatingSubWebListCT_ShouldProvisionContentTypeOnRootWebAndFieldsAsSiteColumn()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var subWeb = testScope.SiteCollection.RootWeb.Webs.Add("subweb");
+
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Start by provisioning a list without CT
+                    var ensuredList = listHelper.EnsureList(subWeb, listInfo);
+
+                    // Act
+                    var ensuredListContentType = contentTypeHelper.EnsureContentType(ensuredList.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    var contentTypeWebRefetched = testScope.SiteCollection.RootWeb.ContentTypes["NameKey"];
+                    var contentTypeListRefetched = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[ensuredList.ID].ContentTypes["NameKey"];
+
+                    // CT should be on RootWeb
+                    Assert.IsNotNull(contentTypeWebRefetched);
+
+                    // CT should be on List
+                    Assert.IsNotNull(ensuredList.ContentTypes["NameKey"]);
+                    Assert.IsNotNull(contentTypeWebRefetched);
+
+                    // Field should be on ensured CTs (web + list)
+                    Assert.IsNotNull(ensuredListContentType.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeListRefetched.Fields[fieldId]);
+                    Assert.IsNotNull(contentTypeWebRefetched.Fields[fieldId]);
+
+                    // Field should be a site column now also
+                    Assert.IsNotNull(testScope.SiteCollection.RootWeb.Fields[fieldId]);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Attaching a CT on a list when that CT already exists on RootWeb means a child CT should be attached to list
+
+        /// <summary>
+        /// Validates that EnsureContentType re-uses the root web CT (root web list CT attach scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenOnRootWebList_AndRootWebCTAlreadyExists_ShouldProvisionChildContentTypeOnList()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var rootWeb = testScope.SiteCollection.RootWeb;
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Start by provisioning a list without CT
+                    var ensuredList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Also provision the existing CT on the root web
+                    var ensuredRootWebCT = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    // Act
+                    var ensuredListContentType = contentTypeHelper.EnsureContentType(ensuredList.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    Assert.IsTrue(ensuredListContentType.Id.IsChildOf(ensuredRootWebCT.Id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType re-uses the root web CT (sub-web list CT attach scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenOnSubWebList_AndRootWebCTAlreadyExists_ShouldProvisionChildContentTypeOnList()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var rootWeb = testScope.SiteCollection.RootWeb;
+                    var subWeb = rootWeb.Webs.Add("subweb");
+
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Start by provisioning a list without CT
+                    var ensuredSubWebList = listHelper.EnsureList(subWeb, listInfo);
+
+                    // Also provision the existing CT on the root web
+                    var ensuredRootWebCT = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    // Act
+                    var ensuredListContentType = contentTypeHelper.EnsureContentType(ensuredSubWebList.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    Assert.IsTrue(ensuredListContentType.Id.IsChildOf(ensuredRootWebCT.Id));
+                }
+            }
+        }
+
+        #endregion
+
+        #region Attempting to ensure a CT on a sub-web's CT collection should simply ensure that CT on the root web
+
+        /// <summary>
+        /// Validates that EnsureContentType re-uses (and updates) the root web CT (sub-web CT attach scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenOnSubWeb_AndRootWebCTAlreadyExists_ShouldUpdateAndReturnExistingRootWebCT()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var rootWeb = testScope.SiteCollection.RootWeb;
+                    var subWeb = rootWeb.Webs.Add("subweb");
+
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Also provision the existing CT on the root web
+                    var ensuredRootWebCT = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                    // Change CT definition a little bit
+                    contentTypeInfo.DescriptionResourceKey = "DescriptionKeyAlt";
+                    contentTypeInfo.Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    };
+
+                    // Act
+                    var ensuredSubWebContentType = contentTypeHelper.EnsureContentType(subWeb.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    Assert.AreEqual(ensuredRootWebCT.Id, ensuredSubWebContentType.Id);
+
+                    var refetchedRootWebCT = rootWeb.ContentTypes["NameKey"];
+                    Assert.IsNotNull(refetchedRootWebCT.Fields[textFieldInfo.Id]);
+                    Assert.AreEqual("DescriptionKeyAlt", refetchedRootWebCT.Description);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType on a sub-web ensures the the root web CT instead (sub-web CT creation scenario)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenOnSubWeb_AndRootWebCTDoesntAlreadyExists_ShouldProvisionRootWebCT()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldId = new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}");
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    fieldId,
+                    "Test_FieldTitle",
+                    "Test_FieldDescription",
+                    "Test_ContentGroup")
+                {
+                    MaxLength = 50,
+                    Required = RequiredType.Required
+                };
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                    {
+                        textFieldInfo
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var rootWeb = testScope.SiteCollection.RootWeb;
+                    var subWeb = rootWeb.Webs.Add("subweb");
+
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Act
+                    var ensuredSubWebContentType = contentTypeHelper.EnsureContentType(subWeb.ContentTypes, contentTypeInfo);
+
+                    // Assert
+                    var refetchedRootWebCT = rootWeb.ContentTypes["NameKey"];
+                    Assert.IsNotNull(refetchedRootWebCT);
+
+                    // CT shouldn't ever end up on sub-web exclusively (we wanna force the creation of RootWeb CT instead)
+                    Assert.IsNull(subWeb.ContentTypes.Cast<SPContentType>().SingleOrDefault(ct => ct.Id == ensuredSubWebContentType.Id));
+                }
+            }
+        }
+
+        #endregion
+
+        #region Content type Title, Description and Content Group should be easy to translate (if you configured your IResourceLocatorConfig properly)
+        
+        //// TODO: add CT localization tests here
+        
         #endregion
     }
 }

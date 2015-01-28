@@ -1850,7 +1850,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion
 
-        #region The UniqueContentTypeOrder should be respected during initial provisionning and updates
+        #region The UniqueContentTypeOrder should be respected during initial provisioning and updates
 
         /// <summary>
         /// Validates that the ordering of content types on ListInfo determines the UniqueContentTypeOrder on the list's root folder.

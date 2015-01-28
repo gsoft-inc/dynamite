@@ -267,13 +267,36 @@ namespace GSoft.Dynamite.ContentTypes
                     var contentTypeInWeb = web.ContentTypes[contentTypeId];
                     if (contentTypeInWeb == null)
                     {
-                        // Add the content type to the collection.
-                        var newWebContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
-                        var returnedWebContentType = contentTypeCollection.Add(newWebContentType);
+                        SPContentTypeCollection rootWebContentTypeCollection = null;
 
-                        this.InnerEnsureFieldInContentType(returnedWebContentType, fields);
+                        if (web.ID == web.Site.RootWeb.ID)
+                        {
+                            rootWebContentTypeCollection = contentTypeCollection;
+                        }
+                        else
+                        {
+                            rootWebContentTypeCollection = web.Site.RootWeb.ContentTypes;
 
-                        return returnedWebContentType;
+                            this.log.Warn(
+                                "EnsureContentType - Will force creation of content type (id={0} name={1}) on root web instead of on specified sub-web. This is to enforce the following convention: all CTs should be provisioned at root of site collection, to ease maintenance. Ensure your content types on the root web's SPContentTypeCollection to avoid this warning.",
+                                contentTypeId.ToString(),
+                                contentTypeName);
+                        }
+
+                        var contentTypeInRootWeb = rootWebContentTypeCollection[contentTypeId];
+
+                        if (contentTypeInRootWeb == null)
+                        {
+                            // Add the content type to the Root Web collection. By convention, we avoid provisioning
+                            // CTs directly on sub-webs to make CT management easier (i.e. all of your site collection's
+                            // content types should be configured at the root of the site collection).
+                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResouceTitle);
+                            contentTypeInRootWeb = rootWebContentTypeCollection.Add(newWebContentType);
+                        }
+
+                        this.InnerEnsureFieldInContentType(contentTypeInRootWeb, fields);
+
+                        return contentTypeInRootWeb;
                     }
                     else
                     {

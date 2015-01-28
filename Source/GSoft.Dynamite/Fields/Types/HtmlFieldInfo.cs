@@ -4,7 +4,7 @@ using System.Xml.Linq;
 namespace GSoft.Dynamite.Fields.Types
 {
     /// <summary>
-    /// Definition of a HtmlFieldInfo info
+    /// Definition of a HtmlFieldInfo info. Represents a Publishing HTML field definition.
     /// </summary>
     public class HtmlFieldInfo : FieldInfo<string>
     {
@@ -34,13 +34,14 @@ namespace GSoft.Dynamite.Fields.Types
         /// </summary>
         /// <param name="baseFieldSchema">
         /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
-        /// we want to add field type-specific attributes
+        /// we want to add field type-specific attributes (RichText=TRUE and RichTextMode=ThemeHtml,
+        /// as should be the default for HTML type fields)
         /// </param>
         /// <returns>The full field XML schema</returns>
         public override XElement Schema(XElement baseFieldSchema)
         {
             baseFieldSchema.Add(new XAttribute("RichText", "TRUE"));
-            baseFieldSchema.Add(new XAttribute("RichTextMode", "ThemHtml"));
+            baseFieldSchema.Add(new XAttribute("RichTextMode", "ThemeHtml"));
                 
             return baseFieldSchema;
         }

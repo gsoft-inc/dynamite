@@ -2798,7 +2798,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
-                // Gotta create the list before we even think about provisionning a lookup
+                // Gotta create the list before we even think about provisioning a lookup
                 ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
