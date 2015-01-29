@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.ContentTypes
                 contentTypeInfo.ResourceFileName,
                 contentTypeInfo.Fields.ToList());
 
-            // Get a list of the available languages and end with the main language
+            //// Get a list of the available languages and end with the main language
             var web = contentType.ParentWeb;
             var availableLanguages = web.SupportedUICultures.Reverse().ToList();
 
@@ -69,9 +69,9 @@ namespace GSoft.Dynamite.ContentTypes
                 var labels = this.variationHelper.GetVariationLabels(web.Site);
                 if (labels.Count > 0)
                 {
-                   // Predicate to check if the web contains the label language in it's available languages
-                   Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) => 
-                       !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
+                    // Predicate to check if the web contains the label language in it's available languages
+                    Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) =>
+                        !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
 
                     // Get the label languages that aren't already in the web's available languages
                     var labelLanguages = labels
@@ -84,13 +84,19 @@ namespace GSoft.Dynamite.ContentTypes
 
             // If multiple languages are enabled, since we have a full ContentTypeInfo object, we want to populate 
             // all alternate language labels for the Content Type
-            foreach (var availableLanguage in availableLanguages)
+            foreach (CultureInfo availableLanguage in availableLanguages)
             {
-                // Make sure the ResourceLocator will fetch the correct culture's DisplayName values
-                // by forwarding the CultureInfo.
-                contentType.Name = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey, availableLanguage);
-                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage);
-                contentType.Group = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey, availableLanguage);
+                var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
+                Thread.CurrentThread.CurrentUICulture = availableLanguage;
+
+                contentType.Name = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
+                
+                contentType.Description = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey);
+                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage.LCID);
+
+                contentType.Group = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey);
+
+                Thread.CurrentThread.CurrentUICulture = previousUiCulture;
             }
 
             contentType.Update();
@@ -208,7 +214,7 @@ namespace GSoft.Dynamite.ContentTypes
 
             SPList list = null;
 
-            var contentTypeResouceTitle = this.resourceLocator.GetResourceString(resourceFileName, contentTypeName);
+            var contentTypeResourceTitle = this.resourceLocator.GetResourceString(resourceFileName, contentTypeName);
 
             if (TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
@@ -234,7 +240,7 @@ namespace GSoft.Dynamite.ContentTypes
                             // By convention, content types should always exist on root web as site-collection-wide
                             // content types before they get linked on a specific list.
                             var rootWebContentTypeCollection = list.ParentWeb.Site.RootWeb.ContentTypes;
-                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResouceTitle);
+                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResourceTitle);
                             contentTypeInWeb = rootWebContentTypeCollection.Add(newWebContentType);
 
                             this.InnerEnsureFieldInContentType(contentTypeInWeb, fields);
@@ -290,7 +296,7 @@ namespace GSoft.Dynamite.ContentTypes
                             // Add the content type to the Root Web collection. By convention, we avoid provisioning
                             // CTs directly on sub-webs to make CT management easier (i.e. all of your site collection's
                             // content types should be configured at the root of the site collection).
-                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResouceTitle);
+                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResourceTitle);
                             contentTypeInRootWeb = rootWebContentTypeCollection.Add(newWebContentType);
                         }
 
@@ -306,7 +312,7 @@ namespace GSoft.Dynamite.ContentTypes
                 }
 
                 // Case if there is no Content Types in the Web (e.g single SPWeb)
-                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResouceTitle);
+                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResourceTitle);
                 var returnedContentType = contentTypeCollection.Add(newContentType);
                 this.InnerEnsureFieldInContentType(returnedContentType, fields);
                 return returnedContentType;

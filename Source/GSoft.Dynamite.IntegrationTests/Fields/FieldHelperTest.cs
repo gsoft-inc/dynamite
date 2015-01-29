@@ -3613,13 +3613,19 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 {
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
 
-                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+                    var rootWebFieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    SPField field = fieldHelper.EnsureField(rootWebFieldsCollection, textFieldInfo);
+                    SPField fieldFromOldCollection = rootWebFieldsCollection[textFieldInfo.Id];
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
 
                     Assert.AreEqual("EN Field Title", field.Title);
                     Assert.AreEqual("EN Field Description", field.Description);
                     Assert.AreEqual("EN Content Group", field.Group);
 
-                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+                    Assert.AreEqual("EN Field Title", fieldFromOldCollection.Title);
+                    Assert.AreEqual("EN Field Description", fieldFromOldCollection.Description);
+                    Assert.AreEqual("EN Content Group", fieldFromOldCollection.Group);
 
                     Assert.AreEqual("EN Field Title", fieldRefetched.Title);
                     Assert.AreEqual("EN Field Description", fieldRefetched.Description);
@@ -3651,8 +3657,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var rootWebFieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
-                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+                    SPField field = fieldHelper.EnsureField(rootWebFieldsCollection, textFieldInfo);
+                    SPField fieldFromOldCollection = rootWebFieldsCollection[textFieldInfo.Id];
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
 
                     // Set MUI to french
                     var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
@@ -3662,7 +3671,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("FR Description de champ", field.Description);
                     Assert.AreEqual("FR Groupe de contenu", field.Group);
 
-                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+                    Assert.AreEqual("FR Nom de champ", fieldFromOldCollection.Title);
+                    Assert.AreEqual("FR Description de champ", fieldFromOldCollection.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldFromOldCollection.Group);
 
                     Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
                     Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
@@ -3702,8 +3713,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldCollection = testScope.SiteCollection.RootWeb.Fields;
 
-                    SPField field = fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, textFieldInfo);
+                    SPField field = fieldHelper.EnsureField(fieldCollection, textFieldInfo);
+                    SPField fieldFromOldCollection = fieldCollection[textFieldInfo.Id];
+                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
 
                     // Set MUI to english
                     var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
@@ -3713,7 +3727,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("EN Field Description", field.Description);
                     Assert.AreEqual("EN Content Group", field.Group);
 
-                    SPField fieldRefetched = testScope.SiteCollection.RootWeb.Fields[textFieldInfo.Id];
+                    Assert.AreEqual("EN Field Title", fieldFromOldCollection.Title);
+                    Assert.AreEqual("EN Field Description", fieldFromOldCollection.Description);
+                    Assert.AreEqual("EN Content Group", fieldFromOldCollection.Group);
 
                     Assert.AreEqual("EN Field Title", fieldRefetched.Title);
                     Assert.AreEqual("EN Field Description", fieldRefetched.Description);
@@ -3725,6 +3741,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("FR Nom de champ", field.Title);
                     Assert.AreEqual("FR Description de champ", field.Description);
                     Assert.AreEqual("FR Groupe de contenu", field.Group);
+
+                    Assert.AreEqual("FR Nom de champ", fieldFromOldCollection.Title);
+                    Assert.AreEqual("FR Description de champ", fieldFromOldCollection.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldFromOldCollection.Group);
 
                     Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
                     Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
@@ -3770,6 +3790,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     SPFieldCollection listFields = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields;
 
                     SPField field = fieldHelper.EnsureField(listFields, textFieldInfo);
+                    SPField fieldOnOldCollection = listFields[textFieldInfo.Id];
                     SPField fieldRefetched = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields[textFieldInfo.Id];
 
                     // Set MUI to french
@@ -3779,6 +3800,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("FR Nom de champ", field.Title);
                     Assert.AreEqual("FR Description de champ", field.Description);
                     Assert.AreEqual("FR Groupe de contenu", field.Group);
+
+                    Assert.AreEqual("FR Nom de champ", fieldOnOldCollection.Title);
+                    Assert.AreEqual("FR Description de champ", fieldOnOldCollection.Description);
+                    Assert.AreEqual("FR Groupe de contenu", fieldOnOldCollection.Group);
 
                     Assert.AreEqual("FR Nom de champ", fieldRefetched.Title);
                     Assert.AreEqual("FR Description de champ", fieldRefetched.Description);
@@ -3824,6 +3849,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     SPFieldCollection listFields = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields;
 
                     SPField field = fieldHelper.EnsureField(listFields, textFieldInfo);
+                    SPField fieldOnOldCollection = listFields[textFieldInfo.Id];
                     SPField fieldRefetched = testScope.SiteCollection.RootWeb.Webs["subweb"].Lists[subWebList.ID].Fields[textFieldInfo.Id];
 
                     // Set MUI to english
@@ -3833,6 +3859,10 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual("EN Field Title", field.Title);
                     Assert.AreEqual("EN Field Description", field.Description);
                     Assert.AreEqual("EN Content Group", field.Group);
+
+                    Assert.AreEqual("EN Field Title", fieldOnOldCollection.Title);
+                    Assert.AreEqual("EN Field Description", fieldOnOldCollection.Description);
+                    Assert.AreEqual("EN Content Group", fieldOnOldCollection.Group);
 
                     Assert.AreEqual("EN Field Title", fieldRefetched.Title);
                     Assert.AreEqual("EN Field Description", fieldRefetched.Description);

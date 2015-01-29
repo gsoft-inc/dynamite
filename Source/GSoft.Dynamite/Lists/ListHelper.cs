@@ -521,17 +521,16 @@ namespace GSoft.Dynamite.Lists
             Guid id;
             try
             {
-                id = web.Lists.Add("Default title", "Default Description", listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
+                var title = this.resourceLocator.GetResourceString(listInfo.ResourceFileName, listInfo.DisplayNameResourceKey);
+                var description = this.resourceLocator.GetResourceString(listInfo.ResourceFileName, listInfo.DescriptionResourceKey);
+
+                id = web.Lists.Add(title, description, listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
             }
             catch (SPException sharepointException)
             {
                 throw new ArgumentException(
                     string.Format(CultureInfo.InvariantCulture, "The web-relative URL '{0}' for the ensured list conflicts with an existing URL (subweb, folder, ...). Try with a different one.", listInfo.WebRelativeUrl), sharepointException);
             }
-
-            var list = web.Lists[id];
-            this.SetTitleAndDescriptionValues(web, listInfo, list);
-            list.Update();
 
             return web.Lists[id];
         }
@@ -542,8 +541,8 @@ namespace GSoft.Dynamite.Lists
             var availableLanguages = web.SupportedUICultures.Reverse();
             foreach (var availableLanguage in availableLanguages)
             {
-                var title = this.resourceLocator.Find(listInfo.DisplayNameResourceKey, availableLanguage.LCID);
-                var description = this.resourceLocator.Find(listInfo.DescriptionResourceKey, availableLanguage.LCID);
+                var title = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DisplayNameResourceKey, availableLanguage.LCID);
+                var description = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DescriptionResourceKey, availableLanguage.LCID);
 
                 list.TitleResource.SetValueForUICulture(availableLanguage, title);
                 list.TitleResource.Update();

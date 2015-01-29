@@ -49,9 +49,9 @@ namespace GSoft.Dynamite.Fields
                 new XAttribute("Type", fieldInfo.Type),
                 new XAttribute("ID", "{" + fieldInfo.Id + "}"),
                 new XAttribute("StaticName", fieldInfo.InternalName),
-                new XAttribute("DisplayName", this.resourceLocator.GetResourceString(fieldInfo.DisplayNameResourceKey)),
-                new XAttribute("Description", this.resourceLocator.GetResourceString(fieldInfo.DescriptionResourceKey)),
-                new XAttribute("Group", this.resourceLocator.GetResourceString(fieldInfo.GroupResourceKey)),
+                new XAttribute("DisplayName", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DisplayNameResourceKey)),
+                new XAttribute("Description", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DescriptionResourceKey)),
+                new XAttribute("Group", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.GroupResourceKey)),
                 new XAttribute("EnforceUniqueValues", fieldInfo.EnforceUniqueValues.ToString().ToUpper(CultureInfo.InvariantCulture)));
 
             // Check the Required type

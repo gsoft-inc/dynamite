@@ -2030,11 +2030,10 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     IListHelper listHelper = injectionScope.Resolve<IListHelper>();
 
                     SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
 
                     Assert.AreEqual("EN List Name", list.Title);
                     Assert.AreEqual("EN List Description", list.Description);
-
-                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
 
                     Assert.AreEqual("EN List Name", listRefetched.Title);
                     Assert.AreEqual("EN List Description", listRefetched.Description);
@@ -2060,14 +2059,20 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     IListHelper listHelper = injectionScope.Resolve<IListHelper>();
 
                     SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
+
+                    // Set MUI to french
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
 
                     Assert.AreEqual("FR Nom de la liste", list.Title);
                     Assert.AreEqual("FR Description de la liste", list.Description);
 
-                    SPList listRefetched = testScope.SiteCollection.RootWeb.Lists[list.ID];
-
                     Assert.AreEqual("FR Nom de la liste", listRefetched.Title);
                     Assert.AreEqual("FR Description de la liste", listRefetched.Description);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
                 }
             }
         }

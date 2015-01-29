@@ -38,6 +38,14 @@ namespace GSoft.Dynamite.Fields
         /// Content group in SharePoint definitions
         /// </summary>
         string GroupResourceKey { get; }
+
+        /// <summary>
+        /// Resource file name (optional - if kept empty,
+        /// the ResourceLocator will scan through all resource files
+        /// configured through IResourceLocatorConfig in
+        /// search for your ResourceKeys)
+        /// </summary>
+        string ResourceFileName { get; set; }
         
         /// <summary>
         /// Indicates if the field is required

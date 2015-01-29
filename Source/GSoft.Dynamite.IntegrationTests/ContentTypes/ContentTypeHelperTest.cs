@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
@@ -14,7 +15,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 {
     /// <summary>
-    /// Content type helper integration tests.
+    /// Validates the entire stack of behavior behind <see cref="ContentTypeHelper"/>.
+    /// The GSoft.Dynamite.wsp package (GSoft.Dynamite.SP project) needs to be 
+    /// deployed to the current server environment before running these tests.
+    /// Redeploy the WSP package every time GSoft.Dynamite.dll changes.
     /// </summary>
     [TestClass]
     public class ContentTypeHelperTest
@@ -894,9 +898,160 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         #endregion
 
         #region Content type Title, Description and Content Group should be easy to translate (if you configured your IResourceLocatorConfig properly)
-        
-        //// TODO: add CT localization tests here
-        
+
+        /// <summary>
+        /// Validates that English CT name is initialized on English-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenEnglishOnlySiteCollection_ShouldCreateCTWithEnglishDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "Test_ContentTypeTitle", "Test_ContentTypeDescription", "Test_ContentGroup");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var rootWebContentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(rootWebContentTypeCollection, contentTypeInfo);
+
+                    Assert.AreEqual("EN Content Type Title", contentType.Name);
+                    Assert.AreEqual("EN Content Type Description", contentType.Description);
+                    Assert.AreEqual("EN Content Group", contentType.Group);
+
+                    SPContentType contentTypeFromOldCollection = rootWebContentTypeCollection[contentType.Id];
+
+                    Assert.AreEqual("EN Content Type Title", contentTypeFromOldCollection.Name);
+                    Assert.AreEqual("EN Content Type Description", contentTypeFromOldCollection.Description);
+                    Assert.AreEqual("EN Content Group", contentTypeFromOldCollection.Group);
+
+                    SPContentType contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes[contentType.Id];
+
+                    Assert.AreEqual("EN Content Type Title", contentTypeRefetched.Name);
+                    Assert.AreEqual("EN Content Type Description", contentTypeRefetched.Description);
+                    Assert.AreEqual("EN Content Group", contentTypeRefetched.Group);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that French CT name is initialized on French-language web
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenFrenchOnlySiteCollection_ShouldCreateCTWithFrenchDisplayName()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.French.Culture.LCID))
+            {
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "Test_ContentTypeTitle", "Test_ContentTypeDescription", "Test_ContentGroup");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var rootWebContentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(rootWebContentTypeCollection, contentTypeInfo);
+                    SPContentType contentTypeFromOldCollection = rootWebContentTypeCollection[contentType.Id];
+                    SPContentType contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes[contentType.Id];
+
+                    // Set MUI to french
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentType.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentType.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentType.Group);
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentTypeFromOldCollection.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentTypeFromOldCollection.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentTypeFromOldCollection.Group);
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentTypeRefetched.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentTypeRefetched.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentTypeRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that CT name is initialized in both languages
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenEnglishAndFrenchSiteCollection_ShouldCreateCTWithBothDisplayNames()
+        {
+            using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
+            {
+                // Add French so that both languages are supported
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                rootWeb.AddSupportedUICulture(Language.French.Culture);
+                rootWeb.Update();
+
+                var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(contentTypeId, "Test_ContentTypeTitle", "Test_ContentTypeDescription", "Test_ContentGroup");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var rootWebContentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(rootWebContentTypeCollection, contentTypeInfo);
+                    SPContentType contentTypeFromOldCollection = rootWebContentTypeCollection[contentType.Id];
+                    SPContentType contentTypeRefetched = testScope.SiteCollection.RootWeb.ContentTypes[contentType.Id];
+                    
+                    // Set MUI to english
+                    var ambientThreadCulture = Thread.CurrentThread.CurrentUICulture;
+                    Thread.CurrentThread.CurrentUICulture = Language.English.Culture;
+
+                    Assert.AreEqual("EN Content Type Title", contentType.Name);
+                    Assert.AreEqual("EN Content Type Description", contentType.Description);
+                    Assert.AreEqual("EN Content Group", contentType.Group);
+
+                    Assert.AreEqual("EN Content Type Title", contentTypeFromOldCollection.Name);
+                    Assert.AreEqual("EN Content Type Description", contentTypeFromOldCollection.Description);
+                    Assert.AreEqual("EN Content Group", contentTypeFromOldCollection.Group);
+
+                    Assert.AreEqual("EN Content Type Title", contentTypeRefetched.Name);
+                    Assert.AreEqual("EN Content Type Description", contentTypeRefetched.Description);
+                    Assert.AreEqual("EN Content Group", contentTypeRefetched.Group);
+
+                    // Set MUI to french
+                    Thread.CurrentThread.CurrentUICulture = Language.French.Culture;
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentType.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentType.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentType.Group);
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentTypeFromOldCollection.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentTypeFromOldCollection.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentTypeFromOldCollection.Group);
+
+                    Assert.AreEqual("FR Nom de type de contenu", contentTypeRefetched.Name);
+                    Assert.AreEqual("FR Description de type de contenu", contentTypeRefetched.Description);
+                    Assert.AreEqual("FR Groupe de contenu", contentTypeRefetched.Group);
+
+                    // Reset MUI to its old abient value
+                    Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
         #endregion
     }
 }
