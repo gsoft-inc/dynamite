@@ -37,22 +37,33 @@ Describe "Logging.ps1" {
 		}
 
 		It "should create a logging folder at specified location" {
-			# run the script
-            $folderPath = (Get-Location).Path + "\Logs"
-			Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
-            Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
-			Test-Path $folderPath | Should Be $true
+            if ($host.name -eq 'ConsoleHost') {
+
+                # run the script
+                $folderPath = (Get-Location).Path + "\Logs"
+			    Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+                Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+			    Test-Path $folderPath | Should Be $true
+            }
+            else {
+                Write-Warning "Cannot test 'Start-Transcript' in anything else than the console host."
+            }
 		}
 
 		It "should create a logging folder with a single *.log file at specified location" {
-			# run the script
-            $folderPath = (Get-Location).Path + "\Logs"
-			Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
-            Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+            if ($host.name -eq 'ConsoleHost') {
+			    # run the script
+                $folderPath = (Get-Location).Path + "\Logs"
+			    Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+                Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
 
-            $logFile = Get-ChildItem $folderPath *.log
-			$logFile.Count -eq 1 | Should Be $true
-			$logFile.Length -gt 1 | Should Be $true
+                $logFile = Get-ChildItem $folderPath *.log
+			    $logFile.Count -eq 1 | Should Be $true
+			    $logFile.Length -gt 1 | Should Be $true
+            }
+            else {
+                Write-Warning "Cannot test 'Start-Transcript' in anything else than the console host."
+            }
 		}
 	}
 
@@ -71,14 +82,19 @@ Describe "Logging.ps1" {
 		}
 
 		It "should create a logging folder with a single *.log file at specified location" {
-			# run the script
-            $folderPath = (Get-Location).Path + "\Logs"
-			Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
-            Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+            if ($host.name -eq 'ConsoleHost') {
+			    # run the script
+                $folderPath = (Get-Location).Path + "\Logs"
+			    Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+                Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
 			
-            $logFile = Get-ChildItem $folderPath *.log
-			$logFile.Count -eq 1 | Should Be $true
-			$logFile.Length -gt 1 | Should Be $true
+                $logFile = Get-ChildItem $folderPath *.log
+			    $logFile.Count -eq 1 | Should Be $true
+			    $logFile.Length -gt 1 | Should Be $true
+            }
+            else {
+                Write-Warning "Cannot test 'Start-Transcript' in anything else than the console host."
+            }
 		}
 	}
 
@@ -88,7 +104,9 @@ Describe "Logging.ps1" {
 			# Pre-condition: make sure nothing exists under $folderPath
 			Write-Host "     --Test Setup--"
 			Remove-LogsFolder
-			Start-Transcript
+            if ($host.name -eq 'ConsoleHost') {
+			    Start-Transcript
+            }
 		}
 
 		AfterEach {
@@ -98,14 +116,19 @@ Describe "Logging.ps1" {
 		}
 
 		It "should stop the current transcript and log normally" {
-			# run the script
-            $folderPath = (Get-Location).Path + "\Logs"
-			Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
-            Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+            if ($host.name -eq 'ConsoleHost') {
+			    # run the script
+                $folderPath = (Get-Location).Path + "\Logs"
+			    Start-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
+                Stop-DSPLogging -commandName "Test-DSPLogging" -folder $folderPath
 			
-            $logFile = Get-ChildItem $folderPath *.log
-			$logFile.Count -eq 1 | Should Be $true
-			$logFile.Length -gt 1 | Should Be $true
+                $logFile = Get-ChildItem $folderPath *.log
+			    $logFile.Count -eq 1 | Should Be $true
+			    $logFile.Length -gt 1 | Should Be $true
+            }
+            else {
+                Write-Warning "Cannot test 'Start-Transcript' in anything else than the console host."
+            }
 		}
 	}
 }
