@@ -145,4 +145,7 @@ Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession
+
+#Logging
+Export-ModuleMember Start-DSPLogging, Stop-DSPLogging
 #endregion

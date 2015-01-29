@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{59F22005-22BB-498C-BE1E-5C0E3BBD989B}"
 	ProjectSection(SolutionItems) = preProject
@@ -43,6 +43,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dynamite.PowerShell.Toolkit
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Feature.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Group.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Group.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\List.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\List.ps1
+		Gsoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Logging.ps1 = Gsoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Logging.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\ManagedPath.ps1
 		GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1 = GSoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\PropertyBag.ps1
 		Gsoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Remote.ps1 = Gsoft.Dynamite.Scripts\Dynamite.PowerShell.Toolkit\Remote.ps1
@@ -72,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.IntegrationT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{13586D62-D483-4B4E-B13E-C344B9D457D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Powershell.Tests", "GSoft.Dynamite.Powershell.Tests\GSoft.Dynamite.Powershell.Tests.csproj", "{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +103,10 @@ Global
 		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,5 +116,6 @@ Global
 		{7379FB7E-3334-4B1D-9991-D7FD7DB52EAF} = {13586D62-D483-4B4E-B13E-C344B9D457D7}
 		{084E468F-B518-4047-9FA8-F982B85316FE} = {81F1B9A8-239C-4C04-9C76-150AE25D0039}
 		{A94EE293-CDE0-4FD0-9CB7-6B68F3D453AD} = {13586D62-D483-4B4E-B13E-C344B9D457D7}
+		{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5} = {13586D62-D483-4B4E-B13E-C344B9D457D7}
 	EndGlobalSection
 EndGlobal
