@@ -73,7 +73,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.IntegrationT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{13586D62-D483-4B4E-B13E-C344B9D457D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.Powershell.Tests", "GSoft.Dynamite.Powershell.Tests\GSoft.Dynamite.Powershell.Tests.csproj", "{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSoft.Dynamite.PowerShell.Tests", "GSoft.Dynamite.Powershell.Tests\GSoft.Dynamite.PowerShell.Tests.csproj", "{0BFB49A8-9B80-4FE6-9E34-C78E63A1C9B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

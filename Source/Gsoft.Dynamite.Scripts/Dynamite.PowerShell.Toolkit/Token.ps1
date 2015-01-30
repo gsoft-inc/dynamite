@@ -75,36 +75,25 @@ function Update-DSPTokens {
 		[string]$TemplatePath = (Get-Location),
 		
 		[Parameter(Mandatory=$false)]
-		[switch]$UseHostName,
-		
-		[Parameter(Mandatory=$false)]
 		[switch]$UseDomain
 	)
-	
-	if ($UseHostName -eq $true) {
-		$Domain = [System.Net.Dns]::GetHostName()
-	}
 	
 	if ($UseDomain -eq $true) {
 		$Domain = (Get-CurrentDomain)
 	}
 
-	$tokenPath = ""
-	
 	$Path = Resolve-Path $Path
 	$TemplatePath = Resolve-Path $TemplatePath
-		
-	Get-ChildItem -Path $Path -Include "Tokens.$Domain.ps1" -Recurse | foreach {
-		$tokenPath = $_.FullName
-	}
+	$tokenPath = (Get-ChildItem -Path $Path -Filter "Tokens.$Domain.ps1" -ErrorAction Stop | select -First 1).FullName
 	
-	if (Test-Path $tokenPath) {
-		Write-Host "Found token file at : $tokenPath"
-		Execute-TokenFile $TemplatePath $tokenPath $Encoding
-	}
-	else {
-		Write-Host "Didn't found the token file named : Tokens.$Domain.ps1"
-	}
+    if (-not [string]::IsNullOrEmpty($tokenPath)) {
+	    if (Test-Path $tokenPath) {
+		    Write-Verbose "Found token file at : $tokenPath"
+		    Execute-TokenFile $TemplatePath $tokenPath $Encoding
+	    }
+        else { throw [System.IO.FileNotFoundException] "File 'Tokens.$Domain.ps1' not found." }
+    }
+    else { throw [System.IO.FileNotFoundException] "File 'Tokens.$Domain.ps1' not found." }
 }
 
 <#
@@ -128,14 +117,19 @@ function script:Execute-TokenFile {
 		$TokenPath,
 		$Encoding
 	)
-	Write-Host "$TokenPath"
+	Write-Verbose "$TokenPath"
 	# Load tokens
 	. $TokenPath
 	$tokens = Get-Variable -Include "DSP_*"
 	
-	# Replace tokens in all .template files.
-	Get-ChildItem -Path $Path -Include "*.template" -Recurse | foreach {
-		Write-Host "Replacing tokens in file '$_'... " -NoNewline
+    # NOTE: Usage of *.template is obsolete.  Prefer *.template.* for intellisense
+    if ((Get-ChildItem -Path $Path -Include "*.template" -Recurse).Count -ge 1) {
+        Write-Warning "Usage of '*.template' files is obsolete.  Please use *.template.* for intellisense."
+    }
+
+	# Replace tokens in all .template files and *.template.* files.
+	Get-ChildItem -Path $Path -Include ("*.template", "*.template.*") -Recurse | foreach {
+		Write-Verbose "Replacing tokens in file '$_'... "
 		
 		try {
 			# Get the contents of the template file.
@@ -147,12 +141,12 @@ function script:Execute-TokenFile {
 			}
 			
 			# Write the contents with the replaces tokens to a new file overriding any current file.
-			Set-Content -Encoding $Encoding -Value $contents -path $_.FullName.Substring(0, $_.FullName.IndexOf(".template")) -Force -ErrorAction Stop
+			Set-Content -Encoding $Encoding -Value $contents -path $_.FullName.Replace(".template", [String]::Empty) -Force -ErrorAction Stop
 		} catch {
-			Write-Host "Failed - $_" -ForegroundColor Red
+			Write-Error "Failed - $_"
 		}
 		
-		Write-Host "Success!" -ForegroundColor Green
+		Write-Verbose "Success!"
 	}
 }
 
@@ -216,7 +210,7 @@ function Initialize-DSPTokens {
         }
         else 
         {
-            $CustomizationPath = Get-ChildItem -Path $CustomizationPath | ? { $_.Name -like "*.CrossSitePublishingCMS" } | Select FullName | foreach {$_.FullName}
+            $CustomizationPath = Get-ChildItem -Path $CustomizationPath | ? { $_.Name -like "*.CrossSitePublishingCMS" } | Select FullName -First | foreach {$_.FullName}
         }
     }
 
@@ -309,7 +303,7 @@ function Copy-DSPFile {
     {
     	# Replace tokens in all .template files.
 	    Get-ChildItem -Path $Path -Include $Match -Recurse | foreach {
-		    Write-Host "Copying script file '$_'... " -NoNewline
+		    Write-Verbose "Copying script file '$_'... "
 
             # Get the relative Path of the file from where we are.
             $relativePath = $_.FullName.Replace($Path, "")
@@ -326,7 +320,6 @@ function Copy-DSPFile {
 
             # We write the tokenized file
 			Copy-Item $_.FullName $fileFullName -Force -ErrorAction Stop
-		    Write-Host "Success!" -ForegroundColor Green
         }
     }
 }
@@ -348,11 +341,11 @@ function Copy-DSPSolution {
         New-Item -ItemType Directory -Force -Path $DestinationPath | Out-Null
     }
     
-    Write-Host "Searching WSPs in $Path matching $FilterPath"
+    Write-Verbose "Searching WSPs in $Path matching $FilterPath"
 
     Get-ChildItem -Path $Path -Include "*.wsp" -Recurse | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
-		Write-Host "Copying WSP file '$_'... " -NoNewline
+		Write-Verbose "Copying WSP file '$_'... "
 		Copy-Item $_.FullName $DestinationPath -Force -ErrorAction Stop
-		Write-Host "Success!" -ForegroundColor Green
+		Write-Verbose "Success!"
     }
 }
