@@ -2081,7 +2081,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that list title in both language are initialized on English-and-French site
         /// </summary>
         [TestMethod]
-        public void EnsureList_WhenEnlishgAndFrenchSiteCollection_ShouldCreateListWithBothDisplayNames()
+        public void EnsureList_WhenEnglishAndFrenchSiteCollection_ShouldCreateListWithBothDisplayNames()
         {
             using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
             {

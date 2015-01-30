@@ -20,6 +20,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
+        [Obsolete("Use EnsureCatalog(SPWeb, CatalogInfo) instead. We want to limit noise in the *Helper interfaces.")]
         SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields);
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
+        [Obsolete("Use EnsureCatalog(SPWeb, CatalogInfo) instead. We want to limit noise in the *Helper interfaces.")]
         SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, bool activateAnonymousAccess);
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="availableFields">List of internal field names that are available through the catalog.</param>
         /// <param name="taxonomyFieldMap">The taxonomy field that will be used for navigation.</param>
         /// <returns>The SharePoint list configured as a catalog.</returns>
+        [Obsolete("Use EnsureCatalog(SPWeb, CatalogInfo) instead. We want to limit noise in the *Helper interfaces.")]
         SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap);
 
         /// <summary>
@@ -53,6 +56,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <returns>
         /// The SharePoint list configured as a catalog.
         /// </returns>
+        [Obsolete("Use EnsureCatalog(SPWeb, CatalogInfo) instead. We want to limit noise in the *Helper interfaces.")]
         SPList SetListAsCatalog(SPList list, IEnumerable<string> availableFields, string taxonomyFieldMap, bool activateAnonymousAccess);
 
         /// <summary>
@@ -104,6 +108,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="site">The target site</param>
         /// <param name="catalogConnectionInfo">The catalog connection information</param>
         /// <param name="overwrite">True if the connection must be override. False otherwise</param>
+        /// TODO: make the overwrite param part of the CatalogConnectionInfo object
         void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo, bool overwrite);
 
         /// <summary>

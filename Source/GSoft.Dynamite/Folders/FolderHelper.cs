@@ -31,16 +31,14 @@ namespace GSoft.Dynamite.Folders
         }
 
         /// <summary>
-        /// Ensure a folder hierarchy in a library
+        /// Ensure a folder hierarchy in a list or library
         /// </summary>
-        /// <param name="library">The library</param>
-        /// <param name="folderInfo">The root folder of the library</param>
-        public void EnsureFolderHierarchy(SPList library, FolderInfo folderInfo)
+        /// <param name="list">The SharePoint list or library</param>
+        /// <param name="rootFolderInfo">The metadata that should define the root folder of the list</param>
+        /// <returns>The list's root folder instance</returns>
+        public SPFolder EnsureFolderHierarchy(SPList list, FolderInfo rootFolderInfo)
         {
-            if (folderInfo.IsRootFolder)
-            {
-                this.EnsureFolder(library, null, folderInfo);
-            }
+            return this.EnsureFolder(list, null, rootFolderInfo);
         }
 
         /// <summary>
@@ -53,13 +51,7 @@ namespace GSoft.Dynamite.Folders
             web.RootFolder.Update();
         }
 
-        /// <summary>
-        /// Ensure a folder a its sub folders
-        /// </summary>
-        /// <param name="library">The library</param>
-        /// <param name="parentFolder">The parent folder</param>
-        /// <param name="folderInfo">The current folder information</param>
-        private void EnsureFolder(SPList library, SPFolder parentFolder, FolderInfo folderInfo)
+        private SPFolder EnsureFolder(SPList library, SPFolder parentFolder, FolderInfo folderInfo)
         {
             SPFolder folder = null;
 
@@ -73,9 +65,14 @@ namespace GSoft.Dynamite.Folders
                 this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
 
                 // Create sub folders
-                foreach (var childFolder in folderInfo.Subfolders)
+                if (folderInfo.Subfolders != null && folderInfo.Subfolders.Count > 0)
                 {
-                    this.EnsureFolder(library, folder, childFolder);
+                    library.EnableFolderCreation = true;
+
+                    foreach (var childFolder in folderInfo.Subfolders)
+                    {
+                        this.EnsureFolder(library, folder, childFolder);
+                    }
                 }
 
                 // Set Web HomePage
@@ -117,6 +114,8 @@ namespace GSoft.Dynamite.Folders
                     this.EnsureFolder(library, folder, childFolder);
                 }
             }
+
+            return folder;
         }
     }
 }

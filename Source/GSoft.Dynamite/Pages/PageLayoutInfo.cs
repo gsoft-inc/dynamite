@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// Initializes a new <see cref="PageLayoutInfo"/> instance
         /// </summary>
-        /// <param name="name">Page layout name</param>
+        /// <param name="name">Page layout file name (including the .aspx)</param>
         /// <param name="associatedContentTypeId">Associated page content type ID</param>
         public PageLayoutInfo(string name, string associatedContentTypeId) : this()
         {
@@ -28,7 +28,7 @@ namespace GSoft.Dynamite.Pages
         }
 
         /// <summary>
-        /// Name of the Page Layout
+        /// Name of the Page Layout (including the .aspx)
         /// </summary>
         public string Name { get; set; }
 

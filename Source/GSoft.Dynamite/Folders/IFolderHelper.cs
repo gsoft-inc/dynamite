@@ -13,11 +13,12 @@ namespace GSoft.Dynamite.Folders
     public interface IFolderHelper
     {
         /// <summary>
-        /// Ensure a folder hierarchy in a library
+        /// Ensure a folder hierarchy in a list or library
         /// </summary>
-        /// <param name="library">The library</param>
-        /// <param name="folderInfo">The root folder of the library</param>
-        void EnsureFolderHierarchy(SPList library, FolderInfo folderInfo);
+        /// <param name="list">The SharePoint list or library</param>
+        /// <param name="rootFolderInfo">The metadata that should define the root folder of the list</param>
+        /// <returns>The list's root folder instance</returns>
+        SPFolder EnsureFolderHierarchy(SPList list, FolderInfo rootFolderInfo);
 
         /// <summary>
         /// Method to revert to home page to the default web page

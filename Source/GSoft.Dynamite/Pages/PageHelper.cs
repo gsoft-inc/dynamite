@@ -57,7 +57,7 @@ namespace GSoft.Dynamite.Pages
             var publishingWeb = PublishingWeb.GetPublishingWeb(library.ParentWeb);
             var publishingPages = publishingWeb.GetPublishingPages();
 
-            PageLayout pageLayout;
+            PageLayout pageLayout = null;
 
             // Get the correct Page Layout according to its name (<xxx>.aspx)
             var pageLayoutInfo = this.GetPageLayout(publishingSite, page.PageLayout.Name, true);
@@ -67,13 +67,6 @@ namespace GSoft.Dynamite.Pages
             {
                 // Associate the page layout specified in the page.
                 pageLayout = pageLayoutInfo;
-            }
-            else
-            {
-                // Get the first page layout with the specified content type id.
-                var pageContentType = publishingSite.ContentTypes[page.ContentTypeId];
-                var pageLayouts = publishingSite.GetPageLayouts(pageContentType, true);
-                pageLayout = pageLayouts[0]; // default to first associated page layout
             }
 
             var pageServerRelativeUrl = folder.ServerRelativeUrl + "/" + page.FileName + ".aspx";

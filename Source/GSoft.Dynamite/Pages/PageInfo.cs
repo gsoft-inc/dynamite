@@ -22,6 +22,23 @@ namespace GSoft.Dynamite.Pages
         }
 
         /// <summary>
+        /// Creates a new <see cref="PageInfo"/>
+        /// </summary>
+        /// <param name="fileName">
+        /// Name of the file for the page without the ".aspx" extension.
+        /// </param>
+        /// <param name="pageLayout">
+        /// Page layout metadata for the page instance. This will also determine
+        /// the page's content type (through the page layout's AssociatedContentTypeId)
+        /// </param>
+        public PageInfo(string fileName, PageLayoutInfo pageLayout) : this()
+        {
+            this.FileName = fileName;
+            this.Title = fileName;
+            this.PageLayout = pageLayout;
+        }
+
+        /// <summary>
         /// Name of the file for the page without the ".aspx" extension.
         /// </summary>
         public string FileName { get; set; }
@@ -32,14 +49,10 @@ namespace GSoft.Dynamite.Pages
         public string Title { get; set; }
 
         /// <summary>
-        /// The page layout of the page
+        /// The page layout of the page (also determines the page's content type,
+        /// through the PageLayout's AssociatedContentTypeId.
         /// </summary>
         public PageLayoutInfo PageLayout { get; set; }
-
-        /// <summary>
-        /// The content type of the page
-        /// </summary>
-        public string ContentTypeId { get; set; }
 
         /// <summary>
         /// WebParts by zone

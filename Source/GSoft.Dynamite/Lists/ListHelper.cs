@@ -7,6 +7,7 @@ using System.Reflection;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Taxonomy;
 using Microsoft.Office.DocumentManagement.MetadataNavigation;
@@ -189,10 +190,21 @@ namespace GSoft.Dynamite.Lists
                 this.AddtoQuickLaunch(list);
             }
 
-            // Attachements
+            // Attachements (only possible if not a DocLib or Survey list)
             if (listInfo.EnableAttachements)
             {
-                list.EnableAttachments = listInfo.EnableAttachements;
+                if (listInfo.ListTemplateInfo.ListTempateTypeId != BuiltInListTemplates.DocumentLibrary.ListTempateTypeId
+                    && listInfo.ListTemplateInfo.ListTempateTypeId != BuiltInListTemplates.Survey.ListTempateTypeId)
+                {
+                    list.EnableAttachments = listInfo.EnableAttachements;
+                }
+                else
+                {
+                    this.logger.Warn(
+                        "EnsureList - Skipped setting EnableAttachment=TRUE on list (url={0}) because list is a Document Library or a Surbey list, which don't support attachements." +
+                        " Provide a ListInfo without EnableAttachment=TRUE to avoid this warning.", 
+                        listInfo.WebRelativeUrl);
+                }
             }
             else if (list.ItemCount == 0)
             {

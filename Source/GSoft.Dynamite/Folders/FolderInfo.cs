@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Pages;
 
@@ -22,7 +23,7 @@ namespace GSoft.Dynamite.Folders
         {
             this.Pages = new List<PageInfo>();
             this.Subfolders = new List<FolderInfo>();
-            this.ItemFieldValues = new List<IFieldInfo>();
+            this.FieldDefaultValues = new List<FieldValueInfo>();
         }
 
         /// <summary>
@@ -52,16 +53,16 @@ namespace GSoft.Dynamite.Folders
         public ICollection<FolderInfo> Subfolders { get; set; }
 
         /// <summary>
-        /// Values for the folder should be stored in the DefaultValue
-        /// property of the FieldInfo objects.
+        /// Represents the folder's field metadata defaults (per-folder column default values).
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexible initialization.")]
-        public ICollection<IFieldInfo> ItemFieldValues { get; set; }
+        public ICollection<FieldValueInfo> FieldDefaultValues { get; set; }
 
         /// <summary>
-        /// True if the folder is a root folder
+        /// Determines the list of content types that will be suggested in the folder's Add Item dropdown menu (in the SharePoint ribbon).
         /// </summary>
-        public bool IsRootFolder { get; set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable more flexible initialization.")]
+        public ICollection<ContentTypeInfo> UniqueContentTypeOrder { get; set; }
 
         /// <summary>
         /// The Welcome Page of the folder

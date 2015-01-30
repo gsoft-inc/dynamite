@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="ContentTypes\ContentTypeHelperTest.cs" />
     <Compile Include="Fields\FieldHelperTest.cs" />
+    <Compile Include="Folders\FolderHelperTest.cs" />
     <Compile Include="IntegrationTestServiceLocator.cs" />
     <Compile Include="Lists\ListHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
