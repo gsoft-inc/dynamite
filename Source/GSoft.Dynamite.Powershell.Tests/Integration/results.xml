@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="10" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2015-01-30" time="11:08:49">
+  <environment user="yohan.belval" machine-name="SP2013-YOHAN" cwd="C:\git\Dynamite\Source\GSoft.Dynamite.PowerShell.Tests\Integration" user-domain="OFFICE" platform="Microsoft Windows Server 2012 Standard|C:\windows|\Device\Harddisk0\Partition2" nunit-version="2.5.8.0" os-version="6.2.9200" clr-version="4.0.30319.18449" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Powershell" name="C:\git\Dynamite\Source\GSoft.Dynamite.PowerShell.Tests\Integration" executed="True" result="Success" success="True" time="15.3651" asserts="0">
+    <results>
+      <test-suite type="PowerShell" name="Logging.ps1" executed="True" result="Success" success="True" time="0.1938" asserts="0">
+        <results>
+          <test-case name="should create a logging folder at specified location" executed="True" time="0.0752" asserts="0" success="True" result="Success" />
+          <test-case name="should create a logging folder with a single *.log file at specified location" executed="True" time="0.0098" asserts="0" success="True" result="Success" />
+          <test-case name="should create a logging folder with a single *.log file at specified location" executed="True" time="0.0571" asserts="0" success="True" result="Success" />
+          <test-case name="should stop the current transcript and log normally" executed="True" time="0.0517" asserts="0" success="True" result="Success" />
+        </results>
+      </test-suite>
+      <test-suite type="PowerShell" name="Token.ps1" executed="True" result="Success" success="True" time="15.1713" asserts="0">
+        <results>
+          <test-case name="should replace the token in the legacy template format (*.template)" executed="True" time="4.9794" asserts="0" success="True" result="Success" />
+          <test-case name="should replace the token in the intellisense template format (*.template.*)" executed="True" time="0.0869" asserts="0" success="True" result="Success" />
+          <test-case name="should replace the token in the legacy template format (*.template)" executed="True" time="4.9968" asserts="0" success="True" result="Success" />
+          <test-case name="should replace the token in the intellisense template format (*.template.*)" executed="True" time="4.9286" asserts="0" success="True" result="Success" />
+          <test-case name="should throw file not found exception" executed="True" time="0.1237" asserts="0" success="True" result="Success" />
+          <test-case name="should not throw exception and template file shouldn't exist" executed="True" time="0.0558" asserts="0" success="True" result="Success" />
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

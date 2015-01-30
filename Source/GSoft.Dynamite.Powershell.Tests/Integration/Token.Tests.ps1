@@ -1,13 +1,13 @@
-﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+﻿$here = Split-Path -Path $MyInvocation.MyCommand.Path -Parent 
 
 # Script under test (sut)
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
+$sut = (Split-Path -Path $MyInvocation.MyCommand.Path -Leaf).Replace(".Tests.", ".")
 $sutPath = "$here\..\..\GSoft.Dynamite.Scripts\$sut"
 
 function Get-CurrentDomain {
 	try {
 		# Return this version if wmi is installed
-		return [string](gwmi Win32_NTDomain).DomainName.Trim()
+		return [string](Get-WmiObject -Class Win32_NTDomain).DomainName.Trim()
 	} catch {
 		# Fall back on this version in case of error
 		return $env:USERDOMAIN
@@ -35,7 +35,7 @@ Describe "Token.ps1" {
 	}
 	
 	function Remove-TokenFiles {
-		Get-ChildItem Tokens.*.ps1 | Remove-Item -Force -Recurse
+		Get-ChildItem -Filter Tokens.*.ps1 | Remove-Item -Force -Recurse
 	}
 
     function New-TemplateFileIntellisenseFormat {
@@ -56,7 +56,7 @@ Describe "Token.ps1" {
 	
 		BeforeEach {	
 			# Pre-condition: make sure nothing exists under $folderPath
-			Write-Host "     --Test Setup--"
+			Write-Host -Object "     --Test Setup--"
 			New-HostTokenFile
 		}
 
@@ -64,7 +64,7 @@ Describe "Token.ps1" {
 			# Post-condition: make sure nothing exists under $folderPath
 			Remove-TokenFiles
             Remove-TemplateFiles
-			Write-Host "     --Test Teardown--"
+			Write-Host -Object "     --Test Teardown--"
 		}
 
 		It "should replace the token in the legacy template format (*.template)" {
@@ -72,7 +72,7 @@ Describe "Token.ps1" {
             New-TemplateFileLegacyFormat
             Update-DSPTokens
 
-            $updatedTemplateFile = Get-ChildItem "$templateFileName.ps1"
+            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
 		}
@@ -82,7 +82,7 @@ Describe "Token.ps1" {
             New-TemplateFileIntellisenseFormat
             Update-DSPTokens
 
-            $updatedTemplateFile = Get-ChildItem "$templateFileName.ps1"
+            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
 		}
@@ -92,7 +92,7 @@ Describe "Token.ps1" {
 	
 		BeforeEach {	
 			# Pre-condition: make sure nothing exists under $folderPath
-			Write-Host "     --Test Setup--"
+			Write-Host -Object "     --Test Setup--"
             New-DomainTokenFile
 		}
 
@@ -100,7 +100,7 @@ Describe "Token.ps1" {
 			# Post-condition: make sure nothing exists under $folderPath
 			Remove-TokenFiles
             Remove-TemplateFiles
-			Write-Host "     --Test Teardown--"
+			Write-Host -Object "     --Test Teardown--"
 		}
 
 		It "should replace the token in the legacy template format (*.template)" {
@@ -108,7 +108,7 @@ Describe "Token.ps1" {
             New-TemplateFileLegacyFormat
             Update-DSPTokens -UseDomain
 
-            $updatedTemplateFile = Get-ChildItem "$templateFileName.ps1"
+            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
 		}
@@ -118,9 +118,53 @@ Describe "Token.ps1" {
             New-TemplateFileIntellisenseFormat
             Update-DSPTokens -UseDomain
 
-            $updatedTemplateFile = Get-ChildItem "$templateFileName.ps1"
+            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
+		}
+	}
+
+
+	Context "No token file" {
+	
+		BeforeEach {	
+			# Pre-condition: make sure nothing exists under $folderPath
+			Write-Host -Object "     --Test Setup--"
+			Remove-TokenFiles
+            Remove-TemplateFiles
+		}
+
+		AfterEach {
+			# Post-condition: make sure nothing exists under $folderPath
+			Remove-TokenFiles
+            Remove-TemplateFiles
+			Write-Host -Object "     --Test Teardown--"
+		}
+
+		It "should throw file not found exception" {
+			{ Update-DSPTokens } | Should Throw
+		}
+	}
+
+	Context "No template files" {
+	
+		BeforeEach {	
+			# Pre-condition: make sure nothing exists under $folderPath
+			Write-Host -Object "     --Test Setup--"
+			New-HostTokenFile
+            Remove-TemplateFiles
+		}
+
+		AfterEach {
+			# Post-condition: make sure nothing exists under $folderPath
+			Remove-TokenFiles
+            Remove-TemplateFiles
+			Write-Host -Object "     --Test Teardown--"
+		}
+
+		It "should not throw exception and template file shouldn't exist" {
+            Update-DSPTokens			
+			Get-ChildItem -Filter "$templateFileName.ps1"| Should BeNullOrEmpty
 		}
 	}
 }

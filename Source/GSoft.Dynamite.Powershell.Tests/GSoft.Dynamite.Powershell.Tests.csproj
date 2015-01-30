@@ -55,6 +55,7 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="Integration\Invoke-IntegrationTests.ps1" />
+    <None Include="Integration\Token.Tests.ps1" />
     <None Include="Integration\Logging.Tests.ps1" />
   </ItemGroup>
   <Choose>
@@ -77,6 +78,10 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

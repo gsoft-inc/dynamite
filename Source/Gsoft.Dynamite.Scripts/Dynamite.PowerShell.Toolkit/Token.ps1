@@ -82,21 +82,18 @@ function Update-DSPTokens {
 		$Domain = (Get-CurrentDomain)
 	}
 
-	$tokenPath = [String]::Empty
 	$Path = Resolve-Path $Path
 	$TemplatePath = Resolve-Path $TemplatePath
-		
-	Get-ChildItem -Path $Path -Include "Tokens.$Domain.ps1" -Recurse | foreach {
-		$tokenPath = $_.FullName
-	}
+	$tokenPath = (Get-ChildItem -Path $Path -Filter "Tokens.$Domain.ps1" -ErrorAction Stop | select -First 1).FullName
 	
-	if (Test-Path $tokenPath) {
-		Write-Verbose "Found token file at : $tokenPath"
-		Execute-TokenFile $TemplatePath $tokenPath $Encoding
-	}
-	else {
-		Write-Warning "Didn't find the token file named : Tokens.$Domain.ps1"
-	}
+    if (-not [string]::IsNullOrEmpty($tokenPath)) {
+	    if (Test-Path $tokenPath) {
+		    Write-Verbose "Found token file at : $tokenPath"
+		    Execute-TokenFile $TemplatePath $tokenPath $Encoding
+	    }
+        else { throw [System.IO.FileNotFoundException] "File 'Tokens.$Domain.ps1' not found." }
+    }
+    else { throw [System.IO.FileNotFoundException] "File 'Tokens.$Domain.ps1' not found." }
 }
 
 <#
