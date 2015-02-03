@@ -229,7 +229,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
         
         /// <summary>
-        /// Validates that when the hierarchy is modified, re-ensuring isn't overzealous and doesn't attemps to
+        /// Validates that when the hierarchy is modified, re-ensuring isn't overzealous and doesn't attempt to
         /// delete any already existing folders.
         /// </summary>
         [TestMethod]
@@ -439,21 +439,276 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             }
         }
 
-        ////[TestMethod]
-        ////public void EnsureFolderHierarchy_WhenNotInPagesLibrary_AndPageInfosAreDefined_ShouldThrowException()
-        ////{
-        ////}
+        /// <summary>
+        /// Validate that attempting to provision a publishing page outside the dedicated Pages library throws an exception
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenNotInPagesLibrary_AndPageInfosAreDefined_ShouldThrowException()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
 
-        ////[TestMethod]
-        ////public void EnsureFolderHierarchy_WhenNotInPulishingSite_AndPageInfosAreDefined_ShouldThrowException()
-        ////{
-        ////}
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Pages = new List<PageInfo>()
+                    {
+                        new PageInfo("Hello-root-page-path", welcomePageLayout)
+                        {
+                            FieldValues = new List<FieldValueInfo>()
+                            {
+                                new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>My HTML rocks!!!</p></div>")
+                            }
+                        }
+                    }
+                };
+
+                var listInfo = new ListInfo("somelistparth", "ListNameKey", "ListDescrKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create a custom library (not a Pages lib)
+                    var customLibrary = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Act
+                    try
+                    {
+                        folderHelper.EnsureFolderHierarchy(customLibrary, rootFolderInfo);
+                        Assert.Fail("Should've thrown argument exception");
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // Assert
+                        Assert.IsTrue(e.Message.Contains("Publishing pages cannot be provisionned outside of the Pages library."));
+                    }                    
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validate that attempting to provision a publishing page outside of a Publishing site throws an exception
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenNotInPulishingSite_AndPageInfosAreDefined_ShouldThrowException()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Pages = new List<PageInfo>()
+                    {
+                        new PageInfo("Hello-root-page-path", welcomePageLayout)
+                        {
+                            FieldValues = new List<FieldValueInfo>()
+                            {
+                                new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>My HTML rocks!!!</p></div>")
+                            }
+                        }
+                    }
+                };
+
+                var listInfo = new ListInfo("Pages", "PagesLibNameKey", "PagesLibDescrKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.Pages
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create a custom library (not a Pages lib)
+                    var customLibrary = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Act
+                    try
+                    {
+                        folderHelper.EnsureFolderHierarchy(customLibrary, rootFolderInfo);
+                        Assert.Fail("Should've thrown argument exception");
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // Assert
+                        Assert.IsTrue(e.Message.Contains("Publishing pages cannot be provisionned outside of a Publishing web (choose the Publishing Site or Enterprise Wiki site definition)."));
+                    }
+                }
+            }
+        }
 
         #endregion
 
         #region Pages should be updated during re-ensure
 
-        //// TODO: write 'em tests
+        /// <summary>
+        /// Validates that a folder's pages' property values are updated when re-ensured
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenPagesAlreadyEnsured_ShouldUpdatePublishingPageFieldValues()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+
+                var level1PageInfo = new PageInfo("Hello-root-page-path", welcomePageLayout)
+                    {
+                        FieldValues = new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>My HTML rocks!!!</p></div>")
+                        }
+                    };
+
+                var level2PageInfo = new PageInfo("Hello-lvl-2-page-path", articleLeftPageLayout)
+                    {
+                        FieldValues = new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>Hi LVL 2!!! My HTML rocks!!!</p></div>")
+                        }
+                    };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Pages = new List<PageInfo>()
+                            {
+                                level2PageInfo
+                            }
+                        }
+                    },
+                    Pages = new List<PageInfo>()
+                    {
+                        level1PageInfo
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    var pagesLibrary = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+
+                    // Ensure the hierarchy a first time with the initial page values
+                    folderHelper.EnsureFolderHierarchy(pagesLibrary, rootFolderInfo);
+
+                    // Edit the PageInfos slightly
+                    level1PageInfo.FieldValues[0].Value = "Level 1 updated HTML value";
+                    level2PageInfo.FieldValues[0].Value = "Level 2 updated HTML value";
+
+                    // Act: re-ensure the same hierarchy
+                    folderHelper.EnsureFolderHierarchy(pagesLibrary, rootFolderInfo);
+
+                    // Assert: page instances should've been updated
+                    var publishingSite = new PublishingSite(pagesLibrary.ParentWeb.Site);
+                    var publishingWeb = PublishingWeb.GetPublishingWeb(pagesLibrary.ParentWeb);
+                    var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+                    var publishingPages = publishingWeb.GetPublishingPages(recursivePagesQuery);
+
+                    Assert.AreEqual(2, publishingPages.Cast<PublishingPage>().Where(p => p.Name.StartsWith("Hello")).Count());
+
+                    var ensuredWelcomePage = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-root-page-path"));
+                    Assert.AreEqual("Level 1 updated HTML value", ensuredWelcomePage.ListItem[PublishingFields.PublishingPageContent.Id]);
+                    Assert.AreEqual(2, ensuredWelcomePage.ListItem.Versions.Count);
+
+                    var ensuredLevel2Page = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-lvl-2-page-path"));
+                    Assert.AreEqual("Level 2 updated HTML value", ensuredLevel2Page.ListItem[PublishingFields.PublishingPageContent.Id]);
+                    Assert.AreEqual(2, ensuredLevel2Page.ListItem.Versions.Count);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that a renamed PageInfo title causes a new page to be created (and the old page to be left alone
+        /// and not overzealously deleted)
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenPagesAlreadyEnsured_AndPageInfoIsRenamed_ShouldNotDeleteExistingPage_AndCreateABrandNewPage()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+
+                var level1PageInfo = new PageInfo("Hello-root-page-path", welcomePageLayout)
+                {
+                    FieldValues = new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>My HTML rocks!!!</p></div>")
+                        }
+                };
+
+                var level2PageInfo = new PageInfo("Hello-lvl-2-page-path", articleLeftPageLayout)
+                {
+                    FieldValues = new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(PublishingFields.PublishingPageContent, "<div><p>Hi LVL 2!!! My HTML rocks!!!</p></div>")
+                        }
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Pages = new List<PageInfo>()
+                            {
+                                level2PageInfo
+                            }
+                        }
+                    },
+                    Pages = new List<PageInfo>()
+                    {
+                        level1PageInfo
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    var pagesLibrary = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+
+                    // Ensure the hierarchy a first time with the initial page values
+                    folderHelper.EnsureFolderHierarchy(pagesLibrary, rootFolderInfo);
+
+                    // Edit the PageInfos slightly
+                    level1PageInfo.FileName = "Hello-welcome-page-renamed";
+                    level2PageInfo.FileName = "Hello-level-2-page-renamed";
+
+                    // Act: re-ensure the same hierarchy
+                    folderHelper.EnsureFolderHierarchy(pagesLibrary, rootFolderInfo);
+
+                    // Assert: new pages should've been created and the old ones should still be there
+                    var publishingSite = new PublishingSite(pagesLibrary.ParentWeb.Site);
+                    var publishingWeb = PublishingWeb.GetPublishingWeb(pagesLibrary.ParentWeb);
+                    var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+                    var publishingPages = publishingWeb.GetPublishingPages(recursivePagesQuery);
+
+                    Assert.AreEqual(4, publishingPages.Cast<PublishingPage>().Where(p => p.Name.StartsWith("Hello")).Count());
+
+                    var ensuredWelcomePage = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-root-page-path"));
+                    var ensuredLevel2Page = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-lvl-2-page-path"));
+
+                    var extraEnsuredWelcomePage = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-welcome-page-renamed"));
+                    var extraEnsuredLevel2Page = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-level-2-page-renamed"));
+                }
+            }
+        }
 
         #endregion
 

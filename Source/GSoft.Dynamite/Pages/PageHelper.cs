@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
 using GSoft.Dynamite.Binding.IO;
@@ -54,6 +55,12 @@ namespace GSoft.Dynamite.Pages
         public PublishingPage EnsurePage(SPList library, SPFolder folder, PageInfo page)
         {
             var publishingSite = new PublishingSite(library.ParentWeb.Site);
+
+            if (!PublishingWeb.IsPublishingWeb(library.ParentWeb))
+            {
+                throw new ArgumentException("Publishing pages cannot be provisionned outside of a Publishing web (choose the Publishing Site or Enterprise Wiki site definition).");
+            }
+
             var publishingWeb = PublishingWeb.GetPublishingWeb(library.ParentWeb);
             var publishingPages = publishingWeb.GetPublishingPages();
 

@@ -193,15 +193,15 @@ namespace GSoft.Dynamite.Lists
             // Attachements (only possible if not a DocLib or Survey list)
             if (listInfo.EnableAttachements)
             {
-                if (listInfo.ListTemplateInfo.ListTempateTypeId != BuiltInListTemplates.DocumentLibrary.ListTempateTypeId
-                    && listInfo.ListTemplateInfo.ListTempateTypeId != BuiltInListTemplates.Survey.ListTempateTypeId)
+                if (list.BaseType != SPBaseType.Survey
+                    && list.BaseType != SPBaseType.DocumentLibrary)
                 {
                     list.EnableAttachments = listInfo.EnableAttachements;
                 }
                 else
                 {
                     this.logger.Warn(
-                        "EnsureList - Skipped setting EnableAttachment=TRUE on list (url={0}) because list is a Document Library or a Surbey list, which don't support attachements." +
+                        "EnsureList - Skipped setting EnableAttachment=TRUE on list (url={0}) because list is a Document Library or a Survey list, which don't support attachements." +
                         " Provide a ListInfo without EnableAttachment=TRUE to avoid this warning.", 
                         listInfo.WebRelativeUrl);
                 }

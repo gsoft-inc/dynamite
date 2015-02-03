@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Pages;
 using Microsoft.Office.Server.Search.Internal.UI;
@@ -62,7 +63,16 @@ namespace GSoft.Dynamite.Folders
                 folder = library.RootFolder;
                 
                 // Create pages
-                this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
+                if (folderInfo.Pages != null)
+                {
+                    if ((int)library.BaseTemplate != BuiltInListTemplates.Pages.ListTempateTypeId)
+                    {
+                        // To provision Publishing Pages, you NEED to be inside the Pages library
+                        throw new ArgumentException("Publishing pages cannot be provisionned outside of the Pages library. Remove the PageInfo objects from your FolderInfo, or use this FolderInfo to provision content inside the Pages library instead.");
+                    }
+
+                    this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
+                }
 
                 // Create sub folders
                 if (folderInfo.Subfolders != null && folderInfo.Subfolders.Count > 0)
@@ -105,6 +115,15 @@ namespace GSoft.Dynamite.Folders
                     }
 
                     // Create pages
+                    if (folderInfo.Pages != null)
+                    {
+                        if ((int)library.BaseTemplate != BuiltInListTemplates.Pages.ListTempateTypeId)
+                        {
+                            // To provision Publishing Pages, you NEED to be inside the Pages library
+                            throw new ArgumentException("Publishing pages cannot be provisionned outside of the Pages library. Remove the PageInfo objects from your FolderInfo, or use this FolderInfo to provision content inside the Pages library instead.");
+                        }
+                    }
+
                     this.pageHelper.EnsurePage(library, folder, folderInfo.Pages);
                 }
 
