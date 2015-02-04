@@ -65,8 +65,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The taxonomy value or null if not found</returns>
         public TaxonomyValue GetTaxonomyValueForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            var session = new TaxonomySession(site);
+            var termStore = session.DefaultSiteCollectionTermStore;
 
             return GetTaxonomyValueForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
