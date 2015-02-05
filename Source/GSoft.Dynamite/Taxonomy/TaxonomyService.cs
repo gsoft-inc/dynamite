@@ -123,8 +123,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term or null if not found</returns>
         public Term GetTermForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            var session = new TaxonomySession(site);
+            var termStore = session.DefaultSiteCollectionTermStore;
 
             return GetTermForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
