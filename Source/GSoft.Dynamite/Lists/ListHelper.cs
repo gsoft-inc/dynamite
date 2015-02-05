@@ -553,14 +553,19 @@ namespace GSoft.Dynamite.Lists
             var availableLanguages = web.SupportedUICultures.Reverse();
             foreach (var availableLanguage in availableLanguages)
             {
-                var title = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DisplayNameResourceKey, availableLanguage.LCID);
-                var description = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DescriptionResourceKey, availableLanguage.LCID);
+                if (!string.IsNullOrEmpty(listInfo.DisplayNameResourceKey))
+                {
+                    var title = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DisplayNameResourceKey, availableLanguage.LCID);
+                    list.TitleResource.SetValueForUICulture(availableLanguage, title);
+                    list.TitleResource.Update();
+                }
 
-                list.TitleResource.SetValueForUICulture(availableLanguage, title);
-                list.TitleResource.Update();
-
-                list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
-                list.DescriptionResource.Update();
+                if (!string.IsNullOrEmpty(listInfo.DescriptionResourceKey))
+                {
+                    var description = this.resourceLocator.Find(listInfo.ResourceFileName, listInfo.DescriptionResourceKey, availableLanguage.LCID);
+                    list.DescriptionResource.SetValueForUICulture(availableLanguage, description);
+                    list.DescriptionResource.Update();
+                }
             }
         }
 

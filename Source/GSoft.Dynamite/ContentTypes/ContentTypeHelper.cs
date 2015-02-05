@@ -52,54 +52,16 @@ namespace GSoft.Dynamite.ContentTypes
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         public SPContentType EnsureContentType(SPContentTypeCollection contentTypeCollection, ContentTypeInfo contentTypeInfo)
         {
-            var contentType = this.InnerEnsureContentType(
-                contentTypeCollection,
-                new SPContentTypeId(contentTypeInfo.ContentTypeId),
-                contentTypeInfo.DisplayNameResourceKey,
-                contentTypeInfo.ResourceFileName,
-                contentTypeInfo.Fields.ToList());
+            var contentType = this.InnerEnsureContentType(contentTypeCollection, contentTypeInfo);
 
-            //// Get a list of the available languages and end with the main language
-            var web = contentType.ParentWeb;
-            var availableLanguages = web.SupportedUICultures.Reverse().ToList();
-
-            // If it's a publishing web, add the variation labels as available languages
-            if (PublishingWeb.IsPublishingWeb(web) && this.variationHelper.IsVariationsEnabled(web.Site))
+            SPList list;
+            if (!TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
-                var labels = this.variationHelper.GetVariationLabels(web.Site);
-                if (labels.Count > 0)
-                {
-                    // Predicate to check if the web contains the label language in it's available languages
-                    Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) =>
-                        !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
-
-                    // Get the label languages that aren't already in the web's available languages
-                    var labelLanguages = labels
-                        .Where(notAvailableWebLanguageFunc)
-                        .Select(label => new CultureInfo(label.Language));
-
-                    availableLanguages.AddRange(labelLanguages);
-                }
+                // Set the content type title, description, and group information for each language.
+                // Only do this when not on a web because the SPContentType Title property does not support resource values at this level.
+                // The content type for a list is created at the root web level, then added to the list.
+                this.SetTitleDescriptionAndGroupValues(contentTypeInfo, contentType);
             }
-
-            // If multiple languages are enabled, since we have a full ContentTypeInfo object, we want to populate 
-            // all alternate language labels for the Content Type
-            foreach (CultureInfo availableLanguage in availableLanguages)
-            {
-                var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
-                Thread.CurrentThread.CurrentUICulture = availableLanguage;
-
-                contentType.Name = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
-                
-                contentType.Description = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey);
-                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage.LCID);
-
-                contentType.Group = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey);
-
-                Thread.CurrentThread.CurrentUICulture = previousUiCulture;
-            }
-
-            contentType.Update();
 
             return contentType;
         }
@@ -195,26 +157,17 @@ namespace GSoft.Dynamite.ContentTypes
 
         #region Private methods
 
-        private SPContentType InnerEnsureContentType(SPContentTypeCollection contentTypeCollection, SPContentTypeId contentTypeId, string contentTypeName, string resourceFileName, IList<IFieldInfo> fields)
+        private SPContentType InnerEnsureContentType(SPContentTypeCollection contentTypeCollection, ContentTypeInfo contentTypeInfo)
         {
             if (contentTypeCollection == null)
             {
                 throw new ArgumentNullException("contentTypeCollection");
             }
 
-            if (contentTypeId == null)
-            {
-                throw new ArgumentNullException("contentTypeId");
-            }
-
-            if (string.IsNullOrEmpty(contentTypeName))
-            {
-                throw new ArgumentNullException("contentTypeName");
-            }
-
+            SPContentTypeId contentTypeId = new SPContentTypeId(contentTypeInfo.ContentTypeId);
             SPList list = null;
 
-            var contentTypeResourceTitle = this.resourceLocator.GetResourceString(resourceFileName, contentTypeName);
+            var contentTypeResourceTitle = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
 
             if (TryGetListFromContentTypeCollection(contentTypeCollection, out list))
             {
@@ -240,10 +193,7 @@ namespace GSoft.Dynamite.ContentTypes
                             // By convention, content types should always exist on root web as site-collection-wide
                             // content types before they get linked on a specific list.
                             var rootWebContentTypeCollection = list.ParentWeb.Site.RootWeb.ContentTypes;
-                            var newWebContentType = new SPContentType(contentTypeId, rootWebContentTypeCollection, contentTypeResourceTitle);
-                            contentTypeInWeb = rootWebContentTypeCollection.Add(newWebContentType);
-
-                            this.InnerEnsureFieldInContentType(contentTypeInWeb, fields);
+                            contentTypeInWeb = this.EnsureContentType(rootWebContentTypeCollection, contentTypeInfo);
 
                             this.log.Warn(
                                 "EnsureContentType - Forced the creation of Content Type (name={0} ctid={1}) on the root web (url=) instead of adding the CT directly on the list (id={2} title={3}). By convention, all CTs should be provisonned on RootWeb before being re-used in lists.",
@@ -259,7 +209,7 @@ namespace GSoft.Dynamite.ContentTypes
                 }
                 else
                 {
-                    this.InnerEnsureFieldInContentType(contentTypeInList, fields);
+                    this.InnerEnsureFieldInContentType(contentTypeInList, contentTypeInfo.Fields);
 
                     return contentTypeInList;
                 }
@@ -286,7 +236,7 @@ namespace GSoft.Dynamite.ContentTypes
                             this.log.Warn(
                                 "EnsureContentType - Will force creation of content type (id={0} name={1}) on root web instead of on specified sub-web. This is to enforce the following convention: all CTs should be provisioned at root of site collection, to ease maintenance. Ensure your content types on the root web's SPContentTypeCollection to avoid this warning.",
                                 contentTypeId.ToString(),
-                                contentTypeName);
+                                contentTypeInfo.DisplayNameResourceKey);
                         }
 
                         var contentTypeInRootWeb = rootWebContentTypeCollection[contentTypeId];
@@ -300,21 +250,19 @@ namespace GSoft.Dynamite.ContentTypes
                             contentTypeInRootWeb = rootWebContentTypeCollection.Add(newWebContentType);
                         }
 
-                        this.InnerEnsureFieldInContentType(contentTypeInRootWeb, fields);
+                        this.InnerEnsureFieldInContentType(contentTypeInRootWeb, contentTypeInfo.Fields);
 
                         return contentTypeInRootWeb;
                     }
                     else
                     {
-                        this.InnerEnsureFieldInContentType(contentTypeInWeb, fields);
+                        this.InnerEnsureFieldInContentType(contentTypeInWeb, contentTypeInfo.Fields);
                         return contentTypeInWeb;
                     }
                 }
 
                 // Case if there is no Content Types in the Web (e.g single SPWeb)
-                var newContentType = new SPContentType(contentTypeId, contentTypeCollection, contentTypeResourceTitle);
-                var returnedContentType = contentTypeCollection.Add(newContentType);
-                this.InnerEnsureFieldInContentType(returnedContentType, fields);
+                var returnedContentType = this.EnsureContentType(contentTypeCollection, contentTypeInfo);
                 return returnedContentType;
             }
 
@@ -419,6 +367,51 @@ namespace GSoft.Dynamite.ContentTypes
             }
 
             return false;
+        }
+
+        private void SetTitleDescriptionAndGroupValues(ContentTypeInfo contentTypeInfo, SPContentType contentType)
+        {
+            //// Get a list of the available languages and end with the main language
+            var web = contentType.ParentWeb;
+            var availableLanguages = web.SupportedUICultures.Reverse().ToList();
+
+            // If it's a publishing web, add the variation labels as available languages
+            if (PublishingWeb.IsPublishingWeb(web) && this.variationHelper.IsVariationsEnabled(web.Site))
+            {
+                var labels = this.variationHelper.GetVariationLabels(web.Site);
+                if (labels.Count > 0)
+                {
+                    // Predicate to check if the web contains the label language in it's available languages
+                    Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) =>
+                        !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
+
+                    // Get the label languages that aren't already in the web's available languages
+                    var labelLanguages = labels
+                        .Where(notAvailableWebLanguageFunc)
+                        .Select(label => new CultureInfo(label.Language));
+
+                    availableLanguages.AddRange(labelLanguages);
+                }
+            }
+
+            // If multiple languages are enabled, since we have a full ContentTypeInfo object, we want to populate 
+            // all alternate language labels for the Content Type
+            foreach (CultureInfo availableLanguage in availableLanguages)
+            {
+                var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
+                Thread.CurrentThread.CurrentUICulture = availableLanguage;
+
+                contentType.Name = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);
+
+                contentType.Description = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey);
+                contentType.Description = this.resourceLocator.Find(contentTypeInfo.ResourceFileName, contentTypeInfo.DescriptionResourceKey, availableLanguage.LCID);
+
+                contentType.Group = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.GroupResourceKey);
+
+                Thread.CurrentThread.CurrentUICulture = previousUiCulture;
+            }
+
+            contentType.Update();
         }
 
         private static bool TryGetListFromContentTypeCollection(SPContentTypeCollection collection, out SPList list)
