@@ -93,7 +93,7 @@ Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPM
 Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-SuggestedBrowserContentLocations
 
 # Tokenizer
-Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolution
+Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens
 
 # Taxonomy
 Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup
@@ -141,7 +141,7 @@ Export-ModuleMember Set-DSPWebPermissions
 Export-ModuleMember Set-DSPTimerJobs
 
 # Utilities
-Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin
+Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession

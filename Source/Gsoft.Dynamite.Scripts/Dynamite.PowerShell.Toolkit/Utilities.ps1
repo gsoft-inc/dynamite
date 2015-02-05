@@ -54,3 +54,174 @@ function Test-DSPIsAdmin()
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal( [Security.Principal.WindowsIdentity]::GetCurrent() )
     return $currentPrincipal.IsInRole( [Security.Principal.WindowsBuiltInRole]::Administrator )
 }
+
+function Copy-DSPFiles {
+	<#
+	.SYNOPSIS
+		Copies files to a specified destination
+	
+	.DESCRIPTION
+		Copies files from a source folder to a destination folder using the specified
+		match and exclude patterns.
+		Note: See Get-ChildItem documentation for more information on pattern syntax.
+		https://technet.microsoft.com/en-us/library/hh849800.aspx
+	
+		--------------------------------------------------------------------------------------
+		Module 'Dynamite.PowerShell.Toolkit'
+		by: GSoft, Team Dynamite.
+		> GSoft & Dynamite : http://www.gsoft.com
+		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+		--------------------------------------------------------------------------------------
+    
+	.PARAMETER Path
+		The source path where all the files are located. By default the value is the current working location.
+	
+	.PARAMETER DestinationPath
+		The destination path where the files will be copied.
+ 	
+	.PARAMETER Match
+		Array of strings to match files with.
+	
+	.PARAMETER Exclude
+		Array of strings to exclude files with.
+	#>
+  [CmdletBinding()]
+	param (
+        [Parameter(Mandatory=$true)]
+        [string]$Path = (Get-Location),
+		
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Match = @("*.ps1","*.template","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*", "*.psd1", "*.psm1"),
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Exclude
+	)
+    
+    # Copy all .ps1 script inside $Path to $DestinationPath
+    Copy-DSPFile -Path $Path -DestinationPath $DestinationPath -Match $Match -Exclude $Exclude
+}
+
+function Copy-DSPFile {
+	<#
+	.SYNOPSIS
+		Copies a file to a specified destination
+	
+	.DESCRIPTION
+		Copies a file from a source folder to a destination folder using the specified
+		match and exclude patterns.
+		Note: See Get-ChildItem documentation for more information on pattern syntax.
+		https://technet.microsoft.com/en-us/library/hh849800.aspx
+	
+		--------------------------------------------------------------------------------------
+		Module 'Dynamite.PowerShell.Toolkit'
+		by: GSoft, Team Dynamite.
+		> GSoft & Dynamite : http://www.gsoft.com
+		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+		--------------------------------------------------------------------------------------
+    
+	.PARAMETER Path
+		The source path where the file is located. By default the value is the current working location.
+	
+	.PARAMETER DestinationPath
+		The destination path where the file will be copied.
+ 	
+	.PARAMETER Match
+		Array of strings to match files with. Default is *.ps1,*.template, *.template.*,*.xlsx,*.jpg,*.jpeg,*.png,*.sgt, README*, *.psd1, *.psm1
+		for components deployment package publishing.
+	
+	.PARAMETER Exclude
+		Array of strings to exclude files with.
+	#>
+  [CmdletBinding()]
+	param (
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+		
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Match=@("*.ps1","*.template", "*.template.*","*.xlsx","*.jpg","*.jpeg","*.png","*.sgt", "README*", "*.psd1", "*.psm1"),
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Exclude
+	)
+
+    if ((![String]::IsNullOrEmpty($DestinationPath)))
+    {
+    	# Replace tokens in all .template files.
+	    Get-ChildItem -Path $Path -Include $Match -Exclude $Exclude -Recurse | foreach {
+		    Write-Verbose "Copying file '$_'... "
+
+            # Get the relative Path of the file from where we are.
+            $relativePath = $_.FullName.Replace($Path, "")
+
+            # We then build the path from the package path with the relative folder 
+            $fileFullName = Join-Path $DestinationPath $relativePath
+
+            # We remove the filename to test the path and create the folder if it doesnt exist
+            $packageSpecificPath = Split-Path $fileFullName
+            if (!(Test-Path $packageSpecificPath)) 
+            {
+                New-Item -ItemType Directory -Force -Path $packageSpecificPath | Out-Null
+            }
+
+            # We write the tokenized file
+			Copy-Item $_.FullName $fileFullName -Force -ErrorAction Stop
+        }
+    }
+}
+
+function Copy-DSPSolutions {
+	<#
+	.SYNOPSIS
+		Copies WSP files to a specified destination
+	
+	.DESCRIPTION
+		Copies WSP files from a source folder to a destination folder using the specified
+		match and exclude patterns.
+		Note: See Get-ChildItem documentation for more information on pattern syntax.
+		https://technet.microsoft.com/en-us/library/hh849800.aspx
+	
+		--------------------------------------------------------------------------------------
+		Module 'Dynamite.PowerShell.Toolkit'
+		by: GSoft, Team Dynamite.
+		> GSoft & Dynamite : http://www.gsoft.com
+		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+		--------------------------------------------------------------------------------------
+    
+	.PARAMETER Path
+		The source path where all the files are located. By default the value is the current working location.
+	
+	.PARAMETER DestinationPath
+		The destination path where the files will be copied.
+ 	
+	.PARAMETER Match
+		Array of strings to match files with. Default is *.wsp
+	
+	.PARAMETER Exclude
+		Array of strings to exclude files with.
+	#>
+	[CmdletBinding()]
+	param (
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+		
+        [Parameter(Mandatory=$true)]
+        [string]$DestinationPath,
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Match=@("*.wsp"),
+
+        [Parameter(Mandatory=$false)]
+        [string[]]$Exclude
+	)
+
+	Copy-DSPFiles -Path $Path -DestinationPath $DestinationPath -Match $Match
+}
