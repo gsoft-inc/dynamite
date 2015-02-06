@@ -141,7 +141,7 @@ Export-ModuleMember Set-DSPWebPermissions
 Export-ModuleMember Set-DSPTimerJobs
 
 # Utilities
-Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions
+Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession

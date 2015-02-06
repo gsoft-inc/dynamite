@@ -237,3 +237,45 @@ function Copy-DSPSolutions {
         Write-Verbose "Success!"
     }
 }
+
+function Test-DSPDeployedSolutions {
+	<#
+	.SYNOPSIS
+		Checks the SharePoint farm to see if solutions are deployed
+	
+	.DESCRIPTION
+		Checks the SharePoint farm's solution solution store to see if all the solutions in the configuration file are deployed.
+	
+		--------------------------------------------------------------------------------------
+		Module 'Dynamite.PowerShell.Toolkit'
+		by: GSoft, Team Dynamite.
+		> GSoft & Dynamite : http://www.gsoft.com
+		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+		--------------------------------------------------------------------------------------
+    
+	.PARAMETER SolutionsConfigurationFilePath
+		Path of the XML configuration file of the deployed solutions.
+	#>
+	Param(
+        [Parameter(Mandatory=$true)]
+        [string]$SolutionsConfigurationFilePath)
+	
+	# Get configuration file contents
+	[xml]$solutionsXml = Get-Content $SolutionsConfigurationFilePath
+	$expectedSolutionNames = $solutionsXml.SelectNodes("//Solution") | ForEach-Object { $_.Path.Substring($_.Path.LastIndexOf("\") + 1) }
+
+	# Check the farm for deployed solutions
+	$hasSolutionsDeployed = $true
+	$actualSolutionNames = Get-SPSolution | Where-Object Deployed | ForEach-Object Name
+	foreach ($expectedSolutionName in $expectedSolutionNames) {
+		if (-not ($actualSolutionNames -contains $expectedSolutionName)) {
+			$hasSolutionsDeployed = $false
+			Write-Warning "'$expectedSolutionName' not deployed in farm."
+		} else {
+			Write-Verbose "'$expectedSolutionName' deployed in farm."
+		}
+	}
+
+	return $hasSolutionsDeployed
+}
