@@ -217,11 +217,23 @@ function Copy-DSPSolutions {
         [string]$DestinationPath,
 
         [Parameter(Mandatory=$false)]
-        [string[]]$Match=@("*.wsp"),
+        [string]$FilterPath="*",
 
         [Parameter(Mandatory=$false)]
         [string[]]$Exclude
 	)
+    
 
-	Copy-DSPFiles -Path $Path -DestinationPath $DestinationPath -Match $Match
+    if (!(Test-Path $DestinationPath)) 
+    {
+        New-Item -ItemType Directory -Force -Path $DestinationPath | Out-Null
+    }
+    
+    Write-Verbose "Searching WSPs in $Path matching $FilterPath"
+
+    Get-ChildItem -Path $Path -Include "*.wsp" -Recurse -Exclude $Exclude | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
+        Write-Verbose "Copying WSP file '$_'... "
+        Copy-Item $_.FullName $DestinationPath -Force -ErrorAction Stop
+        Write-Verbose "Success!"
+    }
 }
