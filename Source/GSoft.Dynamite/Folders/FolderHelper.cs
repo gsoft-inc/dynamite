@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.Folders
                 folder = library.RootFolder;
                 
                 // Create pages
-                if (folderInfo.Pages != null)
+                if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                 {
                     if ((int)library.BaseTemplate != BuiltInListTemplates.Pages.ListTempateTypeId)
                     {
@@ -115,7 +115,7 @@ namespace GSoft.Dynamite.Folders
                     }
 
                     // Create pages
-                    if (folderInfo.Pages != null)
+                    if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                     {
                         if ((int)library.BaseTemplate != BuiltInListTemplates.Pages.ListTempateTypeId)
                         {

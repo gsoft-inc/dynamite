@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
-using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.WebParts;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Pages
     {
         private readonly IWebPartHelper webPartHelper;
         private readonly ILogger logger;
-        private readonly ISPItemValueWriter itemValueWriter;
+        private readonly IFieldValueWriter itemValueWriter;
 
         /// <summary>
         /// Initializes a new <see cref="PageHelper" /> instance
@@ -26,7 +26,7 @@ namespace GSoft.Dynamite.Pages
         /// <param name="webPartHelper">Web Part helper</param>
         /// <param name="logger">The logger.</param>
         /// <param name="itemValueWriter">The item value writer.</param>
-        public PageHelper(IWebPartHelper webPartHelper, ILogger logger, ISPItemValueWriter itemValueWriter)
+        public PageHelper(IWebPartHelper webPartHelper, ILogger logger, IFieldValueWriter itemValueWriter)
         {
             this.webPartHelper = webPartHelper;
             this.logger = logger;
@@ -97,7 +97,7 @@ namespace GSoft.Dynamite.Pages
             }
 
             // Set field Values
-            this.itemValueWriter.WriteValuesToSPListItem(publishingPage.ListItem, page.FieldValues);
+            this.itemValueWriter.WriteValuesToListItem(publishingPage.ListItem, page.FieldValues);
             publishingPage.ListItem.Update();
 
             // Insert WebParts

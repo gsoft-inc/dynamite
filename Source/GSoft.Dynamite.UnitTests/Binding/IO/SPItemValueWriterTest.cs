@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autofac;
-using GSoft.Dynamite.Binding.IO;
-using GSoft.Dynamite.Binding.IO.Fakes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.ValueTypes.Writers;
+using GSoft.Dynamite.ValueTypes.Writers.Fakes;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Fakes;
@@ -42,22 +42,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                     new FieldValueInfo(BuiltInFields.Title, null)
                 };
 
-                ShimSPItemValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (writerInst, listItemParam, fieldValuesParam) =>
-                {
-                    actualCallCount++;
-                    return listItemParam;
-                };
+                ShimFieldValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (writerInst, listItemParam, fieldValuesParam) =>
+                 {
+                     actualCallCount++;
+                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValuesToSPListItem(fakeListItem, fieldValueInfos);
+                writer.WriteValuesToListItem(fakeListItem, fieldValueInfos);
 
                 // Assert
                 Assert.AreEqual(expectedCallCount, actualCallCount, string.Format("The call was made {0} out of {1} times.", actualCallCount, expectedCallCount));
@@ -79,23 +78,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new DateTimeFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the DateTimeFieldInfo type.");
@@ -115,23 +112,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new GuidFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the GuidFieldInfo type.");
@@ -151,23 +146,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new HtmlFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the HtmlFieldInfo type.");
@@ -187,23 +180,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new ImageFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemImageValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimImageValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemImageValueWriter should have been used for the ImageFieldInfo type.");
@@ -223,23 +214,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new LookupFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemLookupValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimLookupValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemLookupValueWriter should have been used for the LookupFieldInfo type.");
@@ -260,14 +249,14 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var fieldInfo = new LookupMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 // Expect Not Supported Exception 
@@ -287,23 +276,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new MinimalFieldInfo("InternalName", Guid.NewGuid());
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the MinimalFieldInfo type.");
@@ -323,23 +310,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new NoteFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the NoteFieldInfo type.");
@@ -359,23 +344,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new NumberFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the NumberFieldInfo type.");
@@ -395,23 +378,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new TaxonomyFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemTaxonomyValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimTaxonomyFullValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemTaxonomyValueWriter should have been used for the TaxonomyFieldInfo type.");
@@ -431,23 +412,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new TaxonomyMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemTaxonomyMultiValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimTaxonomyFullValueCollectionWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemTaxonomyMultiValueWriter should have been used for the TaxonomyMultiFieldInfo type.");
@@ -467,23 +446,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new TextFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemBaseValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the TextFieldInfo type.");
@@ -503,23 +480,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new UrlFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemUrlValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimUrlValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemUrlValueWriter should have been used for the UrlFieldFieldInfo type.");
@@ -539,23 +514,21 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new UserFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimSPItemUserValueWriter.AllInstances.WriteValueToSPListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimUserValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
-
-                    return listItem;
                 };
 
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 Assert.IsTrue(correctWriterWasUsed, "The SPItemUserValueWriter should have been used for the UserFieldFieldInfo type.");
@@ -576,14 +549,14 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var fieldInfo = new UserMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
                 var fakeListItem = new ShimSPListItem().Instance;
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
                 // Expect Not Supported Exception 
@@ -612,16 +585,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                     }
                 };
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 SPListItem fakeListItem = fakeListItemShim.Instance;
 
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(setField, setValue));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(setField, setValue));
 
                 // Assert
             }

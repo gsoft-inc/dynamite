@@ -714,7 +714,99 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
         #region Folder MetadataDefaults (field default values) should be created and/or updated during Ensure
 
-        //// TODO: write 'em tests
+        /// <summary>
+        /// Validates that folder MetadataDefaults get initialized if DefaultValues are specified
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecified_AndFirstEnsure_ShouldInitializeFolderMetadataDefaults()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var folderInfoLvl3 = new FolderInfo("level3");
+                var folderInfoLvl2 = new FolderInfo("somelevel2path");
+                var folderInfoLvl2Alt = new FolderInfo("somelevel2path alt");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2      // just add one of the three subfolders for now
+                    }
+                };
+
+                var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Ensure the initial (partial) folder hierarchy
+                    folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+
+                    // Modify the folder hierarchy to add the 2 missing subfolders
+                    folderInfoLvl2.Subfolders.Add(folderInfoLvl3);
+                    rootFolderInfo.Subfolders.Add(folderInfoLvl2Alt);
+
+                    // Act: re-ensure the hierarchy with update definition
+                    folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+
+                    // Assert
+                    Assert.IsTrue(list.EnableFolderCreation);
+                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms" && folder.Name != "Item" && folder.Name != "Attachments").Count());
+                    Assert.AreEqual(0, list.Folders.Count);   // Since this isn't a doclib, Folders array will always be empty (gotta use RootFolder.SubFolders)
+
+                    var lvl2Folder = list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+
+                    Assert.AreEqual(1, lvl2Folder.SubFolders.Count);
+                    lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that folder MetadataDefaults get updated if DefaultValues are specified
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecified_AndRepeatEnsure_ShouldUpdateFolderMetadataDefaults()
+        {
+        }
+
+        /// <summary>
+        /// VAlidates that default folder values in list are applied when you create an item
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInListFolder_AndYouCreateAListItem_ThenItemShouldHaveDefaultValue()
+        {
+        }
+
+        /// <summary>
+        /// Validates that default folder values in document library are applied when you upload a document
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInLibraryFolder_AndYouUploadADocument_ThenDocumentShouldHaveDefaultValue()
+        {
+        }
+
+        /// <summary>
+        /// Validates that default folder values in Pages library are applied when you create a publishing page
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInPagesLibraryFolder_AndYouCreateAPage_ThenPageShouldHaveDefaultValue()
+        {
+        }
+
+        /// <summary>
+        /// Validates that default folder values in Pages library are applied when you specify a collection of PageInfos in your FolderInfo definition
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInPagesLibraryFolder_AndYouSpecifyPageInfosForFolderInfo_ThenFolderEnsureShouldCreatePagesWithDefaultValue()
+        {
+        }
 
         #endregion
 

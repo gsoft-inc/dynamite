@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
-using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caml;
@@ -29,6 +28,7 @@ using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
 
@@ -80,15 +80,15 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<TaxonomyValueCollectionConverter>();
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
-            builder.RegisterType<SPItemValueWriter>().As<ISPItemValueWriter>();
-            builder.RegisterType<SPItemBaseValueWriter>();
-            builder.RegisterType<SPItemTaxonomyValueWriter>();
-            builder.RegisterType<SPItemTaxonomyMultiValueWriter>();
-            builder.RegisterType<SPItemLookupValueWriter>();
-            builder.RegisterType<SPItemPrincipalValueWriter>();
-            builder.RegisterType<SPItemUserValueWriter>();
-            builder.RegisterType<SPItemUrlValueWriter>();
-            builder.RegisterType<SPItemImageValueWriter>();
+            builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
+            builder.RegisterType<StringValueWriter>();
+            builder.RegisterType<TaxonomyFullValueWriter>();
+            builder.RegisterType<TaxonomyFullValueCollectionWriter>();
+            builder.RegisterType<LookupValueWriter>();
+            builder.RegisterType<PrincipalValueWriter>();
+            builder.RegisterType<UserValueWriter>();
+            builder.RegisterType<UrlValueWriter>();
+            builder.RegisterType<ImageValueWriter>();
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();

@@ -85,16 +85,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
-    <Compile Include="Binding\IO\ISPItemValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemBaseValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemImageValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemLookupValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemPrincipalValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemTaxonomyMultiValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemTaxonomyValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemUrlValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemUserValueWriter.cs" />
-    <Compile Include="Binding\IO\SPItemValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\GuidValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\DoubleValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\IBaseValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\IFieldValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\BaseValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\BooleanValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\StringValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\ImageValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\LookupValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\PrincipalValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\TaxonomyFullValueCollectionWriter.cs" />
+    <Compile Include="ValueTypes\Writers\TaxonomyFullValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\UrlValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\UserValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\FieldValueWriter.cs" />
     <Compile Include="Branding\IDisplayTemplateHelper.cs" />
     <Compile Include="Branding\IImageRenditionHelper.cs" />
     <Compile Include="Branding\ImageRenditionInfo.cs" />
