@@ -33,7 +33,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             if (termInfos != null && termInfos.Count > 0)
             {
                 List<string> labelGuidPairsListOutParam = new List<string>();
-                newTaxonomyFieldValueCollection = this.CreateSharePointTaxonomyFieldValue(taxonomyField, termInfos, labelGuidPairsListOutParam);
+                newTaxonomyFieldValueCollection = CreateSharePointTaxonomyFieldValue(taxonomyField, termInfos, labelGuidPairsListOutParam);
 
                 item[taxonomyField.Id] = newTaxonomyFieldValueCollection;
               
@@ -64,7 +64,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (withDefaultVal.DefaultValue != null)
             {               
-                var taxonomyFieldValueCollection = this.CreateSharePointTaxonomyFieldValue(sharepointTaxonomyField, withDefaultVal.DefaultValue, null);
+                var taxonomyFieldValueCollection = CreateSharePointTaxonomyFieldValue(sharepointTaxonomyField, withDefaultVal.DefaultValue, null);
                 string collectionValidatedString = sharepointTaxonomyField.GetValidatedString(taxonomyFieldValueCollection);
 
                 sharepointTaxonomyField.DefaultValue = collectionValidatedString;
@@ -76,12 +76,17 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             }
         }
 
+        /// <summary>
+        /// Writes a field value as an SPFolder's default column value
+        /// </summary>
+        /// <param name="folder">The folder for which we wish to update a field's default value</param>
+        /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             throw new NotImplementedException();
         }
 
-        private TaxonomyFieldValueCollection CreateSharePointTaxonomyFieldValue(
+        private static TaxonomyFieldValueCollection CreateSharePointTaxonomyFieldValue(
             TaxonomyField sharepointTaxonomyField, 
             TaxonomyFullValueCollection dynamiteCollection, 
             List<string> labelGuidPairsListOutParam)
@@ -96,7 +101,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             foreach (var taxonomyFullValue in dynamiteCollection)
             {
                 string labelGuidPair = TaxonomyItem.NormalizeName(taxonomyFullValue.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
-                                + taxonomyFullValue.Term.Id.ToString().ToUpperInvariant(); ;
+                                + taxonomyFullValue.Term.Id.ToString().ToUpperInvariant();
 
                 labelGuidPairsListOutParam.Add(labelGuidPair);
             }

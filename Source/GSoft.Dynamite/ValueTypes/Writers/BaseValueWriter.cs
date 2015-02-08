@@ -11,6 +11,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     /// <summary>
     /// Defines the generic contract for all ValueType writers
     /// </summary>
+    /// <typeparam name="T">The writer's associated value type</typeparam>
     public abstract class BaseValueWriter<T> : IBaseValueWriter
     {
         /// <summary>

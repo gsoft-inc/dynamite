@@ -24,9 +24,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
             var principal = fieldValueInfo.Value as PrincipalValue;
-            var newValue = principal != null
-                ? string.Format(CultureInfo.InvariantCulture, "{0};#{1}", principal.Id, (principal.DisplayName ?? string.Empty).Replace(";", ";;"))
-                : null;
+            var newValue = principal != null ? FormatPrincipalString(principal) : null;
 
             item[fieldValueInfo.FieldInfo.InternalName] = newValue;
         }
@@ -38,12 +36,36 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var withDefaultVal = (FieldInfo<PrincipalValue>)fieldValueInfo.FieldInfo;
+            var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
+
+            if (withDefaultVal.DefaultValue != null)
+            {
+                field.DefaultValue = FormatPrincipalString(withDefaultVal.DefaultValue);
+            }
+            else
+            {
+                field.DefaultValue = null;
+            }
         }
 
+        /// <summary>
+        /// Writes a field value as an SPFolder's default column value
+        /// </summary>
+        /// <param name="folder">The folder for which we wish to update a field's default value</param>
+        /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             throw new NotImplementedException();
+        }
+
+        private static string FormatPrincipalString(PrincipalValue principalValue)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture, 
+                "{0};#{1}", 
+                principalValue.Id, 
+                (principalValue.DisplayName ?? string.Empty).Replace(";", ";;"));
         }
     }
 }

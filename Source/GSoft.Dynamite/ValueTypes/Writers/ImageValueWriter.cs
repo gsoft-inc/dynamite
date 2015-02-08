@@ -29,7 +29,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (imageValue != null)
             {
-                sharePointFieldImageValue = this.CreateSharePointImageFieldValue(imageValue);
+                sharePointFieldImageValue = CreateSharePointImageFieldValue(imageValue);
             }
 
             item[fieldValueInfo.FieldInfo.InternalName] = sharePointFieldImageValue;
@@ -48,18 +48,27 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             if (withDefaultVal.DefaultValue != null)
             {
                 var imageValue = withDefaultVal.DefaultValue;
-                var sharePointFieldImageValue = this.CreateSharePointImageFieldValue(imageValue);
+                var sharePointFieldImageValue = CreateSharePointImageFieldValue(imageValue);
 
                 field.DefaultValue = sharePointFieldImageValue.ToString();
             }
+            else
+            {
+                field.DefaultValue = null;
+            }
         }
 
+        /// <summary>
+        /// Writes a field value as an SPFolder's default column value
+        /// </summary>
+        /// <param name="folder">The folder for which we wish to update a field's default value</param>
+        /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             throw new NotImplementedException();
         }
 
-        private ImageFieldValue CreateSharePointImageFieldValue(ImageValue imageValue)
+        private static ImageFieldValue CreateSharePointImageFieldValue(ImageValue imageValue)
         {
             var fieldImageValue = new ImageFieldValue()
             {
@@ -77,6 +86,5 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             return fieldImageValue;
         }
-
     }
 }

@@ -72,19 +72,16 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                               + withDefaultValue.DefaultValue.Term.Id.ToString().ToUpperInvariant();
                 sharePointTaxonomyFieldValue.PopulateFromLabelGuidPair(path);
 
-                //int[] ids = TaxonomyField.GetWssIdsOfTerm(web.Site, termStore.Id, termSet.Id, term.Id, true, 1);
-
-                //if (ids.Length == 0)
-                //{
-                //    statusTaxonomyFieldDefaultValue.WssId = -1;
-                //}
-
-                //statusTaxonomyFieldDefaultValue.TermGuid = statusTaxonomyFieldDefaultValue.TermGuid.ToUpperInvariant();
                 taxonomyField.DefaultValue = sharePointTaxonomyFieldValue.ValidatedString;
                 taxonomyField.Update();
             }
         }
 
+        /// <summary>
+        /// Writes a field value as an SPFolder's default column value
+        /// </summary>
+        /// <param name="folder">The folder for which we wish to update a field's default value</param>
+        /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             throw new NotImplementedException();

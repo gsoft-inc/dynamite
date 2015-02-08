@@ -85,12 +85,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
+    <Compile Include="ValueTypes\Writers\DateTimeValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\GuidValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\DoubleValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\IBaseValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\IFieldValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\BaseValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\BooleanValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\MediaValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\LookupValueCollectionWriter.cs" />
     <Compile Include="ValueTypes\Writers\StringValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\ImageValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\LookupValueWriter.cs" />
@@ -98,6 +101,7 @@
     <Compile Include="ValueTypes\Writers\TaxonomyFullValueCollectionWriter.cs" />
     <Compile Include="ValueTypes\Writers\TaxonomyFullValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\UserValueCollectionWriter.cs" />
     <Compile Include="ValueTypes\Writers\UserValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\FieldValueWriter.cs" />
     <Compile Include="Branding\IDisplayTemplateHelper.cs" />

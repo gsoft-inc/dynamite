@@ -18,6 +18,10 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     {
         private ILogger log;
 
+        /// <summary>
+        /// Creates a new <see cref="UrlValueWriter"/>
+        /// </summary>
+        /// <param name="log">Logging utility</param>
         public UrlValueWriter(ILogger log)
         {
             this.log = log;
@@ -66,8 +70,17 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                         urlValue.Url);
                 }
             }
+            else
+            {
+                field.DefaultValue = null;
+            }
         }
 
+        /// <summary>
+        /// Writes a field value as an SPFolder's default column value
+        /// </summary>
+        /// <param name="folder">The folder for which we wish to update a field's default value</param>
+        /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             throw new NotImplementedException();

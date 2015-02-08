@@ -13,18 +13,18 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.ValueTypes.Writers
 {
     /// <summary>
-    /// Writes user values to SharePoint list items, field definition's DefaultValue
+    /// Writes user value collections to SharePoint list items, field definition's DefaultValue
     /// and folder MetadataDefaults.
     /// </summary>
-    public class UserValueWriter : BaseValueWriter<UserValue>
+    public class UserValueCollectionWriter : BaseValueWriter<UserValueCollection>
     {
         private ILogger log;
 
         /// <summary>
-        /// Creates a new <see cref="UserValueWriter"/>
+        /// Creates a new <see cref="UserValueCollectionWriter"/>
         /// </summary>
         /// <param name="log">Logging utility</param>
-        public UserValueWriter(ILogger log)
+        public UserValueCollectionWriter(ILogger log)
         {
             this.log = log;
         }
@@ -36,9 +36,9 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
-            var userValue = fieldValueInfo.Value as UserValue;
-            var newUserValue = userValue != null
-                ? CreateSharePointUserValue(item.Web, userValue).ToString()
+            var userValueColl = fieldValueInfo.Value as UserValueCollection;
+            var newUserValue = userValueColl != null
+                ? CreateSharePointUserValueCollection(item.Web, userValueColl).ToString()
                 : null;
 
             item[fieldValueInfo.FieldInfo.InternalName] = newUserValue;
@@ -53,15 +53,15 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<UserValue>)fieldValueInfo.FieldInfo;
+            var withDefaultVal = (FieldInfo<UserValueCollection>)fieldValueInfo.FieldInfo;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
             if (withDefaultVal.DefaultValue != null)
             {
-                field.DefaultValue = CreateSharePointUserValue(parentFieldCollection.Web, withDefaultVal.DefaultValue).ToString();
+                field.DefaultValue = CreateSharePointUserValueCollection(parentFieldCollection.Web, withDefaultVal.DefaultValue).ToString();
 
                 this.log.Warn(
-                    "Default value ({0}) set on field {1} with type User. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
+                    "Default value ({0}) set on field {1} with type UserMulti. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
                     field.DefaultValue,
                     field.InternalName);
             }
@@ -77,12 +77,16 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             throw new NotImplementedException();
         }
 
-        private static SPFieldUserValue CreateSharePointUserValue(SPWeb web, UserValue userValue)
+        private static SPFieldUserValueCollection CreateSharePointUserValueCollection(SPWeb web, UserValueCollection userValueCollection)
         {
-            return new SPFieldUserValue(
-                web,
-                userValue.Id,
-                HttpUtility.HtmlEncode(userValue.DisplayName));
+            SPFieldUserValueCollection resultCollection = new SPFieldUserValueCollection();
+
+            foreach (UserValue defaultVal in userValueCollection)
+            {
+                resultCollection.Add(new SPFieldUserValue(web, defaultVal.Id, HttpUtility.HtmlEncode(defaultVal.DisplayName)));
+            }
+
+            return resultCollection;
         }
     }
 }

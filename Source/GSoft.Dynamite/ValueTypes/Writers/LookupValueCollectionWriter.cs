@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
@@ -13,39 +11,36 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.ValueTypes.Writers
 {
     /// <summary>
-    /// Writes user values to SharePoint list items, field definition's DefaultValue
+    /// Writes LookupCollection values to SharePoint list items, field definition's DefaultValue
     /// and folder MetadataDefaults.
     /// </summary>
-    public class UserValueWriter : BaseValueWriter<UserValue>
+    public class LookupValueCollectionWriter : BaseValueWriter<LookupValueCollection>
     {
         private ILogger log;
 
         /// <summary>
-        /// Creates a new <see cref="UserValueWriter"/>
+        /// Creates a new <see cref="LookupValueCollectionWriter"/>
         /// </summary>
         /// <param name="log">Logging utility</param>
-        public UserValueWriter(ILogger log)
+        public LookupValueCollectionWriter(ILogger log)
         {
             this.log = log;
         }
 
         /// <summary>
-        /// Writes a user field value to a SPListItem
+        /// Writes a lookup field value to a SPListItem
         /// </summary>
         /// <param name="item">The SharePoint List Item</param>
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
-            var userValue = fieldValueInfo.Value as UserValue;
-            var newUserValue = userValue != null
-                ? CreateSharePointUserValue(item.Web, userValue).ToString()
-                : null;
+            var lookupCollection = fieldValueInfo.Value as LookupValueCollection;
 
-            item[fieldValueInfo.FieldInfo.InternalName] = newUserValue;
+            item[fieldValueInfo.FieldInfo.InternalName] = lookupCollection != null ? CreateSharePointLookupCollection(lookupCollection) : null;
         }
 
         /// <summary>
-        /// Writes a User value as an SPField's default value.
+        /// Writes a Lookup value as an SPField's default value
         /// WARNING: This should only be used in scenarios where you have complete and exclusive programmatic
         /// access to item creation - because SharePoint has patchy support for this and your NewForm.aspx pages WILL break. 
         /// </summary>
@@ -53,17 +48,23 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<UserValue>)fieldValueInfo.FieldInfo;
+            var withDefaultVal = (FieldInfo<LookupValueCollection>)fieldValueInfo.FieldInfo;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
             if (withDefaultVal.DefaultValue != null)
             {
-                field.DefaultValue = CreateSharePointUserValue(parentFieldCollection.Web, withDefaultVal.DefaultValue).ToString();
+                LookupValueCollection defaultCollection = withDefaultVal.DefaultValue;
+
+                field.DefaultValue = CreateSharePointLookupCollection(defaultCollection).ToString();
 
                 this.log.Warn(
-                    "Default value ({0}) set on field {1} with type User. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
+                    "Default value ({0}) set on field {1} with type LookupMulti. SharePoint does not support default values on Lookup fields. Only list items created programmatically will get the default value properly set. Setting a Lookup-field default value will not be respected by your lists' NewForm.aspx item creation form.",
                     field.DefaultValue,
                     field.InternalName);
+            }
+            else
+            {
+                field.DefaultValue = null;
             }
         }
 
@@ -77,12 +78,16 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             throw new NotImplementedException();
         }
 
-        private static SPFieldUserValue CreateSharePointUserValue(SPWeb web, UserValue userValue)
+        private static SPFieldLookupValueCollection CreateSharePointLookupCollection(LookupValueCollection lookupCollection)
         {
-            return new SPFieldUserValue(
-                web,
-                userValue.Id,
-                HttpUtility.HtmlEncode(userValue.DisplayName));
+            SPFieldLookupValueCollection returnCollection = new SPFieldLookupValueCollection();
+
+            foreach (LookupValue lookup in lookupCollection)
+            {
+                returnCollection.Add(new SPFieldLookupValue(lookup.Id, lookup.Value));
+            }
+
+            return returnCollection;
         }
     }
 }

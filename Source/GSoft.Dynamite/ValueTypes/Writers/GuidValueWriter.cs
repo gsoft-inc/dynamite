@@ -57,7 +57,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Writes a standard field value as an SPFolder's default value
         /// </summary>
-        /// <param name="field">The field for which we wish to update the default value</param>
+        /// <param name="folder">The folder for which we wish to update the column metadata defaults</param>
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {

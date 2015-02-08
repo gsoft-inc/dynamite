@@ -44,7 +44,17 @@ namespace GSoft.Dynamite.Fields
             {
                 if (value != null)
                 {
-                    if (value.GetType() != this.FieldInfo.AssociatedValueType)
+                    Type associatedValueType = this.FieldInfo.AssociatedValueType;
+                    bool isNullable = associatedValueType.IsGenericType && associatedValueType.Name == typeof(Nullable<>).Name;
+                    Type nullableTypeArg = null;
+
+                    if (isNullable)
+                    {
+                        nullableTypeArg = associatedValueType.GetGenericArguments()[0];
+                    }
+
+                    if (value.GetType() != this.FieldInfo.AssociatedValueType 
+                        && value.GetType() != nullableTypeArg)
                     {
                         throw new InvalidOperationException("The type of the value must be the same as the FieldInfo AssociatedValueType.");
                     }

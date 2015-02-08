@@ -82,13 +82,20 @@ namespace GSoft.Dynamite.ServiceLocator
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
             builder.RegisterType<StringValueWriter>();
+            builder.RegisterType<BooleanValueWriter>();
+            builder.RegisterType<DoubleValueWriter>();
+            builder.RegisterType<DateTimeValueWriter>();
+            builder.RegisterType<GuidValueWriter>();
             builder.RegisterType<TaxonomyFullValueWriter>();
             builder.RegisterType<TaxonomyFullValueCollectionWriter>();
             builder.RegisterType<LookupValueWriter>();
+            builder.RegisterType<LookupValueCollectionWriter>();
             builder.RegisterType<PrincipalValueWriter>();
             builder.RegisterType<UserValueWriter>();
+            builder.RegisterType<UserValueCollectionWriter>();
             builder.RegisterType<UrlValueWriter>();
             builder.RegisterType<ImageValueWriter>();
+            builder.RegisterType<MediaValueWriter>();
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
