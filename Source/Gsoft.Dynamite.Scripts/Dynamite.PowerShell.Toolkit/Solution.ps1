@@ -69,8 +69,10 @@ function global:Deploy-DSPSolution() {
 				$force = $false
 			}
 			
-			$WSPName = Split-Path $_.Path -Leaf
-			$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $_.Path -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
+            if ($_ -ne $null) {
+	            $WSPName = Split-Path $_.Path -Leaf
+	            $solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $_.Path -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
+            }
 		}
 		
 		Write-Output $solutionQueue
@@ -251,9 +253,11 @@ function global:Deploy-DSPSolution() {
 			[Array]$SolutionQueue
 		)
 		
-		Remove-WSPSolutionsInQueue -SolutionQueue $SolutionQueue
+		if ($SolutionQueue -ne $null) {
+			Remove-WSPSolutionsInQueue -SolutionQueue $SolutionQueue
+		}
 		
-		if (-not $RemoveOnly) {
+		if ((-not $RemoveOnly) -and ($SolutionQueue -ne $null)) {
 			Deploy-WSPSolutionsInQueue -SolutionQueue $SolutionQueue
 		}
 	}
