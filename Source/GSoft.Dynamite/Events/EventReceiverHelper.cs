@@ -112,8 +112,7 @@ namespace GSoft.Dynamite.Events
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
-                var contentType = site.RootWeb.AvailableContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
-
+                var contentType = site.RootWeb.ContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
                 if (contentType != null)
                 {
                     this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
@@ -131,8 +130,7 @@ namespace GSoft.Dynamite.Events
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
-                var contentType = site.RootWeb.AvailableContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
-
+                var contentType = site.RootWeb.ContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
                 if (contentType != null)
                 {
                     this.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
@@ -155,9 +153,7 @@ namespace GSoft.Dynamite.Events
             if (eventReceiverDefinition != null)
             {
                 var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => eventReceiver.Type == eventReceiverDefinition.Type).ToList();
-
                 eventToDelete.ForEach(c => c.Delete());
-
                 contentType.Update(true);
             }
         }
