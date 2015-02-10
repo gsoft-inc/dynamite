@@ -87,7 +87,7 @@ namespace GSoft.Dynamite.Lists
             var list = this.listLocator.GetByNameResourceKey(web, listInfo.DisplayNameResourceKey);
             if (list != null)
             {
-                if (!list.RootFolder.Url.Equals(listInfo.WebRelativeUrl.ToString()))
+                if (!list.RootFolder.Url.Equals(listInfo.WebRelativeUrl.ToString(), StringComparison.OrdinalIgnoreCase))
                 {
                     // A list with the same name already exists on a different web relative URL, throwing exception
                     throw new ArgumentException(
