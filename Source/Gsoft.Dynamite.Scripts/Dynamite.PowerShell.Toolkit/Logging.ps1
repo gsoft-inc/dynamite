@@ -44,7 +44,10 @@
     [Parameter(
         Mandatory=$False, 
         ValueFromPipeline=$True)]
-    [string]$file = ($folder + "\" + [System.IO.Path]::GetFileNameWithoutExtension($commandName) + $time +".log")
+    [string]$file = ($folder + "\" + [System.IO.Path]::GetFileNameWithoutExtension($commandName) + "_" + $time +".log"),
+
+    [Parameter(Mandatory=$False)]
+    [switch]$resetFolder = $false
   )
 
     begin {
@@ -65,7 +68,7 @@
 				Write-Verbose "Creating folder '$folder'"
 				New-Item -ItemType directory -Path $folder
 			}
-			else {
+			elseif ($resetFolder) {
 				# Reset the log folder
 				Get-ChildItem $folder | Foreach-Object { Remove-Item  $_.FullName -Force }
 			}
