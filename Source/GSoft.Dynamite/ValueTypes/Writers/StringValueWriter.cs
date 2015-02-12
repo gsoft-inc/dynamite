@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.Logging;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -13,6 +16,17 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     /// </summary>
     public class StringValueWriter : BaseValueWriter<string>
     {
+        private ILogger log;
+
+        /// <summary>
+        /// Creates a new string-based field value writer
+        /// </summary>
+        /// <param name="log">Logging utility</param>
+        public StringValueWriter(ILogger log)
+        {
+            this.log = log;
+        }
+
         /// <summary>
         /// Writes a string field value to a SPListItem
         /// </summary>
@@ -30,10 +44,21 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<string>)fieldValueInfo.FieldInfo;
+            var defaultValue = (string)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            field.DefaultValue = withDefaultVal.DefaultValue;
+            if (fieldValueInfo.FieldInfo is NoteFieldInfo || fieldValueInfo.FieldInfo is HtmlFieldInfo)
+            {
+                this.log.Warn(
+                    "WriteValueToFieldDefault - Initializing {0} field (fieldName={0}) with default value \"{1}\"."
+                    + " Be aware that field default values on {0}-type field are not well supported by SharePoint and that this default"
+                    + " value will not be editable through your site column's settings page.",
+                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.InternalName,
+                    defaultValue);
+            }
+
+            field.DefaultValue = defaultValue;
         }
 
         /// <summary>
@@ -41,9 +66,32 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update the column metadata defaults</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (string)fieldValueInfo.Value;
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            if (defaultValue != null)
+            {
+                if (fieldValueInfo.FieldInfo is NoteFieldInfo || fieldValueInfo.FieldInfo is HtmlFieldInfo)
+                {
+                    this.log.Warn(
+                        "WriteValueToFolderDefault - Initializing {0} field (fieldName={1}) with default value \"{2}\"."
+                        + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default" 
+                        + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
+                        fieldValueInfo.FieldInfo.Type,
+                        fieldValueInfo.FieldInfo.InternalName,
+                        defaultValue);
+                }
+
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, defaultValue);
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();
         }
     }
 }

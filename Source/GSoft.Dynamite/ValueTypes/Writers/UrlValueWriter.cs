@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -36,6 +37,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             var urlValue = fieldValueInfo.Value as UrlValue;
             var newUrlValue = urlValue != null ? new SPFieldUrlValue { Url = urlValue.Url, Description = urlValue.Description } : null;
+
             item[fieldValueInfo.FieldInfo.InternalName] = newUrlValue;
         }
 
@@ -46,14 +48,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<UrlValue>)fieldValueInfo.FieldInfo;
+            var defaultValue = (UrlValue)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultValue != null)
             {
-                var urlValue = withDefaultVal.DefaultValue;
-
-                var newUrlValue = new SPFieldUrlValue { Url = urlValue.Url, Description = urlValue.Description };
+                var newUrlValue = new SPFieldUrlValue { Url = defaultValue.Url, Description = defaultValue.Description };
 
                 // Avoid setting the Description as well, otherwise all
                 // new items created with that field will have both the URL
@@ -61,13 +61,24 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                 // of OOTB support for Url default values).
                 field.DefaultValue = newUrlValue.Url;
 
-                if (!string.IsNullOrEmpty(urlValue.Description))
+                if (!string.IsNullOrEmpty(defaultValue.Description))
                 {
                     this.log.Warn(
-                        "Skipped initialization of Description property (val={0}) on Url field value (urlval={1}). "
-                        + "A SPFieldUrlValue cannot support more than a simple URL string as default value.", 
-                        urlValue.Description, 
-                        urlValue.Url);
+                        "WriteValueToFieldDefault - Skipped initialization of Description property (val={0}) on Url field value (urlval={1})."
+                        + " A SPFieldUrlValue cannot support more than a simple URL string as default value for your field {2}."
+                        + " Be aware that field default values on \"Hyperlink or Picture\"-type field are not well supported by SharePoint"
+                        + " and that this default value will not be editable through your site column's settings page.",
+                        defaultValue.Description,
+                        defaultValue.Url,
+                        fieldValueInfo.FieldInfo.InternalName);
+                }
+                else
+                {
+                    this.log.Warn(
+                        "WriteValueToFieldDefault - Be aware that field default values on \"Hyperlink or Picture\"-type field are not well supported by SharePoint"
+                        + " and that this default value will not be editable through your site column's settings page (fieldName={0}) defaultVal={1}).",
+                    fieldValueInfo.FieldInfo.InternalName,
+                    newUrlValue.Url);
                 }
             }
             else
@@ -81,9 +92,31 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (UrlValue)fieldValueInfo.Value;
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            if (defaultValue != null)
+            {
+                var sharePointFieldUrlValue = new SPFieldUrlValue { Url = defaultValue.Url, Description = defaultValue.Description };
+
+                this.log.Warn(
+                    "WriteValueToFolderDefault - Initializing {0} field (fieldName={1}) with default value \"{2}\"."
+                    + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default"
+                    + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
+                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.InternalName,
+                    sharePointFieldUrlValue.ToString());
+
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, sharePointFieldUrlValue.ToString());
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update(); 
         }
     }
 }

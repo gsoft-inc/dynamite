@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -48,17 +50,17 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<LookupValueCollection>)fieldValueInfo.FieldInfo;
+            var defaultCollection = (LookupValueCollection)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultCollection != null)
             {
-                LookupValueCollection defaultCollection = withDefaultVal.DefaultValue;
-
                 field.DefaultValue = CreateSharePointLookupCollection(defaultCollection).ToString();
 
                 this.log.Warn(
-                    "Default value ({0}) set on field {1} with type LookupMulti. SharePoint does not support default values on Lookup fields. Only list items created programmatically will get the default value properly set. Setting a Lookup-field default value will not be respected by your lists' NewForm.aspx item creation form.",
+                    "Default value ({0}) set on field {1} with type LookupMulti. SharePoint does not support default values on Lookup fields trough its UI." 
+                    + " Only list items created programmatically will get the default value properly set. Setting a Lookup-field default value"
+                    + " will not be respected by your lists' NewForm.aspx item creation form.",
                     field.DefaultValue,
                     field.InternalName);
             }
@@ -73,9 +75,13 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "WriteValueToFolderDefault - Initializing a folder column default value with LookupValueCollection is not supported (fieldName={0}).",
+                    fieldValueInfo.FieldInfo.InternalName));
         }
 
         private static SPFieldLookupValueCollection CreateSharePointLookupCollection(LookupValueCollection lookupCollection)

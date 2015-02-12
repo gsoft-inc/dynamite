@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
@@ -60,20 +61,21 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
             var sharepointTaxonomyField = (TaxonomyField)parentFieldCollection[fieldValueInfo.FieldInfo.Id];
-            var withDefaultVal = (FieldInfo<TaxonomyFullValueCollection>)fieldValueInfo.FieldInfo;
+            var defaultVal = (TaxonomyFullValueCollection)fieldValueInfo.Value;
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultVal != null)
             {               
-                var taxonomyFieldValueCollection = CreateSharePointTaxonomyFieldValue(sharepointTaxonomyField, withDefaultVal.DefaultValue, null);
+                var taxonomyFieldValueCollection = CreateSharePointTaxonomyFieldValue(sharepointTaxonomyField, defaultVal, null);
                 string collectionValidatedString = sharepointTaxonomyField.GetValidatedString(taxonomyFieldValueCollection);
 
                 sharepointTaxonomyField.DefaultValue = collectionValidatedString;
-                sharepointTaxonomyField.Update();
             }
             else
             {
                 sharepointTaxonomyField.DefaultValue = null;
             }
+
+            sharepointTaxonomyField.Update();
         }
 
         /// <summary>
@@ -81,9 +83,26 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (TaxonomyFullValueCollection)fieldValueInfo.Value;
+            var list = folder.ParentWeb.Lists[folder.ParentListId];
+            var taxonomyField = (TaxonomyField)list.Fields[fieldValueInfo.FieldInfo.Id];
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
+
+            if (defaultValue != null)
+            {
+                var taxonomyFieldValueCollection = CreateSharePointTaxonomyFieldValue(taxonomyField, defaultValue, null);
+                string collectionValidatedString = taxonomyField.GetValidatedString(taxonomyFieldValueCollection);
+
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, collectionValidatedString);
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();
         }
 
         private static TaxonomyFieldValueCollection CreateSharePointTaxonomyFieldValue(

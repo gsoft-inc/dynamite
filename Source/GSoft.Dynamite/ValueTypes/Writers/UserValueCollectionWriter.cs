@@ -8,6 +8,7 @@ using System.Web;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -53,17 +54,21 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<UserValueCollection>)fieldValueInfo.FieldInfo;
+            var defaultValue = (UserValueCollection)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultValue != null)
             {
-                field.DefaultValue = CreateSharePointUserValueCollection(parentFieldCollection.Web, withDefaultVal.DefaultValue).ToString();
+                field.DefaultValue = CreateSharePointUserValueCollection(parentFieldCollection.Web, defaultValue).ToString();
 
                 this.log.Warn(
                     "Default value ({0}) set on field {1} with type UserMulti. SharePoint does not support default values on User fields. Only list items created programmatically will get the default value properly set. Setting a User-field default value may break your lists' NewForm.aspx people pickers. User folder metadata defaults for User default values instead.",
                     field.DefaultValue,
                     field.InternalName);
+            }
+            else
+            {
+                field.DefaultValue = null;
             }
         }
 
@@ -72,9 +77,13 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "WriteValueToFolderDefault - Initializing a folder column default value with UserValueCollection is not supported (fieldName={0}).",
+                    fieldValueInfo.FieldInfo.InternalName));
         }
 
         private static SPFieldUserValueCollection CreateSharePointUserValueCollection(SPWeb web, UserValueCollection userValueCollection)

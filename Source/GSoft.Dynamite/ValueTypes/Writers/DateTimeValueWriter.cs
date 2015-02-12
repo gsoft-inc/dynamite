@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
@@ -42,12 +43,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<DateTime?>)fieldValueInfo.FieldInfo;
+            var defaultValue = (DateTime?)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue.HasValue)
+            if (defaultValue.HasValue)
             {
-                field.DefaultValue = SPUtility.CreateISO8601DateTimeFromSystemDateTime(withDefaultVal.DefaultValue.Value);
+                field.DefaultValue = FormatLocalDateTimeString(defaultValue.Value);
             }
             else
             {
@@ -60,9 +61,30 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The field for which we wish to update the default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (DateTime?)fieldValueInfo.Value;
+            var list = folder.ParentWeb.Lists[folder.ParentListId];
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
+
+            if (defaultValue.HasValue)
+            {
+                // Assume that DefaultValue we need to format as string is in Local time.
+                // In SharePoint. it's important to store everything as a UTC-string.
+                string dateString = FormatLocalDateTimeString(defaultValue.Value.ToUniversalTime());
+                listMetadataDefaults.SetFieldDefault(folder.ServerRelativeUrl, fieldValueInfo.FieldInfo.InternalName, dateString);
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder.ServerRelativeUrl, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();      
+        }
+
+        private static string FormatLocalDateTimeString(DateTime dateTime)
+        {
+            return SPUtility.CreateISO8601DateTimeFromSystemDateTime(dateTime);
         }
     }
 }

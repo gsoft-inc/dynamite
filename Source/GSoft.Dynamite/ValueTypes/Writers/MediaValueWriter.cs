@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Fields;
 
@@ -16,6 +18,17 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     /// </summary>
     public class MediaValueWriter : BaseValueWriter<MediaValue>
     {
+        private ILogger log;
+
+        /// <summary>
+        /// Creates a new <see cref="MediaValueWriter"/>
+        /// </summary>
+        /// <param name="log">Logging utility</param>
+        public MediaValueWriter(ILogger log)
+        {
+            this.log = log;
+        }
+
         /// <summary>
         /// Writes an image field value to a SPListItem
         /// </summary>
@@ -42,18 +55,30 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<MediaValue>)fieldValueInfo.FieldInfo;
+            var defaultValue = (MediaValue)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultValue != null)
             {
-                var imageValue = withDefaultVal.DefaultValue;
-                var sharePointFieldMediaValue = CreateSharePointMediaFieldValue(imageValue);
+                var sharePointFieldMediaValue = CreateSharePointMediaFieldValue(defaultValue);
 
                 field.DefaultValue = sharePointFieldMediaValue.ToString();
             }
-            else
+            else if (field.DefaultValue != null)
             {
+                // Setting SPField.DefaultValue to NULL will always end up setting it as string.Empty.
+                // The Media field type behaves weirdly when string.Empty is its DefaultValue (the NewForm.aspx breaks
+                // because of impossible cast from string to MediaFieldValue type).
+                // Thus, if the DefaultValue was already NULL, we gotta be carefull not to replace that NULL with an
+                // empty string needlessly.
+                this.log.Warn(
+                    "WriteValueToFieldDefault - Initializing {0} field (fieldName={0}) with default value \"{1}\"."
+                    + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default"
+                    + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
+                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.InternalName,
+                    defaultValue);
+
                 field.DefaultValue = null;
             }
         }
@@ -63,9 +88,31 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (MediaValue)fieldValueInfo.Value;
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            if (defaultValue != null)
+            {
+                var sharePointFieldMediaValue = CreateSharePointMediaFieldValue(defaultValue);
+
+                this.log.Warn(
+                    "WriteValueToFolderDefault - Initializing {0} field (fieldName={1}) with default value \"{2}\"."
+                    + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default"
+                    + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
+                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.InternalName,
+                    sharePointFieldMediaValue.ToString());
+
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, sharePointFieldMediaValue.ToString());
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();
         }
 
         private static MediaFieldValue CreateSharePointMediaFieldValue(MediaValue mediaVal)

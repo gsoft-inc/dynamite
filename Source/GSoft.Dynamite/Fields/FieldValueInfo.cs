@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,7 +57,13 @@ namespace GSoft.Dynamite.Fields
                     if (value.GetType() != this.FieldInfo.AssociatedValueType 
                         && value.GetType() != nullableTypeArg)
                     {
-                        throw new InvalidOperationException("The type of the value must be the same as the FieldInfo AssociatedValueType.");
+                        throw new InvalidOperationException(
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "The type of the value (val={0} valueType={1}) must be the same as the FieldInfo AssociatedValueType (expectedFieldValueType={2}).",
+                                value,
+                                value.GetType(),
+                                nullableTypeArg == null ? this.FieldInfo.AssociatedValueType : nullableTypeArg));
                     }
                 }
 

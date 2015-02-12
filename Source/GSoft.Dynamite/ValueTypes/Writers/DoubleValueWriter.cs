@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -42,12 +43,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<double?>)fieldValueInfo.FieldInfo;
+            var defaultValue = (double?)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue.HasValue)
+            if (defaultValue.HasValue)
             {
-                field.DefaultValue = withDefaultVal.DefaultValue.Value.ToString(CultureInfo.InvariantCulture);
+                field.DefaultValue = defaultValue.Value.ToString(CultureInfo.InvariantCulture);
             }
             else
             {
@@ -60,9 +61,21 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update the column metadata defaults</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (double?)fieldValueInfo.Value;
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            if (defaultValue.HasValue)
+            {
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, defaultValue.Value.ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();  
         }
     }
 }

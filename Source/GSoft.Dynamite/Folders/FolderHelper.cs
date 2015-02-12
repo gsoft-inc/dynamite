@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Pages;
+using GSoft.Dynamite.ValueTypes.Writers;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.Office.Server.Search.Internal.UI;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Portal.WebControls;
@@ -19,16 +21,19 @@ namespace GSoft.Dynamite.Folders
     {
         private readonly ILogger logger;
         private readonly IPageHelper pageHelper;
+        private readonly IFieldValueWriter valueWriter;
 
         /// <summary>
         /// Constructor for FolderHelper
         /// </summary>
         /// <param name="logger">The logger helper instance</param>
         /// <param name="pageHelper">The page helper instance</param>
-        public FolderHelper(ILogger logger, IPageHelper pageHelper)
+        /// <param name="valueWriter">Field value initializer</param>
+        public FolderHelper(ILogger logger, IPageHelper pageHelper, IFieldValueWriter valueWriter)
         {
             this.logger = logger;
             this.pageHelper = pageHelper;
+            this.valueWriter = valueWriter;
         }
 
         /// <summary>
@@ -61,7 +66,23 @@ namespace GSoft.Dynamite.Folders
                 // We are on at the root folder of the library (i.e. no parent folder).
                 // Initialize defaults and pages in here, then move on to subfolders (instead of trying to create the folder)
                 folder = library.RootFolder;
-                
+
+                // Ensure folder metadata defaults
+                bool isDocumentLibrary = library.BaseType == SPBaseType.DocumentLibrary;
+                if (folderInfo.FieldDefaultValues != null && folderInfo.FieldDefaultValues.Count > 0)
+                {
+                    if (!isDocumentLibrary)
+                    {
+                        throw new ArgumentException("EnsureFolderHierarchy - Impossible to ensure folder MetadataDefaults on a list which is not a Document Library.");
+                    }
+
+                    this.valueWriter.WriteValuesToFolderDefaults(folder, folderInfo.FieldDefaultValues.ToList());
+                }
+                else if (isDocumentLibrary)
+                {
+                    ClearFolderAllFolderMetadataDefaults(folder);
+                }
+
                 // Create pages
                 if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                 {
@@ -78,6 +99,7 @@ namespace GSoft.Dynamite.Folders
                 if (folderInfo.Subfolders != null && folderInfo.Subfolders.Count > 0)
                 {
                     library.EnableFolderCreation = true;
+                    library.Update();
 
                     foreach (var childFolder in folderInfo.Subfolders)
                     {
@@ -114,6 +136,22 @@ namespace GSoft.Dynamite.Folders
                         folder = parentFolder.SubFolders.Add(folderInfo.Name);
                     }
 
+                    // Ensure folder metadata defaults
+                    bool isDocumentLibrary = library.BaseType == SPBaseType.DocumentLibrary;
+                    if (folderInfo.FieldDefaultValues != null && folderInfo.FieldDefaultValues.Count > 0)
+                    {
+                        if (!isDocumentLibrary)
+                        {
+                            throw new ArgumentException("EnsureFolderHierarchy - Impossible to ensure folder MetadataDefaults on a list which is not a Document Library.");
+                        }
+
+                        this.valueWriter.WriteValuesToFolderDefaults(folder, folderInfo.FieldDefaultValues.ToList());
+                    }
+                    else if (isDocumentLibrary)
+                    {
+                        ClearFolderAllFolderMetadataDefaults(folder);
+                    }
+
                     // Create pages
                     if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                     {
@@ -135,6 +173,13 @@ namespace GSoft.Dynamite.Folders
             }
 
             return folder;
+        }
+
+        private static void ClearFolderAllFolderMetadataDefaults(SPFolder folder)
+        {
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+            listMetadataDefaults.RemoveAllFieldDefaults(folder);
+            listMetadataDefaults.Update();
         }
     }
 }

@@ -123,7 +123,20 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="defaultFieldValueInfos">The default values to be applied as the SPFields' new defaults.</param>
         public void WriteValuesToFieldDefaults(SPFieldCollection parentFieldCollection, IList<FieldValueInfo> defaultFieldValueInfos)
         {
-            throw new NotImplementedException();
+            if (parentFieldCollection == null)
+            {
+                throw new ArgumentNullException("parentFieldCollection");
+            }
+
+            if (defaultFieldValueInfos == null)
+            {
+                throw new ArgumentNullException("defaultFieldValueInfos");
+            }
+
+            foreach (var fieldValue in defaultFieldValueInfos)
+            {
+                this.WriteValueToFieldDefault(parentFieldCollection, fieldValue);
+            }
         }
         
         /// <summary>
@@ -155,7 +168,20 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="defaultFieldValueInfos">The default values to be applied to items created within that folder.</param>
         public void WriteValuesToFolderDefaults(SPFolder folder, IList<FieldValueInfo> defaultFieldValueInfos)
         {
-            throw new NotImplementedException();
+            if (folder == null)
+            {
+                throw new ArgumentNullException("folder");
+            }
+
+            if (defaultFieldValueInfos == null)
+            {
+                throw new ArgumentNullException("defaultFieldValueInfos");
+            }
+
+            foreach (var fieldValue in defaultFieldValueInfos)
+            {
+                this.WriteValuesToFolderDefault(folder, fieldValue);
+            }
         }
     
         /// <summary>
@@ -165,7 +191,19 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="defaultFieldValueInfo">The default value to be applied to items created within that folder.</param>
         public void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo defaultFieldValueInfo)
         {
-            throw new NotImplementedException();
+            if (folder == null)
+            {
+                throw new ArgumentNullException("folder");
+            }
+
+            if (defaultFieldValueInfo == null || defaultFieldValueInfo.FieldInfo == null)
+            {
+                throw new ArgumentNullException("defaultFieldValueInfo");
+            }
+
+            IBaseValueWriter valueWriter = this.GetWriter(defaultFieldValueInfo);
+
+            valueWriter.WriteValueToFolderDefault(folder, defaultFieldValueInfo);
         }
 
         private void AddToWritersDictionary(IBaseValueWriter writer)

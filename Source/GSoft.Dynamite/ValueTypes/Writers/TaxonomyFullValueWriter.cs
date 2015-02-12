@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
@@ -62,19 +63,19 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultValue = (FieldInfo<TaxonomyFullValue>)fieldValueInfo.FieldInfo;
+            var defaultValue = (TaxonomyFullValue)fieldValueInfo.Value;
             var taxonomyField = (TaxonomyField)parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultValue.DefaultValue != null)
+            if (defaultValue  != null)
             {
-                var sharePointTaxonomyFieldValue = new TaxonomyFieldValue(taxonomyField);
-                string path = TaxonomyItem.NormalizeName(withDefaultValue.DefaultValue.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
-                              + withDefaultValue.DefaultValue.Term.Id.ToString().ToUpperInvariant();
-                sharePointTaxonomyFieldValue.PopulateFromLabelGuidPair(path);
-
-                taxonomyField.DefaultValue = sharePointTaxonomyFieldValue.ValidatedString;
-                taxonomyField.Update();
+                taxonomyField.DefaultValue = FormatTaxonomyString(taxonomyField, defaultValue);
             }
+            else
+            {
+                taxonomyField.DefaultValue = null;
+            }
+
+            taxonomyField.Update();
         }
 
         /// <summary>
@@ -82,9 +83,33 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (TaxonomyFullValue)fieldValueInfo.Value;
+            var list = folder.ParentWeb.Lists[folder.ParentListId];
+            var taxonomyField = (TaxonomyField)list.Fields[fieldValueInfo.FieldInfo.Id];
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
+
+            if (defaultValue != null)
+            {
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, FormatTaxonomyString(taxonomyField, defaultValue));
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }
+
+            listMetadataDefaults.Update();
+        }
+
+        private static string FormatTaxonomyString(TaxonomyField sharePointField, TaxonomyFullValue valueToApply)
+        {
+            var sharePointTaxonomyFieldValue = new TaxonomyFieldValue(sharePointField);
+            string path = TaxonomyItem.NormalizeName(valueToApply.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                            + valueToApply.Term.Id.ToString().ToUpperInvariant();
+            sharePointTaxonomyFieldValue.PopulateFromLabelGuidPair(path);
+
+            return sharePointTaxonomyFieldValue.ValidatedString;
         }
     }
 }

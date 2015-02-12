@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Logging;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -52,15 +54,15 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<bool?>)fieldValueInfo.FieldInfo;
+            var defaultValue = (bool?)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue.HasValue)
+            if (defaultValue.HasValue)
             {
-                field.DefaultValue = withDefaultVal.DefaultValue.Value.ToString();
+                field.DefaultValue = defaultValue.Value.ToString();
 
                 this.log.Warn(
-                    "Default value ({0}) set on field {1} with type Boolean. SharePoint does not support default values on Boolean fields. "
+                    "Default value ({0}) set on field {1} with type Boolean. SharePoint has patchy support for default values on Boolean fields. "
                     + "Only list items created programmatically will get the default value properly set. Setting a Boolean-field default value will not be "
                     + "respected in your lists' NewForm.aspx item creation form.",
                     field.DefaultValue,
@@ -77,9 +79,42 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update the default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            var defaultValue = (bool?)fieldValueInfo.Value;
+            MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            var parentList = folder.ParentWeb.Lists[folder.ParentListId];
+            var listField = parentList.Fields[fieldValueInfo.FieldInfo.Id];
+
+            if (!string.IsNullOrEmpty(listField.DefaultValue)
+                && bool.Parse(listField.DefaultValue)
+                && defaultValue.HasValue
+                && !defaultValue.Value)
+            {
+                // The SPField already has a default value set to TRUE. Our folder column default FALSE will have no
+                // effect because the field definition's default will always be applied. Thanks SharePoint!
+                string exceptionMessage = "WriteValueToFolderDefault - The field {0} already has a DefaultValue=TRUE definition."
+                    + " Your attempt to define a folder column default with value=FALSE would not work, since the TRUE"
+                    + " value imposed by the SPField's DefaultValue will always \"win\" and be applied instead.";
+
+                throw new NotSupportedException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        exceptionMessage,
+                        fieldValueInfo.FieldInfo.InternalName));
+            }
+
+            if (defaultValue.HasValue)
+            {
+                listMetadataDefaults.SetFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName, defaultValue.Value.ToString());
+            }
+            else
+            {
+                listMetadataDefaults.RemoveFieldDefault(folder, fieldValueInfo.FieldInfo.InternalName);
+            }   
+
+            listMetadataDefaults.Update();   
         }
     }
 }

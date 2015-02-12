@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
@@ -36,12 +37,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var withDefaultVal = (FieldInfo<PrincipalValue>)fieldValueInfo.FieldInfo;
+            var defaultValue = (PrincipalValue)fieldValueInfo.Value;
             var field = parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
-            if (withDefaultVal.DefaultValue != null)
+            if (defaultValue != null)
             {
-                field.DefaultValue = FormatPrincipalString(withDefaultVal.DefaultValue);
+                field.DefaultValue = FormatPrincipalString(defaultValue);
             }
             else
             {
@@ -54,9 +55,13 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public override void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
+        public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "WriteValueToFolderDefault - Initializing a folder column default value with PrincipalValue is not supported (fieldName={0}).",
+                    fieldValueInfo.FieldInfo.InternalName));
         }
 
         private static string FormatPrincipalString(PrincipalValue principalValue)

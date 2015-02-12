@@ -44,6 +44,6 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="folder">The folder for which we wish to update a field's default value</param>
         /// <param name="fieldValueInfo">The field and value information</param>
-        public abstract void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo);
+        public abstract void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo);
     }
 }
