@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
@@ -70,6 +72,26 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             var defaultValue = (string)fieldValueInfo.Value;
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
+
+            var parentList = folder.ParentWeb.Lists[folder.ParentListId];
+            var listField = parentList.Fields[fieldValueInfo.FieldInfo.Id];
+
+            // Pages library is a special case: attempting to set folder default value on any text-based field (Text, Note or HTML)
+            // will always fail because of patchy OOTB support.
+            if ((int)parentList.BaseTemplate == BuiltInListTemplates.Pages.ListTempateTypeId
+                && !string.IsNullOrEmpty(defaultValue))
+            {
+                string exceptionMessage = "WriteValueToFolderDefault - Impossible to set folder default value (val={0}) on field {1} of type {2}"
+                    + " within the Pages library. That column default would be ignored.";
+
+                throw new NotSupportedException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        exceptionMessage,
+                        defaultValue,
+                        fieldValueInfo.FieldInfo.InternalName,
+                        fieldValueInfo.FieldInfo.Type));
+            }
 
             if (defaultValue != null)
             {

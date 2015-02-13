@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.Office.DocumentManagement;
@@ -84,8 +86,20 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
             var defaultValue = (ImageValue)fieldValueInfo.Value;
+            var list = folder.ParentWeb.Lists[folder.ParentListId];
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
 
+            // Pages library is a special case: attempting to set default value will
+            // always fail because of patchy OOTB support.
+            if ((int)list.BaseTemplate == BuiltInListTemplates.Pages.ListTempateTypeId)
+            {
+                throw new NotSupportedException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "WriteValueToFolderDefault - Initializing a folder column default value with ImageValue within the Pages library s not supported (fieldName={0}).",
+                        fieldValueInfo.FieldInfo.InternalName));
+            }
+          
             if (defaultValue != null)
             {
                 var sharePointFieldImageValue = CreateSharePointImageFieldValue(defaultValue);

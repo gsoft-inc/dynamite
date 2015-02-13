@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
@@ -28,7 +30,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (typedFieldValue.HasValue)
             {
-                item[fieldValueInfo.FieldInfo.InternalName] = typedFieldValue.Value;
+                item[fieldValueInfo.FieldInfo.InternalName] = typedFieldValue.Value.ToUniversalTime();
             }
             else
             {
@@ -65,13 +67,38 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             var defaultValue = (DateTime?)fieldValueInfo.Value;
             var list = folder.ParentWeb.Lists[folder.ParentListId];
+            var listField = list.Fields[fieldValueInfo.FieldInfo.Id];
+            bool isPagesLibrary = (int)list.BaseTemplate == BuiltInListTemplates.Pages.ListTempateTypeId;
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
+
+            // Pages library is a special case: attempting to set default value to TRUE will
+            // always fail because of patchy OOTB support.
+            if (isPagesLibrary
+                && defaultValue.HasValue
+                && (!string.IsNullOrEmpty(listField.DefaultValue) || !string.IsNullOrEmpty(listField.DefaultFormula)))
+            {
+                string exceptionMessage = "WriteValueToFolderDefault - Impossible to set folder default value as on DateTime-type field (fieldName={0})"
+                    + " within the Pages library when the SPField already has a DefaultValue or DefaultFormula. That folder column default (val={1})"
+                    + "would be ignored.";
+
+                throw new NotSupportedException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        exceptionMessage,
+                        fieldValueInfo.FieldInfo.InternalName,
+                        defaultValue.Value.ToString(CultureInfo.InvariantCulture)));
+            }
 
             if (defaultValue.HasValue)
             {
-                // Assume that DefaultValue we need to format as string is in Local time.
-                // In SharePoint. it's important to store everything as a UTC-string.
-                string dateString = FormatLocalDateTimeString(defaultValue.Value.ToUniversalTime());
+                // Weirdness warning: between regular Document Libraries and the Pages Library,
+                // how we set DateTime column default per-folder needs to be different.
+                // On Document Library folder, we need to convert the DateTime value to UTC before
+                // we assign it as a default column value (i.e. we need to go from local time to UTC).
+                // On a Pages library folder, we need to set the local datetime string as the default,
+                // without UTC conversion.
+                DateTime defaultValueWithUTCConversionIfNeeded = isPagesLibrary ? defaultValue.Value : defaultValue.Value.ToUniversalTime();
+                string dateString = FormatLocalDateTimeString(defaultValueWithUTCConversionIfNeeded);
                 listMetadataDefaults.SetFieldDefault(folder.ServerRelativeUrl, fieldValueInfo.FieldInfo.InternalName, dateString);
             }
             else

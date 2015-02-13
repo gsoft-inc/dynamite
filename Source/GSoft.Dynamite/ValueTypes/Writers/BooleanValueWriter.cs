@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using Microsoft.Office.DocumentManagement;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
 {
@@ -86,6 +88,22 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             var parentList = folder.ParentWeb.Lists[folder.ParentListId];
             var listField = parentList.Fields[fieldValueInfo.FieldInfo.Id];
+
+            // Pages library is a special case: attempting to set default value to TRUE will
+            // always fail because of patchy OOTB support.
+            if ((int)parentList.BaseTemplate == BuiltInListTemplates.Pages.ListTempateTypeId
+                && defaultValue.HasValue
+                && defaultValue.Value)
+            {
+                string exceptionMessage = "WriteValueToFolderDefault - Impossible to set folder default value as TRUE"
+                    + " within the Pages library. That column default would be ignored. (fieldName={0})";
+
+                throw new NotSupportedException(
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        exceptionMessage,
+                        fieldValueInfo.FieldInfo.InternalName));
+            }
 
             if (!string.IsNullOrEmpty(listField.DefaultValue)
                 && bool.Parse(listField.DefaultValue)

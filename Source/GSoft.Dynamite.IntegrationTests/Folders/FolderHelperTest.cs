@@ -719,7 +719,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
         #endregion
 
-        #region Folder MetadataDefaults (field default values) should be created and/or updated during Ensure
+        #region Document Library's folder MetadataDefaults (field default values) should be created and/or updated during Ensure
 
         /// <summary>
         /// Validates that ensuring MetadataDefaults on a non-doclib SPList throws an error
@@ -776,10 +776,10 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validates that library sub-folder MetadataDefaults get initialized if DefaultValues are specified
+        /// Validates that document library sub-folder MetadataDefaults get initialized if DefaultValues are specified
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecified_AndFirstEnsure_AndInSubFolder_ShouldInitializeFolderMetadataDefaults()
+        public void EnsureFolderHierarchy_WhenDocLibFolderDefaultValuesAreSpecified_AndFirstEnsure_AndInSubFolder_ShouldInitializeFolderMetadataDefaults()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -856,10 +856,10 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validates that library root-folder MetadataDefaults get initialized if DefaultValues are specified
+        /// Validates that document library root-folder MetadataDefaults get initialized if DefaultValues are specified
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecified_AndFirstEnsure_AndInRootFolder_ShouldInitializeFolderMetadataDefaults()
+        public void EnsureFolderHierarchy_WhenDocLibFolderDefaultValuesAreSpecified_AndFirstEnsure_AndInRootFolder_ShouldInitializeFolderMetadataDefaults()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -924,7 +924,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         /// Validates that folder MetadataDefaults get updated if DefaultValues are specified
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecified_AndRepeatEnsure_ShouldUpdateFolderMetadataDefaults()
+        public void EnsureFolderHierarchy_WhenDocLibFolderDefaultValuesAreSpecified_AndRepeatEnsure_ShouldUpdateFolderMetadataDefaults()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1021,7 +1021,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         /// Validates that folder MetadataDefaults are removed if DefaultValues are cleared between two EnsureFolderHierarchy runs
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreRemoved_AndRepeatEnsure_ShouldUpdateFolderAndDropMetadataDefaults()
+        public void EnsureFolderHierarchy_WhenDocLibFolderDefaultValuesAreRemoved_AndRepeatEnsure_ShouldUpdateFolderAndDropMetadataDefaults()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1115,13 +1115,13 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validates exception is thrown when attempting to set folder column default on a boolean field which already has
+        /// Validates exception is thrown when attempting to set doclib  folder column default on a boolean field which already has
         /// a TRUE value as its SPField's DefaultValue.
         /// This is a weird edge-case where SharePoint's folder column defaults logic breaks down.
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(NotSupportedException))]
-        public void EnsureFolderHierarchy_WhenAttemptingFALSEDefaultFolderValue_AndSPFieldAlreadHasTRUEDefaultValue_ShouldExplodeAndWarnYouThatThisWeirdEdgeCaseIsNotSupported()
+        public void EnsureFolderHierarchy_WhenAttemptingFALSEDefaultFolderValueInDocLib_AndSPFieldAlreadHasTRUEDefaultValue_ShouldExplodeAndWarnYouThatThisWeirdEdgeCaseIsNotSupported()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1170,11 +1170,11 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validated that attempting to ensure folder column default values on Lookup fields fails and warns the developer
+        /// Validated that attempting to ensure doclib folder column default values on Lookup fields fails and warns the developer
         /// that this behavior is not supported.
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenAttemptingToSetLookupFolderDefaultValue_ShouldFailWithNotSupportedException()
+        public void EnsureFolderHierarchy_WhenAttemptingToSetLookupFolderDefaultValueInDocLib_ShouldFailWithNotSupportedException()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1298,11 +1298,11 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validated that attempting to ensure folder column default values on User fields fails and warns the developer
+        /// Validated that attempting to ensure doclib folder column default values on User fields fails and warns the developer
         /// that this behavior is not supported.
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenAttemptingToSetUserFolderDefaultValue_ShouldFailWithNotSupportedException()
+        public void EnsureFolderHierarchy_WhenAttemptingToSetUserFolderDefaultValueInDocLib_ShouldFailWithNotSupportedException()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1380,10 +1380,10 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
-        /// Validates that default folder values in document library are applied when you upload a document
+        /// Validates that default subfolder values in document library are applied when you upload a document
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInLibraryFolder_AndYouUploadADocument_ThenDocumentShouldHaveDefaultValueForAllSupportedFieldTypes()
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInDocumentLibrarySubFolder_AndYouUploadADocument_ThenDocumentShouldHaveDefaultValueForAllSupportedFieldTypes()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1704,11 +1704,11 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                     var urlFieldVal = new SPFieldUrlValue(itemInSecondLevelFolder.Item["TestInternalNameUrl"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
-                    Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+                    Assert.AreEqual("patate!", urlFieldVal.Description);
 
                     var urlImageFieldVal = new SPFieldUrlValue(itemInSecondLevelFolder.Item["TestInternalNameUrlImg"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
-                    Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+                    Assert.AreEqual("patate!", urlImageFieldVal.Description);
 
                     var mediaFieldVal = MediaFieldValue.FromString(itemInSecondLevelFolder.Item["TestInternalNameMedia"].ToString());
                     Assert.AreEqual("Some media file title", mediaFieldVal.Title);
@@ -1734,11 +1734,1077 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         }
 
         /// <summary>
+        /// Validates that default root folder values in document library are applied when you upload a document
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInDocumentLibraryRootFolder_AndYouUploadADocument_ThenDocumentShouldHaveDefaultValueForAllSupportedFieldTypes()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey");
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    LocaleId = 3084 // fr-CA
+                };
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoDefaultFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{628181BD-9B0B-4B7E-934F-1CF1796EA4E4}"),
+                    "NameKeyBoolFalse",
+                    "DescriptionKeyBoolFalse",
+                    "GroupKey")
+                {
+                    // see related test above: EnsureFolderHierarchy_WhenAttemptingFALSEDefaultFolderValue_AndSPFieldAlreadHasTRUEDefaultValue_ShouldExplodeAndWarnYouThatThisWeirdEdgeCaseIsNotSupported
+                    DefaultValue = false
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                    "NameKeyDateTimeFormula",
+                    "DescriptionKeyDateTimeFormula",
+                    "GroupKey")
+                {
+                    DefaultFormula = "=[Today]"
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoDefault = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey")
+                {
+                    DefaultValue = new DateTime(2005, 10, 21)
+                };
+
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKeyText",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    DefaultValue = "Text default value"
+                };
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyNote",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = "Note default value"
+                };
+
+                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
+                    "TestInternalNameHtml",
+                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
+                    "NameKeyHtml",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    DefaultValue = "<p class=\"some-css-class\">HTML default value</p>"
+                };
+
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey")
+                {
+                };
+
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey")
+                {
+                };
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = "Image"
+                };
+
+                MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
+                    "TestInternalNameMedia",
+                    new Guid("{A2F070FE-FE33-44FC-9FDF-D18E74ED4D67}"),
+                    "NameKeyMedia",
+                    "DescriptionKeyMEdia",
+                    "GroupKey");
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKeyTaxo",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{2F49D362-B014-41BB-9959-1000C9A7FFA0}"),
+                    "NameKeyTaxoMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                // Create a list that contains all the fields we've prepared
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        boolFieldInfoDefaultFalse,
+                        dateTimeFieldInfoFormula,
+                        dateTimeFieldInfoDefault,
+                        textFieldInfo,
+                        noteFieldInfo,
+                        htmlFieldInfo,
+                        imageFieldInfo,
+                        urlFieldInfo,
+                        urlFieldInfoImage,
+                        mediaFieldInfo,
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
+                    };
+
+                ContentTypeInfo contentTypeWithAllFields = new ContentTypeInfo("0x0101007403019827FD4C68AF50C5F41781D262", "CTNameKey", "CTDescrKey", "GroupKey")
+                {
+                    Fields = fieldsToEnsure
+                };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+                ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    ContentTypes = new List<ContentTypeInfo>() { contentTypeWithAllFields }
+                };
+
+                // Prepare some MetadataDefaults that we'll apply on the second-level folder
+                var fieldDefaultValues = new List<FieldValueInfo>()
+                {
+                    new FieldValueInfo(numberFieldInfo, 5.0),
+                    new FieldValueInfo(currencyFieldInfo, 535.95),
+                    new FieldValueInfo(boolFieldInfoBasic, true),
+                    new FieldValueInfo(boolFieldInfoDefaultFalse, true),
+                    new FieldValueInfo(dateTimeFieldInfoFormula, new DateTime(1977, 1, 1)),
+                    new FieldValueInfo(dateTimeFieldInfoDefault, new DateTime(1978, 1, 1)),
+                    new FieldValueInfo(textFieldInfo, "TextAltDefaultValue"),
+                    new FieldValueInfo(noteFieldInfo, "NoteAltDefaultValue"),
+                    new FieldValueInfo(htmlFieldInfo, "HtmlAltDefaultValue"),
+                    new FieldValueInfo(
+                        imageFieldInfo, 
+                        new ImageValue()
+                        {
+                            Hyperlink = "http://github.com/GSoft-SharePoint/",
+                            ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                        }),
+                    new FieldValueInfo(
+                        urlFieldInfo, 
+                        new UrlValue()
+                        {
+                            Url = "http://github.com/GSoft-SharePoint/",
+                            Description = "patate!"
+                        }),
+                    new FieldValueInfo(
+                        urlFieldInfoImage, 
+                        new UrlValue()
+                        {
+                            Url = "http://github.com/GSoft-SharePoint/",
+                            Description = "patate!"
+                        }),
+                    new FieldValueInfo(
+                        mediaFieldInfo, 
+                        new MediaValue()
+                        {
+                            Title = "Some media file title",
+                            Url = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
+                            IsAutoPlay = true,
+                            IsLoop = true,
+                            PreviewImageUrl = "/_layouts/15/Images/logo.png"
+                        }),
+                    new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermB)),
+                    new FieldValueInfo(
+                        taxoMultiFieldInfo, 
+                        new TaxonomyFullValueCollection(
+                            new List<TaxonomyFullValue>() 
+                                { 
+                                    new TaxonomyFullValue(levelTwoTermAA), 
+                                    new TaxonomyFullValue(levelTwoTermAB)
+                                }))
+                };
+
+                // Default values are configured on the root folder (not on the 2nd level folder)
+                var folderInfoLvl2 = new FolderInfo("somelevel2path");
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    FieldDefaultValues = fieldDefaultValues,
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create the test doc lib
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act: ensure the folder hierarchy with 2nd level subfolder which has MetadataDefaults for all possible types
+                    var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+
+                    var itemInRootFolder = ensuredRootFolder.Files.Add("SomeRootFile.txt", new byte[0]);
+                    itemInRootFolder.Update();
+
+                    var secondLevelEnsuredFolder = ensuredRootFolder.SubFolders["somelevel2path"];
+
+                    var itemInSecondLevelFolder = secondLevelEnsuredFolder.Files.Add("SomeLevel2File.txt", new byte[0]);
+                    itemInSecondLevelFolder.Update();
+
+                    // Assert
+
+                    // In root folder, our MetadataDefaults should've been applied
+                    Assert.AreEqual(5.0, itemInRootFolder.Item["TestInternalNameNumber"]);
+                    Assert.AreEqual(535.95, itemInRootFolder.Item["TestInternalNameCurrency"]);
+                    Assert.IsTrue((bool)itemInRootFolder.Item["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemInRootFolder.Item["TestInternalNameBoolFalse"]);
+                    Assert.AreEqual(new DateTime(1977, 1, 1), itemInRootFolder.Item["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(1978, 1, 1), itemInRootFolder.Item["TestInternalNameDateDefault"]);
+                    Assert.AreEqual("TextAltDefaultValue", itemInRootFolder.Item["TestInternalNameText"]);
+                    Assert.AreEqual("NoteAltDefaultValue", itemInRootFolder.Item["TestInternalNameNote"]);
+                    Assert.AreEqual("HtmlAltDefaultValue", itemInRootFolder.Item["TestInternalNameHtml"]);
+
+                    var imageFieldVal = (ImageFieldValue)itemInRootFolder.Item["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
+                    var urlFieldVal = new SPFieldUrlValue(itemInRootFolder.Item["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    Assert.AreEqual("patate!", urlFieldVal.Description);
+
+                    var urlImageFieldVal = new SPFieldUrlValue(itemInRootFolder.Item["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    Assert.AreEqual("patate!", urlImageFieldVal.Description);
+
+                    var mediaFieldVal = MediaFieldValue.FromString(itemInRootFolder.Item["TestInternalNameMedia"].ToString());
+                    Assert.AreEqual("Some media file title", mediaFieldVal.Title);
+                    Assert.AreEqual(HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), mediaFieldVal.MediaSource);
+                    Assert.IsTrue(mediaFieldVal.AutoPlay);
+                    Assert.IsTrue(mediaFieldVal.Loop);
+                    Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
+
+                    var taxoFieldValue = (TaxonomyFieldValue)itemInRootFolder.Item["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+
+                    var taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemInRootFolder.Item["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                    
+                    // In second-level folder, our MetadataDefaults should've been applied as well (inherited from root folder)
+                    Assert.AreEqual(5.0, itemInSecondLevelFolder.Item["TestInternalNameNumber"]);
+                    Assert.AreEqual(535.95, itemInSecondLevelFolder.Item["TestInternalNameCurrency"]);
+                    Assert.IsTrue((bool)itemInSecondLevelFolder.Item["TestInternalNameBool"]);
+                    Assert.IsTrue((bool)itemInSecondLevelFolder.Item["TestInternalNameBoolFalse"]);
+                    Assert.AreEqual(new DateTime(1977, 1, 1), itemInSecondLevelFolder.Item["TestInternalNameDateFormula"]);
+                    Assert.AreEqual(new DateTime(1978, 1, 1), itemInSecondLevelFolder.Item["TestInternalNameDateDefault"]);
+                    Assert.AreEqual("TextAltDefaultValue", itemInSecondLevelFolder.Item["TestInternalNameText"]);
+                    Assert.AreEqual("NoteAltDefaultValue", itemInSecondLevelFolder.Item["TestInternalNameNote"]);
+                    Assert.AreEqual("HtmlAltDefaultValue", itemInSecondLevelFolder.Item["TestInternalNameHtml"]);
+
+                    imageFieldVal = (ImageFieldValue)itemInSecondLevelFolder.Item["TestInternalNameImage"];
+                    Assert.IsNotNull(imageFieldVal);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", imageFieldVal.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", imageFieldVal.ImageUrl);
+
+                    urlFieldVal = new SPFieldUrlValue(itemInSecondLevelFolder.Item["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    Assert.AreEqual("patate!", urlFieldVal.Description);
+
+                    urlImageFieldVal = new SPFieldUrlValue(itemInSecondLevelFolder.Item["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    Assert.AreEqual("patate!", urlImageFieldVal.Description);
+
+                    mediaFieldVal = MediaFieldValue.FromString(itemInSecondLevelFolder.Item["TestInternalNameMedia"].ToString());
+                    Assert.AreEqual("Some media file title", mediaFieldVal.Title);
+                    Assert.AreEqual(HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), mediaFieldVal.MediaSource);
+                    Assert.IsTrue(mediaFieldVal.AutoPlay);
+                    Assert.IsTrue(mediaFieldVal.Loop);
+                    Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
+
+                    taxoFieldValue = (TaxonomyFieldValue)itemInSecondLevelFolder.Item["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+
+                    taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemInSecondLevelFolder.Item["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Pages Library's folder MetadataDefaults (field default values) should be created and/or updated during Ensure
+
+        /// <summary>
+        /// Validates that a NotSupportedException is thrown when attempting to set Boolean fields' default value to TRUE
+        /// within a Pages library folder (SharePoint's OOTB support for Page-CT boolean default values is broken)
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenBooleanTRUEDefaultValuesAreSpecifiedInPagesLibraryFolder_ShouldThrownNotSupportedException()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoDefaultTrue = new BooleanFieldInfo(
+                   "TestInternalNameBoolTrue",
+                   new Guid("{0D0289AD-C5FB-495B-96C6-48CC46737D08}"),
+                   "NameKeyBoolTrue",
+                   "DescriptionKeyBoolTrue",
+                   "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo boolFieldInfoDefaultFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{628181BD-9B0B-4B7E-934F-1CF1796EA4E4}"),
+                    "NameKeyBoolFalse",
+                    "DescriptionKeyBoolFalse",
+                    "GroupKey")
+                {
+                    DefaultValue = false
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                {
+                    boolFieldInfoBasic,
+                    boolFieldInfoDefaultTrue,
+                    boolFieldInfoDefaultFalse
+                };
+
+                // We gotta update the ArticlePage Content type with our fields
+                var articlePageCT = new ContentTypeInfo(
+                    "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D",
+                    "UpdatedArticlePageCT",
+                    "UpdatedArticlePageCTDescription",
+                    "GroupKey")
+                {
+                    Fields = fieldsToEnsure
+                };
+
+                // Default values will be  configured further down on the level 2 folder (not on the root folder)
+                var folderInfoLvl2 = new FolderInfo("somelevel2path")
+                {
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
+                    SPList list = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+                    contentTypeHelper.EnsureContentType(list.ContentTypes, articlePageCT);      // this should add the field to the Pages lib
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act #1: try to set a TRUE folder default value on a default-less Boolean field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(boolFieldInfoBasic, true) };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    // Act #2: try to set a TRUE folder default value on a TRUE-default Boolean field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(boolFieldInfoDefaultTrue, true) };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    // Act #3: try to set a TRUE folder default value on a FALSE-default Boolean field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(boolFieldInfoDefaultFalse, true) };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that a NotSupportedException is thrown when attempting to set DateTime fields' folder default value 
+        /// when a SPField.DefaulValue or DefaultFormula already exists. The SPField's default DateTime value will always take precedence
+        /// when in a Pages library.
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
+                   "TestInternalNameDateFormula",
+                   new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                   "NameKeyDateTimeFormula",
+                   "DescriptionKeyDateTimeFormula",
+                   "GroupKey")
+                {
+                    DefaultFormula = "=[Today]"
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoDefault = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey")
+                {
+                    DefaultValue = new DateTime(2005, 10, 21)
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                {
+                    dateTimeFieldInfoFormula,
+                    dateTimeFieldInfoDefault
+                };
+
+                // We gotta update the ArticlePage Content type with our fields
+                var articlePageCT = new ContentTypeInfo(
+                    "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D",
+                    "UpdatedArticlePageCT",
+                    "UpdatedArticlePageCTDescription",
+                    "GroupKey")
+                {
+                    Fields = fieldsToEnsure
+                };
+
+                // Default values will be configured further down on the level 2 folder (not on the root folder)
+                var folderInfoLvl2 = new FolderInfo("somelevel2path")
+                {
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
+                    SPList list = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+                    contentTypeHelper.EnsureContentType(list.ContentTypes, articlePageCT);      // this should add the field to the Pages lib
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act #1: try to set a DateTime folder default on a field which already has a formula
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(dateTimeFieldInfoFormula, new DateTime(2003, 12, 31)) };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    // Act #2: try to set a DateTime folder default value on a field which already has a default value
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(dateTimeFieldInfoDefault, new DateTime(2003, 12, 31)) };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that a NotSupportedException is thrown when attempting to set string-based fields' folder default value 
+        /// when in a Pages library. While folder-specific default values work for string-based fields in document libraries,
+        /// this all breaks down in the Pages library, which somehow prevents per-folder string defaults.
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenInPagesLibrary_AndAttemptingToSetDefaultStringValue_ShouldThrownNotSupportedException()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKeyText",
+                    "DescriptionKey",
+                    "GroupKey");
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyNote",
+                    "DescriptionKeyAlt",
+                    "GroupKey");
+
+                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
+                    "TestInternalNameHtml",
+                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
+                    "NameKeyHtml",
+                    "DescriptionKeyAlt",
+                    "GroupKey");
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                {
+                    textFieldInfo,
+                    noteFieldInfo,
+                    htmlFieldInfo
+                };
+
+                // We gotta update the ArticlePage Content type with our fields
+                var articlePageCT = new ContentTypeInfo(
+                    "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D",
+                    "UpdatedArticlePageCT",
+                    "UpdatedArticlePageCTDescription",
+                    "GroupKey")
+                {
+                    Fields = fieldsToEnsure
+                };
+
+                // Default values will be configured further down on the level 2 folder (not on the root folder)
+                var folderInfoLvl2 = new FolderInfo("somelevel2path")
+                {
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
+                    SPList list = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+                    contentTypeHelper.EnsureContentType(list.ContentTypes, articlePageCT);      // this should add the field to the Pages lib
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act #1: try to set a folder default on a Text field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(textFieldInfo, "MyTextFolderDefault") };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    // Act #2: try to set a folder default on a Note field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(noteFieldInfo, "MyNoteFolderDefault") };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    // Act #3: try to set a folder default on a Html field
+                    folderInfoLvl2.FieldDefaultValues = new List<FieldValueInfo>() { new FieldValueInfo(noteFieldInfo, "MyHtmlFolderDefault") };
+
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that a NotSupportedException is thrown when attempting to set Publishing Image folder-specific column default value.
+        /// SharePoint simply doesn't support folder defaults for that field type.
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenInPagesLibrary_AndAttemptingToSetDefaultPublishingImageValue_ShouldThrownNotSupportedException()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey")
+                {
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                {
+                    imageFieldInfo
+                };
+
+                // We gotta update the ArticlePage Content type with our fields
+                var articlePageCT = new ContentTypeInfo(
+                    "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D",
+                    "UpdatedArticlePageCT",
+                    "UpdatedArticlePageCTDescription",
+                    "GroupKey")
+                {
+                    Fields = fieldsToEnsure
+                };
+
+                // Default values configured on the level 2 folder (not on the root folder)
+                var folderInfoLvl2 = new FolderInfo("somelevel2path")
+                {
+                    FieldDefaultValues = new List<FieldValueInfo>() 
+                    { 
+                        new FieldValueInfo(
+                            imageFieldInfo, 
+                            new ImageValue()
+                            {
+                                Hyperlink = "http://github.com/GSoft-SharePoint/",
+                                ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                            })
+                    }
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
+                    SPList list = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+                    contentTypeHelper.EnsureContentType(list.ContentTypes, articlePageCT);      // this should add the field to the Pages lib
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act: try to set a folder default on a Publishing Image field
+                    try
+                    {
+                        var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+                        Assert.Fail("Should've thrown NotSupportedException");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Validates that default folder values in Pages library are applied when you create a publishing page
         /// </summary>
         [TestMethod]
         public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInPagesLibraryFolder_AndYouCreateAPage_ThenPageShouldHaveDefaultValue()
         {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey");
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    LocaleId = 3084 // fr-CA
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDate",
+                    new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                    "NameKeyDateTime",
+                    "DescriptionKeyDateTime",
+                    "GroupKey")
+                {
+                    // Important that there be no DefaultFormula and no DefaultValue, otherwise the
+                    // folder default column value would be ignored.
+                    // See related test above: EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException
+                };
+             
+
+
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey")
+                {
+                };
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = "Image"
+                };
+
+                MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
+                    "TestInternalNameMedia",
+                    new Guid("{A2F070FE-FE33-44FC-9FDF-D18E74ED4D67}"),
+                    "NameKeyMedia",
+                    "DescriptionKeyMEdia",
+                    "GroupKey");
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKeyTaxo",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{2F49D362-B014-41BB-9959-1000C9A7FFA0}"),
+                    "NameKeyTaxoMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                // Create a list that contains all the fields we've prepared
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        dateTimeFieldInfo,
+                        urlFieldInfo,
+                        urlFieldInfoImage,
+                        mediaFieldInfo,
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
+                    };
+                
+                // Prepare some MetadataDefaults that we'll apply on the second-level folder
+                var fieldDefaultValues = new List<FieldValueInfo>()
+                {
+                    new FieldValueInfo(numberFieldInfo, 5.0),
+                    new FieldValueInfo(currencyFieldInfo, 535.95),
+                    new FieldValueInfo(dateTimeFieldInfo, new DateTime(1977, 1, 1)),
+                    new FieldValueInfo(
+                        urlFieldInfo, 
+                        new UrlValue()
+                        {
+                            Url = "http://github.com/GSoft-SharePoint/",
+                            Description = "patate!"
+                        }),
+                    new FieldValueInfo(
+                        urlFieldInfoImage, 
+                        new UrlValue()
+                        {
+                            Url = "http://github.com/GSoft-SharePoint/",
+                            Description = "patate!"
+                        }),
+                    new FieldValueInfo(
+                        mediaFieldInfo, 
+                        new MediaValue()
+                        {
+                            Title = "Some media file title",
+                            Url = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
+                            IsAutoPlay = true,
+                            IsLoop = true,
+                            PreviewImageUrl = "/_layouts/15/Images/logo.png"
+                        }),
+                    new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermB)),
+                    new FieldValueInfo(
+                        taxoMultiFieldInfo, 
+                        new TaxonomyFullValueCollection(
+                            new List<TaxonomyFullValue>() 
+                                { 
+                                    new TaxonomyFullValue(levelTwoTermAA), 
+                                    new TaxonomyFullValue(levelTwoTermAB)
+                                }))
+                };
+
+                // We gotta update the ArticlePage Content type with our fields
+                var articlePageCT = new ContentTypeInfo(
+                    "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D",
+                    "UpdatedArticlePageCT",
+                    "UpdatedArticlePageCTDescription",
+                    "GroupKey")
+                    {
+                        Fields = fieldsToEnsure
+                    };
+
+                // Default values are configured on the level 2 folder (not on the root folder)
+                var articleLeftPageLayoutInfo = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
+                var folderInfoLvl2 = new FolderInfo("somelevel2path")
+                {
+                    FieldDefaultValues = fieldDefaultValues,
+                    Pages = new List<PageInfo>() 
+                    { 
+                        new PageInfo("DynamiteTestPage", articleLeftPageLayoutInfo),
+                        new PageInfo("DynamiteTestPageWithValues", articleLeftPageLayoutInfo)
+                        {
+                            FieldValues = new List<FieldValueInfo>()
+                            {
+                                new FieldValueInfo(dateTimeFieldInfo, new DateTime(1999, 1, 1)),
+                                new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermA))
+                            }
+                        }
+                    }
+                };
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
+                    SPList list = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+                    contentTypeHelper.EnsureContentType(list.ContentTypes, articlePageCT);      // this should add the field to the Pages lib
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Act: ensure the folder hierarchy with a page inside 2nd level subfolder which has MetadataDefaults for all possible types
+                    var ensuredRootFolder = folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
+
+                    // Assert
+                    var pubWeb = PublishingWeb.GetPublishingWeb(testScope.SiteCollection.RootWeb);
+                    var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+                    var allPages = pubWeb.GetPublishingPages(recursivePagesQuery);
+                    var ourPageWithDefaults = allPages["/Pages/somelevel2path/DynamiteTestPage.aspx"];
+                    var ourPageWithDefaultsAndValues = allPages["/Pages/somelevel2path/DynamiteTestPageWithValues.aspx"];
+
+                    // In 1st publishing page's list item, all metadata defaults should've been applied
+                    Assert.AreEqual(5.0, ourPageWithDefaults.ListItem["TestInternalNameNumber"]);
+                    Assert.AreEqual(535.95, ourPageWithDefaults.ListItem["TestInternalNameCurrency"]);
+                    Assert.AreEqual(new DateTime(1977, 1, 1), ourPageWithDefaults.ListItem["TestInternalNameDate"]);
+                    
+                    var urlFieldVal = new SPFieldUrlValue(ourPageWithDefaults.ListItem["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    Assert.AreEqual("patate!", urlFieldVal.Description);
+
+                    var urlImageFieldVal = new SPFieldUrlValue(ourPageWithDefaults.ListItem["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    Assert.AreEqual("patate!", urlImageFieldVal.Description);
+
+                    var mediaFieldVal = MediaFieldValue.FromString(ourPageWithDefaults.ListItem["TestInternalNameMedia"].ToString());
+                    Assert.AreEqual("Some media file title", mediaFieldVal.Title);
+                    Assert.AreEqual(HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), mediaFieldVal.MediaSource);
+                    Assert.IsTrue(mediaFieldVal.AutoPlay);
+                    Assert.IsTrue(mediaFieldVal.Loop);
+                    Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
+
+                    var taxoFieldValue = (TaxonomyFieldValue)ourPageWithDefaults.ListItem["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+
+                    var taxoFieldValueMulti = (TaxonomyFieldValueCollection)ourPageWithDefaults.ListItem["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+
+                    // In 2nd publishing page's list item, metadata defaults should've been applied everywhere except where we specified item values
+                    Assert.AreEqual(5.0, ourPageWithDefaultsAndValues.ListItem["TestInternalNameNumber"]);
+                    Assert.AreEqual(535.95, ourPageWithDefaultsAndValues.ListItem["TestInternalNameCurrency"]);
+                    Assert.AreEqual(new DateTime(1999, 1, 1), ourPageWithDefaultsAndValues.ListItem["TestInternalNameDate"]);     // PageInfo Value should be applied, not folder MetadataDefault
+                    
+                    urlFieldVal = new SPFieldUrlValue(ourPageWithDefaultsAndValues.ListItem["TestInternalNameUrl"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
+                    Assert.AreEqual("patate!", urlFieldVal.Description);     // proper Url description will never be set for Format=Hyperlink
+
+                    urlImageFieldVal = new SPFieldUrlValue(ourPageWithDefaultsAndValues.ListItem["TestInternalNameUrlImg"].ToString());
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlImageFieldVal.Url);
+                    Assert.AreEqual("patate!", urlImageFieldVal.Description);     // proper Url description will never be set for Format=Image either
+
+                    mediaFieldVal = MediaFieldValue.FromString(ourPageWithDefaultsAndValues.ListItem["TestInternalNameMedia"].ToString());
+                    Assert.AreEqual("Some media file title", mediaFieldVal.Title);
+                    Assert.AreEqual(HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), mediaFieldVal.MediaSource);
+                    Assert.IsTrue(mediaFieldVal.AutoPlay);
+                    Assert.IsTrue(mediaFieldVal.Loop);
+                    Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
+
+                    taxoFieldValue = (TaxonomyFieldValue)ourPageWithDefaultsAndValues.ListItem["TestInternalNameTaxo"];  // PageInfo Value should be applied, not folder MetadataDefault
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermA.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermA.Label, taxoFieldValue.Label);
+
+                    taxoFieldValueMulti = (TaxonomyFieldValueCollection)ourPageWithDefaultsAndValues.ListItem["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                }
+            }
         }
 
         /// <summary>

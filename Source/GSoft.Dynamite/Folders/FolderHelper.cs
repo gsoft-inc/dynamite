@@ -152,6 +152,15 @@ namespace GSoft.Dynamite.Folders
                         ClearFolderAllFolderMetadataDefaults(folder);
                     }
 
+                    // Make sure the folder is published
+                    SPModerationInformation folderModerationInfo = folder.Item.ModerationInformation;
+                    if (folderModerationInfo != null)
+                    {
+                        folderModerationInfo.Comment = "Automatically approved upon creation through Dynamite's FolderHelper utility.";
+                        folderModerationInfo.Status = SPModerationStatusType.Approved;
+                        folder.Item.Update();
+                    }
+
                     // Create pages
                     if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                     {
