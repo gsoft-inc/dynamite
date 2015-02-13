@@ -74,7 +74,6 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(folder.ParentWeb.Lists[folder.ParentListId]);
 
             var parentList = folder.ParentWeb.Lists[folder.ParentListId];
-            var listField = parentList.Fields[fieldValueInfo.FieldInfo.Id];
 
             // Pages library is a special case: attempting to set folder default value on any text-based field (Text, Note or HTML)
             // will always fail because of patchy OOTB support.

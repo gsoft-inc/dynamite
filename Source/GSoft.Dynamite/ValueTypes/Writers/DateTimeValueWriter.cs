@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (typedFieldValue.HasValue)
             {
-                item[fieldValueInfo.FieldInfo.InternalName] = typedFieldValue.Value.ToUniversalTime();
+                item[fieldValueInfo.FieldInfo.InternalName] = typedFieldValue.Value;
             }
             else
             {
@@ -91,14 +91,8 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (defaultValue.HasValue)
             {
-                // Weirdness warning: between regular Document Libraries and the Pages Library,
-                // how we set DateTime column default per-folder needs to be different.
-                // On Document Library folder, we need to convert the DateTime value to UTC before
-                // we assign it as a default column value (i.e. we need to go from local time to UTC).
-                // On a Pages library folder, we need to set the local datetime string as the default,
-                // without UTC conversion.
-                DateTime defaultValueWithUTCConversionIfNeeded = isPagesLibrary ? defaultValue.Value : defaultValue.Value.ToUniversalTime();
-                string dateString = FormatLocalDateTimeString(defaultValueWithUTCConversionIfNeeded);
+                // Weirdness warning: don't forget to convert to UTC so that the list item default value gets applied in UTC
+                string dateString = FormatLocalDateTimeString(defaultValue.Value.ToUniversalTime());
                 listMetadataDefaults.SetFieldDefault(folder.ServerRelativeUrl, fieldValueInfo.FieldInfo.InternalName, dateString);
             }
             else

@@ -153,7 +153,7 @@ namespace GSoft.Dynamite.Folders
                     }
 
                     // Make sure the folder is published
-                    SPModerationInformation folderModerationInfo = folder.Item.ModerationInformation;
+                    SPModerationInformation folderModerationInfo = folder.Item != null ? folder.Item.ModerationInformation : null;
                     if (folderModerationInfo != null)
                     {
                         folderModerationInfo.Comment = "Automatically approved upon creation through Dynamite's FolderHelper utility.";

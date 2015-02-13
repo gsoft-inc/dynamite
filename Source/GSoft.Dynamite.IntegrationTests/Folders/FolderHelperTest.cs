@@ -2183,7 +2183,6 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
 
                     // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
@@ -2293,7 +2292,6 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
 
                     // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
@@ -2393,7 +2391,6 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
 
                     // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
@@ -2500,7 +2497,6 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
 
                     // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
@@ -2548,19 +2544,30 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     LocaleId = 3084 // fr-CA
                 };
 
-                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                DateTimeFieldInfo dateOnlyFieldInfo = new DateTimeFieldInfo(
                     "TestInternalNameDate",
                     new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
-                    "NameKeyDateTime",
-                    "DescriptionKeyDateTime",
+                    "NameKeyDate",
+                    "DescriptionKeyDate",
                     "GroupKey")
                 {
                     // Important that there be no DefaultFormula and no DefaultValue, otherwise the
                     // folder default column value would be ignored.
                     // See related test above: EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException
                 };
-             
 
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                  "TestInternalNameDateTime",
+                  new Guid("{526F9055-7472-4CFA-A31D-E2B7BFB1FD7D}"),
+                  "NameKeyDateTime",
+                  "DescriptionKeyDateTime",
+                  "GroupKey")
+                {
+                    // Important that there be no DefaultFormula and no DefaultValue, otherwise the
+                    // folder default column value would be ignored.
+                    // See related test above: EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException
+                    Format = "DateTime"
+                };
 
                 UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
                     "TestInternalNameUrl",
@@ -2631,6 +2638,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     {
                         numberFieldInfo,
                         currencyFieldInfo,
+                        dateOnlyFieldInfo,
                         dateTimeFieldInfo,
                         urlFieldInfo,
                         urlFieldInfoImage,
@@ -2644,6 +2652,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 {
                     new FieldValueInfo(numberFieldInfo, 5.0),
                     new FieldValueInfo(currencyFieldInfo, 535.95),
+                    new FieldValueInfo(dateOnlyFieldInfo, new DateTime(1976, 1, 1)),
                     new FieldValueInfo(dateTimeFieldInfo, new DateTime(1977, 1, 1)),
                     new FieldValueInfo(
                         urlFieldInfo, 
@@ -2702,6 +2711,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                         {
                             FieldValues = new List<FieldValueInfo>()
                             {
+                                new FieldValueInfo(dateOnlyFieldInfo, new DateTime(1998, 1, 1)),
                                 new FieldValueInfo(dateTimeFieldInfo, new DateTime(1999, 1, 1)),
                                 new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermA))
                             }
@@ -2719,7 +2729,6 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
-                    //var fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
 
                     // Init the test Pages library (we're in a Pub Site, the Pages lib already exists and we want to add fields to it)
@@ -2734,6 +2743,9 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Assert
                     var pubWeb = PublishingWeb.GetPublishingWeb(testScope.SiteCollection.RootWeb);
                     var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+
+                    // Fetch all pages. WARNING: all dates will be returned in UTC time, because our SPQuery is modified
+                    // by GetPublishingPages to force DatesInUtc=true.
                     var allPages = pubWeb.GetPublishingPages(recursivePagesQuery);
                     var ourPageWithDefaults = allPages["/Pages/somelevel2path/DynamiteTestPage.aspx"];
                     var ourPageWithDefaultsAndValues = allPages["/Pages/somelevel2path/DynamiteTestPageWithValues.aspx"];
@@ -2741,7 +2753,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // In 1st publishing page's list item, all metadata defaults should've been applied
                     Assert.AreEqual(5.0, ourPageWithDefaults.ListItem["TestInternalNameNumber"]);
                     Assert.AreEqual(535.95, ourPageWithDefaults.ListItem["TestInternalNameCurrency"]);
-                    Assert.AreEqual(new DateTime(1977, 1, 1), ourPageWithDefaults.ListItem["TestInternalNameDate"]);
+                    Assert.AreEqual(new DateTime(1976, 1, 1), ((DateTime)ourPageWithDefaults.ListItem["TestInternalNameDate"]).ToLocalTime());    // SPListItem should normally return DateTime as local time (not UTC), but since we used GetPublishingPage, dates are in UTC
+                    Assert.AreEqual(new DateTime(1977, 1, 1), ((DateTime)ourPageWithDefaults.ListItem["TestInternalNameDateTime"]).ToLocalTime());
                     
                     var urlFieldVal = new SPFieldUrlValue(ourPageWithDefaults.ListItem["TestInternalNameUrl"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
@@ -2774,7 +2787,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // In 2nd publishing page's list item, metadata defaults should've been applied everywhere except where we specified item values
                     Assert.AreEqual(5.0, ourPageWithDefaultsAndValues.ListItem["TestInternalNameNumber"]);
                     Assert.AreEqual(535.95, ourPageWithDefaultsAndValues.ListItem["TestInternalNameCurrency"]);
-                    Assert.AreEqual(new DateTime(1999, 1, 1), ourPageWithDefaultsAndValues.ListItem["TestInternalNameDate"]);     // PageInfo Value should be applied, not folder MetadataDefault
+                    Assert.AreEqual(new DateTime(1998, 1, 1), ((DateTime)ourPageWithDefaultsAndValues.ListItem["TestInternalNameDate"]).ToLocalTime());     // PageInfo Value should be applied, not folder MetadataDefaul
+                    Assert.AreEqual(new DateTime(1999, 1, 1), ((DateTime)ourPageWithDefaultsAndValues.ListItem["TestInternalNameDateTime"]).ToLocalTime());     // PageInfo Value should be applied, not folder MetadataDefault
                     
                     urlFieldVal = new SPFieldUrlValue(ourPageWithDefaultsAndValues.ListItem["TestInternalNameUrl"].ToString());
                     Assert.AreEqual("http://github.com/GSoft-SharePoint/", urlFieldVal.Url);
