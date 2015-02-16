@@ -164,7 +164,7 @@ namespace GSoft.Dynamite.ContentTypes
                 throw new ArgumentNullException("contentTypeCollection");
             }
 
-            SPContentTypeId contentTypeId = new SPContentTypeId(contentTypeInfo.ContentTypeId);
+            SPContentTypeId contentTypeId = contentTypeInfo.ContentTypeId;
             SPList list = null;
 
             var contentTypeResourceTitle = this.resourceLocator.GetResourceString(contentTypeInfo.ResourceFileName, contentTypeInfo.DisplayNameResourceKey);

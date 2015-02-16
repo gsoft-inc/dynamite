@@ -577,7 +577,7 @@ namespace GSoft.Dynamite.Lists
 
         private static SPContentType GetListContentType(SPList list, ContentTypeInfo contentTypeInfo)
         {
-            var contentTypeId = new SPContentTypeId(contentTypeInfo.ContentTypeId);
+            var contentTypeId = contentTypeInfo.ContentTypeId;
 
             // If content type is direct child of item, remove it
             var bestMatchItem = list.ContentTypes.BestMatch(contentTypeId);

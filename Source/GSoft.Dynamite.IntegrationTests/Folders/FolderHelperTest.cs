@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using Autofac;
 using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.ContentTypes.Constants;
 using GSoft.Dynamite.Extensions;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
@@ -31,7 +33,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
     [TestClass]
     public class FolderHelperTest
     {
-        #region Ensure should create folder hierarchy within the specified library
+        #region Ensure should create folder hierarchy within the specified library (or list)
 
         /// <summary>
         /// Validates that hierarchy of subfolders is created in Pages library
@@ -116,7 +118,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Assert
                     Assert.IsTrue(documentLibrary.EnableFolderCreation);
                     Assert.AreEqual(2, documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms").Count());
-                    Assert.AreEqual(3, documentLibrary.Folders.Count);   // all created folders, exclusing the special Forms folder at library root
+                    Assert.AreEqual(3, documentLibrary.Folders.Count);   // all created folders, excluding the special Forms folder at library root
 
                     var lvl2Folder = documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
                     documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
@@ -151,7 +153,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     }
                 };
 
-                var listInfo = new ListInfo("somelistparth", "ListNameKey", "ListDescrKey");
+                var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey");
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
@@ -165,8 +167,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                     // Assert
                     Assert.IsTrue(list.EnableFolderCreation);
-                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms" && folder.Name != "Item" && folder.Name != "Attachments").Count());
-                    Assert.AreEqual(0, list.Folders.Count);   // Since this isn't a doclib, Folders array will always be empty (gotta use RootFolder.SubFolders)
+                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Item" && folder.Name != "Attachments").Count());
+                    Assert.AreEqual(3, list.Folders.Count);   // all created folders, excluding the special Item/Attachments folders at list root
 
                     var lvl2Folder = list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
                     list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
@@ -182,10 +184,10 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         #region Ensure should update the folder hierarchy if run more than once
 
         /// <summary>
-        /// Validates that when the hierarchy is modified, re-ensuring adds the missing folders
+        /// Validates that when the hierarchy is modified in a list, re-ensuring adds the missing folders
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenUpdating_ShouldUpdateFolderHierarchyWithAddedSubfolders()
+        public void EnsureFolderHierarchy_WhenUpdatingListFolders_ShouldUpdateFolderHierarchyWithAddedSubfolders()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -223,8 +225,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                     // Assert
                     Assert.IsTrue(list.EnableFolderCreation);
-                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms" && folder.Name != "Item" && folder.Name != "Attachments").Count());
-                    Assert.AreEqual(0, list.Folders.Count);   // Since this isn't a doclib, Folders array will always be empty (gotta use RootFolder.SubFolders)
+                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Item" && folder.Name != "Attachments").Count());
+                    Assert.AreEqual(3, list.Folders.Count);   // all created folders, excluding the special Item/Attachments folders at list root
 
                     var lvl2Folder = list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
                     list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
@@ -234,13 +236,70 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 }
             }
         }
-        
+
         /// <summary>
-        /// Validates that when the hierarchy is modified, re-ensuring isn't overzealous and doesn't attempt to
+        /// Validates that when the hierarchy is modified in a documnet library, re-ensuring adds the missing folders
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenUpdatingDocLibFolders_ShouldUpdateFolderHierarchyWithAddedSubfolders()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var folderInfoLvl3 = new FolderInfo("level3");
+                var folderInfoLvl2 = new FolderInfo("somelevel2path");
+                var folderInfoLvl2Alt = new FolderInfo("somelevel2path alt");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        folderInfoLvl2      // just add one of the three subfolders for now
+                    }
+                };
+
+                var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var documentLibrary = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Ensure the initial (partial) folder hierarchy
+                    folderHelper.EnsureFolderHierarchy(documentLibrary, rootFolderInfo);
+
+                    // Modify the folder hierarchy to add the 2 missing subfolders
+                    folderInfoLvl2.Subfolders.Add(folderInfoLvl3);
+                    rootFolderInfo.Subfolders.Add(folderInfoLvl2Alt);
+
+                    // Act: re-ensure the hierarchy with update definition
+                    folderHelper.EnsureFolderHierarchy(documentLibrary, rootFolderInfo);
+
+                    // Assert
+                    Assert.IsTrue(documentLibrary.EnableFolderCreation);
+                    Assert.AreEqual(2, documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms").Count());
+                    Assert.AreEqual(3, documentLibrary.Folders.Count);   // all created folders, excluding the special Forms folder at library root
+
+                    var lvl2Folder = documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+
+                    Assert.AreEqual(1, lvl2Folder.SubFolders.Count);
+                    lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that when the hierarchy is modified in a list, re-ensuring isn't overzealous and doesn't attempt to
         /// delete any already existing folders.
         /// </summary>
         [TestMethod]
-        public void EnsureFolderHierarchy_WhenUpdating_AndDefinitionChangedToRemoveSubFolder_ShouldNeverDeleteExistingSubfolder()
+        public void EnsureFolderHierarchy_WhenUpdatingListFolders_AndDefinitionChangedToRemoveSubFolder_ShouldNeverDeleteExistingSubfolder()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -278,17 +337,77 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
 
                     // Act: re-ensure to determine if the existing (and now superfluous) folders stay in place
                     folderHelper.EnsureFolderHierarchy(list, rootFolderInfo);
-                    
+
                     // Assert (nothing in the initial tree should've been removed)
                     Assert.IsTrue(list.EnableFolderCreation);
-                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms" && folder.Name != "Item" && folder.Name != "Attachments").Count());
-                    Assert.AreEqual(0, list.Folders.Count);   // Since this isn't a doclib, Folders array will always be empty (gotta use RootFolder.SubFolders)
+                    Assert.AreEqual(2, list.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Item" && folder.Name != "Attachments").Count());
+                    Assert.AreEqual(3, list.Folders.Count);   // all created folders, excluding the special Item/Attachments folders at list root
 
                     var lvl2Folder = list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
                     list.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
 
                     Assert.AreEqual(1, lvl2Folder.SubFolders.Count);
                     lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that when the hierarchy is modified in a document library, re-ensuring isn't overzealous and doesn't attempt to
+        /// delete any already existing folders.
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenUpdatingDocLibFolders_AndDefinitionChangedToRemoveSubFolder_ShouldNeverDeleteExistingSubfolder()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Subfolders = new List<FolderInfo>()
+                            {
+                                new FolderInfo("level3")
+                            }
+                        },
+                        new FolderInfo("somelevel2path alt")
+                    }
+                };
+
+                var listInfo = new ListInfo("somelistparth", "ListNameKey", "ListDescrKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var documentLibrary = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+
+                    // Start by ensuring a full folder hierarchy
+                    folderHelper.EnsureFolderHierarchy(documentLibrary, rootFolderInfo);
+
+                    // Edit the definition to remove some subfolder
+                    rootFolderInfo.Subfolders = rootFolderInfo.Subfolders.Where(f => f.Name != "somelevel2path").ToList();
+                    rootFolderInfo.Subfolders.First().Subfolders.Clear();
+
+                    // Act: re-ensure to determine if the existing (and now superfluous) folders stay in place
+                    folderHelper.EnsureFolderHierarchy(documentLibrary, rootFolderInfo);
+
+                    // Assert (nothing in the initial tree should've been removed)
+                    Assert.IsTrue(documentLibrary.EnableFolderCreation);
+                    Assert.AreEqual(2, documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Where(folder => folder.Name != "Forms").Count());
+                    Assert.AreEqual(3, documentLibrary.Folders.Count);   // all created folders, excluding the special Forms folder at library root
+
+                    var lvl2Folder = documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    documentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+
+                    Assert.AreEqual(1, lvl2Folder.SubFolders.Count);
                 }
             }
         }
@@ -2820,20 +2939,262 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 }
             }
         }
-
-        /// <summary>
-        /// Validates that default folder values in Pages library are applied when you specify a collection of PageInfos in your FolderInfo definition
-        /// </summary>
-        [TestMethod]
-        public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInPagesLibraryFolder_AndYouSpecifyPageInfosForFolderInfo_ThenFolderEnsureShouldCreatePagesWithDefaultValue()
-        {
-        }
-
+        
         #endregion
 
         #region Root folder and sub-folders' UniqueContentTypeOrder should be ensured through the hierarchy
 
-        //// TODO: write 'em tests
+        /// <summary>
+        /// Validates that hierarchy of subfolders is created each with their UniqueContentTypeOrder when in a pages library
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenInPagesLibrary_ShouldApplyFolderSpecificContentTypesChoicesInRibbonNewPageDropdown()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+
+                // Create some content types, children of Article Page, the base Page Layout-based page CT
+                var contentTypeId1 = ContentTypeIdBuilder.CreateChild(ContentTypeId.ArticlePage, new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+                var contentTypeId2 = ContentTypeIdBuilder.CreateChild(ContentTypeId.ArticlePage, new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+
+                var pageContentType1 = new ContentTypeInfo(contentTypeId1, "PageCT1NameKey", "PageCT1DescrKey", "GroupKey");
+                var pageContentType2 = new ContentTypeInfo(contentTypeId2, "PageCT2NameKey", "PageCT2DescrKey", "GroupKey");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Subfolders = new List<FolderInfo>()
+                            {
+                                new FolderInfo("level3")
+                                {
+                                    UniqueContentTypeOrder = new List<ContentTypeInfo>() { pageContentType2 }
+                                }
+                            },
+                            UniqueContentTypeOrder = new List<ContentTypeInfo>() { pageContentType1 }
+                        },
+                        new FolderInfo("somelevel2path alt")
+                    },
+                    UniqueContentTypeOrder = new List<ContentTypeInfo>()
+                    {
+                        // order: 2-1
+                        pageContentType2,
+                        pageContentType1
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    var pagesLibrary = testScope.SiteCollection.RootWeb.GetPagesLibrary();
+
+                    // Make sure our CTs are available on lib (this will add CTs to the root web and
+                    // associate some child CTs to the list).
+                    contentTypeHelper.EnsureContentType(
+                        pagesLibrary.ContentTypes, 
+                        new List<ContentTypeInfo>() { pageContentType1, pageContentType2 });
+                    pagesLibrary.Update();
+
+                    // Act
+                    folderHelper.EnsureFolderHierarchy(pagesLibrary, rootFolderInfo);
+
+                    // Assert
+
+                    // root folder should have order 2-1
+                    var rootFolder = pagesLibrary.RootFolder;
+                    Assert.AreEqual(2, rootFolder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(pageContentType2.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[0].Id));
+                    Assert.IsTrue(pageContentType1.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[1].Id));
+
+                    // lvl2 folder should have page1CT only
+                    var lvl2Folder = pagesLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    Assert.AreEqual(1, lvl2Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(pageContentType1.ContentTypeId.IsParentOf(lvl2Folder.UniqueContentTypeOrder[0].Id));
+
+                    // lvl2Alt should inherit root folder
+                    var lvl2Alt = pagesLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+                    Assert.IsNull(lvl2Alt.UniqueContentTypeOrder);
+
+                    // lvl3 should have page2CT only
+                    var lvl3Folder = lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                    Assert.AreEqual(1, lvl3Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(pageContentType2.ContentTypeId.IsParentOf(lvl3Folder.UniqueContentTypeOrder[0].Id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that hierarchy of subfolders is created each with their UniqueContentTypeOrder when in a document library
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenInDocumentLibrary_ShouldApplyFolderSpecificContentTypesChoicesInRibbonNewDocumentDropdown()
+        {
+            using (var testScope = SiteTestScope.TeamSite())
+            {
+                // Arrange
+
+                // Create some content types, children of Document CT
+                var contentTypeId1 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Document, new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+                var contentTypeId2 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Document, new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+
+                var docContentType1 = new ContentTypeInfo(contentTypeId1, "DocCT1NameKey", "DocCT1DescrKey", "GroupKey");
+                var docContentType2 = new ContentTypeInfo(contentTypeId2, "DocCT2NameKey", "DocCT2DescrKey", "GroupKey");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Subfolders = new List<FolderInfo>()
+                            {
+                                new FolderInfo("level3")
+                                {
+                                    UniqueContentTypeOrder = new List<ContentTypeInfo>() { docContentType2 }
+                                }
+                            },
+                            UniqueContentTypeOrder = new List<ContentTypeInfo>() { docContentType1 }
+                        },
+                        new FolderInfo("somelevel2path alt")
+                    },
+                    UniqueContentTypeOrder = new List<ContentTypeInfo>()
+                    {
+                        // order: 2-1
+                        docContentType2,
+                        docContentType1
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                    var basicDocumentLibrary = testScope.SiteCollection.RootWeb.Lists["Documents"];
+
+                    // Make sure our CTs are available on lib (this will add CTs to the root web and
+                    // associate some child CTs to the list).
+                    contentTypeHelper.EnsureContentType(
+                        basicDocumentLibrary.ContentTypes,
+                        new List<ContentTypeInfo>() { docContentType1, docContentType2 });
+                    basicDocumentLibrary.Update();
+
+                    // Act
+                    folderHelper.EnsureFolderHierarchy(basicDocumentLibrary, rootFolderInfo);
+
+                    // Assert
+
+                    // root folder should have order 2-1
+                    var rootFolder = basicDocumentLibrary.RootFolder;
+                    Assert.AreEqual(2, rootFolder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(docContentType2.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[0].Id));
+                    Assert.IsTrue(docContentType1.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[1].Id));
+
+                    // lvl2 folder should have page1CT only
+                    var lvl2Folder = basicDocumentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    Assert.AreEqual(1, lvl2Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(docContentType1.ContentTypeId.IsParentOf(lvl2Folder.UniqueContentTypeOrder[0].Id));
+
+                    // lvl2Alt should inherit root folder
+                    var lvl2Alt = basicDocumentLibrary.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+                    Assert.IsNull(lvl2Alt.UniqueContentTypeOrder);
+
+                    // lvl3 should have page2CT only
+                    var lvl3Folder = lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                    Assert.AreEqual(1, lvl3Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(docContentType2.ContentTypeId.IsParentOf(lvl3Folder.UniqueContentTypeOrder[0].Id));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that hierarchy of subfolders is created each with their UniqueContentTypeOrder when in a list
+        /// </summary>
+        [TestMethod]
+        public void EnsureFolderHierarchy_WhenInList_ShouldApplyFolderSpecificContentTypesChoicesInRibbonNewItemDropdown()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+
+                // Create some content types, children of Item CT
+                var contentTypeId1 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+                var contentTypeId2 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+
+                var itemContentType1 = new ContentTypeInfo(contentTypeId1, "itemCT1NameKey", "ItemCT1DescrKey", "GroupKey");
+                var itemContentType2 = new ContentTypeInfo(contentTypeId2, "ItemCT2NameKey", "ItemCT2DescrKey", "GroupKey");
+
+                var rootFolderInfo = new FolderInfo("somepath")
+                {
+                    Subfolders = new List<FolderInfo>()
+                    {
+                        new FolderInfo("somelevel2path")
+                        {
+                            Subfolders = new List<FolderInfo>()
+                            {
+                                new FolderInfo("level3")
+                                {
+                                    UniqueContentTypeOrder = new List<ContentTypeInfo>() { itemContentType2 }
+                                }
+                            },
+                            UniqueContentTypeOrder = new List<ContentTypeInfo>() { itemContentType1 }
+                        },
+                        new FolderInfo("somelevel2path alt")
+                    },
+                    UniqueContentTypeOrder = new List<ContentTypeInfo>()
+                    {
+                        // order: 2-1
+                        itemContentType2,
+                        itemContentType1
+                    }
+                };
+
+                var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                {
+                    ContentTypes = new List<ContentTypeInfo>() { itemContentType1, itemContentType2 }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var folderHelper = injectionScope.Resolve<IFolderHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Make sure our CTs are available on list (this will add CTs to the root web and
+                    // associate some child CTs to the list).
+                    var ensuredList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Act
+                    folderHelper.EnsureFolderHierarchy(ensuredList, rootFolderInfo);
+
+                    // Assert
+
+                    // root folder should have order 2-1
+                    var rootFolder = ensuredList.RootFolder;
+                    Assert.AreEqual(2, rootFolder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(itemContentType2.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[0].Id));
+                    Assert.IsTrue(itemContentType1.ContentTypeId.IsParentOf(rootFolder.UniqueContentTypeOrder[1].Id));
+
+                    // lvl2 folder should have page1CT only
+                    var lvl2Folder = ensuredList.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path");
+                    Assert.AreEqual(1, lvl2Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(itemContentType1.ContentTypeId.IsParentOf(lvl2Folder.UniqueContentTypeOrder[0].Id));
+
+                    // lvl2Alt should inherit root folder
+                    var lvl2Alt = ensuredList.RootFolder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "somelevel2path alt");
+                    Assert.IsNull(lvl2Alt.UniqueContentTypeOrder);
+
+                    // lvl3 should have page2CT only
+                    var lvl3Folder = lvl2Folder.SubFolders.Cast<SPFolder>().Single(f => f.Name == "level3");
+                    Assert.AreEqual(1, lvl3Folder.UniqueContentTypeOrder.Count);
+                    Assert.IsTrue(itemContentType2.ContentTypeId.IsParentOf(lvl3Folder.UniqueContentTypeOrder[0].Id));
+                }
+            }
+        }
 
         #endregion
     }

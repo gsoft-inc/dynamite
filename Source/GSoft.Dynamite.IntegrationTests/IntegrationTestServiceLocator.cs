@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.IntegrationTests
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public static ILifetimeScope BeginLifetimeScope(SPWeb web)
         {
-            return innerServiceLocator.BeginLifetimeScope();
+            return innerServiceLocator.BeginLifetimeScope(web);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace GSoft.Dynamite.IntegrationTests
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public static ILifetimeScope BeginLifetimeScope(SPSite site)
         {
-            return innerServiceLocator.BeginLifetimeScope();
+            return innerServiceLocator.BeginLifetimeScope(site);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace GSoft.Dynamite.IntegrationTests
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public static ILifetimeScope BeginLifetimeScope(SPWebApplication webApplication)
         {
-            return innerServiceLocator.BeginLifetimeScope();
+            return innerServiceLocator.BeginLifetimeScope(webApplication);
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace GSoft.Dynamite.IntegrationTests
         /// <returns>A new child lifetime scope which should be disposed by the caller.</returns>
         public static ILifetimeScope BeginLifetimeScope(SPFarm farm)
         {
-            return innerServiceLocator.BeginLifetimeScope();
+            return innerServiceLocator.BeginLifetimeScope(farm);
         }
     }
 }

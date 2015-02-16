@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Pages;
@@ -11,6 +12,7 @@ using Microsoft.Office.DocumentManagement;
 using Microsoft.Office.Server.Search.Internal.UI;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Portal.WebControls;
+using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Folders
 {
@@ -83,6 +85,9 @@ namespace GSoft.Dynamite.Folders
                     ClearFolderAllFolderMetadataDefaults(folder);
                 }
 
+                // UniqueContentTypeOrder
+                EnsureUniqueContentTypeOrder(folder, folderInfo);
+
                 // Create pages
                 if (folderInfo.Pages != null && folderInfo.Pages.Count > 0)
                 {
@@ -119,25 +124,51 @@ namespace GSoft.Dynamite.Folders
             {
                 if (!string.IsNullOrEmpty(folderInfo.Name))
                 {
+                    bool isDocumentLibrary = library.BaseType == SPBaseType.DocumentLibrary;
+
                     try
                     {
-                        folder = parentFolder.SubFolders[folderInfo.Name];
+                        if (isDocumentLibrary)
+                        {
+                            folder = parentFolder.SubFolders[folderInfo.Name];
+                        }
+                        else
+                        {
+                            string serverRelativeFolderPathToMatch = SPUtility.ConcatUrls(parentFolder.ServerRelativeUrl, folderInfo.Name);
+                            folder = library.Folders.Cast<SPListItem>().Single(folderItem => folderItem.Folder.ServerRelativeUrl == serverRelativeFolderPathToMatch).Folder;
+                        }
+
                         this.logger.Info("Skipping folder creation for " + folderInfo.Name +
                                          " because it already exists (will still apply values and default metadata)");
                     }
                     catch (ArgumentException)
                     {
-                        this.logger.Info("Creating folder " + folderInfo.Name);
+                        this.logger.Info("Creating liubrary folder " + folderInfo.Name);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        this.logger.Info("Creating list folder " + folderInfo.Name);
                     }
 
                     if (folder == null)
                     {
                         // Add the folder (if it doesn't already exist)
-                        folder = parentFolder.SubFolders.Add(folderInfo.Name);
+                        if (isDocumentLibrary)
+                        {
+                            folder = parentFolder.SubFolders.Add(folderInfo.Name);
+                        }
+                        else
+                        {
+                            // In a non-doclib list, creating Folders needs to be done in another way (otherwise the SPFolder will not get an associated SPListItem)
+                            var folderItem = library.Items.Add(parentFolder.ServerRelativeUrl, SPFileSystemObjectType.Folder);
+                            folderItem["Title"] = folderInfo.Name;
+                            folderItem.Update();
+
+                            folder = folderItem.Folder;
+                        }
                     }
 
                     // Ensure folder metadata defaults
-                    bool isDocumentLibrary = library.BaseType == SPBaseType.DocumentLibrary;
                     if (folderInfo.FieldDefaultValues != null && folderInfo.FieldDefaultValues.Count > 0)
                     {
                         if (!isDocumentLibrary)
@@ -151,6 +182,9 @@ namespace GSoft.Dynamite.Folders
                     {
                         ClearFolderAllFolderMetadataDefaults(folder);
                     }
+
+                    // UniqueContentTypeInfo
+                    EnsureUniqueContentTypeOrder(folder, folderInfo);
 
                     // Make sure the folder is published
                     SPModerationInformation folderModerationInfo = folder.Item != null ? folder.Item.ModerationInformation : null;
@@ -182,6 +216,39 @@ namespace GSoft.Dynamite.Folders
             }
 
             return folder;
+        }
+
+        private static void EnsureUniqueContentTypeOrder(SPFolder folder, FolderInfo folderInfo)
+        {
+            if (folderInfo.UniqueContentTypeOrder != null && folderInfo.UniqueContentTypeOrder.Count > 0)
+            {
+                SPContentTypeCollection listContentTypes = folder.ParentWeb.Lists[folder.ParentListId].ContentTypes;
+                IList<SPContentType> uniqueOrder = new List<SPContentType>();
+
+                foreach (ContentTypeInfo needToEnsureThisCTInfo in folderInfo.UniqueContentTypeOrder)
+                {
+                    var foundRealCT = listContentTypes[needToEnsureThisCTInfo.ContentTypeId];
+
+                    if (foundRealCT == null)
+                    {
+                        // Failed to find CT with direct ID lookup: now let's assume that we were given site collection CT IDs as
+                        // input and that we need to inspect the list CTs' parents to find a match.
+                        foreach (var listCT in listContentTypes.Cast<SPContentType>())
+                        {
+                            if (listCT.Id.Parent == needToEnsureThisCTInfo.ContentTypeId)
+                            {
+                                foundRealCT = listCT;
+                                break;
+                            }
+                        }
+                    }
+
+                    uniqueOrder.Add(foundRealCT);
+                }
+
+                folder.UniqueContentTypeOrder = uniqueOrder;
+                folder.Update();
+            }
         }
 
         private static void ClearFolderAllFolderMetadataDefaults(SPFolder folder)
