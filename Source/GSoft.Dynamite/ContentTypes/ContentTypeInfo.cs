@@ -42,6 +42,31 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="groupResourceKey">Content group resource key</param>
         /// <param name="resourceFileName">Name of the resource file.</param>
         public ContentTypeInfo(string contentTypeId, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey, string resourceFileName)
+            : this(new SPContentTypeId(contentTypeId), displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new ContentTypeInfo
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
+        public ContentTypeInfo(SPContentTypeId contentTypeId, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+            : this(contentTypeId, displayNameResourceKey, descriptionResourceKey, groupResourceKey, string.Empty)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new ContentTypeInfo
+        /// </summary>
+        /// <param name="contentTypeId">The content type identifier</param>
+        /// <param name="displayNameResourceKey">Display name resource key</param>
+        /// <param name="descriptionResourceKey">Description resource key</param>
+        /// <param name="groupResourceKey">Content group resource key</param>
+        /// <param name="resourceFileName">Name of the resource file.</param>
+        public ContentTypeInfo(SPContentTypeId contentTypeId, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey, string resourceFileName)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
         {
             this.ContentTypeId = contentTypeId;
@@ -51,7 +76,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <summary>
         /// The content type identifier
         /// </summary>
-        public string ContentTypeId { get; private set; }
+        public SPContentTypeId ContentTypeId { get; private set; }
 
         /// <summary>
         /// Field description for all of the content type's fields (not including fields from parent content types)

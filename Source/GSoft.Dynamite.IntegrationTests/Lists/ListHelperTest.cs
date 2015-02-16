@@ -1404,14 +1404,14 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
         #endregion 
 
-        #region Ensuring content types on a list should provision the content types properly
+        #region Ensuring custom content types on a list should provision the content types properly (i.e. by re-using RootWeb's CTs)
 
         /// <summary>
-        /// Make sure that when you use List Info to ensure a list, and you specifiy a content type collection,
-        /// the list is created with those content types and of course they are enabled.
+        /// Make sure that when you use List Info to ensure a list, and you specify a content type collection,
+        /// then the list is created with those content types and Content Type Management is turned on on the list.
         /// In this case, if the content types didn't already exist on the root web, it should be ensured there
-        /// beforehand, as a convenience/bit of magic. We want to enforce the convention of "don't define CTs
-        /// directly on list, re-use site collection CTs instead".
+        /// beforehand, as a convenience/bit of magic. We want to enforce the convention of: "don't define CTs
+        /// directly on a list, re-use site collection CTs instead".
         /// </summary>
         [TestMethod]
         public void EnsureList_WhenEnsuringANewListInRootWebWithSpecifiedContentTypes_AndContentTypeDoesntExistOnRootWebYet_ItShouldAddThemToBothRootWebAndList()
@@ -1866,15 +1866,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 Required = RequiredType.Required
             };
 
-            var contentTypeId1 = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "0x0100{0:N}",
-                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
-
-            var contentTypeId2 = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "0x0100{0:N}",
-                    new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+            var contentTypeId1 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+            var contentTypeId2 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
 
             var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
             {
@@ -1915,12 +1908,12 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                     // Assert
                     var listUniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
-                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
-                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(contentTypeInfo1.ContentTypeId));
+                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(contentTypeInfo2.ContentTypeId));
 
                     var listUniqueContentTypeOrderRefetched = listRefetched.RootFolder.UniqueContentTypeOrder;
-                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
-                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(contentTypeInfo1.ContentTypeId));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(contentTypeInfo2.ContentTypeId));
                 }
             }
         }
@@ -1939,15 +1932,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 Required = RequiredType.Required
             };
 
-            var contentTypeId1 = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "0x0100{0:N}",
-                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
-
-            var contentTypeId2 = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "0x0100{0:N}",
-                    new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
+            var contentTypeId1 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+            var contentTypeId2 = ContentTypeIdBuilder.CreateChild(SPBuiltInContentTypeId.Item, new Guid("{A7BAA5B7-C57B-4928-9778-818D267505A1}"));
 
             var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
             {
@@ -1998,12 +1984,12 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                     // Assert
                     var listUniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
-                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
-                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrder[0].Id.IsChildOf(contentTypeInfo2.ContentTypeId));
+                    Assert.IsTrue(listUniqueContentTypeOrder[1].Id.IsChildOf(contentTypeInfo1.ContentTypeId));
 
                     var listUniqueContentTypeOrderRefetched = listRefetched.RootFolder.UniqueContentTypeOrder;
-                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(new SPContentTypeId(contentTypeInfo2.ContentTypeId)));
-                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(new SPContentTypeId(contentTypeInfo1.ContentTypeId)));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[0].Id.IsChildOf(contentTypeInfo2.ContentTypeId));
+                    Assert.IsTrue(listUniqueContentTypeOrderRefetched[1].Id.IsChildOf(contentTypeInfo1.ContentTypeId));
                 }
             }
         }

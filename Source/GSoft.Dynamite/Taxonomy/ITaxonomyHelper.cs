@@ -14,6 +14,16 @@ namespace GSoft.Dynamite.Taxonomy
     public interface ITaxonomyHelper
     {
         /// <summary>
+        /// Applies a term store mapping to a SharePoint field
+        /// </summary>
+        /// <param name="site">The current site collection</param>
+        /// <param name="field">The site or list column to map to the term store</param>
+        /// <param name="columnTermStoreMapping">
+        /// The term set or sub-term-specific anchor which will determine what's available in the field's taxonomy picker
+        /// </param>
+        void AssignTermStoreMappingToField(SPSite site, SPField field, TaxonomyContext columnTermStoreMapping);
+
+        /// <summary>
         /// Assigns a term set to a site column.
         /// </summary>
         /// <param name="web">The web containing the field.</param>
