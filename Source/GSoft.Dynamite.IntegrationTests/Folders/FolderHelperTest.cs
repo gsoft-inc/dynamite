@@ -1425,7 +1425,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
