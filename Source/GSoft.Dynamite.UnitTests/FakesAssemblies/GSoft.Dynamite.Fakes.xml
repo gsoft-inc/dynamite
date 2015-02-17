@@ -14158,8 +14158,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.CatalogItemContentTypeIdGet">
             <summary>Sets the shim of NavigationManagedProperties.get_CatalogItemContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.CatalogItemContentTypeIdSetString">
-            <summary>Sets the shim of NavigationManagedProperties.set_CatalogItemContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.CatalogItemContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of NavigationManagedProperties.set_CatalogItemContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.Constructor">
             <summary>Sets the shim of NavigationManagedProperties.NavigationManagedProperties()</summary>
@@ -14209,8 +14209,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.TargetItemContentTypeIdGet">
             <summary>Sets the shim of NavigationManagedProperties.get_TargetItemContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.TargetItemContentTypeIdSetString">
-            <summary>Sets the shim of NavigationManagedProperties.set_TargetItemContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.TargetItemContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of NavigationManagedProperties.set_TargetItemContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.TitleGet">
             <summary>Sets the shim of NavigationManagedProperties.get_Title()</summary>
@@ -14224,8 +14224,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.CatalogItemContentTypeIdGet">
             <summary>Sets the shim of NavigationManagedProperties.get_CatalogItemContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.CatalogItemContentTypeIdSetString">
-            <summary>Sets the shim of NavigationManagedProperties.set_CatalogItemContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.CatalogItemContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of NavigationManagedProperties.set_CatalogItemContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.FilterManagedPropertyNameGet">
             <summary>Sets the shim of NavigationManagedProperties.get_FilterManagedPropertyName()</summary>
@@ -14272,8 +14272,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.TargetItemContentTypeIdGet">
             <summary>Sets the shim of NavigationManagedProperties.get_TargetItemContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.TargetItemContentTypeIdSetString">
-            <summary>Sets the shim of NavigationManagedProperties.set_TargetItemContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.TargetItemContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of NavigationManagedProperties.set_TargetItemContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationManagedProperties.AllInstances.TitleGet">
             <summary>Sets the shim of NavigationManagedProperties.get_Title()</summary>
@@ -14443,8 +14443,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.GetNavigationNodeItemsNavigationManagedProperties">
             <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.GetNavigationNodeItemsNavigationManagedPropertiesStringString">
-            <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties, String filteredContentTypeId, String term)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.GetNavigationNodeItemsNavigationManagedPropertiesSPContentTypeIdString">
+            <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, String term)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.GetNavigationNodeTermsSPWebNavigationManagedPropertiesIEnumerableOfNavigationTerm">
             <summary>Sets the shim of NavigationService.GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable`1&lt;NavigationTerm&gt; navigationTerms)</summary>
@@ -14473,8 +14473,8 @@
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.AllInstances.GetNavigationNodeItemsNavigationManagedProperties">
             <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.AllInstances.GetNavigationNodeItemsNavigationManagedPropertiesStringString">
-            <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties, String filteredContentTypeId, String term)</summary>
+        <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.AllInstances.GetNavigationNodeItemsNavigationManagedPropertiesSPContentTypeIdString">
+            <summary>Sets the shim of NavigationService.GetNavigationNodeItems(NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, String term)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Navigation.Fakes.ShimNavigationService.AllInstances.GetNavigationNodeTermsSPWebNavigationManagedPropertiesIEnumerableOfNavigationTerm">
             <summary>Sets the shim of NavigationService.GetNavigationNodeTerms(SPWeb web, NavigationManagedProperties properties, IEnumerable`1&lt;NavigationTerm&gt; navigationTerms)</summary>
@@ -15535,6 +15535,9 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -15969,6 +15972,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
