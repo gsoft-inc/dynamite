@@ -482,8 +482,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.PublishingSite())
             {
                 // Arrange
-                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
-                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D"));
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4"));
 
                 var rootFolderInfo = new FolderInfo("somepath")
                 {
@@ -556,10 +556,10 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     Assert.AreEqual(4, publishingPages.Cast<PublishingPage>().Where(p => p.Name.StartsWith("Hello")).Count());
 
                     var ensuredWelcomePage = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-root-page-path"));
-                    Assert.IsTrue(ensuredWelcomePage.ContentType.Id.IsChildOf(new SPContentTypeId(welcomePageLayout.AssociatedContentTypeId)));
+                    Assert.IsTrue(ensuredWelcomePage.ContentType.Id.IsChildOf(welcomePageLayout.AssociatedContentTypeId));
 
                     var ensuredLevel2Page = publishingPages.Cast<PublishingPage>().Single(p => p.Name.StartsWith("Hello-lvl-2-page-path"));
-                    Assert.IsTrue(ensuredLevel2Page.ContentType.Id.IsChildOf(new SPContentTypeId(articleLeftPageLayout.AssociatedContentTypeId)));
+                    Assert.IsTrue(ensuredLevel2Page.ContentType.Id.IsChildOf(articleLeftPageLayout.AssociatedContentTypeId));
                     Assert.AreEqual("<div><p>Hi LVL 2!!! My HTML rocks!!!</p></div>", ensuredLevel2Page.ListItem[PublishingFields.PublishingPageContent.Id].ToString());
                 }
             }
@@ -574,7 +574,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.PublishingSite())
             {
                 // Arrange
-                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4"));
 
                 var rootFolderInfo = new FolderInfo("somepath")
                 {
@@ -627,7 +627,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
-                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4"));
 
                 var rootFolderInfo = new FolderInfo("somepath")
                 {
@@ -684,8 +684,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.PublishingSite())
             {
                 // Arrange
-                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
-                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D"));
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4"));
 
                 var level1PageInfo = new PageInfo("Hello-root-page-path", welcomePageLayout)
                     {
@@ -766,8 +766,8 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.PublishingSite())
             {
                 // Arrange
-                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D");
-                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+                var articleLeftPageLayout = new PageLayoutInfo("ArticleLeft.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D"));
+                var welcomePageLayout = new PageLayoutInfo("WelcomeSplash.aspx", new SPContentTypeId("0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4"));
 
                 var level1PageInfo = new PageInfo("Hello-root-page-path", welcomePageLayout)
                 {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Pages
 {
@@ -21,7 +22,18 @@ namespace GSoft.Dynamite.Pages
         /// </summary>
         /// <param name="name">Page layout file name (including the .aspx)</param>
         /// <param name="associatedContentTypeId">Associated page content type ID</param>
-        public PageLayoutInfo(string name, string associatedContentTypeId) : this()
+        public PageLayoutInfo(string name, string associatedContentTypeId)
+            : this(name, new SPContentTypeId(associatedContentTypeId))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new <see cref="PageLayoutInfo"/> instance
+        /// </summary>
+        /// <param name="name">Page layout file name (including the .aspx)</param>
+        /// <param name="associatedContentTypeId">Associated page content type ID</param>
+        public PageLayoutInfo(string name, SPContentTypeId associatedContentTypeId)
+            : this()
         {
             this.Name = name;
             this.AssociatedContentTypeId = associatedContentTypeId;
@@ -41,7 +53,7 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// The associated content type id
         /// </summary>
-        public string AssociatedContentTypeId { get; set; }
+        public SPContentTypeId AssociatedContentTypeId { get; set; }
 
         ///// <summary>
         ///// The relative path of the preview picture of the page layout

@@ -135,10 +135,10 @@ namespace GSoft.Dynamite.Pages
             var publishingSite = new PublishingSite(site);
             var pageLayout = this.GetPageLayout(publishingSite, pageLayoutInfo.Name, true);
 
-            if (!string.IsNullOrEmpty(pageLayoutInfo.AssociatedContentTypeId))
+            if (pageLayoutInfo.AssociatedContentTypeId != null)
             {
                 var contentTypeId =
-                site.RootWeb.ContentTypes.BestMatch(new SPContentTypeId(pageLayoutInfo.AssociatedContentTypeId));
+                site.RootWeb.ContentTypes.BestMatch(pageLayoutInfo.AssociatedContentTypeId);
 
                 var ct = site.RootWeb.ContentTypes[contentTypeId];
 

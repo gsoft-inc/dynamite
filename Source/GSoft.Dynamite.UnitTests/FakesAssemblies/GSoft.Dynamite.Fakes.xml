@@ -15082,14 +15082,17 @@
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AssociatedContentTypeIdGet">
             <summary>Sets the shim of PageLayoutInfo.get_AssociatedContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AssociatedContentTypeIdSetString">
-            <summary>Sets the shim of PageLayoutInfo.set_AssociatedContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AssociatedContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of PageLayoutInfo.set_AssociatedContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.Constructor">
             <summary>Sets the shim of PageLayoutInfo.PageLayoutInfo()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.ConstructorStringSPContentTypeId">
+            <summary>Sets the shim of PageLayoutInfo.PageLayoutInfo(String name, SPContentTypeId associatedContentTypeId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.ConstructorStringString">
             <summary>Sets the shim of PageLayoutInfo.PageLayoutInfo(String name, String associatedContentTypeId)</summary>
@@ -15112,8 +15115,8 @@
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AllInstances.AssociatedContentTypeIdGet">
             <summary>Sets the shim of PageLayoutInfo.get_AssociatedContentTypeId()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AllInstances.AssociatedContentTypeIdSetString">
-            <summary>Sets the shim of PageLayoutInfo.set_AssociatedContentTypeId(String value)</summary>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AllInstances.AssociatedContentTypeIdSetSPContentTypeId">
+            <summary>Sets the shim of PageLayoutInfo.set_AssociatedContentTypeId(SPContentTypeId value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.ShimPageLayoutInfo.AllInstances.NameGet">
             <summary>Sets the shim of PageLayoutInfo.get_Name()</summary>
@@ -16124,6 +16127,9 @@
             <summary>Stub type of GSoft.Dynamite.Pages.PageLayoutInfo</summary>
         </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubPageLayoutInfo.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Pages.Fakes.StubPageLayoutInfo.#ctor(System.String,Microsoft.SharePoint.SPContentTypeId)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubPageLayoutInfo.#ctor(System.String,System.String)">
