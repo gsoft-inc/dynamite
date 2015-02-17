@@ -1,6 +1,6 @@
-﻿using Microsoft.SharePoint.Publishing;
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -46,12 +46,12 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// The Catalog Item Content Type Id 
         /// </summary>
-        public string CatalogItemContentTypeId { get; set; }
+        public SPContentTypeId CatalogItemContentTypeId { get; set; }
 
         /// <summary>
         /// The Catalog Item Content Type Id 
         /// </summary>
-        public string TargetItemContentTypeId { get; set; }
+        public SPContentTypeId TargetItemContentTypeId { get; set; }
 
         /// <summary>
         /// The list of query properties 
