@@ -97,9 +97,6 @@ button::-moz-focus-inner {
 #pageStatusBar[class], .ms-status-msg {
 	margin-bottom: 0px;
 }
-#suiteBarLeft {
-    background-color: #0088CC;
-}
 .ms-cui-dd-text, input.ms-cui-cb-input, input[type="text"].ms-cui-cb-input {
     border-color: #D3D6D9;
     border-image: none;
