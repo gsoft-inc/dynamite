@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
     /// Test for the SPItemUrlValueWriter class.
     /// </summary>
     [TestClass]
-    public class SPItemUrlValueWriterTest
+    public class UrlValueWriterTest
     {
         #region WriteValuesToSPListItem
         /// <summary>

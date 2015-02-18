@@ -14,10 +14,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GSoft.Dynamite.UnitTests.Binding.IO
 {
     /// <summary>
-    /// Tests for the SPItemValueWriter class
+    /// Tests for the ValueWriter class
     /// </summary>
     [TestClass]
-    public class SPItemValueWriterTest
+    public class FieldValueWriterTest
     {
         #region WriteValuesToSPListItem
         /// <summary>
@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
         /// When updating five fields on a list item, the item is updated five times.
         /// </summary>
         [TestMethod]
-        public void WriteValuesToSPListItem_WhenGiven5FieldValues_ShouldCallWriteValueToSPListItem5Times()
+        public void WriteValuesToSPListItem_WhenGiven5FieldValues_ShouldCallWriteValueToListItem5Times()
         {
             using (ShimsContext.Create())
             {
@@ -64,13 +64,13 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
         }
         #endregion
 
-        #region WriteValueToSPListItem
+        #region WriteValueToListItem
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
-        /// When updating the value of a Date time field, use the Base value writer.
+        /// Test for the WriteValueToListItem method.
+        /// When updating the value of a Date time field, use the DateTime value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenDateTimeFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenDateTimeFieldInfo_ShouldUseDateTimeValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -78,7 +78,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new DateTimeFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimDateTimeValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };
@@ -95,16 +95,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the DateTimeFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The DateTimeValueWriter should have been used for the DateTimeFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
-        /// When updating the value of a Guid field, use the Base value writer.
+        /// Test for the WriteValueToListItem method.
+        /// When updating the value of a Guid field, use the Guid value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenGuidFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenGuidFieldInfo_ShouldUseGuidValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -112,7 +112,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new GuidFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimGuidValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };
@@ -129,16 +129,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the GuidFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The GuidValueWriter should have been used for the GuidFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Html field, use the Base value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenHtmlFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenHtmlFieldInfo_ShouldUseBaseValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -163,16 +163,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the HtmlFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The BaseValueWriter should have been used for the HtmlFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Image field, use the Image value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenImageFieldInfo_ShouldUseSPItemImageValueWriter()
+        public void WriteValueToListItem_GivenImageFieldInfo_ShouldUseImageValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -197,16 +197,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemImageValueWriter should have been used for the ImageFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The ImageValueWriter should have been used for the ImageFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Lookup field, use the Lookup value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenLookupFieldInfo_ShouldUseSPItemLookupValueWriter()
+        public void WriteValueToListItem_GivenLookupFieldInfo_ShouldUseLookupValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -231,22 +231,28 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemLookupValueWriter should have been used for the LookupFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The LookupValueWriter should have been used for the LookupFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
-        /// When updating the value of a Multi value lookup field, a not supported exception is thrown.
+        /// Test for the WriteValueToListItem method.
+        /// When updating the value of a Multi value lookup field, use the LookupCollection value writer.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void WriteValueToSPListItem_GivenLookupMultiFieldInfo_ExpectNotSupportedException()
+        public void WriteValueToListItem_GivenLookupMultiFieldInfo_ShouldUseLookupValueCollectionWriter()
         {
             using (ShimsContext.Create())
             {
                 // Arrange
+                var correctWriterWasUsed = false;
                 var fieldInfo = new LookupMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+
+                ShimLookupValueCollectionWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                {
+                    correctWriterWasUsed = true;
+                };
+
                 var fakeListItem = new ShimSPListItem().Instance;
 
                 IFieldValueWriter writer;
@@ -259,16 +265,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                // Expect Not Supported Exception 
+                Assert.IsTrue(correctWriterWasUsed, "The LookupValueCollectionWriter should have been used for the LookupFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a field with a MinimalFieldInfo, use the Base value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenMinimalFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenMinimalFieldInfo_ShouldUseBaseValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -293,16 +299,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the MinimalFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The BaseValueWriter should have been used for the MinimalFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Note field, use the Base value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenNoteFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenNoteFieldInfo_ShouldUseBaseValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -327,16 +333,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the NoteFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The BaseValueWriter should have been used for the NoteFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
-        /// When updating the value of a Number field, use the Base value writer.
+        /// Test for the WriteValueToListItem method.
+        /// When updating the value of a Number field, use the double value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenNumberFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenNumberFieldInfo_ShouldUseDoubleValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -344,7 +350,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new NumberFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimDoubleValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };
@@ -361,16 +367,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the NumberFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The DoubleValueWriter should have been used for the NumberFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Taxonomy field, use the Taxonomy value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenTaxonomyFieldInfo_ShouldUseSPItemTaxonomyValueWriter()
+        public void WriteValueToListItem_GivenTaxonomyFieldInfo_ShouldUseTaxonomyValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -395,16 +401,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemTaxonomyValueWriter should have been used for the TaxonomyFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The TaxonomyValueWriter should have been used for the TaxonomyFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Taxonomy Multi field, use the Taxonomy Multi value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenTaxonomyMultiFieldInfo_ShouldUseSPItemTaxonomyMultiValueWriter()
+        public void WriteValueToListItem_GivenTaxonomyMultiFieldInfo_ShouldUseTaxonomyMultiValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -429,16 +435,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemTaxonomyMultiValueWriter should have been used for the TaxonomyMultiFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The TaxonomyMultiValueWriter should have been used for the TaxonomyMultiFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Text field, use the Base value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenTextFieldInfo_ShouldUseSPItemBaseValueWriter()
+        public void WriteValueToListItem_GivenTextFieldInfo_ShouldUseBaseValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -463,16 +469,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemBaseValueWriter should have been used for the TextFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The BaseValueWriter should have been used for the TextFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a Url field, use the url value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenUrlFieldFieldInfo_ShouldUseSPItemUrlValueWriter()
+        public void WriteValueToListItem_GivenUrlFieldFieldInfo_ShouldUseUrlValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -497,16 +503,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemUrlValueWriter should have been used for the UrlFieldFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The UrlValueWriter should have been used for the UrlFieldFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating the value of a User field, use the User value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_GivenUserFieldFieldInfo_ShouldUseSPItemUserValueWriter()
+        public void WriteValueToListItem_GivenUserFieldFieldInfo_ShouldUseUserValueWriter()
         {
             using (ShimsContext.Create())
             {
@@ -531,22 +537,28 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The SPItemUserValueWriter should have been used for the UserFieldFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The UserValueWriter should have been used for the UserFieldFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
-        /// When updating the value of a User Multi field, a not supported exception is thrown.
+        /// Test for the WriteValueToListItem method.
+        /// When updating the value of a User Multi field, use the UserCollection value writer.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void WriteValueToSPListItem_GivenUserMultiFieldFieldInfo_ExpectNotSupportedException()
+        public void WriteValueToListItem_GivenUserMultiFieldFieldInfo_ShouldUseUserValueCollectionWriter()
         {
             using (ShimsContext.Create())
             {
                 // Arrange
+                var correctWriterWasUsed = false;
                 var fieldInfo = new UserMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
+
+                ShimUserValueCollectionWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                {
+                    correctWriterWasUsed = true;
+                };
+
                 var fakeListItem = new ShimSPListItem().Instance;
 
                 IFieldValueWriter writer;
@@ -559,16 +571,16 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                // Expect Not Supported Exception 
+                Assert.IsTrue(correctWriterWasUsed, "The UserValueCollectionWriter should have been used for the UserMultiFieldFieldInfo type.");
             }
         }
 
         /// <summary>
-        /// Test for the WriteValueToSPListItem method.
+        /// Test for the WriteValueToListItem method.
         /// When updating a string field, the field is updated.
         /// </summary>
         [TestMethod]
-        public void WriteValueToSPListItem_WhenGivenFieldValue_ShouldUpdateFieldValue()
+        public void WriteValueToListItem_WhenGivenFieldValue_ShouldUpdateFieldValue()
         {
             using (ShimsContext.Create())
             {
