@@ -44,7 +44,7 @@ namespace GSoft.Dynamite.Files
             var list = this.listLocator.TryGetList(web, listTitle);
 
             // Go get the file if its url is not null
-            if (!string.IsNullOrEmpty(file.Url.ToString()))
+            if (file.Url != null)
             {
                 sharePointFile = web.GetFile(file.Url.ToString());
             }
