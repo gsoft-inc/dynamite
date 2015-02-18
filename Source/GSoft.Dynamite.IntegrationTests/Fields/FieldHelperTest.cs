@@ -2242,7 +2242,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that DateTime field type properties are mapped along with its formula or default value
         /// </summary>
         [TestMethod]
-        public void EnsureField_WhenDateTimeField_ShouldApplyNumberFieldDefinitionAndDefaultValue()
+        public void EnsureField_WhenDateTimeField_ShouldApplyDateTimeFieldDefinitionAndDefaultValue()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -2269,7 +2269,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                 DateTimeFieldInfo dateTimeFieldInfoWithDefaultValue = new DateTimeFieldInfo(
                     "TestInternalNameDateDefault",
-                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    new Guid("{2F901D99-F2B4-41E6-BD06-4B2D69BA363F}"),
                     "NameKeyAlt",
                     "DescriptionKeyAlt",
                     "GroupKey")
@@ -2309,7 +2309,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // 3) Alternate datetime field definition #2 (with all property values customized and a Default Value assigned)
                     SPFieldDateTime dateTimeFieldWithDefaultValue = (SPFieldDateTime)fieldHelper.EnsureField(fieldsCollection, dateTimeFieldInfoWithDefaultValue);
-                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithFormula, dateTimeFieldWithDefaultValue);
+                    this.ValidateFieldBasicValues(dateTimeFieldInfoWithDefaultValue, dateTimeFieldWithDefaultValue);
                     Assert.AreEqual(SPDateTimeFieldFormatType.DateTime, dateTimeFieldWithDefaultValue.DisplayFormat);
                     Assert.AreEqual(SPDateTimeFieldFriendlyFormatType.Relative, dateTimeFieldWithDefaultValue.FriendlyDisplayFormat);
                     Assert.IsTrue(string.IsNullOrEmpty(dateTimeFieldWithDefaultValue.DefaultFormula));
@@ -2386,11 +2386,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     // 1) Basic guid field definition (all default property values)
                     SPFieldGuid guidField = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfo);
                     this.ValidateFieldBasicValues(guidFieldInfo, guidField);
-                    Assert.IsNull(guidField.DefaultValue);
+                    Assert.IsTrue(string.IsNullOrEmpty(guidField.DefaultValue));
 
                     SPFieldGuid guidFieldRefetched = (SPFieldGuid)testScope.SiteCollection.RootWeb.Fields[guidFieldInfo.Id];
                     this.ValidateFieldBasicValues(guidFieldInfo, guidFieldRefetched);
-                    Assert.IsNull(guidFieldRefetched.DefaultValue);
+                    Assert.IsTrue(string.IsNullOrEmpty(guidFieldRefetched.DefaultValue));
 
                     // 2) Guid field with a default value
                     SPFieldGuid guidFieldAlt = (SPFieldGuid)fieldHelper.EnsureField(fieldsCollection, guidFieldInfoAlt);
@@ -3291,7 +3291,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
                 };
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(

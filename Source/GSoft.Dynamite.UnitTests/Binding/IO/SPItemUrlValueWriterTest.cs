@@ -1,9 +1,9 @@
 ﻿using System;
 using Autofac;
-using GSoft.Dynamite.Binding.IO;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.QualityTools.Testing.Fakes;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Fakes;
@@ -39,15 +39,15 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                     }
                 };
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 var fakeListItem = fakeListItemShim.Instance;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(expectedField, null));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(expectedField, null));
 
                 // Assert
                 Assert.IsNull(actualUrlValue);
@@ -85,15 +85,15 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                     }
                 };
 
-                ISPItemValueWriter writer;
+                IFieldValueWriter writer;
                 var fakeListItem = fakeListItemShim.Instance;
                 using (var scope = UnitTestServiceLocator.BeginLifetimeScope())
                 {
-                    writer = scope.Resolve<ISPItemValueWriter>();
+                    writer = scope.Resolve<IFieldValueWriter>();
                 }
 
                 // Act
-                writer.WriteValueToSPListItem(fakeListItem, new FieldValueInfo(expectedField, expectedUrlValue));
+                writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(expectedField, expectedUrlValue));
 
                 // Assert
                 Assert.AreEqual(expectedUrlValue.Url, actualUrlValue.Url);

@@ -44,7 +44,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
-        [Obsolete("Use EnsureContentType instead, with a correctly ordered inner list of IFieldInfos to re-order them.")]
         void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields);
     }
 }

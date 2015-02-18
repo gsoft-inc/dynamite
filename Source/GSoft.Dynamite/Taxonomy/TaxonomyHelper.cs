@@ -36,6 +36,50 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Applies a term store mapping to a SharePoint field
+        /// </summary>
+        /// <param name="site">The current site collection</param>
+        /// <param name="field">The site or list column to map to the term store</param>
+        /// <param name="columnTermStoreMapping">
+        /// The term set or sub-term-specific anchor which will determine what's available in the field's taxonomy picker
+        /// </param>
+        public void AssignTermStoreMappingToField(SPSite site, SPField field, TaxonomyContext columnTermStoreMapping)
+        {
+            TaxonomySession session = new TaxonomySession(site);
+
+            TermStore store = null;
+            if (columnTermStoreMapping.TermStore == null)
+            {
+                store = session.DefaultSiteCollectionTermStore;
+            }
+            else
+            {
+                store = session.TermStores[columnTermStoreMapping.TermStore.Name];
+            }
+
+            Group termStoreGroup = null;
+            if (columnTermStoreMapping.Group == null)
+            {
+                termStoreGroup = store.GetSiteCollectionGroup(site);
+            }
+            else
+            {
+                termStoreGroup = store.Groups[columnTermStoreMapping.Group.Name];
+            }
+
+            TaxonomyField taxoField = (TaxonomyField)field;
+
+            if (columnTermStoreMapping.TermSubset != null)
+            {
+                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Name, columnTermStoreMapping.TermSet.Label, columnTermStoreMapping.TermSubset.Id);
+            }
+            else
+            {
+                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Name, columnTermStoreMapping.TermSet.Label, Guid.Empty);
+            }
+        }
+
+        /// <summary>
         /// Assigns a term set to a site column.
         /// </summary>
         /// <param name="web">The web containing the field.</param>

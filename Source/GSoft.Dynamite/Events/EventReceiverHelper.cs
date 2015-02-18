@@ -112,7 +112,7 @@ namespace GSoft.Dynamite.Events
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
-                var contentType = site.RootWeb.ContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
+                var contentType = site.RootWeb.ContentTypes[eventReceiver.ContentType.ContentTypeId];
                 if (contentType != null)
                 {
                     this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
@@ -130,7 +130,7 @@ namespace GSoft.Dynamite.Events
             // Content Types
             if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
             {
-                var contentType = site.RootWeb.ContentTypes[new SPContentTypeId(eventReceiver.ContentType.ContentTypeId)];
+                var contentType = site.RootWeb.ContentTypes[eventReceiver.ContentType.ContentTypeId];
                 if (contentType != null)
                 {
                     this.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);

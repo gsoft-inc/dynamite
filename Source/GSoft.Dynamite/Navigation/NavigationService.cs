@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search;
-using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Publishing.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
@@ -136,7 +133,7 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>Navigation node</returns>
         private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
         {
-            return this.GetNavigationNodeItems(properties, null, null);
+            return this.GetNavigationNodeItems(properties, SPContentTypeId.Empty, null);
         }
         
         /// <summary>
@@ -146,7 +143,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, string filteredContentTypeId, string term)
+        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, string term)
         {
             // Use 'all menu items' result source for search query
             var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
@@ -168,8 +165,8 @@ namespace GSoft.Dynamite.Navigation
                 RowLimit = 500
             };
 
-            // Adds the filter on content type if the parameter is not null.
-            if (!string.IsNullOrEmpty(filteredContentTypeId))
+            // Adds the filter on content type if the parameter is not empty.
+            if (filteredContentTypeId != SPContentTypeId.Empty)
             {
                 query.QueryText += string.Format(CultureInfo.InvariantCulture, " {0}:{1}", BuiltInManagedProperties.ContentTypeId, filteredContentTypeId + "*");
             }
