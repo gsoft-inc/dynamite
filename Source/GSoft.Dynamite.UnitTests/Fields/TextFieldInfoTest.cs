@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that string is the associated value type
         /// </summary>
         [TestMethod]
-        public void ShouldHaveAssociationToValueTypeString()
+        public void TextFieldInfo_ShouldHaveAssociationToValueTypeString()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.NewGuid());
 
@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that Text is the site column type name
         /// </summary>
         [TestMethod]
-        public void ShouldBeInitializedWithTypeText()
+        public void TextFieldInfo_ShouldBeInitializedWithTypeText()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.NewGuid());
 
@@ -41,7 +41,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that maximum length should be 255 by default
         /// </summary>
         [TestMethod]
-        public void ShouldBeInitializedWithDefaultMaxLength255()
+        public void TextFieldInfo_ShouldBeInitializedWithDefaultMaxLength255()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.NewGuid());
 
@@ -53,7 +53,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldHaveId()
+        public void TextFieldInfo_ShouldHaveId()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.Empty);
         }
@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldHaveInternalName()
+        public void TextFieldInfo_ShouldHaveInternalName()
         {
             var textFieldDefinition = this.CreateTextFieldInfo(Guid.Empty, internalName: "SomeName");
         }
@@ -72,7 +72,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that XML definition can be used as input
         /// </summary>
         [TestMethod]
-        public void ShouldBeAbleToCreateFromXml()
+        public void TextFieldInfo_ShouldBeAbleToCreateFromXml()
         {
             var xmlElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"255\" />");
             var textFieldDefinition = new TextFieldInfo(xmlElement);
@@ -84,23 +84,6 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("SomeDescription", textFieldDefinition.DescriptionResourceKey);
             Assert.AreEqual("Test", textFieldDefinition.GroupResourceKey);
             Assert.AreEqual(255, textFieldDefinition.MaxLength);
-        }
-
-        /// <summary>
-        /// Validates that XML definition can be printed as output through Schema
-        /// </summary>
-        [TestMethod]
-        public void Schema_ShouldOutputValidFieldXml()
-        {
-            // TODO: fix schema validation - change to integration test maybe? because we need field schema helper now...
-            ////var fieldSchemaHelper = new FieldSchemaHelper(new ResourceLocator(new List<IResourceLocatorConfig>() { new DefaultResourceLocatorConfig() }));
-
-            ////var textFieldDefinition = this.CreateTextFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
-            ////textFieldDefinition.MaxLength = 400;    // test out the MaxLength param
-
-            ////var validXml = "<Field Name=\"SomeInternalName\" Type=\"Text\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" MaxLength=\"400\" />";
-
-            ////Assert.AreEqual(validXml, fieldSchemaHelper.SchemaForField(textFieldDefinition).ToString());
         }
         
         private TextFieldInfo CreateTextFieldInfo(

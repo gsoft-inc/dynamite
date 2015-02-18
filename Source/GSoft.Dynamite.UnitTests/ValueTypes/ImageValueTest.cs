@@ -1,4 +1,5 @@
 ﻿using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint.Publishing.Fields;
 ////using Microsoft.QualityTools.Testing.Emulators;
 ////using Microsoft.SharePoint.Emulators;
 ////using Microsoft.SharePoint.Publishing.Fields;
@@ -27,29 +28,25 @@ namespace GSoft.Dynamite.UnitTests.ValueTypes
         /// Test method
         /// </summary>
         [TestMethod]
-        public void GivenAnImageFieldValueToImageValueConstructorExpectPropertiesToBeSetted()
+        public void ImageValue_GivenAnImageFieldValueToImageValueConstructorExpectPropertiesToBeSetted()
         {
-            ////using (new SharePointEmulationScope(EmulationMode.Enabled))
-            ////{
+            // Arrange
+            var sharePointFieldValue = new ImageFieldValue() { ImageUrl = NewImageUrl, Hyperlink = NewHyperlink, OpenHyperlinkInNewWindow = NewOpenHyperlinkInNewWindow, Alignment = NewAlignment, AlternateText = NewAlternateText, BorderWidth = NewBorderWidth, Height = NewHeight, Width = NewWidth, HorizontalSpacing = NewHorizontalSpacing, VerticalSpacing = NewVerticalSpacing };
 
-            ////    //Arrange
-            ////    var spImageFieldValue = new ImageFieldValue() { ImageUrl = NewImageUrl, Hyperlink = NewHyperlink, OpenHyperlinkInNewWindow = NewOpenHyperlinkInNewWindow, Alignment = NewAlignment, AlternateText = NewAlternateText, BorderWidth = NewBorderWidth, Height = NewHeight, Width = NewWidth, HorizontalSpacing = NewHorizontalSpacing, VerticalSpacing = NewVerticalSpacing };
+            // Act
+            var imageValue = new ImageValue(sharePointFieldValue);
 
-            ////    //Act
-            ////    var imageValue = new ImageValue(spImageFieldValue);
-
-            ////    //Assert
-            ////    Assert.AreEqual(NewImageUrl, imageValue.ImageUrl);
-            ////    Assert.AreEqual(NewHyperlink, imageValue.Hyperlink);
-            ////    Assert.AreEqual(NewOpenHyperlinkInNewWindow, imageValue.OpenHyperlinkInNewWindow);
-            ////    Assert.AreEqual(NewAlignment, imageValue.Alignment);
-            ////    Assert.AreEqual(NewAlternateText, imageValue.AlternateText);
-            ////    Assert.AreEqual(NewBorderWidth, imageValue.BorderWidth);
-            ////    Assert.AreEqual(NewHeight, imageValue.Height);
-            ////    Assert.AreEqual(NewWidth, imageValue.Width);
-            ////    Assert.AreEqual(NewHorizontalSpacing, imageValue.HorizontalSpacing);
-            ////    Assert.AreEqual(NewVerticalSpacing, imageValue.VerticalSpacing);
-            ////}
+            // Assert
+            Assert.AreEqual(NewImageUrl, imageValue.ImageUrl);
+            Assert.AreEqual(NewHyperlink, imageValue.Hyperlink);
+            Assert.AreEqual(NewOpenHyperlinkInNewWindow, imageValue.OpenHyperlinkInNewWindow);
+            Assert.AreEqual(NewAlignment, imageValue.Alignment);
+            Assert.AreEqual(NewAlternateText, imageValue.AlternateText);
+            Assert.AreEqual(NewBorderWidth, imageValue.BorderWidth);
+            Assert.AreEqual(NewHeight, imageValue.Height);
+            Assert.AreEqual(NewWidth, imageValue.Width);
+            Assert.AreEqual(NewHorizontalSpacing, imageValue.HorizontalSpacing);
+            Assert.AreEqual(NewVerticalSpacing, imageValue.VerticalSpacing);
         }
     }
 }

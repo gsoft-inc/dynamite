@@ -54,6 +54,7 @@
     <Reference Include="Microsoft.SharePoint.15.0.0.0.Fakes">
       <HintPath>FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Web" />
     <Reference Include="System.XML" />
@@ -74,12 +75,12 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Binding\Converters\LookupValueConverterTest.cs" />
+    <Compile Include="ValueTypes\ImageFieldValue.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
     <Compile Include="ValueTypes\Writers\FieldValueWriterTest.cs" />
     <Compile Include="Fields\NoteFieldInfoTest.cs" />
     <Compile Include="Fields\TextFieldInfoTest.cs" />
     <Compile Include="UnitTestServiceLocator.cs" />
-    <Compile Include="Lists\ListLocatorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>

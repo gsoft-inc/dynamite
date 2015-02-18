@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that value type is string
         /// </summary>
         [TestMethod]
-        public void ShouldHaveAssociationToValueTypeString()
+        public void NoteFieldInfo_ShouldHaveAssociationToValueTypeString()
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.NewGuid());
 
@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that Note is the site column type
         /// </summary>
         [TestMethod]
-        public void ShouldBeInitializedWithTypeNote()
+        public void NoteFieldInfo_ShouldBeInitializedWithTypeNote()
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.NewGuid());
 
@@ -41,7 +41,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that number of lines should be 6 by default
         /// </summary>
         [TestMethod]
-        public void ShouldBeInitializedWithDefaultNumLines6()
+        public void NoteFieldInfo_ShouldBeInitializedWithDefaultNumLines6()
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.NewGuid());
 
@@ -53,7 +53,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldHaveId()
+        public void NoteFieldInfo_ShouldHaveId()
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.Empty);
         }
@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// </summary>
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldHaveInternalName()
+        public void NoteFieldInfo_ShouldHaveInternalName()
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.Empty, internalName: "SomeName");
         }
@@ -72,7 +72,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         /// Validates that XML definition can be used as input
         /// </summary>
         [TestMethod]
-        public void ShouldBeAbleToCreateFromXml()
+        public void NoteFieldInfo_ShouldBeAbleToCreateFromXml()
         {
             var xmlElement = XElement.Parse("<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"6\" />");
             var noteFieldDefinition = new NoteFieldInfo(xmlElement);
@@ -84,24 +84,6 @@ namespace GSoft.Dynamite.UnitTests.Fields
             Assert.AreEqual("SomeDescription", noteFieldDefinition.DescriptionResourceKey);
             Assert.AreEqual("Test", noteFieldDefinition.GroupResourceKey);
             Assert.AreEqual(6, noteFieldDefinition.NumLines);
-        }
-
-        /// <summary>
-        /// Validates that XML definition can be printed as output through Schema
-        /// </summary>
-        [TestMethod]
-        public void Schema_ShouldOutputValidFieldXml()
-        {
-            // TODO: fix schema validation - change to integration test maybe? because we need field schema helper now...
-            ////var fieldSchemaHelper = new FieldSchemaHelper(new ResourceLocator(new List<IResourceLocatorConfig>() { new DefaultResourceLocatorConfig() }));
-
-            ////var noteFieldDefinition = this.CreateNoteFieldInfo(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"));
-            ////noteFieldDefinition.NumLines = 4;           // testing out the NumLines param
-            ////noteFieldDefinition.HasRichText = true;     // testing out RichText=On, look out for RichTextMode="FullHtml"
-
-            ////var validXml = "<Field Name=\"SomeInternalName\" Type=\"Note\" ID=\"{7a937493-3c82-497c-938a-d7a362bd8086}\" StaticName=\"SomeInternalName\" DisplayName=\"SomeDisplayName\" Description=\"SomeDescription\" Group=\"Test\" EnforceUniqueValues=\"FALSE\" ShowInListSettings=\"TRUE\" NumLines=\"4\" RichText=\"TRUE\" RichTextMode=\"FullHtml\" />";
-
-            ////Assert.AreEqual(validXml, fieldSchemaHelper.SchemaForField(noteFieldDefinition).ToString());
         }
 
         private NoteFieldInfo CreateNoteFieldInfo(

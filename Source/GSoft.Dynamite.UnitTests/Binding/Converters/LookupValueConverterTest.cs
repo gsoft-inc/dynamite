@@ -1,15 +1,13 @@
 ﻿using System;
+using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Binding.Converters;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.ValueTypes;
+using Microsoft.SharePoint;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GSoft.Dynamite.UnitTests.Binding.Converters
 {
-    using GSoft.Dynamite.Binding;
-    using GSoft.Dynamite.Binding.Converters;
-    using GSoft.Dynamite.Logging;
-    using GSoft.Dynamite.ValueTypes;
-
-    using Microsoft.SharePoint;
-
     /// <summary>
     /// Test class
     /// </summary>
@@ -20,7 +18,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.Converters
         /// Test method
         /// </summary>
         [TestMethod]
-        public void TestThatLookupValueIsProperlyInitializedWhenIdAndValueAreSplittedByKey()
+        public void LookupValueConverter_TestThatLookupValueIsProperlyInitializedWhenIdAndValueAreSplittedByKey()
         {
             var converter = new LookupValueConverter(new TraceLogger("Logger", "Test", true));
 
