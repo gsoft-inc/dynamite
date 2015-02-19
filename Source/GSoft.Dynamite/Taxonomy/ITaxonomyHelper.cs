@@ -61,10 +61,10 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="web">The web containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
+        void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId);
 
         /// <summary>
         /// Assigns a term set to a list column.
@@ -83,10 +83,10 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="list">The list containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
+        void AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId);
 
         /// <summary>
         /// Assigns a global farm-wide term set to a list column

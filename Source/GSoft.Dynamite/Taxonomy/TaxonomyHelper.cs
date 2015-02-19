@@ -71,11 +71,11 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (columnTermStoreMapping.TermSubset != null)
             {
-                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Name, columnTermStoreMapping.TermSet.Label, columnTermStoreMapping.TermSubset.Id);
+                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Id, columnTermStoreMapping.TermSet.Id, columnTermStoreMapping.TermSubset.Id);
             }
             else
             {
-                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Name, columnTermStoreMapping.TermSet.Label, Guid.Empty);
+                InternalAssignTermSetToTaxonomyField(store, taxoField, termStoreGroup.Id, columnTermStoreMapping.TermSet.Id, Guid.Empty);
             }
         }
 
@@ -151,18 +151,18 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="web">The web containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        public void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)
         {
             if (web.Fields.Contains(fieldId))
             {
                 var session = new TaxonomySession(web.Site);
                 var termStore = session.DefaultSiteCollectionTermStore;
                 var field = (TaxonomyField)web.Fields[fieldId];
-                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetId);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupId, termSetId, termSubsetId);
             }
         }
 
@@ -193,18 +193,18 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="list">The list containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        public void AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)
         {
             if (list.Fields.Contains(fieldId))
             {
                 var session = new TaxonomySession(list.ParentWeb.Site);
                 var termStore = session.DefaultSiteCollectionTermStore;
                 var field = (TaxonomyField)list.Fields[fieldId];
-                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetId);
+                InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupId, termSetId, termSubsetId);
             }
         }
 
@@ -715,10 +715,10 @@ namespace GSoft.Dynamite.Taxonomy
             field.Update();
         }
 
-        private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, string termStoreGroupName, string termSetName, Guid termSubsetId)
+        private static void InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)
         {
-            Group group = termStore.Groups[termStoreGroupName];
-            TermSet termSet = group.TermSets[termSetName];
+            Group group = termStore.Groups[termStoreGroupId];
+            TermSet termSet = group.TermSets[termSetId];
 
             // Connect to MMS
             field.SspId = termSet.TermStore.Id;

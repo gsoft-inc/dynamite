@@ -15535,6 +15535,9 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -15969,6 +15972,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
@@ -20014,11 +20020,11 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumnSPSiteTermStoreGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToAllListUsagesOfSiteColumn(SPSite site, TermStore termStore, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidGuidGuidGuid">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
-            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20026,11 +20032,11 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidGuidGuidGuid">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringStringGuid">
-            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20071,8 +20077,8 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.GetTermStoreDefaultLanguageSPSite">
             <summary>Sets the shim of TaxonomyHelper.GetTermStoreDefaultLanguage(SPSite site)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.InternalAssignTermSetToTaxonomyFieldTermStoreTaxonomyFieldStringStringGuid">
-            <summary>Sets the shim of TaxonomyHelper.InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.InternalAssignTermSetToTaxonomyFieldTermStoreTaxonomyFieldGuidGuidGuid">
+            <summary>Sets the shim of TaxonomyHelper.InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.InternalAssignTermSetToTaxonomyFieldTermStoreTaxonomyFieldStringStringString">
             <summary>Sets the shim of TaxonomyHelper.InternalAssignTermSetToTaxonomyField(TermStore termStore, TaxonomyField field, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20095,11 +20101,11 @@
         <member name="T:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidGuidGuidGuid">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringStringGuid">
-            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20107,11 +20113,11 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToListColumnSPListGuidStringStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToSiteColumnSPWebGuidGuidGuidGuid">
+            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToSiteColumnSPWebGuidStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToSiteColumnSPWebGuidStringStringGuid">
-            <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTaxonomyHelper.AllInstances.AssignTermSetToSiteColumnSPWebGuidStringStringString">
             <summary>Sets the shim of TaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20722,11 +20728,11 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.#ctor">
             <summary>Initializes a new instance of type StubITaxonomyHelper</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidGuidGuidGuid">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringString">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringGuid">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringString">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20734,11 +20740,11 @@
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToListColumnSPListGuidStringStringStringString">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidGuidGuidGuid">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
+        </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringString">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termSetName, String termSubsetName)</summary>
-        </member>
-        <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringStringGuid">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
         </member>
         <member name="F:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.AssignTermSetToSiteColumnSPWebGuidStringStringString">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20761,8 +20767,8 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String,System.Guid)">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.Guid,System.Guid,System.Guid)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToListColumn(Microsoft.SharePoint.SPList,System.Guid,System.String,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToListColumn(SPList list, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
@@ -20773,8 +20779,8 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.Guid)">
-            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreGroupName, String termSetName, Guid termSubsetId)</summary>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.Guid,System.Guid,System.Guid)">
+            <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubITaxonomyHelper.gsd::GSoft#Dynamite#Taxonomy#ITaxonomyHelper#AssignTermSetToSiteColumn(Microsoft.SharePoint.SPWeb,System.Guid,System.String,System.String,System.String,System.String)">
             <summary>Sets the stub of ITaxonomyHelper.AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, String termStoreName, String termStoreGroupName, String termSetName, String termSubsetName)</summary>
