@@ -49,7 +49,7 @@ Describe "Token.ps1" {
     }
 
     function Remove-TemplateFiles {
-		Get-ChildItem -Path $Path -Include ("*.template", "*.template.*", "$templateFileName.ps1") -Recurse | Remove-Item -Force -Recurse
+		Get-ChildItem -Path $here -Include ("*.template", "*.template.*", "$templateFileName.ps1") -Recurse | Remove-Item -Force -Recurse
 	}
 
 	Context "Replacing tokens with HOST tokens file" {

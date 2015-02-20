@@ -19,13 +19,13 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
     [TestClass]
     public class FieldValueWriterTest
     {
-        #region WriteValuesToSPListItem
+        #region WriteValuesToListItem
         /// <summary>
-        /// Test for the WriteValuesToSPListItem method.
+        /// Test for the WriteValuesToListItem method.
         /// When updating five fields on a list item, the item is updated five times.
         /// </summary>
         [TestMethod]
-        public void WriteValuesToSPListItem_WhenGiven5FieldValues_ShouldCallWriteValueToListItem5Times()
+        public void WriteValuesToListItem_WhenGiven5FieldValues_ShouldCallWriteValueToListItem5Times()
         {
             using (ShimsContext.Create())
             {

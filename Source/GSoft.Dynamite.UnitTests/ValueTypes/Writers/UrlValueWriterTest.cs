@@ -17,13 +17,13 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
     [TestClass]
     public class UrlValueWriterTest
     {
-        #region WriteValuesToSPListItem
+        #region WriteValuesToListItem
         /// <summary>
-        /// Test for the WriteValuesToSPListItem method.
+        /// Test for the WriteValuesToListItem method.
         /// When supplying a null Url, the SPListItem returned is null
         /// </summary>
         [TestMethod]
-        public void WriteValuesToSpListItem_WhenGivenNullUrl_ShouldCopyNullUrl()
+        public void WriteValuesToListItem_WhenGivenNullUrl_ShouldCopyNullUrl()
         {
             using (ShimsContext.Create())
             {
@@ -55,13 +55,13 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
         }
         #endregion
 
-        #region WriteValuesToSPListItem
+        #region WriteValuesToListItem
         /// <summary>
-        /// Test for the WriteValuesToSPListItem method.
+        /// Test for the WriteValuesToListItem method.
         /// When supplying an Url value and a description, the SPListItem returned is properly updated.
         /// </summary>
         [TestMethod]
-        public void WriteValuesToSpListItem_WhenGivenValueAndDescription_ShouldCopyValueAndDescription()
+        public void WriteValuesToListItem_WhenGivenValueAndDescription_ShouldCopyValueAndDescription()
         {
             using (ShimsContext.Create())
             {
