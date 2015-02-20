@@ -266,15 +266,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <returns>A catalogConnectionSettings object</returns>
         public CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, Uri webAbsoluteUrl, Uri catalogWebRelativeUrl)
         {
-            // TODO: Validate why do we need this extra lists URL fragment? Why on earther would you want to rework the catalog's web-relative URL to always add the /Lists/ ??? Why call them tokens?
-            string listToken = "lists";
-            var tokens = catalogWebRelativeUrl.ToString().Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-
-            if (tokens.Any() && tokens.First() != listToken)
-            {
-                tokens.Insert(0, listToken);
-            }
-
+            var tokens = catalogWebRelativeUrl.ToString().Split(new[] { "/" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             CatalogConnectionSettings catalogConnectionSettings = null;
 
             try
