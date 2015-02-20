@@ -230,7 +230,9 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="termDrivenPageInfo">The term driven page setting info</param>
         public void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo)
         {
-            var taxonomySession = new TaxonomySession(site);
+            // Force the taxonomy session to update the cache due to previous changes
+            // Note: this is necessary in the context of the components installation script
+            var taxonomySession = new TaxonomySession(site, true);
             if (taxonomySession.TermStores.Count > 0)
             {
                 var defaultTermStore = taxonomySession.DefaultSiteCollectionTermStore;
@@ -257,6 +259,8 @@ namespace GSoft.Dynamite.Navigation
                         {
                             termSet.SetCustomProperty("_Sys_Nav_CatalogTargetUrlForChildTerms", termDrivenPageInfo.CatalogTargetUrlForChildTerms);
                         }
+
+                        termSet.TermStore.CommitAll();
                     }
                 }
 
