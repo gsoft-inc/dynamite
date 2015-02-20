@@ -29,6 +29,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// Validates that EnsureContentType adds a content type to the site collection if it did not exist previously
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenNotAlreadyExists_ShouldAddAndReturnContentType()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -282,6 +283,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// Validates that EnsureContentType returns the existing content type to the site collection with updated resources, if a content type with the same ID previously existed
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenOtherContentTypeWithSameIdAlreadyExists_ShouldUpdateResourcesAndReturnExistingMatch()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -990,6 +992,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// Validates that CT name is initialized in both languages
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenEnglishAndFrenchSiteCollection_ShouldCreateCTWithBothDisplayNames()
         {
             using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))

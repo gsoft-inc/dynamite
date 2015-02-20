@@ -3113,6 +3113,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// TODO: validated the behavior for other field types like Choice, User and UserMulti, etc.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureField_WhenFieldAddedToListWithDefaultValue_NewItemsCreatedOnListShouldHaveDefaultValues()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -3689,6 +3690,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that display names for field in both languages is initialized on Enlish-and-French-languages web
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureField_WhenEnglishAndFrenchSiteCollection_ShouldCreateFieldWithDisplayNameAvailableInBothLanguages()
         {
             using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))

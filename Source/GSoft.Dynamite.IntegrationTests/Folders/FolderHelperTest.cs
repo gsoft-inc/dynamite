@@ -1502,6 +1502,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         /// Validates that default subfolder values in document library are applied when you upload a document
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInDocumentLibrarySubFolder_AndYouUploadADocument_ThenDocumentShouldHaveDefaultValueForAllSupportedFieldTypes()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -2641,6 +2642,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
         /// Validates that default folder values in Pages library are applied when you create a publishing page
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFolderHierarchy_WhenFolderDefaultValuesAreSpecifiedInPagesLibraryFolder_AndYouCreateAPage_ThenPageShouldHaveDefaultValue()
         {
             using (var testScope = SiteTestScope.PublishingSite())

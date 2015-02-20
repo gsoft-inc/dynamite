@@ -32,6 +32,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// if it did not exist previously.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenNotAlreadyExists_ShouldCreateNewOneAtListsPath()
         {
             // Arrange
@@ -1665,6 +1666,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// provision those for you)
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenSpecifyingBothContentTypesAndFieldDefinitions_AndNoneOfThemAreProvisionnedYet_ShouldProvisionSiteColumnAndContentType_ThenOverrideFieldDefinitionOnTheList()
         {
             // Arrange
@@ -2067,6 +2069,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that list title in both language are initialized on English-and-French site
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenEnglishAndFrenchSiteCollection_ShouldCreateListWithBothDisplayNames()
         {
             using (var testScope = SiteTestScope.BlankSite(Language.English.Culture.LCID))
