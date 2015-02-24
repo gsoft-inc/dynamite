@@ -22,6 +22,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// </summary>
         /// <param name="stringValueWriter">The base value writer.</param>
         /// <param name="boolValueWriter">The boolean value writer.</param>
+        /// <param name="integerValueWriter">The int value writer.</param>
         /// <param name="doubleValueWriter">The double value writer.</param>
         /// <param name="dateTimeValueWriter">The DateTime value writer.</param>
         /// <param name="guidValueWriter">The Guid value writer.</param>
@@ -38,6 +39,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public FieldValueWriter(
             StringValueWriter stringValueWriter,
             BooleanValueWriter boolValueWriter,
+            IntegerValueWriter integerValueWriter,
             DoubleValueWriter doubleValueWriter,
             DateTimeValueWriter dateTimeValueWriter,
             GuidValueWriter guidValueWriter,
@@ -54,6 +56,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             this.AddToWritersDictionary(stringValueWriter);
             this.AddToWritersDictionary(boolValueWriter);
+            this.AddToWritersDictionary(integerValueWriter);
             this.AddToWritersDictionary(doubleValueWriter);
             this.AddToWritersDictionary(dateTimeValueWriter);
             this.AddToWritersDictionary(guidValueWriter);

@@ -1508,6 +1508,13 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
                 NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
                     "TestInternalNameNumber",
                     new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
@@ -1669,6 +1676,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Create a list that contains all the fields we've prepared
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
+                        integerFieldInfo,
                         numberFieldInfo,
                         currencyFieldInfo,
                         boolFieldInfoBasic,
@@ -1701,6 +1709,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Prepare some MetadataDefaults that we'll apply on the second-level folder
                 var fieldDefaultValues = new List<FieldValueInfo>()
                 {
+                    new FieldValueInfo(integerFieldInfo, 555),
                     new FieldValueInfo(numberFieldInfo, 5.0),
                     new FieldValueInfo(currencyFieldInfo, 535.95),
                     new FieldValueInfo(boolFieldInfoBasic, true),
@@ -1789,6 +1798,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Assert
 
                     // In root folder, the field definitions should apply
+                    Assert.IsNull(itemInRootFolder.Item["TestInternalNameInteger"]);
                     Assert.IsNull(itemInRootFolder.Item["TestInternalNameNumber"]);
                     Assert.IsNull(itemInRootFolder.Item["TestInternalNameCurrency"]);
                     Assert.IsNull(itemInRootFolder.Item["TestInternalNameBool"]);
@@ -1807,6 +1817,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     Assert.AreEqual(0, ((TaxonomyFieldValueCollection)itemInRootFolder.Item["TestInternalNameTaxoMulti"]).Count);
 
                     // In second-level folder, our MetadataDefaults should've been applied
+                    Assert.AreEqual(555, itemInSecondLevelFolder.Item["TestInternalNameInteger"]);
                     Assert.AreEqual(5.0, itemInSecondLevelFolder.Item["TestInternalNameNumber"]);
                     Assert.AreEqual(535.95, itemInSecondLevelFolder.Item["TestInternalNameCurrency"]);
                     Assert.IsTrue((bool)itemInSecondLevelFolder.Item["TestInternalNameBool"]);
@@ -1862,6 +1873,13 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
                 NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
                     "TestInternalNameNumber",
                     new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
@@ -2023,6 +2041,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Create a list that contains all the fields we've prepared
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
+                        integerFieldInfo,
                         numberFieldInfo,
                         currencyFieldInfo,
                         boolFieldInfoBasic,
@@ -2055,6 +2074,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Prepare some MetadataDefaults that we'll apply on the second-level folder
                 var fieldDefaultValues = new List<FieldValueInfo>()
                 {
+                    new FieldValueInfo(integerFieldInfo, 555),
                     new FieldValueInfo(numberFieldInfo, 5.0),
                     new FieldValueInfo(currencyFieldInfo, 535.95),
                     new FieldValueInfo(boolFieldInfoBasic, true),
@@ -2140,6 +2160,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Assert
 
                     // In root folder, our MetadataDefaults should've been applied
+                    Assert.AreEqual(555, itemInRootFolder.Item["TestInternalNameInteger"]);
                     Assert.AreEqual(5.0, itemInRootFolder.Item["TestInternalNameNumber"]);
                     Assert.AreEqual(535.95, itemInRootFolder.Item["TestInternalNameCurrency"]);
                     Assert.IsTrue((bool)itemInRootFolder.Item["TestInternalNameBool"]);
@@ -2648,6 +2669,13 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
             using (var testScope = SiteTestScope.PublishingSite())
             {
                 // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
                 NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
                     "TestInternalNameNumber",
                     new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
@@ -2757,6 +2785,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Create a list that contains all the fields we've prepared
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
+                        integerFieldInfo,
                         numberFieldInfo,
                         currencyFieldInfo,
                         dateOnlyFieldInfo,
@@ -2771,6 +2800,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 // Prepare some MetadataDefaults that we'll apply on the second-level folder
                 var fieldDefaultValues = new List<FieldValueInfo>()
                 {
+                    new FieldValueInfo(integerFieldInfo, 555),
                     new FieldValueInfo(numberFieldInfo, 5.0),
                     new FieldValueInfo(currencyFieldInfo, 535.95),
                     new FieldValueInfo(dateOnlyFieldInfo, new DateTime(1976, 1, 1)),
@@ -2872,6 +2902,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     var ourPageWithDefaultsAndValues = allPages["/Pages/somelevel2path/DynamiteTestPageWithValues.aspx"];
 
                     // In 1st publishing page's list item, all metadata defaults should've been applied
+                    Assert.AreEqual(555, ourPageWithDefaults.ListItem["TestInternalNameInteger"]);
                     Assert.AreEqual(5.0, ourPageWithDefaults.ListItem["TestInternalNameNumber"]);
                     Assert.AreEqual(535.95, ourPageWithDefaults.ListItem["TestInternalNameCurrency"]);
                     Assert.AreEqual(new DateTime(1976, 1, 1), ((DateTime)ourPageWithDefaults.ListItem["TestInternalNameDate"]).ToLocalTime());    // SPListItem should normally return DateTime as local time (not UTC), but since we used GetPublishingPage, dates are in UTC

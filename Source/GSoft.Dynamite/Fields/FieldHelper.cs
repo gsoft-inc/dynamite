@@ -89,7 +89,44 @@ namespace GSoft.Dynamite.Fields
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "refetchedField", Justification = "Variable exists just to attempt to trigger ArgumentException to handle weird edge-case.")]
         private SPField InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
         {
-            SPField field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, this.fieldSchemaHelper.SchemaForField(fieldInfo));
+            SPField field = null;
+            
+            if (fieldInfo.GetType().Name.StartsWith("MinimalFieldInfo", StringComparison.OrdinalIgnoreCase))
+            {
+                // Ensuring a MinimalFieldInfo from its SchemaXML is impossible since the MinimalFieldInfo object
+                // doesn't hold enough information to completely describe the field metadata.
+                // Instead, we have to re-use the site column and apply it to the list.
+                var existingSiteColumn = fieldCollection.Web.Site.RootWeb.Fields.TryGetFieldByStaticName(fieldInfo.InternalName);
+
+                if (existingSiteColumn == null)
+                {
+                    throw new NotSupportedException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Failed to ensure MinimalFieldInfo for field {0} because the pre-requisite Site Column doesn't exist.",
+                            fieldInfo.InternalName));
+                }
+
+                SPList parentList = null;
+                if (!TryGetListFromFieldCollection(fieldCollection, out parentList))
+                {
+                    throw new NotSupportedException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Failed to ensure MinimalFieldInfo for field {0}. A MinimalFieldInfo can only be used to ensure a Field on a List's SPFieldCollection, not to re-define an OOTB site column definition.",
+                            fieldInfo.InternalName));
+                }
+
+                fieldCollection.Add(existingSiteColumn);
+
+                field = fieldCollection[existingSiteColumn.Id];
+            }
+            else
+            {
+                // We have a fully-functional/fully-detailed IFieldInfo which should support a conversion to SchemaXML: go ahead and try to add the field.
+                XElement xmlSchemaForField = this.fieldSchemaHelper.SchemaForField(fieldInfo);
+                field = this.fieldSchemaHelper.EnsureFieldFromSchema(fieldCollection, xmlSchemaForField);
+            }
 
             // In some cases, the returned field will not match the one we meant to create or ensure. For example,
             // we may have defined a fieldInfo with an InternalName that clashes with an already existing field.

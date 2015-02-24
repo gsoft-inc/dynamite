@@ -4,6 +4,7 @@ using Autofac;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.ValueTypes.Writers.Fakes;
 using Microsoft.QualityTools.Testing.Fakes;
@@ -271,18 +272,18 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
 
         /// <summary>
         /// Test for the WriteValueToListItem method.
-        /// When updating the value of a field with a MinimalFieldInfo, use the Base value writer.
+        /// When updating the value of a field with a MinimalFieldInfo, use the associated value writer.
         /// </summary>
         [TestMethod]
-        public void WriteValueToListItem_GivenMinimalFieldInfo_ShouldUseBaseValueWriter()
+        public void WriteValueToListItem_GivenMinimalFieldInfo_ShouldUseCorrespondingValueTypeValueWriter()
         {
             using (ShimsContext.Create())
             {
                 // Arrange
                 var correctWriterWasUsed = false;
-                var fieldInfo = new MinimalFieldInfo("InternalName", Guid.NewGuid());
+                var fieldInfo = new MinimalFieldInfo<UrlValue>("InternalName", Guid.NewGuid());
 
-                ShimStringValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimUrlValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };
@@ -299,7 +300,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 writer.WriteValueToListItem(fakeListItem, new FieldValueInfo(fieldInfo, null));
 
                 // Assert
-                Assert.IsTrue(correctWriterWasUsed, "The BaseValueWriter should have been used for the MinimalFieldInfo type.");
+                Assert.IsTrue(correctWriterWasUsed, "The UrlValueWriter should have been used for the MinimalFieldInfo type.");
             }
         }
 

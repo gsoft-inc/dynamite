@@ -9,10 +9,12 @@ using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Taxonomy;
@@ -2177,6 +2179,16 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInt",
+                    new Guid("{6816676E-4952-4CED-8EB2-F15FDD7A595B}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey")
+                {
+                    DefaultValue = 7777
+                };
+
                 NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
                     "TestInternalNameNumber",
                     new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
@@ -2205,7 +2217,20 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
-                    // 1) Basic nunber field definition (all default property values)
+                    // 1) Basic integer field definition
+                    SPFieldNumber integerField = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, integerFieldInfo);
+                    this.ValidateFieldBasicValues(integerFieldInfo, integerField);
+                    Assert.AreEqual(SPNumberFormatTypes.Automatic, integerField.DisplayFormat);
+                    Assert.IsFalse(integerField.ShowAsPercentage);
+                    Assert.AreEqual("7777", integerField.DefaultValue);
+
+                    SPFieldNumber integerFieldRefetched = (SPFieldNumber)testScope.SiteCollection.RootWeb.Fields[integerFieldInfo.Id]; // refetch to make sure .Update() was properly called on SPField
+                    this.ValidateFieldBasicValues(integerFieldInfo, integerFieldRefetched);
+                    Assert.AreEqual(SPNumberFormatTypes.Automatic, integerFieldRefetched.DisplayFormat);
+                    Assert.IsFalse(integerFieldRefetched.ShowAsPercentage);
+                    Assert.AreEqual("7777", integerFieldRefetched.DefaultValue);
+
+                    // 2) Basic nunber field definition (all default property values)
                     SPFieldNumber numberField = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfo);
                     this.ValidateFieldBasicValues(numberFieldInfo, numberField);
                     Assert.AreEqual(SPNumberFormatTypes.NoDecimal, numberField.DisplayFormat);
@@ -2218,7 +2243,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.IsFalse(numberFieldRefetched.ShowAsPercentage);
                     Assert.IsTrue(string.IsNullOrEmpty(numberFieldRefetched.DefaultValue));
 
-                    // 2) Alternate number field definition (with all property values customized and a default value assigned)
+                    // 3) Alternate number field definition (with all property values customized and a default value assigned)
                     SPFieldNumber numberFieldAlt = (SPFieldNumber)fieldHelper.EnsureField(fieldsCollection, numberFieldInfoAlt);
                     this.ValidateFieldBasicValues(numberFieldInfoAlt, numberFieldAlt);
                     Assert.AreEqual(SPNumberFormatTypes.ThreeDecimals, numberFieldAlt.DisplayFormat);
@@ -3119,6 +3144,16 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey")
+                {
+                    DefaultValue = 555
+                };
+
                 NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
                     "TestInternalNameNumber",
                     new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
@@ -3126,7 +3161,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyNumber",
                     "GroupKey")
                 {
-                    DefaultValue = 5
+                    DefaultValue = 5.5
                 };
 
                 CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
@@ -3379,6 +3414,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                 var fieldsToEnsure = new List<IFieldInfo>()
                     {
+                        integerFieldInfo,
                         numberFieldInfo,
                         currencyFieldInfo,
                         boolFieldInfoBasic,
@@ -3448,7 +3484,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // Assert
                     // List item #1 (fields on list ensured via FieldHelper.EnsureField)
-                    Assert.AreEqual(5.0, itemOnList1["TestInternalNameNumber"]);
+                    Assert.AreEqual(555, itemOnList1["TestInternalNameInteger"]);
+                    Assert.AreEqual(5.5, itemOnList1["TestInternalNameNumber"]);
                     Assert.AreEqual(500.95, itemOnList1["TestInternalNameCurrency"]);
                     Assert.IsNull(itemOnList1["TestInternalNameBool"]);
                     Assert.IsTrue((bool)itemOnList1["TestInternalNameBoolTrue"]);
@@ -3514,7 +3551,8 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
 
                     // List item #2 (fields on list ensured via ListHelper.EnsureList)
-                    Assert.AreEqual(5.0, itemOnList2["TestInternalNameNumber"]);
+                    Assert.AreEqual(555, itemOnList2["TestInternalNameInteger"]);
+                    Assert.AreEqual(5.5, itemOnList2["TestInternalNameNumber"]);
                     Assert.AreEqual(500.95, itemOnList2["TestInternalNameCurrency"]);
                     Assert.IsNull(itemOnList2["TestInternalNameBool"]);
                     Assert.IsTrue((bool)itemOnList2["TestInternalNameBoolTrue"]);
@@ -3872,6 +3910,163 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     // Reset MUI to its old abient value
                     Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        #endregion
+
+        #region OOTB Field Types - Ensuring MinimalFieldInfo should work to add column to CT or list (but not to add as site column)
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos cannot be ensured as Site Columns (because they lack a full field definition)
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnsuringAMinimalFieldInfoOOTBColumnAsSiteColumn_ShouldFailBecauseSuchOOTBSiteColumnShouldBeAddedByOOTBFeatures()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IFieldInfo textFieldInfo = new MinimalFieldInfo<string>(
+                    "Hobbies",
+                    new Guid("{203fa378-6eb8-4ed9-a4f9-221a4c1fbf46}"));
+
+                IFieldInfo dateFieldInfo = new MinimalFieldInfo<DateTime?>(
+                    "Birthday",
+                    new Guid("{C4C7D925-BC1B-4f37-826D-AC49B4FB1BC1}"));
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+
+                    int noOfFieldsBefore = fieldsCollection.Count;
+
+                    // Act + Assert
+                    try
+                    {
+                        SPField field = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because a MinimalFieldInfo lacks information for site collection ensure operation.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        SPField field = fieldHelper.EnsureField(fieldsCollection, dateFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because a MinimalFieldInfo lacks information for site collection ensure operation.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos can be used to define additions to list fields (provided the OOTB site column exists in the site collection)
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnList_ShouldMakeFieldAvailableOnList()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                {
+                    FieldDefinitions = new List<IFieldInfo>()
+                        {
+                            BuiltInFields.AssignedTo,   // OOTB User field
+                            BuiltInFields.Cellphone,    // OOTB Text field
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+                    // Act (ensure fields on list through both listHelper and fieldHelper)
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    SPField field = fieldHelper.EnsureField(list.Fields, BuiltInFields.EnterpriseKeywords);     // OOTB Taxonomy Multi field
+
+                    // Assert
+                    Assert.IsNotNull(list.Fields[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(list.Fields[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(list.Fields[BuiltInFields.EnterpriseKeywords.Id]);
+
+                    // Use the a list and create an item just for kicks
+                    SPListItem item = list.AddItem();
+                    item.Update();
+
+                    var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserName);
+
+                    IFieldValueWriter writer = injectionScope.Resolve<IFieldValueWriter>();
+                    writer.WriteValuesToListItem(
+                        item,
+                        new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(BuiltInFields.AssignedTo, new UserValue(ensuredUser1)),
+                            new FieldValueInfo(BuiltInFields.Cellphone, "Test Cellphone Value"),
+                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyFullValueCollection())
+                        });
+
+                    item.Update();
+
+                    Assert.IsNotNull(item[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.EnterpriseKeywords.Id]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos cannot be used to define additions to content types when the relevant site column doesn't exist
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnList_AndOOTBSiteColumnIsNOTAvailable_ShouldFailBecauseSuchOOTBSiteColumnShouldBeAddedByOOTBFeatures()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                {
+                    FieldDefinitions = new List<IFieldInfo>()
+                        {
+                            PublishingFields.PublishingPageContent  // Should be missing from site columns (only available in Publishing sites)
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    SPList list = null;
+
+                    // Act
+                    try
+                    {
+                        // Field ensured through ListHelper->FieldHelper
+                        list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because pre-requisite site column doesn't exist on RootWeb.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        listInfo.FieldDefinitions.Clear();
+                        list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                        // Field ensured through FieldHelper only
+                        fieldHelper.EnsureField(list.Fields, PublishingFields.PublishingPageContent);
+                        Assert.Fail("Should've thrown NotSupportedException because pre-requisite site column doesn't exist on RootWeb.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
                 }
             }
         }
