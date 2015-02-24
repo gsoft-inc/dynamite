@@ -24,6 +24,7 @@ function New-DSPSiteCollectionRecusiveXml()
 	[string]$SiteRelativePath = $Site.RelativePath
 	[string]$Name = $Site.Name
 	[string]$OwnerAlias = $Site.OwnerAlias
+	[string]$SecondaryOwnerAlias = if ([string]::IsNullOrEmpty($Site.SecondaryOwnerAlias)) { "$env:USERDOMAIN\$env:USERNAME" } else { $Site.SecondaryOwnerAlias }
 	[string]$Language = $Site.Language
 	[string]$Template = $Site.Template
 	[bool]$IsHostNamedSite = -not [string]::IsNullOrEmpty($SiteHostNamePath)
@@ -48,11 +49,11 @@ function New-DSPSiteCollectionRecusiveXml()
 		$startTime = Get-Date
 		if ($IsHostNamedSite)
 		{
-			$spSite = New-SPSite -URL $SiteAbsoluteUrl -HostHeaderWebApplication $WebApplicationUrl -OwnerAlias $OwnerAlias -SecondaryOwnerAlias $env:USERDOMAIN\$env:USERNAME -Name $Name -Language $Language -Template $Template -ContentDatabase $ContentDatabaseName
+			$spSite = New-SPSite -URL $SiteAbsoluteUrl -HostHeaderWebApplication $WebApplicationUrl -OwnerAlias $OwnerAlias -SecondaryOwnerAlias $SecondaryOwnerAlias -Name $Name -Language $Language -Template $Template -ContentDatabase $ContentDatabaseName
 		}
 		else
 		{
-			$spSite = New-SPSite -URL $SiteAbsoluteUrl -OwnerAlias $OwnerAlias -SecondaryOwnerAlias $env:USERDOMAIN\$env:USERNAME -Name $Name -Language $Language -Template $Template -ContentDatabase $ContentDatabaseName
+			$spSite = New-SPSite -URL $SiteAbsoluteUrl -OwnerAlias $OwnerAlias -SecondaryOwnerAlias $SecondaryOwnerAlias -Name $Name -Language $Language -Template $Template -ContentDatabase $ContentDatabaseName
 		}
 		
 		if ($IsAnonymous)
