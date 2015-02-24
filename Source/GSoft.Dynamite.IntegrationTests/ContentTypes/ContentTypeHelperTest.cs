@@ -7,8 +7,11 @@ using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.SharePoint;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -1051,6 +1054,114 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                     // Reset MUI to its old abient value
                     Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Using OOTB fields as part of Content Type definition should work, but only if the site columns already exist
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos can be used to define additions to content types (provided the OOTB site column exists in the site collection)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnContentType_AndOOTBSiteColumnIsAvailable_ShouldMakeFieldAvailableOnCT()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ContentTypeInfo contentTypeInfo = new ContentTypeInfo(
+                    ContentTypeIdBuilder.CreateChild(new SPContentTypeId("0x01"), Guid.NewGuid()),
+                    "CTNameKey",
+                    "CTDescrKey",
+                    "GroupKey")
+                    {
+                        Fields = new List<IFieldInfo>()
+                        {
+                            BuiltInFields.AssignedTo,   // OOTB User field
+                            BuiltInFields.Cellphone,    // OOTB Text field
+                            BuiltInFields.EnterpriseKeywords    // OOTB Taxonomy Multi field
+                        }
+                    };
+
+                ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                    {
+                        ContentTypes = new List<ContentTypeInfo>()
+                        {
+                            contentTypeInfo
+                        }
+                    };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+
+                    // Assert
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.EnterpriseKeywords.Id]);
+
+                    // Use the CT's OOTB fields in a list and create an item just for kicks
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    SPListItem item = list.AddItem();
+                    item.Update();
+
+                    var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserName);
+
+                    IFieldValueWriter writer = injectionScope.Resolve<IFieldValueWriter>();
+                    writer.WriteValuesToListItem(
+                        item,
+                        new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(BuiltInFields.AssignedTo, new UserValue(ensuredUser1)),
+                            new FieldValueInfo(BuiltInFields.Cellphone, "Test Cellphone Value"),
+                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyFullValueCollection())
+                        });
+
+                    item.Update();
+
+                    Assert.IsNotNull(item[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.EnterpriseKeywords.Id]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos cannot be used to define additions to content types when the relevant site column doesn't exist
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void EnsureContentType_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnContentType_AndOOTBSiteColumnIsNOTAvailable_ShouldFailBecauseSuchOOTBSiteColumnShouldBeAddedByOOTBFeatures()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ContentTypeInfo contentTypeInfo = new ContentTypeInfo(
+                    ContentTypeIdBuilder.CreateChild(new SPContentTypeId("0x01"), Guid.NewGuid()),
+                    "CTNameKey",
+                    "CTDescrKey",
+                    "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                        {
+                            PublishingFields.PublishingPageContent  // Should be missing from site columns (only available in Publishing sites)
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act + Assert
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
                 }
             }
         }

@@ -86,7 +86,9 @@
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
     <Compile Include="ValueTypes\Writers\DateTimeValueWriter.cs" />
+    <Compile Include="ValueTypes\Writers\IntegerValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\GuidValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\DoubleValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\IBaseValueWriter.cs" />

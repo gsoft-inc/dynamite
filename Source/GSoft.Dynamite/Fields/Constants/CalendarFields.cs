@@ -1,5 +1,6 @@
 ﻿using System;
 using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.ValueTypes;
 
 namespace GSoft.Dynamite.Fields.Constants
 {
@@ -13,12 +14,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// EventDate field internal name
         /// </summary>
-        public const string EventDateName = "EventDate";
-
-        /// <summary>
-        /// Location field internal name
-        /// </summary>
-        public const string LocationName = "Location";    
+        public const string StartDateName = "StartDate";
 
         /// <summary>
         /// EndDate field internal name
@@ -26,9 +22,14 @@ namespace GSoft.Dynamite.Fields.Constants
         public const string EndDateName = "EndDate";
 
         /// <summary>
+        /// Location field internal name
+        /// </summary>
+        public const string LocationName = "Location";    
+
+        /// <summary>
         /// Description field internal name
         /// </summary>
-        public const string DescriptionName = "Description";       
+        public const string CommentsName = "Description";       
 
         /// <summary>
         /// Category field internal name
@@ -39,17 +40,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// fAllDayEvent field internal name
         /// </summary>
         public const string AllDayEventName = "fAllDayEvent";
-
-        /// <summary>
-        /// fRecurrence field internal name
-        /// </summary>
-        public const string RecurrenceName = "fRecurrence";
-
-        /// <summary>
-        /// WorkspaceLink field internal name
-        /// </summary>
-        public const string WorkspaceLinkName = "WorkspaceLink";
-
+        
         /// <summary>
         /// EventType field internal name
         /// </summary>
@@ -61,11 +52,6 @@ namespace GSoft.Dynamite.Fields.Constants
         public const string UIDName = "UID";
 
         /// <summary>
-        /// RecurrenceID field internal name
-        /// </summary>
-        public const string RecurrenceIDName = "RecurrenceID";
-
-        /// <summary>
         /// EventCanceled field internal name
         /// </summary>
         public const string EventCanceledName = "EventCanceled";
@@ -74,6 +60,16 @@ namespace GSoft.Dynamite.Fields.Constants
         /// Duration field internal name
         /// </summary>
         public const string DurationName = "Duration";
+
+        /// <summary>
+        /// fRecurrence field internal name
+        /// </summary>
+        public const string HasRecurrenceName = "fRecurrence";
+
+        /// <summary>
+        /// RecurrenceID field internal name
+        /// </summary>
+        public const string RecurrenceIDName = "RecurrenceID";
 
         /// <summary>
         /// RecurrenceData field internal name
@@ -94,7 +90,12 @@ namespace GSoft.Dynamite.Fields.Constants
         /// MasterSeriesItemID field internal name
         /// </summary>
         public const string MasterSeriesItemIDName = "MasterSeriesItemID";
-        
+
+        /// <summary>
+        /// WorkspaceLink field internal name
+        /// </summary>
+        public const string WorkspaceLinkName = "WorkspaceLink";
+
         /// <summary>
         /// Workspace field internal name
         /// </summary>
@@ -105,200 +106,200 @@ namespace GSoft.Dynamite.Fields.Constants
         #region FieldInfo
 
         /// <summary>
-        /// EventDate field info
+        /// EventDate field info (OOTB type = Date, Format = DateOnly)
         /// </summary>
-        public static IFieldInfo EventDate 
+        public static IFieldInfo StartDate 
         { 
             get 
             { 
-                return new MinimalFieldInfo(EventDateName, new Guid("{64cd368d-2f95-4bfc-a1f9-8d4324ecb007}")); 
+                return new MinimalFieldInfo<DateTime?>(StartDateName, new Guid("{64cd368d-2f95-4bfc-a1f9-8d4324ecb007}")); 
             } 
-        }     // TODO: turn into DateTimeFieldInfo
+        }
 
         /// <summary>
-        /// Location field info
+        /// EndDate field info (OOTB type = DateTime, format = DateTime)
+        /// </summary>
+        public static IFieldInfo EndDate
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(EndDateName, new Guid("{2684f9f2-54be-429f-ba06-76754fc056bf}"));
+            }
+        }
+
+        /// <summary>
+        /// Location field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Location 
         { 
             get 
             { 
-                return new MinimalFieldInfo(LocationName, new Guid("{288f5f32-8462-4175-8f09-dd7ba29359a9}")); 
+                return new MinimalFieldInfo<string>(LocationName, new Guid("{288f5f32-8462-4175-8f09-dd7ba29359a9}")); 
             } 
         }
 
         /// <summary>
-        /// EndDate field info
+        /// Comments field info (OOTB type = Note, RichText = TRUE, Display Name = "Description")
         /// </summary>
-        public static IFieldInfo EndDate 
+        public static IFieldInfo Comments 
         { 
             get 
             { 
-                return new MinimalFieldInfo(EndDateName, new Guid("{2684f9f2-54be-429f-ba06-76754fc056bf}")); 
-            } 
-        }     // TODO: turn into DateFieldInfo
-
-        /// <summary>
-        /// Description field info
-        /// </summary>
-        public static IFieldInfo Description 
-        { 
-            get 
-            { 
-                return new MinimalFieldInfo(DescriptionName, new Guid("{9da97a8a-1da5-4a77-98d3-4bc10456e700}")); 
+                return new MinimalFieldInfo<string>(CommentsName, new Guid("{9da97a8a-1da5-4a77-98d3-4bc10456e700}")); 
             } 
         }
 
         /// <summary>
-        /// Category field info
+        /// Category field info (OOTB type = Choice)
         /// </summary>
         public static IFieldInfo Category 
         { 
             get 
             { 
-                return new MinimalFieldInfo(CategoryName, new Guid("{6df9bd52-550e-4a30-bc31-a4366832a87d}")); 
+                return new MinimalFieldInfo<string>(CategoryName, new Guid("{6df9bd52-550e-4a30-bc31-a4366832a87d}")); 
             } 
-        }   // TODO: turn into ChoiceFieldInfo ?
+        }
 
         /// <summary>
-        /// fAllDayEvent field info
+        /// fAllDayEvent field info (OOTB type = AllDayEvent)
         /// </summary>
         public static IFieldInfo AllDayEvent 
         { 
             get 
             { 
-                return new MinimalFieldInfo(AllDayEventName, new Guid("{7d95d1f4-f5fd-4a70-90cd-b35abc9b5bc8}")); 
-            } 
-        }  // TODO: turn into BooleanFieldInfo
-
-        /// <summary>
-        /// fRecurrence field info
-        /// </summary>
-        public static IFieldInfo Recurrence 
-        { 
-            get 
-            { 
-                return new MinimalFieldInfo(RecurrenceName, new Guid("{f2e63656-135e-4f1c-8fc2-ccbe74071901}")); 
-            } 
-        }       // TODO: turn into BooleanFieldInfo
-
-        /// <summary>
-        /// WorkspaceLink field info
-        /// </summary>
-        public static IFieldInfo WorkspaceLink 
-        { 
-            get 
-            { 
-                return new MinimalFieldInfo(WorkspaceLinkName, new Guid("{08fc65f9-48eb-4e99-bd61-5946c439e691}")); 
+                return new MinimalFieldInfo<bool?>(AllDayEventName, new Guid("{7d95d1f4-f5fd-4a70-90cd-b35abc9b5bc8}")); 
             } 
         }
 
         /// <summary>
-        /// EventType field info
+        /// EventType field info (OOTB type = Integer)
         /// </summary>
         public static IFieldInfo EventType 
         { 
             get 
             { 
-                return new MinimalFieldInfo(EventTypeName, new Guid("{5d1d4e76-091a-4e03-ae83-6a59847731c0}")); 
+                return new MinimalFieldInfo<double?>(EventTypeName, new Guid("{5d1d4e76-091a-4e03-ae83-6a59847731c0}")); 
             } 
         }
 
         /// <summary>
-        /// UID field info
+        /// UID field info (OOTB type = Guid)
         /// </summary>
         public static IFieldInfo UID 
         { 
             get 
             { 
-                return new MinimalFieldInfo(UIDName, new Guid("{63055d04-01b5-48f3-9e1e-e564e7c6b23b}")); 
+                return new MinimalFieldInfo<Guid?>(UIDName, new Guid("{63055d04-01b5-48f3-9e1e-e564e7c6b23b}")); 
             } 
         }
 
         /// <summary>
-        /// RecurrenceID field info
-        /// </summary>
-        public static IFieldInfo RecurrenceID 
-        { 
-            get 
-            { 
-                return new MinimalFieldInfo(RecurrenceIDName, new Guid("{dfcc8fff-7c4c-45d6-94ed-14ce0719efef}")); 
-            } 
-        }
-
-        /// <summary>
-        /// EventCanceled field info
+        /// EventCanceled field info (OOTB type = Boolean)
         /// </summary>
         public static IFieldInfo EventCanceled 
         { 
             get 
             { 
-                return new MinimalFieldInfo(EventCanceledName, new Guid("{b8bbe503-bb22-4237-8d9e-0587756a2176}")); 
+                return new MinimalFieldInfo<bool?>(EventCanceledName, new Guid("{b8bbe503-bb22-4237-8d9e-0587756a2176}")); 
             } 
-        }     // TODO: turn into BooleanFieldInfo
+        }
 
         /// <summary>
-        /// Duration field info
+        /// Duration field info (OOTB type = Integer)
         /// </summary>
         public static IFieldInfo Duration 
         { 
             get 
             { 
-                return new MinimalFieldInfo(DurationName, new Guid("{4d54445d-1c84-4a6d-b8db-a51ded4e1acc}")); 
+                return new MinimalFieldInfo<int?>(DurationName, new Guid("{4d54445d-1c84-4a6d-b8db-a51ded4e1acc}")); 
             } 
-        } 
+        }
 
         /// <summary>
-        /// RecurrenceData field info
+        /// fRecurrence field info - indicates whether recurrence is configured on the item or not (OOTB type = Recurrence)
+        /// </summary>
+        public static IFieldInfo HasRecurrence
+        {
+            get
+            {
+                return new MinimalFieldInfo<bool?>(HasRecurrenceName, new Guid("{f2e63656-135e-4f1c-8fc2-ccbe74071901}"));
+            }
+        }
+
+        /// <summary>
+        /// RecurrenceID field info (OOTB type = DateTime, Format = ISO8601Gregorian)
+        /// </summary>
+        public static IFieldInfo RecurrenceID
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(RecurrenceIDName, new Guid("{dfcc8fff-7c4c-45d6-94ed-14ce0719efef}"));
+            }
+        }
+
+        /// <summary>
+        /// RecurrenceData field info (OOTB type = Note)
         /// </summary>
         public static IFieldInfo RecurrenceData 
         { 
             get 
             { 
-                return new MinimalFieldInfo(RecurrenceDataName, new Guid("{d12572d0-0a1e-4438-89b5-4d0430be7603}")); 
+                return new MinimalFieldInfo<string>(RecurrenceDataName, new Guid("{d12572d0-0a1e-4438-89b5-4d0430be7603}")); 
             } 
-        } // TODO: implement ReccurenceFieldInfo? maybe not...
+        }
 
         /// <summary>
-        /// TimeZone field info
+        /// TimeZone field info (OOTB type = Integer)
         /// </summary>
         public static IFieldInfo TimeZone 
         { 
             get 
             { 
-                return new MinimalFieldInfo(TimeZoneName, new Guid("{6cc1c612-748a-48d8-88f2-944f477f301b}")); 
+                return new MinimalFieldInfo<int?>(TimeZoneName, new Guid("{6cc1c612-748a-48d8-88f2-944f477f301b}")); 
             } 
         }
 
         /// <summary>
-        /// XMLTZone field info
+        /// XMLTZone field info (OOTB type = Note)
         /// </summary>
         public static IFieldInfo XMLTZone 
         { 
             get 
             { 
-                return new MinimalFieldInfo(XMLTZoneName, new Guid("{c4b72ed6-45aa-4422-bff1-2b6750d30819}")); 
+                return new MinimalFieldInfo<string>(XMLTZoneName, new Guid("{c4b72ed6-45aa-4422-bff1-2b6750d30819}")); 
             } 
         }
 
         /// <summary>
-        /// MasterSeriesItemID field info
+        /// MasterSeriesItemID field info (OOTB type = Integer)
         /// </summary>
         public static IFieldInfo MasterSeriesItemID 
         { 
             get 
             { 
-                return new MinimalFieldInfo(MasterSeriesItemIDName, new Guid("{9b2bed84-7769-40e3-9b1d-7954a4053834}")); 
+                return new MinimalFieldInfo<int?>(MasterSeriesItemIDName, new Guid("{9b2bed84-7769-40e3-9b1d-7954a4053834}")); 
             } 
         }
-        
+
         /// <summary>
-        /// Workspace field info
+        /// WorkspaceLink field info (OOTB type = CrossProjectLink)
+        /// </summary>
+        public static IFieldInfo WorkspaceLink
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(WorkspaceLinkName, new Guid("{08fc65f9-48eb-4e99-bd61-5946c439e691}"));
+            }
+        }
+
+        /// <summary>
+        /// Workspace field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo Workspace 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkspaceName, new Guid("{881eac4a-55a5-48b6-a28e-8329d7486120}")); 
+                return new MinimalFieldInfo<UrlValue>(WorkspaceName, new Guid("{881eac4a-55a5-48b6-a28e-8329d7486120}")); 
             } 
         }
 
