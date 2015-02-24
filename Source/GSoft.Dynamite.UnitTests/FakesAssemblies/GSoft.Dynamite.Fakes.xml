@@ -8161,9 +8161,6 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.AssignedToGet">
             <summary>Sets the shim of BuiltInFields.get_AssignedTo()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.AuthorGet">
-            <summary>Sets the shim of BuiltInFields.get_Author()</summary>
-        </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
@@ -8181,6 +8178,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.ContentTypeIdGet">
             <summary>Sets the shim of BuiltInFields.get_ContentTypeId()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.CreatedByGet">
+            <summary>Sets the shim of BuiltInFields.get_CreatedBy()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.CreatedGet">
             <summary>Sets the shim of BuiltInFields.get_Created()</summary>
@@ -8223,6 +8223,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.MasterPageUrlGet">
             <summary>Sets the shim of BuiltInFields.get_MasterPageUrl()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.ModifiedByGet">
+            <summary>Sets the shim of BuiltInFields.get_ModifiedBy()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.ModifiedGet">
             <summary>Sets the shim of BuiltInFields.get_Modified()</summary>
@@ -8311,8 +8314,8 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.CategoryGet">
             <summary>Sets the shim of CalendarFields.get_Category()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.DescriptionGet">
-            <summary>Sets the shim of CalendarFields.get_Description()</summary>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.CommentsGet">
+            <summary>Sets the shim of CalendarFields.get_Comments()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.DurationGet">
             <summary>Sets the shim of CalendarFields.get_Duration()</summary>
@@ -8323,11 +8326,11 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.EventCanceledGet">
             <summary>Sets the shim of CalendarFields.get_EventCanceled()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.EventDateGet">
-            <summary>Sets the shim of CalendarFields.get_EventDate()</summary>
-        </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.EventTypeGet">
             <summary>Sets the shim of CalendarFields.get_EventType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.HasRecurrenceGet">
+            <summary>Sets the shim of CalendarFields.get_HasRecurrence()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.LocationGet">
             <summary>Sets the shim of CalendarFields.get_Location()</summary>
@@ -8338,11 +8341,11 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.RecurrenceDataGet">
             <summary>Sets the shim of CalendarFields.get_RecurrenceData()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.RecurrenceGet">
-            <summary>Sets the shim of CalendarFields.get_Recurrence()</summary>
-        </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.RecurrenceIDGet">
             <summary>Sets the shim of CalendarFields.get_RecurrenceID()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.StartDateGet">
+            <summary>Sets the shim of CalendarFields.get_StartDate()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimCalendarFields.TimeZoneGet">
             <summary>Sets the shim of CalendarFields.get_TimeZone()</summary>
@@ -9481,6 +9484,42 @@
         <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimImageFieldInfo.AllInstances.SchemaXElement">
             <summary>Sets the shim of ImageFieldInfo.Schema(XElement baseFieldSchema)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo">
+            <summary>Shim type of GSoft.Dynamite.Fields.Types.IntegerFieldInfo</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.#ctor(GSoft.Dynamite.Fields.Types.IntegerFieldInfo)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.Bind(GSoft.Dynamite.Fields.IFieldInfo)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.ConstructorStringGuidStringStringString">
+            <summary>Sets the shim of IntegerFieldInfo.IntegerFieldInfo(String internalName, Guid id, String displayNameResourceKey, String descriptionResourceKey, String groupResourceKey)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.ConstructorXElement">
+            <summary>Sets the shim of IntegerFieldInfo.IntegerFieldInfo(XElement fieldSchemaXml)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.SchemaXElement">
+            <summary>Sets the shim of IntegerFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimIntegerFieldInfo.AllInstances.SchemaXElement">
+            <summary>Sets the shim of IntegerFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimLookupFieldInfo">
             <summary>Shim type of GSoft.Dynamite.Fields.Types.LookupFieldInfo</summary>
         </member>
@@ -9634,38 +9673,38 @@
         <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMediaFieldInfo.AllInstances.SchemaXElement">
             <summary>Sets the shim of MediaFieldInfo.Schema(XElement baseFieldSchema)</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo">
-            <summary>Shim type of GSoft.Dynamite.Fields.Types.MinimalFieldInfo</summary>
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1">
+            <summary>Shim type of GSoft.Dynamite.Fields.Types.MinimalFieldInfo`1</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.#ctor">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.#ctor">
             <summary>Initializes a new shim instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.#ctor(GSoft.Dynamite.Fields.Types.MinimalFieldInfo)">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.#ctor(GSoft.Dynamite.Fields.Types.MinimalFieldInfo{`0})">
             <summary>Initializes a new shim for the given instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.BehaveAsCurrent">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.BehaveAsCurrent">
             <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.BehaveAsNotImplemented">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.BehaveAsNotImplemented">
             <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.Bind(GSoft.Dynamite.Fields.IFieldInfo)">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.Bind(GSoft.Dynamite.Fields.IFieldInfo)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.Behavior">
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.ConstructorStringGuid">
-            <summary>Sets the shim of MinimalFieldInfo.MinimalFieldInfo(String internalName, Guid id)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.ConstructorStringGuid">
+            <summary>Sets the shim of MinimalFieldInfo`1.MinimalFieldInfo`1(String internalName, Guid id)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.SchemaXElement">
-            <summary>Sets the shim of MinimalFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.SchemaXElement">
+            <summary>Sets the shim of MinimalFieldInfo`1.Schema(XElement baseFieldSchema)</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.AllInstances">
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo.AllInstances.SchemaXElement">
-            <summary>Sets the shim of MinimalFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.ShimMinimalFieldInfo`1.AllInstances.SchemaXElement">
+            <summary>Sets the shim of MinimalFieldInfo`1.Schema(XElement baseFieldSchema)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Types.Fakes.ShimNoteFieldInfo">
             <summary>Shim type of GSoft.Dynamite.Fields.Types.NoteFieldInfo</summary>
@@ -10348,6 +10387,33 @@
         <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubImageFieldInfo.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo">
+            <summary>Stub type of GSoft.Dynamite.Fields.Types.IntegerFieldInfo</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.#ctor(System.Xml.Linq.XElement)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.#ctor(System.String,System.Guid,System.String,System.String,System.String)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.InitializeStub">
+            <summary>Initializes a new instance of type StubIntegerFieldInfo</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.Schema(System.Xml.Linq.XElement)">
+            <summary>Sets the stub of IntegerFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.SchemaXElement">
+            <summary>Sets the stub of IntegerFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubIntegerFieldInfo.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Fields.Types.Fakes.StubLookupFieldInfo">
             <summary>Stub type of GSoft.Dynamite.Fields.Types.LookupFieldInfo</summary>
         </member>
@@ -10426,28 +10492,28 @@
         <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMediaFieldInfo.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo">
-            <summary>Stub type of GSoft.Dynamite.Fields.Types.MinimalFieldInfo</summary>
+        <member name="T:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1">
+            <summary>Stub type of GSoft.Dynamite.Fields.Types.MinimalFieldInfo`1</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.#ctor(System.String,System.Guid)">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.#ctor(System.String,System.Guid)">
             <summary>Initializes a new instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.InitializeStub">
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.InitializeStub">
             <summary>Initializes a new instance of type StubMinimalFieldInfo</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.Schema(System.Xml.Linq.XElement)">
-            <summary>Sets the stub of MinimalFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        <member name="M:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.Schema(System.Xml.Linq.XElement)">
+            <summary>Sets the stub of MinimalFieldInfo`1.Schema(XElement baseFieldSchema)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.SchemaXElement">
-            <summary>Sets the stub of MinimalFieldInfo.Schema(XElement baseFieldSchema)</summary>
+        <member name="F:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.SchemaXElement">
+            <summary>Sets the stub of MinimalFieldInfo`1.Schema(XElement baseFieldSchema)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.CallBase">
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.InstanceBehavior">
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo.InstanceObserver">
+        <member name="P:GSoft.Dynamite.Fields.Types.Fakes.StubMinimalFieldInfo`1.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.Fields.Types.Fakes.StubNoteFieldInfo">
@@ -15535,9 +15601,6 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
-        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -15972,9 +16035,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
@@ -23149,8 +23209,8 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.ConstructorStringValueWriterBooleanValueWriterDoubleValueWriterDateTimeValueWriterGuidValueWriterTaxonomyFullValueWriterTaxonomyFullValueCollectionWriterLookupValueWriterLookupValueCollectionWriterPrincipalValueWriterUserValueWriterUserValueCollectionWrite">
-            <summary>Sets the shim of FieldValueWriter.FieldValueWriter(StringValueWriter stringValueWriter, BooleanValueWriter boolValueWriter, DoubleValueWriter doubleValueWriter, DateTimeValueWriter dateTimeValueWriter, GuidValueWriter guidValueWriter, TaxonomyFullValueWriter taxonomyValueWriter, TaxonomyFullValueCollectionWriter taxonomyValueCollectionWriter, LookupValueWriter lookupValueWriter, LookupValueCollectionWriter lookupValueCollectionWriter, PrincipalValueWriter principalValueWriter, UserValueWriter userValueWriter, UserValueCollectionWriter userValueCollectionWriter, UrlValueWriter urlValueWriter, ImageValueWriter imageValueWriter, MediaValueWriter mediaValueWriter)</summary>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.ConstructorStringValueWriterBooleanValueWriterIntegerValueWriterDoubleValueWriterDateTimeValueWriterGuidValueWriterTaxonomyFullValueWriterTaxonomyFullValueCollectionWriterLookupValueWriterLookupValueCollectionWriterPrincipalValueWriterUserValueWriterUserVa">
+            <summary>Sets the shim of FieldValueWriter.FieldValueWriter(StringValueWriter stringValueWriter, BooleanValueWriter boolValueWriter, IntegerValueWriter integerValueWriter, DoubleValueWriter doubleValueWriter, DateTimeValueWriter dateTimeValueWriter, GuidValueWriter guidValueWriter, TaxonomyFullValueWriter taxonomyValueWriter, TaxonomyFullValueCollectionWriter taxonomyValueCollectionWriter, LookupValueWriter lookupValueWriter, LookupValueCollectionWriter lookupValueCollectionWriter, PrincipalValueWriter principalValueWriter, UserValueWriter userValueWriter, UserValueCollectionWriter userValueCollectionWriter, UrlValueWriter urlValueWriter, ImageValueWriter imageValueWriter, MediaValueWriter mediaValueWriter)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.GetWriterFieldValueInfo">
             <summary>Sets the shim of FieldValueWriter.GetWriter(FieldValueInfo fieldValueInfo)</summary>
@@ -23292,6 +23352,51 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
             <summary>Sets the shim of ImageValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.IntegerValueWriter</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.#ctor(GSoft.Dynamite.ValueTypes.Writers.IntegerValueWriter)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.Bind(GSoft.Dynamite.ValueTypes.Writers.IBaseValueWriter)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.Constructor">
+            <summary>Sets the shim of IntegerValueWriter.IntegerValueWriter()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.WriteValueToFieldDefaultSPFieldCollectionFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.WriteValueToFolderDefaultSPFolderFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.WriteValueToListItemSPListItemFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.AllInstances.WriteValueToFieldDefaultSPFieldCollectionFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.AllInstances.WriteValueToFolderDefaultSPFolderFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimIntegerValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
+            <summary>Sets the shim of IntegerValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimLookupValueCollectionWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.LookupValueCollectionWriter</summary>
@@ -23911,7 +24016,7 @@
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
         </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueWriter,GSoft.Dynamite.ValueTypes.Writers.BooleanValueWriter,GSoft.Dynamite.ValueTypes.Writers.DoubleValueWriter,GSoft.Dynamite.ValueTypes.Writers.DateTimeValueWriter,GSoft.Dynamite.ValueTypes.Writers.GuidValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyFullValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyFullValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.PrincipalValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.UrlValueWriter,GSoft.Dynamite.ValueTypes.Writers.ImageValueWriter,GSoft.Dynamite.ValueTypes.Writers.MediaValueWriter)">
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueWriter,GSoft.Dynamite.ValueTypes.Writers.BooleanValueWriter,GSoft.Dynamite.ValueTypes.Writers.IntegerValueWriter,GSoft.Dynamite.ValueTypes.Writers.DoubleValueWriter,GSoft.Dynamite.ValueTypes.Writers.DateTimeValueWriter,GSoft.Dynamite.ValueTypes.Writers.GuidValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyFullValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyFullValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.PrincipalValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.UrlValueWriter,GSoft.Dynamite.ValueTypes.Writers.ImageValueWriter,GSoft.Dynamite.ValueTypes.Writers.MediaValueWriter)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.InitializeStub">
@@ -24068,6 +24173,42 @@
             <summary>Gets or sets the instance behavior.</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueWriter.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.IntegerValueWriter</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.InitializeStub">
+            <summary>Initializes a new instance of type StubIntegerValueWriter</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToFieldDefault(Microsoft.SharePoint.SPFieldCollection,GSoft.Dynamite.Fields.FieldValueInfo)">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToFieldDefaultSPFieldCollectionFieldValueInfo">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToFolderDefault(Microsoft.SharePoint.SPFolder,GSoft.Dynamite.Fields.FieldValueInfo)">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToFolderDefaultSPFolderFieldValueInfo">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToListItem(Microsoft.SharePoint.SPListItem,GSoft.Dynamite.Fields.FieldValueInfo)">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.WriteValueToListItemSPListItemFieldValueInfo">
+            <summary>Sets the stub of IntegerValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIntegerValueWriter.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubLookupValueCollectionWriter">

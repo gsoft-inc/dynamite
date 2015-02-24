@@ -83,6 +83,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
             builder.RegisterType<StringValueWriter>();
             builder.RegisterType<BooleanValueWriter>();
+            builder.RegisterType<IntegerValueWriter>();
             builder.RegisterType<DoubleValueWriter>();
             builder.RegisterType<DateTimeValueWriter>();
             builder.RegisterType<GuidValueWriter>();

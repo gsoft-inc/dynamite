@@ -17,6 +17,7 @@ namespace GSoft.Dynamite.IntegrationTests
         /// Default test site collection hostname
         /// </summary>
         public const string DefaultSiteCollectionHostName = "http://dynamite.sharepoint.test";
+        private ulong diskSizeAfterCreation;
 
         /// <summary>
         /// Creates a temporary site collection on the default port 80 web application, with the default
@@ -187,6 +188,8 @@ namespace GSoft.Dynamite.IntegrationTests
                 "Dynamite Test Agent", 
                 "test@test.com", 
                 true);
+
+            this.diskSizeAfterCreation = newSite.ContentDatabase.DiskSizeRequired;
 
             this.SiteCollection = newSite;
         }
