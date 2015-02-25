@@ -6676,8 +6676,8 @@
         <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._ReorderFieldsInContentTypeb__4SPFieldLink">
             <summary>Sets the shim of ContentTypeHelper.&lt;ReorderFieldsInContentType&gt;b__4(SPFieldLink x)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._SetTitleDescriptionAndGroupValuesb__11VariationLabel">
-            <summary>Sets the shim of ContentTypeHelper.&lt;SetTitleDescriptionAndGroupValues&gt;b__11(VariationLabel label)</summary>
+        <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._SetTitleDescriptionAndGroupValuesb__14VariationLabel">
+            <summary>Sets the shim of ContentTypeHelper.&lt;SetTitleDescriptionAndGroupValues&gt;b__14(VariationLabel label)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -8164,6 +8164,9 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.BodyGet">
+            <summary>Sets the shim of BuiltInFields.get_Body()</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.CellphoneGet">
             <summary>Sets the shim of BuiltInFields.get_Cellphone()</summary>
         </member>
@@ -8196,6 +8199,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.EnterpriseKeywordsGet">
             <summary>Sets the shim of BuiltInFields.get_EnterpriseKeywords()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.ExpiresGet">
+            <summary>Sets the shim of BuiltInFields.get_Expires()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.FileLeafRefGet">
             <summary>Sets the shim of BuiltInFields.get_FileLeafRef()</summary>
@@ -15601,6 +15607,9 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
+        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -16035,6 +16044,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
+            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>

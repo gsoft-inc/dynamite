@@ -1167,5 +1167,126 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         }
 
         #endregion
+
+        #region Ensuring parent content type fields should reorder them accordingly
+
+        /// <summary>
+        /// Validates that EnsureContentType adds a child content type and reorders its fields when you bother to repeat all the parent's
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenRedefiningParentFields_ShouldReorderFields()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var reorderedFieldId = new Guid("{5FDCC376-228A-4F2F-B66D-A4CABE7DF538}");
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId, 
+                    "ChildAnnouncement", 
+                    "ChildAnnouncementDescription", 
+                    "ChildAnnouncementGroup")
+                    {
+                        Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            new TextFieldInfo(
+                                "ShouldBeReorder", 
+                                reorderedFieldId, 
+                                "ShouldBeReorderName", 
+                                "ShouldBeReorderDesc", 
+                                "ShouldBeReorderGroup"), 
+                            BuiltInFields.Body
+                        }
+                    };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualContentType.Fields[0].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualContentType.Fields[1].Id);
+                    Assert.AreEqual(reorderedFieldId, actualContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualContentType.Fields[3].Id);
+
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualRefetchedContentType.Fields[0].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualRefetchedContentType.Fields[1].Id);
+                    Assert.AreEqual(reorderedFieldId, actualRefetchedContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualRefetchedContentType.Fields[3].Id);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType adds a child content type and not reorder its fields when don't you bother to repeat all the parent's
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenNotRedefiningParentFields_ShouldRespectParentFieldOrdering()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var reorderedFieldId = new Guid("{5FDCC376-228A-4F2F-B66D-A4CABE7DF538}");
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            new TextFieldInfo(
+                                "ShouldBeLast", 
+                                reorderedFieldId, 
+                                "ShouldBeLastName", 
+                                "ShouldBeLastDesc", 
+                                "ShouldBeLastGroup"), 
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    // Note: Hidden content type field is always the first field
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualContentType.Fields[1].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualContentType.Fields[3].Id);
+                    Assert.AreEqual(reorderedFieldId, actualContentType.Fields[4].Id);
+
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualRefetchedContentType.Fields[1].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualRefetchedContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualRefetchedContentType.Fields[3].Id);
+                    Assert.AreEqual(reorderedFieldId, actualRefetchedContentType.Fields[4].Id);
+                }
+            }
+        }
+        #endregion
     }
 }

@@ -274,7 +274,9 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="fieldInfos">The field information.</param>
-        /// <returns>IEnumerable of SPFields that where found.</returns>
+        /// <returns>
+        /// IEnumerable of SPFields that where found.
+        /// </returns>
         private IEnumerable<SPField> InnerEnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos)
         {
             bool fieldWasAdded = false;
@@ -328,6 +330,13 @@ namespace GSoft.Dynamite.ContentTypes
                         throw;
                     }
                 }
+            }
+
+            // If the fields redefined one or more fields from it's parent
+            if (fieldInfos.Any(f => contentType.Parent.Fields.ContainsField(f.InternalName)))
+            {
+                // Reorder fields if contains a field from it's parent
+                this.ReorderFieldsInContentType(contentType, fieldInfos);
             }
 
             return fields;

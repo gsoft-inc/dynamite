@@ -240,6 +240,16 @@ namespace GSoft.Dynamite.Fields.Constants
         /// </summary>
         public const string ModifiedName = "Modified";
 
+        /// <summary>
+        /// Body: Note field containing rich text.
+        /// </summary>
+        public const string BodyName = "Body";
+
+        /// <summary>
+        /// Expires: Date and time field for content expiration.
+        /// </summary>
+        public const string ExpiresName = "Expires";
+
         #endregion
 
         #region FieldInfo
@@ -727,6 +737,27 @@ namespace GSoft.Dynamite.Fields.Constants
             } 
         }
 
+        /// <summary>
+        /// The body note field.
+        /// </summary>
+        public static IFieldInfo Body
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(BodyName, SPBuiltInFieldId.Body);
+            }
+        }
+
+        /// <summary>
+        /// The content expiration date time field.
+        /// </summary>
+        public static IFieldInfo Expires
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(ExpiresName, SPBuiltInFieldId.Expires);
+            }
+        }
         #endregion
     }
 }
