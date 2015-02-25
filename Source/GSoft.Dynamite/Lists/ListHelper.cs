@@ -536,12 +536,22 @@ namespace GSoft.Dynamite.Lists
                 var title = this.resourceLocator.GetResourceString(listInfo.ResourceFileName, listInfo.DisplayNameResourceKey);
                 var description = this.resourceLocator.GetResourceString(listInfo.ResourceFileName, listInfo.DescriptionResourceKey);
 
-                id = web.Lists.Add(title, description, listInfo.WebRelativeUrl.ToString(), listInfo.ListTemplateInfo.FeatureId.ToString(), listInfo.ListTemplateInfo.ListTempateTypeId, null);
+                id = web.Lists.Add(
+                    title, 
+                    description, 
+                    listInfo.WebRelativeUrl.ToString(), 
+                    listInfo.ListTemplateInfo.FeatureId.ToString(), 
+                    listInfo.ListTemplateInfo.ListTempateTypeId, 
+                    null);
             }
             catch (SPException sharepointException)
             {
+                var messageFormat = "The web-relative URL '{0}' for the ensured list conflicts with an existing URL "
+                        + "(subweb, folder, ...). Try with a different one.";
+
                 throw new ArgumentException(
-                    string.Format(CultureInfo.InvariantCulture, "The web-relative URL '{0}' for the ensured list conflicts with an existing URL (subweb, folder, ...). Try with a different one.", listInfo.WebRelativeUrl), sharepointException);
+                    string.Format(CultureInfo.InvariantCulture, messageFormat, listInfo.WebRelativeUrl), 
+                    sharepointException);
             }
 
             return web.Lists[id];
