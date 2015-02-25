@@ -23011,6 +23011,48 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.StubUserValueCollection.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIBaseValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIBaseValueReader.#ctor">
+            <summary>Initializes a new instance of type StubIBaseValueReader</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIBaseValueReader.AssociatedValueTypeGet">
+            <summary>Sets the stub of IBaseValueReader.get_AssociatedValueType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIBaseValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IBaseValueReader#AssociatedValueType">
+            <summary>Sets the stub of IBaseValueReader.get_AssociatedValueType()</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.BaseValueReader`1</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.#ctor(GSoft.Dynamite.ValueTypes.Writers.BaseValueReader{`0})">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.AssociatedValueTypeGet">
+            <summary>Sets the shim of BaseValueReader`1.get_AssociatedValueType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.Constructor">
+            <summary>Sets the shim of BaseValueReader`1.BaseValueReader`1()</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1.AllInstances.AssociatedValueTypeGet">
+            <summary>Sets the shim of BaseValueReader`1.get_AssociatedValueType()</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueWriter`1">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.BaseValueWriter`1</summary>
         </member>
@@ -23040,6 +23082,51 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueWriter`1.AllInstances.AssociatedValueTypeGet">
             <summary>Sets the shim of BaseValueWriter`1.get_AssociatedValueType()</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.BooleanValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.BooleanValueReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.Constructor">
+            <summary>Sets the shim of BooleanValueReader.BooleanValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.AllInstances.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.AllInstances.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of BooleanValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBooleanValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.BooleanValueWriter</summary>
@@ -23179,6 +23266,63 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimDoubleValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
             <summary>Sets the shim of DoubleValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.FieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.FieldValueReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Bind(GSoft.Dynamite.ValueTypes.Writers.IFieldValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ReadValueFromListItemOf1SPListItemString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ReadValueFromListItemVersionOf1SPListItemVersionString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AddToReadersDictionaryIBaseValueReader">
+            <summary>Sets the shim of FieldValueReader.AddToReadersDictionary(IBaseValueReader reader)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ConstructorStringValueReaderBooleanValueReaderImageValueReader">
+            <summary>Sets the shim of FieldValueReader.FieldValueReader(StringValueReader stringValueReader, BooleanValueReader booleanValueReader, ImageValueReader imageValueReader)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetReaderType">
+            <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.ValueTypes.Writers.FieldValueReader,System.Data.DataRow,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.ReadValueFromListItemOf1SPListItemString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.ValueTypes.Writers.FieldValueReader,Microsoft.SharePoint.SPListItem,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.ReadValueFromListItemVersionOf1SPListItemVersionString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.ValueTypes.Writers.FieldValueReader,Microsoft.SharePoint.SPListItemVersion,System.String,``0})">
+            <summary>Sets the shim of FieldValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.AddToReadersDictionaryIBaseValueReader">
+            <summary>Sets the shim of FieldValueReader.AddToReadersDictionary(IBaseValueReader reader)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.GetReaderType">
+            <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
         </member>
@@ -23298,6 +23442,51 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimGuidValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
             <summary>Sets the shim of GuidValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.ImageValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.ImageValueReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.Constructor">
+            <summary>Sets the shim of ImageValueReader.ImageValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.AllInstances.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.AllInstances.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of ImageValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimImageValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.ImageValueWriter</summary>
@@ -23581,6 +23770,51 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimPrincipalValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
             <summary>Sets the shim of PrincipalValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.StringValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.Constructor">
+            <summary>Sets the shim of StringValueReader.StringValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.AllInstances.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.AllInstances.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of StringValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimStringValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.StringValueWriter</summary>
         </member>
@@ -23863,6 +24097,42 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimUserValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo">
             <summary>Sets the shim of UserValueWriter.WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.BaseValueReader`1</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.InitializeStub">
+            <summary>Initializes a new instance of type StubBaseValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromCamlResultDataRow(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of BaseValueReader`1.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueReader`1.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueWriter`1">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.BaseValueWriter`1</summary>
         </member>
@@ -23897,6 +24167,42 @@
             <summary>Gets or sets the instance behavior.</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBaseValueWriter`1.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.BooleanValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.InitializeStub">
+            <summary>Initializes a new instance of type StubBooleanValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromCamlResultDataRow(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of BooleanValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueReader.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubBooleanValueWriter">
@@ -24007,6 +24313,24 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubDoubleValueWriter.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueReader,GSoft.Dynamite.ValueTypes.Writers.BooleanValueReader,GSoft.Dynamite.ValueTypes.Writers.ImageValueReader)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.InitializeStub">
+            <summary>Initializes a new instance of type StubFieldValueReader</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
         </member>
@@ -24091,6 +24415,30 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIBaseValueWriter.gsd::GSoft#Dynamite#ValueTypes#Writers#IBaseValueWriter#AssociatedValueType">
             <summary>Sets the stub of IBaseValueWriter.get_AssociatedValueType()</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.IFieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.#ctor">
+            <summary>Initializes a new instance of type StubIFieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromCamlResultDataRow``1(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromListItem``1(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromListItemVersion``1(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromListItemOf1SPListItemString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromListItemVersionOf1SPListItemVersionString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.IFieldValueWriter</summary>
         </member>
@@ -24132,6 +24480,42 @@
         </member>
         <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.WriteValuesToListItemSPListItemIListOfFieldValueInfo">
             <summary>Sets the stub of IFieldValueWriter.WriteValuesToListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.ImageValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.InitializeStub">
+            <summary>Initializes a new instance of type StubImageValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromCamlResultDataRow(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of ImageValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueReader.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubImageValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.ImageValueWriter</summary>
@@ -24347,6 +24731,42 @@
             <summary>Gets or sets the instance behavior.</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubPrincipalValueWriter.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.StringValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.InitializeStub">
+            <summary>Initializes a new instance of type StubStringValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromCamlResultDataRow(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of StringValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromCamlResultDataRowDataRowString">
+            <summary>Sets the stub of StringValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of StringValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of StringValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of StringValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of StringValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueReader.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubStringValueWriter">

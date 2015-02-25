@@ -98,6 +98,11 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<ImageValueWriter>();
             builder.RegisterType<MediaValueWriter>();
 
+            builder.RegisterType<FieldValueReader>().As<IFieldValueReader>();
+            builder.RegisterType<StringValueReader>();
+            builder.RegisterType<BooleanValueReader>();
+            builder.RegisterType<ImageValueReader>();
+
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
             builder.RegisterType<ExtraMasterPageBodyCssClasses>().As<IExtraMasterPageBodyCssClasses>();

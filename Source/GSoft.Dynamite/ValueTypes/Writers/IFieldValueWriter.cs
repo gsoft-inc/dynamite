@@ -6,7 +6,8 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.ValueTypes.Writers
 {
     /// <summary>
-    /// Handlers writing values to a SharePoint list item.
+    /// Handles writing values to a SharePoint list item, to a field definition's default value setting
+    /// or to a folder's metadata defaults.
     /// </summary>
     public interface IFieldValueWriter
     {

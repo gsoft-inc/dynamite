@@ -87,6 +87,13 @@
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\FieldValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\ImageValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\StringValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\BaseValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\IBaseValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\IFieldValueReader.cs" />
     <Compile Include="ValueTypes\Writers\DateTimeValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\IntegerValueWriter.cs" />
     <Compile Include="ValueTypes\Writers\GuidValueWriter.cs" />
