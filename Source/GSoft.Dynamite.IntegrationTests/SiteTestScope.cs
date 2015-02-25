@@ -17,7 +17,11 @@ namespace GSoft.Dynamite.IntegrationTests
         /// Default test site collection hostname
         /// </summary>
         public const string DefaultSiteCollectionHostName = "http://dynamite.sharepoint.test";
-        private ulong diskSizeAfterCreation;
+
+        /// <summary>
+        /// Test content database name
+        /// </summary>
+        public const string TestContentDatabaseName = "SP2013_Content_DynamiteIntegrationTest";
 
         /// <summary>
         /// Creates a temporary site collection on the default port 80 web application, with the default
@@ -161,10 +165,11 @@ namespace GSoft.Dynamite.IntegrationTests
         private void InitializeSite(string hostName, string templateName, uint lcid)
         {
             var defaultPortWebApp = this.GetDefaultPortWebApp();
+            SPContentDatabase testContentDatabase = this.EnsureTestContentDatabase(defaultPortWebApp);
 
-            SPSiteCollection sites = defaultPortWebApp.Sites;
+            SPSiteCollection sites = testContentDatabase.Sites;
 
-            SPSite existingSite = defaultPortWebApp.Sites.FirstOrDefault(site => site.Url == hostName);
+            SPSite existingSite = testContentDatabase.Sites.FirstOrDefault(site => site.Url == hostName);
 
             if (existingSite != null)
             {
@@ -172,7 +177,7 @@ namespace GSoft.Dynamite.IntegrationTests
                 existingSite.Dispose();
 
                 // Refresh Sites collection
-                sites = defaultPortWebApp.Sites;
+                sites = testContentDatabase.Sites;
             }
 
             SPSite newSite = sites.Add(
@@ -189,19 +194,20 @@ namespace GSoft.Dynamite.IntegrationTests
                 "test@test.com", 
                 true);
 
-            this.diskSizeAfterCreation = newSite.ContentDatabase.DiskSizeRequired;
-
             this.SiteCollection = newSite;
         }
 
         private void InitializeSiteAtManagedPath(string managedPath)
         {
-            var defaultPortWebApp = this.GetDefaultPortWebApp();
+            var defaultPortWebApp = this.GetDefaultPortWebApp(); 
+            SPContentDatabase testContentDatabase = this.EnsureTestContentDatabase(defaultPortWebApp);
 
             var prefixCollection = defaultPortWebApp.Prefixes;
 
             if (!prefixCollection.Contains(managedPath))
             {
+                // The hostname-site collection's prefix may still exist
+                // if a test run was interrupted previously.
                 prefixCollection.Add(managedPath, SPPrefixType.ExplicitInclusion);                
             }
 
@@ -210,8 +216,76 @@ namespace GSoft.Dynamite.IntegrationTests
 
             var siteUrl = defaultPortWebApp.GetResponseUri(SPUrlZone.Default) + managedPath;
 
-            var newSite = defaultPortWebApp.Sites.Add(siteUrl, Environment.UserName, "test@test.com");
+            SPSiteCollection sites = testContentDatabase.Sites;
+            SPSite existingSite = sites.FirstOrDefault(site => site.Url == siteUrl);
+
+            if (existingSite != null)
+            {
+                existingSite.Delete();
+                existingSite.Dispose();
+
+                // Refresh Sites collection
+                sites = testContentDatabase.Sites;
+            }
+
+            var newSite = sites.Add(siteUrl, Environment.UserName, "test@test.com");
+
             this.SiteCollection = newSite;
+        }
+
+        private SPContentDatabase EnsureTestContentDatabase(SPWebApplication defaultPortWebApp)
+        {
+            SPContentDatabaseCollection databaseCollection = defaultPortWebApp.ContentDatabases;
+
+            SPContentDatabase defaultWebAppContentDatabase = defaultPortWebApp.ContentDatabases[0];
+            SPContentDatabase testContentDb = databaseCollection.Cast<SPContentDatabase>().FirstOrDefault(db => db.Name == TestContentDatabaseName);
+
+            if (testContentDb != null)
+            {
+                // DB already exists, we gotta figure out if it's getting bloated or not.
+                // A typical Content Database will weigh in at a almost 160MB right at the start. 
+                // After creating a couple of hundred site collection, even if we  delete them 
+                // everytime, some space gets wasted and the disk size required for a backup 
+                // grows to more than 200MB.
+                const ulong MaxNumberOfMb = 200;
+                if (testContentDb.DiskSizeRequired > MaxNumberOfMb * 1024 * 1024)
+                {
+                    // Repeated site collection recreation has left behind traces
+                    // in the content database, time to delete it and start fresh
+                    foreach (SPSite site in testContentDb.Sites)
+                    {
+                        // Delete any straggling site collection (and hope to god no one has 
+                        // piggybacked onto our content database with an important site collection
+                        // of their own - their loss, anyway)
+                        site.Delete();
+                    }
+
+                    testContentDb.Status = SPObjectStatus.Offline;
+                    testContentDb.Unprovision();
+                    databaseCollection.Delete(testContentDb.Id);
+                    testContentDb = null;
+                }
+                else
+                {
+                    // We haven't hit the size limit yet, let's re-use the same content database
+                    // ...
+                }
+            }
+
+            if (testContentDb == null)
+            {
+                // DB doesn't exist yet (or has just been deleted): we should (re)create it.
+                testContentDb = databaseCollection.Add(
+                    defaultWebAppContentDatabase.Server,
+                    TestContentDatabaseName,
+                    defaultWebAppContentDatabase.Username,
+                    defaultWebAppContentDatabase.Password,
+                    2000,
+                    5000,
+                    0);       // Status = 0 means the database is READY (instead of OFFLINE, which is Status = 1)
+            }
+
+            return testContentDb;
         }
 
         private SPWebApplication GetDefaultPortWebApp()
