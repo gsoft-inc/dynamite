@@ -74,7 +74,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void FromEntity<T>(T entity, SPListItem listItem)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).FromEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields, listItem.Web);
+            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).FromEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace GSoft.Dynamite.Binding
 
                 foreach (var dataRow in rows)
                 {
-                    returnList.Add(this.Get<T>(dataRow, listItems.Fields, listItems.List.ParentWeb));
+                    returnList.Add(this.Get<T>(dataRow, listItems.Fields));
                 }
             }
 
@@ -150,11 +150,11 @@ namespace GSoft.Dynamite.Binding
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>
-        public T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web) where T : new()
+        public T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection) where T : new()
         {
             var entity = new T();
 
-            this.ToEntity(entity, dataRow, fieldCollection, web);
+            this.ToEntity(entity, dataRow, fieldCollection);
 
             return entity;
         }
@@ -167,7 +167,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void ToEntity<T>(T entity, SPListItem listItem)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields, listItem.Web);
+            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields);
         }
 
         /// <summary>
@@ -185,12 +185,9 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        public void ToEntity<T>(T entity, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)
+        public void ToEntity<T>(T entity, DataRow dataRow, SPFieldCollection fieldCollection)
         {
-            this.entitySchemaDataRowBuilder.GetSchema(typeof(T)).ToEntity(entity, new DataRowValuesAdapter(dataRow), fieldCollection, web);
+            this.entitySchemaDataRowBuilder.GetSchema(typeof(T)).ToEntity(entity, new DataRowValuesAdapter(dataRow), fieldCollection);
         }
 
         /// <summary>
@@ -201,7 +198,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItemVersion">The list item version.</param>
         public void ToEntity<T>(T entity, SPListItemVersion listItemVersion)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemVersionValuesAdapter(listItemVersion), listItemVersion.Fields, listItemVersion.ListItem.Web);
+            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemVersionValuesAdapter(listItemVersion), listItemVersion.Fields);
         }
 
         #endregion

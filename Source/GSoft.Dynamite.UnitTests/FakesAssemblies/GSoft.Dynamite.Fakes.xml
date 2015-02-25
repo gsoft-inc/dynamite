@@ -22,8 +22,8 @@
         <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.ConstructorStringTypeStringDataRowSPFieldCollectionSPWebIDictionaryOfStringObject">
-            <summary>Sets the shim of DataRowConversionArguments.DataRowConversionArguments(String propertyName, Type propertyType, String valueKey, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web, IDictionary`2&lt;String,Object&gt; fieldValues)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.ConstructorStringTypeStringDataRowSPFieldCollectionIDictionaryOfStringObject">
+            <summary>Sets the shim of DataRowConversionArguments.DataRowConversionArguments(String propertyName, Type propertyType, String valueKey, DataRow dataRow, SPFieldCollection fieldCollection, IDictionary`2&lt;String,Object&gt; fieldValues)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.DataRowGet">
             <summary>Sets the shim of DataRowConversionArguments.get_DataRow()</summary>
@@ -45,9 +45,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.WebGet">
             <summary>Sets the shim of DataRowConversionArguments.get_Web()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.WebSetSPWeb">
-            <summary>Sets the shim of DataRowConversionArguments.set_Web(SPWeb value)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -72,9 +69,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.AllInstances.WebGet">
             <summary>Sets the shim of DataRowConversionArguments.get_Web()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowConversionArguments.AllInstances.WebSetSPWeb">
-            <summary>Sets the shim of DataRowConversionArguments.set_Web(SPWeb value)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Converters.Fakes.ShimDataRowValueConverter">
             <summary>Shim type of GSoft.Dynamite.Binding.Converters.DataRowValueConverter</summary>
@@ -721,7 +715,7 @@
         <member name="T:GSoft.Dynamite.Binding.Converters.Fakes.StubDataRowConversionArguments">
             <summary>Stub type of GSoft.Dynamite.Binding.Converters.DataRowConversionArguments</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Converters.Fakes.StubDataRowConversionArguments.#ctor(System.String,System.Type,System.String,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb,System.Collections.Generic.IDictionary{System.String,System.Object})">
+        <member name="M:GSoft.Dynamite.Binding.Converters.Fakes.StubDataRowConversionArguments.#ctor(System.String,System.Type,System.String,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,System.Collections.Generic.IDictionary{System.String,System.Object})">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Converters.Fakes.StubDataRowConversionArguments.InitializeStub">
@@ -1531,14 +1525,14 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.Constructor">
             <summary>Sets the shim of EntitySchema.EntitySchema()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.FromEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.FromEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema._FromEntityb__0EntityBindingDetail">
             <summary>Sets the shim of EntitySchema.&lt;FromEntity&gt;b__0(EntityBindingDetail x)</summary>
@@ -1552,14 +1546,14 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.AddPropertyEntityBindingDetail">
             <summary>Sets the shim of EntitySchema.AddProperty(EntityBindingDetail detail)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.FromEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.FromEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema.AllInstances.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaBuilder`1">
             <summary>Shim type of GSoft.Dynamite.Binding.EntitySchemaBuilder`1</summary>
@@ -2101,14 +2095,14 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.Constructor">
             <summary>Sets the shim of SharePointDataRowEntitySchema.SharePointDataRowEntitySchema()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointDataRowEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder">
             <summary>Shim type of GSoft.Dynamite.Binding.SharePointEntityBinder</summary>
@@ -2131,8 +2125,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
             <summary>Sets the shim of SharePointEntityBinder.FromEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1DataRowSPFieldCollectionSPWeb``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb,``0})">
-            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,``0})">
             <summary>Sets the shim of SharePointEntityBinder.Get(SPListItem listItem)</summary>
@@ -2143,8 +2137,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,``0})">
             <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0DataRowSPFieldCollectionSPWeb``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb})">
-            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
             <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItem listItem)</summary>
@@ -2167,8 +2161,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,Microsoft.SharePoint.SPListItem})">
             <summary>Sets the shim of SharePointEntityBinder.FromEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1DataRowSPFieldCollectionSPWeb``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb,``0})">
-            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,Microsoft.SharePoint.SPListItem,``0})">
             <summary>Sets the shim of SharePointEntityBinder.Get(SPListItem listItem)</summary>
@@ -2179,8 +2173,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,Microsoft.SharePoint.SPListItemVersion,``0})">
             <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0DataRowSPFieldCollectionSPWeb``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb})">
-            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,Microsoft.SharePoint.SPListItem})">
             <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItem listItem)</summary>
@@ -2215,14 +2209,14 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.Constructor">
             <summary>Sets the shim of SharePointEntitySchema.SharePointEntitySchema()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the shim of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema.AllInstances.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the shim of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimStraightConverter">
             <summary>Shim type of GSoft.Dynamite.Binding.StraightConverter</summary>
@@ -2350,20 +2344,20 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of EntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.InitializeStub">
             <summary>Initializes a new instance of type StubEntitySchema</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntitySchema.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
@@ -2440,17 +2434,17 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.#ctor">
             <summary>Initializes a new instance of type StubIEntitySchema</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.FromEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of IEntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.FromEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of IEntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.gsd::GSoft#Dynamite#Binding#IEntitySchema#FromEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of IEntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.gsd::GSoft#Dynamite#Binding#IEntitySchema#FromEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of IEntitySchema.FromEntity(Object sourceEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.gsd::GSoft#Dynamite#Binding#IEntitySchema#ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of IEntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.gsd::GSoft#Dynamite#Binding#IEntitySchema#ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of IEntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of IEntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of IEntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaBuilder">
             <summary>Stub type of GSoft.Dynamite.Binding.IEntitySchemaBuilder</summary>
@@ -2497,8 +2491,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.gsd::GSoft#Dynamite#Binding#ISharePointEntityBinder#Get``1(Microsoft.SharePoint.SPListItemVersion)">
             <summary>Sets the stub of ISharePointEntityBinder.Get(SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.gsd::GSoft#Dynamite#Binding#ISharePointEntityBinder#Get``1(System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of ISharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.gsd::GSoft#Dynamite#Binding#ISharePointEntityBinder#Get``1(System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of ISharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.gsd::GSoft#Dynamite#Binding#ISharePointEntityBinder#ToEntity``1(``0,Microsoft.SharePoint.SPListItem)">
             <summary>Sets the stub of ISharePointEntityBinder.ToEntity(!!0 entity, SPListItem listItem)</summary>
@@ -2506,8 +2500,8 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.gsd::GSoft#Dynamite#Binding#ISharePointEntityBinder#ToEntity``1(``0,Microsoft.SharePoint.SPListItemVersion)">
             <summary>Sets the stub of ISharePointEntityBinder.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.GetOf1DataRowSPFieldCollectionSPWeb``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb,``0})">
-            <summary>Sets stubs of Get(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets stubs of Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,``0})">
             <summary>Sets stubs of Get(SPListItem listItem)</summary>
@@ -2668,20 +2662,20 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of SharePointDataRowEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.InitializeStub">
             <summary>Initializes a new instance of type StubSharePointDataRowEntitySchema</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointDataRowEntitySchema.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
@@ -2722,20 +2716,20 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.GetConversionArguments(GSoft.Dynamite.Binding.EntityBindingDetail,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.GetConversionArgumentsEntityBindingDetailIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of SharePointEntitySchema.GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.InitializeStub">
             <summary>Initializes a new instance of type StubSharePointEntitySchema</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection,Microsoft.SharePoint.SPWeb)">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.ToEntity(System.Object,System.Collections.Generic.IDictionary{System.String,System.Object},Microsoft.SharePoint.SPFieldCollection)">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollectionSPWeb">
-            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection, SPWeb web)</summary>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.ToEntityObjectIDictionaryOfStringObjectSPFieldCollection">
+            <summary>Sets the stub of EntitySchema.ToEntity(Object targetEntity, IDictionary`2&lt;String,Object&gt; values, SPFieldCollection fieldCollection)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>

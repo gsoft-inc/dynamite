@@ -15,21 +15,20 @@ namespace GSoft.Dynamite.Binding
         /// <param name="bindingDetail">The binding detail.</param>
         /// <param name="values">The values.</param>
         /// <param name="fieldCollection">The item Collection.</param>
-        /// <param name="web">The web.</param>
         /// <returns>
         /// The conversion arguments.
         /// </returns>
-        protected internal override ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
+        protected internal override ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             var listItemValues = values as IDataRowValues;
             
             if (listItemValues != null)
             {
-                return new DataRowConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey, listItemValues.DataRow, fieldCollection, web, values);
+                return new DataRowConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey, listItemValues.DataRow, fieldCollection, values);
             }
             else
             {
-                return base.GetConversionArguments(bindingDetail, values, fieldCollection, web);
+                return base.GetConversionArguments(bindingDetail, values, fieldCollection);
             }
         }
     }

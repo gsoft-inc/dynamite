@@ -23,14 +23,10 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
         void FromEntity(
             object sourceEntity,
             IDictionary<string, object> values,
-            SPFieldCollection fieldCollection,
-            SPWeb web);
+            SPFieldCollection fieldCollection);
 
         /// <summary>
         /// Fills the entity from the values.
@@ -44,10 +40,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        void ToEntity(object targetEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web);
+        void ToEntity(object targetEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection);
 
         #endregion
     }

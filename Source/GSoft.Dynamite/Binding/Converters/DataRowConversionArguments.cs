@@ -20,11 +20,10 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <param name="fieldCollection">The field Collection.</param>
         /// <param name="web">The current web</param>
         /// <param name="fieldValues">The full dictionary of values being converted</param>
-        public DataRowConversionArguments(string propertyName, Type propertyType, string valueKey, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web, IDictionary<string, object> fieldValues)
+        public DataRowConversionArguments(string propertyName, Type propertyType, string valueKey, DataRow dataRow, SPFieldCollection fieldCollection, IDictionary<string, object> fieldValues)
             : base(propertyName, propertyType, valueKey)
         {
             this.FieldCollection = fieldCollection;
-            this.Web = web;
             this.DataRow = dataRow;
             this.FieldValues = fieldValues;
         }
@@ -37,7 +36,14 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <summary>
         /// Gets or sets the web.
         /// </summary>
-        public SPWeb Web { get; private set; }
+        public SPWeb Web
+        {
+            get
+            {
+                return this.FieldCollection.Web;
+            }
+        }
+            
 
         /// <summary>
         /// Gets the list item.

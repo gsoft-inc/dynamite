@@ -36,12 +36,12 @@ namespace GSoft.Dynamite.Binding
         /// <param name="web">
         /// The web.
         /// </param>
-        public void FromEntity(object sourceEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
+        public void FromEntity(object sourceEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             foreach (var binding in this.BindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))
             {
                 var value = binding.EntityProperty.GetValue(sourceEntity, null);
-                value = binding.Converter.ConvertBack(value, this.GetConversionArguments(binding, values, fieldCollection, web));
+                value = binding.Converter.ConvertBack(value, this.GetConversionArguments(binding, values, fieldCollection));
                 values[binding.ValueKey] = value;
             }
         }
@@ -58,10 +58,7 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        public virtual void ToEntity(object targetEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
+        public virtual void ToEntity(object targetEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             foreach (var binding in this.BindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
             {
@@ -71,7 +68,7 @@ namespace GSoft.Dynamite.Binding
                     value = null;
                 }
 
-                value = binding.Converter.Convert(value, this.GetConversionArguments(binding, values, fieldCollection, web));
+                value = binding.Converter.Convert(value, this.GetConversionArguments(binding, values, fieldCollection));
                 binding.EntityProperty.SetValue(targetEntity, value, null);
             }
         }
@@ -86,9 +83,8 @@ namespace GSoft.Dynamite.Binding
         /// <param name="bindingDetail">The binding detail.</param>
         /// <param name="values">The values.</param>
         /// <param name="fieldCollection">The collection of fields</param>
-        /// <param name="web">The current web</param>
         /// <returns>The conversion arguments.</returns>
-        protected internal virtual ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
+        protected internal virtual ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             return new ConversionArguments(bindingDetail.EntityProperty.Name, bindingDetail.EntityProperty.PropertyType, bindingDetail.ValueKey);
         }

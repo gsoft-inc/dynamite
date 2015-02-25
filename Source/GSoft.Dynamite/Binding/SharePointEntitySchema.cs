@@ -27,7 +27,7 @@ namespace GSoft.Dynamite.Binding
         /// <returns>
         /// The conversion arguments.
         /// </returns>
-        protected internal override ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection, SPWeb web)
+        protected internal override ConversionArguments GetConversionArguments(EntityBindingDetail bindingDetail, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             var listItemValues = values as ISharePointListItemValues;
             if (listItemValues != null)
@@ -36,7 +36,7 @@ namespace GSoft.Dynamite.Binding
             }
             else
             {
-                return base.GetConversionArguments(bindingDetail, values, fieldCollection, web);
+                return base.GetConversionArguments(bindingDetail, values, fieldCollection);
             }
         }
     }
