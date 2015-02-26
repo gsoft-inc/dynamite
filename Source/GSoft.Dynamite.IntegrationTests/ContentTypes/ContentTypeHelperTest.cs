@@ -1288,5 +1288,106 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
             }
         }
         #endregion
+
+        #region Modifying a content type's field required property should update the field link
+
+        /// <summary>
+        /// Validates that EnsureContentType changes the field link required property if it's different from it's field information
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenModifyingFieldRequiredProperty_ShouldUpdateContentTypeFieldLink()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var requiredBodyField = BuiltInFields.Body;
+                requiredBodyField.Required = RequiredType.Required;
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            requiredBodyField
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.IsTrue(actualContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                    Assert.IsTrue(actualRefetchedContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType changes the field link required property if it's different from it's field information
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenNotModifyingFieldRequiredProperty_ShouldNotUpdateContentTypeFieldLink()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                // Note: the body field is already "not required"
+                var notRequiredBodyField = BuiltInFields.Body;
+                notRequiredBodyField.Required = RequiredType.NotRequired;
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            notRequiredBodyField
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.IsFalse(actualContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                    Assert.IsFalse(actualRefetchedContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                }
+            }
+        }
+
+        #endregion
     }
 }
