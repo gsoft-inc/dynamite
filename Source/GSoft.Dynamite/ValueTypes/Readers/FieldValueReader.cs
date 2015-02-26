@@ -23,8 +23,8 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             DoubleValueReader doubleValueReader,
             DateTimeValueReader dateTimeValueReader,
             GuidValueReader guidValueReader,
-            //TaxonomyFullValueReader taxonomyValueReader,
-            //TaxonomyFullValueCollectionReader taxonomyValueCollectionReader,
+            TaxonomyValueReader taxonomyValueReader,
+            TaxonomyValueCollectionReader taxonomyValueCollectionReader,
             LookupValueReader lookupValueReader,
             LookupValueCollectionReader lookupValueCollectionReader,
             PrincipalValueReader principalValueReader,
@@ -40,6 +40,8 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             this.AddToReadersDictionary(doubleValueReader);
             this.AddToReadersDictionary(dateTimeValueReader);
             this.AddToReadersDictionary(guidValueReader);
+            this.AddToReadersDictionary(taxonomyValueReader);
+            this.AddToReadersDictionary(taxonomyValueCollectionReader);
             this.AddToReadersDictionary(lookupValueReader);
             this.AddToReadersDictionary(lookupValueCollectionReader);
             this.AddToReadersDictionary(principalValueReader);

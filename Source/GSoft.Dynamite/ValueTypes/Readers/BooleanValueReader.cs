@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 
-            if (fieldValue != null && !(fieldValue is System.DBNull))
+            if (fieldValue != null && fieldValue != System.DBNull.Value)
             {
                 return fieldValue.ToString() == "1";
             }

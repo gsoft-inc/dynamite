@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -47,6 +49,22 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
+        /// Convenience constructor to create TermInfo objects out of SharePoint's Term
+        /// instances
+        /// </summary>
+        /// <param name="sharePointTerm">The SharePoint taxonomy term</param>
+        public TermInfo(Term sharePointTerm)
+        {
+            IDictionary<CultureInfo, string> labels = new Dictionary<CultureInfo, string>();
+            sharePointTerm.Labels.Cast<Label>().ToList().ForEach(l => labels.Add(new CultureInfo(l.Language), l.Value));
+
+            this.Id = sharePointTerm.Id;
+            this.Labels = labels;
+            this.TermSet = new TermSetInfo(sharePointTerm.TermSet);
+            this.CustomSortPosition = GetCustomSortOrderFromParent(sharePointTerm);
+        }
+
+        /// <summary>
         /// GUID of the term
         /// </summary>
         public Guid Id { get; private set; }
@@ -84,5 +102,42 @@ namespace GSoft.Dynamite.Taxonomy
         /// Gets or sets the custom sort position.
         /// </summary>
         public int CustomSortPosition { get; set; }
+
+        private static int GetCustomSortOrderFromParent(Term term)
+        {
+            int sortPosition = 0;
+            string parentCustomSortOrder = string.Empty;
+
+            if (term.Parent != null)
+            {
+                // Parent term holds the custom sort order
+                parentCustomSortOrder = term.Parent.CustomSortOrder;
+            }
+            else
+            {
+                // At root of term set the TermSet object holds the wacky ordering string
+                parentCustomSortOrder = term.TermSet.CustomSortOrder;
+            }
+
+            if (!string.IsNullOrEmpty(parentCustomSortOrder))
+            {
+                // Format is {GUID}:{GUID}:{GUID} and so on for all child terms
+                string[] split = parentCustomSortOrder.Split(':');
+
+                var currentPosition = 0;
+                foreach (string guid in split)
+                {
+                    currentPosition++;
+
+                    if (new Guid(guid) == term.Id)
+                    {
+                        sortPosition = currentPosition;
+                        break;
+                    }
+                }
+            }
+
+            return sortPosition;
+        }
     }
 }

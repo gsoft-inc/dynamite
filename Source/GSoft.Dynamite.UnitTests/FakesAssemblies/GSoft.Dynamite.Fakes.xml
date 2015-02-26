@@ -8116,24 +8116,6 @@
         <member name="P:GSoft.Dynamite.Extensions.Fakes.ShimEnumerableExtensions.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension">
-            <summary>Shim type of GSoft.Dynamite.Extensions.GuidExtension</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension.#ctor">
-            <summary>Initializes a new shim instance</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension.BehaveAsCurrent">
-            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension.BehaveAsNotImplemented">
-            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension.Behavior">
-            <summary>Assigns the behavior for all methods of the shimmed type</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Extensions.Fakes.ShimGuidExtension.TryParseStringGuidOut">
-            <summary>Sets the shim of GuidExtension.TryParse(String s, Guid&amp; result)</summary>
-        </member>
         <member name="T:GSoft.Dynamite.Extensions.Fakes.ShimWebExtensions">
             <summary>Shim type of GSoft.Dynamite.Extensions.WebExtensions</summary>
         </member>
@@ -20839,6 +20821,9 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermGroupInfo.Constructor">
             <summary>Sets the shim of TermGroupInfo.TermGroupInfo()</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermGroupInfo.ConstructorGroup">
+            <summary>Sets the shim of TermGroupInfo.TermGroupInfo(Group sharePointTermGroup)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermGroupInfo.ConstructorGuidString">
             <summary>Sets the shim of TermGroupInfo.TermGroupInfo(Guid id, String name)</summary>
         </member>
@@ -20923,11 +20908,17 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.ConstructorGuidStringTermSetInfo">
             <summary>Sets the shim of TermInfo.TermInfo(Guid id, String label, TermSetInfo termSet)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.ConstructorTerm">
+            <summary>Sets the shim of TermInfo.TermInfo(Term sharePointTerm)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.CustomSortPositionGet">
             <summary>Sets the shim of TermInfo.get_CustomSortPosition()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.CustomSortPositionSetInt32">
             <summary>Sets the shim of TermInfo.set_CustomSortPosition(Int32 value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.GetCustomSortOrderFromParentTerm">
+            <summary>Sets the shim of TermInfo.GetCustomSortOrderFromParent(Term term)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermInfo.IdGet">
             <summary>Sets the shim of TermInfo.get_Id()</summary>
@@ -21019,6 +21010,9 @@
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermSetInfo.ConstructorGuidStringTermGroupInfo">
             <summary>Sets the shim of TermSetInfo.TermSetInfo(Guid id, String label, TermGroupInfo termGroup)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermSetInfo.ConstructorTermSet">
+            <summary>Sets the shim of TermSetInfo.TermSetInfo(TermSet sharePointTermSet)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermSetInfo.GroupGet">
             <summary>Sets the shim of TermSetInfo.get_Group()</summary>
         </member>
@@ -21093,6 +21087,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermStoreInfo.ConstructorGuidString">
             <summary>Sets the shim of TermStoreInfo.TermStoreInfo(Guid id, String name)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermStoreInfo.ConstructorTermStore">
+            <summary>Sets the shim of TermStoreInfo.TermStoreInfo(TermStore sharePointTermStore)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Taxonomy.Fakes.ShimTermStoreInfo.IdGet">
             <summary>Sets the shim of TermStoreInfo.get_Id()</summary>
@@ -21538,6 +21535,9 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermGroupInfo.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermGroupInfo.#ctor(Microsoft.SharePoint.Taxonomy.Group)">
+            <summary>Initializes a new instance</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermGroupInfo.#ctor(System.Guid,System.String)">
             <summary>Initializes a new instance</summary>
         </member>
@@ -21562,6 +21562,9 @@
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermInfo.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermInfo.#ctor(Microsoft.SharePoint.Taxonomy.Term)">
+            <summary>Initializes a new instance</summary>
+        </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermInfo.#ctor(System.Guid,System.String,GSoft.Dynamite.Taxonomy.TermSetInfo)">
             <summary>Initializes a new instance</summary>
         </member>
@@ -21584,6 +21587,9 @@
             <summary>Stub type of GSoft.Dynamite.Taxonomy.TermSetInfo</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermSetInfo.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermSetInfo.#ctor(Microsoft.SharePoint.Taxonomy.TermSet)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermSetInfo.#ctor(System.Guid,System.String)">
@@ -21614,6 +21620,9 @@
             <summary>Stub type of GSoft.Dynamite.Taxonomy.TermStoreInfo</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermStoreInfo.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermStoreInfo.#ctor(Microsoft.SharePoint.Taxonomy.TermStore)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Taxonomy.Fakes.StubTermStoreInfo.#ctor(System.Guid,System.String)">
@@ -22582,6 +22591,12 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.Constructor">
             <summary>Sets the shim of TaxonomyFullValue.TaxonomyFullValue()</summary>
         </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.ConstructorTaxonomyFieldValue">
+            <summary>Sets the shim of TaxonomyFullValue.TaxonomyFullValue(TaxonomyFieldValue fieldValue)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.ConstructorTerm">
+            <summary>Sets the shim of TaxonomyFullValue.TaxonomyFullValue(Term term)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.ConstructorTermInfo">
             <summary>Sets the shim of TaxonomyFullValue.TaxonomyFullValue(TermInfo termInfo)</summary>
         </member>
@@ -22590,6 +22605,12 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.ContextSetTaxonomyContext">
             <summary>Sets the shim of TaxonomyFullValue.set_Context(TaxonomyContext value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.IdGet">
+            <summary>Sets the shim of TaxonomyFullValue.get_Id()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.LabelGet">
+            <summary>Sets the shim of TaxonomyFullValue.get_Label()</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.TermGet">
             <summary>Sets the shim of TaxonomyFullValue.get_Term()</summary>
@@ -22605,6 +22626,12 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.AllInstances.ContextSetTaxonomyContext">
             <summary>Sets the shim of TaxonomyFullValue.set_Context(TaxonomyContext value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.AllInstances.IdGet">
+            <summary>Sets the shim of TaxonomyFullValue.get_Id()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.AllInstances.LabelGet">
+            <summary>Sets the shim of TaxonomyFullValue.get_Label()</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValue.AllInstances.TermGet">
             <summary>Sets the shim of TaxonomyFullValue.get_Term()</summary>
@@ -22659,6 +22686,18 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection.ConstructorIListOfTaxonomyFullValue">
             <summary>Sets the shim of TaxonomyFullValueCollection.TaxonomyFullValueCollection(IList`1&lt;TaxonomyFullValue&gt; taxonomyValues)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection.ConstructorIListOfTerm">
+            <summary>Sets the shim of TaxonomyFullValueCollection.TaxonomyFullValueCollection(IList`1&lt;Term&gt; termsCollection)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection.ConstructorTaxonomyFieldValueCollection">
+            <summary>Sets the shim of TaxonomyFullValueCollection.TaxonomyFullValueCollection(TaxonomyFieldValueCollection taxonomyFieldValueCollection)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection._ctorb__0Term">
+            <summary>Sets the shim of TaxonomyFullValueCollection.&lt;.ctor&gt;b__0(Term term)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection._ctorb__2TaxonomyFieldValue">
+            <summary>Sets the shim of TaxonomyFullValueCollection.&lt;.ctor&gt;b__2(TaxonomyFieldValue taxFieldValue)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Fakes.ShimTaxonomyFullValueCollection.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -23155,6 +23194,12 @@
         <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValue.#ctor(GSoft.Dynamite.Taxonomy.TermInfo)">
             <summary>Initializes a new instance</summary>
         </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValue.#ctor(Microsoft.SharePoint.Taxonomy.TaxonomyFieldValue)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValue.#ctor(Microsoft.SharePoint.Taxonomy.Term)">
+            <summary>Initializes a new instance</summary>
+        </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValue.InitializeStub">
             <summary>Initializes a new instance of type StubTaxonomyFullValue</summary>
         </member>
@@ -23173,7 +23218,13 @@
         <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValueCollection.#ctor">
             <summary>Initializes a new instance</summary>
         </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValueCollection.#ctor(Microsoft.SharePoint.Taxonomy.TaxonomyFieldValueCollection)">
+            <summary>Initializes a new instance</summary>
+        </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValueCollection.#ctor(System.Collections.Generic.IList{GSoft.Dynamite.ValueTypes.TaxonomyFullValue})">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValueCollection.#ctor(System.Collections.Generic.IList{Microsoft.SharePoint.Taxonomy.Term})">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Fakes.StubTaxonomyFullValueCollection.ClearItems">
@@ -23857,6 +23908,108 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimPrincipalValueReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
             <summary>Sets the shim of PrincipalValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueCollectionReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.#ctor(GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueCollectionReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.Constructor">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.TaxonomyValueCollectionReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.InitTaxonomyContextForValuesTaxonomyFullValueCollectionTaxonomyFieldSPSite">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.InitTaxonomyContextForValues(TaxonomyFullValueCollection taxValueCollection, TaxonomyField field, SPSite site)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.InitTaxonomyContextForValuesTaxonomyFullValueCollectionTaxonomyFieldSPSite">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.InitTaxonomyContextForValues(TaxonomyFullValueCollection taxValueCollection, TaxonomyField field, SPSite site)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader">
+            <summary>Shim type of GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.#ctor(GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueReader)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.Constructor">
+            <summary>Sets the shim of TaxonomyValueReader.TaxonomyValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.InitTaxonomyContextForValueTaxonomyFullValueTaxonomyFieldSPSite">
+            <summary>Sets the shim of TaxonomyValueReader.InitTaxonomyContextForValue(TaxonomyFullValue taxValue, TaxonomyField field, SPSite site)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.InitTaxonomyContextForValueTaxonomyFullValueTaxonomyFieldSPSite">
+            <summary>Sets the shim of TaxonomyValueReader.InitTaxonomyContextForValue(TaxonomyFullValue taxValue, TaxonomyField field, SPSite site)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.ReadValueFromListItemSPListItemString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the shim of TaxonomyValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimUrlValueReader">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Readers.UrlValueReader</summary>
         </member>
@@ -24430,6 +24583,78 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubPrincipalValueReader.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueCollectionReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.InitializeStub">
+            <summary>Initializes a new instance of type StubTaxonomyValueCollectionReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(Microsoft.SharePoint.SPWeb,System.Data.DataRow,System.String)">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of TaxonomyValueCollectionReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueCollectionReader.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.#ctor">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.InitializeStub">
+            <summary>Initializes a new instance of type StubTaxonomyValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromCamlResultDataRow(Microsoft.SharePoint.SPWeb,System.Data.DataRow,System.String)">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromCamlResultDataRowSPWebDataRowString">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromListItem(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromListItemSPListItemString">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromListItemVersion(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.ReadValueFromListItemVersionSPListItemVersionString">
+            <summary>Sets the stub of TaxonomyValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubTaxonomyValueReader.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubUrlValueReader">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Readers.UrlValueReader</summary>
         </member>
@@ -24739,8 +24964,8 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ConstructorStringValueReaderBooleanValueReaderIntegerValueReaderDoubleValueReaderDateTimeValueReaderGuidValueReaderLookupValueReaderLookupValueCollectionReaderPrincipalValueReaderUserValueReaderUserValueCollectionReaderUrlValueReaderImageValueReaderMediaVa">
-            <summary>Sets the shim of FieldValueReader.FieldValueReader(StringValueReader stringValueReader, BooleanValueReader boolValueReader, IntegerValueReader integerValueReader, DoubleValueReader doubleValueReader, DateTimeValueReader dateTimeValueReader, GuidValueReader guidValueReader, LookupValueReader lookupValueReader, LookupValueCollectionReader lookupValueCollectionReader, PrincipalValueReader principalValueReader, UserValueReader userValueReader, UserValueCollectionReader userValueCollectionReader, UrlValueReader urlValueReader, ImageValueReader imageValueReader, MediaValueReader mediaValueReader)</summary>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ConstructorStringValueReaderBooleanValueReaderIntegerValueReaderDoubleValueReaderDateTimeValueReaderGuidValueReaderTaxonomyValueReaderTaxonomyValueCollectionReaderLookupValueReaderLookupValueCollectionReaderPrincipalValueReaderUserValueReaderUserValueColle">
+            <summary>Sets the shim of FieldValueReader.FieldValueReader(StringValueReader stringValueReader, BooleanValueReader boolValueReader, IntegerValueReader integerValueReader, DoubleValueReader doubleValueReader, DateTimeValueReader dateTimeValueReader, GuidValueReader guidValueReader, TaxonomyValueReader taxonomyValueReader, TaxonomyValueCollectionReader taxonomyValueCollectionReader, LookupValueReader lookupValueReader, LookupValueCollectionReader lookupValueCollectionReader, PrincipalValueReader principalValueReader, UserValueReader userValueReader, UserValueCollectionReader userValueCollectionReader, UrlValueReader urlValueReader, ImageValueReader imageValueReader, MediaValueReader mediaValueReader)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetReaderType">
             <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
@@ -25651,7 +25876,7 @@
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueReader</summary>
         </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueReader,GSoft.Dynamite.ValueTypes.Readers.BooleanValueReader,GSoft.Dynamite.ValueTypes.Readers.IntegerValueReader,GSoft.Dynamite.ValueTypes.Readers.DoubleValueReader,GSoft.Dynamite.ValueTypes.Readers.DateTimeValueReader,GSoft.Dynamite.ValueTypes.Readers.GuidValueReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.PrincipalValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.UrlValueReader,GSoft.Dynamite.ValueTypes.Readers.ImageValueReader,GSoft.Dynamite.ValueTypes.Readers.MediaValueReader)">
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueReader,GSoft.Dynamite.ValueTypes.Readers.BooleanValueReader,GSoft.Dynamite.ValueTypes.Readers.IntegerValueReader,GSoft.Dynamite.ValueTypes.Readers.DoubleValueReader,GSoft.Dynamite.ValueTypes.Readers.DateTimeValueReader,GSoft.Dynamite.ValueTypes.Readers.GuidValueReader,GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueReader,GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.PrincipalValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.UrlValueReader,GSoft.Dynamite.ValueTypes.Readers.ImageValueReader,GSoft.Dynamite.ValueTypes.Readers.MediaValueReader)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.InitializeStub">

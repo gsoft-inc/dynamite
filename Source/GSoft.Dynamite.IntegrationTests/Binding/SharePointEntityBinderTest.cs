@@ -326,8 +326,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         userFieldInfo,
                         userMultiFieldInfo,
                         mediaFieldInfo,
-                        //taxoFieldInfo,
-                        //taxoMultiFieldInfo
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
                     };
 
                 ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
@@ -418,13 +418,13 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     Assert.IsTrue(entityMappedFromSingleItem.MediaProperty.IsLoop);
                     Assert.AreEqual("/_layouts/15/Images/logo.png", entityMappedFromSingleItem.MediaProperty.PreviewImageUrl);
 
-                    //Assert.AreEqual(levelOneTermB.Id, entityMappedFromSingleItem.TaxonomyProperty.Id);
-                    //Assert.AreEqual(levelOneTermB.Label, entityMappedFromSingleItem.TaxonomyProperty.Label);
+                    Assert.AreEqual(levelOneTermB.Id, entityMappedFromSingleItem.TaxonomyProperty.Id);
+                    Assert.AreEqual(levelOneTermB.Label, entityMappedFromSingleItem.TaxonomyProperty.Label);
 
-                    //Assert.AreEqual(levelTwoTermAA.Id, entityMappedFromSingleItem.TaxonomyMultiProperty[0].Id);
-                    //Assert.AreEqual(levelTwoTermAA.Label, entityMappedFromSingleItem.TaxonomyMultiProperty[0].Label);
-                    //Assert.AreEqual(levelTwoTermAB.Id, entityMappedFromSingleItem.TaxonomyMultiProperty[1].Id);
-                    //Assert.AreEqual(levelTwoTermAB.Label, entityMappedFromSingleItem.TaxonomyMultiProperty[1].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, entityMappedFromSingleItem.TaxonomyMultiProperty[0].Id);
+                    Assert.AreEqual(levelTwoTermAA.Label, entityMappedFromSingleItem.TaxonomyMultiProperty[0].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, entityMappedFromSingleItem.TaxonomyMultiProperty[1].Id);
+                    Assert.AreEqual(levelTwoTermAB.Label, entityMappedFromSingleItem.TaxonomyMultiProperty[1].Label);
 
                     //// #2 Validate straight list item collection to entity mappings
                     Assert.AreEqual(555, entitiesMappedFromItemCollection[0].IntegerProperty);
@@ -456,13 +456,13 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     Assert.IsTrue(entitiesMappedFromItemCollection[0].MediaProperty.IsLoop);
                     Assert.AreEqual("/_layouts/15/Images/logo.png", entitiesMappedFromItemCollection[0].MediaProperty.PreviewImageUrl);
 
-                    //Assert.AreEqual(levelOneTermB.Id, entitiesMappedFromItemCollection[0].TaxonomyProperty.Id);
-                    //Assert.AreEqual(levelOneTermB.Label, entitiesMappedFromItemCollection[0].TaxonomyProperty.Label);
+                    Assert.AreEqual(levelOneTermB.Id, entitiesMappedFromItemCollection[0].TaxonomyProperty.Id);
+                    Assert.AreEqual(levelOneTermB.Label, entitiesMappedFromItemCollection[0].TaxonomyProperty.Label);
 
-                    //Assert.AreEqual(levelTwoTermAA.Id, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[0].Id);
-                    //Assert.AreEqual(levelTwoTermAA.Label, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[0].Label);
-                    //Assert.AreEqual(levelTwoTermAB.Id, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[1].Id);
-                    //Assert.AreEqual(levelTwoTermAB.Label, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[1].Label);
+                    Assert.AreEqual(levelTwoTermAA.Id, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[0].Id);
+                    Assert.AreEqual(levelTwoTermAA.Label, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[0].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[1].Id);
+                    Assert.AreEqual(levelTwoTermAB.Label, entitiesMappedFromItemCollection[0].TaxonomyMultiProperty[1].Label);
                 }
 
                 // Cleanup term set so that we don't pollute the metadata store
@@ -470,6 +470,12 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                 defaultSiteCollectionTermStore.CommitAll();
             }
         }
+
+        // MORE TEST CASE Suggestions:
+        // - All nulls in list items ToEntity
+        // - Document Lib items To/From
+        // - PublishingPage.ListItem DateTime binding
+        
 
         /// <summary>
         /// Validates that using the ISharePointEntityBinder to map an entity's properties to
@@ -699,8 +705,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         userFieldInfo,
                         userMultiFieldInfo,
                         mediaFieldInfo,
-                        //taxoFieldInfo,
-                        //taxoMultiFieldInfo
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
                     };
 
                 ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
@@ -777,13 +783,13 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         },
-                        //TaxonomyProperty = new TaxonomyValue(createdTermB), //TODO: This should become TaxonomyFullValue
-                        //TaxonomyMultiProperty = new TaxonomyValueCollection(
-                        //new List<TaxonomyValue>() 
-                        //    { 
-                        //        new TaxonomyValue(createdTermAA), 
-                        //        new TaxonomyValue(createdTermAB)
-                        //    })
+                        TaxonomyProperty = new TaxonomyFullValue(createdTermB), //TODO: This should become TaxonomyFullValue
+                        TaxonomyMultiProperty = new TaxonomyFullValueCollection(
+                        new List<TaxonomyFullValue>() 
+                            { 
+                                new TaxonomyFullValue(createdTermAA), 
+                                new TaxonomyFullValue(createdTermAB)
+                            })
                     };
 
                     // Act (create the list item and bind the Entity's values to it)
@@ -847,18 +853,18 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     Assert.IsTrue(mediaFieldVal.Loop);
                     Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
 
-                    //var taxoFieldValue = (TaxonomyFieldValue)itemOnList["TestInternalNameTaxo"];
-                    //Assert.AreNotEqual(-1, taxoFieldValue.WssId);
-                    //Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
-                    //Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+                    var taxoFieldValue = (TaxonomyFieldValue)itemOnList["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
 
-                    //var taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemOnList["TestInternalNameTaxoMulti"];
-                    //Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
-                    //Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
-                    //Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
-                    //Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
-                    //Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
-                    //Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                    var taxoFieldValueMulti = (TaxonomyFieldValueCollection)itemOnList["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
 
                     // #2: validate ListItem field values on the re-fetched list item
                     var refetchedItemOnList = list.GetItemById(itemOnList.ID);
@@ -916,18 +922,18 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     Assert.IsTrue(mediaFieldVal.Loop);
                     Assert.AreEqual("/_layouts/15/Images/logo.png", mediaFieldVal.PreviewImageSource);
 
-                    //taxoFieldValue = (TaxonomyFieldValue)refetchedItemOnList["TestInternalNameTaxo"];
-                    //Assert.AreNotEqual(-1, taxoFieldValue.WssId);
-                    //Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
-                    //Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
+                    taxoFieldValue = (TaxonomyFieldValue)refetchedItemOnList["TestInternalNameTaxo"];
+                    Assert.AreNotEqual(-1, taxoFieldValue.WssId);
+                    Assert.AreEqual(levelOneTermB.Id, new Guid(taxoFieldValue.TermGuid));
+                    Assert.AreEqual(levelOneTermB.Label, taxoFieldValue.Label);
 
-                    //taxoFieldValueMulti = (TaxonomyFieldValueCollection)refetchedItemOnList["TestInternalNameTaxoMulti"];
-                    //Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
-                    //Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
-                    //Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
-                    //Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
-                    //Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
-                    //Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
+                    taxoFieldValueMulti = (TaxonomyFieldValueCollection)refetchedItemOnList["TestInternalNameTaxoMulti"];
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[0].WssId);
+                    Assert.AreEqual(levelTwoTermAA.Id, new Guid(taxoFieldValueMulti[0].TermGuid));
+                    Assert.AreEqual(levelTwoTermAA.Label, taxoFieldValueMulti[0].Label);
+                    Assert.AreNotEqual(-1, taxoFieldValueMulti[1].WssId);
+                    Assert.AreEqual(levelTwoTermAB.Id, new Guid(taxoFieldValueMulti[1].TermGuid));
+                    Assert.AreEqual(levelTwoTermAB.Label, taxoFieldValueMulti[1].Label);
                 }
 
                 // Cleanup term set so that we don't pollute the metadata store
@@ -983,11 +989,11 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             [Property("TestInternalNameMedia")]
             public MediaValue MediaProperty { get; set; }
 
-            //[Property("TestInternalNameTaxo")]
-            //public TaxonomyValue TaxonomyProperty { get; set; }    // TODO: consolidate TaxonomyValue and TaxonomyFullValue
+            [Property("TestInternalNameTaxo")]
+            public TaxonomyFullValue TaxonomyProperty { get; set; }
 
-            //[Property("TestInternalNameTaxoMulti")]
-            //public TaxonomyValueCollection TaxonomyMultiProperty { get; set; } 
+            [Property("TestInternalNameTaxoMulti")]
+            public TaxonomyFullValueCollection TaxonomyMultiProperty { get; set; } 
         }
 
         public class TestItemEntityWithLookups : TestItemEntity

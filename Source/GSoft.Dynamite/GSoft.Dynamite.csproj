@@ -94,6 +94,8 @@
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
+    <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
+    <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />
     <Compile Include="ValueTypes\Readers\LookupValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\UserValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\LookupValueReader.cs" />
@@ -318,7 +320,6 @@
     <Compile Include="Collections\SnaspshotConcurrentList.cs" />
     <Compile Include="Extensions\ElevationExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
-    <Compile Include="Extensions\GuidExtension.cs" />
     <Compile Include="Extensions\WebExtensions.cs" />
     <Compile Include="Globalization\IResourceLocatorConfig.cs" />
     <Compile Include="Globalization\Language.cs" />

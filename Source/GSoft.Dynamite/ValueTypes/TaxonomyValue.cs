@@ -31,7 +31,7 @@ namespace GSoft.Dynamite.ValueTypes
                 throw new ArgumentNullException("taxonomyValue");
             }
 
-            if (!GuidExtension.TryParse(taxonomyValue.TermGuid, out termGuid))
+            if (!Guid.TryParse(taxonomyValue.TermGuid, out termGuid))
             {
                 throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "taxonomyValue");
             }

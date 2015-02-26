@@ -108,8 +108,8 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DoubleValueReader>();
             builder.RegisterType<DateTimeValueReader>();
             builder.RegisterType<GuidValueReader>();
-            //builder.RegisterType<TaxonomyFullValueReader>();
-            //builder.RegisterType<TaxonomyFullValueCollectionReader>();
+            builder.RegisterType<TaxonomyValueReader>();
+            builder.RegisterType<TaxonomyValueCollectionReader>();
             builder.RegisterType<LookupValueReader>();
             builder.RegisterType<LookupValueCollectionReader>();
             builder.RegisterType<PrincipalValueReader>();

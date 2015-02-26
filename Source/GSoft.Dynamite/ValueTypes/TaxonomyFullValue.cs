@@ -1,4 +1,11 @@
-﻿using GSoft.Dynamite.Taxonomy;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Taxonomy;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.ValueTypes
 {
@@ -25,63 +32,44 @@ namespace GSoft.Dynamite.ValueTypes
             this.Context = new TaxonomyContext(termInfo.TermSet);
         }
 
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
-        ///// </summary>
-        ///// <remarks>This constructor will not ensure the label respect the CurrentUICulture</remarks>
-        ///// <param name="field">The list field from which the TaxonomyFieldValue was extracted. This is needed to extract the full TaxonomyContext.</param>
-        ///// <param name="fieldValue">The actual taxonomy field value.</param>
-        ////public TaxonomyFullValue(TaxonomyField field, TaxonomyFieldValue fieldValue)
-        ////{
-            
-        ////    field.
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
+        /// </summary>
+        /// <remarks>This constructor will not ensure the label respect the CurrentUICulture</remarks>
+        /// <param name="field">The list field from which the TaxonomyFieldValue was extracted. This is needed to extract the full TaxonomyContext.</param>
+        /// <param name="fieldValue">The actual taxonomy field value.</param>
+        public TaxonomyFullValue(TaxonomyFieldValue fieldValue)
+        {
+            Guid termGuid;
 
-        ////    //Guid termGuid;
+            if (fieldValue == null)
+            {
+                throw new ArgumentNullException("fieldValue");
+            }
 
-        ////    //if (taxonomyValue == null)
-        ////    //{
-        ////    //    throw new ArgumentNullException("taxonomyValue");
-        ////    //}
+            if (!Guid.TryParse(fieldValue.TermGuid, out termGuid))
+            {
+                throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "taxonomyValue");
+            }
 
-        ////    //if (!GuidExtension.TryParse(taxonomyValue.TermGuid, out termGuid))
-        ////    //{
-        ////    //    throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "taxonomyValue");
-        ////    //}
+            this.Term = new TermInfo(termGuid, fieldValue.Label, null);
+            this.Context = null;
+        }
 
-        ////    //this.Id = termGuid;
-        ////    //this.Label = taxonomyValue.Label;
-        ////}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
+        /// </summary>
+        /// <param name="term">The term.</param>
+        public TaxonomyFullValue(Term term)
+        {
+            if (term == null)
+            {
+                throw new ArgumentNullException("term");
+            }
 
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
-        ///// </summary>
-        ///// <param name="term">The term.</param>
-        ////public TaxonomyFullValue(Term term)
-        ////{
-        ////    throw new NotImplementedException();
-
-        ////    //if (term == null)
-        ////    //{
-        ////    //    throw new ArgumentNullException("term");
-        ////    //}
-
-        ////    //this.Id = term.Id;
-
-        ////    //// Respect the current user's MUI language selection
-        ////    //string currentUiLabel = term.GetDefaultLabel(CultureInfo.CurrentUICulture.LCID);
-
-        ////    //if (!string.IsNullOrEmpty(currentUiLabel))
-        ////    //{
-        ////    //    this.Label = currentUiLabel;
-        ////    //}
-        ////    //else if (term.Labels.Count > 0)
-        ////    //{
-        ////    //    // if no label exists in the current UI language, just fall back on the first of the bunch 
-        ////    //    this.Label = term.Labels[0].Value;
-        ////    //}
-            
-        ////    //this.CustomSortPosition = GetCustomSortOrderFromParent(term);
-        ////}
+            this.Term = new TermInfo(term);
+            this.Context = new TaxonomyContext(new TermSetInfo(term.TermSet));
+        }
 
         /// <summary>
         /// Gets or sets the Term definition
@@ -92,5 +80,27 @@ namespace GSoft.Dynamite.ValueTypes
         /// Gets or sets the Term's parent context objects.
         /// </summary>
         public TaxonomyContext Context { get; set; }
+
+        /// <summary>
+        /// Gets the Term's unique Id
+        /// </summary>
+        public Guid Id 
+        { 
+            get
+            {
+                return this.Term.Id;
+            }
+        }
+
+        /// <summary>
+        /// Gets the Term's label in the current UI culture
+        /// </summary>
+        public string Label
+        {
+            get
+            {
+                return this.Term.Label;
+            }
+        }
     }
 }
