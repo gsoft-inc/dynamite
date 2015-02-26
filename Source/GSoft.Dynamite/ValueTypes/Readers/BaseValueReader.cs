@@ -6,9 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using Microsoft.SharePoint;
-using GSoft.Dynamite.ValueTypes.Readers;
 
-namespace GSoft.Dynamite.ValueTypes.Writers
+namespace GSoft.Dynamite.ValueTypes.Readers
 {
     /// <summary>
     /// Defines the generic contract for all ValueType readers
@@ -45,9 +44,10 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Reads a field value from a DataRow returned by a CAML query
         /// </summary>
+        /// <param name="web">The context's web</param>
         /// <param name="dataRowFromCamlResult">The CAML-query-result data row we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
         /// <returns>The value extracted from the data row's corresponding cell</returns>
-        public abstract T ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, string fieldInternalName);
+        public abstract T ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, string fieldInternalName);
     }
 }

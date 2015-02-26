@@ -6,10 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
 using Microsoft.SharePoint;
-using GSoft.Dynamite.ValueTypes.Readers;
 using Microsoft.SharePoint.Publishing.Fields;
 
-namespace GSoft.Dynamite.ValueTypes.Writers
+namespace GSoft.Dynamite.ValueTypes.Readers
 {
     /// <summary>
     /// Reads PublishingImage-based field values
@@ -19,7 +18,6 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Reads a field value from a list item
         /// </summary>
-        /// <typeparam name="T">The field's associated value type</typeparam>
         /// <param name="item">The list item we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field in the item's columns</param>
         /// <returns>The value extracted from the list item's field</returns>
@@ -58,10 +56,11 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Reads a field value from a DataRow returned by a CAML query
         /// </summary>
+        /// <param name="web">The context's web</param>
         /// <param name="dataRowFromCamlResult">The CAML-query-result data row we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
         /// <returns>The value extracted from the data row's corresponding cell</returns>
-        public override ImageValue ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, string fieldInternalName)
+        public override ImageValue ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, string fieldInternalName)
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 

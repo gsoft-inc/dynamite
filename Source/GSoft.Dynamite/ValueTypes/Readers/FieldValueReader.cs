@@ -18,13 +18,36 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
         public FieldValueReader(
             StringValueReader stringValueReader,
-            BooleanValueReader booleanValueReader,
-            ImageValueReader imageValueReader
-            )
+            BooleanValueReader boolValueReader,
+            IntegerValueReader integerValueReader,
+            DoubleValueReader doubleValueReader,
+            DateTimeValueReader dateTimeValueReader,
+            GuidValueReader guidValueReader,
+            //TaxonomyFullValueReader taxonomyValueReader,
+            //TaxonomyFullValueCollectionReader taxonomyValueCollectionReader,
+            LookupValueReader lookupValueReader,
+            LookupValueCollectionReader lookupValueCollectionReader,
+            PrincipalValueReader principalValueReader,
+            UserValueReader userValueReader,
+            UserValueCollectionReader userValueCollectionReader,
+            UrlValueReader urlValueReader,
+            ImageValueReader imageValueReader,
+            MediaValueReader mediaValueReader)
         {
             this.AddToReadersDictionary(stringValueReader);
-            this.AddToReadersDictionary(booleanValueReader);
+            this.AddToReadersDictionary(boolValueReader);
+            this.AddToReadersDictionary(integerValueReader);
+            this.AddToReadersDictionary(doubleValueReader);
+            this.AddToReadersDictionary(dateTimeValueReader);
+            this.AddToReadersDictionary(guidValueReader);
+            this.AddToReadersDictionary(lookupValueReader);
+            this.AddToReadersDictionary(lookupValueCollectionReader);
+            this.AddToReadersDictionary(principalValueReader);
+            this.AddToReadersDictionary(userValueReader);
+            this.AddToReadersDictionary(userValueCollectionReader);
+            this.AddToReadersDictionary(urlValueReader);
             this.AddToReadersDictionary(imageValueReader);
+            this.AddToReadersDictionary(mediaValueReader);
         }
 
         /// <summary>

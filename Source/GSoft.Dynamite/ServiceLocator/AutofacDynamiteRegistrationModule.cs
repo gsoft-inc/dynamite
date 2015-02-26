@@ -104,7 +104,20 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<FieldValueReader>().As<IFieldValueReader>();
             builder.RegisterType<StringValueReader>();
             builder.RegisterType<BooleanValueReader>();
+            builder.RegisterType<IntegerValueReader>();
+            builder.RegisterType<DoubleValueReader>();
+            builder.RegisterType<DateTimeValueReader>();
+            builder.RegisterType<GuidValueReader>();
+            //builder.RegisterType<TaxonomyFullValueReader>();
+            //builder.RegisterType<TaxonomyFullValueCollectionReader>();
+            builder.RegisterType<LookupValueReader>();
+            builder.RegisterType<LookupValueCollectionReader>();
+            builder.RegisterType<PrincipalValueReader>();
+            builder.RegisterType<UserValueReader>();
+            builder.RegisterType<UserValueCollectionReader>();
+            builder.RegisterType<UrlValueReader>();
             builder.RegisterType<ImageValueReader>();
+            builder.RegisterType<MediaValueReader>();
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();

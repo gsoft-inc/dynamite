@@ -49,21 +49,22 @@ namespace GSoft.Dynamite.Binding
         public void FromEntity<T>(T entity, SPListItem listItem)
         {
             var schema = this.entitySchemaFactory.GetSchema(typeof(T));
+            var listItemFields = listItem.Fields;
 
             foreach (var binding in schema.PropertyConversionDetails.ToList().Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))
             {
                 var valueFromEntity = binding.EntityProperty.GetValue(entity, null);
-                var writer = binding.ValueWriter;
-
+                IBaseValueWriter writer = binding.ValueWriter;
+                
+                // Create a MinimalFieldInfo<TValueType> to feed into the FieldValueInfo needed to
+                // interact with IBaseValueWriter
                 var minimalFieldInfoType = typeof(MinimalFieldInfo<>).MakeGenericType(writer.AssociatedValueType);
                 string fieldInternalName = binding.ValueKey;
-
-                SPField itemField = listItem.Fields.GetFieldByInternalName(fieldInternalName);
-
+                SPField itemField = listItemFields.GetFieldByInternalName(fieldInternalName);
                 var minimalFieldInfo = (IFieldInfo)Activator.CreateInstance(minimalFieldInfoType, new object[] { fieldInternalName, itemField.Id });
-
                 var fieldValueInfo = new FieldValueInfo(minimalFieldInfo, valueFromEntity);
 
+                // Update the list item through the IBaseValueWriter
                 writer.WriteValueToListItem(listItem, fieldValueInfo);
             }
         }
@@ -119,6 +120,18 @@ namespace GSoft.Dynamite.Binding
 
             if (listItems.Count > 0)
             {
+                // Using GetDataTable is great because it eagerly fetches all
+                // the data of the SPListItemCollection. Without a GetDataTable
+                // each step in the SPListItemCollection enumeration will trigger
+                // a database call. If you are truly careless and forgot to specify
+                // your SPQuery.ViewFields, each field value access on the item will
+                // also trigger a database call.
+                // Lessons: 
+                // 1) always use ISharePointEntityBinder.Get<T>(SPListItemCollection)
+                // because it eagerly fetches all the data
+                // and 
+                // 2) always specify SPQuery.ViewFields to avoid per-field-access
+                // database calls.
                 var table = listItems.GetDataTable();
                 var rows = table.AsEnumerable();
 
@@ -195,7 +208,7 @@ namespace GSoft.Dynamite.Binding
                 IBaseValueReader reader = binding.ValueReader;
                 var value = reader.GetType()
                     .GetMethod("ReadValueFromCamlResultDataRow")
-                    .Invoke(reader, new object[] { dataRow, binding.ValueKey });
+                    .Invoke(reader, new object[] { fieldCollection.Web, dataRow, binding.ValueKey });
 
                 binding.EntityProperty.SetValue(entity, value, null);
             }

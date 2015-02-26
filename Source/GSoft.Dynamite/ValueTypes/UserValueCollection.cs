@@ -29,5 +29,15 @@ namespace GSoft.Dynamite.ValueTypes
             base(userValues)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// </summary>
+        /// <remarks>This constructor will not ensure that the labels respect the CurrentUICulture</remarks>
+        /// <param name="taxonomyFieldValueCollection">The taxonomy values.</param>
+        public UserValueCollection(SPFieldUserValueCollection userFieldValueCollection) :
+            this(new UserValueCollection(userFieldValueCollection.Select(userFieldValue => new UserValue(userFieldValue.User)).ToList()))
+        {
+        }
     }
 }
