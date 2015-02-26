@@ -31,6 +31,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         /// a list item which was created in a list where field definitions contain default values works.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void ToEntity_WhenMappingFromListItem_AndFieldsHaveDefaultValues_ShouldMapEntityWithAllFieldDefaultValues()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -284,7 +285,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermB),
+                    DefaultValue = new TaxonomyValue(levelOneTermB),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -295,11 +296,11 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -482,6 +483,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         /// a list item which was created in a list works.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void FromEntity_WhenMappingToNewListItem_ShouldInitializeListItemFieldValues()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -783,12 +785,12 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         },
-                        TaxonomyProperty = new TaxonomyFullValue(createdTermB), //TODO: This should become TaxonomyFullValue
-                        TaxonomyMultiProperty = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                        TaxonomyProperty = new TaxonomyValue(createdTermB), //TODO: This should become TaxonomyValue
+                        TaxonomyMultiProperty = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(createdTermAA), 
-                                new TaxonomyFullValue(createdTermAB)
+                                new TaxonomyValue(createdTermAA), 
+                                new TaxonomyValue(createdTermAB)
                             })
                     };
 
@@ -990,10 +992,10 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             public MediaValue MediaProperty { get; set; }
 
             [Property("TestInternalNameTaxo")]
-            public TaxonomyFullValue TaxonomyProperty { get; set; }
+            public TaxonomyValue TaxonomyProperty { get; set; }
 
             [Property("TestInternalNameTaxoMulti")]
-            public TaxonomyFullValueCollection TaxonomyMultiProperty { get; set; } 
+            public TaxonomyValueCollection TaxonomyMultiProperty { get; set; } 
         }
 
         public class TestItemEntityWithLookups : TestItemEntity

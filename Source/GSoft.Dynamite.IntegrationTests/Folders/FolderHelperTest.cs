@@ -1750,14 +1750,14 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         }),
-                    new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermB)),
+                    new FieldValueInfo(taxoFieldInfo, new TaxonomyValue(levelOneTermB)),
                     new FieldValueInfo(
                         taxoMultiFieldInfo, 
-                        new TaxonomyFullValueCollection(
-                            new List<TaxonomyFullValue>() 
+                        new TaxonomyValueCollection(
+                            new List<TaxonomyValue>() 
                                 { 
-                                    new TaxonomyFullValue(levelTwoTermAA), 
-                                    new TaxonomyFullValue(levelTwoTermAB)
+                                    new TaxonomyValue(levelTwoTermAA), 
+                                    new TaxonomyValue(levelTwoTermAB)
                                 }))
                 };
 
@@ -2115,14 +2115,14 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         }),
-                    new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermB)),
+                    new FieldValueInfo(taxoFieldInfo, new TaxonomyValue(levelOneTermB)),
                     new FieldValueInfo(
                         taxoMultiFieldInfo, 
-                        new TaxonomyFullValueCollection(
-                            new List<TaxonomyFullValue>() 
+                        new TaxonomyValueCollection(
+                            new List<TaxonomyValue>() 
                                 { 
-                                    new TaxonomyFullValue(levelTwoTermAA), 
-                                    new TaxonomyFullValue(levelTwoTermAB)
+                                    new TaxonomyValue(levelTwoTermAA), 
+                                    new TaxonomyValue(levelTwoTermAB)
                                 }))
                 };
 
@@ -2829,14 +2829,14 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         }),
-                    new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermB)),
+                    new FieldValueInfo(taxoFieldInfo, new TaxonomyValue(levelOneTermB)),
                     new FieldValueInfo(
                         taxoMultiFieldInfo, 
-                        new TaxonomyFullValueCollection(
-                            new List<TaxonomyFullValue>() 
+                        new TaxonomyValueCollection(
+                            new List<TaxonomyValue>() 
                                 { 
-                                    new TaxonomyFullValue(levelTwoTermAA), 
-                                    new TaxonomyFullValue(levelTwoTermAB)
+                                    new TaxonomyValue(levelTwoTermAA), 
+                                    new TaxonomyValue(levelTwoTermAB)
                                 }))
                 };
 
@@ -2864,7 +2864,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                             {
                                 new FieldValueInfo(dateOnlyFieldInfo, new DateTime(1998, 1, 1)),
                                 new FieldValueInfo(dateTimeFieldInfo, new DateTime(1999, 1, 1)),
-                                new FieldValueInfo(taxoFieldInfo, new TaxonomyFullValue(levelOneTermA))
+                                new FieldValueInfo(taxoFieldInfo, new TaxonomyValue(levelOneTermA))
                             }
                         }
                     }

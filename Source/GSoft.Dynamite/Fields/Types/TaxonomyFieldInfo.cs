@@ -9,7 +9,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition for a Taxonomy field
     /// </summary>
-    public class TaxonomyFieldInfo : FieldInfo<TaxonomyFullValue>
+    public class TaxonomyFieldInfo : FieldInfo<TaxonomyValue>
     {                
         /// <summary>
         /// Initializes a new FieldInfo

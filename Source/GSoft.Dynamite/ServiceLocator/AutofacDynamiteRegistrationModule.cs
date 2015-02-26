@@ -90,8 +90,8 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<DoubleValueWriter>();
             builder.RegisterType<DateTimeValueWriter>();
             builder.RegisterType<GuidValueWriter>();
-            builder.RegisterType<TaxonomyFullValueWriter>();
-            builder.RegisterType<TaxonomyFullValueCollectionWriter>();
+            builder.RegisterType<TaxonomyValueWriter>();
+            builder.RegisterType<TaxonomyValueCollectionWriter>();
             builder.RegisterType<LookupValueWriter>();
             builder.RegisterType<LookupValueCollectionWriter>();
             builder.RegisterType<PrincipalValueWriter>();

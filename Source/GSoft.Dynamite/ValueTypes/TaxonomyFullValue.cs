@@ -12,33 +12,33 @@ namespace GSoft.Dynamite.ValueTypes
     /// <summary>
     /// A taxonomy value.
     /// </summary>
-    public class TaxonomyFullValue
+    public class TaxonomyValue
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
-        public TaxonomyFullValue()
+        public TaxonomyValue()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="TaxonomyFullValue"/> with a 
+        /// Initializes a new instance of <see cref="TaxonomyValue"/> with a 
         /// default TaxonomyContext determined by the parent term set of the TermInfo
         /// </summary>
         /// <param name="termInfo">The term metadata corresponding to the taxonomy value</param>
-        public TaxonomyFullValue(TermInfo termInfo)
+        public TaxonomyValue(TermInfo termInfo)
         {
             this.Term = termInfo;
             this.Context = new TaxonomyContext(termInfo.TermSet);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
         /// <remarks>This constructor will not ensure the label respect the CurrentUICulture</remarks>
         /// <param name="field">The list field from which the TaxonomyFieldValue was extracted. This is needed to extract the full TaxonomyContext.</param>
         /// <param name="fieldValue">The actual taxonomy field value.</param>
-        public TaxonomyFullValue(TaxonomyFieldValue fieldValue)
+        public TaxonomyValue(TaxonomyFieldValue fieldValue)
         {
             Guid termGuid;
 
@@ -57,10 +57,10 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyFullValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
         /// <param name="term">The term.</param>
-        public TaxonomyFullValue(Term term)
+        public TaxonomyValue(Term term)
         {
             if (term == null)
             {

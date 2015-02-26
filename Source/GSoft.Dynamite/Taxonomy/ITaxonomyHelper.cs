@@ -149,7 +149,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="web">The web.</param>
         /// <param name="field">The field.</param>
         /// <param name="defaultValue">The default value.</param>
-        void SetDefaultTaxonomyFieldValue(SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue);
+        void SetDefaultTaxonomyFieldValue(SPWeb web, TaxonomyField field, TaxonomyValue defaultValue);
 
         /// <summary>
         /// Set default value for a multi valued taxonomy site column
@@ -167,7 +167,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="web">The web.</param>
         /// <param name="field">The field.</param>
         /// <param name="defaultValueCollection">The default value collection.</param>
-        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyFullValueCollection defaultValueCollection);
+        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyValueCollection defaultValueCollection);
 
         /// <summary>
         /// Gets the term group by name.

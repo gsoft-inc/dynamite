@@ -1744,7 +1744,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    DefaultValue = new TaxonomyValue(levelOneTermA),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -1755,11 +1755,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -1859,7 +1859,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    DefaultValue = new TaxonomyValue(levelOneTermA),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -1870,11 +1870,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -1977,7 +1977,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    DefaultValue = new TaxonomyValue(levelOneTermA),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -1988,11 +1988,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -2083,7 +2083,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermA),
+                    DefaultValue = new TaxonomyValue(levelOneTermA),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -2094,11 +2094,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -3392,7 +3392,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValue(levelOneTermB),
+                    DefaultValue = new TaxonomyValue(levelOneTermB),
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
@@ -3403,11 +3403,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKey",
                     "GroupKey")
                 {
-                    DefaultValue = new TaxonomyFullValueCollection(
-                        new List<TaxonomyFullValue>() 
+                    DefaultValue = new TaxonomyValueCollection(
+                        new List<TaxonomyValue>() 
                             { 
-                                new TaxonomyFullValue(levelTwoTermAA), 
-                                new TaxonomyFullValue(levelTwoTermAB)
+                                new TaxonomyValue(levelTwoTermAA), 
+                                new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
@@ -4009,7 +4009,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         {
                             new FieldValueInfo(BuiltInFields.AssignedTo, new UserValue(ensuredUser1)),
                             new FieldValueInfo(BuiltInFields.Cellphone, "Test Cellphone Value"),
-                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyFullValueCollection())
+                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyValueCollection())
                         });
 
                     item.Update();

@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     /// Writes Taxonomy Multi values to SharePoint list items, field definition's DefaultValue
     /// and folder MetadataDefaults.
     /// </summary>
-    public class TaxonomyFullValueCollectionWriter : BaseValueWriter<TaxonomyFullValueCollection>
+    public class TaxonomyValueCollectionWriter : BaseValueWriter<TaxonomyValueCollection>
     {
         /// <summary>
         /// Writes a Taxonomy Multi field value to a SPListItem
@@ -24,7 +24,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
-            var termInfos = fieldValueInfo.Value as TaxonomyFullValueCollection;
+            var termInfos = fieldValueInfo.Value as TaxonomyValueCollection;
             TaxonomyFieldValueCollection newTaxonomyFieldValueCollection = null;
 
             TaxonomyField taxonomyField = (TaxonomyField)item.Fields.GetField(fieldValueInfo.FieldInfo.InternalName);
@@ -61,7 +61,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
             var sharepointTaxonomyField = (TaxonomyField)parentFieldCollection[fieldValueInfo.FieldInfo.Id];
-            var defaultVal = (TaxonomyFullValueCollection)fieldValueInfo.Value;
+            var defaultVal = (TaxonomyValueCollection)fieldValueInfo.Value;
 
             if (defaultVal != null)
             {               
@@ -85,7 +85,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            var defaultValue = (TaxonomyFullValueCollection)fieldValueInfo.Value;
+            var defaultValue = (TaxonomyValueCollection)fieldValueInfo.Value;
             var list = folder.ParentWeb.Lists[folder.ParentListId];
             var taxonomyField = (TaxonomyField)list.Fields[fieldValueInfo.FieldInfo.Id];
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
@@ -107,7 +107,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
         private static TaxonomyFieldValueCollection CreateSharePointTaxonomyFieldValue(
             TaxonomyField sharepointTaxonomyField, 
-            TaxonomyFullValueCollection dynamiteCollection, 
+            TaxonomyValueCollection dynamiteCollection, 
             List<string> labelGuidPairsListOutParam)
         {
             if (labelGuidPairsListOutParam == null)
@@ -117,10 +117,10 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             TaxonomyFieldValueCollection sharePointValueCollection = null;
 
-            foreach (var taxonomyFullValue in dynamiteCollection)
+            foreach (var TaxonomyValue in dynamiteCollection)
             {
-                string labelGuidPair = TaxonomyItem.NormalizeName(taxonomyFullValue.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
-                                + taxonomyFullValue.Term.Id.ToString().ToUpperInvariant();
+                string labelGuidPair = TaxonomyItem.NormalizeName(TaxonomyValue.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter
+                                + TaxonomyValue.Term.Id.ToString().ToUpperInvariant();
 
                 labelGuidPairsListOutParam.Add(labelGuidPair);
             }

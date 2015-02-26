@@ -385,7 +385,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new TaxonomyFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimTaxonomyFullValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimTaxonomyValueWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };
@@ -419,7 +419,7 @@ namespace GSoft.Dynamite.UnitTests.Binding.IO
                 var correctWriterWasUsed = false;
                 var fieldInfo = new TaxonomyMultiFieldInfo("InternalName", Guid.NewGuid(), string.Empty, string.Empty, string.Empty);
 
-                ShimTaxonomyFullValueCollectionWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
+                ShimTaxonomyValueCollectionWriter.AllInstances.WriteValueToListItemSPListItemFieldValueInfo = (inst, listItem, fieldValueInfo) =>
                 {
                     correctWriterWasUsed = true;
                 };

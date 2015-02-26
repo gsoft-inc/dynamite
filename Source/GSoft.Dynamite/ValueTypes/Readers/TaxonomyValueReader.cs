@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
     /// <summary>
     /// Reads Taxonomy-based field values
     /// </summary>
-    public class TaxonomyValueReader : BaseValueReader<TaxonomyFullValue>
+    public class TaxonomyValueReader : BaseValueReader<TaxonomyValue>
     {
         /// <summary>
         /// Reads a field value from a list item
@@ -23,14 +23,14 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <param name="item">The list item we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field in the item's columns</param>
         /// <returns>The value extracted from the list item's field</returns>
-        public override TaxonomyFullValue ReadValueFromListItem(SPListItem item, string fieldInternalName)
+        public override TaxonomyValue ReadValueFromListItem(SPListItem item, string fieldInternalName)
         {
             var fieldValue = item[fieldInternalName];
 
             if (fieldValue != null)
             {
                 var taxFieldVal = (TaxonomyFieldValue)fieldValue;
-                var taxValue = new TaxonomyFullValue(taxFieldVal);
+                var taxValue = new TaxonomyValue(taxFieldVal);
 
                 var field = (TaxonomyField)item.Fields.GetFieldByInternalName(fieldInternalName);
 
@@ -48,14 +48,14 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <param name="itemVersion">The list item version we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field in the item's columns</param>
         /// <returns>The ImageValue extracted from the list item's field</returns>
-        public override TaxonomyFullValue ReadValueFromListItemVersion(SPListItemVersion itemVersion, string fieldInternalName)
+        public override TaxonomyValue ReadValueFromListItemVersion(SPListItemVersion itemVersion, string fieldInternalName)
         {
             var fieldValue = itemVersion[fieldInternalName];
 
             if (fieldValue != null)
             {
                 var taxFieldVal = (TaxonomyFieldValue)fieldValue;
-                var taxValue = new TaxonomyFullValue(taxFieldVal);
+                var taxValue = new TaxonomyValue(taxFieldVal);
 
                 var field = (TaxonomyField)itemVersion.Fields.GetFieldByInternalName(fieldInternalName);
 
@@ -74,7 +74,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <param name="dataRowFromCamlResult">The CAML-query-result data row we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
         /// <returns>The value extracted from the data row's corresponding cell</returns>
-        public override TaxonomyFullValue ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, string fieldInternalName)
+        public override TaxonomyValue ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, string fieldInternalName)
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 
@@ -86,7 +86,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
                 var taxFieldVal = new TaxonomyFieldValue(field);
                 taxFieldVal.PopulateFromLabelGuidPair(fieldValue.ToString());
 
-                var taxValue = new TaxonomyFullValue(taxFieldVal);
+                var taxValue = new TaxonomyValue(taxFieldVal);
 
                 // Watch out! Here, we're going to use the Site Collection's site column to determine
                 // the taxonomy context. This means that if the item comes from a list where the 
@@ -100,7 +100,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
             return null;
         }
 
-        private void InitTaxonomyContextForValue(TaxonomyFullValue taxValue, TaxonomyField field, SPSite site)
+        private void InitTaxonomyContextForValue(TaxonomyValue taxValue, TaxonomyField field, SPSite site)
         {
             if (field.SspId != null && field.SspId != Guid.Empty)
             {

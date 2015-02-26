@@ -8,42 +8,42 @@ namespace GSoft.Dynamite.ValueTypes
     /// <summary>
     /// Multiple taxonomy values.
     /// </summary>
-    public class TaxonomyFullValueCollection : Collection<TaxonomyFullValue>
+    public class TaxonomyValueCollection : Collection<TaxonomyValue>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyFullValueCollection"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
         /// </summary>
-        public TaxonomyFullValueCollection()
+        public TaxonomyValueCollection()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyFullValueCollection"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
         /// </summary>
         /// <param name="taxonomyValues">The taxonomy value.</param>
-        public TaxonomyFullValueCollection(IList<TaxonomyFullValue> taxonomyValues) :
+        public TaxonomyValueCollection(IList<TaxonomyValue> taxonomyValues) :
             base(taxonomyValues)
         {
         }
 
          //<summary>
-         //Initializes a new instance of the <see cref="TaxonomyFullValueCollection"/> class.
+         //Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
          //</summary>
          //<param name="termsCollection">The taxonomy values.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
-        public TaxonomyFullValueCollection(IList<Term> termsCollection) :
-            this(new TaxonomyFullValueCollection(termsCollection.Select(term => new TaxonomyFullValue(term)).ToList()))
+        public TaxonomyValueCollection(IList<Term> termsCollection) :
+            this(new TaxonomyValueCollection(termsCollection.Select(term => new TaxonomyValue(term)).ToList()))
         {
         }
 
          //<summary>
-         //Initializes a new instance of the <see cref="TaxonomyFullValueCollection"/> class.
+         //Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
          //</summary>
          //<remarks>This constructor will not ensure that the labels respect the CurrentUICulture</remarks>
          //<param name="taxonomyFieldValueCollection">The taxonomy values.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
-        public TaxonomyFullValueCollection(TaxonomyFieldValueCollection taxonomyFieldValueCollection) :
-            this(new TaxonomyFullValueCollection(taxonomyFieldValueCollection.Select(taxFieldValue => new TaxonomyFullValue(taxFieldValue)).ToList()))
+        public TaxonomyValueCollection(TaxonomyFieldValueCollection taxonomyFieldValueCollection) :
+            this(new TaxonomyValueCollection(taxonomyFieldValueCollection.Select(taxFieldValue => new TaxonomyValue(taxFieldValue)).ToList()))
         {
         }
     }

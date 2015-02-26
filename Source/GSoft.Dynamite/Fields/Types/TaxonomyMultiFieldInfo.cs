@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition for a TaxonomyMulti field
     /// </summary>
-    public class TaxonomyMultiFieldInfo : FieldInfo<TaxonomyFullValueCollection>
+    public class TaxonomyMultiFieldInfo : FieldInfo<TaxonomyValueCollection>
     {
         /// <summary>
         /// Initializes a new FieldInfo
