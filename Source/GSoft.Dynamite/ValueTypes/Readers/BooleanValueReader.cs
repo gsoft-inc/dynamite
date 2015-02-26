@@ -64,9 +64,9 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 
-            if (fieldValue != null)
+            if (fieldValue != null && !(fieldValue is System.DBNull))
             {
-                return (bool)fieldValue;
+                return fieldValue.ToString() == "1";
             }
 
             return null;

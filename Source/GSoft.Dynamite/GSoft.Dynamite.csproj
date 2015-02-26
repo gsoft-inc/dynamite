@@ -85,6 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
+    <Compile Include="Binding\EntityPropertyConversionDetail.cs" />
+    <Compile Include="Binding\EntityBindingSchema.cs" />
+    <Compile Include="Binding\IEntityBindingSchema.cs" />
+    <Compile Include="Binding\EntitySchemaFactory.cs" />
+    <Compile Include="Binding\IEntitySchemaFactory.cs" />
+    <Compile Include="Binding\SharePointEntityBinderNextGen.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
@@ -276,7 +282,7 @@
     <Compile Include="Binding\Enums.cs" />
     <Compile Include="Binding\IConverter.cs" />
     <Compile Include="Binding\IEntitySchema.cs" />
-    <Compile Include="Binding\IEntitySchemaBuilder.cs" />
+    <Compile Include="Binding\IEntityBindingSchemaBuilder.cs" />
     <Compile Include="Binding\ISharePointEntityBinder.cs" />
     <Compile Include="Binding\ISharePointListItemValues.cs" />
     <Compile Include="Binding\ListItemValuesAdapter.cs" />

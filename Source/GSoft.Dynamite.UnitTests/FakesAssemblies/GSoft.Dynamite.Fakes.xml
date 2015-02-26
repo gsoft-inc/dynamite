@@ -1498,6 +1498,141 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingDetail.AllInstances.ValueKeySetString">
             <summary>Sets the shim of EntityBindingDetail.set_ValueKey(String value)</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema">
+            <summary>Shim type of GSoft.Dynamite.Binding.EntityBindingSchema</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.#ctor(GSoft.Dynamite.Binding.EntityBindingSchema)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.Bind(GSoft.Dynamite.Binding.IEntityBindingSchema)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.ConstructorType">
+            <summary>Sets the shim of EntityBindingSchema.EntityBindingSchema(Type entityType)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.EntityTypeGet">
+            <summary>Sets the shim of EntityBindingSchema.get_EntityType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.EntityTypeSetType">
+            <summary>Sets the shim of EntityBindingSchema.set_EntityType(Type value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.PropertyConversionDetailsGet">
+            <summary>Sets the shim of EntityBindingSchema.get_PropertyConversionDetails()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.PropertyConversionDetailsSetIListOfEntityPropertyConversionDetail">
+            <summary>Sets the shim of EntityBindingSchema.set_PropertyConversionDetails(IList`1&lt;EntityPropertyConversionDetail&gt; value)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.AllInstances.EntityTypeGet">
+            <summary>Sets the shim of EntityBindingSchema.get_EntityType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.AllInstances.EntityTypeSetType">
+            <summary>Sets the shim of EntityBindingSchema.set_EntityType(Type value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.AllInstances.PropertyConversionDetailsGet">
+            <summary>Sets the shim of EntityBindingSchema.get_PropertyConversionDetails()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityBindingSchema.AllInstances.PropertyConversionDetailsSetIListOfEntityPropertyConversionDetail">
+            <summary>Sets the shim of EntityBindingSchema.set_PropertyConversionDetails(IList`1&lt;EntityPropertyConversionDetail&gt; value)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail">
+            <summary>Shim type of GSoft.Dynamite.Binding.EntityPropertyConversionDetail</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.#ctor(GSoft.Dynamite.Binding.EntityPropertyConversionDetail)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.BindingTypeGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_BindingType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.BindingTypeSetBindingType">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_BindingType(BindingType value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ConstructorPropertyInfoStringBindingTypeIBaseValueWriterIBaseValueReader">
+            <summary>Sets the shim of EntityPropertyConversionDetail.EntityPropertyConversionDetail(PropertyInfo entityProperty, String valueKey, BindingType bindingType, IBaseValueWriter valueWriter, IBaseValueReader valueReader)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.EntityPropertyGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_EntityProperty()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.EntityPropertySetPropertyInfo">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_EntityProperty(PropertyInfo value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueKeyGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueKey()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueKeySetString">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueKey(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueReaderGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueReaderSetIBaseValueReader">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueReader(IBaseValueReader value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueWriterGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueWriter()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.ValueWriterSetIBaseValueWriter">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueWriter(IBaseValueWriter value)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.BindingTypeGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_BindingType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.BindingTypeSetBindingType">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_BindingType(BindingType value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.EntityPropertyGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_EntityProperty()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.EntityPropertySetPropertyInfo">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_EntityProperty(PropertyInfo value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueKeyGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueKey()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueKeySetString">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueKey(String value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueReaderGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueReader()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueReaderSetIBaseValueReader">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueReader(IBaseValueReader value)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueWriterGet">
+            <summary>Sets the shim of EntityPropertyConversionDetail.get_ValueWriter()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntityPropertyConversionDetail.AllInstances.ValueWriterSetIBaseValueWriter">
+            <summary>Sets the shim of EntityPropertyConversionDetail.set_ValueWriter(IBaseValueWriter value)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntitySchema">
             <summary>Shim type of GSoft.Dynamite.Binding.EntitySchema</summary>
         </member>
@@ -1620,6 +1755,39 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaBuilder`1.AllInstances.UnregisterTypeConverterType">
             <summary>Sets the shim of EntitySchemaBuilder`1.UnregisterTypeConverter(Type targetType)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory">
+            <summary>Shim type of GSoft.Dynamite.Binding.EntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.#ctor(GSoft.Dynamite.Binding.EntitySchemaFactory)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.Bind(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.ConstructorIFieldValueWriterIFieldValueReader">
+            <summary>Sets the shim of EntitySchemaFactory.EntitySchemaFactory(IFieldValueWriter fieldValueWriter, IFieldValueReader fieldValueReader)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.GetSchemaType">
+            <summary>Sets the shim of EntitySchemaFactory.GetSchema(Type type)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimEntitySchemaFactory.AllInstances.GetSchemaType">
+            <summary>Sets the shim of EntitySchemaFactory.GetSchema(Type type)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimListItemValuesAdapter">
             <summary>Shim type of GSoft.Dynamite.Binding.ListItemValuesAdapter</summary>
@@ -2185,6 +2353,93 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.RegisterTypeConverters">
             <summary>Sets the shim of SharePointEntityBinder.RegisterTypeConverters()</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen">
+            <summary>Shim type of GSoft.Dynamite.Binding.SharePointEntityBinderNextGen</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.SharePointEntityBinderNextGen)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.Bind(GSoft.Dynamite.Binding.ISharePointEntityBinder)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.FromEntity(!!0 entity, SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemCollection listItems)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemVersion listItemVersion)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItemVersion})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._FromEntityb__0Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;FromEntity&gt;b__0(EntityPropertyConversionDetail x)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__1Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__1(EntityPropertyConversionDetail x)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__2Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__2(EntityPropertyConversionDetail x)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__3Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__3(EntityPropertyConversionDetail x)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ConstructorIEntitySchemaFactoryILogger">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory, ILogger logger)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.FromEntity(!!0 entity, SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItem,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemCollection listItems)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItemVersion,``0})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemVersion listItemVersion)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItem listItem)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItemVersion})">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntitySchema">
             <summary>Shim type of GSoft.Dynamite.Binding.SharePointEntitySchema</summary>
         </member>
@@ -2338,6 +2593,42 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityBindingDetail.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema">
+            <summary>Stub type of GSoft.Dynamite.Binding.EntityBindingSchema</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema.#ctor(System.Type)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema.InitializeStub">
+            <summary>Initializes a new instance of type StubEntityBindingSchema</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityBindingSchema.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail">
+            <summary>Stub type of GSoft.Dynamite.Binding.EntityPropertyConversionDetail</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail.#ctor(System.Reflection.PropertyInfo,System.String,GSoft.Dynamite.Binding.BindingType,GSoft.Dynamite.ValueTypes.Writers.IBaseValueWriter,GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail.InitializeStub">
+            <summary>Initializes a new instance of type StubEntityPropertyConversionDetail</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntityPropertyConversionDetail.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubEntitySchema">
             <summary>Stub type of GSoft.Dynamite.Binding.EntitySchema</summary>
         </member>
@@ -2398,6 +2689,24 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaBuilder`1.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory">
+            <summary>Stub type of GSoft.Dynamite.Binding.EntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory.#ctor(GSoft.Dynamite.ValueTypes.Writers.IFieldValueWriter,GSoft.Dynamite.ValueTypes.Readers.IFieldValueReader)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory.InitializeStub">
+            <summary>Initializes a new instance of type StubEntitySchemaFactory</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubEntitySchemaFactory.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubIConverter">
             <summary>Stub type of GSoft.Dynamite.Binding.IConverter</summary>
         </member>
@@ -2427,6 +2736,24 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubIDataRowValues.gsd::GSoft#Dynamite#Binding#IDataRowValues#DataRow">
             <summary>Sets the stub of IDataRowValues.get_DataRow()</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema">
+            <summary>Stub type of GSoft.Dynamite.Binding.IEntityBindingSchema</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema.#ctor">
+            <summary>Initializes a new instance of type StubIEntityBindingSchema</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema.EntityTypeGet">
+            <summary>Sets the stub of IEntityBindingSchema.get_EntityType()</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema.PropertyConversionDetailsGet">
+            <summary>Sets the stub of IEntityBindingSchema.get_PropertyConversionDetails()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema.gsd::GSoft#Dynamite#Binding#IEntityBindingSchema#EntityType">
+            <summary>Sets the stub of IEntityBindingSchema.get_EntityType()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubIEntityBindingSchema.gsd::GSoft#Dynamite#Binding#IEntityBindingSchema#PropertyConversionDetails">
+            <summary>Sets the stub of IEntityBindingSchema.get_PropertyConversionDetails()</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubIEntitySchema">
             <summary>Stub type of GSoft.Dynamite.Binding.IEntitySchema</summary>
@@ -2469,6 +2796,18 @@
         </member>
         <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaBuilder.UnregisterTypeConverterType">
             <summary>Sets the stub of IEntitySchemaBuilder.UnregisterTypeConverter(Type targetType)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaFactory">
+            <summary>Stub type of GSoft.Dynamite.Binding.IEntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaFactory.#ctor">
+            <summary>Initializes a new instance of type StubIEntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaFactory.gsd::GSoft#Dynamite#Binding#IEntitySchemaFactory#GetSchema(System.Type)">
+            <summary>Sets the stub of IEntitySchemaFactory.GetSchema(Type type)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubIEntitySchemaFactory.GetSchemaType">
+            <summary>Sets the stub of IEntitySchemaFactory.GetSchema(Type type)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubISharePointEntityBinder">
             <summary>Stub type of GSoft.Dynamite.Binding.ISharePointEntityBinder</summary>
@@ -2708,6 +3047,24 @@
             <summary>Gets or sets the instance behavior.</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen">
+            <summary>Stub type of GSoft.Dynamite.Binding.SharePointEntityBinderNextGen</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory,GSoft.Dynamite.Logging.ILogger)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InitializeStub">
+            <summary>Initializes a new instance of type StubSharePointEntityBinderNextGen</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubSharePointEntitySchema">
@@ -23023,6 +23380,36 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIBaseValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IBaseValueReader#AssociatedValueType">
             <summary>Sets the stub of IBaseValueReader.get_AssociatedValueType()</summary>
         </member>
+        <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader">
+            <summary>Stub type of GSoft.Dynamite.ValueTypes.Readers.IFieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.#ctor">
+            <summary>Initializes a new instance of type StubIFieldValueReader</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IFieldValueReader#GetValueReaderForType(System.Type)">
+            <summary>Sets the stub of IFieldValueReader.GetValueReaderForType(Type valueType)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IFieldValueReader#ReadValueFromCamlResultDataRow``1(System.Data.DataRow,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IFieldValueReader#ReadValueFromListItem``1(Microsoft.SharePoint.SPListItem,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Readers#IFieldValueReader#ReadValueFromListItemVersion``1(Microsoft.SharePoint.SPListItemVersion,System.String)">
+            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.GetValueReaderForTypeType">
+            <summary>Sets the stub of IFieldValueReader.GetValueReaderForType(Type valueType)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.ReadValueFromListItemOf1SPListItemString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Readers.Fakes.StubIFieldValueReader.ReadValueFromListItemVersionOf1SPListItemVersionString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,System.String,``0})">
+            <summary>Sets stubs of ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimBaseValueReader`1">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.BaseValueReader`1</summary>
         </member>
@@ -23281,7 +23668,7 @@
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.BehaveAsNotImplemented">
             <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Bind(GSoft.Dynamite.ValueTypes.Writers.IFieldValueReader)">
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Bind(GSoft.Dynamite.ValueTypes.Readers.IFieldValueReader)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,System.String,``0})">
@@ -23305,6 +23692,9 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetReaderType">
             <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetValueReaderForTypeType">
+            <summary>Sets the shim of FieldValueReader.GetValueReaderForType(Type valueType)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
@@ -23322,6 +23712,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.GetReaderType">
             <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.GetValueReaderForTypeType">
+            <summary>Sets the shim of FieldValueReader.GetValueReaderForType(Type valueType)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
@@ -23350,6 +23743,9 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.ConstructorStringValueWriterBooleanValueWriterIntegerValueWriterDoubleValueWriterDateTimeValueWriterGuidValueWriterTaxonomyFullValueWriterTaxonomyFullValueCollectionWriterLookupValueWriterLookupValueCollectionWriterPrincipalValueWriterUserValueWriterUserVa">
             <summary>Sets the shim of FieldValueWriter.FieldValueWriter(StringValueWriter stringValueWriter, BooleanValueWriter boolValueWriter, IntegerValueWriter integerValueWriter, DoubleValueWriter doubleValueWriter, DateTimeValueWriter dateTimeValueWriter, GuidValueWriter guidValueWriter, TaxonomyFullValueWriter taxonomyValueWriter, TaxonomyFullValueCollectionWriter taxonomyValueCollectionWriter, LookupValueWriter lookupValueWriter, LookupValueCollectionWriter lookupValueCollectionWriter, PrincipalValueWriter principalValueWriter, UserValueWriter userValueWriter, UserValueCollectionWriter userValueCollectionWriter, UrlValueWriter urlValueWriter, ImageValueWriter imageValueWriter, MediaValueWriter mediaValueWriter)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.GetValueWriterForTypeType">
+            <summary>Sets the shim of FieldValueWriter.GetValueWriterForType(Type valueType)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.GetWriterFieldValueInfo">
             <summary>Sets the shim of FieldValueWriter.GetWriter(FieldValueInfo fieldValueInfo)</summary>
         </member>
@@ -23376,6 +23772,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances.AddToWritersDictionaryIBaseValueWriter">
             <summary>Sets the shim of FieldValueWriter.AddToWritersDictionary(IBaseValueWriter writer)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances.GetValueWriterForTypeType">
+            <summary>Sets the shim of FieldValueWriter.GetValueWriterForType(Type valueType)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances.GetWriterFieldValueInfo">
             <summary>Sets the shim of FieldValueWriter.GetWriter(FieldValueInfo fieldValueInfo)</summary>
@@ -24415,35 +24814,14 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIBaseValueWriter.gsd::GSoft#Dynamite#ValueTypes#Writers#IBaseValueWriter#AssociatedValueType">
             <summary>Sets the stub of IBaseValueWriter.get_AssociatedValueType()</summary>
         </member>
-        <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader">
-            <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.IFieldValueReader</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.#ctor">
-            <summary>Initializes a new instance of type StubIFieldValueReader</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromCamlResultDataRow``1(System.Data.DataRow,System.String)">
-            <summary>Sets the stub of IFieldValueReader.ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromListItem``1(Microsoft.SharePoint.SPListItem,System.String)">
-            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueReader#ReadValueFromListItemVersion``1(Microsoft.SharePoint.SPListItemVersion,System.String)">
-            <summary>Sets the stub of IFieldValueReader.ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromCamlResultDataRowOf1DataRowString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,System.String,``0})">
-            <summary>Sets stubs of ReadValueFromCamlResultDataRow(DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromListItemOf1SPListItemString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,System.String,``0})">
-            <summary>Sets stubs of ReadValueFromListItem(SPListItem item, String fieldInternalName)</summary>
-        </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueReader.ReadValueFromListItemVersionOf1SPListItemVersionString``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,System.String,``0})">
-            <summary>Sets stubs of ReadValueFromListItemVersion(SPListItemVersion itemVersion, String fieldInternalName)</summary>
-        </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.IFieldValueWriter</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.#ctor">
             <summary>Initializes a new instance of type StubIFieldValueWriter</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueWriter#GetValueWriterForType(System.Type)">
+            <summary>Sets the stub of IFieldValueWriter.GetValueWriterForType(Type valueType)</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueWriter#WriteValueToFieldDefault(Microsoft.SharePoint.SPFieldCollection,GSoft.Dynamite.Fields.FieldValueInfo)">
             <summary>Sets the stub of IFieldValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo defaultFieldValueInfo)</summary>
@@ -24462,6 +24840,9 @@
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.gsd::GSoft#Dynamite#ValueTypes#Writers#IFieldValueWriter#WriteValuesToListItem(Microsoft.SharePoint.SPListItem,System.Collections.Generic.IList{GSoft.Dynamite.Fields.FieldValueInfo})">
             <summary>Sets the stub of IFieldValueWriter.WriteValuesToListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.GetValueWriterForTypeType">
+            <summary>Sets the stub of IFieldValueWriter.GetValueWriterForType(Type valueType)</summary>
         </member>
         <member name="F:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubIFieldValueWriter.WriteValueToFieldDefaultSPFieldCollectionFieldValueInfo">
             <summary>Sets the stub of IFieldValueWriter.WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo defaultFieldValueInfo)</summary>

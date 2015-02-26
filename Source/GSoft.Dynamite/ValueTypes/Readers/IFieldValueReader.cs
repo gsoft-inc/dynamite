@@ -4,7 +4,7 @@ using System.Data;
 using GSoft.Dynamite.Fields;
 using Microsoft.SharePoint;
 
-namespace GSoft.Dynamite.ValueTypes.Writers
+namespace GSoft.Dynamite.ValueTypes.Readers
 {
     /// <summary>
     /// Handles reading values from a SharePoint list item, from a DataRow obtained from a CAML query
@@ -38,6 +38,13 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
         /// <returns>The value extracted from the data row's corresponding cell</returns>
         T ReadValueFromCamlResultDataRow<T>(DataRow dataRowFromCamlResult, string fieldInternalName);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valueType"></param>
+        /// <returns></returns>
+        IBaseValueReader GetValueReaderForType(Type valueType);
 
         /// <summary>
         /// Reads a field value from a DataRow returned by a Search query

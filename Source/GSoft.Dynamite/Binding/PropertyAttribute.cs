@@ -54,6 +54,7 @@ namespace GSoft.Dynamite.Binding
         /// <summary>
         /// Gets or sets the type of the converter.
         /// </summary>
+        [Obsolete("Your custom converter type may not be respected")]
         public virtual Type ConverterType { get; set; }
 
         /// <summary>

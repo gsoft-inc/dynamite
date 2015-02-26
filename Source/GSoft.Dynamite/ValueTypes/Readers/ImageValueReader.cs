@@ -67,7 +67,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (fieldValue != null)
             {
-                var imageFieldVal = (ImageFieldValue)fieldValue;
+                var imageFieldVal = new ImageFieldValue(fieldValue.ToString());
                 return new ImageValue(imageFieldVal);
             }
 

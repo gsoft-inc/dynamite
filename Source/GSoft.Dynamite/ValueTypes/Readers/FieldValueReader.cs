@@ -69,6 +69,23 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             return (T)valueThatWasRead;
         }
 
+        public IBaseValueReader GetValueReaderForType(Type valueType)
+        {
+            Type readerTypeArgument = valueType;
+            if ((valueType.IsValueType || valueType.IsPrimitive) && !valueType.Name.StartsWith("Nullable", StringComparison.OrdinalIgnoreCase))
+            {
+                // Readers for primitives or structs always handles the Nullable versions of those value types
+                readerTypeArgument = typeof(Nullable<>).MakeGenericType(valueType);
+            }
+
+            if (this.readers.ContainsKey(readerTypeArgument))
+            {
+                return readers[readerTypeArgument];
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Reads a field value from a DataRow returned by a Search query
         /// </summary>
@@ -85,7 +102,8 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         private IBaseValueReader GetReader(Type typeOfValueWeWantToRead)
         {
             Type readerTypeArgument = typeOfValueWeWantToRead;
-            if (typeOfValueWeWantToRead.IsValueType || typeOfValueWeWantToRead.IsPrimitive)
+            if ((typeOfValueWeWantToRead.IsValueType || typeOfValueWeWantToRead.IsPrimitive)
+                && !typeOfValueWeWantToRead.Name.StartsWith("Nullable", StringComparison.OrdinalIgnoreCase))
             {
                 // Readers for primitives or structs always handles the Nullable versions of those value types
                 readerTypeArgument = typeof(Nullable<>).MakeGenericType(typeOfValueWeWantToRead);

@@ -209,6 +209,24 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             valueWriter.WriteValueToFolderDefault(folder, defaultFieldValueInfo);
         }
 
+        public IBaseValueWriter GetValueWriterForType(Type valueType)
+        {
+            Type writerTypeArgument = valueType;
+            if ((valueType.IsValueType || valueType.IsPrimitive)
+                && !valueType.Name.StartsWith("Nullable", StringComparison.OrdinalIgnoreCase))
+            {
+                // Readers for primitives or structs always handles the Nullable versions of those value types
+                writerTypeArgument = typeof(Nullable<>).MakeGenericType(valueType);
+            }
+
+            if (this.writers.ContainsKey(writerTypeArgument))
+            {
+                return this.writers[writerTypeArgument];
+            }
+
+            return null;
+        }
+
         private void AddToWritersDictionary(IBaseValueWriter writer)
         {
             this.writers.Add(writer.AssociatedValueType, writer);

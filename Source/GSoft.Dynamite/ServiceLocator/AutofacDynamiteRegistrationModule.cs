@@ -28,6 +28,7 @@ using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.ValueTypes.Readers;
 using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
@@ -69,16 +70,18 @@ namespace GSoft.Dynamite.ServiceLocator
 #endif
 
             // Binding
-            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
-            var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
+            //var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
+            //var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
 
-            builder.RegisterType<SharePointDataRowEntitySchema>();
-            builder.RegisterInstance<IEntitySchemaBuilder>(cachedSchemaBuilder);
-            builder.RegisterType<TaxonomyValueDataRowConverter>();
-            builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
-            builder.RegisterType<TaxonomyValueConverter>();
-            builder.RegisterType<TaxonomyValueCollectionConverter>();
-            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
+            //builder.RegisterType<SharePointDataRowEntitySchema>();
+            //builder.RegisterInstance<IEntitySchemaBuilder>(cachedSchemaBuilder);
+            //builder.RegisterType<TaxonomyValueDataRowConverter>();
+            //builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
+            //builder.RegisterType<TaxonomyValueConverter>();
+            //builder.RegisterType<TaxonomyValueCollectionConverter>();
+            //builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
+            builder.RegisterType<EntitySchemaFactory>().As<IEntitySchemaFactory>();
+            builder.RegisterType<SharePointEntityBinderNextGen>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
             builder.RegisterType<StringValueWriter>();

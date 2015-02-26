@@ -54,5 +54,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="folder">The SharePoint folder for which we want to update the metadata defaults.</param>
         /// <param name="defaultFieldValueInfo">The default value to be applied to items created within that folder.</param>
         void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo defaultFieldValueInfo);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valueType"></param>
+        /// <returns></returns>
+        IBaseValueWriter GetValueWriterForType(Type valueType);
     }
 }
