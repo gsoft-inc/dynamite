@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
             if (fieldValue != null)
             {
-                return double.Parse(fieldValue.ToString());
+                return double.Parse(fieldValue.ToString(), CultureInfo.InvariantCulture);
             }
 
             return null;

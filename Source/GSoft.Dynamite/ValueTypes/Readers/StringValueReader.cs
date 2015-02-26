@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
-using Microsoft.SharePoint;
 using GSoft.Dynamite.ValueTypes.Readers;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Writers
 {

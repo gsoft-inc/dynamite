@@ -18,7 +18,6 @@ namespace GSoft.Dynamite.Binding.Converters
         /// <param name="valueKey">The value key.</param>
         /// <param name="dataRow">The data row.</param>
         /// <param name="fieldCollection">The field Collection.</param>
-        /// <param name="web">The current web</param>
         /// <param name="fieldValues">The full dictionary of values being converted</param>
         public DataRowConversionArguments(string propertyName, Type propertyType, string valueKey, DataRow dataRow, SPFieldCollection fieldCollection, IDictionary<string, object> fieldValues)
             : base(propertyName, propertyType, valueKey)
@@ -43,7 +42,6 @@ namespace GSoft.Dynamite.Binding.Converters
                 return this.FieldCollection.Web;
             }
         }
-            
 
         /// <summary>
         /// Gets the list item.

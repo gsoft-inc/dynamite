@@ -33,9 +33,6 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
         public void FromEntity(object sourceEntity, IDictionary<string, object> values, SPFieldCollection fieldCollection)
         {
             foreach (var binding in this.BindingDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))

@@ -12,6 +12,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
     /// <summary>
     /// Defines the generic contract for all ValueType readers
     /// </summary>
+    /// <typeparam name="T">The associated value type</typeparam>
     public abstract class BaseValueReader<T> : IBaseValueReader
     {
         /// <summary>

@@ -70,16 +70,6 @@ namespace GSoft.Dynamite.ServiceLocator
 #endif
 
             // Binding
-            //var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
-            //var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
-
-            //builder.RegisterType<SharePointDataRowEntitySchema>();
-            //builder.RegisterInstance<IEntitySchemaBuilder>(cachedSchemaBuilder);
-            //builder.RegisterType<TaxonomyValueDataRowConverter>();
-            //builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
-            //builder.RegisterType<TaxonomyValueConverter>();
-            //builder.RegisterType<TaxonomyValueCollectionConverter>();
-            //builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
             builder.RegisterType<EntitySchemaFactory>().Named<IEntitySchemaFactory>("decorated");
             builder.RegisterDecorator<IEntitySchemaFactory>((c, inner) => new CachedEntitySchemaFactory(inner, c.Resolve<ILogger>()), fromKey: "decorated");
             builder.RegisterType<SharePointEntityBinderNextGen>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder

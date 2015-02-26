@@ -56,6 +56,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <summary>
         /// Reads a field value from a DataRow returned by a CAML query
         /// </summary>
+        /// <param name="web">The context's web</param>
         /// <param name="dataRowFromCamlResult">The CAML-query-result data row we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
         /// <returns>The value extracted from the data row's corresponding cell</returns>

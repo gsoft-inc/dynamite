@@ -34,7 +34,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
                 var field = (TaxonomyField)item.Fields.GetFieldByInternalName(fieldInternalName);
 
-                this.InitTaxonomyContextForValues(taxValueCollection, field, item.Web.Site);
+                InitTaxonomyContextForValues(taxValueCollection, field, item.Web.Site);
 
                 return taxValueCollection;
             }
@@ -59,7 +59,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
                 var field = (TaxonomyField)itemVersion.Fields.GetFieldByInternalName(fieldInternalName);
 
-                this.InitTaxonomyContextForValues(taxValueCollection, field, itemVersion.ListItem.Web.Site);
+                InitTaxonomyContextForValues(taxValueCollection, field, itemVersion.ListItem.Web.Site);
 
                 return taxValueCollection;
             }
@@ -92,7 +92,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
                 // the taxonomy context. This means that if the item comes from a list where the 
                 // TermStoreMapping on the list column is different than on the site column, we're
                 // going to initialize the wrong context for the item here.
-                this.InitTaxonomyContextForValues(taxValueCollection, field, site);
+                InitTaxonomyContextForValues(taxValueCollection, field, site);
 
                 return taxValueCollection;
             }
@@ -100,7 +100,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
             return null;
         }
 
-        private void InitTaxonomyContextForValues(TaxonomyValueCollection taxValueCollection, TaxonomyField field, SPSite site)
+        private static void InitTaxonomyContextForValues(TaxonomyValueCollection taxValueCollection, TaxonomyField field, SPSite site)
         {
             if (field.SspId != null && field.SspId != Guid.Empty)
             {

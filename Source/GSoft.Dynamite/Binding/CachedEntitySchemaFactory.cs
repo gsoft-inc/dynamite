@@ -10,13 +10,22 @@ using GSoft.Dynamite.ValueTypes.Writers;
 
 namespace GSoft.Dynamite.Binding
 {
-    public class CachedEntitySchemaFactory : IEntitySchemaFactory
+    /// <summary>
+    /// Decorator for <see cref="EntitySchemaFactory"/> which takes care of caching
+    /// entity mapping details for all types.
+    /// </summary>
+    public class CachedEntitySchemaFactory : IEntitySchemaFactory, IDisposable
     {
+        private readonly ConcurrentDictionary<Type, IEntityBindingSchema> cachedSchemas = new ConcurrentDictionary<Type, IEntityBindingSchema>();
+
         private IEntitySchemaFactory decoratedSchemaFactory;
         private ILogger logger;
 
-        private readonly ConcurrentDictionary<Type, IEntityBindingSchema> cachedSchemas = new ConcurrentDictionary<Type, IEntityBindingSchema>();
-
+        /// <summary>
+        /// Creates a new instance of <see cref="CachedEntitySchemaFactory"/>
+        /// </summary>
+        /// <param name="decoratedSchemaFactory">The real implementation of the schema factory</param>
+        /// <param name="logger">Logging utility</param>
         public CachedEntitySchemaFactory(IEntitySchemaFactory decoratedSchemaFactory, ILogger logger)
         {
             this.decoratedSchemaFactory = decoratedSchemaFactory;
@@ -50,5 +59,27 @@ namespace GSoft.Dynamite.Binding
 
             return schema;
         }
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources
+        /// </summary>
+        /// <param name="managed"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool managed)
+        {
+            this.cachedSchemas.Dispose();
+        }
+
+        #endregion
     }
 }

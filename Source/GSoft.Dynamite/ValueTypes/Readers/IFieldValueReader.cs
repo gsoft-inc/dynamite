@@ -40,10 +40,10 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         T ReadValueFromCamlResultDataRow<T>(DataRow dataRowFromCamlResult, string fieldInternalName);
 
         /// <summary>
-        /// 
+        /// Gets the registered value reader instance for the specified type
         /// </summary>
-        /// <param name="valueType"></param>
-        /// <returns></returns>
+        /// <param name="valueType">The value type we wish to read</param>
+        /// <returns>The value reader that you should then cast down to a generic BaseValueReader of Type valueType</returns>
         IBaseValueReader GetValueReaderForType(Type valueType);
 
         /// <summary>

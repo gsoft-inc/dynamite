@@ -209,6 +209,11 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             valueWriter.WriteValueToFolderDefault(folder, defaultFieldValueInfo);
         }
 
+        /// <summary>
+        /// Gets the registered value writer instance for the specified type
+        /// </summary>
+        /// <param name="valueType">The value type we wish to write</param>
+        /// <returns>The value writer for the specified type</returns>
         public IBaseValueWriter GetValueWriterForType(Type valueType)
         {
             Type writerTypeArgument = valueType;

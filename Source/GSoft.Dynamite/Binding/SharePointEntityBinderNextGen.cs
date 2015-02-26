@@ -15,25 +15,25 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.Binding
 {
     /// <summary>
-    /// The new entity binder for SharePoint.
+    /// An entity mapping utility for SharePoint.
     /// </summary>
     public class SharePointEntityBinderNextGen : ISharePointEntityBinder
     {
         #region Fields
 
         private readonly IEntitySchemaFactory entitySchemaFactory;
-        private readonly ILogger logger;
 
         #endregion
 
         #region Constructors
 
-        public SharePointEntityBinderNextGen(
-            IEntitySchemaFactory entitySchemaFactory,
-            ILogger logger)
+        /// <summary>
+        /// Creates a new instance of <see cref="SharePointEntityBinder"/>
+        /// </summary>
+        /// <param name="entitySchemaFactory">The entity schema building utility</param>
+        public SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory)
         {
             this.entitySchemaFactory = entitySchemaFactory;
-            this.logger = logger;
         }
 
         #endregion
@@ -150,7 +150,6 @@ namespace GSoft.Dynamite.Binding
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="dataRow">The data row.</param>
         /// <param name="fieldCollection">The collection of field to get</param>
-        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>

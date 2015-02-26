@@ -8,10 +8,20 @@ using GSoft.Dynamite.ValueTypes.Writers;
 
 namespace GSoft.Dynamite.Binding
 {
+    /// <summary>
+    /// Builds the schema of entity mapping details for all of an entity's properties
+    /// tagged with the PropertyAttribute.
+    /// </summary>
     public class EntitySchemaFactory : IEntitySchemaFactory
     {
         private IFieldValueWriter fieldValueWriter;
         private IFieldValueReader fieldValueReader;
+
+        /// <summary>
+        /// Creates an instance of <see cref="EntitySchemaFactory"/>
+        /// </summary>
+        /// <param name="fieldValueWriter">Field value writer</param>
+        /// <param name="fieldValueReader">Field value reader</param>
         public EntitySchemaFactory(IFieldValueWriter fieldValueWriter, IFieldValueReader fieldValueReader)
         {
             this.fieldValueWriter = fieldValueWriter;

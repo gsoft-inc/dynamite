@@ -16,8 +16,9 @@ namespace GSoft.Dynamite.Binding
         /// </summary>
         /// <param name="entityProperty">The entity property.</param>
         /// <param name="valueKey">The value key.</param>
-        /// <param name="converter">The converter.</param>
         /// <param name="bindingType">Type of the binding.</param>
+        /// <param name="valueWriter">Value writer for the associated value type</param>
+        /// <param name="valueReader">Value reader for the associated value type</param>
         public EntityPropertyConversionDetail(PropertyInfo entityProperty, string valueKey, BindingType bindingType, IBaseValueWriter valueWriter, IBaseValueReader valueReader)
         {
             this.EntityProperty = entityProperty;
@@ -58,6 +59,5 @@ namespace GSoft.Dynamite.Binding
         public IBaseValueReader ValueReader { get; private set; }
 
         #endregion
-
     }
 }

@@ -146,7 +146,6 @@ namespace GSoft.Dynamite.Binding
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="dataRow">The data row.</param>
         /// <param name="fieldCollection">The collection of field to get</param>
-        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>

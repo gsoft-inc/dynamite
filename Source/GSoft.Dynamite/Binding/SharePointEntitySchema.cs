@@ -21,9 +21,6 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
         /// <returns>
         /// The conversion arguments.
         /// </returns>

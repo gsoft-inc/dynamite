@@ -17,7 +17,6 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <summary>
         /// Reads a field value from a list item
         /// </summary>
-        /// <typeparam name="T">The field's associated value type</typeparam>
         /// <param name="item">The list item we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field in the item's columns</param>
         /// <returns>The value extracted from the list item's field</returns>
@@ -36,7 +35,6 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         /// <summary>
         /// Reads a field value from a list item version
         /// </summary>
-        /// <typeparam name="T">The field's associated value type</typeparam>
         /// <param name="itemVersion">The list item version we want to extract a field value from</param>
         /// <param name="fieldInternalName">The key to find the field in the item's columns</param>
         /// <returns>The value extracted from the list item's field</returns>

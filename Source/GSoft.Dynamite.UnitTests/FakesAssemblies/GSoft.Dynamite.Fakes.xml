@@ -1168,17 +1168,32 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Bind(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Bind(System.IDisposable)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.ConstructorIEntitySchemaFactoryILogger">
             <summary>Sets the shim of CachedEntitySchemaFactory.CachedEntitySchemaFactory(IEntitySchemaFactory decoratedSchemaFactory, ILogger logger)</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Dispose">
+            <summary>Sets the shim of CachedEntitySchemaFactory.Dispose()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.DisposeBoolean">
+            <summary>Sets the shim of CachedEntitySchemaFactory.Dispose(Boolean managed)</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.GetSchemaType">
             <summary>Sets the shim of CachedEntitySchemaFactory.GetSchema(Type type)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances">
             <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances.Dispose">
+            <summary>Sets the shim of CachedEntitySchemaFactory.Dispose()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances.DisposeBoolean">
+            <summary>Sets the shim of CachedEntitySchemaFactory.Dispose(Boolean managed)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances.GetSchemaType">
             <summary>Sets the shim of CachedEntitySchemaFactory.GetSchema(Type type)</summary>
@@ -2443,8 +2458,8 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ConstructorIEntitySchemaFactoryILogger">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory, ILogger logger)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ConstructorIEntitySchemaFactory">
+            <summary>Sets the shim of SharePointEntityBinderNextGen.SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -2553,6 +2568,12 @@
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory,GSoft.Dynamite.Logging.ILogger)">
             <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.Dispose(System.Boolean)">
+            <summary>Sets the stub of CachedEntitySchemaFactory.Dispose(Boolean managed)</summary>
+        </member>
+        <member name="F:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.DisposeBoolean">
+            <summary>Sets the stub of CachedEntitySchemaFactory.Dispose(Boolean managed)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.InitializeStub">
             <summary>Initializes a new instance of type StubCachedEntitySchemaFactory</summary>
@@ -3103,7 +3124,7 @@
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen">
             <summary>Stub type of GSoft.Dynamite.Binding.SharePointEntityBinderNextGen</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory,GSoft.Dynamite.Logging.ILogger)">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InitializeStub">
@@ -23794,9 +23815,6 @@
         <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.InitTaxonomyContextForValuesTaxonomyValueCollectionTaxonomyFieldSPSite">
-            <summary>Sets the shim of TaxonomyValueCollectionReader.InitTaxonomyContextForValues(TaxonomyValueCollection taxValueCollection, TaxonomyField field, SPSite site)</summary>
-        </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueCollectionReader.AllInstances.ReadValueFromCamlResultDataRowSPWebDataRowString">
             <summary>Sets the shim of TaxonomyValueCollectionReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>
         </member>
@@ -23844,9 +23862,6 @@
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances">
             <summary>Define shims for all instances members</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.InitTaxonomyContextForValueTaxonomyValueTaxonomyFieldSPSite">
-            <summary>Sets the shim of TaxonomyValueReader.InitTaxonomyContextForValue(TaxonomyValue taxValue, TaxonomyField field, SPSite site)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Readers.Fakes.ShimTaxonomyValueReader.AllInstances.ReadValueFromCamlResultDataRowSPWebDataRowString">
             <summary>Sets the shim of TaxonomyValueReader.ReadValueFromCamlResultDataRow(SPWeb web, DataRow dataRowFromCamlResult, String fieldInternalName)</summary>

@@ -16,6 +16,25 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     {
         private readonly IDictionary<Type, IBaseValueReader> readers = new Dictionary<Type, IBaseValueReader>();
 
+        /// <summary>
+        /// Creates a new instance of <see cref="FieldValueReader"/>
+        /// </summary>
+        /// <param name="stringValueReader">String value reader</param>
+        /// <param name="boolValueReader">Boolean value reader</param>
+        /// <param name="integerValueReader">Integer value reader</param>
+        /// <param name="doubleValueReader">Double value reader</param>
+        /// <param name="dateTimeValueReader">DateTime value reader</param>
+        /// <param name="guidValueReader">Guid value reader</param>
+        /// <param name="taxonomyValueReader">Taxonomy value reader</param>
+        /// <param name="taxonomyValueCollectionReader">Taxonomy value collection reader</param>
+        /// <param name="lookupValueReader">Lookup value reader</param>
+        /// <param name="lookupValueCollectionReader">Lookup value collection reader</param>
+        /// <param name="principalValueReader">Principal value reader</param>
+        /// <param name="userValueReader">User value reader</param>
+        /// <param name="userValueCollectionReader">User value collection reader</param>
+        /// <param name="urlValueReader">Url value reader</param>
+        /// <param name="imageValueReader">Publishing image value reader</param>
+        /// <param name="mediaValueReader">Nedia value reader</param>
         public FieldValueReader(
             StringValueReader stringValueReader,
             BooleanValueReader boolValueReader,
@@ -94,6 +113,11 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             return (T)valueThatWasRead;
         }
 
+        /// <summary>
+        /// Gets the registered value reader instance for the specified type
+        /// </summary>
+        /// <param name="valueType">The value type we wish to read</param>
+        /// <returns>The value reader that you should then cast down to a generic BaseValueReader of Type valueType</returns>
         public IBaseValueReader GetValueReaderForType(Type valueType)
         {
             Type readerTypeArgument = valueType;
@@ -105,20 +129,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (this.readers.ContainsKey(readerTypeArgument))
             {
-                return readers[readerTypeArgument];
+                return this.readers[readerTypeArgument];
             }
 
             return null;
         }
 
-        /// <summary>
-        /// Reads a field value from a DataRow returned by a Search query
-        /// </summary>
-        /// <typeparam name="T">The field's associated value type</typeparam>
-        /// <param name="dataRowFromCamlResult">The CAML-query-result data row we want to extract a field value from</param>
-        /// <param name="fieldInternalName">The key to find the field among the data row cells</param>
-        /// <returns>The value extracted from the data row's corresponding cell</returns>
-        ////T ReadValueFromSearchResultDataRow<T>(DataRow dataRowFromSearchResult, string fieldManagedPropertyName);
         private void AddToReadersDictionary(IBaseValueReader reader)
         {
             this.readers.Add(reader.AssociatedValueType, reader);
@@ -136,7 +152,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (this.readers.ContainsKey(readerTypeArgument))
             {
-                return readers[readerTypeArgument];
+                return this.readers[readerTypeArgument];
             }
             else
             {

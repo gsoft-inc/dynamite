@@ -476,7 +476,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         // - All nulls in list items ToEntity
         // - Document Lib items To/From
         // - PublishingPage.ListItem DateTime binding
-        
 
         /// <summary>
         /// Validates that using the ISharePointEntityBinder to map an entity's properties to
@@ -785,7 +784,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                             IsLoop = true,
                             PreviewImageUrl = "/_layouts/15/Images/logo.png"
                         },
-                        TaxonomyProperty = new TaxonomyValue(createdTermB), //TODO: This should become TaxonomyValue
+                        TaxonomyProperty = new TaxonomyValue(createdTermB),
                         TaxonomyMultiProperty = new TaxonomyValueCollection(
                         new List<TaxonomyValue>() 
                             { 
@@ -944,74 +943,146 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             }
         }
 
+        /// <summary>
+        /// A test class
+        /// </summary>
         public class TestItemEntity : BaseEntity
         {
+            /// <summary>
+            /// Test int property
+            /// </summary>
             [Property("TestInternalNameInteger")]
             public int IntegerProperty { get; set; }
 
+            /// <summary>
+            /// Test double property
+            /// </summary>
             [Property("TestInternalNameNumber")]
             public double DoubleProperty { get; set; }
 
+            /// <summary>
+            /// Test currency property
+            /// </summary>
             [Property("TestInternalNameCurrency")]
             public double CurrencyProperty { get; set; }   // TODO: right now currency (which, ideally, would be mapped to type decimal) will use the DoubleValueWriter, which may map wrong to decimal
 
+            /// <summary>
+            /// Test bool property
+            /// </summary>
             [Property("TestInternalNameBool")]
             public bool? BoolProperty { get; set; }
 
+            /// <summary>
+            /// Test bool property with True default value on field
+            /// </summary>
             [Property("TestInternalNameBoolTrue")]
             public bool BoolDefaultTrueProperty { get; set; }
 
+            /// <summary>
+            /// Test bool property with False default value on field
+            /// </summary>
             [Property("TestInternalNameBoolFalse")]
             public bool BoolDefaultFalseProperty { get; set; }
 
+            /// <summary>
+            /// Test datetime property with formula on field
+            /// </summary>
             [Property("TestInternalNameDateFormula")]
             public DateTime DateTimeFormulaProperty { get; set; }
 
+            /// <summary>
+            /// Test datetime property
+            /// </summary>
             [Property("TestInternalNameDateDefault")]
             public DateTime? DateTimeProperty { get; set; }
 
+            /// <summary>
+            /// Test text property
+            /// </summary>
             [Property("TestInternalNameText")]
             public string TextProperty { get; set; }
 
+            /// <summary>
+            /// Test note property
+            /// </summary>
             [Property("TestInternalNameNote")]
             public string NoteProperty { get; set; }
 
+            /// <summary>
+            /// Test HTML property
+            /// </summary>
             [Property("TestInternalNameHtml")]
             public string HtmlProperty { get; set; }
 
+            /// <summary>
+            /// Test Image property
+            /// </summary>
             [Property("TestInternalNameImage")]
             public ImageValue ImageProperty { get; set; }
 
+            /// <summary>
+            /// Test URL property
+            /// </summary>
             [Property("TestInternalNameUrl")]
             public UrlValue UrlProperty { get; set; }
 
+            /// <summary>
+            /// Test URL-as-Image property
+            /// </summary>
             [Property("TestInternalNameUrlImg")]
             public UrlValue UrlImageProperty { get; set; }
 
+            /// <summary>
+            /// Test media (audio-video) property
+            /// </summary>
             [Property("TestInternalNameMedia")]
             public MediaValue MediaProperty { get; set; }
 
+            /// <summary>
+            /// Test taxonomy property
+            /// </summary>
             [Property("TestInternalNameTaxo")]
             public TaxonomyValue TaxonomyProperty { get; set; }
 
+            /// <summary>
+            /// Test taxonomy multi property
+            /// </summary>
             [Property("TestInternalNameTaxoMulti")]
             public TaxonomyValueCollection TaxonomyMultiProperty { get; set; } 
         }
 
+        /// <summary>
+        /// Another test class
+        /// </summary>
         public class TestItemEntityWithLookups : TestItemEntity
         {
+            /// <summary>
+            /// Test lookup property
+            /// </summary>
             [Property("TestInternalNameLookup")]
             public LookupValue LookupProperty { get; set; }
 
+            /// <summary>
+            /// Alternate test lookup property
+            /// </summary>
             [Property("TestInternalNameLookupAlt")]
             public LookupValue LookupAltProperty { get; set; }
 
+            /// <summary>
+            /// Test lookup multi property
+            /// </summary>
             [Property("TestInternalNameLookupM")]
             public LookupValueCollection LookupMultiProperty { get; set; }
 
+            /// <summary>
+            /// Test User property
+            /// </summary>
             [Property("TestInternalNameUser")]
             public UserValue UserProperty { get; set; }
 
+            /// <summary>
+            /// Test user multi property
+            /// </summary>
             [Property("TestInternalNameUserMulti")]
             public UserValueCollection UserMultiProperty { get; set; }
         }

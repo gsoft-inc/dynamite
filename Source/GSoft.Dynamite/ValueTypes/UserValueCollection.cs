@@ -31,10 +31,10 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// Initializes a new instance of the <see cref="UserValueCollection"/> class.
         /// </summary>
-        /// <remarks>This constructor will not ensure that the labels respect the CurrentUICulture</remarks>
-        /// <param name="taxonomyFieldValueCollection">The taxonomy values.</param>
+        /// <param name="userFieldValueCollection">The user values.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
         public UserValueCollection(SPFieldUserValueCollection userFieldValueCollection) :
             this(new UserValueCollection(userFieldValueCollection.Select(userFieldValue => new UserValue(userFieldValue.User)).ToList()))
         {

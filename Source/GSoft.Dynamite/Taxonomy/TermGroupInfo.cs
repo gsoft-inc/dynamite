@@ -43,7 +43,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// Convenience constructor to create TeermGroupInfo objects from
         /// SharePoint's taxonomy group instances
         /// </summary>
-        /// <param name="sharePointTermGroup"></param>
+        /// <param name="sharePointTermGroup">The SharePoint taxonomy group</param>
         public TermGroupInfo(Group sharePointTermGroup)
         {
             this.Name = sharePointTermGroup.Name;
