@@ -87,6 +87,7 @@
     <Compile Include="Binding\Converters\UserValueCollectionConverter.cs" />
     <Compile Include="Binding\EntityPropertyConversionDetail.cs" />
     <Compile Include="Binding\EntityBindingSchema.cs" />
+    <Compile Include="Binding\CachedEntitySchemaFactory.cs" />
     <Compile Include="Binding\IEntityBindingSchema.cs" />
     <Compile Include="Binding\EntitySchemaFactory.cs" />
     <Compile Include="Binding\IEntitySchemaFactory.cs" />

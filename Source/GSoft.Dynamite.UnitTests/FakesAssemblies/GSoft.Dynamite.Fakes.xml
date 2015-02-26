@@ -1150,6 +1150,39 @@
         <member name="P:GSoft.Dynamite.Binding.Converters.Fakes.StubUserValueDataRowConverter.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory">
+            <summary>Shim type of GSoft.Dynamite.Binding.CachedEntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.#ctor">
+            <summary>Initializes a new shim instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.#ctor(GSoft.Dynamite.Binding.CachedEntitySchemaFactory)">
+            <summary>Initializes a new shim for the given instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.BehaveAsCurrent">
+            <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.BehaveAsNotImplemented">
+            <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Bind(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
+            <summary>Binds the members of the interface to the shim.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.Behavior">
+            <summary>Assigns the behavior for all methods of the shimmed type</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.ConstructorIEntitySchemaFactoryILogger">
+            <summary>Sets the shim of CachedEntitySchemaFactory.CachedEntitySchemaFactory(IEntitySchemaFactory decoratedSchemaFactory, ILogger logger)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.GetSchemaType">
+            <summary>Sets the shim of CachedEntitySchemaFactory.GetSchema(Type type)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances">
+            <summary>Define shims for all instances members</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimCachedEntitySchemaFactory.AllInstances.GetSchemaType">
+            <summary>Sets the shim of CachedEntitySchemaFactory.GetSchema(Type type)</summary>
+        </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.ShimCachedSchemaBuilder">
             <summary>Shim type of GSoft.Dynamite.Binding.CachedSchemaBuilder</summary>
         </member>
@@ -2514,6 +2547,24 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimStraightConverter.AllInstances.ConvertObjectConversionArguments">
             <summary>Sets the shim of StraightConverter.Convert(Object value, ConversionArguments arguments)</summary>
+        </member>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory">
+            <summary>Stub type of GSoft.Dynamite.Binding.CachedEntitySchemaFactory</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory,GSoft.Dynamite.Logging.ILogger)">
+            <summary>Initializes a new instance</summary>
+        </member>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.InitializeStub">
+            <summary>Initializes a new instance of type StubCachedEntitySchemaFactory</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.CallBase">
+            <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.InstanceBehavior">
+            <summary>Gets or sets the instance behavior.</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory.InstanceObserver">
+            <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubCachedSchemaBuilder">
             <summary>Stub type of GSoft.Dynamite.Binding.CachedSchemaBuilder</summary>
@@ -18972,6 +19023,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ServiceLocator.Fakes.ShimAutofacDynamiteRegistrationModule.LoadContainerBuilder">
             <summary>Sets the shim of AutofacDynamiteRegistrationModule.Load(ContainerBuilder builder)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ServiceLocator.Fakes.ShimAutofacDynamiteRegistrationModule._Loadb__0IComponentContextIEntitySchemaFactory">
+            <summary>Sets the shim of AutofacDynamiteRegistrationModule.&lt;Load&gt;b__0(IComponentContext c, IEntitySchemaFactory inner)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ServiceLocator.Fakes.ShimAutofacDynamiteRegistrationModule.AllInstances">
             <summary>Define shims for all instances members</summary>

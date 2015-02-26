@@ -80,44 +80,45 @@ namespace GSoft.Dynamite.ServiceLocator
             //builder.RegisterType<TaxonomyValueConverter>();
             //builder.RegisterType<TaxonomyValueCollectionConverter>();
             //builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
-            builder.RegisterType<EntitySchemaFactory>().As<IEntitySchemaFactory>();
+            builder.RegisterType<EntitySchemaFactory>().Named<IEntitySchemaFactory>("decorated");
+            builder.RegisterDecorator<IEntitySchemaFactory>((c, inner) => new CachedEntitySchemaFactory(inner, c.Resolve<ILogger>()), fromKey: "decorated");
             builder.RegisterType<SharePointEntityBinderNextGen>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
-            builder.RegisterType<StringValueWriter>();
-            builder.RegisterType<BooleanValueWriter>();
-            builder.RegisterType<IntegerValueWriter>();
-            builder.RegisterType<DoubleValueWriter>();
-            builder.RegisterType<DateTimeValueWriter>();
-            builder.RegisterType<GuidValueWriter>();
-            builder.RegisterType<TaxonomyValueWriter>();
-            builder.RegisterType<TaxonomyValueCollectionWriter>();
-            builder.RegisterType<LookupValueWriter>();
-            builder.RegisterType<LookupValueCollectionWriter>();
-            builder.RegisterType<PrincipalValueWriter>();
-            builder.RegisterType<UserValueWriter>();
-            builder.RegisterType<UserValueCollectionWriter>();
-            builder.RegisterType<UrlValueWriter>();
-            builder.RegisterType<ImageValueWriter>();
-            builder.RegisterType<MediaValueWriter>();
+            builder.RegisterType<StringValueWriter>().SingleInstance();
+            builder.RegisterType<BooleanValueWriter>().SingleInstance();
+            builder.RegisterType<IntegerValueWriter>().SingleInstance();
+            builder.RegisterType<DoubleValueWriter>().SingleInstance();
+            builder.RegisterType<DateTimeValueWriter>().SingleInstance();
+            builder.RegisterType<GuidValueWriter>().SingleInstance();
+            builder.RegisterType<TaxonomyValueWriter>().SingleInstance();
+            builder.RegisterType<TaxonomyValueCollectionWriter>().SingleInstance();
+            builder.RegisterType<LookupValueWriter>().SingleInstance();
+            builder.RegisterType<LookupValueCollectionWriter>().SingleInstance();
+            builder.RegisterType<PrincipalValueWriter>().SingleInstance();
+            builder.RegisterType<UserValueWriter>().SingleInstance();
+            builder.RegisterType<UserValueCollectionWriter>().SingleInstance();
+            builder.RegisterType<UrlValueWriter>().SingleInstance();
+            builder.RegisterType<ImageValueWriter>().SingleInstance();
+            builder.RegisterType<MediaValueWriter>().SingleInstance();
 
             builder.RegisterType<FieldValueReader>().As<IFieldValueReader>();
-            builder.RegisterType<StringValueReader>();
-            builder.RegisterType<BooleanValueReader>();
-            builder.RegisterType<IntegerValueReader>();
-            builder.RegisterType<DoubleValueReader>();
-            builder.RegisterType<DateTimeValueReader>();
-            builder.RegisterType<GuidValueReader>();
-            builder.RegisterType<TaxonomyValueReader>();
-            builder.RegisterType<TaxonomyValueCollectionReader>();
-            builder.RegisterType<LookupValueReader>();
-            builder.RegisterType<LookupValueCollectionReader>();
-            builder.RegisterType<PrincipalValueReader>();
-            builder.RegisterType<UserValueReader>();
-            builder.RegisterType<UserValueCollectionReader>();
-            builder.RegisterType<UrlValueReader>();
-            builder.RegisterType<ImageValueReader>();
-            builder.RegisterType<MediaValueReader>();
+            builder.RegisterType<StringValueReader>().SingleInstance();
+            builder.RegisterType<BooleanValueReader>().SingleInstance();
+            builder.RegisterType<IntegerValueReader>().SingleInstance();
+            builder.RegisterType<DoubleValueReader>().SingleInstance();
+            builder.RegisterType<DateTimeValueReader>().SingleInstance();
+            builder.RegisterType<GuidValueReader>().SingleInstance();
+            builder.RegisterType<TaxonomyValueReader>().SingleInstance();
+            builder.RegisterType<TaxonomyValueCollectionReader>().SingleInstance();
+            builder.RegisterType<LookupValueReader>().SingleInstance();
+            builder.RegisterType<LookupValueCollectionReader>().SingleInstance();
+            builder.RegisterType<PrincipalValueReader>().SingleInstance();
+            builder.RegisterType<UserValueReader>().SingleInstance();
+            builder.RegisterType<UserValueCollectionReader>().SingleInstance();
+            builder.RegisterType<UrlValueReader>().SingleInstance();
+            builder.RegisterType<ImageValueReader>().SingleInstance();
+            builder.RegisterType<MediaValueReader>().SingleInstance();
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
