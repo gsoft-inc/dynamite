@@ -24826,14 +24826,17 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ConstructorStringValueReaderBooleanValueReaderIntegerValueReaderDoubleValueReaderDateTimeValueReaderGuidValueReaderTaxonomyValueReaderTaxonomyValueCollectionReaderLookupValueReaderLookupValueCollectionReaderPrincipalValueReaderUserValueReaderUserValueColle">
-            <summary>Sets the shim of FieldValueReader.FieldValueReader(StringValueReader stringValueReader, BooleanValueReader boolValueReader, IntegerValueReader integerValueReader, DoubleValueReader doubleValueReader, DateTimeValueReader dateTimeValueReader, GuidValueReader guidValueReader, TaxonomyValueReader taxonomyValueReader, TaxonomyValueCollectionReader taxonomyValueCollectionReader, LookupValueReader lookupValueReader, LookupValueCollectionReader lookupValueCollectionReader, PrincipalValueReader principalValueReader, UserValueReader userValueReader, UserValueCollectionReader userValueCollectionReader, UrlValueReader urlValueReader, ImageValueReader imageValueReader, MediaValueReader mediaValueReader)</summary>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.ConstructorIListOfIBaseValueReader">
+            <summary>Sets the shim of FieldValueReader.FieldValueReader(IList`1&lt;IBaseValueReader&gt; readers)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetReaderType">
             <summary>Sets the shim of FieldValueReader.GetReader(Type typeOfValueWeWantToRead)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.GetValueReaderForTypeType">
             <summary>Sets the shim of FieldValueReader.GetValueReaderForType(Type valueType)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader._ctorb__0IBaseValueReader">
+            <summary>Sets the shim of FieldValueReader.&lt;.ctor&gt;b__0(IBaseValueReader w)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -24855,6 +24858,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances.GetValueReaderForTypeType">
             <summary>Sets the shim of FieldValueReader.GetValueReaderForType(Type valueType)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueReader.AllInstances._ctorb__0IBaseValueReader">
+            <summary>Sets the shim of FieldValueReader.&lt;.ctor&gt;b__0(IBaseValueReader w)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
@@ -24880,8 +24886,8 @@
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.ConstructorStringValueWriterBooleanValueWriterIntegerValueWriterDoubleValueWriterDateTimeValueWriterGuidValueWriterTaxonomyValueWriterTaxonomyValueCollectionWriterLookupValueWriterLookupValueCollectionWriterPrincipalValueWriterUserValueWriterUserValueColle">
-            <summary>Sets the shim of FieldValueWriter.FieldValueWriter(StringValueWriter stringValueWriter, BooleanValueWriter boolValueWriter, IntegerValueWriter integerValueWriter, DoubleValueWriter doubleValueWriter, DateTimeValueWriter dateTimeValueWriter, GuidValueWriter guidValueWriter, TaxonomyValueWriter taxonomyValueWriter, TaxonomyValueCollectionWriter taxonomyValueCollectionWriter, LookupValueWriter lookupValueWriter, LookupValueCollectionWriter lookupValueCollectionWriter, PrincipalValueWriter principalValueWriter, UserValueWriter userValueWriter, UserValueCollectionWriter userValueCollectionWriter, UrlValueWriter urlValueWriter, ImageValueWriter imageValueWriter, MediaValueWriter mediaValueWriter)</summary>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.ConstructorIListOfIBaseValueWriter">
+            <summary>Sets the shim of FieldValueWriter.FieldValueWriter(IList`1&lt;IBaseValueWriter&gt; writers)</summary>
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.GetValueWriterForTypeType">
             <summary>Sets the shim of FieldValueWriter.GetValueWriterForType(Type valueType)</summary>
@@ -24906,6 +24912,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.WriteValuesToListItemSPListItemIListOfFieldValueInfo">
             <summary>Sets the shim of FieldValueWriter.WriteValuesToListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter._ctorb__0IBaseValueWriter">
+            <summary>Sets the shim of FieldValueWriter.&lt;.ctor&gt;b__0(IBaseValueWriter w)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -24936,6 +24945,9 @@
         </member>
         <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances.WriteValuesToListItemSPListItemIListOfFieldValueInfo">
             <summary>Sets the shim of FieldValueWriter.WriteValuesToListItem(SPListItem item, IList`1&lt;FieldValueInfo&gt; fieldValueInfos)</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimFieldValueWriter.AllInstances._ctorb__0IBaseValueWriter">
+            <summary>Sets the shim of FieldValueWriter.&lt;.ctor&gt;b__0(IBaseValueWriter w)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.ShimGuidValueWriter">
             <summary>Shim type of GSoft.Dynamite.ValueTypes.Writers.GuidValueWriter</summary>
@@ -25738,7 +25750,7 @@
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueReader</summary>
         </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueReader,GSoft.Dynamite.ValueTypes.Readers.BooleanValueReader,GSoft.Dynamite.ValueTypes.Readers.IntegerValueReader,GSoft.Dynamite.ValueTypes.Readers.DoubleValueReader,GSoft.Dynamite.ValueTypes.Readers.DateTimeValueReader,GSoft.Dynamite.ValueTypes.Readers.GuidValueReader,GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueReader,GSoft.Dynamite.ValueTypes.Readers.TaxonomyValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueReader,GSoft.Dynamite.ValueTypes.Readers.LookupValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.PrincipalValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueReader,GSoft.Dynamite.ValueTypes.Readers.UserValueCollectionReader,GSoft.Dynamite.ValueTypes.Readers.UrlValueReader,GSoft.Dynamite.ValueTypes.Readers.ImageValueReader,GSoft.Dynamite.ValueTypes.Readers.MediaValueReader)">
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.#ctor(System.Collections.Generic.IList{GSoft.Dynamite.ValueTypes.Readers.IBaseValueReader})">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueReader.InitializeStub">
@@ -25756,7 +25768,7 @@
         <member name="T:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter">
             <summary>Stub type of GSoft.Dynamite.ValueTypes.Writers.FieldValueWriter</summary>
         </member>
-        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.#ctor(GSoft.Dynamite.ValueTypes.Writers.StringValueWriter,GSoft.Dynamite.ValueTypes.Writers.BooleanValueWriter,GSoft.Dynamite.ValueTypes.Writers.IntegerValueWriter,GSoft.Dynamite.ValueTypes.Writers.DoubleValueWriter,GSoft.Dynamite.ValueTypes.Writers.DateTimeValueWriter,GSoft.Dynamite.ValueTypes.Writers.GuidValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyValueWriter,GSoft.Dynamite.ValueTypes.Writers.TaxonomyValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueWriter,GSoft.Dynamite.ValueTypes.Writers.LookupValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.PrincipalValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueWriter,GSoft.Dynamite.ValueTypes.Writers.UserValueCollectionWriter,GSoft.Dynamite.ValueTypes.Writers.UrlValueWriter,GSoft.Dynamite.ValueTypes.Writers.ImageValueWriter,GSoft.Dynamite.ValueTypes.Writers.MediaValueWriter)">
+        <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.#ctor(System.Collections.Generic.IList{GSoft.Dynamite.ValueTypes.Writers.IBaseValueWriter})">
             <summary>Initializes a new instance</summary>
         </member>
         <member name="M:GSoft.Dynamite.ValueTypes.Writers.Fakes.StubFieldValueWriter.InitializeStub">

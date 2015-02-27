@@ -1,4 +1,7 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
@@ -75,40 +78,48 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<SharePointEntityBinderNextGen>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
-            builder.RegisterType<StringValueWriter>().SingleInstance();
-            builder.RegisterType<BooleanValueWriter>().SingleInstance();
-            builder.RegisterType<IntegerValueWriter>().SingleInstance();
-            builder.RegisterType<DoubleValueWriter>().SingleInstance();
-            builder.RegisterType<DateTimeValueWriter>().SingleInstance();
-            builder.RegisterType<GuidValueWriter>().SingleInstance();
-            builder.RegisterType<TaxonomyValueWriter>().SingleInstance();
-            builder.RegisterType<TaxonomyValueCollectionWriter>().SingleInstance();
-            builder.RegisterType<LookupValueWriter>().SingleInstance();
-            builder.RegisterType<LookupValueCollectionWriter>().SingleInstance();
-            builder.RegisterType<PrincipalValueWriter>().SingleInstance();
-            builder.RegisterType<UserValueWriter>().SingleInstance();
-            builder.RegisterType<UserValueCollectionWriter>().SingleInstance();
-            builder.RegisterType<UrlValueWriter>().SingleInstance();
-            builder.RegisterType<ImageValueWriter>().SingleInstance();
-            builder.RegisterType<MediaValueWriter>().SingleInstance();
+            var writers = new[] 
+            {
+                typeof(StringValueWriter),
+                typeof(BooleanValueWriter),
+                typeof(IntegerValueWriter),
+                typeof(DoubleValueWriter),
+                typeof(DateTimeValueWriter),
+                typeof(GuidValueWriter),
+                typeof(TaxonomyValueWriter),
+                typeof(TaxonomyValueCollectionWriter),
+                typeof(LookupValueWriter),
+                typeof(LookupValueCollectionWriter),
+                typeof(PrincipalValueWriter),
+                typeof(UserValueWriter),
+                typeof(UserValueCollectionWriter),
+                typeof(UrlValueWriter),
+                typeof(ImageValueWriter),
+                typeof(MediaValueWriter)
+            };
+            writers.ToList().ForEach(w => builder.RegisterType(w).As<IBaseValueWriter>().SingleInstance());
 
             builder.RegisterType<FieldValueReader>().As<IFieldValueReader>();
-            builder.RegisterType<StringValueReader>().SingleInstance();
-            builder.RegisterType<BooleanValueReader>().SingleInstance();
-            builder.RegisterType<IntegerValueReader>().SingleInstance();
-            builder.RegisterType<DoubleValueReader>().SingleInstance();
-            builder.RegisterType<DateTimeValueReader>().SingleInstance();
-            builder.RegisterType<GuidValueReader>().SingleInstance();
-            builder.RegisterType<TaxonomyValueReader>().SingleInstance();
-            builder.RegisterType<TaxonomyValueCollectionReader>().SingleInstance();
-            builder.RegisterType<LookupValueReader>().SingleInstance();
-            builder.RegisterType<LookupValueCollectionReader>().SingleInstance();
-            builder.RegisterType<PrincipalValueReader>().SingleInstance();
-            builder.RegisterType<UserValueReader>().SingleInstance();
-            builder.RegisterType<UserValueCollectionReader>().SingleInstance();
-            builder.RegisterType<UrlValueReader>().SingleInstance();
-            builder.RegisterType<ImageValueReader>().SingleInstance();
-            builder.RegisterType<MediaValueReader>().SingleInstance();
+            var readers = new[] 
+            {
+                typeof(StringValueReader),
+                typeof(BooleanValueReader),
+                typeof(IntegerValueReader),
+                typeof(DoubleValueReader),
+                typeof(DateTimeValueReader),
+                typeof(GuidValueReader),
+                typeof(TaxonomyValueReader),
+                typeof(TaxonomyValueCollectionReader),
+                typeof(LookupValueReader),
+                typeof(LookupValueCollectionReader),
+                typeof(PrincipalValueReader),
+                typeof(UserValueReader),
+                typeof(UserValueCollectionReader),
+                typeof(UrlValueReader),
+                typeof(ImageValueReader),
+                typeof(MediaValueReader)
+            };
+            readers.ToList().ForEach(r => builder.RegisterType(r).As<IBaseValueReader>().SingleInstance());
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();

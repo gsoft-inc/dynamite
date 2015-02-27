@@ -6,7 +6,7 @@ using System.Text;
 namespace GSoft.Dynamite.ValueTypes.Readers
 {
     /// <summary>
-    /// Marker inteface for implementations of BaseValueReader of T
+    /// Marker interface for implementations of BaseValueReader of T
     /// </summary>
     public interface IBaseValueReader
     {

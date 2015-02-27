@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.ValueTypes.Readers;
 using Microsoft.SharePoint;
@@ -19,56 +20,10 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Creates a new instance of <see cref="FieldValueReader"/>
         /// </summary>
-        /// <param name="stringValueReader">String value reader</param>
-        /// <param name="boolValueReader">Boolean value reader</param>
-        /// <param name="integerValueReader">Integer value reader</param>
-        /// <param name="doubleValueReader">Double value reader</param>
-        /// <param name="dateTimeValueReader">DateTime value reader</param>
-        /// <param name="guidValueReader">Guid value reader</param>
-        /// <param name="taxonomyValueReader">Taxonomy value reader</param>
-        /// <param name="taxonomyValueCollectionReader">Taxonomy value collection reader</param>
-        /// <param name="lookupValueReader">Lookup value reader</param>
-        /// <param name="lookupValueCollectionReader">Lookup value collection reader</param>
-        /// <param name="principalValueReader">Principal value reader</param>
-        /// <param name="userValueReader">User value reader</param>
-        /// <param name="userValueCollectionReader">User value collection reader</param>
-        /// <param name="urlValueReader">Url value reader</param>
-        /// <param name="imageValueReader">Publishing image value reader</param>
-        /// <param name="mediaValueReader">Nedia value reader</param>
-        public FieldValueReader(
-            StringValueReader stringValueReader,
-            BooleanValueReader boolValueReader,
-            IntegerValueReader integerValueReader,
-            DoubleValueReader doubleValueReader,
-            DateTimeValueReader dateTimeValueReader,
-            GuidValueReader guidValueReader,
-            TaxonomyValueReader taxonomyValueReader,
-            TaxonomyValueCollectionReader taxonomyValueCollectionReader,
-            LookupValueReader lookupValueReader,
-            LookupValueCollectionReader lookupValueCollectionReader,
-            PrincipalValueReader principalValueReader,
-            UserValueReader userValueReader,
-            UserValueCollectionReader userValueCollectionReader,
-            UrlValueReader urlValueReader,
-            ImageValueReader imageValueReader,
-            MediaValueReader mediaValueReader)
+        /// <param name="readers">All registered value readers for specific value types</param>
+        public FieldValueReader(IList<IBaseValueReader> readers)
         {
-            this.AddToReadersDictionary(stringValueReader);
-            this.AddToReadersDictionary(boolValueReader);
-            this.AddToReadersDictionary(integerValueReader);
-            this.AddToReadersDictionary(doubleValueReader);
-            this.AddToReadersDictionary(dateTimeValueReader);
-            this.AddToReadersDictionary(guidValueReader);
-            this.AddToReadersDictionary(taxonomyValueReader);
-            this.AddToReadersDictionary(taxonomyValueCollectionReader);
-            this.AddToReadersDictionary(lookupValueReader);
-            this.AddToReadersDictionary(lookupValueCollectionReader);
-            this.AddToReadersDictionary(principalValueReader);
-            this.AddToReadersDictionary(userValueReader);
-            this.AddToReadersDictionary(userValueCollectionReader);
-            this.AddToReadersDictionary(urlValueReader);
-            this.AddToReadersDictionary(imageValueReader);
-            this.AddToReadersDictionary(mediaValueReader);
+            readers.ToList().ForEach(w => this.AddToReadersDictionary(w));
         }
 
         /// <summary>

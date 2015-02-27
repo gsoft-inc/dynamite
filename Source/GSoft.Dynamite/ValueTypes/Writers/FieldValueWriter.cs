@@ -20,56 +20,10 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <summary>
         /// Initializes a new instance of the <see cref="FieldValueWriter"/> class.
         /// </summary>
-        /// <param name="stringValueWriter">The base value writer.</param>
-        /// <param name="boolValueWriter">The boolean value writer.</param>
-        /// <param name="integerValueWriter">The int value writer.</param>
-        /// <param name="doubleValueWriter">The double value writer.</param>
-        /// <param name="dateTimeValueWriter">The DateTime value writer.</param>
-        /// <param name="guidValueWriter">The Guid value writer.</param>
-        /// <param name="taxonomyValueWriter">The taxonomy value writer.</param>
-        /// <param name="taxonomyValueCollectionWriter">The taxonomy multi value writer.</param>
-        /// <param name="lookupValueWriter">The lookup value writer.</param>
-        /// <param name="lookupValueCollectionWriter">The lookup value collection writer</param>
-        /// <param name="principalValueWriter">The principal value writer.</param>
-        /// <param name="userValueWriter">The user value writer.</param>
-        /// <param name="userValueCollectionWriter">The user value collection writer</param>
-        /// <param name="urlValueWriter">The URL value writer.</param>
-        /// <param name="imageValueWriter">The image value writer.</param>
-        /// <param name="mediaValueWriter">The media value writer.</param>
-        public FieldValueWriter(
-            StringValueWriter stringValueWriter,
-            BooleanValueWriter boolValueWriter,
-            IntegerValueWriter integerValueWriter,
-            DoubleValueWriter doubleValueWriter,
-            DateTimeValueWriter dateTimeValueWriter,
-            GuidValueWriter guidValueWriter,
-            TaxonomyValueWriter taxonomyValueWriter,
-            TaxonomyValueCollectionWriter taxonomyValueCollectionWriter,
-            LookupValueWriter lookupValueWriter,
-            LookupValueCollectionWriter lookupValueCollectionWriter,
-            PrincipalValueWriter principalValueWriter,
-            UserValueWriter userValueWriter,
-            UserValueCollectionWriter userValueCollectionWriter,
-            UrlValueWriter urlValueWriter,
-            ImageValueWriter imageValueWriter,
-            MediaValueWriter mediaValueWriter)
+        /// <param name="writers">All registered value writers for specific value types</param>
+        public FieldValueWriter(IList<IBaseValueWriter> writers)
         {
-            this.AddToWritersDictionary(stringValueWriter);
-            this.AddToWritersDictionary(boolValueWriter);
-            this.AddToWritersDictionary(integerValueWriter);
-            this.AddToWritersDictionary(doubleValueWriter);
-            this.AddToWritersDictionary(dateTimeValueWriter);
-            this.AddToWritersDictionary(guidValueWriter);
-            this.AddToWritersDictionary(taxonomyValueWriter);
-            this.AddToWritersDictionary(taxonomyValueCollectionWriter);
-            this.AddToWritersDictionary(lookupValueWriter);
-            this.AddToWritersDictionary(lookupValueCollectionWriter);
-            this.AddToWritersDictionary(principalValueWriter);
-            this.AddToWritersDictionary(userValueWriter);
-            this.AddToWritersDictionary(userValueCollectionWriter);
-            this.AddToWritersDictionary(urlValueWriter);
-            this.AddToWritersDictionary(imageValueWriter);
-            this.AddToWritersDictionary(mediaValueWriter);
+            writers.ToList().ForEach(w => this.AddToWritersDictionary(w));
         }
 
         /// <summary>
