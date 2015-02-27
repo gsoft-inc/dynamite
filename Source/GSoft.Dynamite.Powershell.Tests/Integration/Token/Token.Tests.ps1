@@ -17,12 +17,14 @@ function Get-CurrentDomain {
 # Global test parameters
 $tokenValue = "`"tokenValue`""
 $templateFileName = "TemplateFile"
-$domainNameTokenFile = (Get-Location).Path + "\Tokens." + (Get-CurrentDomain) + ".ps1"
+$domainNameTokenFile = $here + "\Tokens." + (Get-CurrentDomain) + ".ps1"
 
  
 Describe "Token.ps1" {
 
 	# Test utility functions
+	# Set working directory to the current test folder
+	Set-Location $here
 
 	function New-HostTokenFile {
         $tokenFile = (Get-Location).Path + "\Tokens." + [System.Net.Dns]::GetHostName() + ".ps1"
@@ -72,7 +74,7 @@ Describe "Token.ps1" {
             New-TemplateFileLegacyFormat
             Update-DSPTokens
 
-            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
+            $updatedTemplateFile = $here | Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
 		}
@@ -82,7 +84,7 @@ Describe "Token.ps1" {
             New-TemplateFileIntellisenseFormat
             Update-DSPTokens
 
-            $updatedTemplateFile = Get-ChildItem -Filter "$templateFileName.ps1"
+            $updatedTemplateFile = $here | Get-ChildItem -Filter "$templateFileName.ps1"
 			($updatedTemplateFile).Count -eq 1 | Should Be $true
 			$updatedTemplateFile.FullName | Should ContainExactly $tokenValue
 		}
