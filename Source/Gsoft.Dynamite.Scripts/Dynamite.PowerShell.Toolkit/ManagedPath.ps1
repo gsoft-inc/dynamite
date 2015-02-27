@@ -57,25 +57,44 @@ function New-DSPManagedPath()
 		[string]$SiteRelativePath,
 		
 		[Parameter(Mandatory=$true, Position=1)]
-		[string]$WebApplicationUrl
+		[string]$WebApplicationUrl,
+
+		[Parameter(Mandatory=$false, Position=2)]
+		[switch]$HostHeader
 	)
 	
 	$SiteRelativeUrl = "/$SiteRelativePath"
 	$SiteAbsoluteUrl = "$WebApplicationUrl$SiteRelativeUrl"
 	
-	$ManagedPath = $SiteRelativeUrl.split("/")[1]
-	
-	$ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplicationUrl | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+	$ManagedPath = $SiteRelativeUrl.Trim("/")
 	
 	# Create Managed Path
-	if ($ExistingManagedPath -eq $null)
+	if ($HostHeader) 
 	{
-		Write-Verbose "The managed path a the address $SiteAbsoluteUrl is being created ..."
-		New-SPManagedPath -RelativeURL $SiteRelativeUrl -WebApplication $WebApplicationUrl -Explicit
-		Write-Verbose "The managed path a the address $SiteAbsoluteUrl was successfully created."
+		$ExistingManagedPath = Get-SPManagedPath -HostHeader | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+		if ($ExistingManagedPath -eq $null)
+		{
+			Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl is being created ..."
+			New-SPManagedPath -RelativeURL $SiteRelativeUrl -HostHeader -Explicit
+			Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl was successfully created."
+		}
+		else
+		{
+			Write-Verbose "The host header managed path '$ManagedPath' already exists"
+		}
 	}
-	else
+	else 
 	{
-		Write-Verbose "The managed path '$ManagedPath' already exists"
+		$ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplicationUrl | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+		if ($ExistingManagedPath -eq $null)
+		{
+			Write-Verbose "The managed path at the address $SiteAbsoluteUrl is being created ..."
+			New-SPManagedPath -RelativeURL $SiteRelativeUrl -WebApplication $WebApplicationUrl -Explicit
+			Write-Verbose "The managed path at the address $SiteAbsoluteUrl was successfully created."
+		}
+		else
+		{
+			Write-Verbose "The managed path '$ManagedPath' already exists"
+		}
 	}
 }

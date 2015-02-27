@@ -35,10 +35,17 @@ function New-DSPSiteCollectionRecusiveXml()
  	# Create the Content Database if they do not exist
 	New-DSPContentDatabase -ContentDatabaseName $ContentDatabaseName -WebApplicationUrl $WebApplicationUrl
 	
+	# Create the Managed Path if they do not exist
 	if($SiteRelativePath -and $SiteRelativePath -ne "/")
 	{
-		# Create the Managed Path if they do not exist
-		New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl
+		if ($IsHostNamedSite)
+		{
+			New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl -HostHeader
+		}
+		else
+		{
+			New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl 
+		}
 	}
 
 	$spSite = Get-SPSite -Identity $SiteAbsoluteUrl -ErrorAction SilentlyContinue
