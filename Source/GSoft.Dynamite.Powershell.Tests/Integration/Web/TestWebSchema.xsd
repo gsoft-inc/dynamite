@@ -1,0 +1,19 @@
+﻿<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xs:element name="Configuration" type="ConfigurationType"/>
+  <xs:complexType name="WebType" mixed="true">
+    <xs:sequence>
+      <xs:element type="WebType" name="Web" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="Name" use="required"/>
+    <xs:attribute type="xs:string" name="Path" use="required"/>
+    <xs:attribute type="xs:string" name="Template" use="required"/>
+    <xs:attribute type="xs:string" name="IsRoot" use="optional"/>
+	<xs:attribute type="xs:string" name="Owner" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="ConfigurationType">
+    <xs:sequence>
+      <xs:element type="WebType" name="Web"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

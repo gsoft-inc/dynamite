@@ -120,7 +120,7 @@ Export-ModuleMember Add-DSPFile, Set-DSPAlerts, Add-DSPAlert
 Export-ModuleMember Add-DSPSampleContent, Add-DSPReusableContentSnippets
 
 # Web
-Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings
+Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWeb
 
 # User Profile 
 Export-ModuleMember Set-DSPUserProfileSchema
