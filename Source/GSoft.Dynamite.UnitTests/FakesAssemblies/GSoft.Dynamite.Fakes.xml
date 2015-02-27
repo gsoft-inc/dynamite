@@ -253,12 +253,6 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.ConstructorStringBoolean">
             <summary>Sets the shim of PropertyAttribute.PropertyAttribute(String propertyName, Boolean isLookupId)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.ConverterTypeGet">
-            <summary>Sets the shim of PropertyAttribute.get_ConverterType()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.ConverterTypeSetType">
-            <summary>Sets the shim of PropertyAttribute.set_ConverterType(Type value)</summary>
-        </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.IsLookupIdGet">
             <summary>Sets the shim of PropertyAttribute.get_IsLookupId()</summary>
         </member>
@@ -273,12 +267,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.AllInstances.BindingTypeSetBindingType">
             <summary>Sets the shim of PropertyAttribute.set_BindingType(BindingType value)</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.AllInstances.ConverterTypeGet">
-            <summary>Sets the shim of PropertyAttribute.get_ConverterType()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.AllInstances.ConverterTypeSetType">
-            <summary>Sets the shim of PropertyAttribute.set_ConverterType(Type value)</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.AllInstances.IsLookupIdGet">
             <summary>Sets the shim of PropertyAttribute.get_IsLookupId()</summary>
@@ -544,20 +532,11 @@
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.AttachBackingFieldToBindingType">
             <summary>Attaches delegates to emulate StubPropertyAttribute.BindingType as a property with a backing field.</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.AttachBackingFieldToConverterType">
-            <summary>Attaches delegates to emulate StubPropertyAttribute.ConverterType as a property with a backing field.</summary>
-        </member>
         <member name="F:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.BindingTypeGet">
             <summary>Sets the stub of PropertyAttribute.get_BindingType()</summary>
         </member>
         <member name="F:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.BindingTypeSetBindingType">
             <summary>Sets the stub of PropertyAttribute.set_BindingType(BindingType value)</summary>
-        </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.ConverterTypeGet">
-            <summary>Sets the stub of PropertyAttribute.get_ConverterType()</summary>
-        </member>
-        <member name="F:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.ConverterTypeSetType">
-            <summary>Sets the stub of PropertyAttribute.set_ConverterType(Type value)</summary>
         </member>
         <member name="M:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.Equals(System.Object)">
             <summary>Sets the stub of Attribute.Equals(Object obj)</summary>
@@ -597,9 +576,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.ConverterType">
-            <summary>Sets the stub of PropertyAttribute.get_ConverterType()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>

@@ -45,7 +45,9 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
             if (fieldValue != null)
             {
-                return (DateTime)fieldValue;
+                var dateTime = (DateTime)fieldValue;
+                return dateTime.ToLocalTime();  // Weird, but list item version returns the datetime objects in UTC 
+                                                // (while SPListItem takes care of the UTC-to-local conversion)
             }
 
             return null;
