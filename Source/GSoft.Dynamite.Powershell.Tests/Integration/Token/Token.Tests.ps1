@@ -126,7 +126,6 @@ Describe "Token.ps1" {
 		}
 	}
 
-
 	Context "No token file" {
 	
 		BeforeEach {	
@@ -169,4 +168,7 @@ Describe "Token.ps1" {
 			Get-ChildItem -Filter "$templateFileName.ps1"| Should BeNullOrEmpty
 		}
 	}
+
+	# Reset working directory
+	Set-Location (Split-Path -Path (Get-Location) -Parent)
 }
