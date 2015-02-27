@@ -31,7 +31,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         /// a list item which was created in a list where field definitions contain default values works.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void ToEntity_WhenMappingFromListItem_AndFieldsHaveDefaultValues_ShouldMapEntityWithAllFieldDefaultValues()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -539,13 +538,13 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             }
         }
 
-
         /// <summary>
         /// Validates that using the ISharePointEntityBinder to map and entity's properties from
         /// a list item which was created in a list where field definitions don't contain default
         /// values and where the list item was updated with field values through the SharePoint API.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
         public void ToEntity_WhenMappingFromListItem_AndItemPropertiesAreFilledWithValues_ShouldMapEntityWithAllItemValues()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -831,14 +830,13 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         {
                             Url = "http://github.com/GSoft-SharePoint/",
                             Description = "patate!"
-
                         };
                     itemOnList["TestInternalNameUrlImg"] = new SPFieldUrlValue()
                         {
                             Url = "http://github.com/GSoft-SharePoint/",
                             Description = "patate!"
-
                         };
+
                     itemOnList["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
                     itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
                     itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
@@ -861,7 +859,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     taxonomyField.SetFieldValue(itemOnList, createdTermB);
 
                     var taxonomyMultiField = (TaxonomyField)itemOnList.Fields.GetFieldByInternalName("TestInternalNameTaxoMulti");
-                    taxonomyMultiField.SetFieldValue(itemOnList, new []{ createdTermAA, createdTermAB });
+                    taxonomyMultiField.SetFieldValue(itemOnList, new[] { createdTermAA, createdTermAB });
 
                     itemOnList.Update();
 
@@ -1032,9 +1030,268 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             }
         }
 
+        /// <summary>
+        /// Validates that entities with non-nullable primitive and struct-based properties
+        /// get their properly initialized from NULL SPListItem values
+        /// </summary>
+        [TestMethod]
+        public void ToEntity_WhenAllValuesInListItemAreNull_AndEntityTypeHasNonNullablePrimitiveValues_ShouldInitializeEntityWithPrimitiveTypeDefaults()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey");
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDate",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey");
+
+                GuidFieldInfo guidFieldInfo = new GuidFieldInfo(
+                    "TestInternalNameGuid",
+                    new Guid("{308C0899-DDBE-44EE-A8A8-226F7A6A7C89}"),
+                    "NameKeyGuid",
+                    "DescriptionKeyGuid",
+                    "GroupKey");
+                
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        integerFieldInfo,
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        dateTimeFieldInfo,
+                        guidFieldInfo
+                    };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    FieldDefinitions = fieldsToEnsure
+                };
+
+                // Note how we need to specify SPSite for injection context - ISharePointEntityBinder's implementation
+                // is lifetime-scoped to InstancePerSite.
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(testScope.SiteCollection))
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create the  test list
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    list.EnableVersioning = true;
+                    list.Update();
+
+                    // Create an empty item
+                    var itemOnList = list.AddItem();
+                    itemOnList.Update();
+
+                    // Act
+                    var entityBinder = injectionScope.Resolve<ISharePointEntityBinder>();
+                    var entityMappedFromSingleItem = new TestItemEntityWithNonNullablePrimitivesOnly();
+                    var entityMappedFromItemVersion = new TestItemEntityWithNonNullablePrimitivesOnly();
+
+                    // Act
+
+                    // Map from SPListItem
+                    entityBinder.ToEntity<TestItemEntityWithNonNullablePrimitivesOnly>(entityMappedFromSingleItem, itemOnList);
+
+                    // Map from SPListItemVersion
+                    entityBinder.ToEntity<TestItemEntityWithNonNullablePrimitivesOnly>(entityMappedFromItemVersion, itemOnList.Versions[0]);
+
+                    // Map from DataRow/SPListItemCollection
+                    var entitiesMappedFromItemCollection = entityBinder.Get<TestItemEntityWithNonNullablePrimitivesOnly>(list.Items);
+
+                    // Assert
+
+                    // #1 Check SPListItem-mapped values
+                    Assert.AreEqual(0, entityMappedFromSingleItem.IntegerProperty);
+                    Assert.AreEqual(0.0, entityMappedFromSingleItem.DoubleProperty);
+                    Assert.AreEqual(0.0, entityMappedFromSingleItem.CurrencyProperty);
+                    Assert.IsFalse(entityMappedFromSingleItem.BoolProperty);
+                    Assert.AreEqual(DateTime.MinValue, entityMappedFromSingleItem.DateTimeProperty);
+                    Assert.AreEqual(Guid.Empty, entityMappedFromSingleItem.GuidProperty);
+
+                    // #2 Check SPListItemVersion-mapped values
+                    Assert.AreEqual(0, entityMappedFromItemVersion.IntegerProperty);
+                    Assert.AreEqual(0.0, entityMappedFromItemVersion.DoubleProperty);
+                    Assert.AreEqual(0.0, entityMappedFromItemVersion.CurrencyProperty);
+                    Assert.IsFalse(entityMappedFromItemVersion.BoolProperty);
+                    Assert.AreEqual(DateTime.MinValue, entityMappedFromItemVersion.DateTimeProperty);
+                    Assert.AreEqual(Guid.Empty, entityMappedFromItemVersion.GuidProperty);
+
+                    // #1 Check SPListItemCollection/DataRow-mapped values
+                    Assert.AreEqual(0, entitiesMappedFromItemCollection[0].IntegerProperty);
+                    Assert.AreEqual(0.0, entitiesMappedFromItemCollection[0].DoubleProperty);
+                    Assert.AreEqual(0.0, entitiesMappedFromItemCollection[0].CurrencyProperty);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].BoolProperty);
+                    Assert.AreEqual(DateTime.MinValue, entitiesMappedFromItemCollection[0].DateTimeProperty);
+                    Assert.AreEqual(Guid.Empty, entitiesMappedFromItemCollection[0].GuidProperty);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that entities with nullable primitive and struct-based properties
+        /// get their properly initialized from NULL SPListItem values
+        /// </summary>
+        [TestMethod]
+        public void ToEntity_WhenAllValuesInListItemAreNull_AndEntityTypeHasNullablePrimitiveValues_ShouldInitializeEntityWithEmptyNullable()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey");
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDate",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey");
+
+                GuidFieldInfo guidFieldInfo = new GuidFieldInfo(
+                    "TestInternalNameGuid",
+                    new Guid("{308C0899-DDBE-44EE-A8A8-226F7A6A7C89}"),
+                    "NameKeyGuid",
+                    "DescriptionKeyGuid",
+                    "GroupKey");
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        integerFieldInfo,
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        dateTimeFieldInfo,
+                        guidFieldInfo
+                    };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    FieldDefinitions = fieldsToEnsure
+                };
+
+                // Note how we need to specify SPSite for injection context - ISharePointEntityBinder's implementation
+                // is lifetime-scoped to InstancePerSite.
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(testScope.SiteCollection))
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create the  test list
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    list.EnableVersioning = true;
+                    list.Update();
+
+                    // Create an empty item
+                    var itemOnList = list.AddItem();
+                    itemOnList.Update();
+
+                    // Act
+                    var entityBinder = injectionScope.Resolve<ISharePointEntityBinder>();
+                    var entityMappedFromSingleItem = new TestItemEntityWithNullablePrimitivesOnly();
+                    var entityMappedFromItemVersion = new TestItemEntityWithNullablePrimitivesOnly();
+
+                    // Act
+
+                    // Map from SPListItem
+                    entityBinder.ToEntity<TestItemEntityWithNullablePrimitivesOnly>(entityMappedFromSingleItem, itemOnList);
+
+                    // Map from SPListItemVersion
+                    entityBinder.ToEntity<TestItemEntityWithNullablePrimitivesOnly>(entityMappedFromItemVersion, itemOnList.Versions[0]);
+
+                    // Map from DataRow/SPListItemCollection
+                    var entitiesMappedFromItemCollection = entityBinder.Get<TestItemEntityWithNullablePrimitivesOnly>(list.Items);
+
+                    // Assert
+
+                    // #1 Check SPListItem-mapped values
+                    Assert.IsFalse(entityMappedFromSingleItem.IntegerProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromSingleItem.DoubleProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromSingleItem.CurrencyProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromSingleItem.BoolProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromSingleItem.DateTimeProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromSingleItem.GuidProperty.HasValue);
+
+                    // #2 Check SPListItemVersion-mapped values
+                    Assert.IsFalse(entityMappedFromItemVersion.IntegerProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromItemVersion.DoubleProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromItemVersion.CurrencyProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromItemVersion.BoolProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromItemVersion.DateTimeProperty.HasValue);
+                    Assert.IsFalse(entityMappedFromItemVersion.GuidProperty.HasValue);
+
+                    // #1 Check SPListItemCollection/DataRow-mapped values
+                    // Note that the DataRow item conversion prevents us from distinguishing 
+                    // empty integer value from 0.
+                    Assert.AreEqual(0, entitiesMappedFromItemCollection[0].IntegerProperty);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].DoubleProperty.HasValue);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].CurrencyProperty.HasValue);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].BoolProperty.HasValue);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].DateTimeProperty.HasValue);
+                    Assert.IsFalse(entitiesMappedFromItemCollection[0].GuidProperty.HasValue);
+                }
+            }
+        }
+
         // MORE TEST CASE Suggestions:
         // - Round trip FromEntity -> ToEntity -> 
-        // - All nulls in list items ToEntity
         // - Document Lib items To/From
         // - PublishingPage.ListItem DateTime binding
         // - Non SiteCollection-specific term group bindings
@@ -1647,6 +1904,90 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             /// </summary>
             [Property("TestInternalNameUserMulti")]
             public UserValueCollection UserMultiProperty { get; set; }
+        }
+
+        /// <summary>
+        /// A test class with primitive-based or struct value types
+        /// </summary>
+        public class TestItemEntityWithNonNullablePrimitivesOnly : BaseEntity
+        {
+            /// <summary>
+            /// Test int property
+            /// </summary>
+            [Property("TestInternalNameInteger")]
+            public int IntegerProperty { get; set; }
+
+            /// <summary>
+            /// Test double property
+            /// </summary>
+            [Property("TestInternalNameNumber")]
+            public double DoubleProperty { get; set; }
+
+            /// <summary>
+            /// Test currency property
+            /// </summary>
+            [Property("TestInternalNameCurrency")]
+            public double CurrencyProperty { get; set; }
+
+            /// <summary>
+            /// Test bool property
+            /// </summary>
+            [Property("TestInternalNameBool")]
+            public bool BoolProperty { get; set; }
+
+            /// <summary>
+            /// Test datetime property
+            /// </summary>
+            [Property("TestInternalNameDate")]
+            public DateTime DateTimeProperty { get; set; }
+
+            /// <summary>
+            /// Test Guid property
+            /// </summary>
+            [Property("TestInternalNameGuid")]
+            public Guid GuidProperty { get; set; }
+        }
+
+        /// <summary>
+        /// A test class with primitive-based or struct value types
+        /// </summary>
+        public class TestItemEntityWithNullablePrimitivesOnly : BaseEntity
+        {
+            /// <summary>
+            /// Test int property
+            /// </summary>
+            [Property("TestInternalNameInteger")]
+            public int? IntegerProperty { get; set; }
+
+            /// <summary>
+            /// Test double property
+            /// </summary>
+            [Property("TestInternalNameNumber")]
+            public double? DoubleProperty { get; set; }
+
+            /// <summary>
+            /// Test currency property
+            /// </summary>
+            [Property("TestInternalNameCurrency")]
+            public double? CurrencyProperty { get; set; }
+
+            /// <summary>
+            /// Test bool property
+            /// </summary>
+            [Property("TestInternalNameBool")]
+            public bool? BoolProperty { get; set; }
+
+            /// <summary>
+            /// Test datetime property
+            /// </summary>
+            [Property("TestInternalNameDate")]
+            public DateTime? DateTimeProperty { get; set; }
+
+            /// <summary>
+            /// Test Guid property
+            /// </summary>
+            [Property("TestInternalNameGuid")]
+            public Guid? GuidProperty { get; set; }
         }
     }
 }

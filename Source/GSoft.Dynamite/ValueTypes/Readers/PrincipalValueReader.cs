@@ -64,7 +64,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 
-            if (fieldValue != null)
+            if (fieldValue != null && fieldValue != System.DBNull.Value)
             {
                 var userFieldVal = new SPFieldUserValue(web, fieldValue.ToString());
                 return new PrincipalValue(userFieldVal.User.ID);

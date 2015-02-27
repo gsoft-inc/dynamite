@@ -78,7 +78,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
         {
             var fieldValue = dataRowFromCamlResult[fieldInternalName];
 
-            if (fieldValue != null)
+            if (fieldValue != null && fieldValue != System.DBNull.Value)
             {
                 var site = web.Site;
                 var field = (TaxonomyField)site.RootWeb.Fields.GetFieldByInternalName(fieldInternalName);
