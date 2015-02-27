@@ -335,7 +335,8 @@ namespace GSoft.Dynamite.ContentTypes
                 }
                 catch (SPException maybeNoChildrenException)
                 {
-                    if (maybeNoChildrenException.Message.Contains("The content type has no children"))
+                    if (maybeNoChildrenException.Message.Contains("The content type has no children") ||
+                        maybeNoChildrenException.Message.Contains("Le type de contenu n'a pas d'enfants"))
                     {
                         // attempt a single no-children update instead
                         contentType.Update();
