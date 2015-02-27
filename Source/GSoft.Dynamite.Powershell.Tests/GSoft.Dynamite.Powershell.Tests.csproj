@@ -52,12 +52,19 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Integration\Web\TestVariationsSettings.xml" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Integration\Invoke-IntegrationTests.ps1" />
+    <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />
     <None Include="Integration\Utilities.Tests.ps1" />
     <None Include="Integration\Token.Tests.ps1" />
     <None Include="Integration\Logging.Tests.ps1" />
+    <None Include="Integration\Web\TestWebSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Integration\Web\Web.Tests.template.ps1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
