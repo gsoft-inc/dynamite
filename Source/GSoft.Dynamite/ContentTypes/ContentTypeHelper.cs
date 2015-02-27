@@ -10,6 +10,7 @@ using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
 using GSoft.Dynamite.Globalization.Variations;
 using GSoft.Dynamite.Logging;
+using Microsoft.Office.Server.Search.Administration;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 
@@ -274,10 +275,13 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         /// <param name="contentType">Type of the content.</param>
         /// <param name="fieldInfos">The field information.</param>
-        /// <returns>IEnumerable of SPFields that where found.</returns>
+        /// <returns>
+        /// IEnumerable of SPFields that where found.
+        /// </returns>
         private IEnumerable<SPField> InnerEnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos)
         {
             bool fieldWasAdded = false;
+            bool fieldWasModified = false;
             List<SPField> fields = new List<SPField>();
 
             // For each field we want to add.
@@ -304,9 +308,23 @@ namespace GSoft.Dynamite.ContentTypes
                 {
                     fieldWasAdded = true;
                 }
+
+                // If the field is required and shouldn't be
+                // Else if the field is not required and should be
+                var fieldLink = contentType.FieldLinks[fieldInfo.Id];
+                if (fieldLink.Required && fieldInfo.Required.Equals(RequiredType.NotRequired))
+                {
+                    fieldLink.Required = false;
+                    fieldWasModified = true;
+                }
+                else if (!fieldLink.Required && fieldInfo.Required.Equals(RequiredType.Required))
+                {
+                    fieldLink.Required = true;
+                    fieldWasModified = true;
+                }
             }
 
-            if (fieldWasAdded)
+            if (fieldWasAdded || fieldWasModified)
             {
                 // When One or more fields are added to the content type, we update the content type.
                 try
@@ -328,6 +346,13 @@ namespace GSoft.Dynamite.ContentTypes
                         throw;
                     }
                 }
+            }
+
+            // If the fields redefined one or more fields from it's parent
+            if (fieldInfos.Any(f => contentType.Parent.Fields.ContainsField(f.InternalName)))
+            {
+                // Reorder fields if contains a field from it's parent
+                this.ReorderFieldsInContentType(contentType, fieldInfos);
             }
 
             return fields;

@@ -7,8 +7,11 @@ using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.SharePoint;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -1051,6 +1054,336 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                     // Reset MUI to its old abient value
                     Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Using OOTB fields as part of Content Type definition should work, but only if the site columns already exist
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos can be used to define additions to content types (provided the OOTB site column exists in the site collection)
+        /// </summary>
+        [TestMethod]
+        public void EnsureContentType_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnContentType_AndOOTBSiteColumnIsAvailable_ShouldMakeFieldAvailableOnCT()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ContentTypeInfo contentTypeInfo = new ContentTypeInfo(
+                    ContentTypeIdBuilder.CreateChild(new SPContentTypeId("0x01"), Guid.NewGuid()),
+                    "CTNameKey",
+                    "CTDescrKey",
+                    "GroupKey")
+                    {
+                        Fields = new List<IFieldInfo>()
+                        {
+                            BuiltInFields.AssignedTo,   // OOTB User field
+                            BuiltInFields.Cellphone,    // OOTB Text field
+                            BuiltInFields.EnterpriseKeywords    // OOTB Taxonomy Multi field
+                        }
+                    };
+
+                ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
+                    {
+                        ContentTypes = new List<ContentTypeInfo>()
+                        {
+                            contentTypeInfo
+                        }
+                    };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+
+                    // Assert
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(contentType.Fields[BuiltInFields.EnterpriseKeywords.Id]);
+
+                    // Use the CT's OOTB fields in a list and create an item just for kicks
+                    IListHelper listHelper = injectionScope.Resolve<IListHelper>();
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    SPListItem item = list.AddItem();
+                    item.Update();
+
+                    var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserName);
+
+                    IFieldValueWriter writer = injectionScope.Resolve<IFieldValueWriter>();
+                    writer.WriteValuesToListItem(
+                        item,
+                        new List<FieldValueInfo>()
+                        {
+                            new FieldValueInfo(BuiltInFields.AssignedTo, new UserValue(ensuredUser1)),
+                            new FieldValueInfo(BuiltInFields.Cellphone, "Test Cellphone Value"),
+                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyFullValueCollection())
+                        });
+
+                    item.Update();
+
+                    Assert.IsNotNull(item[BuiltInFields.AssignedTo.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.Cellphone.Id]);
+                    Assert.IsNotNull(item[BuiltInFields.EnterpriseKeywords.Id]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that MinimalFieldInfos cannot be used to define additions to content types when the relevant site column doesn't exist
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void EnsureContentType_WhenEnsuringAMinimalFieldInfoOOTBColumnAsFieldOnContentType_AndOOTBSiteColumnIsNOTAvailable_ShouldFailBecauseSuchOOTBSiteColumnShouldBeAddedByOOTBFeatures()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                ContentTypeInfo contentTypeInfo = new ContentTypeInfo(
+                    ContentTypeIdBuilder.CreateChild(new SPContentTypeId("0x01"), Guid.NewGuid()),
+                    "CTNameKey",
+                    "CTDescrKey",
+                    "GroupKey")
+                {
+                    Fields = new List<IFieldInfo>()
+                        {
+                            PublishingFields.PublishingPageContent  // Should be missing from site columns (only available in Publishing sites)
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    IContentTypeHelper contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act + Assert
+                    SPContentType contentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Ensuring parent content type fields should reorder them accordingly
+
+        /// <summary>
+        /// Validates that EnsureContentType adds a child content type and reorders its fields when you bother to repeat all the parent's
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenRedefiningParentFields_ShouldReorderFields()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var reorderedFieldId = new Guid("{5FDCC376-228A-4F2F-B66D-A4CABE7DF538}");
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId, 
+                    "ChildAnnouncement", 
+                    "ChildAnnouncementDescription", 
+                    "ChildAnnouncementGroup")
+                    {
+                        Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            new TextFieldInfo(
+                                "ShouldBeReorder", 
+                                reorderedFieldId, 
+                                "ShouldBeReorderName", 
+                                "ShouldBeReorderDesc", 
+                                "ShouldBeReorderGroup"), 
+                            BuiltInFields.Body
+                        }
+                    };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualContentType.Fields[0].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualContentType.Fields[1].Id);
+                    Assert.AreEqual(reorderedFieldId, actualContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualContentType.Fields[3].Id);
+
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualRefetchedContentType.Fields[0].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualRefetchedContentType.Fields[1].Id);
+                    Assert.AreEqual(reorderedFieldId, actualRefetchedContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualRefetchedContentType.Fields[3].Id);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType adds a child content type and not reorder its fields when don't you bother to repeat all the parent's
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenNotRedefiningParentFields_ShouldRespectParentFieldOrdering()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var reorderedFieldId = new Guid("{5FDCC376-228A-4F2F-B66D-A4CABE7DF538}");
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            new TextFieldInfo(
+                                "ShouldBeLast", 
+                                reorderedFieldId, 
+                                "ShouldBeLastName", 
+                                "ShouldBeLastDesc", 
+                                "ShouldBeLastGroup"), 
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    // Note: Hidden content type field is always the first field
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualContentType.Fields[1].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualContentType.Fields[3].Id);
+                    Assert.AreEqual(reorderedFieldId, actualContentType.Fields[4].Id);
+
+                    Assert.AreEqual(BuiltInFields.Title.Id, actualRefetchedContentType.Fields[1].Id);
+                    Assert.AreEqual(BuiltInFields.Body.Id, actualRefetchedContentType.Fields[2].Id);
+                    Assert.AreEqual(BuiltInFields.Expires.Id, actualRefetchedContentType.Fields[3].Id);
+                    Assert.AreEqual(reorderedFieldId, actualRefetchedContentType.Fields[4].Id);
+                }
+            }
+        }
+        #endregion
+
+        #region Modifying a content type's field required property should update the field link
+
+        /// <summary>
+        /// Validates that EnsureContentType changes the field link required property if it's different from it's field information
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenModifyingFieldRequiredProperty_ShouldUpdateContentTypeFieldLink()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var requiredBodyField = BuiltInFields.Body;
+                requiredBodyField.Required = RequiredType.Required;
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            requiredBodyField
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.IsTrue(actualContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                    Assert.IsTrue(actualRefetchedContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureContentType changes the field link required property if it's different from it's field information
+        /// content type fields.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureContentType_WhenNotModifyingFieldRequiredProperty_ShouldNotUpdateContentTypeFieldLink()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                // Note: the body field is already "not required"
+                var notRequiredBodyField = BuiltInFields.Body;
+                notRequiredBodyField.Required = RequiredType.NotRequired;
+
+                var contentTypeId = ContentTypeIdBuilder.CreateChild(
+                    SPBuiltInContentTypeId.Announcement,
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+                var contentTypeInfo = new ContentTypeInfo(
+                    contentTypeId,
+                    "ChildAnnouncement",
+                    "ChildAnnouncementDescription",
+                    "ChildAnnouncementGroup")
+                {
+                    Fields = new[]
+                        {
+                            BuiltInFields.Title,
+                            BuiltInFields.Expires,
+                            notRequiredBodyField
+                        }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+                    var contentTypeCollection = testScope.SiteCollection.RootWeb.ContentTypes;
+
+                    // Act
+                    var actualContentType = contentTypeHelper.EnsureContentType(contentTypeCollection, contentTypeInfo);
+                    var actualRefetchedContentType = testScope.SiteCollection.RootWeb.ContentTypes[contentTypeId];
+
+                    // Assert
+                    Assert.IsFalse(actualContentType.FieldLinks[BuiltInFields.Body.Id].Required);
+                    Assert.IsFalse(actualRefetchedContentType.FieldLinks[BuiltInFields.Body.Id].Required);
                 }
             }
         }

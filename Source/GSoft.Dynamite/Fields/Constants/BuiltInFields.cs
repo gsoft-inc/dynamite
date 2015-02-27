@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Fields.Constants
@@ -230,486 +231,533 @@ namespace GSoft.Dynamite.Fields.Constants
         public const string CreatedName = "Created";
 
         /// <summary>
+        /// Editor : The latest modifier of the item
+        /// </summary>
+        public const string EditorName = "Editor";
+
+        /// <summary>
         /// Modified : The date of the last modification
         /// </summary>
         public const string ModifiedName = "Modified";
+
+        /// <summary>
+        /// Body: Note field containing rich text.
+        /// </summary>
+        public const string BodyName = "Body";
+
+        /// <summary>
+        /// Expires: Date and time field for content expiration.
+        /// </summary>
+        public const string ExpiresName = "Expires";
 
         #endregion
 
         #region FieldInfo
 
         /// <summary>
-        /// Title field info
+        /// Title field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Title
         {
             get 
             { 
-                return new MinimalFieldInfo(TitleName, SPBuiltInFieldId.Title); 
+                return new MinimalFieldInfo<string>(TitleName, SPBuiltInFieldId.Title); 
             }
         }
 
         /// <summary>
-        /// Title linked to item with edit menu
+        /// Title linked to item with edit menu (OOTB type = Computed)
         /// </summary>
-        public static IFieldInfo TitleLink 
+        public static IFieldInfo TitleLink
         { 
-            get { return new MinimalFieldInfo(TitleLinkName, SPBuiltInFieldId.LinkTitle); } 
+            get { return new MinimalFieldInfo<string>(TitleLinkName, SPBuiltInFieldId.LinkTitle); } 
         }
 
         /// <summary>
-        /// Title linked to item with no edit menu
+        /// Title linked to item with no edit menu (OOTB type = Computed)
         /// </summary>
         public static IFieldInfo TitleLinkNoMenu 
         { 
             get 
             { 
-                return new MinimalFieldInfo(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu); 
+                return new MinimalFieldInfo<string>(TitleLinkNoMenuName, SPBuiltInFieldId.LinkTitleNoMenu); 
             } 
         }
 
         /// <summary>
-        /// FileRef (i.e. File Url) field info
+        /// FileRef (i.e. File Url Path) field info (OOTB type = Lookup)
         /// </summary>
         public static IFieldInfo FileRef 
         { 
             get 
             { 
-                return new MinimalFieldInfo(FileRefName, SPBuiltInFieldId.FileRef); 
+                return new MinimalFieldInfo<LookupValue>(FileRefName, SPBuiltInFieldId.FileRef); 
             } 
         }
 
         /// <summary>
-        /// FileLeafRef (i.e. Document Name) field info
+        /// FileLeafRef (i.e. Document Name) field info (OOTB type = File)
         /// </summary>
         public static IFieldInfo FileLeafRef 
         { 
             get 
-            { 
-                return new MinimalFieldInfo(FileLeafRefName, SPBuiltInFieldId.FileLeafRef); 
+            {
+                return new MinimalFieldInfo<LookupValue>(FileLeafRefName, SPBuiltInFieldId.FileLeafRef); 
             } 
         }
 
         /// <summary>
-        /// ContentType field info
+        /// ContentType field info (OOTB type = Computed)
         /// </summary>
         public static IFieldInfo ContentType 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ContentTypeName, SPBuiltInFieldId.ContentType); 
+                return new MinimalFieldInfo<string>(ContentTypeName, SPBuiltInFieldId.ContentType); 
             } 
         }
 
         /// <summary>
-        /// ContentTypeId field info
+        /// ContentTypeId field info (OOTB type = ContentTypeId)
         /// </summary>
         public static IFieldInfo ContentTypeId 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId); 
+                return new MinimalFieldInfo<string>(ContentTypeIdName, SPBuiltInFieldId.ContentTypeId); 
             } 
         }
 
         /// <summary>
-        /// URL field info
+        /// URL field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo Url 
         { 
             get 
             { 
-                return new MinimalFieldInfo(UrlName, SPBuiltInFieldId.URL); 
+                return new MinimalFieldInfo<UrlValue>(UrlName, SPBuiltInFieldId.URL); 
             } 
-        }   // TODO: turn into UrlFieldValue
+        }
 
         /// <summary>
-        /// TaxCatchAll field info.
+        /// TaxCatchAll field info (OOTB type = LookupMulti)
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
         public static IFieldInfo TaxCatchAll 
         { 
             get 
             { 
-                return new MinimalFieldInfo(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611")); 
+                return new MinimalFieldInfo<LookupValueCollection>(TaxCatchAllName, new Guid("f3b0adf9-c1a2-4b02-920d-943fba4b3611")); 
             } 
         }
 
         /// <summary>
-        /// TaxCatchAllLabel field info.
+        /// TaxCatchAllLabel field info (OOTB type = LookupMulti)
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
         public static IFieldInfo TaxCatchAllLabel 
         { 
             get 
             { 
-                return new MinimalFieldInfo(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2")); 
+                return new MinimalFieldInfo<LookupValueCollection>(TaxCatchAllLabelName, new Guid("8f6b6dd8-9357-4019-8172-966fcd502ed2")); 
             } 
         }
 
         /// <summary>
-        /// The assigned to field info
+        /// The assigned to field info (OOTB type = User)
         /// </summary>
         public static IFieldInfo AssignedTo 
         { 
             get 
             { 
-                return new MinimalFieldInfo(AssignedToName, SPBuiltInFieldId.AssignedTo); 
+                return new MinimalFieldInfo<UserValue>(AssignedToName, SPBuiltInFieldId.AssignedTo); 
             } 
-        }  // TODO: turn into UserFieldInfo
+        }
 
         /// <summary>
-        /// The percent complete field info
+        /// The percent complete field info (OOTB type = Number, Min = 0, Max = 1, Percentage = TRUE)
         /// </summary>
         public static IFieldInfo PercentComplete 
         { 
             get 
             { 
-                return new MinimalFieldInfo(PercentCompleteName, SPBuiltInFieldId.PercentComplete); 
+                return new MinimalFieldInfo<double?>(PercentCompleteName, SPBuiltInFieldId.PercentComplete); 
             } 
         }
 
         /// <summary>
-        /// The predecessors field info
+        /// The predecessors field info (OOTB type = LookupMulti)
         /// </summary>
         public static IFieldInfo Predecessors 
         { 
             get 
             { 
-                return new MinimalFieldInfo(PredecessorsName, SPBuiltInFieldId.Predecessors); 
+                return new MinimalFieldInfo<LookupValueCollection>(PredecessorsName, SPBuiltInFieldId.Predecessors); 
             } 
         }
 
         /// <summary>
-        /// The priority field info
+        /// The priority field info (OOTB type = Choice)
         /// </summary>
         public static IFieldInfo Priority 
         { 
             get 
             { 
-                return new MinimalFieldInfo(PriorityName, SPBuiltInFieldId.Priority); 
+                return new MinimalFieldInfo<string>(PriorityName, SPBuiltInFieldId.Priority); 
             } 
-        }    // TODO: turn into ChoiceFieldInfo
+        }
 
         /// <summary>
-        /// The task status field info
+        /// The task status field info (OOTB type = Choice)
         /// </summary>
-        public static IFieldInfo TaskStatus 
-        { 
-            get 
-            { 
-                return new MinimalFieldInfo(TaskStatusName, SPBuiltInFieldId.TaskStatus); 
-            } 
-        }      // TODO: turn into ChoiceFieldInfo
+        public static IFieldInfo TaskStatus
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(TaskStatusName, SPBuiltInFieldId.TaskStatus);
+            }
+        }
 
         /// <summary>
-        /// The home phone field info
+        /// The home phone field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo HomePhone 
         { 
             get 
             { 
-                return new MinimalFieldInfo(HomePhoneName, SPBuiltInFieldId.HomePhone); 
+                return new MinimalFieldInfo<string>(HomePhoneName, SPBuiltInFieldId.HomePhone); 
             } 
         }
 
         /// <summary>
-        /// The work fax field info
+        /// The work fax field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkFax 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkFaxName, SPBuiltInFieldId.WorkFax); 
+                return new MinimalFieldInfo<string>(WorkFaxName, SPBuiltInFieldId.WorkFax); 
             } 
         }
 
         /// <summary>
-        /// The work address field info
+        /// The work address field info (OOTB type = Note)
         /// </summary>
         public static IFieldInfo WorkAddress 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkAddressName, SPBuiltInFieldId.WorkAddress); 
+                return new MinimalFieldInfo<string>(WorkAddressName, SPBuiltInFieldId.WorkAddress); 
             } 
         }
 
         /// <summary>
-        /// The work country field info
+        /// The work country field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkCountry 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkCountryName, SPBuiltInFieldId.WorkCountry); 
+                return new MinimalFieldInfo<string>(WorkCountryName, SPBuiltInFieldId.WorkCountry); 
             } 
         }
 
         /// <summary>
-        /// The work city field info
+        /// The work city field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkCity 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkCityName, SPBuiltInFieldId.WorkCity); 
+                return new MinimalFieldInfo<string>(WorkCityName, SPBuiltInFieldId.WorkCity); 
             } 
         }
 
         /// <summary>
-        /// The work state field info
+        /// The work state field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkState 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkStateName, SPBuiltInFieldId.WorkState); 
+                return new MinimalFieldInfo<string>(WorkStateName, SPBuiltInFieldId.WorkState); 
             } 
         }
 
         /// <summary>
-        /// The work zip field info
+        /// The work zip field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkZip 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkZipName, SPBuiltInFieldId.WorkZip); 
+                return new MinimalFieldInfo<string>(WorkZipName, SPBuiltInFieldId.WorkZip); 
             } 
         }
 
         /// <summary>
-        /// The web page field info
+        /// The web page field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo Webpage 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WebpageName, SPBuiltInFieldId.WebPage); 
+                return new MinimalFieldInfo<UrlValue>(WebpageName, SPBuiltInFieldId.WebPage); 
             } 
-        }       // TODO: turn into UrlFieldInfo
+        }
 
         /// <summary>
-        /// The comments field info
+        /// The comments field info (OOTB type = Note)
         /// </summary>
         public static IFieldInfo Comments 
         { 
             get 
             { 
-                return new MinimalFieldInfo(CommentsName, SPBuiltInFieldId.Comments); 
+                return new MinimalFieldInfo<string>(CommentsName, SPBuiltInFieldId.Comments); 
             } 
         }
 
         /// <summary>
-        /// The department field info
+        /// The department field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Department 
         { 
             get 
             { 
-                return new MinimalFieldInfo(DepartmentName, SPBuiltInFieldId.Department); 
+                return new MinimalFieldInfo<string>(DepartmentName, SPBuiltInFieldId.Department); 
             } 
         }
 
         /// <summary>
-        /// The role field info
+        /// The role field info (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Role 
         { 
             get 
             { 
-                return new MinimalFieldInfo(RoleName, SPBuiltInFieldId.Role); 
+                return new MinimalFieldInfo<string>(RoleName, SPBuiltInFieldId.Role); 
             } 
         }
 
         /// <summary>
-        /// The related items field info
+        /// The related items field info (OOTB type = RelatedItems)
         /// </summary>
         public static IFieldInfo RelatedItems 
         { 
             get 
             { 
-                return new MinimalFieldInfo(RelatedItemsName, SPBuiltInFieldId.RelatedItems); 
+                return new MinimalFieldInfo<string>(RelatedItemsName, SPBuiltInFieldId.RelatedItems); 
             } 
         }
 
         /// <summary>
-        /// The display order field info
+        /// The display order field info - used in composed looks (OOTB type = Number)
         /// </summary>
         public static IFieldInfo DisplayOrder 
         { 
             get 
             { 
-                return new MinimalFieldInfo(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb")); 
+                return new MinimalFieldInfo<double?>(DisplayOrderName, new Guid("2cc33755-5880-44c7-925c-fd41fd76cefb")); 
             } 
         }
 
         /// <summary>
-        /// The master page URL field info
+        /// The master page URL field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo MasterPageUrl 
         { 
             get 
             { 
-                return new MinimalFieldInfo(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c")); 
+                return new MinimalFieldInfo<UrlValue>(MasterPageUrlName, new Guid("b65d5645-28c4-44b5-8f87-c49250c5c98c")); 
             } 
-        }   // TODO: Turn into UrlFieldInfo
+        }
 
         /// <summary>
-        /// The theme URL field info
+        /// The theme URL field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo ThemeUrl 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1")); 
+                return new MinimalFieldInfo<UrlValue>(ThemeUrlName, new Guid("f0490cd6-93e0-42bd-8de3-1be68e3045f1")); 
             } 
-        } // TODO turn into UrlFieldValue
+        }
 
         /// <summary>
-        /// The image URL field info
+        /// The image URL field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo ImageUrl 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023")); 
+                return new MinimalFieldInfo<UrlValue>(ImageUrlName, new Guid("833cb87d-835f-4fa7-8927-e781c890f023")); 
             } 
-        } // TODO turn into UrlFieldValue
+        }
 
         /// <summary>
-        /// The font scheme URL field info
+        /// The font scheme URL field info (OOTB type = URL)
         /// </summary>
         public static IFieldInfo FontSchemeUrl 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320")); 
+                return new MinimalFieldInfo<UrlValue>(ImageUrlName, new Guid("b5dfc328-900e-4306-93e1-43c74a847320")); 
             } 
-        } // TODO turn into UrlFieldValue
+        }
 
         /// <summary>
-        /// The enterprise keywords field info
+        /// The enterprise keywords field info (OOTB type = TaxonomyMulti)
         /// </summary>
         public static IFieldInfo EnterpriseKeywords 
         { 
             get 
-            { 
-                return new MinimalFieldInfo(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); 
+            {
+                return new MinimalFieldInfo<TaxonomyFullValueCollection>(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); 
             } 
-        } // TODO: turn into TaxonomyMultiFieldInfo
+        }
 
         /// <summary>
-        /// The cell phone
+        /// The cell phone (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Cellphone 
         { 
             get 
             { 
-                return new MinimalFieldInfo(CellphoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2")); 
+                return new MinimalFieldInfo<string>(CellphoneName, new Guid("2a464df1-44c1-4851-949d-fcd270f0ccf2")); 
             } 
         }
 
         /// <summary>
-        /// The full name
+        /// The full name (OOTB type = Text)
         /// </summary>
         public static IFieldInfo FullName 
         { 
             get 
             { 
-                return new MinimalFieldInfo(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538")); 
+                return new MinimalFieldInfo<string>(FullNameName, new Guid("475c2610-c157-4b91-9e2d-6855031b3538")); 
             } 
         }
 
         /// <summary>
-        /// The email
+        /// The email (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Email 
         { 
             get 
             { 
-                return new MinimalFieldInfo(EmailName, SPBuiltInFieldId.EMail); 
+                return new MinimalFieldInfo<string>(EmailName, SPBuiltInFieldId.EMail); 
             } 
         }
 
         /// <summary>
-        /// The first name
+        /// The first name (OOTB type = Text)
         /// </summary>
         public static IFieldInfo FirstName 
         { 
             get 
             { 
-                return new MinimalFieldInfo(FirstNameName, SPBuiltInFieldId.FirstName); 
+                return new MinimalFieldInfo<string>(FirstNameName, SPBuiltInFieldId.FirstName); 
             } 
         }
 
         /// <summary>
-        /// The work phone
+        /// The work phone (OOTB type = Text)
         /// </summary>
         public static IFieldInfo WorkPhone 
         { 
             get 
             { 
-                return new MinimalFieldInfo(WorkPhoneName, SPBuiltInFieldId.WorkPhone); 
+                return new MinimalFieldInfo<string>(WorkPhoneName, SPBuiltInFieldId.WorkPhone); 
             } 
         }
 
         /// <summary>
-        /// The job title
+        /// The job title (OOTB type = Text)
         /// </summary>
         public static IFieldInfo JobTitle 
         { 
             get 
             { 
-                return new MinimalFieldInfo(JobTitleName, SPBuiltInFieldId.JobTitle); 
+                return new MinimalFieldInfo<string>(JobTitleName, SPBuiltInFieldId.JobTitle); 
             } 
         }
 
         /// <summary>
-        /// The company
+        /// The company (OOTB type = Text)
         /// </summary>
         public static IFieldInfo Company 
         { 
             get 
             { 
-                return new MinimalFieldInfo(CompanyName, SPBuiltInFieldId.Company); 
+                return new MinimalFieldInfo<string>(CompanyName, SPBuiltInFieldId.Company); 
             } 
         }
 
         /// <summary>
-        /// The Author
+        /// The Author (OOTB type = User)
         /// </summary>
-        public static IFieldInfo Author 
+        public static IFieldInfo CreatedBy 
         { 
             get 
             { 
-                return new MinimalFieldInfo(AuthorName, SPBuiltInFieldId.Author); 
+                return new MinimalFieldInfo<UserValue>(AuthorName, SPBuiltInFieldId.Author); 
             } 
         }
 
         /// <summary>
-        /// The Created date
+        /// The Created date (OOTB type = DateTime)
         /// </summary>
         public static IFieldInfo Created 
         { 
             get 
             { 
-                return new MinimalFieldInfo(CreatedName, SPBuiltInFieldId.Created); 
+                return new MinimalFieldInfo<DateTime?>(CreatedName, SPBuiltInFieldId.Created); 
             } 
         }
 
         /// <summary>
-        /// The Modified date
+        /// The Editor (OOTB type = User)
+        /// </summary>
+        public static IFieldInfo ModifiedBy
+        {
+            get
+            {
+                return new MinimalFieldInfo<UserValue>(EditorName, SPBuiltInFieldId.Editor);
+            }
+        }
+
+        /// <summary>
+        /// The Modified date (OOTB type = DateTime)
         /// </summary>
         public static IFieldInfo Modified 
         { 
             get 
             { 
-                return new MinimalFieldInfo(ModifiedName, SPBuiltInFieldId.Modified); 
+                return new MinimalFieldInfo<DateTime?>(ModifiedName, SPBuiltInFieldId.Modified); 
             } 
         }
 
+        /// <summary>
+        /// The body note field.
+        /// </summary>
+        public static IFieldInfo Body
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(BodyName, SPBuiltInFieldId.Body);
+            }
+        }
+
+        /// <summary>
+        /// The content expiration date time field.
+        /// </summary>
+        public static IFieldInfo Expires
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(ExpiresName, SPBuiltInFieldId.Expires);
+            }
+        }
         #endregion
     }
 }

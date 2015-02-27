@@ -77,5 +77,5 @@ function Enter-DSPRemoteSession()
     $securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential ($Username, $securePassword )
 
-    Enter-PSSession –ComputerName $ComputerName –Credential $cred
+    Enter-PSSession –ComputerName $ComputerName –Credential $cred -Authentication Credssp
 }

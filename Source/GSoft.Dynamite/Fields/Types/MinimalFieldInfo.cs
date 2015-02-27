@@ -10,7 +10,8 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Field Info type mostly used to document SharePoint OOTB (built-in) field definitions
     /// </summary>
-    public class MinimalFieldInfo : FieldInfo<string>
+    /// <typeparam name="T">The field type's associated value type</typeparam>
+    public class MinimalFieldInfo<T> : FieldInfo<T>
     {
         /// <summary>
         /// TODO: document proper field types and get rid of this
