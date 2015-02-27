@@ -52,12 +52,6 @@ namespace GSoft.Dynamite.Binding
         #region Properties
 
         /// <summary>
-        /// Gets or sets the type of the converter.
-        /// </summary>
-        [Obsolete("Your custom converter type may not be respected")]
-        public virtual Type ConverterType { get; set; }
-
-        /// <summary>
         /// Gets the name of the property.
         /// </summary>
         public virtual string PropertyName
@@ -79,34 +73,6 @@ namespace GSoft.Dynamite.Binding
             get
             {
                 return this.isLookupId;
-            }
-        }
-
-        #endregion
-
-        #region Creates an instance of the converter
-
-        /// <summary>
-        /// Gets the custom converter.
-        /// </summary>
-        /// <returns>
-        /// The converter.
-        /// </returns>
-        protected internal virtual IConverter CreateConverter()
-        {
-            if (this.ConverterType != null)
-            {
-                var instance = Activator.CreateInstance(this.ConverterType) as IConverter;
-                if (instance == null)
-                {
-                    throw new InvalidOperationException("The custom converter associated to a property must implement the IConverter interface.");
-                }
-
-                return instance;
-            }
-            else
-            {
-                return null;
             }
         }
 

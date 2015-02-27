@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caml;
@@ -214,7 +213,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
 
-            //// Example of monitored (profiled) instance:
+            //// Example of monitored (profiled) instance - a typical decorator pattern use case:
             ////builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
             ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 

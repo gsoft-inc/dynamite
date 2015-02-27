@@ -74,7 +74,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Binding\Converters\LookupValueConverterTest.cs" />
     <Compile Include="ValueTypes\ImageFieldValue.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
     <Compile Include="ValueTypes\Writers\FieldValueWriterTest.cs" />
@@ -115,6 +114,7 @@
     <Content Include="FakesAssemblies\System.Web.2.0.0.0.Fakes.dll" />
     <Content Include="FakesAssemblies\System.Web.2.0.0.0.Fakes.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
