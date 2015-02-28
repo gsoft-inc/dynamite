@@ -387,6 +387,7 @@ function Export-DSPWeb {
 
     # Load SharePoint assembly to be backward compatible with MOSS 2007
     [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
+	[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
     Try
     {
         $site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)
