@@ -7,7 +7,7 @@
 # ******************************************
 # Export-DSPWeb Tokens 
 # ******************************************
-$DSP_WebApplicationUrl = "http://dmx/ "
+$DSP_WebApplicationUrl = "http://dmx"
 $DSP_XmlSchema = ".\TestWebSchema.xsd"
 $DSP_OutputFileName = ".\ExportWebTest_PROD.xml"
 $DSP_TempSiteCollection = "sites/test"
