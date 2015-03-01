@@ -86,6 +86,8 @@ Describe "Web.ps1" {
 
 		$sourceVariationSiteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.RootWeb.Url, "en"))
 
+		Start-Sleep -s 5
+
 		# Sync Sub webs
 		CreateSubWebs -SourceWeb (Get-SPWeb $sourceVariationSiteUrl) | ForEach-Object {$_ | Sync-DSPWeb -LabelToSync 'fr'}
 
@@ -107,6 +109,11 @@ Describe "Web.ps1" {
 
 	Context "The source web exist"	{
 
+		AfterEach {
+			Write-Host "     --Test Teardown--"
+			Remove-Item $outputFileName -Force -Confirm:$false
+		}
+
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
@@ -127,6 +134,11 @@ Describe "Web.ps1" {
 	}
 	
 	Context "The source web has no subsites"	{
+
+		AfterEach {
+			Write-Host "     --Test Teardown--"
+			Remove-Item $outputFileName -Force -Confirm:$false
+		}
 
 		Write-Host "     --Test Setup--"
 
@@ -154,6 +166,11 @@ Describe "Web.ps1" {
 
 	Context "The source web has multiple subsites"	{
 	
+		AfterEach {
+			Write-Host "     --Test Teardown--"
+			Remove-Item $outputFileName -Force -Confirm:$false
+		}
+
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
@@ -163,8 +180,6 @@ Describe "Web.ps1" {
 			
 			# Execute the command
 			Export-DSPWeb -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
-
-			#Remove-SPSite $site -Confirm:$false
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -212,6 +227,11 @@ Describe "Web.ps1" {
 
 	Context "SharePoint variations are activated on the source web with multiple sites" {
 	
+		AfterEach {
+			Write-Host "     --Test Teardown--"
+			Remove-Item $outputFileName -Force -Confirm:$false
+		}
+
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
@@ -260,5 +280,4 @@ Describe "Web.ps1" {
 
 	Write-Host "     --Tests Teardown--"
 	Remove-SPSite $siteUrl -Confirm:$false
-	Remove-Item $outputFileName -Force -Confirm:$false
 }
