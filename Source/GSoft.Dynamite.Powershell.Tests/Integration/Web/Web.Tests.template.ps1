@@ -205,7 +205,7 @@ Describe "Web.ps1" {
 		It "should export all webs and sub webs without the source web if -ExcludeRootWeb is specified" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -ExludeSourceWeb
+			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -ExludeRootWeb
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)

@@ -493,6 +493,7 @@ function Export-DSPWebStructure {
         # Save File
         $oXmlDocument.Save($sw)
 
+        $sw.Close()
         $web.Dispose()
         $site.Dispose();
     }
