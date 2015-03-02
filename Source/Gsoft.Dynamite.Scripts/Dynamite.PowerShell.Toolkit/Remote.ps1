@@ -74,8 +74,17 @@ function Enter-DSPRemoteSession()
 		[string]$ComputerName 
 	)
 
-    $securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-    $cred = New-Object System.Management.Automation.PSCredential ($Username, $securePassword )
+	[SecureString]$securePassword = $null
+	# If password is a path, consider it an encrypted password file
+	if(Test-Path $Password)
+	{
+		$securePassword = Get-Content $Password | ConvertTo-SecureString
+	}
+	else
+	{
+		$securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
+	}
 
+    $cred = New-Object System.Management.Automation.PSCredential ($Username, $securePassword)
     Enter-PSSession –ComputerName $ComputerName –Credential $cred -Authentication Credssp
 }
