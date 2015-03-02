@@ -78,7 +78,7 @@ function Enter-DSPRemoteSession()
 	# If password is a path, consider it an encrypted password file
 	if(Test-Path $Password)
 	{
-		$securePassword = Get-Content c:\scripts\encrypted_password.txt | ConvertTo-SecureString
+		$securePassword = Get-Content $Password | ConvertTo-SecureString
 	}
 	else
 	{
