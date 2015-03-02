@@ -108,7 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 Export-ModuleMember New-DSPTaxonomyNavigationSettings
 
 # Variations
-Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb
+Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
 
 # Administration
 Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
@@ -120,7 +120,7 @@ Export-ModuleMember Add-DSPFile, Set-DSPAlerts, Add-DSPAlert
 Export-ModuleMember Add-DSPSampleContent, Add-DSPReusableContentSnippets
 
 # Web
-Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWeb
+Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStructure, Import-DSPWebStructure
 
 # User Profile 
 Export-ModuleMember Set-DSPUserProfileSchema

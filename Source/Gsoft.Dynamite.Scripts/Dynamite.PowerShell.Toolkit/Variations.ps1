@@ -300,6 +300,45 @@ function Start-ListItemPropagation
 	Start-Sleep -Seconds 15
 }
 
+function Set-VariationHierarchy {
+	[CmdletBinding()]
+	param
+	(	
+		[Parameter(Mandatory=$true, Position=0)]
+		[ValidateNotNullOrEmpty()]
+		[string]$Site
+	)
+	
+		$spSite = Get-SPSite $Site;
+		$rootWeb = $spSite.RootWeb;
+		$guid = [Guid]$rootWeb.GetProperty("_VarLabelsListId");
+		$list = $rootWeb.Lists[$guid];
+	
+		$caml = New-Object -TypeName Microsoft.SharePoint.SPQuery;
+		$caml.RowLimit = 1;
+		$caml.Query = "<Where><Eq><FieldRef Name='Title'/><Value Type='Text'>en</Value></Eq></Where>";
+		$items = $list.GetItems($caml);
+					
+		if ($items.Count -eq 1) {
+			$item = $items[0];
+			$isHierarchyCreated = $item["Hierarchy Is Created"];
+			if ($isHierarchyCreated) {
+				Write-Host "The 'en' label 'hierarchy is created' is already true.  Skipping fix..."
+			} else {
+				Write-Host "Fixing the 'en' label 'hierarchy is created' flag and resetting IIS..."
+				$item["Hierarchy Is Created"] = $true;
+				$item.Update();			
+
+				iisreset
+			}
+
+
+				
+		}
+		else {
+			Write-Warning "Couldn't find 'en' label and fix the 'hierarchy is created' flag"
+		}
+}
 
 
 		
