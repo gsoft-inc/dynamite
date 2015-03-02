@@ -74,7 +74,7 @@ namespace GSoft.Dynamite.ServiceLocator
             // Binding
             builder.RegisterType<EntitySchemaFactory>().Named<IEntitySchemaFactory>("decorated");
             builder.RegisterDecorator<IEntitySchemaFactory>((c, inner) => new CachedEntitySchemaFactory(inner, c.Resolve<ILogger>()), fromKey: "decorated");
-            builder.RegisterType<SharePointEntityBinderNextGen>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
+            builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
             var writers = new[] 

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Web;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Publishing.WebControls;
@@ -10,6 +11,8 @@ namespace GSoft.Dynamite.ValueTypes
     /// </summary>
     public class MediaValue
     {
+        private string url = null;
+
         #region Constructors
 
         /// <summary>
@@ -49,7 +52,18 @@ namespace GSoft.Dynamite.ValueTypes
         /// Gets or sets the source URL of the video/audio file (MediaSource property).
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Value is a string.")]
-        public string Url { get; set; }
+        public string Url 
+        {
+            get
+            {
+                return this.url;
+            }
+
+            set
+            {
+                this.url = HttpUtility.UrlDecode(value);
+            }
+        }
 
         /// <summary>
         /// Gets or sets the source URL video/audio preview image.

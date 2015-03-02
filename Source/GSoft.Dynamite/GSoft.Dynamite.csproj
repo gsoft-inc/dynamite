@@ -90,7 +90,7 @@
     <Compile Include="Binding\IEntityBindingSchema.cs" />
     <Compile Include="Binding\EntitySchemaFactory.cs" />
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
-    <Compile Include="Binding\SharePointEntityBinderNextGen.cs" />
+    <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />

@@ -16,7 +16,7 @@ namespace GSoft.Dynamite.Binding
     /// <summary>
     /// An entity mapping utility for SharePoint.
     /// </summary>
-    public class SharePointEntityBinderNextGen : ISharePointEntityBinder
+    public class SharePointEntityBinder : ISharePointEntityBinder
     {
         #region Fields
 
@@ -30,7 +30,7 @@ namespace GSoft.Dynamite.Binding
         /// Creates a new instance of <see cref="SharePointEntityBinder"/>
         /// </summary>
         /// <param name="entitySchemaFactory">The entity schema building utility</param>
-        public SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory)
+        public SharePointEntityBinder(IEntitySchemaFactory entitySchemaFactory)
         {
             this.entitySchemaFactory = entitySchemaFactory;
         }

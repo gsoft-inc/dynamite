@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Lists.Constants;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ValueTypes.Readers
@@ -27,7 +28,18 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
             if (fieldValue != null)
             {
-                return (DateTime)fieldValue;
+                if ((int)item.ParentList.BaseTemplate == BuiltInListTemplates.Pages.ListTempateTypeId)
+                {
+                    // There's more than a good chance that your SPListItem comes from the result of
+                    // a PublishingWeb.GetPublishingPages(SPQuery) call. This call is sneaky and 
+                    // returns a UTC-time SPListItem instance linked to the PublishingPage object.
+                    var dateTime = (DateTime)fieldValue;
+                    return dateTime.ToLocalTime(); 
+                }
+                else
+                {
+                    return (DateTime)fieldValue;
+                }
             }
 
             return null;

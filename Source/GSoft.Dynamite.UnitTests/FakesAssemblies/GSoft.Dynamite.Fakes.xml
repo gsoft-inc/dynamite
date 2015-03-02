@@ -274,92 +274,92 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.ShimPropertyAttribute.AllInstances.PropertyNameGet">
             <summary>Sets the shim of PropertyAttribute.get_PropertyName()</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen">
-            <summary>Shim type of GSoft.Dynamite.Binding.SharePointEntityBinderNextGen</summary>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder">
+            <summary>Shim type of GSoft.Dynamite.Binding.SharePointEntityBinder</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.#ctor">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.#ctor">
             <summary>Initializes a new shim instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.SharePointEntityBinderNextGen)">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.#ctor(GSoft.Dynamite.Binding.SharePointEntityBinder)">
             <summary>Initializes a new shim for the given instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.BehaveAsCurrent">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.BehaveAsCurrent">
             <summary>Assigns the &apos;Current&apos; behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.BehaveAsNotImplemented">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.BehaveAsNotImplemented">
             <summary>Assigns the &apos;NotImplemented&apos; behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.Bind(GSoft.Dynamite.Binding.ISharePointEntityBinder)">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.Bind(GSoft.Dynamite.Binding.ISharePointEntityBinder)">
             <summary>Binds the members of the interface to the shim.</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.FromEntity(!!0 entity, SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinder.FromEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItem,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemCollection listItems)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemCollection listItems)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemVersion listItemVersion)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{Microsoft.SharePoint.SPListItemVersion,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItemVersion})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{``0,Microsoft.SharePoint.SPListItemVersion})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._FromEntityb__0Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;FromEntity&gt;b__0(EntityPropertyConversionDetail x)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder._FromEntityb__0Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinder.&lt;FromEntity&gt;b__0(EntityPropertyConversionDetail x)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__1Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__1(EntityPropertyConversionDetail x)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder._ToEntityb__1Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinder.&lt;ToEntity&gt;b__1(EntityPropertyConversionDetail x)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__2Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__2(EntityPropertyConversionDetail x)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder._ToEntityb__2Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinder.&lt;ToEntity&gt;b__2(EntityPropertyConversionDetail x)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen._ToEntityb__3Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.&lt;ToEntity&gt;b__3(EntityPropertyConversionDetail x)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder._ToEntityb__3Of1EntityPropertyConversionDetail``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.EntityPropertyConversionDetail,System.Boolean})">
+            <summary>Sets the shim of SharePointEntityBinder.&lt;ToEntity&gt;b__3(EntityPropertyConversionDetail x)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.Behavior">
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.ConstructorIEntitySchemaFactory">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.SharePointEntityBinderNextGen(IEntitySchemaFactory entitySchemaFactory)</summary>
+        <member name="P:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.ConstructorIEntitySchemaFactory">
+            <summary>Sets the shim of SharePointEntityBinder.SharePointEntityBinder(IEntitySchemaFactory entitySchemaFactory)</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances">
+        <member name="T:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances">
             <summary>Define shims for all instances members</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItem})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.FromEntity(!!0 entity, SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.FromEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinder.FromEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItem,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,Microsoft.SharePoint.SPListItem,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemCollection listItems)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1SPListItemCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,Microsoft.SharePoint.SPListItemCollection,System.Collections.Generic.IList{``0}})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemCollection listItems)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,Microsoft.SharePoint.SPListItemVersion,``0})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.Get(SPListItemVersion listItemVersion)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.GetOf1SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Func{GSoft.Dynamite.Binding.SharePointEntityBinder,Microsoft.SharePoint.SPListItemVersion,``0})">
+            <summary>Sets the shim of SharePointEntityBinder.Get(SPListItemVersion listItemVersion)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0DataRowSPFieldCollection``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,System.Data.DataRow,Microsoft.SharePoint.SPFieldCollection})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, DataRow dataRow, SPFieldCollection fieldCollection)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItem})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItem listItem)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0SPListItem``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,Microsoft.SharePoint.SPListItem})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItem listItem)</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinderNextGen.AllInstances.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinderNextGen,``0,Microsoft.SharePoint.SPListItemVersion})">
-            <summary>Sets the shim of SharePointEntityBinderNextGen.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.ShimSharePointEntityBinder.AllInstances.ToEntityOf1M0SPListItemVersion``1(Microsoft.QualityTools.Testing.Fakes.FakesDelegates.Action{GSoft.Dynamite.Binding.SharePointEntityBinder,``0,Microsoft.SharePoint.SPListItemVersion})">
+            <summary>Sets the shim of SharePointEntityBinder.ToEntity(!!0 entity, SPListItemVersion listItemVersion)</summary>
         </member>
         <member name="T:GSoft.Dynamite.Binding.Fakes.StubCachedEntitySchemaFactory">
             <summary>Stub type of GSoft.Dynamite.Binding.CachedEntitySchemaFactory</summary>
@@ -589,22 +589,22 @@
         <member name="P:GSoft.Dynamite.Binding.Fakes.StubPropertyAttribute.TypeId">
             <summary>Sets the stub of Attribute.get_TypeId()</summary>
         </member>
-        <member name="T:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen">
-            <summary>Stub type of GSoft.Dynamite.Binding.SharePointEntityBinderNextGen</summary>
+        <member name="T:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder">
+            <summary>Stub type of GSoft.Dynamite.Binding.SharePointEntityBinder</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.#ctor(GSoft.Dynamite.Binding.IEntitySchemaFactory)">
             <summary>Initializes a new instance</summary>
         </member>
-        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InitializeStub">
-            <summary>Initializes a new instance of type StubSharePointEntityBinderNextGen</summary>
+        <member name="M:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.InitializeStub">
+            <summary>Initializes a new instance of type StubSharePointEntityBinder</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.CallBase">
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.CallBase">
             <summary>Gets or sets a value that indicates if the base method should be called instead of the fallback behavior</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InstanceBehavior">
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinderNextGen.InstanceObserver">
+        <member name="P:GSoft.Dynamite.Binding.Fakes.StubSharePointEntityBinder.InstanceObserver">
             <summary>Gets or sets the instance observer.</summary>
         </member>
         <member name="T:GSoft.Dynamite.Branding.Entities.Fakes.ShimComposedLook">
