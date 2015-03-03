@@ -15,4 +15,4 @@ Update-DSPTokens
 
 # Invoke tests
 # Ignore tests with tag "Local". By this way, you can control tests executed on the build machine.
-Invoke-Pester -OutputFile results.xml -OutputFormat LegacyNUnitXml -ExcludeTag "Local"
+Invoke-Pester -OutputFile results.xml -OutputFormat LegacyNUnitXml -Exclude "Local"
