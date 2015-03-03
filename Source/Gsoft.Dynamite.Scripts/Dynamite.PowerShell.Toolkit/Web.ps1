@@ -303,7 +303,7 @@ function Remove-DSPWeb {
             }
         }
 
-        Remove-SPWeb -Identity $Web
+        Remove-SPWeb -Identity $Web -Confirm:$false
     }
 }
 
@@ -654,7 +654,7 @@ function Import-DSPWebStructure {
 
             if ((Get-SPWeb -Identity $ParentUrl -ErrorAction SilentlyContinue) -eq $null)
             {
-                $ErrorMessage = "The site collection $ParentUrl doesn't exist!"
+                $ErrorMessage = "The web $ParentUrl doesn't exist!"
 			    Throw $ErrorMessage
             } 
             
@@ -673,9 +673,4 @@ function Import-DSPWebStructure {
         $ErrorMessage = $_.Exception.Message
         Throw $ErrorMessage
     }	
-} 
-
-#Import-DSPWebStructure -InputFileName C:\grostest.xml -ParentUrl http://franck-vm2013/sites/jamon/as -Overwrite
-
-
-#Export-DSPwebStructure -OutputFileName C:\grostest.xml -SourceWeb http://franck-vm2013/sites/jamon/as
+}
