@@ -279,3 +279,45 @@ function Test-DSPDeployedSolutions {
 
 	return $hasSolutionsDeployed
 }
+
+function Resolve-DSPType {<#
+	.SYNOPSIS
+		Service locator method that can load up instances of Dynamite utility services and helpers
+	
+	.DESCRIPTION
+		Loads the first Dynamite assembly found in the Global Assembly Cache and attempts to resolve an instance that
+		corresponds to the name of the type that was specified.
+    
+	.PARAMETER $NameOfDynamiteTypeToResolve
+		The name of the type within GSoft.Dynamite assembly that we should attempt to resolve (e.g. "GSoft.Dynamite.Logging.ILogger")
+	#>
+	Param(
+		[Parameter(Mandatory=$true, Position=0)]
+		[string]$NameOfDynamiteTypeToResolve
+	)
+
+	# Load Dynamite+Autofac assemblies from GAC
+	$gacPath = "C:\Windows\Microsoft.NET\assembly\GAC_MSIL\"
+	$dynamiteAssemblyFile = Get-ChildItem -Path $gacPath -Filter GSoft.Dynamite.dll -Recurse
+	$autofacAssemblyFile = Get-ChildItem -Path $gacPath -Filter Autofac.dll -Recurse
+
+	if (($dynamiteAssemblyFile -eq $null) -or ($autofacAssemblyFile -eq $null))
+	{
+		Write-Error "Failed to find the GSoft.Dynamite.dll assembly or the Autofac.dll assembly in the GAC. You must deploy the GSoft.Dynamite.wsp package before using Resolve-DSPType."
+		return $null
+	}
+
+	$dynamiteAssembly = [System.Reflection.Assembly]::LoadFrom($dynamiteAssemblyFile.FullName)
+
+	# Create a temporary service locator that load Dynamite's type registrations only
+	$serviceLocator = New-Object -TypeName GSoft.Dynamite.ServiceLocator.SharePointServiceLocator -ArgumentList "GSoft.Dynamite"
+	$scope = $serviceLocator.BeginLifetimeScope()
+
+	$typeToResolveFullName = $NameOfDynamiteTypeToResolve + ", " + $dynamiteAssembly.FullName
+
+	$typeToResolve = [Type]::GetType($typeToResolveFullName)
+
+	$returnObject = [Autofac.ResolutionExtensions]::Resolve($scope, $typeToResolve)
+
+	return $returnObject;
+}

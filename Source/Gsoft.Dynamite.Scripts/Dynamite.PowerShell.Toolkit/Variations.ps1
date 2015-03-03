@@ -340,5 +340,21 @@ function Set-VariationHierarchy {
 		}
 }
 
+function Sync-DSPWeb {
+	param
+	(
+        [Parameter(Mandatory=$true, HelpMessage = "The variation source web", Position=0, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPWeb]$SourceWeb,
 
-		
+		[Parameter(Mandatory=$true, HelpMessage = "The label to Sync", Position=1)]
+		[string]$LabelToSync
+	)
+
+	$sourceUrl = $SourceWeb.Url
+	$labelToUpper = $LabelToSync.ToUpper()
+    Write-Warning "Sync SPWeb $sourceUrl to the variation label..."
+
+	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
+
+	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
+}

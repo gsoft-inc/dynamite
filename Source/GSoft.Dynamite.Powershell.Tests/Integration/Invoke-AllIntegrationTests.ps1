@@ -13,6 +13,5 @@ Set-Location $path
 # Tokenize 
 Update-DSPTokens
 
-# Invoke Slow tests
-# Ignore tests with tag "Local". By this way, you can control tests executed on the build machine.
-Invoke-Pester -OutputFile slow-results.xml -OutputFormat LegacyNUnitXml -Tag "Slow" -Exclude "Local"
+# Invoke tests
+Invoke-Pester -OutputFile slow-results.xml -OutputFormat LegacyNUnitXml

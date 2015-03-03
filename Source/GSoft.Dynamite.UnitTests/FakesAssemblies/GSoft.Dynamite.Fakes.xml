@@ -4519,8 +4519,8 @@
         <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._ReorderFieldsInContentTypeb__4SPFieldLink">
             <summary>Sets the shim of ContentTypeHelper.&lt;ReorderFieldsInContentType&gt;b__4(SPFieldLink x)</summary>
         </member>
-        <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._SetTitleDescriptionAndGroupValuesb__11VariationLabel">
-            <summary>Sets the shim of ContentTypeHelper.&lt;SetTitleDescriptionAndGroupValues&gt;b__11(VariationLabel label)</summary>
+        <member name="P:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper._SetTitleDescriptionAndGroupValuesb__14VariationLabel">
+            <summary>Sets the shim of ContentTypeHelper.&lt;SetTitleDescriptionAndGroupValues&gt;b__14(VariationLabel label)</summary>
         </member>
         <member name="T:GSoft.Dynamite.ContentTypes.Fakes.ShimContentTypeHelper.AllInstances">
             <summary>Define shims for all instances members</summary>
@@ -5989,6 +5989,9 @@
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.Behavior">
             <summary>Assigns the behavior for all methods of the shimmed type</summary>
         </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.BodyGet">
+            <summary>Sets the shim of BuiltInFields.get_Body()</summary>
+        </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.CellphoneGet">
             <summary>Sets the shim of BuiltInFields.get_Cellphone()</summary>
         </member>
@@ -6021,6 +6024,9 @@
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.EnterpriseKeywordsGet">
             <summary>Sets the shim of BuiltInFields.get_EnterpriseKeywords()</summary>
+        </member>
+        <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.ExpiresGet">
+            <summary>Sets the shim of BuiltInFields.get_Expires()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Fields.Constants.Fakes.ShimBuiltInFields.FileLeafRefGet">
             <summary>Sets the shim of BuiltInFields.get_FileLeafRef()</summary>
@@ -10306,8 +10312,8 @@
         <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteDocumentLibraryGet">
             <summary>Sets the shim of BuiltInListTemplates.get_MySiteDocumentLibrary()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteMicroBloggingListGet">
-            <summary>Sets the shim of BuiltInListTemplates.get_MySiteMicroBloggingList()</summary>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteMicrobloggingListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MySiteMicrobloggingList()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.NoCodePublicWorkflowGet">
             <summary>Sets the shim of BuiltInListTemplates.get_NoCodePublicWorkflow()</summary>

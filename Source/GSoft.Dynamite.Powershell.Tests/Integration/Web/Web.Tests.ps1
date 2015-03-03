@@ -1,4 +1,4 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Script under test (sut)
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
@@ -9,14 +9,14 @@ $destFolderPath = (Get-Location).Path + "\destination"
 # ----------------------
 # Tests configuration
 # ----------------------
-$webXmlSchema         =	 Join-Path -Path "$here" -ChildPath "[[DSP_XmlSchema]]"
-$outputFileName       =  Join-Path -Path "$here" -ChildPath "[[DSP_OutputFileName]]"
-$inputFileName       =  Join-Path -Path "$here" -ChildPath "[[DSP_InputFileName]]"
-$inputFileNameOverwrite  =  Join-Path -Path "$here" -ChildPath "[[DSP_InputFileNameOverwrite]]"
-$tempSiteCollection   = "[[DSP_TempSiteCollection]]"
-$webApplication       = "[[DSP_WebApplicationUrl]]"
-$currentAccountName   = ("[[DSP_CurrentAccount]]").ToLower()
-$variationsConfigFile   = Join-Path -Path "$here" -ChildPath "[[DSP_VariationsConfigFile]]"
+$webXmlSchema         =	 Join-Path -Path "$here" -ChildPath ".\TestWebSchema.xsd"
+$outputFileName       =  Join-Path -Path "$here" -ChildPath ".\ExportWebTest.xml"
+$inputFileName       =  Join-Path -Path "$here" -ChildPath ".\ImportWebStructure.xml"
+$inputFileNameOverwrite  =  Join-Path -Path "$here" -ChildPath ".\ImportWebStructure_Overwrite.xml"
+$tempSiteCollection   = "sites/exporttest"
+$webApplication       = "http://sp2013tao"
+$currentAccountName   = ("OFFICE\thomasantoine.oneill").ToLower()
+$variationsConfigFile   = Join-Path -Path "$here" -ChildPath "./TestVariationsSettings.xml"
 $siteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($webApplication, $tempSiteCollection))
 
 # ----------------------

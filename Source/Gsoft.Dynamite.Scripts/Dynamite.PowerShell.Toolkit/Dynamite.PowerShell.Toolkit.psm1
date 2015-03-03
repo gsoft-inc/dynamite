@@ -87,7 +87,7 @@ Export-ModuleMember -Function New-DSPContentDatabase
 Export-ModuleMember -Function Get-DSPWebAppProperty, Set-DSPWebAppProperty, Set-DSPWebProperty, Get-DSPWebProperty
 
 # Search - Managed Properties
-Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByKeyword, Add-DSPCrawlExtension, Start-DSPContentSourceCrawl, Wait-DSPContentSourceCrawl, New-DSPResultSources, Set-DSPResultTypesByXml, New-DSPQueryRules
+Export-ModuleMember -Function Add-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByXml, Remove-DSPMetadataManagedPropertiesByKeyword, Add-DSPCrawlExtension, Start-DSPContentSourceCrawl, Wait-DSPContentSourceCrawl, <#New-DSPResultSources,#> Set-DSPResultTypesByXml <#, New-DSPQueryRules#>
 
 # SiteCollection - Structure
 Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-SuggestedBrowserContentLocations
@@ -108,7 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 Export-ModuleMember New-DSPTaxonomyNavigationSettings
 
 # Variations
-Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
+Export-ModuleMember New-DSPSiteVariations, <# Sync-DSPList,#> Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
 
 # Administration
 Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
@@ -141,7 +141,7 @@ Export-ModuleMember Set-DSPWebPermissions
 Export-ModuleMember Set-DSPTimerJobs
 
 # Utilities
-Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions
+Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions, Resolve-DSPType
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession

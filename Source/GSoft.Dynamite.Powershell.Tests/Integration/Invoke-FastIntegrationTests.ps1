@@ -10,9 +10,6 @@ Import-Module Dynamite.PowerShell.Toolkit
 $path = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $path
 
-# Tokenize 
-Update-DSPTokens
-
-# Invoke tests
+# Invoke non-Slow tests
 # Ignore tests with tag "Local". By this way, you can control tests executed on the build machine.
 Invoke-Pester -OutputFile fast-results.xml -OutputFormat LegacyNUnitXml -Exclude "Local", "Slow"
