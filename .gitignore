@@ -5,7 +5,7 @@
 !NuGet.exe
 
 #Fakes generated files
-#*/GSoft.Dynamite.Fakes.*
+*GSoft.Dynamite.Fakes.*
 
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
