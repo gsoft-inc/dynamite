@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -66,6 +67,16 @@ namespace GSoft.Dynamite.Taxonomy
             : this(id, labels)
         {
             this.Group = termGroup;     // global farm term group
+        }
+
+        /// <summary>
+        /// Convenience constructor to create TermSetInfo instances from SharePoint
+        /// term set objects
+        /// </summary>
+        /// <param name="sharePointTermSet">The SharePoint taxonomy term set</param>
+        public TermSetInfo(TermSet sharePointTermSet)
+            : this(sharePointTermSet.Id, sharePointTermSet.Name, new TermGroupInfo(sharePointTermSet.Group))
+        {
         }
 
         /// <summary>

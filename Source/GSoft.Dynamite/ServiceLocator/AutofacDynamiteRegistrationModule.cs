@@ -1,6 +1,8 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Autofac;
 using GSoft.Dynamite.Binding;
-using GSoft.Dynamite.Binding.Converters;
 using GSoft.Dynamite.Branding;
 using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Caml;
@@ -28,6 +30,7 @@ using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
 using GSoft.Dynamite.Utils;
+using GSoft.Dynamite.ValueTypes.Readers;
 using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.WebParts;
 using Microsoft.Office.Server.Search;
@@ -69,34 +72,53 @@ namespace GSoft.Dynamite.ServiceLocator
 #endif
 
             // Binding
-            var entitySchemaBuilder = new EntitySchemaBuilder<SharePointDataRowEntitySchema>();
-            var cachedSchemaBuilder = new CachedSchemaBuilder(entitySchemaBuilder, logger);
-
-            builder.RegisterType<SharePointDataRowEntitySchema>();
-            builder.RegisterInstance<IEntitySchemaBuilder>(cachedSchemaBuilder);
-            builder.RegisterType<TaxonomyValueDataRowConverter>();
-            builder.RegisterType<TaxonomyValueCollectionDataRowConverter>();
-            builder.RegisterType<TaxonomyValueConverter>();
-            builder.RegisterType<TaxonomyValueCollectionConverter>();
+            builder.RegisterType<EntitySchemaFactory>().Named<IEntitySchemaFactory>("decorated");
+            builder.RegisterDecorator<IEntitySchemaFactory>((c, inner) => new CachedEntitySchemaFactory(inner, c.Resolve<ILogger>()), fromKey: "decorated");
             builder.RegisterType<SharePointEntityBinder>().As<ISharePointEntityBinder>().InstancePerSite();  // Singleton-per-site entity binder
 
             builder.RegisterType<FieldValueWriter>().As<IFieldValueWriter>();
-            builder.RegisterType<StringValueWriter>();
-            builder.RegisterType<BooleanValueWriter>();
-            builder.RegisterType<IntegerValueWriter>();
-            builder.RegisterType<DoubleValueWriter>();
-            builder.RegisterType<DateTimeValueWriter>();
-            builder.RegisterType<GuidValueWriter>();
-            builder.RegisterType<TaxonomyFullValueWriter>();
-            builder.RegisterType<TaxonomyFullValueCollectionWriter>();
-            builder.RegisterType<LookupValueWriter>();
-            builder.RegisterType<LookupValueCollectionWriter>();
-            builder.RegisterType<PrincipalValueWriter>();
-            builder.RegisterType<UserValueWriter>();
-            builder.RegisterType<UserValueCollectionWriter>();
-            builder.RegisterType<UrlValueWriter>();
-            builder.RegisterType<ImageValueWriter>();
-            builder.RegisterType<MediaValueWriter>();
+            var writers = new[] 
+            {
+                typeof(StringValueWriter),
+                typeof(BooleanValueWriter),
+                typeof(IntegerValueWriter),
+                typeof(DoubleValueWriter),
+                typeof(DateTimeValueWriter),
+                typeof(GuidValueWriter),
+                typeof(TaxonomyValueWriter),
+                typeof(TaxonomyValueCollectionWriter),
+                typeof(LookupValueWriter),
+                typeof(LookupValueCollectionWriter),
+                typeof(PrincipalValueWriter),
+                typeof(UserValueWriter),
+                typeof(UserValueCollectionWriter),
+                typeof(UrlValueWriter),
+                typeof(ImageValueWriter),
+                typeof(MediaValueWriter)
+            };
+            writers.ToList().ForEach(w => builder.RegisterType(w).As<IBaseValueWriter>().SingleInstance());
+
+            builder.RegisterType<FieldValueReader>().As<IFieldValueReader>();
+            var readers = new[] 
+            {
+                typeof(StringValueReader),
+                typeof(BooleanValueReader),
+                typeof(IntegerValueReader),
+                typeof(DoubleValueReader),
+                typeof(DateTimeValueReader),
+                typeof(GuidValueReader),
+                typeof(TaxonomyValueReader),
+                typeof(TaxonomyValueCollectionReader),
+                typeof(LookupValueReader),
+                typeof(LookupValueCollectionReader),
+                typeof(PrincipalValueReader),
+                typeof(UserValueReader),
+                typeof(UserValueCollectionReader),
+                typeof(UrlValueReader),
+                typeof(ImageValueReader),
+                typeof(MediaValueReader)
+            };
+            readers.ToList().ForEach(r => builder.RegisterType(r).As<IBaseValueReader>().SingleInstance());
 
             // Branding
             builder.RegisterType<MasterPageHelper>().As<IMasterPageHelper>();
@@ -191,7 +213,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<PerRequestSiteTaxonomyCacheManager>().As<ISiteTaxonomyCacheManager>();
             builder.RegisterType<TaxonomyService>().As<ITaxonomyService>();
 
-            //// Example of monitored (profiled) instance:
+            //// Example of monitored (profiled) instance - a typical decorator pattern use case:
             ////builder.RegisterType<TaxonomyService>().Named<ITaxonomyService>("decorated").InstancePerSite();
             ////builder.RegisterDecorator<ITaxonomyService>((c, inner) => new MonitoredTaxonomyService(inner, c.Resolve<IAggregateTimeTracker>()), fromKey: "decorated");
 

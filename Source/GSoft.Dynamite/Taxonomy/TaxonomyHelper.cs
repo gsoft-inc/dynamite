@@ -389,7 +389,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="field">The field</param>
         /// <param name="defaultValue">The taxonomy default value</param>
         public void SetDefaultTaxonomyFieldValue(
-            SPWeb web, TaxonomyField field, TaxonomyFullValue defaultValue)
+            SPWeb web, TaxonomyField field, TaxonomyValue defaultValue)
         {
             var termGroupName = string.Empty;
             if (defaultValue.Context.Group != null)
@@ -494,11 +494,11 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="web">The web.</param>
         /// <param name="field">The field.</param>
         /// <param name="defaultValueCollection">The default value collection.</param>
-        public void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyFullValueCollection defaultValueCollection)
+        public void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyValueCollection defaultValueCollection)
         {
             if (defaultValueCollection.Count > 0)
             {
-                TaxonomyFullValue firstDefaultValue = defaultValueCollection[0];
+                TaxonomyValue firstDefaultValue = defaultValueCollection[0];
 
                 var termGroupName = string.Empty;
                 if (firstDefaultValue.Context.Group != null)

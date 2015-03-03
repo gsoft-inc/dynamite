@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -36,6 +37,19 @@ namespace GSoft.Dynamite.Taxonomy
         public TermGroupInfo(Guid id, string name, TermStoreInfo termStore) : this(id, name)
         {
             this.TermStore = termStore;
+        }
+
+        /// <summary>
+        /// Convenience constructor to create TeermGroupInfo objects from
+        /// SharePoint's taxonomy group instances
+        /// </summary>
+        /// <param name="sharePointTermGroup">The SharePoint taxonomy group</param>
+        public TermGroupInfo(Group sharePointTermGroup)
+        {
+            this.Name = sharePointTermGroup.Name;
+            this.Id = sharePointTermGroup.Id;
+            this.TermStore = new TermStoreInfo(sharePointTermGroup.TermStore);
+            this.IsSiteCollectionSpecificTermGroup = sharePointTermGroup.IsSiteCollectionGroup;
         }
 
         /// <summary>

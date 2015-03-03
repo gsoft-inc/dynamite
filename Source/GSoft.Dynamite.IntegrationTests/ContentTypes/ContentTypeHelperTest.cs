@@ -1121,7 +1121,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                         {
                             new FieldValueInfo(BuiltInFields.AssignedTo, new UserValue(ensuredUser1)),
                             new FieldValueInfo(BuiltInFields.Cellphone, "Test Cellphone Value"),
-                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyFullValueCollection())
+                            new FieldValueInfo(BuiltInFields.EnterpriseKeywords, new TaxonomyValueCollection())
                         });
 
                     item.Update();

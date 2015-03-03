@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Taxonomy
 {
@@ -24,6 +25,17 @@ namespace GSoft.Dynamite.Taxonomy
         {
             this.Id = id;
             this.Name = name;
+        }
+
+        /// <summary>
+        /// Convenience constructor to create TermStoreInfo objects
+        /// from SharePoint TermStore instances
+        /// </summary>
+        /// <param name="sharePointTermStore">The SharePoint taxonomy store</param>
+        public TermStoreInfo(TermStore sharePointTermStore)
+        {
+            this.Id = sharePointTermStore.Id;
+            this.Name = sharePointTermStore.Name;
         }
 
         /// <summary>

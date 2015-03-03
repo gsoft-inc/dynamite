@@ -612,7 +612,7 @@ namespace GSoft.Dynamite.Fields.Constants
         { 
             get 
             {
-                return new MinimalFieldInfo<TaxonomyFullValueCollection>(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); 
+                return new MinimalFieldInfo<TaxonomyValueCollection>(EnterpriseKeywordsName, new Guid("23f27201-bee3-471e-b2e7-b64fd8b7ca38")); 
             } 
         }
 

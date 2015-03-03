@@ -15,7 +15,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
     /// Writes Taxonomy values to SharePoint list items, field definition's DefaultValue
     /// and folder MetadataDefaults.
     /// </summary>
-    public class TaxonomyFullValueWriter : BaseValueWriter<TaxonomyFullValue>
+    public class TaxonomyValueWriter : BaseValueWriter<TaxonomyValue>
     {
         /// <summary>
         /// Writes a taxonomy field value to a SPListItem.
@@ -24,7 +24,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
-            var termInfo = fieldValueInfo.Value as TaxonomyFullValue;
+            var termInfo = fieldValueInfo.Value as TaxonomyValue;
             TaxonomyFieldValue newTaxonomyFieldValue = null;
 
             TaxonomyField taxonomyField = (TaxonomyField)item.Fields.GetField(fieldValueInfo.FieldInfo.InternalName);
@@ -63,7 +63,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFieldDefault(SPFieldCollection parentFieldCollection, FieldValueInfo fieldValueInfo)
         {
-            var defaultValue = (TaxonomyFullValue)fieldValueInfo.Value;
+            var defaultValue = (TaxonomyValue)fieldValueInfo.Value;
             var taxonomyField = (TaxonomyField)parentFieldCollection[fieldValueInfo.FieldInfo.Id];
 
             if (defaultValue  != null)
@@ -85,7 +85,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="fieldValueInfo">The field and value information</param>
         public override void WriteValueToFolderDefault(SPFolder folder, FieldValueInfo fieldValueInfo)
         {
-            var defaultValue = (TaxonomyFullValue)fieldValueInfo.Value;
+            var defaultValue = (TaxonomyValue)fieldValueInfo.Value;
             var list = folder.ParentWeb.Lists[folder.ParentListId];
             var taxonomyField = (TaxonomyField)list.Fields[fieldValueInfo.FieldInfo.Id];
             MetadataDefaults listMetadataDefaults = new MetadataDefaults(list);
@@ -102,7 +102,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
             listMetadataDefaults.Update();
         }
 
-        private static string FormatTaxonomyString(TaxonomyField sharePointField, TaxonomyFullValue valueToApply)
+        private static string FormatTaxonomyString(TaxonomyField sharePointField, TaxonomyValue valueToApply)
         {
             var sharePointTaxonomyFieldValue = new TaxonomyFieldValue(sharePointField);
             string path = TaxonomyItem.NormalizeName(valueToApply.Term.Label) + TaxonomyField.TaxonomyGuidLabelDelimiter

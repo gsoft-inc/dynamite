@@ -6,7 +6,8 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.ValueTypes.Writers
 {
     /// <summary>
-    /// Handlers writing values to a SharePoint list item.
+    /// Handles writing values to a SharePoint list item, to a field definition's default value setting
+    /// or to a folder's metadata defaults.
     /// </summary>
     public interface IFieldValueWriter
     {
@@ -53,5 +54,12 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         /// <param name="folder">The SharePoint folder for which we want to update the metadata defaults.</param>
         /// <param name="defaultFieldValueInfo">The default value to be applied to items created within that folder.</param>
         void WriteValuesToFolderDefault(SPFolder folder, FieldValueInfo defaultFieldValueInfo);
+
+        /// <summary>
+        /// Gets the registered value writer instance for the specified type
+        /// </summary>
+        /// <param name="valueType">The value type we wish to write</param>
+        /// <returns>The value writer for the specified type</returns>
+        IBaseValueWriter GetValueWriterForType(Type valueType);
     }
 }

@@ -29,5 +29,15 @@ namespace GSoft.Dynamite.ValueTypes
             base(userValues)
         {
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserValueCollection"/> class.
+        /// </summary>
+        /// <param name="userFieldValueCollection">The user values.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
+        public UserValueCollection(SPFieldUserValueCollection userFieldValueCollection) :
+            this(new UserValueCollection(userFieldValueCollection.Select(userFieldValue => new UserValue(userFieldValue.User)).ToList()))
+        {
+        }
     }
 }

@@ -6,7 +6,9 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite
 {
     /// <summary>
-    /// Base class for SPListItem-mapped entities
+    /// Base class for SPListItem-mapped entities.
+    /// Feed such entities to a <see cref="ISharePointEntityBinder"/>
+    /// to map their properties to their corresponding SPListItem.
     /// </summary>
     public class BaseEntity
     {
