@@ -12487,8 +12487,8 @@
         <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteDocumentLibraryGet">
             <summary>Sets the shim of BuiltInListTemplates.get_MySiteDocumentLibrary()</summary>
         </member>
-        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteMicroBloggingListGet">
-            <summary>Sets the shim of BuiltInListTemplates.get_MySiteMicroBloggingList()</summary>
+        <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.MySiteMicrobloggingListGet">
+            <summary>Sets the shim of BuiltInListTemplates.get_MySiteMicrobloggingList()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Lists.Constants.Fakes.ShimBuiltInListTemplates.NoCodePublicWorkflowGet">
             <summary>Sets the shim of BuiltInListTemplates.get_NoCodePublicWorkflow()</summary>
@@ -15607,9 +15607,6 @@
         <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparatorGet">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
         </member>
-        <member name="F:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettingsGet">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
-        </member>
         <member name="M:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InitOutputCache(System.Web.UI.OutputCacheParameters)">
             <summary>Sets the stub of Page.InitOutputCache(OutputCacheParameters cacheSettings)</summary>
         </member>
@@ -16044,9 +16041,6 @@
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IdSeparator">
             <summary>Sets the stub of Page.get_IdSeparator()</summary>
-        </member>
-        <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.IisSettings">
-            <summary>Sets the stub of UnsecuredLayoutsPageBase.get_IisSettings()</summary>
         </member>
         <member name="P:GSoft.Dynamite.Pages.Fakes.StubDialogLayoutsPageBase.InstanceBehavior">
             <summary>Gets or sets the instance behavior.</summary>

@@ -409,7 +409,7 @@ namespace GSoft.Dynamite.ContentTypes
                 {
                     // Predicate to check if the web contains the label language in it's available languages
                     Func<VariationLabel, bool> notAvailableWebLanguageFunc = (label) =>
-                        !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.InvariantCultureIgnoreCase));
+                        !availableLanguages.Any(lang => lang.Name.Equals(label.Language, StringComparison.OrdinalIgnoreCase));
 
                     // Get the label languages that aren't already in the web's available languages
                     var labelLanguages = labels

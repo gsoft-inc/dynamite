@@ -262,7 +262,7 @@ namespace GSoft.Dynamite.Lists.Constants
         /// <summary>
         /// Built-in List Template 'MySite MicroBlogging List' with ID '544'
         /// </summary>
-        public static ListTemplateInfo MySiteMicroBloggingList
+        public static ListTemplateInfo MySiteMicrobloggingList
         {
              get { return new ListTemplateInfo(544, new Guid("EA23650B-0340-4708-B465-441A41C37AF7")); }
         }
