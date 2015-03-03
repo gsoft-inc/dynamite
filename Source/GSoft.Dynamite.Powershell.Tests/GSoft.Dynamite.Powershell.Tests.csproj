@@ -57,7 +57,8 @@
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Integration\Invoke-IntegrationTests.ps1" />
+    <None Include="Integration\Invoke-FastIntegrationTests.ps1" />
+    <None Include="Integration\Invoke-SlowIntegrationTests.ps1" />
     <None Include="Integration\Logging\Logging.Tests.ps1" />
     <None Include="Integration\Tokens.DMX.ps1" />
     <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />

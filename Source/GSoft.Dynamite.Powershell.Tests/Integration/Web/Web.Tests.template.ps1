@@ -102,7 +102,7 @@ function CreateSiteWithSubsitesAndVariations{
 }
 
 
-Describe "Export-DSPWebStructure" -Tag "Local" {
+Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 
 	# ----------------------
 	# Export-DSPWebStructure
@@ -289,7 +289,7 @@ Describe "Export-DSPWebStructure" -Tag "Local" {
 	Remove-SPSite $siteUrl -Confirm:$false
 }
 
-Describe "Import-DSPWebStructure" {
+Describe "Import-DSPWebStructure" -Tag "Slow" {
 	
 	# ----------------------
 	# Import-DSPWebStructure
