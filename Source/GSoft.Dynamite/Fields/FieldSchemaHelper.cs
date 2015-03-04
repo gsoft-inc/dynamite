@@ -51,8 +51,7 @@ namespace GSoft.Dynamite.Fields
                 new XAttribute("StaticName", fieldInfo.InternalName),
                 new XAttribute("DisplayName", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DisplayNameResourceKey)),
                 new XAttribute("Description", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DescriptionResourceKey)),
-                new XAttribute("Group", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.GroupResourceKey)),
-                new XAttribute("EnforceUniqueValues", fieldInfo.EnforceUniqueValues.ToString().ToUpper(CultureInfo.InvariantCulture)));
+                new XAttribute("Group", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.GroupResourceKey)));
 
             // Check the Required type
             if (fieldInfo.Required == RequiredType.Required)
@@ -187,6 +186,13 @@ namespace GSoft.Dynamite.Fields
                     // we don't want to ensure the field twice on the root web
                     if (fieldCollection.List != null)
                     {
+                        if (parentRootWebExistingField.EnforceUniqueValues)
+                        {
+                            // Before we ensure the site column on a list, gotta make sure
+                            // that, on a list, EnforceUniqueValues=TRUE IF-AND-ONLY-IF Indexed=TRUE
+                            parentRootWebExistingField.Indexed = true;
+                        }
+
                         addedInternalName = fieldCollection.Add(parentRootWebExistingField);
 
                         // Then update the list column with the new list-specific or web-specfic definition
