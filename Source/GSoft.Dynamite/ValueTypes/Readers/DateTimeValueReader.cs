@@ -78,7 +78,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
             if (fieldValue != null && fieldValue != System.DBNull.Value)
             {
-                return DateTime.Parse(fieldValue.ToString(), CultureInfo.InvariantCulture);
+                return fieldValue as DateTime?;
             }
 
             return null;
