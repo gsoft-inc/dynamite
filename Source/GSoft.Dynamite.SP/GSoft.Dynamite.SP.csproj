@@ -156,9 +156,6 @@
     <None Include="Package\Package.Template.xml">
       <DependentUpon>Package.package</DependentUpon>
     </None>
-    <None Include="POWERSHELL\SharePointProjectItem.spdata">
-      <SharePointProjectItemId>{597673a7-c184-4d62-806f-c6999181f8c5}</SharePointProjectItemId>
-    </None>
     <None Include="Resources\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{01a6a883-104e-4560-8f3a-516fb755f156}</SharePointProjectItemId>
     </None>
@@ -216,9 +213,6 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.7.0.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -228,9 +222,7 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="POWERSHELL\Help\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
