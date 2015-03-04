@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".docs", ".docs", "{59F22005-22BB-498C-BE1E-5C0E3BBD989B}"
-	ProjectSection(SolutionItems) = preProject
-		GSoft.Dynamite.UnitTests\NMock3\NMock3 Cheat Sheet.pdf = GSoft.Dynamite.UnitTests\NMock3\NMock3 Cheat Sheet.pdf
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{325B61B1-E832-4861-B919-58FED90B8612}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config

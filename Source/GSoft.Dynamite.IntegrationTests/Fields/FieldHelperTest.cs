@@ -416,7 +416,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     noteFieldInfo.DisplayNameResourceKey = "NameKeyNoteUpdated";
                     noteFieldInfo.DescriptionResourceKey = "DescriptionKeyNoteUpdated";
                     noteFieldInfo.GroupResourceKey = "GroupKeyNoteUpdated";
-                    noteFieldInfo.EnforceUniqueValues = true;
                     noteFieldInfo.IsHidden = true;
                     noteFieldInfo.IsHiddenInDisplayForm = true;
                     noteFieldInfo.IsHiddenInNewForm = false;
@@ -562,7 +561,6 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     taxoMultiFieldInfo.DisplayNameResourceKey = "NameKeyMultiUpdated";
                     taxoMultiFieldInfo.DescriptionResourceKey = "DescriptionKeyMultiUpdated";
                     taxoMultiFieldInfo.GroupResourceKey = "GroupKeyMultiUpdated";
-                    taxoMultiFieldInfo.EnforceUniqueValues = true;
                     taxoMultiFieldInfo.IsHidden = true;
                     taxoMultiFieldInfo.IsHiddenInDisplayForm = true;
                     taxoMultiFieldInfo.IsHiddenInNewForm = false;
@@ -1216,7 +1214,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validate that default value is set on TextFieldInfo type fields
         /// </summary>
         [TestMethod]
-        public void EnsureField_WhenTextOrNoteOrHtmlFieldInfo_ShouldApplyEnforceUniqueValuesProperty()
+        public void EnsureField_WhenTextFieldInfo_ShouldApplyEnforceUniqueValuesProperty()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1230,43 +1228,9 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     EnforceUniqueValues = true
                 };
 
-                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
-                    "TestInternalNameNote",
-                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
-                    "NameKeyAlt",
-                    "DescriptionKeyAlt",
-                    "GroupKey")
-                {
-                    EnforceUniqueValues = true
-                };
-
-                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
-                    "TestInternalNameHtml",
-                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
-                    "NameKeyAlt",
-                    "DescriptionKeyAlt",
-                    "GroupKey")
-                {
-                    EnforceUniqueValues = true
-                };
-
                 TextFieldInfo noValueTextFieldInfo = new TextFieldInfo(
                     "TestInternalNameDefaultText",
                     new Guid("{7BEB995F-C696-453B-BA86-09A32381C783}"),
-                    "NameKeyDefaults",
-                    "DescriptionKeyDefaults",
-                    "GroupKey");
-
-                NoteFieldInfo noValueNoteFieldInfo = new NoteFieldInfo(
-                    "TestInternalNameDefaultNote",
-                    new Guid("{0BB1677D-9B14-4EE8-ADB9-53834D5FD516}"),
-                    "NameKeyDefaults",
-                    "DescriptionKeyDefaults",
-                    "GroupKey");
-
-                HtmlFieldInfo noValueHtmlFieldInfo = new HtmlFieldInfo(
-                    "TestInternalNameDefaultHtml",
-                    new Guid("{4B44FCBE-A8C3-43FB-9633-C2F89F28032D}"),
                     "NameKeyDefaults",
                     "DescriptionKeyDefaults",
                     "GroupKey");
@@ -1276,26 +1240,12 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
                     var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
 
-                    // 1) Text field on/off
+                    // Text field on/off
                     SPField textField = fieldHelper.EnsureField(fieldsCollection, textFieldInfo);
                     Assert.AreEqual(textFieldInfo.EnforceUniqueValues, textField.EnforceUniqueValues);  // both should be true
    
                     SPField defaultValueTextField = fieldHelper.EnsureField(fieldsCollection, noValueTextFieldInfo);
                     Assert.AreEqual(false, defaultValueTextField.EnforceUniqueValues);  // default should be false
-
-                    // 2) Note field on/off
-                    SPField noteField = fieldHelper.EnsureField(fieldsCollection, noteFieldInfo);
-                    Assert.AreEqual(noteFieldInfo.EnforceUniqueValues, noteField.EnforceUniqueValues);  // both should be true
-
-                    SPField defaultValueNoteField = fieldHelper.EnsureField(fieldsCollection, noValueNoteFieldInfo);
-                    Assert.AreEqual(false, defaultValueNoteField.EnforceUniqueValues);  // default should be false
-
-                    // 3) Html field on/off
-                    SPField htmlField = fieldHelper.EnsureField(fieldsCollection, htmlFieldInfo);
-                    Assert.AreEqual(textFieldInfo.EnforceUniqueValues, htmlField.EnforceUniqueValues);  // both should be true
-
-                    SPField defaultValueHtmlField = fieldHelper.EnsureField(fieldsCollection, noValueTextFieldInfo);
-                    Assert.AreEqual(false, defaultValueHtmlField.EnforceUniqueValues);  // default should be false
                 }
             }
         }
@@ -4063,6 +4013,820 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                         // Field ensured through FieldHelper only
                         fieldHelper.EnsureField(list.Fields, PublishingFields.PublishingPageContent);
                         Assert.Fail("Should've thrown NotSupportedException because pre-requisite site column doesn't exist on RootWeb.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region EnforceUniqueValues should be applied only on supported field types and should force list field to be indexed
+
+        /// <summary>
+        /// Validates that site columns can be defined such that they'll enfore uniqueness of values
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenAddingSiteColumnWithEnforceUniqueValue_AndFieldInfoIsSupportedFieldType_ShouldInitializeFieldToEnforceUniqueness_AndForceIndexation()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    LocaleId = 3084 // fr-CA
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDate",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTime",
+                    "DescriptionKeyDateTime",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+                
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+
+                UserFieldInfo userFieldInfo = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{62F8127C-4A8C-4217-8BD8-C6712753AFCE}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        integerFieldInfo,
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        dateTimeFieldInfo,
+                        textFieldInfo,
+                        userFieldInfo,
+                        lookupFieldInfo,
+                        taxoFieldInfo,
+                    };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the first test list
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
+
+                    // Setup the fields as site columns first
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    fieldHelper.EnsureField(testScope.SiteCollection.RootWeb.Fields, fieldsToEnsure);
+
+                    // we need to ensure all fields on first list directly after the site columns were created
+                    IList<SPField> ensuredFieldsOnList = fieldHelper.EnsureField(list.Fields, fieldsToEnsure).ToList();
+
+                    // Act
+                    var originalItemWithUniqueValues = list.AddItem();
+                    originalItemWithUniqueValues["TestInternalNameInteger"] = 555;
+                    originalItemWithUniqueValues["TestInternalNameNumber"] = 5.5;
+                    originalItemWithUniqueValues["TestInternalNameCurrency"] = 500.95;
+                    originalItemWithUniqueValues["TestInternalNameDate"] = new DateTime(2005, 10, 21);
+                    originalItemWithUniqueValues["TestInternalNameText"] = "Text value";
+                    originalItemWithUniqueValues["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
+                    originalItemWithUniqueValues["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
+                    var taxonomyField = (TaxonomyField)originalItemWithUniqueValues.Fields.GetFieldByInternalName("TestInternalNameTaxo");
+                    taxonomyField.SetFieldValue(originalItemWithUniqueValues, createdTermB);
+                    originalItemWithUniqueValues.Update();
+
+                    // Assert
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameInteger").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameInteger"] = 555;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Integer field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameNumber").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameNumber"] = 5.5;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Number field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameCurrency").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameCurrency"] = 500.95;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Currency field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameDate").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameDate"] = new DateTime(2005, 10, 21);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this DateTime field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameText").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameText"] = "Text value";
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Text field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameLookup").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Lookup field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameUser").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this User field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameTaxo").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        taxonomyField = (TaxonomyField)uniquenessBreakingItem.Fields.GetFieldByInternalName("TestInternalNameTaxo");
+                        taxonomyField.SetFieldValue(uniquenessBreakingItem, createdTermB);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Taxonomy field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
+        /// Validates that ensuring columns directly on a list also supports EnforceUniqueValues correctly for all supported field types.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenEnsuringListColumnWithEnforceUniqueValue_AndFieldInfoIsSupportedFieldType_ShouldInitializeFieldToEnforceUniqueness_AndForceIndexation()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    LocaleId = 3084 // fr-CA
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfo = new DateTimeFieldInfo(
+                    "TestInternalNameDate",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTime",
+                    "DescriptionKeyDateTime",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+
+                UserFieldInfo userFieldInfo = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{62F8127C-4A8C-4217-8BD8-C6712753AFCE}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        integerFieldInfo,
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        dateTimeFieldInfo,
+                        textFieldInfo,
+                        userFieldInfo,
+                        lookupFieldInfo,
+                        taxoFieldInfo,
+                    };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo1 = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    FieldDefinitions = fieldsToEnsure
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the test list (which should provision both site columns and list columns)
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo1);
+
+                    // Act
+                    var originalItemWithUniqueValues = list.AddItem();
+                    originalItemWithUniqueValues["TestInternalNameInteger"] = 555;
+                    originalItemWithUniqueValues["TestInternalNameNumber"] = 5.5;
+                    originalItemWithUniqueValues["TestInternalNameCurrency"] = 500.95;
+                    originalItemWithUniqueValues["TestInternalNameDate"] = new DateTime(2005, 10, 21);
+                    originalItemWithUniqueValues["TestInternalNameText"] = "Text value";
+                    originalItemWithUniqueValues["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
+                    originalItemWithUniqueValues["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
+                    var taxonomyField = (TaxonomyField)originalItemWithUniqueValues.Fields.GetFieldByInternalName("TestInternalNameTaxo");
+                    taxonomyField.SetFieldValue(originalItemWithUniqueValues, createdTermB);
+                    originalItemWithUniqueValues.Update();
+
+                    // Assert
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameInteger").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameInteger"] = 555;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Integer field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameNumber").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameNumber"] = 5.5;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Number field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameCurrency").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameCurrency"] = 500.95;
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Currency field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameDate").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameDate"] = new DateTime(2005, 10, 21);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this DateTime field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameText").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameText"] = "Text value";
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Text field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameLookup").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Lookup field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameUser").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        uniquenessBreakingItem["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this User field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+
+                    Assert.IsTrue(list.Fields.GetFieldByInternalName("TestInternalNameTaxo").Indexed);
+                    try
+                    {
+                        var uniquenessBreakingItem = list.AddItem();
+                        taxonomyField = (TaxonomyField)uniquenessBreakingItem.Fields.GetFieldByInternalName("TestInternalNameTaxo");
+                        taxonomyField.SetFieldValue(uniquenessBreakingItem, createdTermB);
+                        uniquenessBreakingItem.Update();
+                        Assert.Fail("Should've thrown SPException because values should be unique on this Taxonomy field");
+                    }
+                    catch (SPException)
+                    {
+                    }
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
+        /// Validates that ensuring EnforceUniqueValues on unsupported field type throws NotSupportedException
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenAttemptingToSetEnforceUniqueValue_ButFieldTypeDoesntSupportUniqueness_ShouldThrowNotSupportedException()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                GuidFieldInfo guidFieldInfo = new GuidFieldInfo(
+                    "TestInternalNameGuid",
+                    new Guid("{7F486426-D3BC-48D8-8E28-85CFC9A457A0}"),
+                    "NameKeyGuid",
+                    "DescriptionKeyGuid",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
+                    "TestInternalNameHtml",
+                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = "Image",
+                    EnforceUniqueValues = true
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2C9D4C0E-21EB-4742-8C6C-4C30DCD08A05}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
+
+                UserMultiFieldInfo userMultiFieldInfo = new UserMultiFieldInfo(
+                    "TestInternalNameUserMulti",
+                    new Guid("{8C662588-D54E-4905-B232-856C2239B036}"),
+                    "NameKeyUserMulti",
+                    "DescriptionKeyUserMulti",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
+                    "TestInternalNameMedia",
+                    new Guid("{A2F070FE-FE33-44FC-9FDF-D18E74ED4D67}"),
+                    "NameKeyMedia",
+                    "DescriptionKeyMEdia",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true
+                };
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{2F49D362-B014-41BB-9959-1000C9A7FFA0}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    EnforceUniqueValues = true,
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo = new ListInfo("sometestlistpathalt", "DynamiteTestListNameKeyAlt", "DynamiteTestListDescriptionKeyAlt");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupMultiFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the test list (which should provision both site columns and list columns)
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Act + Assert
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, boolFieldInfoBasic);
+                        Assert.Fail("Should've thrown NotSupportedException because Boolean fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, guidFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because Guid fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, noteFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because Note fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, htmlFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because Html fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, imageFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because Image fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, urlFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because URL fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, urlFieldInfoImage);
+                        Assert.Fail("Should've thrown NotSupportedException because URL-Image fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, lookupMultiFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because LookupMulti fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, userMultiFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because UserMulti fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, mediaFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because Media fields don't support EnforceUniqueValues.");
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        fieldHelper.EnsureField(list.Fields, taxoMultiFieldInfo);
+                        Assert.Fail("Should've thrown NotSupportedException because TaxoMulti fields don't support EnforceUniqueValues.");
                     }
                     catch (NotSupportedException)
                     {

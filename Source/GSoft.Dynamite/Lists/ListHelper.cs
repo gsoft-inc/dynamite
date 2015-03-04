@@ -327,26 +327,6 @@ namespace GSoft.Dynamite.Lists
         }
 
         /// <summary>
-        /// Enforce the unique value(s) for a list field. In case the field is reused in the site collection, we can make that change on the list scope.
-        /// </summary>
-        /// <param name="list">The list who owns the field</param>
-        /// <param name="field">The field to enforce</param>
-        public void EnforceUniqueValuesToField(SPList list, IFieldInfo field)
-        {
-            if (list != null && field != null)
-            {
-                var listField = this.fieldLocator.GetFieldById(list.Fields, field.Id);
-
-                if (listField != null)
-                {
-                    listField.EnforceUniqueValues = true;
-                    listField.Indexed = true;
-                    listField.Update();
-                }
-            }
-        }
-
-        /// <summary>
         /// Method to remove the Item Content Type from the List
         /// </summary>
         /// <param name="list">The current List</param>

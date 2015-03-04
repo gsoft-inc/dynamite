@@ -58,11 +58,6 @@ namespace GSoft.Dynamite.Catalogs
         public ICollection<ManagedPropertyInfo> ManagedProperties { get; set; }
 
         /// <summary>
-        /// Enforce unique values on the navigation column
-        /// </summary>
-        public bool EnforceUniqueNavigationValues { get; set; }
-
-        /// <summary>
         /// Specifies if the catalog must be anonymous
         /// </summary>
         public bool IsAnonymous { get; set; }

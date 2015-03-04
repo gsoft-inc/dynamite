@@ -59,6 +59,27 @@ namespace GSoft.Dynamite.Fields
             bool isListField = TryGetListFromFieldCollection(fieldCollection, out parentList);
             bool alreadyExistsAsSiteColumn = fieldCollection.Web.Site.RootWeb.Fields.TryGetFieldByStaticName(fieldInfo.InternalName) != null;
 
+            if (fieldInfo.EnforceUniqueValues)
+            {
+                bool isValidTypeForUniquenessConstraint =
+                    fieldInfo is IntegerFieldInfo
+                    || fieldInfo is NumberFieldInfo
+                    || fieldInfo is CurrencyFieldInfo
+                    || fieldInfo is DateTimeFieldInfo
+                    || fieldInfo is TextFieldInfo
+                    || fieldInfo is UserFieldInfo
+                    || fieldInfo is LookupFieldInfo
+                    || fieldInfo is TaxonomyFieldInfo;
+
+                if (!isValidTypeForUniquenessConstraint)
+                {
+                    string msg = "Can't set EnforceUniqueValues=TRUE on your field "
+                        + fieldInfo.InternalName + " because only the following field types are support uniqueness constraints: "
+                        + " Integer, Number, Currency, DateTime, Text (single line), User (not multi), Lookup (not multi) and Taxonomy (not multi).";
+                    throw new NotSupportedException(msg);
+                }
+            }
+
             if (isListField && !alreadyExistsAsSiteColumn)
             {
                 // By convention, we enfore creation of site column before using that field on a list
@@ -286,13 +307,22 @@ namespace GSoft.Dynamite.Fields
             var asTaxonomyMultiFieldInfo = fieldInfo as TaxonomyMultiFieldInfo;
             var asCurrencyFieldInfo = fieldInfo as CurrencyFieldInfo;
 
-            if (fieldInfo is TextFieldInfo
-                || fieldInfo is NoteFieldInfo
-                || fieldInfo is HtmlFieldInfo)
+            // Enforce unique values (should work only on list fields)
+            if (fieldInfo.EnforceUniqueValues)
             {
-                field.EnforceUniqueValues = fieldInfo.EnforceUniqueValues;
+                if (parentFieldCollection.List != null)
+                {
+                    field.Indexed = true;
+                }
+
+                field.EnforceUniqueValues = true;
             }
-            else if (asTaxonomyFieldInfo != null)
+            else
+            {
+                field.EnforceUniqueValues = false;
+            }
+            
+            if (asTaxonomyFieldInfo != null)
             {
                 var taxonomyField = field as TaxonomyField;
                 if (taxonomyField != null)
