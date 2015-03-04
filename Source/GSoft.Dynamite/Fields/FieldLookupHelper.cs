@@ -31,52 +31,6 @@ namespace GSoft.Dynamite.Fields
         }
 
         /// <summary>
-        /// Sets the lookup field to a list.
-        /// </summary>
-        /// <param name="web">The web the field and list will be in.</param>
-        /// <param name="fieldId">The lookup field id.</param>
-        /// <param name="listUrl">The list URL of the list we want to get the information from.</param>
-        /// <exception cref="System.ArgumentNullException">All null parameters.</exception>
-        /// <exception cref="System.ArgumentException">Unable to find the lookup field.;lookupField</exception>
-        [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "2#", Justification = "The GetList method for SP requires a string url.")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        [Obsolete("Use method 'SetLookupToList' with SPFieldCollection as first parameter.")]
-        public void SetLookupToList(SPWeb web, Guid fieldId, string listUrl)
-        {
-            if (web == null)
-            {
-                throw new ArgumentNullException("web");
-            }
-
-            if (fieldId == null)
-            {
-                throw new ArgumentNullException("fieldId");
-            }
-
-            if (string.IsNullOrEmpty(listUrl))
-            {
-                throw new ArgumentNullException("listUrl");
-            }
-
-            this.logger.Info("Start method 'SetLookupToList' for field id: '{0}'", fieldId);
-
-            // Get the field.
-            SPFieldLookup lookupField = this.fieldLocator.GetFieldById(web.Fields, fieldId) as SPFieldLookup;
-            if (lookupField == null)
-            {
-                throw new ArgumentException("Unable to find the lookup field.", "fieldId");
-            }
-
-            // Get the list
-            SPList lookupList = web.GetList(SPUtility.ConcatUrls(web.ServerRelativeUrl, listUrl));
-
-            // Configure the lookup field.
-            this.SetLookupToList(lookupField, lookupList);
-
-            this.logger.Info("End method 'SetLookupToList'.");
-        }
-
-        /// <summary>
         /// Sets the lookup to a list.
         /// </summary>
         /// <param name="fieldCollection">The field collection.</param>

@@ -17,14 +17,6 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="web">The web.</param>
         /// <param name="settings">The settings.</param>
-        [Obsolete("Use NavigationSettingsInfos class instead")]
-        void SetWebNavigationSettings(SPWeb web, ManagedNavigationSettings settings);
-
-        /// <summary>
-        /// Sets the web navigation settings.
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="settings">The settings.</param>
         void SetWebNavigationSettings(SPWeb web, ManagedNavigationInfo settings);
 
         /// <summary>
@@ -67,7 +59,7 @@ namespace GSoft.Dynamite.Navigation
         void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
 
         /// <summary>
-        /// Reset web navigation to its default configuration. Disabled the term set as mavigation term set.
+        /// Reset web navigation to its default configuration. Disabled the term set as avigation term set.
         /// </summary>
         /// <param name="web">The web</param>
         /// <param name="settings">The managed navigation settings. Set null if you want to keep the associated termset unchanged</param>

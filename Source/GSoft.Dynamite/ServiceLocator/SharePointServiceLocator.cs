@@ -74,7 +74,6 @@ namespace GSoft.Dynamite.ServiceLocator
         /// IDisposable objects you inject get properly disposed.
         /// </para>
         /// </summary>
-        [Obsolete("Prefer usage of BeginLifetimeScope() from a using block to ensure proper disposal of all IDisposable objects you injected.")]
         public ILifetimeScope Current
         {
             get 

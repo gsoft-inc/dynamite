@@ -297,7 +297,6 @@
     <Compile Include="Navigation\VariationNavigationHelper.cs" />
     <Compile Include="Navigation\VariationNavigationType.cs" />
     <Compile Include="Navigation\IVariationNavigationHelper.cs" />
-    <Compile Include="Navigation\ManagedNavigationSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fields\Constants\PublishingFields.cs" />
     <Compile Include="Branding\ComposedLookRepository.cs" />
@@ -345,7 +344,6 @@
     <Compile Include="Taxonomy\TaxonomyService.cs" />
     <Compile Include="Catalogs\CatalogHelper.cs" />
     <Compile Include="Utils\Cloner.cs" />
-    <Compile Include="Taxonomy\SiteTaxonomyCacheManager.cs" />
     <Compile Include="Documents\ContentOrganizerHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeHelper.cs" />
     <Compile Include="Utils\CryptoHelper.cs" />

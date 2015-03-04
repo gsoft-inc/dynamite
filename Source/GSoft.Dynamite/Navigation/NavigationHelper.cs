@@ -40,39 +40,12 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         /// <param name="web">The web.</param>
         /// <param name="settings">The settings.</param>
-        [Obsolete("Use NavigationSettingsInfos class instead")]
-        public void SetWebNavigationSettings(SPWeb web, ManagedNavigationSettings settings)
-        {
-            var taxonomySession = new TaxonomySession(web.Site);
-            if (taxonomySession.TermStores.Count > 0)
-            {
-                var termStore = taxonomySession.TermStores[settings.TermStoreName];
-                var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroupName);
-                var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSetName);
-                var navigationSettings = new WebNavigationSettings(web);
-                
-                navigationSettings.GlobalNavigation.TermStoreId = termStore.Id;
-                navigationSettings.GlobalNavigation.TermSetId = termSet.Id;
-                navigationSettings.Update(taxonomySession);
-
-                if (settings.PreserveTaggingOnTermSet)
-                {
-                    termSet.IsAvailableForTagging = true;
-                    termStore.CommitAll(); 
-                }
-            }
-        }
-
-        /// <summary>
-        /// Sets the web navigation settings.
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="settings">The settings.</param>
         public void SetWebNavigationSettings(SPWeb web, ManagedNavigationInfo settings)
         {
             var taxonomySession = new TaxonomySession(web.Site);
             if (taxonomySession.TermStores.Count > 0)
             {
+                // we assume we're always dealing with the site coll's default term store
                 var termStore = taxonomySession.DefaultSiteCollectionTermStore;
                 var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroup.Name);
                 var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSet.Label);
@@ -104,7 +77,7 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
-        /// Reset web navigation to its default configuration. Disabled the term set as mavigation term set.
+        /// Reset web navigation to its default configuration. Disabled the term set as navigation term set.
         /// </summary>
         /// <param name="web">The web</param>
         /// <param name="settings">The managed navigation settings. Set null if you want to keep the associated termset unchanged</param>
