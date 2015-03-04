@@ -60,8 +60,7 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="site">The target site</param>
         /// <param name="catalogConnectionInfo">The catalog connection information</param>
         /// <param name="overwrite">True if the connection must be override. False otherwise</param>
-        /// TODO: make the overwrite param part of the CatalogConnectionInfo object
-        void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo, bool overwrite);
+        void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo);
 
         /// <summary>
         /// Method to create a catalog connection

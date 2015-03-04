@@ -32,6 +32,9 @@ namespace GSoft.Dynamite.Catalogs
             this.IsManualCatalogItemUrlRewriteTemplate = isManualCatalogItemUrlRewriteTemplate;
             this.IsReusedWithPinning = isReusedWithPinning;
             this.CatalogItemUrlRewriteTemplate = catalogItemUrlRewriteTemplate;
+
+            // By default, crush any existing matching catalog connection with our own definition
+            this.OverwriteIfAlreadyExists = true;
         }
 
         /// <summary>
@@ -64,6 +67,12 @@ namespace GSoft.Dynamite.Catalogs
         /// The navigation search managed property used to categorize catalog items
         /// </summary>
         public string CatalogTaxonomyManagedProperty { get; private set; }
+
+        /// <summary>
+        /// Defines the upgrade behavior when this connection definition will
+        /// be re-ensured.
+        /// </summary>
+        public bool OverwriteIfAlreadyExists { get; set; }
 
         /// <summary>
         /// The target web (i.e the publishing web)
