@@ -43,13 +43,6 @@
         void SetWriteSecurity(SPList list, WriteSecurityOptions writeSecurityOptions);
 
         /// <summary>
-        /// Enforce the unique value(s) for a list field. In case the field is reused in the site collection, we can make that change on the list scope.
-        /// </summary>
-        /// <param name="list">The list who owns the field</param>
-        /// <param name="field">The field to enforce</param>
-        void EnforceUniqueValuesToField(SPList list, IFieldInfo field);
-
-        /// <summary>
         /// Method to remove the Item Content Type from the List
         /// </summary>
         /// <param name="list">The current List</param>

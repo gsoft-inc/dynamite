@@ -315,7 +315,11 @@ namespace GSoft.Dynamite.Fields
                     field.Indexed = true;
                 }
 
-                field.EnforceUniqueValues = fieldInfo.EnforceUniqueValues;
+                field.EnforceUniqueValues = true;
+            }
+            else
+            {
+                field.EnforceUniqueValues = false;
             }
             
             if (asTaxonomyFieldInfo != null)

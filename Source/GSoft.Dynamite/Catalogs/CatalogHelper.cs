@@ -75,23 +75,6 @@ namespace GSoft.Dynamite.Catalogs
                 {
                     this.SetListAsCatalog(list, catalog.ManagedProperties.Select(x => x.Name), catalog.TaxonomyFieldMap.InternalName);
                 }
-
-                // Enforce unique values on the navigation column if neccessary
-                if (catalog.EnforceUniqueNavigationValues)
-                {
-                    var field = list.Fields.GetFieldByInternalName(catalog.TaxonomyFieldMap.InternalName);
-                    if (field != null)
-                    {
-                        // A SPField must be indexed before enforce unique values
-                        field.Indexed = true;
-                        field.Update();
-
-                        field.EnforceUniqueValues = true;
-                        field.Update();
-
-                        list.Update();
-                    }
-                }
             }
 
             return list;
