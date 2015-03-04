@@ -87,6 +87,10 @@ namespace GSoft.Dynamite.Pages
             else
             {
                 this.EnsurePageCheckOut(publishingPage);
+
+                // Update the Page layout.
+                publishingPage.Layout = pageLayout;
+                publishingPage.Update();
             }
 
             // Set the title

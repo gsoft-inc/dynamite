@@ -69,6 +69,7 @@
     <Compile Include="IntegrationTestCategories.cs" />
     <Compile Include="IntegrationTestServiceLocator.cs" />
     <Compile Include="Lists\ListHelperTest.cs" />
+    <Compile Include="Pages\PageHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SiteTestScope.cs" />
   </ItemGroup>
