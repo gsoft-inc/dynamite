@@ -177,7 +177,6 @@ namespace GSoft.Dynamite.Catalogs
         /// </summary>
         /// <param name="site">The target site</param>
         /// <param name="catalogConnectionInfo">The catalog connection information</param>
-        /// <param name="overwrite">True if the connection must be override. False otherwise</param>
         public void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo)
         {
             // Get the catalog

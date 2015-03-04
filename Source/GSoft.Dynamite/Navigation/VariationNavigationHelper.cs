@@ -155,7 +155,7 @@ namespace GSoft.Dynamite.Navigation
                     TaxonomyNavigation.GetTermSetForWeb(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true).GetWithNewView(view);
 
                 // Get the matching label navigation term and return it's friendly URL
-                var navigationTerm = this.navigationHelper.GetNavigationTermById(navigationTermSet.Terms, termId);
+                var navigationTerm = this.navigationHelper.FindNavigationTermById(navigationTermSet.Terms, termId);
                 if (navigationTerm != null)
                 {
                     this.logger.Info(

@@ -123,21 +123,5 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="list">The list</param>
         /// <param name="keywordsAsSocialTags">Whether the list's keywords should be used as MySite social tags</param>
         void EnableListEnterpriseKeywordsSetting(SPList list, bool keywordsAsSocialTags);
-
-        /// <summary>
-        /// Get the validated string for a Taxonomy Field
-        /// </summary>
-        /// <param name="web">Web to look for</param>
-        /// <param name="fieldName">Field to search</param>
-        /// <param name="termGroup">The term group</param>
-        /// <param name="termSet">The term set</param>
-        /// <param name="termLabel">The term label</param>
-        /// <returns>The validated string.</returns>
-        string GetTaxonomyFieldValueValidatedString(SPWeb web, string fieldName, string termGroup, string termSet, string termLabel);
-      
-        /// <summary>The get term store default language.</summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The <see cref="int"/>.</returns>
-        int GetTermStoreDefaultLanguage(SPSite site);
     }
 }

@@ -20,12 +20,13 @@ namespace GSoft.Dynamite.Navigation
         void SetWebNavigationSettings(SPWeb web, ManagedNavigationInfo settings);
 
         /// <summary>
-        /// Gets the navigation term by identifier.
+        /// Looks for the navigation term by identifier through the specified
+        /// terms and recursively through their children.
         /// </summary>
-        /// <param name="navigationTerms">The navigation terms.</param>
-        /// <param name="id">The identifier.</param>
-        /// <returns>The navigation term.</returns>
-        NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id);
+        /// <param name="navigationTerms">The navigation terms we want to look through (and their children).</param>
+        /// <param name="id">The term identifier.</param>
+        /// <returns>The navigation term if found, null otherwise.</returns>
+        NavigationTerm FindNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id);
 
         /// <summary>
         /// Gets the navigation parent terms.

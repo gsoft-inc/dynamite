@@ -6,32 +6,28 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using GSoft.Dynamite.Navigation;
+using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Navigation
 {
-    using GSoft.Dynamite.Pages;
-    using GSoft.Dynamite.Utils;
-
     /// <summary>
     /// Navigation configuration helper.
     /// </summary>
     public class NavigationHelper : INavigationHelper
     {
-        private readonly ITaxonomyHelper taxonomyHelper;
         private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
-        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <param name="taxonomyService">The taxonomy service</param>
-        public NavigationHelper(ITaxonomyHelper taxonomyHelper, ITaxonomyService taxonomyService)
+        public NavigationHelper(ITaxonomyService taxonomyService)
         {
-            this.taxonomyHelper = taxonomyHelper;
             this.taxonomyService = taxonomyService;
         }
 
@@ -115,7 +111,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="id">The identifier.</param>
         /// <returns>The navigation term.</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public NavigationTerm GetNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
+        public NavigationTerm FindNavigationTermById(IEnumerable<NavigationTerm> navigationTerms, Guid id)
         {
             var terms = navigationTerms == null ? new NavigationTerm[] { } : navigationTerms.ToArray();
             if (terms.Length <= 0)
@@ -130,7 +126,7 @@ namespace GSoft.Dynamite.Navigation
             }
 
             var childTerms = terms.SelectMany(x => x.Terms);
-            return this.GetNavigationTermById(childTerms, id);
+            return this.FindNavigationTermById(childTerms, id);
         }
 
         /// <summary>
