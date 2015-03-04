@@ -134,83 +134,10 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termLabel">The term label</param>
         /// <returns>The validated string.</returns>
         string GetTaxonomyFieldValueValidatedString(SPWeb web, string fieldName, string termGroup, string termSet, string termLabel);
-
-        /// <summary>
-        /// Set default value for a taxonomy site column
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="termGroupName">The term group name.</param>
-        /// <param name="termSetName">the term set name.</param>
-        /// <param name="termLabel">The term label.</param>
-        void SetDefaultTaxonomyFieldValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel);
-
-        /// <summary>The set default taxonomy field value.</summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="defaultValue">The default value.</param>
-        void SetDefaultTaxonomyFieldValue(SPWeb web, TaxonomyField field, TaxonomyValue defaultValue);
-
-        /// <summary>
-        /// Set default value for a multi valued taxonomy site column
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="termGroupName">Term group name</param>
-        /// <param name="termSetName">Term set name</param>
-        /// <param name="termLabels">Term labels</param>
-        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, SPField field, string termGroupName, string termSetName, string[] termLabels);
-
-        /// <summary>
-        /// Set default value for a multi valued taxonomy site column
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="defaultValueCollection">The default value collection.</param>
-        void SetDefaultTaxonomyFieldMultiValue(SPWeb web, TaxonomyField field, TaxonomyValueCollection defaultValueCollection);
-
-        /// <summary>
-        /// Gets the term group by name.
-        /// </summary>
-        /// <param name="termStore">The term store.</param>
-        /// <param name="groupName">Name of the group.</param>
-        /// <returns>
-        /// The term group.
-        /// </returns>
-        Group GetTermGroupByName(TermStore termStore, string groupName);
-
-        /// <summary>
-        /// Gets the term set by name.
-        /// </summary>
-        /// <param name="termStore">The term store.</param>
-        /// <param name="group">The term group.</param>
-        /// <param name="termSetName">Name of the term set.</param>
-        /// <returns>The term set.</returns>
-        TermSet GetTermSetByName(TermStore termStore, Group group, string termSetName);
-
-        /// <summary>
-        /// Set a taxonomy value for a SPListItem
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="item">The SPListItem.</param>
-        /// <param name="fieldName">Field name to update.</param>
-        /// <param name="termGroupName">Term group name.</param>
-        /// <param name="termSetName">Term Set Name.</param>
-        /// <param name="termLabel">Term Label.</param>
-        void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel);
-
+      
         /// <summary>The get term store default language.</summary>
         /// <param name="site">The site.</param>
         /// <returns>The <see cref="int"/>.</returns>
         int GetTermStoreDefaultLanguage(SPSite site);
-
-        /// <summary>
-        /// Finds a term site by its ID from within a certain group
-        /// </summary>
-        /// <param name="termStore">The term store to look in</param>
-        /// <param name="group">The parent term set group</param>
-        /// <param name="id">The ID of term set</param>
-        /// <returns>The term set, if found</returns>
-        TermSet GetTermSetById(TermStore termStore, Group group, Guid id);
     }
 }

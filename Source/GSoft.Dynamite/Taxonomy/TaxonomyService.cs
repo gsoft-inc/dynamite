@@ -455,6 +455,29 @@ namespace GSoft.Dynamite.Taxonomy
 
             return termSet;
         }
+        
+        /// <summary>
+        /// Gets the term set group from the term store.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">The term set group name, in the term store's default working language.</param>
+        /// <returns>The term set group</returns>
+        public Group GetTermGroupFromStore(TermStore termStore, string groupName)
+        {
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            Group group = termStore.Groups[groupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term set group with name " + groupName + " in term store " + termStore.Name);
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
 
         #region GetTermPathFromRootToTerm
         /// <summary>

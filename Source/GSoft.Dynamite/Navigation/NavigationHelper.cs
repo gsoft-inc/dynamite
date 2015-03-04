@@ -47,8 +47,8 @@ namespace GSoft.Dynamite.Navigation
             {
                 // we assume we're always dealing with the site coll's default term store
                 var termStore = taxonomySession.DefaultSiteCollectionTermStore;
-                var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroup.Name);
-                var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSet.Label);
+                var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
+                var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                 // Flag the term set as a navigation term set
                 termSet.SetCustomProperty("_Sys_Nav_IsNavigationTermSet", "True");
@@ -90,8 +90,8 @@ namespace GSoft.Dynamite.Navigation
                 {
                     // Disable the navigation flag on the the term set
                     var termStore = taxonomySession.DefaultSiteCollectionTermStore;
-                    var group = this.taxonomyHelper.GetTermGroupByName(termStore, settings.TermGroup.Name);
-                    var termSet = this.taxonomyHelper.GetTermSetByName(termStore, group, settings.TermSet.Label);
+                    var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
+                    var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                     const string PropertyName = "_Sys_Nav_IsNavigationTermSet";
                     string propertyValue;
@@ -215,12 +215,12 @@ namespace GSoft.Dynamite.Navigation
                 {
                     // Get the term set group by name
                     // Note, when you build the term store hierachy by XML using Gary Lapointe Cmdlet, the term group ID isn't kept
-                    var group = this.taxonomyHelper.GetTermGroupByName(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
+                    var group = this.taxonomyService.GetTermGroupFromStore(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
 
                     if (group != null)
                     {
                         // Get the term set 
-                        var termSet = this.taxonomyHelper.GetTermSetById(defaultTermStore, group, termDrivenPageInfo.TermSet.Id);
+                        var termSet = group.TermSets[termDrivenPageInfo.TermSet.Id];
 
                         // Set URLs
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
