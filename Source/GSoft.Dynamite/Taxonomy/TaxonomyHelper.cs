@@ -22,17 +22,14 @@ namespace GSoft.Dynamite.Taxonomy
         private const string ClassFullName = "Microsoft.SharePoint.Taxonomy.TaxonomyItemEventReceiver";
 
         private readonly IEventReceiverHelper eventReceiverHelper;
-        private readonly ITaxonomyService taxonomyService;
 
         /// <summary>
         /// Creates a taxonomy helper.
         /// </summary>
         /// <param name="eventReceiverHelper">An event receiver helper.</param>
-        /// <param name="taxonomyService">The taxonomy service.</param>
-        public TaxonomyHelper(IEventReceiverHelper eventReceiverHelper, ITaxonomyService taxonomyService)
+        public TaxonomyHelper(IEventReceiverHelper eventReceiverHelper)
         {
             this.eventReceiverHelper = eventReceiverHelper;
-            this.taxonomyService = taxonomyService;
         }
 
         /// <summary>

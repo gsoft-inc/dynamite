@@ -3116,13 +3116,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     SPField mediaFieldAlt = fieldHelper.EnsureField(fieldsCollection, mediaFieldInfoAlt);
                     this.ValidateFieldBasicValues(mediaFieldInfoAlt, mediaFieldAlt);
                     Assert.AreEqual(
-                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty),
+                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty).Replace("%20", string.Empty),
                         mediaFieldAlt.DefaultValue.Replace(Environment.NewLine, string.Empty).Replace(" ", string.Empty));
 
                     SPField mediaFieldAltRefetched = testScope.SiteCollection.RootWeb.Fields[mediaFieldInfoAlt.Id];
                     this.ValidateFieldBasicValues(mediaFieldInfoAlt, mediaFieldAltRefetched);
                     Assert.AreEqual(
-                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty),
+                       @"<dl><dt>Title</dt><dd>Some media file title</dd><dt>MediaSource</dt><dd><a href=""/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"">link</a></dd><dt>PreviewImageSource</dt><dd><a href=""/_layouts/15/Images/logo.png"">link</a></dd><dt>DisplayMode</dt><dd>Inline</dd><dt>AutoPlay</dt><dd>True</dd><dt>Loop</dt><dd>True</dd><dt>ShowEmbedControl</dt><dd>False</dd><dt>ConfigureFromContext</dt><dd>False</dd></dl>".Replace(" ", string.Empty).Replace("%20", string.Empty),
                         mediaFieldAltRefetched.DefaultValue.Replace(Environment.NewLine, string.Empty).Replace(" ", string.Empty));
                 }
             }
