@@ -2,7 +2,7 @@
 
 # Script under test (sut)
 $sut = (Split-Path -Path $MyInvocation.MyCommand.Path -Leaf).Replace(".Tests.", ".")
-$sutPath = "$here\..\..\GSoft.Dynamite.Scripts\$sut"
+$sutPath = "$here\..\..\GSoft.Dynamite.PowerShell\$sut"
 
 function Get-CurrentDomain {
 	try {

@@ -2,7 +2,7 @@
 
 # Script under test (sut)
 $sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-$sutPath = "$here\..\..\GSoft.Dynamite.Scripts\$sut"
+$sutPath = "$here\..\..\GSoft.Dynamite.PowerShell\$sut"
 $sourceFolderPath = (Get-Location).Path + "\source"
 $destFolderPath = (Get-Location).Path + "\destination"
  
