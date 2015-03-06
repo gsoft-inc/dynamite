@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Integration\Web\ImportWebStructure.xml" />
+    <Content Include="Integration\Web\ImportWebStructure_Overwrite.xml" />
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
   </ItemGroup>
   <ItemGroup>
