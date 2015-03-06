@@ -326,16 +326,16 @@ function Remove-DSPWeb {
     --------------------------------------------------------------------------------------
 		
     .PARAMETER SourceWeb
-	    The source web at which to start exporting. By defaut, the source web in included.
+	    [REQUIRED] The source web at which to start exporting. Be careful, if the source web is also a variation root site, all webs under target branches will be ignored.
 
     .PARAMETER OutputFileName
-	    The output file name (XML format).
+	    [REQUIRED] The output file name in XML format.
 
-    .PARAMETER ExludeRootWeb
-	    If this parameter is specified, the root web of the site collection is excluded.
+    .PARAMETER Exclude
+	    [OPTIONAL] List of tokens to exclude. Applied on the title of each web. You can pass an array of string if you have multiple tokens. Regex expressions are supported.
 
     .EXAMPLE
-		    PS C:\> Export-DSPWebStructure -SourceWeb "http://<site>/sites/test/" -OutputFileName "C:\Test.xml" 
+		    PS C:\> Export-DSPWebStructure -SourceWeb "http://<site>/sites/test/" -OutputFileName "C:\Test.xml" -Exclude "*Home","^Search"
 
 	.OUTPUTS
 		Here is the output Structure XML schema.
@@ -373,85 +373,95 @@ function Export-DSPWebStructure {
 
 		[Parameter(Mandatory=$true, Position=1)]
 		[string]$OutputFileName,
+        
+        [Parameter(Mandatory=$false)]
+		[System.Array]$Exclude
+	)   
 
-		[Parameter(Mandatory=$false)]
-		[switch]$ExludeRootWeb
-	)
-  
-    function CreateWebNode
+    function Process-WebNode
     {
         Param
 	    (
-            [Parameter(Mandatory=$true, Position=0)]
-		    [System.XML.XMLDocument]$XmlDocument,
-
-            [Parameter(Mandatory=$false, Position=1)]
+            [Parameter(Mandatory=$false, Position=0)]
             [System.XML.XMLElement]$ParentXMLElement,
 
-		    [Parameter(Mandatory=$true, Position=2)]
-		    [Microsoft.SharePoint.SPWeb]$Web,
-
-            [Parameter(Mandatory=$false, Position=3)]
-		    [bool]$IgnoreWebNode
+		    [Parameter(Mandatory=$true, Position=1)]
+		    [Microsoft.SharePoint.SPWeb]$Web
         )
 
+        $IsExcluded = $false
+
+        # Check exclusion regex patterns
+        if ($Exclude -ne $null)
+        {
+            if (($Web.Title | Select-String -Pattern $Exclude) -ne $null)
+            {
+                $Url =$Web.Url
+                $Title = $Web.Title
+                $Tokens = $Exclude -Join ","
+                Write-Warning "Web with URL '$Url' with title '$Title' matches one of exclusion tokens '$Tokens'. Skipping export..."
+                $IsExcluded = $true
+            }
+        }
+
+        # Check variations settings
         $WebUrl = $Web.ServerRelativeUrl
 
         # To know if variations are enabled on a site, we need to cast the current Web to a PublishingWeb (works for all web templates) and check the Label property
-        $publishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($web)
+        $CurrentPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
+        $SourcePublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($RootWeb)
 
-        if ($publishingWeb -ne $null)
+        if ($CurrentPublishingWeb -ne $null -and $SourcePublishingWeb -ne $null)
         {
-            if ($publishingWeb.Label -ne $null)
+            if ($CurrentPublishingWeb.Label -ne $null)
             {
                 # Cases were webs are not exported:
                 # - The current web is the source variation site created by SharePoint (e.g /sites/<sitename>/en)
                 # - The current web is a peer variation site automatically created by SharePoint for a variation target label (e.g /sites/<sitename>/fr/subweb where 'en' label is the variation source)
                 # In all cases, it makes no sense to export a web generated automatically by SharePoint. To reproduce the same structure, you have to create the original structure and synchronize again.
-                if (([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $publishingWeb.Label.Title) -or $publishingWeb.Label.IsSource -ne $true)
+                if ([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $CurrentPublishingWeb.Label.Title -or ($SourcePublishingWeb.DefaultPage.Name -match "VariationRoot.aspx" -and $CurrentPublishingWeb.Label.IsSource -eq $false))
                 {
-                    $url =$Web.Url
-                    Write-Warning "Web with URL '$url' appears to be a variation generated site. Skipping export..."
-                    $IgnoreWebNode = $true
+                        $url =$Web.Url
+                        Write-Warning "Web with URL '$url' is a variation generated site. Skipping export..."
+                        $IsExcluded = $true                   
                 }
                 else
                 {
-                    # Remove the variation label to get the original web URL
-                    $WebUrl = $WebUrl.Replace(("/" +$publishingWeb.Label.Title), [string]::Empty)  
+                    # Remove the variation label in the web URL to get the original one
+                    $WebUrl = $WebUrl.Replace(("/" +$CurrentPublishingWeb.Label.Title), [string]::Empty)
                 }              
             }
+            
         }
-
-        if($IgnoreWebNode -eq $false)
-        {
+        
+        if($IsExcluded -eq $false)
+        {           
             # New Node
-            [System.XML.XMLElement]$oXMLElement= $XmlDocument.CreateElement("Web")
-            $oXMLElement.SetAttribute("Name", $Web.Title)
-            $oXMLElement.SetAttribute("Path", [System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl))
-            $oXMLElement.SetAttribute("Template", $Web.WebTemplate + "#" + $Web.Configuration)
-            $oXMLElement.SetAttribute("Language", $Web.Language)
+            [System.XML.XMLElement]$WebXMLElement= $XMLDocument.CreateElement("Web")
+            $WebXMLElement.SetAttribute("Name", $Web.Title)
+            $WebXMLElement.SetAttribute("Path", [System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl))
+            $WebXMLElement.SetAttribute("Template", $Web.WebTemplate + "#" + $Web.Configuration)
+            $WebXMLElement.SetAttribute("Language", $Web.Language)
 
             if ($Web.IsRootWeb -eq $true)
             {
-               $oXMLElement.SetAttribute("IsRoot", "True") 
-               $oXMLElement.SetAttribute("Path", "/")
+               $WebXMLElement.SetAttribute("IsRoot", "True") 
+               $WebXMLElement.SetAttribute("Path", "/")
 
                # Remove claims identifier if present (no claims in MOSS 2007)
-               $ownerLoginName = ($Web.Site.Owner.LoginName -replace "^(.*)[|]",[string]::Empt).ToLower()
+               $ownerLoginName = ($Web.Site.Owner.LoginName -replace "^(.*)[|]",[string]::Empty).ToLower()
 
-               $oXMLElement.SetAttribute("Owner", $ownerLoginName)           
+               $WebXMLElement.SetAttribute("Owner", $ownerLoginName)           
             }
 
-            if ($IgnoreWebNode -eq $false)
-            {
-                $ParentXMLElement.appendChild($oXMLElement)           
-            }
+            $ParentXMLElement.appendChild($WebXMLElement)  
+            $ParentXMLElement = $WebXMLElement                               
         }
         
         # Create sub web nodes
         $web.Webs | ForEach-Object {
 
-            CreateWebNode $XmlDocument $oXMLElement $_      
+            Process-WebNode $ParentXMLElement $_      
         }
     }
 
@@ -460,42 +470,35 @@ function Export-DSPWebStructure {
 	[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
     Try
     {
-        $site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)
-        $web = $site.OpenWeb()
-        $exclude = $false        
+        $Site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)
+        $RootWeb = $Site.OpenWeb()
 
         # Create a new XML File
-        [System.XML.XMLDocument]$oXmlDocument = New-Object System.XML.XMLDocument
-        $xmlDecl = $oXmlDocument.CreateXmlDeclaration("1.0","UTF-8",$null)
-        #$oXMLDocument.appendChild($xmlDecl)
+        [System.Xml.XmlDocument]$XMLDocument = New-Object System.Xml.XmlDocument
+        $XmlDeclaration = $XMLDocument.CreateXmlDeclaration("1.0","UTF-8",$null)
+        $XMLDocument.appendChild($XmlDeclaration)
 
-        
         # Write header
-        $header = $oXmlDocument.CreateComment("This file was auto-generated by the Export-DSPWeb cmdlet at "+ (Get-Date))
-        $oXmlDocument.AppendChild($header)
+        $XMLHeader = $XMLDocument.CreateComment("This file was auto-generated by the Export-DSPWeb cmdlet at "+ (Get-Date))
+        $XMLDocument.AppendChild($XMLHeader)
 
         # Create the root node (an XML file must have a root node even if there is no web to export)
-        [System.XML.XMLElement]$oXMLElement= $oXmlDocument.CreateElement("Configuration")
-        $oXMLDocument.appendChild($oXMLElement)
-
-        if ($web.IsRootWeb -and $ExludeRootWeb.IsPresent)
-        {
-            $exclude = $true
-        }
+        [System.XML.XMLElement]$RootXMLElement= $XMLDocument.CreateElement("Configuration")
+        $XMLDocument.appendChild($RootXMLElement)
 
         # Recursively create nodes
-        CreateWebNode $oXmlDocument $oXMLElement $web $exclude
+        Process-WebNode $RootXMLElement $RootWeb
 
         # Create StreamWriter for encoding
 
-        $sw = New-Object System.IO.StreamWriter($OutputFileName, $false, [System.Text.Encoding]::UTF8)
+        $StreamWriter = New-Object System.IO.StreamWriter($OutputFileName, $false, [System.Text.Encoding]::UTF8)
 
         # Save File
-        $oXmlDocument.Save($sw)
+        $XMLDocument.Save($StreamWriter)
 
-        $sw.Close()
-        $web.Dispose()
-        $site.Dispose();
+        $StreamWriter.Close()
+        $RootWeb.Dispose()
+        $Site.Dispose();
     }
     Catch
     {
@@ -521,13 +524,13 @@ function Export-DSPWebStructure {
     --------------------------------------------------------------------------------------
 		
     .PARAMETER ParentUrl
-	    The parent web URL web at which to start importing. The URL must be a valid SPWeb.
+	    [REQUIRED] The parent web URL web at which to start importing. The URL must be a valid SPWeb.
 
     .PARAMETER InputFileName
-	    The web structure to import in XML format. Note that RootWeb node is ignored is present
+	    [REQUIRED] The web structure to import in XML format. Note that RootWeb node is ignored is present
 
     .PARAMETER Overwrite
-	    Removes a web and all its subwebs if already exists.
+	    [Optional] Removes a web and all its subwebs if already exists. By default, keep the existing web.
 
     .EXAMPLE
 		    PS C:\> Import-DSPWebStructure -ParentUrl "http://<site>/sites/test/" -InputFileName "C:\Test.xml" -Overwrite
