@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Binding\SharePointEntityBinderTest.cs" />
     <Compile Include="ContentTypes\ContentTypeHelperTest.cs" />
+    <Compile Include="Features\FeactureDependencyActivatorTest.cs" />
     <Compile Include="Fields\FieldHelperTest.cs" />
     <Compile Include="Folders\FolderHelperTest.cs" />
     <Compile Include="IntegrationTestCategories.cs" />

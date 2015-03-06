@@ -92,6 +92,11 @@
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Features\FeatureActivationMode.cs" />
+    <Compile Include="Features\FeatureDependencyActivator.cs" />
+    <Compile Include="Features\IFeatureDependencyActivator.cs" />
+    <Compile Include="Features\IFeatureDependencyConfig.cs" />
+    <Compile Include="Features\Types\FeatureDependencyInfo.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />

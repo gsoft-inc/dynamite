@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Branding;
@@ -11,6 +9,7 @@ using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Documents;
 using GSoft.Dynamite.Events;
+using GSoft.Dynamite.Features;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Files;
 using GSoft.Dynamite.Folders;
@@ -33,7 +32,7 @@ using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes.Readers;
 using GSoft.Dynamite.ValueTypes.Writers;
 using GSoft.Dynamite.WebParts;
-using Microsoft.Office.Server.Search;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ServiceLocator
 {
@@ -228,6 +227,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Web Parts
             builder.RegisterType<WebPartHelper>().As<IWebPartHelper>();
+
+            // Features
+            builder.RegisterType<FeatureDependencyActivator>().As<IFeatureDependencyActivator>();
         }
     }
 }
