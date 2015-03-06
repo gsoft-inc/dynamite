@@ -72,6 +72,26 @@ namespace GSoft.Dynamite.Fields.Constants
         /// </summary>
         public const string PublishingPageImageName = "PublishingPageImage";
 
+        /// <summary>
+        /// BrowserTitle name
+        /// </summary>
+        public const string BrowserTitleName = "SeoBrowserTitle";
+
+        /// <summary>
+        /// MetaDescription name
+        /// </summary>
+        public const string MetaDescriptionName = "SeoMetaDescription";
+
+        /// <summary>
+        /// MetaKeywords name
+        /// </summary>
+        public const string MetaKeywordsName = "SeoKeywords";
+
+        /// <summary>
+        /// HideFromInternetSearchEngines name
+        /// </summary>
+        public const string HideFromInternetSearchEnginesName = "RobotsNoIndex";
+
         #endregion
 
         #region FieldInfo
@@ -206,6 +226,50 @@ namespace GSoft.Dynamite.Fields.Constants
             { 
                 return new MinimalFieldInfo<ImageValue>(PublishingPageImageName, new Guid("{3DE94B06-4120-41A5-B907-88773E493458}")); 
             } 
+        }
+
+        /// <summary>
+        /// BrowserTitle field info (OOTB type = string)
+        /// </summary>
+        public static IFieldInfo BrowserTitle
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(BrowserTitleName, new Guid("{ff92f929-d18b-46d4-9879-521378c689ef}"));
+            }
+        }
+
+        /// <summary>
+        /// MetaDescription field info (OOTB type = string)
+        /// </summary>
+        public static IFieldInfo MetaDescription
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(MetaDescriptionName, new Guid("{d83897e5-2430-4df7-8e5a-9bc06c664992}"));
+            }
+        }
+
+        /// <summary>
+        /// MetaKeywords field info (OOTB type = string)
+        /// </summary>
+        public static IFieldInfo MetaKeywords
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(MetaKeywordsName, new Guid("{45ae2169-585c-440b-aa4c-1d5e981fbbe5}"));
+            }
+        }
+
+        /// <summary>
+        /// HideFromInternetSearchEngines field info (OOTB type = string)
+        /// </summary>
+        public static IFieldInfo HideFromInternetSearchEngines
+        {
+            get
+            {
+                return new MinimalFieldInfo<bool?>(HideFromInternetSearchEnginesName, new Guid("{325c00dd-fd91-468b-81cf-5bb9951abba1}"));
+            }
         }
 
         #endregion
