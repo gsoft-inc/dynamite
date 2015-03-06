@@ -86,6 +86,57 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         }
 
         /// <summary>
+        /// Validates that EnsureFeatureActivation activates all the features, no matter the scope.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureFeatureActivation_WhenMultipleFeaturesAreActivated_ShouldActivateAll()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var site = testScope.SiteCollection;
+                var web = testScope.SiteCollection.RootWeb;
+
+                var featureDependencies = new[]
+                {
+                    new FeatureDependencyInfo()
+                    {
+                        Name = "GSoft.Dynamite Javascript Imports",
+                        FeatureId = new Guid("7ed769f5-b01b-4597-9a91-3cfcdf8cc49a"),
+                        FeatureActivationMode = FeatureActivationMode.CurrentSite
+                    },
+                    new FeatureDependencyInfo()
+                    {
+                        Name = "OOTB task list",
+                        FeatureId = new Guid("00BFEA71-A83E-497E-9BA0-7A5C597D0107"),
+                        FeatureActivationMode = FeatureActivationMode.CurrentWeb
+                    }
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    // Need to inject site and web since the features are scoped differently
+                    var featureDependencyActivator = injectionScope.Resolve<IFeatureDependencyActivator>(
+                        new TypedParameter(typeof(SPSite), site),
+                        new TypedParameter(typeof(SPWeb), web));
+
+                    // Act
+                    foreach (var featureDependency in featureDependencies)
+                    {
+                        featureDependencyActivator.EnsureFeatureActivation(featureDependency);
+                    }
+
+                    // Assert
+                    var isSiteFeatureActivated = site.Features.Any(feature => feature.DefinitionId.Equals(featureDependencies[0].FeatureId));
+                    var isWebFeatureActivated = web.Features.Any(feature => feature.DefinitionId.Equals(featureDependencies[1].FeatureId));
+                    Assert.IsTrue(isSiteFeatureActivated);
+                    Assert.IsTrue(isWebFeatureActivated);
+                }
+            }
+        }
+
+        /// <summary>
         /// Validates that EnsureFeatureActivation activates the web scoped feature on the web if it's already
         /// activated and the "ForceReactivation" is set to true
         /// </summary>

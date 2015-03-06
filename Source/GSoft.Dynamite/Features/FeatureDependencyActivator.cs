@@ -18,15 +18,6 @@ namespace GSoft.Dynamite.Features
         /// <summary>
         /// Initializes a new instance of the <see cref="FeatureDependencyActivator" /> class.
         /// </summary>
-        /// <param name="logger">The logger.</param>
-        public FeatureDependencyActivator(ILogger logger)
-        {
-            this.logger = logger;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FeatureDependencyActivator" /> class.
-        /// </summary>
         /// <param name="currentSite">The current site.</param>
         /// <param name="logger">The logger.</param>
         public FeatureDependencyActivator(SPSite currentSite, ILogger logger) : this(logger)
@@ -42,6 +33,28 @@ namespace GSoft.Dynamite.Features
         public FeatureDependencyActivator(SPWeb currentWeb, ILogger logger) : this(logger)
         {
             this.currentWeb = currentWeb;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FeatureDependencyActivator" /> class.
+        /// </summary>
+        /// <param name="currentSite">The current site.</param>
+        /// <param name="currentWeb">The current web.</param>
+        /// <param name="logger">The logger.</param>
+        public FeatureDependencyActivator(SPSite currentSite, SPWeb currentWeb, ILogger logger)
+            : this(logger)
+        {
+            this.currentSite = currentSite;
+            this.currentWeb = currentWeb;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FeatureDependencyActivator" /> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        private FeatureDependencyActivator(ILogger logger)
+        {
+            this.logger = logger;
         }
 
         /// <summary>
