@@ -55,7 +55,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Id of the group
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Name of the group (non-localizable)

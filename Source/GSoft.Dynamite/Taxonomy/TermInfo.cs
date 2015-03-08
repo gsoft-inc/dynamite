@@ -67,7 +67,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// GUID of the term
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Default term label in the current MUI language

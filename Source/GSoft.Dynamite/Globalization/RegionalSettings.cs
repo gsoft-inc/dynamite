@@ -10,6 +10,13 @@ namespace GSoft.Dynamite.Globalization
         #region Constructors
 
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public RegionalSettings()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RegionalSettings"/> class.
         /// </summary>
         /// <param name="regionalSettings">The regional settings.</param>
@@ -26,12 +33,12 @@ namespace GSoft.Dynamite.Globalization
         /// <summary>
         /// Gets the locale id.
         /// </summary>
-        public int LocaleId { get; private set; }
+        public int LocaleId { get; set; }
 
         /// <summary>
         /// Gets the time zone id.
         /// </summary>
-        public int TimeZoneId { get; private set; }
+        public int TimeZoneId { get; set; }
 
         #endregion
     }

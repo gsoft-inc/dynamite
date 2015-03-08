@@ -10,6 +10,13 @@ namespace GSoft.Dynamite.ValueTypes
         #region Constructors
 
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public LookupValue()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LookupValue"/> class.
         /// </summary>
         /// <param name="lookupId">The lookup id.</param>
@@ -37,12 +44,12 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Gets the id.
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
-        public string Value { get; private set; }
+        public string Value { get; set; }
 
         #endregion
     }

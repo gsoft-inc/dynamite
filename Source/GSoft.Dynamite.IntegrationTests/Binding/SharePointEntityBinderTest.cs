@@ -13,6 +13,7 @@ using GSoft.Dynamite.Folders;
 using GSoft.Dynamite.Lists;
 using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Pages;
+using GSoft.Dynamite.Serializers;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
 using Microsoft.SharePoint;
@@ -2315,6 +2316,417 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         }
 
         /// <summary>
+        /// Serialization test: validates that all value types serialize to/from JSON properly
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void ToEntity_AllValueTypesShouldBeEasyToSerializeAndDeserialize()
+        {
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                IntegerFieldInfo integerFieldInfo = new IntegerFieldInfo(
+                    "TestInternalNameInteger",
+                    new Guid("{12E262D0-C7C4-4671-A266-064CDBD3905A}"),
+                    "NameKeyInt",
+                    "DescriptionKeyInt",
+                    "GroupKey");
+
+                NumberFieldInfo numberFieldInfo = new NumberFieldInfo(
+                    "TestInternalNameNumber",
+                    new Guid("{5DD4EE0F-8498-4033-97D0-317A24988786}"),
+                    "NameKeyNumber",
+                    "DescriptionKeyNumber",
+                    "GroupKey");
+
+                CurrencyFieldInfo currencyFieldInfo = new CurrencyFieldInfo(
+                    "TestInternalNameCurrency",
+                    new Guid("{9E9963F6-1EE6-46FB-9599-783BBF4D6249}"),
+                    "NameKeyCurrency",
+                    "DescriptionKeyCurrency",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoBasic = new BooleanFieldInfo(
+                    "TestInternalNameBool",
+                    new Guid("{F556AB6B-9E51-43E2-99C9-4A4E551A4BEF}"),
+                    "NameKeyBool",
+                    "DescriptionKeyBool",
+                    "GroupKey");
+
+                BooleanFieldInfo boolFieldInfoDefaultTrue = new BooleanFieldInfo(
+                    "TestInternalNameBoolTrue",
+                    new Guid("{0D0289AD-C5FB-495B-96C6-48CC46737D08}"),
+                    "NameKeyBoolTrue",
+                    "DescriptionKeyBoolTrue",
+                    "GroupKey")
+                {
+                    DefaultValue = true
+                };
+
+                BooleanFieldInfo boolFieldInfoDefaultFalse = new BooleanFieldInfo(
+                    "TestInternalNameBoolFalse",
+                    new Guid("{628181BD-9B0B-4B7E-934F-1CF1796EA4E4}"),
+                    "NameKeyBoolFalse",
+                    "DescriptionKeyBoolFalse",
+                    "GroupKey")
+                {
+                    DefaultValue = false
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoFormula = new DateTimeFieldInfo(
+                    "TestInternalNameDateFormula",
+                    new Guid("{D23EAD73-9E18-46DB-A426-41B2D47F696C}"),
+                    "NameKeyDateTimeFormula",
+                    "DescriptionKeyDateTimeFormula",
+                    "GroupKey")
+                {
+                    DefaultFormula = "=[Today]"
+                };
+
+                DateTimeFieldInfo dateTimeFieldInfoDefault = new DateTimeFieldInfo(
+                    "TestInternalNameDateDefault",
+                    new Guid("{016BF8D9-CEDC-4BF4-BA21-AC6A8F174AD5}"),
+                    "NameKeyDateTimeDefault",
+                    "DescriptionKeyDateTimeDefault",
+                    "GroupKey");
+
+                TextFieldInfo textFieldInfo = new TextFieldInfo(
+                    "TestInternalNameText",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey");
+
+                NoteFieldInfo noteFieldInfo = new NoteFieldInfo(
+                    "TestInternalNameNote",
+                    new Guid("{E315BB24-19C3-4F2E-AABC-9DE5EFC3D5C2}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey");
+
+                HtmlFieldInfo htmlFieldInfo = new HtmlFieldInfo(
+                    "TestInternalNameHtml",
+                    new Guid("{D16958E7-CF9A-4C38-A8BB-99FC03BFD913}"),
+                    "NameKeyAlt",
+                    "DescriptionKeyAlt",
+                    "GroupKey");
+
+                ImageFieldInfo imageFieldInfo = new ImageFieldInfo(
+                    "TestInternalNameImage",
+                    new Guid("{6C5B9E77-B621-43AA-BFBF-B333093EFCAE}"),
+                    "NameKeyImage",
+                    "DescriptionKeyImage",
+                    "GroupKey");
+
+                UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
+                    "TestInternalNameUrl",
+                    new Guid("{208F904C-5A1C-4E22-9A79-70B294FABFDA}"),
+                    "NameKeyUrl",
+                    "DescriptionKeyUrl",
+                    "GroupKey");
+
+                UrlFieldInfo urlFieldInfoImage = new UrlFieldInfo(
+                    "TestInternalNameUrlImg",
+                    new Guid("{96D22CFF-5B40-4675-B632-28567792E11B}"),
+                    "NameKeyUrlImg",
+                    "DescriptionKeyUrlImg",
+                    "GroupKey")
+                {
+                    Format = UrlFieldFormat.Image
+                };
+
+                LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
+                    "TestInternalNameLookup",
+                    new Guid("{62F8127C-4A8C-4217-8BD8-C6712753AFCE}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey");
+
+                LookupFieldInfo lookupFieldInfoAlt = new LookupFieldInfo(
+                    "TestInternalNameLookupAlt",
+                    new Guid("{1F05DFFA-6396-4AEF-AD23-72217206D35E}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    ShowField = "ID"
+                };
+
+                LookupMultiFieldInfo lookupMultiFieldInfo = new LookupMultiFieldInfo(
+                    "TestInternalNameLookupM",
+                    new Guid("{2C9D4C0E-21EB-4742-8C6C-4C30DCD08A05}"),
+                    "NameKeyMulti",
+                    "DescriptionKeyMulti",
+                    "GroupKey");
+
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
+
+                UserFieldInfo userFieldInfo = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey");
+
+                UserMultiFieldInfo userMultiFieldInfo = new UserMultiFieldInfo(
+                    "TestInternalNameUserMulti",
+                    new Guid("{8C662588-D54E-4905-B232-856C2239B036}"),
+                    "NameKeyUserMulti",
+                    "DescriptionKeyUserMulti",
+                    "GroupKey");
+
+                MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
+                    "TestInternalNameMedia",
+                    new Guid("{A2F070FE-FE33-44FC-9FDF-D18E74ED4D67}"),
+                    "NameKeyMedia",
+                    "DescriptionKeyMEdia",
+                    "GroupKey");
+
+                var testTermSet = new TermSetInfo(Guid.NewGuid(), "Test Term Set"); // keep Ids random because, if this test fails midway, the term
+                // set will not be cleaned up and upon next test run we will
+                // run into a term set and term ID conflicts.
+                var levelOneTermA = new TermInfo(Guid.NewGuid(), "Term A", testTermSet);
+                var levelOneTermB = new TermInfo(Guid.NewGuid(), "Term B", testTermSet);
+                var levelTwoTermAA = new TermInfo(Guid.NewGuid(), "Term A-A", testTermSet);
+                var levelTwoTermAB = new TermInfo(Guid.NewGuid(), "Term A-B", testTermSet);
+
+                TaxonomySession session = new TaxonomySession(testScope.SiteCollection);
+                TermStore defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                Group defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(testScope.SiteCollection);
+                TermSet newTermSet = defaultSiteCollectionGroup.CreateTermSet(testTermSet.Label, testTermSet.Id);
+                Term createdTermA = newTermSet.CreateTerm(levelOneTermA.Label, Language.English.Culture.LCID, levelOneTermA.Id);
+                Term createdTermB = newTermSet.CreateTerm(levelOneTermB.Label, Language.English.Culture.LCID, levelOneTermB.Id);
+                Term createdTermAA = createdTermA.CreateTerm(levelTwoTermAA.Label, Language.English.Culture.LCID, levelTwoTermAA.Id);
+                Term createdTermAB = createdTermA.CreateTerm(levelTwoTermAB.Label, Language.English.Culture.LCID, levelTwoTermAB.Id);
+                defaultSiteCollectionTermStore.CommitAll();
+
+                TaxonomyFieldInfo taxoFieldInfo = new TaxonomyFieldInfo(
+                    "TestInternalNameTaxo",
+                    new Guid("{18CC105F-16C9-43E2-9933-37F98452C038}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
+                };
+
+                TaxonomyMultiFieldInfo taxoMultiFieldInfo = new TaxonomyMultiFieldInfo(
+                    "TestInternalNameTaxoMulti",
+                    new Guid("{2F49D362-B014-41BB-9959-1000C9A7FFA0}"),
+                    "NameKeyMulti",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
+                };
+
+                var fieldsToEnsure = new List<IFieldInfo>()
+                    {
+                        integerFieldInfo,
+                        numberFieldInfo,
+                        currencyFieldInfo,
+                        boolFieldInfoBasic,
+                        boolFieldInfoDefaultTrue,
+                        boolFieldInfoDefaultFalse,
+                        dateTimeFieldInfoFormula,
+                        dateTimeFieldInfoDefault,
+                        textFieldInfo,
+                        noteFieldInfo,
+                        htmlFieldInfo,
+                        imageFieldInfo,
+                        urlFieldInfo,
+                        urlFieldInfoImage,
+                        lookupFieldInfo,
+                        lookupFieldInfoAlt,
+                        lookupMultiFieldInfo,
+                        userFieldInfo,
+                        userMultiFieldInfo,
+                        mediaFieldInfo,
+                        taxoFieldInfo,
+                        taxoMultiFieldInfo
+                    };
+
+                ListInfo lookupListInfo = new ListInfo("sometestlistpathlookup", "DynamiteTestListNameKeyLookup", "DynamiteTestListDescriptionKeyLookup");
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    FieldDefinitions = fieldsToEnsure
+                };
+
+                // Note how we need to specify SPSite for injection context - ISharePointEntityBinder's implementation
+                // is lifetime-scoped to InstancePerSite.
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(testScope.SiteCollection))
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Lookup field ListId setup
+                    SPList lookupList = listHelper.EnsureList(testScope.SiteCollection.RootWeb, lookupListInfo);
+                    lookupFieldInfo.ListId = lookupList.ID;
+                    lookupFieldInfoAlt.ListId = lookupList.ID;
+                    lookupMultiFieldInfo.ListId = lookupList.ID;
+
+                    // Create the looked-up items
+                    var lookupItem1 = lookupList.Items.Add();
+                    lookupItem1["Title"] = "Test Item 1";
+                    lookupItem1.Update();
+
+                    var lookupItem2 = lookupList.Items.Add();
+                    lookupItem2["Title"] = "Test Item 2";
+                    lookupItem2.Update();
+
+                    // Create the first test list
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+                    list.EnableVersioning = true;
+                    list.Update();
+
+                    // Create item on list (Upload an empty file in root folder)
+                    var fileInLib = list.RootFolder.Files.Add("SomeRootFile.txt", new byte[0]);
+                    fileInLib.Update();
+                    var itemOnList = fileInLib.Item;
+
+                    // Update with the field values through the SharePoint API
+                    itemOnList["Title"] = "Item under test";
+                    itemOnList["TestInternalNameInteger"] = 555;
+                    itemOnList["TestInternalNameNumber"] = 5.5;
+                    itemOnList["TestInternalNameCurrency"] = 500.95;
+                    itemOnList["TestInternalNameBool"] = true;
+                    itemOnList["TestInternalNameBoolTrue"] = false;
+                    itemOnList["TestInternalNameBoolFalse"] = true;
+                    itemOnList["TestInternalNameDateFormula"] = new DateTime(1977, 7, 7);
+                    itemOnList["TestInternalNameDateDefault"] = new DateTime(1977, 7, 7);
+                    itemOnList["TestInternalNameText"] = "Text value";
+                    itemOnList["TestInternalNameNote"] = "Note value";
+                    itemOnList["TestInternalNameHtml"] = "<p class=\"some-css-class\">HTML value</p>";
+                    itemOnList["TestInternalNameImage"] = new ImageFieldValue()
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    };
+                    itemOnList["TestInternalNameUrl"] = new SPFieldUrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
+                    itemOnList["TestInternalNameUrlImg"] = new SPFieldUrlValue()
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
+
+                    itemOnList["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
+                    itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
+                    itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
+                    itemOnList["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
+                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection() 
+                        {  
+                            new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name),
+                            new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser2.ID, ensuredUser2.Name)
+                        };
+                    itemOnList["TestInternalNameMedia"] = new MediaFieldValue()
+                    {
+                        Title = "Some media file title",
+                        MediaSource = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
+                        AutoPlay = true,
+                        Loop = true,
+                        PreviewImageSource = "/_layouts/15/Images/logo.png"
+                    };
+
+                    var taxonomyField = (TaxonomyField)itemOnList.Fields.GetFieldByInternalName("TestInternalNameTaxo");
+                    taxonomyField.SetFieldValue(itemOnList, createdTermB);
+
+                    var taxonomyMultiField = (TaxonomyField)itemOnList.Fields.GetFieldByInternalName("TestInternalNameTaxoMulti");
+                    taxonomyMultiField.SetFieldValue(itemOnList, new[] { createdTermAA, createdTermAB });
+
+                    itemOnList.Update();
+
+                    var entityBinder = injectionScope.Resolve<ISharePointEntityBinder>();
+                    var serializer = injectionScope.Resolve<ISerializer>();
+
+                    // Act
+
+                    // Map from SPListItem then JSON serialize/deserialize
+                    var entityMapped = entityBinder.Get<TestItemEntityWithLookups>(itemOnList);
+                    string serializedRepresentation = serializer.Serialize(entityMapped);
+                    var deserializedObject = serializer.Deserialize<TestItemEntityWithLookups>(serializedRepresentation);
+                    
+                    // Assert
+                    // #1 Validate that deserialized object contains all field values
+                    Assert.AreEqual("Item under test", deserializedObject.Title);
+                    Assert.AreEqual(entityMapped.IntegerProperty, deserializedObject.IntegerProperty);
+                    Assert.AreEqual(5.5, deserializedObject.DoubleProperty);
+                    Assert.AreEqual(500.95, deserializedObject.CurrencyProperty);
+                    Assert.IsTrue(deserializedObject.BoolProperty.Value);
+                    Assert.IsFalse(deserializedObject.BoolDefaultTrueProperty);
+                    Assert.IsTrue(deserializedObject.BoolDefaultFalseProperty);
+                    Assert.AreEqual(new DateTime(1977, 7, 7), deserializedObject.DateTimeFormulaProperty);
+                    Assert.AreEqual(new DateTime(1977, 7, 7), deserializedObject.DateTimeProperty);
+                    Assert.AreEqual("Text value", deserializedObject.TextProperty);
+                    Assert.AreEqual("Note value", deserializedObject.NoteProperty);
+                    Assert.AreEqual("<p class=\"some-css-class\">HTML value</p>", deserializedObject.HtmlProperty);
+
+                    Assert.IsNotNull(deserializedObject.ImageProperty);
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", deserializedObject.ImageProperty.Hyperlink);
+                    Assert.AreEqual("/_layouts/15/MyFolder/MyImage.png", deserializedObject.ImageProperty.ImageUrl);
+
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", deserializedObject.UrlProperty.Url);
+                    Assert.AreEqual("patate!", deserializedObject.UrlProperty.Description);
+
+                    Assert.AreEqual("http://github.com/GSoft-SharePoint/", deserializedObject.UrlImageProperty.Url);
+                    Assert.AreEqual("patate!", deserializedObject.UrlProperty.Description);
+
+                    Assert.AreEqual(1, deserializedObject.LookupProperty.Id);
+                    Assert.AreEqual("Test Item 1", deserializedObject.LookupProperty.Value);
+
+                    Assert.AreEqual(2, deserializedObject.LookupAltProperty.Id);
+                    Assert.AreEqual("2", deserializedObject.LookupAltProperty.Value); // ShowField/LookupField is ID
+
+                    Assert.AreEqual(1, deserializedObject.LookupMultiProperty[0].Id);
+                    Assert.AreEqual("Test Item 1", deserializedObject.LookupMultiProperty[0].Value);
+                    Assert.AreEqual(2, deserializedObject.LookupMultiProperty[1].Id);
+                    Assert.AreEqual("Test Item 2", deserializedObject.LookupMultiProperty[1].Value);
+
+                    Assert.AreEqual(ensuredUser1.Name, deserializedObject.UserProperty.DisplayName);
+
+                    Assert.AreEqual(ensuredUser1.Name, deserializedObject.UserMultiProperty[0].DisplayName);
+                    Assert.AreEqual("Maxime Boissonneault", deserializedObject.UserMultiProperty[1].DisplayName);
+
+                    Assert.AreEqual("Some media file title", deserializedObject.MediaProperty.Title);
+                    Assert.AreEqual(
+                        HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), 
+                        deserializedObject.MediaProperty.Url);
+                    Assert.IsTrue(deserializedObject.MediaProperty.IsAutoPlay);
+                    Assert.IsTrue(deserializedObject.MediaProperty.IsLoop);
+                    Assert.AreEqual("/_layouts/15/Images/logo.png", deserializedObject.MediaProperty.PreviewImageUrl);
+
+                    Assert.AreEqual(levelOneTermB.Id, deserializedObject.TaxonomyProperty.Id);
+                    Assert.AreEqual(levelOneTermB.Label, deserializedObject.TaxonomyProperty.Label);
+
+                    // TODO: Figure out the best way to get the TermSet context bound during entity binding
+                    ////Assert.AreEqual(createdTermB.TermSet.Id, deserializedObject.TaxonomyProperty.Term.TermSet.Id);
+                    ////Assert.AreEqual(createdTermB.TermSet.Name, deserializedObject.TaxonomyProperty.Term.TermSet.Label);
+
+                    ////Assert.AreEqual(createdTermB.TermSet.Group.Id, deserializedObject.TaxonomyProperty.Term.TermSet.Group.Id);
+                    ////Assert.AreEqual(createdTermB.TermSet.Group.Name, deserializedObject.TaxonomyProperty.Term.TermSet.Group.Name);
+
+                    ////Assert.AreEqual(createdTermB.TermSet.Group.TermStore.Id, deserializedObject.TaxonomyProperty.Term.TermSet.Group.TermStore.Id);
+                    ////Assert.AreEqual(createdTermB.TermSet.Group.TermStore.Name, deserializedObject.TaxonomyProperty.Term.TermSet.Group.TermStore.Name);
+
+                    Assert.AreEqual(levelTwoTermAA.Id, deserializedObject.TaxonomyMultiProperty[0].Id);
+                    Assert.AreEqual(levelTwoTermAA.Label, deserializedObject.TaxonomyMultiProperty[0].Label);
+                    Assert.AreEqual(levelTwoTermAB.Id, deserializedObject.TaxonomyMultiProperty[1].Id);
+                    Assert.AreEqual(levelTwoTermAB.Label, deserializedObject.TaxonomyMultiProperty[1].Label);
+                }
+
+                // Cleanup term set so that we don't pollute the metadata store
+                newTermSet.Delete();
+                defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        /// <summary>
         /// Validates that when you create an entity from a list item then use that entity
         /// to create another list item, then both list items end up with identical properties
         /// </summary>
@@ -3526,6 +3938,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                 }
             }
         }
+
+
 
         // MORE TEST CASE Suggestions:
         // - Non SiteCollection-specific term group bindings

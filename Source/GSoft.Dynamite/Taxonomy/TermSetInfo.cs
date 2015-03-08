@@ -82,7 +82,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Id of the term set
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// Term set label in the current MUI language

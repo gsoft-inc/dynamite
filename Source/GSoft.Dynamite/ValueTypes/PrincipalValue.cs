@@ -10,6 +10,13 @@ namespace GSoft.Dynamite.ValueTypes
     public class PrincipalValue
     {
         #region Constructors
+        
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public PrincipalValue()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrincipalValue"/> class.
@@ -43,18 +50,18 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Gets or sets the display name.
         /// </summary>
-        public string DisplayName { get; private set; }
+        public string DisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the login.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Justification = "Domain language.")]
-        public string LoginName { get; private set; }
+        public string LoginName { get; set; }
 
         #endregion
     }
