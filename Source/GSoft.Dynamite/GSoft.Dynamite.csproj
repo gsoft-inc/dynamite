@@ -91,6 +91,7 @@
     <Compile Include="Binding\EntitySchemaFactory.cs" />
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
+    <Compile Include="Branding\DisplayTemplateCategory.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
     <Compile Include="Features\FeatureDependencyActivator.cs" />

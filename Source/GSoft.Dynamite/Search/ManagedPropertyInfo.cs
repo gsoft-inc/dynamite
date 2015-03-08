@@ -10,6 +10,13 @@ namespace GSoft.Dynamite.Search
     public class ManagedPropertyInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public ManagedPropertyInfo()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new ManagedPropertyInfo
         /// </summary>
         /// <param name="name">The name of the managed property</param>

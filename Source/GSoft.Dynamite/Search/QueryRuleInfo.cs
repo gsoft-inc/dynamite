@@ -12,6 +12,13 @@ namespace GSoft.Dynamite.Search
     public class QueryRuleInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes only
+        /// </summary>
+        public QueryRuleInfo()
+        {
+        }
+
+        /// <summary>
         /// Creates a new query rule definition
         /// </summary>
         /// <param name="displayName">Display name</param>

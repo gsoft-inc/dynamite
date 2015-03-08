@@ -11,6 +11,13 @@ namespace GSoft.Dynamite.Search
     public class ResultTypeInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes only
+        /// </summary>
+        public ResultTypeInfo()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="ResultTypeInfo"/> instance
         /// </summary>
         /// <param name="name">The name of the type</param>

@@ -12,6 +12,13 @@ namespace GSoft.Dynamite.Search
     public class BestBetInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes only
+        /// </summary>
+        public BestBetInfo()
+        {
+        }
+
+        /// <summary>
         /// Creates a new <see cref="BestBetInfo"/>
         /// </summary>
         /// <param name="title">The title</param>
