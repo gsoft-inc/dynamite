@@ -1,22 +1,36 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Taxonomy;
+using Microsoft.Office.Server.Search.Administration;
+using Microsoft.Office.Server.Search.Administration.Query;
+using Microsoft.Office.Server.Search.Query;
+using Microsoft.Office.Server.Search.Query.Rules;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Search
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-
-    using Microsoft.Office.Server.Search.Administration;
-    using Microsoft.Office.Server.Search.Administration.Query;
-    using Microsoft.Office.Server.Search.Query;
-    using Microsoft.Office.Server.Search.Query.Rules;
-    using Microsoft.SharePoint;
-
     /// <summary>
     /// Search service utilities
     /// </summary>
     public interface ISearchHelper
     {
+        /// <summary>
+        /// Gets the default search service application from a site.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The search service application.</returns>
+        SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site);
+
+        /// <summary>
+        /// Get the service application by its name
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <returns>
+        /// The search service application.
+        /// </returns>
+        SearchServiceApplication GetSearchServiceApplicationByName(string appName);
+
         /// <summary>
         /// Creates a site search scope if it doesn't exist yet
         /// </summary>
@@ -43,26 +57,21 @@ namespace GSoft.Dynamite.Search
         /// <returns>The <see cref="ResultItemType"/>.</returns>
         ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType);
 
+        /// <summary>The delete result type.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="resultType">The result type.</param>
+        void DeleteResultType(SPSite site, ResultTypeInfo resultType);
+
         /// <summary>
-        /// Gets the result source by name using the default application name:'Search Service Application'.
+        /// Gets the result source by name using the default search service application
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="site">The site collection.</param>
-        /// <param name="owner">The owner.</param>
+        /// <param name="scopeOwnerLevel">The level of the scope's owner.</param>
         /// <returns>
         /// The corresponding result source.
         /// </returns>
-        SourceRecord GetResultSourceByName(string resultSourceName, SPSite site, SearchObjectLevel owner);
-
-        /// <summary>
-        /// Get a result source object by name
-        /// </summary>
-        /// <param name="ssa">The search service application</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level</param>
-        /// <param name="contextWeb">The web context</param>
-        /// <returns>The source object</returns>
-        Source GetResultSourceByName(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb);
+        ISource GetResultSourceByName(SPSite site, string resultSourceName, SearchObjectLevel scopeOwnerLevel);
 
         /// <summary>The ensure result source.</summary>
         /// <param name="contextSite">The context site.</param>
@@ -70,45 +79,19 @@ namespace GSoft.Dynamite.Search
         /// <returns>The <see cref="Source"/>.</returns>
         Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo);
 
-        /// <summary>
-        /// Get the service application by its name
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <returns>
-        /// The search service application.
-        /// </returns>
-        SearchServiceApplication GetDefaultSearchServiceApplication(string appName);
-
-        /// <summary>
-        /// Gets the default search service application from a site.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The search service application.</returns>
-        SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site);
-
-        /// <summary>
-        /// Deletes the result source.
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="level">The level.</param>
-        /// <param name="contextWeb">The context web.</param>
-        void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb);
-
         /// <summary>The delete result source.</summary>
         /// <param name="contextSite">The context site.</param>
         /// <param name="resultSourceInfo">The result source info.</param>
         void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo);
 
-        /// <summary>The delete result type.</summary>
-        /// <param name="site">The site.</param>
-        /// <param name="resultType">The result type.</param>
-        void DeleteResultType(SPSite site, ResultTypeInfo resultType);
-
-        /// <summary>The delete managed property.</summary>
-        /// <param name="site">The site.</param>
-        /// <param name="managedPropertyInfo">The managed property info.</param>
-        void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
+        /// <summary>
+        /// Deletes the result source.
+        /// </summary>
+        /// <param name="contextSite">Current site collection</param>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="level">The level.</param>
+        void DeleteResultSource(SPSite contextSite, string resultSourceName, SearchObjectLevel level);
 
         /// <summary>
         /// Creates a query rule object for the search level.
@@ -194,9 +177,13 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The context site</param>
         /// <param name="managedPropertyInfo">The managed property info</param>
-        /// <param name="overwrite">True to overwrite.False otherwise</param>
         /// <returns>The managed property</returns>
-        ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo, bool overwrite);
+        ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
+
+        /// <summary>The delete managed property.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="managedPropertyInfo">The managed property info.</param>
+        void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
 
         /// <summary>
         /// Add faceted navigation refiners for a taxonomy term and its reuses

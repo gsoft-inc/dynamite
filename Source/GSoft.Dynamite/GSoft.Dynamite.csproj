@@ -176,7 +176,7 @@
     <Compile Include="Search\Enums\RefinerType.cs" />
     <Compile Include="Search\ResultTypeInfo.cs" />
     <Compile Include="Search\ResultTypeRuleInfo.cs" />
-    <Compile Include="Search\UpdateBehaviorEnum.cs" />
+    <Compile Include="Search\Enums\ResultSourceUpdateBehavior.cs" />
     <Compile Include="Sites\SiteInfo.cs" />
     <Compile Include="Pages\TermDrivenPageSettingInfo.cs" />
     <Compile Include="Globalization\Variations\VariationSettingsInfo.cs" />

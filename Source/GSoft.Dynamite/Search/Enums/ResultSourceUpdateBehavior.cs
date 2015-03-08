@@ -1,9 +1,9 @@
-﻿namespace GSoft.Dynamite.Search
+﻿namespace GSoft.Dynamite.Search.Enums
 {
     /// <summary>
     /// The update mode for the result source
     /// </summary>
-    public enum UpdateBehavior
+    public enum ResultSourceUpdateBehavior
     {
         /// <summary>
         /// Delete and recreate the result source if already exists

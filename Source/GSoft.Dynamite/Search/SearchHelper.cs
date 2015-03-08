@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Search.Enums;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
@@ -22,9 +25,6 @@ using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
 namespace GSoft.Dynamite.Search
 {
-    using System.Globalization;
-    using GSoft.Dynamite.Utils;
-
     /// <summary>
     /// Search service utilities
     /// </summary>
@@ -42,6 +42,48 @@ namespace GSoft.Dynamite.Search
         {
             this.logger = logger;
             this.taxonomyService = taxonomyService;
+        }
+        /// <summary>
+        /// Gets the default search service application from a site.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The search service application.</returns>
+        public SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site)
+        {
+            var context = SPServiceContext.GetContext(site);
+
+            // Get the search service application proxy
+            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
+
+            // Get the search service application info object so we can find the Id of our Search Service App
+            if (searchProxy != null)
+            {
+                var applicationInfo = searchProxy.GetSearchServiceApplicationInfo();
+
+                // Get the application itself
+                return SearchService.Service.SearchApplications.GetValue<SearchServiceApplication>(applicationInfo.SearchServiceApplicationId);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the service application by its name
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <returns>
+        /// The search service application.
+        /// </returns>
+        public SearchServiceApplication GetSearchServiceApplicationByName(string appName)
+        {
+            var searchService = new SearchService("OSearch15", SPFarm.Local);
+            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
+                                    where sapp.GetSearchApplicationDisplayName() == appName
+                                    select sapp;
+
+            var serviceApp = searchApplication.First();
+
+            return serviceApp;
         }
 
         /// <summary>
@@ -135,17 +177,17 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Gets the result source by name using the default application name:\"Search Service Application\".
+        /// Gets the result source by name using the default search service application
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="site">The site collection.</param>
-        /// <param name="owner">The owner.</param>
+        /// <param name="scopeOwnerLevel">The level of the scope's owner.</param>
         /// <returns>
         /// The corresponding result source.
         /// </returns>
-        public SourceRecord GetResultSourceByName(string resultSourceName, SPSite site, SearchObjectLevel owner)
+        public ISource GetResultSourceByName(SPSite site, string resultSourceName, SearchObjectLevel scopeOwnerLevel)
         {
-            var serviceApplicationOwner = new SearchObjectOwner(owner);
+            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel);
 
             var context = SPServiceContext.GetContext(site);
             var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
@@ -181,7 +223,7 @@ namespace GSoft.Dynamite.Search
             var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
             if (searchServiceApplication != null)
             {
-                if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
+                if (updateMode.Equals(ResultSourceUpdateBehavior.OverwriteResultSource))
                 {
                     resultSource = InnerEnsureResultSource(
                         searchServiceApplication, 
@@ -209,12 +251,12 @@ namespace GSoft.Dynamite.Search
 
                     string searchQuery = string.Empty;
 
-                    if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.OverwriteQuery))
                     {
                         searchQuery = resultSourceInfo.Query;
                     }
 
-                    if (updateMode.Equals(UpdateBehavior.AppendToQuery))
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.AppendToQuery))
                     {
                         if (resultSource.QueryTransform != null)
                         {
@@ -230,7 +272,7 @@ namespace GSoft.Dynamite.Search
                         }
                     }
 
-                    if (updateMode.Equals(UpdateBehavior.RevertQuery))
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.RevertQuery))
                     {
                         if (resultSource.QueryTransform != null)
                         {
@@ -248,86 +290,6 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Get a result source object by name
-        /// </summary>
-        /// <param name="ssa">The search service application</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level</param>
-        /// <param name="contextWeb">The web context</param>
-        /// <returns>The source object</returns>
-        public Source GetResultSourceByName(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var federationManager = new FederationManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-
-            return resultSource;
-        }
-        
-        /// <summary>
-        /// Get the service application by its name
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <returns>
-        /// The search service application.
-        /// </returns>
-        public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
-        {
-            var searchService = new SearchService("OSearch15", SPFarm.Local);
-            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
-                                    where sapp.GetSearchApplicationDisplayName() == appName
-                                    select sapp;
-
-            var serviceApp = searchApplication.First();
-
-            return serviceApp;
-        }
-
-        /// <summary>
-        /// Gets the default search service application from a site.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The search service application.</returns>
-        public SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site)
-        {
-            var context = SPServiceContext.GetContext(site);
-
-            // Get the search service application proxy
-            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
-
-            // Get the search service application info object so we can find the Id of our Search Service App
-            if (searchProxy != null)
-            {
-                var applicationInfo = searchProxy.GetSearchServiceApplicationInfo();
-
-                // Get the application itself
-                return SearchService.Service.SearchApplications.GetValue<SearchServiceApplication>(applicationInfo.SearchServiceApplicationId);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Deletes the result source.
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="level">The level.</param>
-        /// <param name="contextWeb">The context web.</param>
-        public void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var federationManager = new FederationManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-            if (resultSource != null)
-            {
-                federationManager.RemoveSource(resultSource);
-            }
-        }
-
-        /// <summary>
         /// Delete a result source
         /// </summary>
         /// <param name="contextSite">The context site collection</param>
@@ -335,10 +297,26 @@ namespace GSoft.Dynamite.Search
         public void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
             // Get the search service application for the current site
-            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
-            if (searchServiceApplication != null)
+            this.DeleteResultSource(contextSite, resultSourceInfo.Name, resultSourceInfo.Level);
+        }
+
+        /// <summary>
+        /// Deletes the result source.
+        /// </summary>
+        /// <param name="contextSite">Current site collection</param>
+        /// <param name="ssa">The search service application.</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="level">The level.</param>
+        public void DeleteResultSource(SPSite contextSite, string resultSourceName, SearchObjectLevel level)
+        {
+            var searchApp = this.GetDefaultSearchServiceApplication(contextSite);
+            var federationManager = new FederationManager(searchApp);
+            var searchOwner = new SearchObjectOwner(level, contextSite.RootWeb);
+
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+            if (resultSource != null)
             {
-                this.DeleteResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, contextSite.RootWeb);
+                federationManager.RemoveSource(resultSource);
             }
         }
 
@@ -406,9 +384,8 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The context site</param>
         /// <param name="managedPropertyInfo">The managed property info</param>
-        /// <param name="overwrite">True to overwrite.False otherwise</param>
         /// <returns>The managed property</returns>
-        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo, bool overwrite)
+        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
         {
             ManagedProperty managedProperty = null;
             var mappingCollection = new MappingCollection();
@@ -423,7 +400,7 @@ namespace GSoft.Dynamite.Search
             if (managedProperties.Contains(propertyName))
             {
                 var prop = managedProperties[propertyName];
-                if (overwrite)
+                if (managedPropertyInfo.OverwriteIfAlreadyExists)
                 {
                     if (prop.DeleteDisallowed)
                     {
@@ -686,7 +663,7 @@ namespace GSoft.Dynamite.Search
 
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
-            var resultSource = this.GetResultSourceByName(ssa, resultType.ResultSource.Name, resultType.ResultSource.Level, site.RootWeb);
+            var resultSource = this.GetResultSourceByName(site, resultType.ResultSource.Name, resultType.ResultSource.Level);
 
             var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
@@ -761,6 +738,7 @@ namespace GSoft.Dynamite.Search
             {
                 PropertyValues = new List<string>(resultTypeRule.Values)
             };
+
             return rule;
         }
 
