@@ -185,9 +185,7 @@
     <Compile Include="Pages\TermDrivenPageSettingInfo.cs" />
     <Compile Include="Globalization\Variations\VariationSettingsInfo.cs" />
     <Compile Include="Fields\Types\GuidFieldInfo.cs" />
-    <Compile Include="Globalization\IDateHelper.cs" />
     <Compile Include="Globalization\IMuiHelper.cs" />
-    <Compile Include="Globalization\IRegionalSettingsHelper.cs" />
     <Compile Include="Globalization\Languages.cs" />
     <Compile Include="Globalization\Variations\IVariationHelper.cs" />
     <Compile Include="Globalization\Variations\IVariationSyncHelper.cs" />
@@ -313,9 +311,7 @@
     <Compile Include="Fields\Constants\PublishingFields.cs" />
     <Compile Include="Branding\ComposedLookRepository.cs" />
     <Compile Include="Branding\Entities\ComposedLook.cs" />
-    <Compile Include="Folders\FolderRepository.cs" />
     <Compile Include="Branding\IComposedLookRepository.cs" />
-    <Compile Include="Folders\IFolderRepository.cs" />
     <Compile Include="Caml\IQueryHelper.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Lists\ListLocator.cs" />
@@ -361,7 +357,6 @@
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Documents\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Pages\DialogLayoutsPageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -383,7 +378,6 @@
     <Compile Include="Lists\ListSecurityHelper.cs" />
     <Compile Include="Branding\MasterPageHelper.cs" />
     <Compile Include="Globalization\MuiHelper.cs" />
-    <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
     <Compile Include="Utils\NamedReaderWriterLocker.cs" />
     <Compile Include="Search\SearchHelper.cs" />

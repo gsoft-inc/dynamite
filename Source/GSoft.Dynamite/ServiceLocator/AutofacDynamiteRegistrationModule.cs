@@ -159,7 +159,6 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Folders
             builder.RegisterType<FolderHelper>().As<IFolderHelper>();
-            builder.RegisterType<FolderRepository>().As<IFolderRepository>();
 
             // Files
             builder.RegisterType<FileHelper>().As<IFileHelper>();
@@ -170,8 +169,6 @@ namespace GSoft.Dynamite.ServiceLocator
             // It's the container user's responsibility to register a IResourceLocatorConfig implementation
             builder.RegisterType<DefaultResourceLocatorConfig>().As<IResourceLocatorConfig>();
             builder.RegisterType<MuiHelper>().As<IMuiHelper>();
-            builder.RegisterType<DateHelper>().As<IDateHelper>();
-            builder.RegisterType<RegionalSettingsHelper>().As<IRegionalSettingsHelper>();
 
             builder.RegisterType<VariationExpert>().As<IVariationExpert>();
             builder.RegisterType<VariationHelper>().As<IVariationHelper>();
