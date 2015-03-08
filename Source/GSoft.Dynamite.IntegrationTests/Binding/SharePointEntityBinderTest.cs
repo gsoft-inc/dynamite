@@ -187,7 +187,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image",
+                    Format = UrlFieldFormat.Image,
                     DefaultValue = new UrlValue()
                     {
                         Url = "http://github.com/GSoft-SharePoint/",
@@ -665,7 +665,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
@@ -1156,7 +1156,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
@@ -1650,7 +1650,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
@@ -2431,7 +2431,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
@@ -2807,7 +2807,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(
@@ -3272,7 +3272,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 LookupFieldInfo lookupFieldInfo = new LookupFieldInfo(

@@ -26,28 +26,24 @@ namespace GSoft.Dynamite.Lists
 
         private readonly IContentTypeHelper contentTypeBuilder;
         private readonly IResourceLocator resourceLocator;
-        private readonly IFieldLocator fieldLocator;
         private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
         private readonly IListLocator listLocator;
 
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
-        /// <param name="fieldLocator">The field locator.</param>
         /// <param name="fieldHelper">Field creator utility</param>
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="listLocator">List locator</param>
         public ListHelper(
             IContentTypeHelper contentTypeBuilder,
-            IFieldLocator fieldLocator,
             IFieldHelper fieldHelper,
             IResourceLocator resourceLocator,
             ILogger logger,
             IListLocator listLocator)
         {
             this.contentTypeBuilder = contentTypeBuilder;
-            this.fieldLocator = fieldLocator;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;

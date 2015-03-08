@@ -1625,7 +1625,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
@@ -1990,7 +1990,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
@@ -2715,7 +2715,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Important that there be no DefaultFormula and no DefaultValue, otherwise the
                     // folder default column value would be ignored.
                     // See related test above: EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException
-                    Format = "DateTime"
+                    Format = DateTimeFieldFormat.DateTime
                 };
 
                 UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
@@ -2734,7 +2734,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(

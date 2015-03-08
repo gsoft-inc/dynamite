@@ -46,6 +46,13 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="catalogWebRelativeUrl">The root url of the catalog.</param>
         /// <returns>A catalogConnectionSettings object</returns>
         CatalogConnectionSettings GetCatalogConnectionSettings(SPSite site, Uri webAbsoluteUrl, Uri catalogWebRelativeUrl);
+        
+        /// <summary>
+        /// Creates a new catalog connection
+        /// </summary>
+        /// <param name="site">The target site</param>
+        /// <param name="catalogConnectionInfo">The catalog connection information</param>
+        void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo);
 
         /// <summary>
         /// Delete a catalog connection
@@ -53,13 +60,6 @@ namespace GSoft.Dynamite.Catalogs
         /// <param name="site">The target site</param>
         /// <param name="catalogConnectionInfo">The catalog connection information</param>
         void DeleteCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo);
-
-        /// <summary>
-        /// Creates a new catalog connection
-        /// </summary>
-        /// <param name="site">The target site</param>
-        /// <param name="catalogConnectionInfo">The catalog connection information</param>
-        void EnsureCatalogConnection(SPSite site, CatalogConnectionInfo catalogConnectionInfo);
 
         /// <summary>
         /// Method to create a catalog connection

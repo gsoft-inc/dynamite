@@ -2237,7 +2237,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyAlt",
                     "GroupKey")
                 {
-                    Format = "DateTime",
+                    Format = DateTimeFieldFormat.DateTime,
                     DefaultFormula = "=[Today]",
                     HasFriendlyRelativeDisplay = true
                 };
@@ -2249,7 +2249,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyAlt",
                     "GroupKey")
                 {
-                    Format = "DateTime",
+                    Format = DateTimeFieldFormat.DateTime,
                     DefaultValue = new DateTime(1999, 1, 28),
                     HasFriendlyRelativeDisplay = true
                 };
@@ -2309,7 +2309,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyAlt",
                     "GroupKey")
                 {
-                    Format = "DateTime",
+                    Format = DateTimeFieldFormat.DateTime,
                     DefaultFormula = "=[Today]",
                     DefaultValue = new DateTime(1999, 1, 28),   // both formula and defaul val are specified
                     HasFriendlyRelativeDisplay = true
@@ -2710,7 +2710,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyAlt",
                     "GroupKey")
                 {
-                    Format = "Image",
+                    Format = UrlFieldFormat.Image,
                     DefaultValue = new UrlValue()
                     {
                         Url = "http://github.com/GSoft-SharePoint/somethingsomething",
@@ -2929,7 +2929,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "GroupKey")
                 {
                     // ShowField should be Title by default
-                    UserSelectionMode = "PeopleAndGroups"
+                    UserSelectionMode = UserFieldSelectionMode.PeopleAndGroups
                 };
 
                 UserFieldInfo userFieldInfoAlt = new UserFieldInfo(
@@ -3237,7 +3237,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image",
+                    Format = UrlFieldFormat.Image,
                     DefaultValue = new UrlValue()
                     {
                         Url = "http://github.com/GSoft-SharePoint/",
@@ -4641,7 +4641,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image",
+                    Format = UrlFieldFormat.Image,
                     EnforceUniqueValues = true
                 };
 

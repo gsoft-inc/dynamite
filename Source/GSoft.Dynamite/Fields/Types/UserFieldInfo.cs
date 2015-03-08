@@ -23,7 +23,7 @@ namespace GSoft.Dynamite.Fields.Types
         {
             // default person name
             this.ShowField = "ImnName";
-            this.UserSelectionMode = "PeopleOnly";
+            this.UserSelectionMode = UserFieldSelectionMode.PeopleOnly;
             this.UserSelectionScope = 0;   // default is 0 for no group constraint
         }
 
@@ -41,7 +41,8 @@ namespace GSoft.Dynamite.Fields.Types
 
             if (fieldSchemaXml.Attribute("UserSelectionMode") != null)
             {
-                this.UserSelectionMode = fieldSchemaXml.Attribute("UserSelectionMode").Value;
+                this.UserSelectionMode = fieldSchemaXml.Attribute("UserSelectionMode").Value == UserFieldSelectionMode.PeopleAndGroups.ToString() ?
+                    UserFieldSelectionMode.PeopleAndGroups : UserFieldSelectionMode.PeopleOnly;
             }
 
             if (fieldSchemaXml.Attribute("UserSelectionScope") != null)
@@ -56,9 +57,9 @@ namespace GSoft.Dynamite.Fields.Types
         public string ShowField { get; set; }
 
         /// <summary>
-        /// PeopleOnly or PeopleAndGroups
+        /// Selection mode can be PeopleOnly or PeopleAndGroups
         /// </summary>
-        public string UserSelectionMode { get; set; }
+        public UserFieldSelectionMode UserSelectionMode { get; set; }
 
         /// <summary>
         /// The id of the group from which we want people to select people
@@ -77,7 +78,7 @@ namespace GSoft.Dynamite.Fields.Types
         {
             baseFieldSchema.Add(new XAttribute("List", "UserInfo"));
             baseFieldSchema.Add(new XAttribute("ShowField", this.ShowField));
-            baseFieldSchema.Add(new XAttribute("UserSelectionMode", this.UserSelectionMode));
+            baseFieldSchema.Add(new XAttribute("UserSelectionMode", this.UserSelectionMode.ToString()));
             baseFieldSchema.Add(new XAttribute("UserSelectionScope", this.UserSelectionScope));
 
             return baseFieldSchema;
