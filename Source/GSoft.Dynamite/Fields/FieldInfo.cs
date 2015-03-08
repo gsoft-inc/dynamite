@@ -9,7 +9,8 @@ namespace GSoft.Dynamite.Fields
     /// Defines the field info structure.
     /// </summary>
     /// <typeparam name="T">ValueType associated to that particular Field type</typeparam>
-    public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
+    public abstract class FieldInfo<T> : IFieldInfo
+    //    public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
     {
         /// <summary>
         /// Default constructor
@@ -127,71 +128,76 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        /// <summary>
-        /// Unique identifier of the field
-        /// </summary>
-        public Guid Id { get; private set; }
+        ///// <summary>
+        ///// Unique identifier of the field
+        ///// </summary>
+        //public Guid Id { get; private set; }
 
-        /// <summary>
-        /// The internal name of the field
-        /// </summary>
-        public string InternalName { get; private set; }
+        ///// <summary>
+        ///// The internal name of the field
+        ///// </summary>
+        //public string InternalName { get; private set; }
 
-        /// <summary>
-        /// SharePoint Field Type name of the field
-        /// </summary>
-        public string Type { get; private set; }
+        ///// <summary>
+        ///// SharePoint Field Type name of the field
+        ///// </summary>
+        //public string Type { get; private set; }
 
-        /// <summary>
-        /// Indicates if the field is required
-        /// </summary>
-        public RequiredType Required { get; set; }
+        ///// <summary>
+        ///// Indicates if the field is required
+        ///// </summary>
+        //public RequiredType Required { get; set; }
 
-        /// <summary>
-        /// Indicates if the field must enforce unique values
-        /// </summary>
-        public bool EnforceUniqueValues { get; set; }
+        ///// <summary>
+        ///// Indicates if the field must enforce unique values
+        ///// </summary>
+        //public bool EnforceUniqueValues { get; set; }
 
-        /// <summary>
-        /// Indicates if field should be hidden
-        /// </summary>
-        public bool IsHidden { get; set; }
+        ///// <summary>
+        ///// Indicates if field should be hidden
+        ///// </summary>
+        //public bool IsHidden { get; set; }
 
-        /// <summary>
-        /// Indicates if field should be shown in the display form
-        /// </summary>
-        public bool IsHiddenInDisplayForm { get; set; }
+        ///// <summary>
+        ///// Indicates if field should be shown in the display form
+        ///// </summary>
+        //public bool IsHiddenInDisplayForm { get; set; }
 
-        /// <summary>
-        /// Indicates if field should be shown in the new form
-        /// </summary>
-        public bool IsHiddenInNewForm { get; set; }
+        ///// <summary>
+        ///// Indicates if field should be shown in the new form
+        ///// </summary>
+        //public bool IsHiddenInNewForm { get; set; }
 
-        /// <summary>
-        /// Indicates if field should be shown in the edit form
-        /// </summary>
-        public bool IsHiddenInEditForm { get; set; }
+        ///// <summary>
+        ///// Indicates if field should be shown in the edit form
+        ///// </summary>
+        //public bool IsHiddenInEditForm { get; set; }
 
-        /// <summary>
-        /// Indicates if field should be shown in the list settings
-        /// </summary>
-        public bool IsHiddenInListSettings { get; set; }
+        ///// <summary>
+        ///// Indicates if field should be shown in the list settings
+        ///// </summary>
+        //public bool IsHiddenInListSettings { get; set; }
 
-        /// <summary>
-        /// Default formula for the field
-        /// </summary>
-        public string DefaultFormula { get; set; }
+        ///// <summary>
+        ///// Default formula for the field
+        ///// </summary>
+        //public string DefaultFormula { get; set; }
 
         /// <summary>
         /// Returns the FieldInfo's associated ValueType.
         /// For example, a TextFieldInfo should return typeof(string)
         /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
         /// </summary>
-        public Type AssociatedValueType
+        public override Type AssociatedValueType
         {
             get
             {
                 return typeof(T);
+            }
+
+            set
+            {
+                throw new NotSupportedException("Associated value type is determined by type argument and cannot be set.");
             }
         }
 
@@ -208,7 +214,7 @@ namespace GSoft.Dynamite.Fields
         /// we want to add field type-specific attributes
         /// </param>
         /// <returns>The full field XML schema</returns>
-        public abstract XElement Schema(XElement baseFieldSchema);
+        //public abstract XElement Schema(XElement baseFieldSchema);
 
         private static bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
         {

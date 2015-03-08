@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         public ContentTypeInfo()
         {
-            this.Fields = new List<FieldInfo<object>>();
+            this.Fields = new List<IFieldInfo>();
         }
 
         /// <summary>
