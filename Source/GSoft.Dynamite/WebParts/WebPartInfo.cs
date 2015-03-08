@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.UI.WebControls.WebParts;
+using Newtonsoft.Json;
 
 namespace GSoft.Dynamite.WebParts
 {
@@ -8,6 +9,13 @@ namespace GSoft.Dynamite.WebParts
     /// </summary>
     public class WebPartInfo
     {
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public WebPartInfo()
+        {
+        }
+
         /// <summary>
         /// Initializes a new <see cref="WebPartInfo" /> instance
         /// </summary>
@@ -44,6 +52,7 @@ namespace GSoft.Dynamite.WebParts
         /// <summary>
         /// The WebPart object that should be provisioned
         /// </summary>
+        [JsonIgnore]
         public WebPart WebPart { get; set; }
     }
 }

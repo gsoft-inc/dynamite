@@ -86,6 +86,7 @@
     <Compile Include="Branding\ImageRenditionInfoTest.cs" />
     <Compile Include="Branding\DisplayTemplateInfoTest.cs" />
     <Compile Include="BaseSerializationTest.cs" />
+    <Compile Include="Folders\FolderInfoTest.cs" />
     <Compile Include="Catalogs\CatalogInfoTest.cs" />
     <Compile Include="ValueTypes\ImageFieldValue.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
