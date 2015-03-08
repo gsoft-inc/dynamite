@@ -51,6 +51,19 @@ namespace GSoft.Dynamite.Search
         /// <returns>The newly created scope</returns>
         Scope EnsureSharedScope(SPSite site, string scopeName, string displayGroupName, string searchPagePath);
 
+        /// <summary>
+        /// Ensure a managed property in the search service application schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        /// <returns>The managed property</returns>
+        ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
+
+        /// <summary>The delete managed property.</summary>
+        /// <param name="site">The site.</param>
+        /// <param name="managedPropertyInfo">The managed property info.</param>
+        void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
+
         /// <summary>The ensure result type.</summary>
         /// <param name="site">The site.</param>
         /// <param name="resultType">The result type.</param>
@@ -87,24 +100,37 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Deletes the result source.
         /// </summary>
-        /// <param name="contextSite">Current site collection</param>
+        /// <param name="contextSite">Current site collection.</param>
         /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="level">The level.</param>
         void DeleteResultSource(SPSite contextSite, string resultSourceName, SearchObjectLevel level);
 
         /// <summary>
+        /// Get all query rules matching the display name in the search level
+        /// </summary>
+        /// <param name="contextSite">The current site collection.</param>
+        /// <param name="level">The search level.</param>
+        /// <param name="displayName">The query rule display name.</param>
+        /// <returns>A list of query rules</returns>
+        ICollection<QueryRule> GetQueryRulesByName(SPSite contextSite, string displayName, SearchObjectLevel level);
+
+        /// <summary>
         /// Creates a query rule object for the search level.
         /// </summary>
-        /// <param name="ssa">The search service application.</param>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="queryRuleMetadata">The query rule definition.</param>
         /// <param name="level">The search level object.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="isActive">True if the query is active. False otherwise.</param>
-        /// <param name="startDate">The query rule publishing start date.</param>
-        /// <param name="endDate">The query rule publishing end date.</param>
         /// <returns>The new query rule object.</returns>
-        QueryRule CreateQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName, bool isActive, DateTime? startDate, DateTime? endDate);
+        QueryRule EnsureQueryRule(SPSite site, QueryRuleInfo queryRuleMetadata, SearchObjectLevel level);
+
+        /// <summary>
+        /// Delete all query rules corresponding to the display name
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="displayName">The query rule name.</param>
+        /// <param name="level">The search level.</param>
+        void DeleteQueryRule(SPSite site, string displayName, SearchObjectLevel level);
 
         /// <summary>
         /// Ensure a search best bet
@@ -119,25 +145,6 @@ namespace GSoft.Dynamite.Search
         /// <param name="deleteIfUnused">True if must be deleted if unused. False otherwise.</param>
         /// <returns>The best bet object.</returns>
         Microsoft.Office.Server.Search.Query.Rules.BestBet EnsureBestBet(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string title, Uri url, string description, bool isVisualBestBet, bool deleteIfUnused);
-
-        /// <summary>
-        /// Delete all query rules corresponding to the display name
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule name.</param>
-        void DeleteQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName);
-
-        /// <summary>
-        /// Get all query rules matching the display name in the search level
-        /// </summary>
-        /// <param name="ssa">The search service.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule display name.</param>
-        /// <returns>A list of query rules</returns>
-        ICollection<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName);
 
         /// <summary>
         /// Create a change query action for a Query Rule
@@ -171,19 +178,6 @@ namespace GSoft.Dynamite.Search
         /// <param name="resultTypeRule">The result type rule metadata</param>
         /// <returns>The created property rule</returns>
         PropertyRule CreateCustomPropertyRule(ResultTypeRuleInfo resultTypeRule);
-
-        /// <summary>
-        /// Ensure a managed property in the search service application schema
-        /// </summary>
-        /// <param name="site">The context site</param>
-        /// <param name="managedPropertyInfo">The managed property info</param>
-        /// <returns>The managed property</returns>
-        ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
-
-        /// <summary>The delete managed property.</summary>
-        /// <param name="site">The site.</param>
-        /// <param name="managedPropertyInfo">The managed property info.</param>
-        void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo);
 
         /// <summary>
         /// Add faceted navigation refiners for a taxonomy term and its reuses

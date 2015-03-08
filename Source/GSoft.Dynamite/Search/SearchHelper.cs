@@ -177,6 +177,126 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
+        /// Ensure a managed property in the search service application schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        /// <returns>The managed property</returns>
+        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
+        {
+            ManagedProperty managedProperty = null;
+            var mappingCollection = new MappingCollection();
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+            var propertyName = managedPropertyInfo.Name;
+            var propertyType = managedPropertyInfo.DataType;
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            if (managedProperties.Contains(propertyName))
+            {
+                var prop = managedProperties[propertyName];
+                if (managedPropertyInfo.OverwriteIfAlreadyExists)
+                {
+                    if (prop.DeleteDisallowed)
+                    {
+                        this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
+                    }
+                    else
+                    {
+                        prop.DeleteAllMappings();
+                        prop.Delete();
+                        managedProperty = managedProperties.Create(propertyName, propertyType);
+                    }
+                }
+            }
+            else
+            {
+                managedProperty = managedProperties.Create(propertyName, propertyType);
+            }
+
+            if (managedProperty != null)
+            {
+                // Configure the managed property
+                managedProperty.Sortable = managedPropertyInfo.Sortable;
+                managedProperty.SortableType = managedPropertyInfo.SortableType;
+                managedProperty.Refinable = managedPropertyInfo.Refinable;
+                managedProperty.Retrievable = managedPropertyInfo.Retrievable;
+                managedProperty.RespectPriority = managedPropertyInfo.RespectPriority;
+                managedProperty.Queryable = managedPropertyInfo.Queryable;
+                managedProperty.Searchable = managedPropertyInfo.Searchable;
+                managedProperty.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
+                managedProperty.FullTextIndex = managedPropertyInfo.FullTextIndex;
+                managedProperty.Context = managedPropertyInfo.Context;
+                managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+
+                // Ensure crawl properties mappings
+                foreach (KeyValuePair<string, int> crawledProperty in managedPropertyInfo.CrawledProperties)
+                {
+                    // Get the crawled property
+                    var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
+
+                    if (cp != null)
+                    {
+                        // Create mapping information
+                        var mapping = new Mapping
+                        {
+                            CrawledPropertyName = cp.Name,
+                            CrawledPropset = cp.Propset,
+                            ManagedPid = managedProperty.PID,
+                            MappingOrder = crawledProperty.Value
+                        };
+
+                        if (!managedProperty.GetMappings().Contains(mapping))
+                        {
+                            mappingCollection.Add(mapping);
+                        }
+                        else
+                        {
+                            this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledProperty);
+                        }
+                    }
+                    else
+                    {
+                        this.logger.Info("Crawled property with name {0} not found!", crawledProperty);
+                    }
+                }
+
+                // Apply mappings to the managed property
+                if (mappingCollection.Count > 0)
+                {
+                    managedProperty.SetMappings(mappingCollection);
+                }
+
+                managedProperty.Update();
+            }
+
+            return managedProperty;
+        }
+
+        /// <summary>
+        /// Delete a managed property from the search schema
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="managedPropertyInfo">The managed property info</param>
+        public void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
+        {
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            if (managedProperties.Contains(managedPropertyInfo.Name))
+            {
+                var prop = managedProperties[managedPropertyInfo.Name];
+                prop.DeleteAllMappings();
+                prop.Delete();
+            }
+        }
+
+        /// <summary>
         /// Gets the result source by name using the default search service application
         /// </summary>
         /// <param name="resultSourceName">Name of the result source.</param>
@@ -319,29 +439,102 @@ namespace GSoft.Dynamite.Search
                 federationManager.RemoveSource(resultSource);
             }
         }
+        
+        /// <summary>
+        /// Get all query rules matching the display name in the search level
+        /// </summary>
+        /// <param name="contextSite">The current site collection.</param>
+        /// <param name="level">The search level.</param>
+        /// <param name="displayName">The query rule display name.</param>
+        /// <returns>A list of query rules</returns>
+        public ICollection<QueryRule> GetQueryRulesByName(SPSite contextSite, string displayName, SearchObjectLevel level)
+        {
+            var queryRules = new List<QueryRule>();
 
+            // Get all query rules for this level
+            var searchApp = this.GetDefaultSearchServiceApplication(contextSite);
+            var rules = GetQueryRules(searchApp, level, contextSite.RootWeb);
+
+            if (rules.Contains(displayName))
+            {
+                queryRules = rules[displayName].ToList();
+            }
+
+            return queryRules;
+        }
+        
         /// <summary>
         /// Creates a query rule object for the search level.
+        /// If the rule already exists, if may be overwritten, depending on
+        /// the QueryRuleInfo upgrade behavior definition (the OverwriteIfAlreadyExists
+        /// flag is true by default).
         /// </summary>
-        /// <param name="ssa">The search service application.</param>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="queryRuleMetadata">The query rule definition.</param>
         /// <param name="level">The search level object.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="isActive">True if the query is active. False otherwise.</param>
-        /// <param name="startDate">The query rule publishing start date.</param>
-        /// <param name="endDate">The query rule publishing end date.</param>
         /// <returns>The new query rule object.</returns>
-        public QueryRule CreateQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName, bool isActive, DateTime? startDate, DateTime? endDate)
+        public QueryRule EnsureQueryRule(SPSite site, QueryRuleInfo queryRuleMetadata, SearchObjectLevel level)
         {
-            var queryRuleManager = new QueryRuleManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
+            var searchApp = this.GetDefaultSearchServiceApplication(site);
+            var queryRuleManager = new QueryRuleManager(searchApp);
+            var searchOwner = new SearchObjectOwner(level, site.RootWeb);
 
             // Build the SearchObjectFilter
             var searchObjectFilter = new SearchObjectFilter(searchOwner);
 
-            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
+            QueryRuleCollection rules = queryRuleManager.GetQueryRules(searchObjectFilter);
 
-            return rules.CreateQueryRule(displayName, startDate, endDate, isActive);
+            QueryRule returnedRule = null;
+            var existingRule = rules.FirstOrDefault(r => r.DisplayName == queryRuleMetadata.DisplayName);
+
+            if (existingRule != null)
+            {
+                // Deal with upgrade behavior (delete and re-create or return existing)
+                if (queryRuleMetadata.OverwriteIfAlreadyExists)
+                {
+                    rules.RemoveQueryRule(existingRule);
+                    returnedRule = rules.CreateQueryRule(queryRuleMetadata.DisplayName, queryRuleMetadata.StartDate, queryRuleMetadata.EndDate, queryRuleMetadata.IsActive);
+                }
+                else
+                {
+                    returnedRule = existingRule;
+                }
+            }
+            else
+            {
+                // None exist already with that display name, create it
+                returnedRule = rules.CreateQueryRule(queryRuleMetadata.DisplayName, queryRuleMetadata.StartDate, queryRuleMetadata.EndDate, queryRuleMetadata.IsActive);
+            }
+
+            return returnedRule;
+        }
+        
+        /// <summary>
+        /// Delete all query rules corresponding to the display name
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="displayName">The query rule name.</param>
+        /// <param name="level">The search level.</param>
+        public void DeleteQueryRule(SPSite site, string displayName, SearchObjectLevel level)
+        {
+            // Get all query rules for this level
+            var searchApp = this.GetDefaultSearchServiceApplication(site);
+            var rules = GetQueryRules(searchApp, level, site.RootWeb);
+
+            var queryRuleCollection = new List<QueryRule>();
+
+            if (rules.Contains(displayName))
+            {
+                queryRuleCollection = rules[displayName].ToList();
+            }
+
+            if (queryRuleCollection.Count > 0)
+            {
+                foreach (var queryRule in queryRuleCollection)
+                {
+                    rules.RemoveQueryRule(queryRule);
+                }
+            }
         }
 
         /// <summary>
@@ -380,126 +573,6 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Ensure a managed property in the search service application schema
-        /// </summary>
-        /// <param name="site">The context site</param>
-        /// <param name="managedPropertyInfo">The managed property info</param>
-        /// <returns>The managed property</returns>
-        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
-        {
-            ManagedProperty managedProperty = null;
-            var mappingCollection = new MappingCollection();
-            var ssa = this.GetDefaultSearchServiceApplication(site);
-            var propertyName = managedPropertyInfo.Name;
-            var propertyType = managedPropertyInfo.DataType;
-
-            // Get the search schema
-            var sspSchema = new Schema(ssa);
-            var managedProperties = sspSchema.AllManagedProperties;
-
-            if (managedProperties.Contains(propertyName))
-            {
-                var prop = managedProperties[propertyName];
-                if (managedPropertyInfo.OverwriteIfAlreadyExists)
-                {
-                    if (prop.DeleteDisallowed)
-                    {
-                        this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
-                    }
-                    else
-                    {
-                        prop.DeleteAllMappings();
-                        prop.Delete();
-                        managedProperty = managedProperties.Create(propertyName, propertyType);
-                    }
-                }           
-            }
-            else
-            {
-                managedProperty = managedProperties.Create(propertyName, propertyType);               
-            }
-
-            if (managedProperty != null)
-            {
-                // Configure the managed property
-                managedProperty.Sortable = managedPropertyInfo.Sortable;
-                managedProperty.SortableType = managedPropertyInfo.SortableType;
-                managedProperty.Refinable = managedPropertyInfo.Refinable;
-                managedProperty.Retrievable = managedPropertyInfo.Retrievable;
-                managedProperty.RespectPriority = managedPropertyInfo.RespectPriority;
-                managedProperty.Queryable = managedPropertyInfo.Queryable;
-                managedProperty.Searchable = managedPropertyInfo.Searchable;
-                managedProperty.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
-                managedProperty.FullTextIndex = managedPropertyInfo.FullTextIndex;
-                managedProperty.Context = managedPropertyInfo.Context;
-                managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
-
-                // Ensure crawl properties mappings
-                foreach (KeyValuePair<string, int> crawledProperty in managedPropertyInfo.CrawledProperties)
-                {
-                    // Get the crawled property
-                    var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
-                    
-                    if (cp != null)
-                    {
-                        // Create mapping information
-                        var mapping = new Mapping
-                        {
-                            CrawledPropertyName = cp.Name,
-                            CrawledPropset = cp.Propset,
-                            ManagedPid = managedProperty.PID,
-                            MappingOrder = crawledProperty.Value
-                        };
-
-                        if (!managedProperty.GetMappings().Contains(mapping))
-                        {
-                            mappingCollection.Add(mapping);
-                        }
-                        else
-                        {
-                            this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledProperty);
-                        }
-                    }
-                    else
-                    {
-                        this.logger.Info("Crawled property with name {0} not found!", crawledProperty);
-                    }
-                }
-
-                // Apply mappings to the managed property
-                if (mappingCollection.Count > 0)
-                {
-                    managedProperty.SetMappings(mappingCollection);
-                }
-
-                managedProperty.Update();
-            }
-
-            return managedProperty;
-        }
-
-        /// <summary>
-        /// Delete a managed property from the search schema
-        /// </summary>
-        /// <param name="site">The context site</param>
-        /// <param name="managedPropertyInfo">The managed property info</param>
-        public void DeleteManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
-        {
-            var ssa = this.GetDefaultSearchServiceApplication(site);
-
-            // Get the search schema
-            var sspSchema = new Schema(ssa);
-            var managedProperties = sspSchema.AllManagedProperties;
-
-            if (managedProperties.Contains(managedPropertyInfo.Name))
-            {
-                var prop = managedProperties[managedPropertyInfo.Name];
-                prop.DeleteAllMappings();
-                prop.Delete();
-            }
-        }
-
-        /// <summary>
         /// Get a crawled property by name
         /// </summary>
         /// <param name="site">The context site</param>
@@ -527,57 +600,6 @@ namespace GSoft.Dynamite.Search
             }
 
             return crawledProperty;
-        }
-
-        /// <summary>
-        /// Delete all query rules corresponding to the display name
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule name.</param>
-        public void DeleteQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
-        {
-            // Get all query rules for this level
-            var rules = GetQueryRules(ssa, level, contextWeb);
-
-            var queryRuleCollection = new List<QueryRule>();
-
-            if (rules.Contains(displayName))
-            {
-                queryRuleCollection = rules[displayName].ToList();
-            }
-
-            if (queryRuleCollection.Count > 0)
-            {
-                foreach (var queryRule in queryRuleCollection)
-                {
-                    rules.RemoveQueryRule(queryRule);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get all query rules matching the display name in the search level
-        /// </summary>
-        /// <param name="ssa">The search service.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule display name.</param>
-        /// <returns>A list of query rules</returns>
-        public ICollection<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
-        {
-            var queryRules = new List<QueryRule>();
-
-            // Get all query rules for this level
-            var rules = GetQueryRules(ssa, level, contextWeb);
-
-            if (rules.Contains(displayName))
-            {
-                queryRules = rules[displayName].ToList();
-            }
-
-            return queryRules;
         }
 
         /// <summary>
