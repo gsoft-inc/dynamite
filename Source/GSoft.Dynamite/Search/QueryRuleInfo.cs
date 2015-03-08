@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace GSoft.Dynamite.Search
 {
+    /// <summary>
+    /// Query rule definition
+    /// </summary>
     public class QueryRuleInfo
     {
         /// <summary>
         /// Creates a new query rule definition
         /// </summary>
         /// <param name="displayName">Display name</param>
-        /// <param name="isActive"></param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
         public QueryRuleInfo(string displayName)
         {
             this.DisplayName = displayName;
             this.IsActive = true;
             this.StartDate = null;
             this.EndDate = null;
-            this.OverwriteIfAlreadyExists = true;
+            this.OverwriteIfAlreadyExists = false;
         }
 
         /// <summary>
@@ -45,7 +45,10 @@ namespace GSoft.Dynamite.Search
         public DateTime? EndDate { get; set; }
 
         /// <summary>
-        /// Defines the upgrade behavior of this query rule definition
+        /// Defines the upgrade behavior of this query rule definition.
+        /// False by default to protect user customizations.
+        /// Set to true to force re-creation of query rule when you use
+        /// SearchHelper.EnsureQueryRule.
         /// </summary>
         public bool OverwriteIfAlreadyExists { get; set; }
     }

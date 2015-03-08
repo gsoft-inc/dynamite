@@ -78,8 +78,8 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Gets the result source by name using the default search service application
         /// </summary>
-        /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="site">The site collection.</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="scopeOwnerLevel">The level of the scope's owner.</param>
         /// <returns>
         /// The corresponding result source.
@@ -101,7 +101,6 @@ namespace GSoft.Dynamite.Search
         /// Deletes the result source.
         /// </summary>
         /// <param name="contextSite">Current site collection.</param>
-        /// <param name="ssa">The search service application.</param>
         /// <param name="resultSourceName">Name of the result source.</param>
         /// <param name="level">The level.</param>
         void DeleteResultSource(SPSite contextSite, string resultSourceName, SearchObjectLevel level);
@@ -110,8 +109,8 @@ namespace GSoft.Dynamite.Search
         /// Get all query rules matching the display name in the search level
         /// </summary>
         /// <param name="contextSite">The current site collection.</param>
-        /// <param name="level">The search level.</param>
         /// <param name="displayName">The query rule display name.</param>
+        /// <param name="level">The search level.</param>
         /// <returns>A list of query rules</returns>
         ICollection<QueryRule> GetQueryRulesByName(SPSite contextSite, string displayName, SearchObjectLevel level);
 
