@@ -101,7 +101,10 @@
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
+    <Compile Include="Search\QueryRuleHelper.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />

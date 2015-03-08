@@ -199,6 +199,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Search
             builder.RegisterType<SearchHelper>().As<ISearchHelper>();
+            builder.RegisterType<QueryRuleHelper>().As<IQueryRuleHelper>();
 
             // Security
             builder.RegisterType<SecurityHelper>().As<ISecurityHelper>();
