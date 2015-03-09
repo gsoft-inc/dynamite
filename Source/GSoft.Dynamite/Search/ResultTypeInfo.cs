@@ -35,7 +35,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Name of the result type
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Whether the result type is optimized for frequent use
@@ -50,12 +50,12 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Associated display template metadata
         /// </summary>
-        public DisplayTemplateInfo DisplayTemplate { get; private set; }
+        public DisplayTemplateInfo DisplayTemplate { get; set; }
 
         /// <summary>
         /// Associated result source metadata
         /// </summary>
-        public ResultSourceInfo ResultSource { get; private set; }
+        public ResultSourceInfo ResultSource { get; set; }
 
         /// <summary>
         /// The type's rules

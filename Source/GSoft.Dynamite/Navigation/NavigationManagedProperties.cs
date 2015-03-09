@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
+using Newtonsoft.Json;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -46,12 +47,54 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// The Catalog Item Content Type Id 
         /// </summary>
+        [JsonIgnore]
         public SPContentTypeId CatalogItemContentTypeId { get; set; }
+
+        /// <summary>
+        /// String representation of the catalog item content type ID,
+        /// convenient for serialization/deserialization.
+        /// </summary>
+        public string CatalogItemContentTypeIdAsString
+        {
+            get
+            {
+                return this.CatalogItemContentTypeId.ToString();
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    this.CatalogItemContentTypeId = new SPContentTypeId(value);
+                }
+            }
+        }
 
         /// <summary>
         /// The Catalog Item Content Type Id 
         /// </summary>
+        [JsonIgnore]
         public SPContentTypeId TargetItemContentTypeId { get; set; }
+
+        /// <summary>
+        /// String representation of the target item content type ID,
+        /// convenient for serialization/deserialization.
+        /// </summary>
+        public string TargetItemContentTypeIdAsString
+        {
+            get
+            {
+                return this.TargetItemContentTypeId.ToString();
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    this.TargetItemContentTypeId = new SPContentTypeId(value);
+                }
+            }
+        }
 
         /// <summary>
         /// The list of query properties 

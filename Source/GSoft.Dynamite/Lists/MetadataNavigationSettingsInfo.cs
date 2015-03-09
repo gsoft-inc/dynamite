@@ -59,17 +59,17 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// The associated list
         /// </summary>
-        public ListInfo List { get; private set; }
+        public ListInfo List { get; set; }
 
         /// <summary>
         /// Fields internal names act as key filters
         /// </summary>
-        public IList<string> KeyFilters { get; private set; }
+        public IList<string> KeyFilters { get; set; }
 
         /// <summary>
         /// Treeview hierachies to add based on fields internal names
         /// </summary>
-        public IList<string> Hierarchies { get; private set; }
+        public IList<string> Hierarchies { get; set; }
 
         /// <summary>
         /// True to view the folder hierachy in the treeview. False otherwise

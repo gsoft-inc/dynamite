@@ -7,10 +7,17 @@ using System.Threading.Tasks;
 namespace GSoft.Dynamite.Lists
 {
     /// <summary>
-    /// Class ton store a list template ID and its related feature ID
+    /// Class to store a list template ID and its related feature ID
     /// </summary>
     public class ListTemplateInfo
     {
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public ListTemplateInfo()
+        {
+        }
+
         /// <summary>
         /// List Template constructor
         /// </summary>

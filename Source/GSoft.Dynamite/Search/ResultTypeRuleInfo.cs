@@ -9,6 +9,13 @@ namespace GSoft.Dynamite.Search
     public class ResultTypeRuleInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public ResultTypeRuleInfo()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new result type rule
         /// </summary>
         /// <param name="property">Managed property metadata</param>
@@ -24,16 +31,16 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The managed property name
         /// </summary>
-        public string PropertyName { get; private set; }
+        public string PropertyName { get; set; }
 
         /// <summary>
         /// The operator
         /// </summary>
-        public PropertyRuleOperator.DefaultOperator Operator { get; private set; }
+        public PropertyRuleOperator.DefaultOperator Operator { get; set; }
 
         /// <summary>
         /// The associated values
         /// </summary>
-        public ICollection<string> Values { get; private set; }   
+        public ICollection<string> Values { get; set; }   
     }
 }

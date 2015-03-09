@@ -9,6 +9,13 @@ namespace GSoft.Dynamite.Search
     public class FacetedNavigationInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public FacetedNavigationInfo()
+        {
+        }
+
+        /// <summary>
         /// Creates a new FacetedNavigationInfo object
         /// </summary>
         /// <param name="term">The term information</param>
@@ -22,11 +29,11 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The taxonomy term
         /// </summary>
-        public TermInfo Term { get; private set; }
+        public TermInfo Term { get; set; }
 
         /// <summary>
         /// The refiners list
         /// </summary>
-        public IList<RefinerInfo> Refiners { get; private set; } 
+        public IList<RefinerInfo> Refiners { get; set; } 
     }
 }

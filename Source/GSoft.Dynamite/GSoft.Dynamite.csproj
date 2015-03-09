@@ -93,6 +93,7 @@
     <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="Branding\DisplayTemplateCategory.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Events\EventReceiverOwner.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
     <Compile Include="Features\FeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyActivator.cs" />
