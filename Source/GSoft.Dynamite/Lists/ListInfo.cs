@@ -24,8 +24,8 @@ namespace GSoft.Dynamite.Lists
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
             this.ContentTypes = new List<ContentTypeInfo>();
-            this.DefaultViewFields = new List<IFieldInfo>();
-            this.FieldDefinitions = new List<IFieldInfo>();
+            this.DefaultViewFields = new List<BaseFieldInfo>();
+            this.FieldDefinitions = new List<BaseFieldInfo>();
         }
 
         /// <summary>
@@ -46,8 +46,8 @@ namespace GSoft.Dynamite.Lists
             this.EnableAttachements = true;
 
             this.ContentTypes = new List<ContentTypeInfo>();
-            this.DefaultViewFields = new List<IFieldInfo>();
-            this.FieldDefinitions = new List<IFieldInfo>();
+            this.DefaultViewFields = new List<BaseFieldInfo>();
+            this.FieldDefinitions = new List<BaseFieldInfo>();
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace GSoft.Dynamite.Lists
         /// The default view fields for the list
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
-        public ICollection<IFieldInfo> DefaultViewFields { get; set; }
+        public ICollection<BaseFieldInfo> DefaultViewFields { get; set; }
 
         /// <summary>
         /// List field definitions. Use to override site column definitions that come from ContentTypeInfo.
@@ -166,6 +166,6 @@ namespace GSoft.Dynamite.Lists
         /// your custom list.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
-        public ICollection<IFieldInfo> FieldDefinitions { get; set; }
+        public ICollection<BaseFieldInfo> FieldDefinitions { get; set; }
     }
 }

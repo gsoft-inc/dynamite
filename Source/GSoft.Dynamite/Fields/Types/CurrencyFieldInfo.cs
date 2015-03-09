@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a CurrencyFieldInfo info
     /// </summary>
-    public class CurrencyFieldInfo : FieldInfo<double?>
+    public class CurrencyFieldInfo : BaseFieldInfoWithValueType<double?>
     {
         /// <summary>
         /// Initializes a new CurrencyFieldInfo

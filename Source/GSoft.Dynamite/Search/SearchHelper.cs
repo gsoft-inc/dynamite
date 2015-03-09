@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Search.Enums;
 using GSoft.Dynamite.Taxonomy;
+using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
@@ -22,9 +25,6 @@ using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 
 namespace GSoft.Dynamite.Search
 {
-    using System.Globalization;
-    using GSoft.Dynamite.Utils;
-
     /// <summary>
     /// Search service utilities
     /// </summary>
@@ -42,6 +42,49 @@ namespace GSoft.Dynamite.Search
         {
             this.logger = logger;
             this.taxonomyService = taxonomyService;
+        }
+
+        /// <summary>
+        /// Gets the default search service application from a site.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The search service application.</returns>
+        public SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site)
+        {
+            var context = SPServiceContext.GetContext(site);
+
+            // Get the search service application proxy
+            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
+
+            // Get the search service application info object so we can find the Id of our Search Service App
+            if (searchProxy != null)
+            {
+                var applicationInfo = searchProxy.GetSearchServiceApplicationInfo();
+
+                // Get the application itself
+                return SearchService.Service.SearchApplications.GetValue<SearchServiceApplication>(applicationInfo.SearchServiceApplicationId);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Get the service application by its name
+        /// </summary>
+        /// <param name="appName">Name of the application.</param>
+        /// <returns>
+        /// The search service application.
+        /// </returns>
+        public SearchServiceApplication GetSearchServiceApplicationByName(string appName)
+        {
+            var searchService = new SearchService("OSearch15", SPFarm.Local);
+            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
+                                    where sapp.GetSearchApplicationDisplayName() == appName
+                                    select sapp;
+
+            var serviceApp = searchApplication.First();
+
+            return serviceApp;
         }
 
         /// <summary>
@@ -135,280 +178,12 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Gets the result source by name using the default application name:\"Search Service Application\".
-        /// </summary>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="site">The site collection.</param>
-        /// <param name="owner">The owner.</param>
-        /// <returns>
-        /// The corresponding result source.
-        /// </returns>
-        public SourceRecord GetResultSourceByName(string resultSourceName, SPSite site, SearchObjectLevel owner)
-        {
-            var serviceApplicationOwner = new SearchObjectOwner(owner);
-
-            var context = SPServiceContext.GetContext(site);
-            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
-
-            return searchProxy.GetResultSourceByName(resultSourceName, serviceApplicationOwner);
-        }
-
-        /// <summary>
-        /// Ensure a result source
-        /// </summary>
-        /// <param name="contextSite">The context SPSite object</param>
-        /// <param name="resultSourceInfo">The result source configuration object</param>
-        /// <returns>The name of the result source</returns>
-        public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
-        {
-            Source resultSource = null;
-            var updateMode = resultSourceInfo.UpdateMode;
-
-            var sortCollection = new SortCollection();
-
-            if (resultSourceInfo.SortSettings != null)
-            {            
-                foreach (KeyValuePair<string, SortDirection> sortSetting in resultSourceInfo.SortSettings)
-                {
-                    sortCollection.Add(sortSetting.Key, sortSetting.Value);
-                }
-            }
-
-            var queryProperties = new QueryTransformProperties();
-            queryProperties["SortList"] = sortCollection;
-
-            // Get the search service application for the current site
-            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
-            if (searchServiceApplication != null)
-            {
-                if (updateMode.Equals(UpdateBehavior.OverwriteResultSource))
-                {
-                    resultSource = InnerEnsureResultSource(
-                        searchServiceApplication, 
-                        resultSourceInfo.Name, 
-                        resultSourceInfo.Level, 
-                        resultSourceInfo.SearchProvider, 
-                        contextSite.RootWeb, 
-                        resultSourceInfo.Query,
-                        queryProperties, 
-                        true, 
-                        resultSourceInfo.IsDefaultResultSourceForOwner);
-                }
-                else
-                {
-                    resultSource = InnerEnsureResultSource(
-                        searchServiceApplication, 
-                        resultSourceInfo.Name, 
-                        resultSourceInfo.Level, 
-                        resultSourceInfo.SearchProvider, 
-                        contextSite.RootWeb, 
-                        resultSourceInfo.Query,
-                        queryProperties, 
-                        false, 
-                        resultSourceInfo.IsDefaultResultSourceForOwner);
-
-                    string searchQuery = string.Empty;
-
-                    if (updateMode.Equals(UpdateBehavior.OverwriteQuery))
-                    {
-                        searchQuery = resultSourceInfo.Query;
-                    }
-
-                    if (updateMode.Equals(UpdateBehavior.AppendToQuery))
-                    {
-                        if (resultSource.QueryTransform != null)
-                        {
-                            var rgx = new Regex(resultSourceInfo.Query);
-                            if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
-                            {
-                                searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
-                            }
-                        }
-                        else
-                        {
-                            searchQuery = resultSourceInfo.Query;
-                        }
-                    }
-
-                    if (updateMode.Equals(UpdateBehavior.RevertQuery))
-                    {
-                        if (resultSource.QueryTransform != null)
-                        {
-                            var rgx = new Regex(resultSourceInfo.Query);
-                            searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
-                        }
-                    }
-
-                    resultSource.CreateQueryTransform(queryProperties, searchQuery);
-                    resultSource.Commit();
-                }
-            }
-
-            return resultSource;
-        }
-
-        /// <summary>
-        /// Get a result source object by name
-        /// </summary>
-        /// <param name="ssa">The search service application</param>
-        /// <param name="resultSourceName">The result source name</param>
-        /// <param name="level">The search object level</param>
-        /// <param name="contextWeb">The web context</param>
-        /// <returns>The source object</returns>
-        public Source GetResultSourceByName(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var federationManager = new FederationManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-
-            return resultSource;
-        }
-        
-        /// <summary>
-        /// Get the service application by its name
-        /// </summary>
-        /// <param name="appName">Name of the application.</param>
-        /// <returns>
-        /// The search service application.
-        /// </returns>
-        public SearchServiceApplication GetDefaultSearchServiceApplication(string appName)
-        {
-            var searchService = new SearchService("OSearch15", SPFarm.Local);
-            var searchApplication = from SearchServiceApplication sapp in searchService.SearchApplications
-                                    where sapp.GetSearchApplicationDisplayName() == appName
-                                    select sapp;
-
-            var serviceApp = searchApplication.First();
-
-            return serviceApp;
-        }
-
-        /// <summary>
-        /// Gets the default search service application from a site.
-        /// </summary>
-        /// <param name="site">The site.</param>
-        /// <returns>The search service application.</returns>
-        public SearchServiceApplication GetDefaultSearchServiceApplication(SPSite site)
-        {
-            var context = SPServiceContext.GetContext(site);
-
-            // Get the search service application proxy
-            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
-
-            // Get the search service application info object so we can find the Id of our Search Service App
-            if (searchProxy != null)
-            {
-                var applicationInfo = searchProxy.GetSearchServiceApplicationInfo();
-
-                // Get the application itself
-                return SearchService.Service.SearchApplications.GetValue<SearchServiceApplication>(applicationInfo.SearchServiceApplicationId);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Deletes the result source.
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="resultSourceName">Name of the result source.</param>
-        /// <param name="level">The level.</param>
-        /// <param name="contextWeb">The context web.</param>
-        public void DeleteResultSource(SearchServiceApplication ssa, string resultSourceName, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var federationManager = new FederationManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
-            if (resultSource != null)
-            {
-                federationManager.RemoveSource(resultSource);
-            }
-        }
-
-        /// <summary>
-        /// Delete a result source
-        /// </summary>
-        /// <param name="contextSite">The context site collection</param>
-        /// <param name="resultSourceInfo">The result source info object</param>
-        public void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
-        {
-            // Get the search service application for the current site
-            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
-            if (searchServiceApplication != null)
-            {
-                this.DeleteResultSource(searchServiceApplication, resultSourceInfo.Name, resultSourceInfo.Level, contextSite.RootWeb);
-            }
-        }
-
-        /// <summary>
-        /// Creates a query rule object for the search level.
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="level">The search level object.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The display name.</param>
-        /// <param name="isActive">True if the query is active. False otherwise.</param>
-        /// <param name="startDate">The query rule publishing start date.</param>
-        /// <param name="endDate">The query rule publishing end date.</param>
-        /// <returns>The new query rule object.</returns>
-        public QueryRule CreateQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName, bool isActive, DateTime? startDate, DateTime? endDate)
-        {
-            var queryRuleManager = new QueryRuleManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            // Build the SearchObjectFilter
-            var searchObjectFilter = new SearchObjectFilter(searchOwner);
-
-            var rules = queryRuleManager.GetQueryRules(searchObjectFilter);
-
-            return rules.CreateQueryRule(displayName, startDate, endDate, isActive);
-        }
-
-        /// <summary>
-        /// Ensure a search best bet
-        /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="title">The title of the best bet.</param>
-        /// <param name="url">The url of the best bet.</param>
-        /// <param name="description">The description of the best bet.</param>
-        /// <param name="isVisualBestBet">True if it is a visual best bet. False otherwise.</param>
-        /// <param name="deleteIfUnused">True if must be deleted if unused. False otherwise.</param>
-        /// <returns>The best bet object.</returns>
-        public Microsoft.Office.Server.Search.Query.Rules.BestBet EnsureBestBet(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string title, Uri url, string description, bool isVisualBestBet, bool deleteIfUnused)
-        {
-            Microsoft.Office.Server.Search.Query.Rules.BestBet bestBet = null;
-            var queryRuleManager = new QueryRuleManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            // Build the SearchObjectFilter
-            var searchObjectFilter = new SearchObjectFilter(searchOwner);
-
-            var bestBets = queryRuleManager.GetBestBets(searchObjectFilter);
-
-            if (!bestBets.Contains(url))
-            {
-                bestBet = bestBets.CreateBestBet(title, url, description, isVisualBestBet, deleteIfUnused);
-            }
-            else
-            {
-                bestBet = bestBets[url];
-            }
-
-            return bestBet;
-        }
-
-        /// <summary>
         /// Ensure a managed property in the search service application schema
         /// </summary>
         /// <param name="site">The context site</param>
         /// <param name="managedPropertyInfo">The managed property info</param>
-        /// <param name="overwrite">True to overwrite.False otherwise</param>
         /// <returns>The managed property</returns>
-        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo, bool overwrite)
+        public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
         {
             ManagedProperty managedProperty = null;
             var mappingCollection = new MappingCollection();
@@ -423,7 +198,7 @@ namespace GSoft.Dynamite.Search
             if (managedProperties.Contains(propertyName))
             {
                 var prop = managedProperties[propertyName];
-                if (overwrite)
+                if (managedPropertyInfo.OverwriteIfAlreadyExists)
                 {
                     if (prop.DeleteDisallowed)
                     {
@@ -435,11 +210,11 @@ namespace GSoft.Dynamite.Search
                         prop.Delete();
                         managedProperty = managedProperties.Create(propertyName, propertyType);
                     }
-                }           
+                }
             }
             else
             {
-                managedProperty = managedProperties.Create(propertyName, propertyType);               
+                managedProperty = managedProperties.Create(propertyName, propertyType);
             }
 
             if (managedProperty != null)
@@ -462,7 +237,7 @@ namespace GSoft.Dynamite.Search
                 {
                     // Get the crawled property
                     var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
-                    
+
                     if (cp != null)
                     {
                         // Create mapping information
@@ -523,155 +298,146 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Get a crawled property by name
+        /// Gets the result source by name using the default search service application
         /// </summary>
-        /// <param name="site">The context site</param>
-        /// <param name="crawledPropertyName">The crawl property name</param>
-        /// <returns>The crawled property</returns>
-        public CrawledProperty GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
+        /// <param name="site">The site collection.</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="scopeOwnerLevel">The level of the scope's owner.</param>
+        /// <returns>
+        /// The corresponding result source.
+        /// </returns>
+        public ISource GetResultSourceByName(SPSite site, string resultSourceName, SearchObjectLevel scopeOwnerLevel)
         {
-            CrawledProperty crawledProperty = null;
+            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel);
 
-            var ssa = this.GetDefaultSearchServiceApplication(site);
-            
-            // Get the search schema
-            var sspSchema = new Schema(ssa);
+            var context = SPServiceContext.GetContext(site);
+            var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
 
-            // Search in all categories
-            foreach (var category in sspSchema.AllCategories)
-            {
-                foreach (var property in category.GetAllCrawledProperties())
+            return searchProxy.GetResultSourceByName(resultSourceName, serviceApplicationOwner);
+        }
+
+        /// <summary>
+        /// Ensure a result source
+        /// </summary>
+        /// <param name="contextSite">The context SPSite object</param>
+        /// <param name="resultSourceInfo">The result source configuration object</param>
+        /// <returns>The name of the result source</returns>
+        public Source EnsureResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
+        {
+            Source resultSource = null;
+            var updateMode = resultSourceInfo.UpdateMode;
+
+            var sortCollection = new SortCollection();
+
+            if (resultSourceInfo.SortSettings != null)
+            {            
+                foreach (KeyValuePair<string, SortDirection> sortSetting in resultSourceInfo.SortSettings)
                 {
-                    if (string.CompareOrdinal(property.Name, crawledPropertyName) == 0)
+                    sortCollection.Add(sortSetting.Key, sortSetting.Value);
+                }
+            }
+
+            var queryProperties = new QueryTransformProperties();
+            queryProperties["SortList"] = sortCollection;
+
+            // Get the search service application for the current site
+            var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
+            if (searchServiceApplication != null)
+            {
+                if (updateMode.Equals(ResultSourceUpdateBehavior.OverwriteResultSource))
+                {
+                    resultSource = InnerEnsureResultSource(
+                        searchServiceApplication, 
+                        resultSourceInfo.Name, 
+                        resultSourceInfo.Level, 
+                        resultSourceInfo.SearchProvider, 
+                        contextSite.RootWeb, 
+                        resultSourceInfo.Query,
+                        queryProperties, 
+                        true, 
+                        resultSourceInfo.IsDefaultResultSourceForOwner);
+                }
+                else
+                {
+                    resultSource = InnerEnsureResultSource(
+                        searchServiceApplication, 
+                        resultSourceInfo.Name, 
+                        resultSourceInfo.Level, 
+                        resultSourceInfo.SearchProvider, 
+                        contextSite.RootWeb, 
+                        resultSourceInfo.Query,
+                        queryProperties, 
+                        false, 
+                        resultSourceInfo.IsDefaultResultSourceForOwner);
+
+                    string searchQuery = string.Empty;
+
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.OverwriteQuery))
                     {
-                        crawledProperty = property;
+                        searchQuery = resultSourceInfo.Query;
                     }
+
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.AppendToQuery))
+                    {
+                        if (resultSource.QueryTransform != null)
+                        {
+                            var rgx = new Regex(resultSourceInfo.Query);
+                            if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
+                            {
+                                searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
+                            }
+                        }
+                        else
+                        {
+                            searchQuery = resultSourceInfo.Query;
+                        }
+                    }
+
+                    if (updateMode.Equals(ResultSourceUpdateBehavior.RevertQuery))
+                    {
+                        if (resultSource.QueryTransform != null)
+                        {
+                            var rgx = new Regex(resultSourceInfo.Query);
+                            searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
+                        }
+                    }
+
+                    resultSource.CreateQueryTransform(queryProperties, searchQuery);
+                    resultSource.Commit();
                 }
             }
 
-            return crawledProperty;
+            return resultSource;
         }
 
         /// <summary>
-        /// Delete all query rules corresponding to the display name
+        /// Delete a result source
         /// </summary>
-        /// <param name="ssa">The search service application.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule name.</param>
-        public void DeleteQueryRule(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
+        /// <param name="contextSite">The context site collection</param>
+        /// <param name="resultSourceInfo">The result source info object</param>
+        public void DeleteResultSource(SPSite contextSite, ResultSourceInfo resultSourceInfo)
         {
-            // Get all query rules for this level
-            var rules = GetQueryRules(ssa, level, contextWeb);
-
-            var queryRuleCollection = new List<QueryRule>();
-
-            if (rules.Contains(displayName))
-            {
-                queryRuleCollection = rules[displayName].ToList();
-            }
-
-            if (queryRuleCollection.Count > 0)
-            {
-                foreach (var queryRule in queryRuleCollection)
-                {
-                    rules.RemoveQueryRule(queryRule);
-                }
-            }
+            // Get the search service application for the current site
+            this.DeleteResultSource(contextSite, resultSourceInfo.Name, resultSourceInfo.Level);
         }
 
         /// <summary>
-        /// Get all query rules matching the display name in the search level
+        /// Deletes the result source.
         /// </summary>
-        /// <param name="ssa">The search service.</param>
-        /// <param name="level">The search level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <param name="displayName">The query rule display name.</param>
-        /// <returns>A list of query rules</returns>
-        public ICollection<QueryRule> GetQueryRulesByName(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb, string displayName)
+        /// <param name="contextSite">Current site collection</param>
+        /// <param name="resultSourceName">Name of the result source.</param>
+        /// <param name="level">The level.</param>
+        public void DeleteResultSource(SPSite contextSite, string resultSourceName, SearchObjectLevel level)
         {
-            var queryRules = new List<QueryRule>();
+            var searchApp = this.GetDefaultSearchServiceApplication(contextSite);
+            var federationManager = new FederationManager(searchApp);
+            var searchOwner = new SearchObjectOwner(level, contextSite.RootWeb);
 
-            // Get all query rules for this level
-            var rules = GetQueryRules(ssa, level, contextWeb);
-
-            if (rules.Contains(displayName))
+            var resultSource = federationManager.GetSourceByName(resultSourceName, searchOwner);
+            if (resultSource != null)
             {
-                queryRules = rules[displayName].ToList();
+                federationManager.RemoveSource(resultSource);
             }
-
-            return queryRules;
-        }
-
-        /// <summary>
-        /// Create a change query action for a Query Rule
-        /// </summary>
-        /// <param name="rule">The query rule object</param>
-        /// <param name="queryTemplate">The search query template in KQL format</param>
-        /// <param name="resultSourceId">The search result source Id</param>
-        public void CreateChangeQueryAction(QueryRule rule, string queryTemplate, Guid resultSourceId)
-        {
-            var queryAction = (ChangeQueryAction)rule.CreateQueryAction(QueryActionType.ChangeQuery);
-
-            if (!string.IsNullOrEmpty(queryTemplate))
-            {
-                queryAction.QueryTransform.QueryTemplate = queryTemplate;
-            }
-
-            queryAction.QueryTransform.SourceId = resultSourceId;
-
-            rule.Update();
-        }
-
-        /// <summary>
-        /// Create a result block query action for a Query Rule
-        /// </summary>
-        /// <param name="rule">The query rule object</param>
-        /// <param name="blockTitle">The result block Title</param>
-        /// <param name="queryTemplate">The search query template in KQL format</param>
-        /// <param name="resultSourceId">The search result source Id</param>
-        /// <param name="routingLabel">A routing label for a content search WebPart</param>
-        /// <param name="numberOfItems">The number of result to retrieve</param>
-        public void CreateResultBlockAction(QueryRule rule, string blockTitle, string queryTemplate, Guid resultSourceId, string routingLabel, string numberOfItems)
-        {
-            var queryAction = (CreateResultBlockAction)rule.CreateQueryAction(QueryActionType.CreateResultBlock);
-
-            queryAction.ResultTitle.DefaultLanguageString = blockTitle;
-
-            if (!string.IsNullOrEmpty(queryTemplate))
-            {
-                queryAction.QueryTransform.QueryTemplate = queryTemplate;
-            }
-
-            queryAction.QueryTransform.SourceId = resultSourceId;
-
-            if (!string.IsNullOrEmpty(routingLabel))
-            {
-                queryAction.ResultTableType = routingLabel;
-            }
-
-            if (!string.IsNullOrEmpty(numberOfItems))
-            {
-                queryAction.QueryTransform.OverrideProperties = new QueryTransformProperties();
-                queryAction.QueryTransform.OverrideProperties["RowLimit"] = int.Parse(numberOfItems, CultureInfo.InvariantCulture);
-                queryAction.QueryTransform.OverrideProperties["TotalRowsExactMinimum"] = int.Parse(numberOfItems, CultureInfo.InvariantCulture);
-            }
-
-            rule.Update();
-        }
-
-        /// <summary>
-        /// Create a promoted link action for a a query rule
-        /// </summary>
-        /// <param name="rule">The query rule object</param>
-        /// <param name="bestBetId">The bestBetIds</param>
-        public void CreatePromotedResultAction(QueryRule rule, Guid bestBetId)
-        {
-            var queryAction = (AssignBestBetsAction)rule.CreateQueryAction(QueryActionType.AssignBestBet);
-
-            queryAction.BestBetIds.Add(bestBetId);
-
-            rule.Update();
         }
 
         /// <summary>
@@ -686,7 +452,7 @@ namespace GSoft.Dynamite.Search
 
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
-            var resultSource = this.GetResultSourceByName(ssa, resultType.ResultSource.Name, resultType.ResultSource.Level, site.RootWeb);
+            var resultSource = this.GetResultSourceByName(site, resultType.ResultSource.Name, resultType.ResultSource.Level);
 
             var resultTypeManager = new ResultItemTypeManager(this.GetDefaultSearchServiceApplication(site));
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
@@ -761,6 +527,7 @@ namespace GSoft.Dynamite.Search
             {
                 PropertyValues = new List<string>(resultTypeRule.Values)
             };
+
             return rule;
         }
 
@@ -850,21 +617,6 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Get all query rules for a search level.
-        /// </summary>
-        /// <param name="ssa">The search service.</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <returns>A query rule collection.</returns>
-        private static QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var queryRuleManager = new QueryRuleManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            return queryRuleManager.GetQueryRules(new SearchObjectFilter(searchOwner));
-        }
-
-        /// <summary>
         /// Ensure a search result source
         /// </summary>
         /// <param name="ssa">The search service application.</param>
@@ -906,6 +658,36 @@ namespace GSoft.Dynamite.Search
             }
 
             return resultSource;
+        }
+
+        /// <summary>
+        /// Get a crawled property by name
+        /// </summary>
+        /// <param name="site">The context site</param>
+        /// <param name="crawledPropertyName">The crawl property name</param>
+        /// <returns>The crawled property</returns>
+        private CrawledProperty GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
+        {
+            CrawledProperty crawledProperty = null;
+
+            var ssa = this.GetDefaultSearchServiceApplication(site);
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+
+            // Search in all categories
+            foreach (var category in sspSchema.AllCategories)
+            {
+                foreach (var property in category.GetAllCrawledProperties())
+                {
+                    if (string.CompareOrdinal(property.Name, crawledPropertyName) == 0)
+                    {
+                        crawledProperty = property;
+                    }
+                }
+            }
+
+            return crawledProperty;
         }
     }
 }

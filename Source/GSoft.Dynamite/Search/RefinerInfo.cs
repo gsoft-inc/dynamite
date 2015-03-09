@@ -11,6 +11,13 @@ namespace GSoft.Dynamite.Search
     public class RefinerInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public RefinerInfo()
+        {
+        }
+
+        /// <summary>
         /// Creates a new refiner info
         /// </summary>
         /// <param name="managedPropertyName">The managed property name</param>

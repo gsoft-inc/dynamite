@@ -3,37 +3,16 @@
 namespace GSoft.Dynamite.Branding
 {
     /// <summary>
-    /// The various Display Template categories
-    /// </summary>
-    public enum DisplayTemplateCategory
-    {
-        /// <summary>
-        /// Undefined display template category
-        /// </summary>
-        Undefined = 0,
-
-        /// <summary>
-        /// Search display templates
-        /// </summary>
-        Search = 1,
-
-        /// <summary>
-        /// Content Search Web Part display templates
-        /// </summary>
-        ContentSearch = 2,
-
-        /// <summary>
-        /// Filters display templates
-        /// </summary>
-        Filter = 3
-    }
-
-    /// <summary>
     /// Easily serializable representation of a display template's metadata
     /// </summary>
     public class DisplayTemplateInfo
     {
-        private readonly DisplayTemplateCategory category;
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public DisplayTemplateInfo()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of <see cref="DisplayTemplateInfo"/>
@@ -45,32 +24,32 @@ namespace GSoft.Dynamite.Branding
             this.Name = displayTemplateName;
             this.HtmlFileName = displayTemplateName + ".html";
             this.JavaScriptFileName = displayTemplateName + ".js";
-            this.category = displayTemplateCategory;
+            this.Category = displayTemplateCategory;
         }
 
         /// <summary>
         /// Internal name of the display template
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// The HTML file name
         /// </summary>
-        public string HtmlFileName { get; private set; }
+        public string HtmlFileName { get; set; }
 
         /// <summary>
         /// The JavaScript file name
         /// </summary>
-        public string JavaScriptFileName { get; private set; }
+        public string JavaScriptFileName { get; set; }
 
         /// <summary>
         /// The folder category of the display template
         /// </summary>
-        public string Category 
+        public string CategoryFolderName
         {
             get
             {
-                switch (this.category)
+                switch (this.Category)
                 {
                     case DisplayTemplateCategory.Search:
                         return "Search";
@@ -85,6 +64,15 @@ namespace GSoft.Dynamite.Branding
                         return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Display template category
+        /// </summary>
+        public DisplayTemplateCategory Category
+        {
+            get;
+            set;
         }
 
         /// <summary>

@@ -137,7 +137,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// <param name="contentType">Type of the content.</param>
         /// <param name="orderedFields">A collection of indexes (0 based) and their corresponding field information.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<IFieldInfo> orderedFields)
+        public void ReorderFieldsInContentType(SPContentType contentType, ICollection<BaseFieldInfo> orderedFields)
         {
             var fieldInternalNames = contentType.FieldLinks.Cast<SPFieldLink>().Where(x => !x.Hidden).Select(x => x.Name).ToList();
 
@@ -278,14 +278,14 @@ namespace GSoft.Dynamite.ContentTypes
         /// <returns>
         /// IEnumerable of SPFields that where found.
         /// </returns>
-        private IEnumerable<SPField> InnerEnsureFieldInContentType(SPContentType contentType, ICollection<IFieldInfo> fieldInfos)
+        private IEnumerable<SPField> InnerEnsureFieldInContentType(SPContentType contentType, ICollection<BaseFieldInfo> fieldInfos)
         {
             bool fieldWasAdded = false;
             bool fieldWasModified = false;
             List<SPField> fields = new List<SPField>();
 
             // For each field we want to add.
-            foreach (IFieldInfo fieldInfo in fieldInfos)
+            foreach (BaseFieldInfo fieldInfo in fieldInfos)
             {
                 // We get the field from AvailableFields because we don't need to modify the field.
                 SPField field = contentType.ParentWeb.AvailableFields.Cast<SPField>().SingleOrDefault(f => f.Id == fieldInfo.Id);

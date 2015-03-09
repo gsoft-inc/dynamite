@@ -10,6 +10,13 @@ namespace GSoft.Dynamite.Search
     public class ManagedPropertyInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public ManagedPropertyInfo()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new ManagedPropertyInfo
         /// </summary>
         /// <param name="name">The name of the managed property</param>
@@ -38,6 +45,7 @@ namespace GSoft.Dynamite.Search
             this.FullTextIndex = "Default";
             this.SafeForAnonymous = true;
             this.Context = 2;
+            this.OverwriteIfAlreadyExists = true;
         }
 
         /// <summary>
@@ -107,8 +115,15 @@ namespace GSoft.Dynamite.Search
         public string FullTextIndex { get; set; }
 
         /// <summary>
-        /// Gets or set whether this managed property should be returned for queries executed by anonymous users.
+        /// Gets or sets whether this managed property should be returned for queries executed by anonymous users.
         /// </summary>
         public bool SafeForAnonymous { get; set; }
+
+        /// <summary>
+        /// Gets or sets the upgrade behavior of this managed property definition.
+        /// If true, any existing managed property will be deleted, then re-created
+        /// when re-ensured through ISearchHelper.EnsureManagedProperty.
+        /// </summary>
+        public bool OverwriteIfAlreadyExists { get; set; }
     }
 }

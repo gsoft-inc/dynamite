@@ -41,12 +41,12 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="fieldInfo">The field definition for which we want to print out the full XML schema</param>
         /// <returns>The XML schema of the field</returns>
-        public XElement SchemaForField(IFieldInfo fieldInfo)
+        public XElement SchemaForField(BaseFieldInfo fieldInfo)
         {
             var schema = new XElement(
                 "Field",
                 new XAttribute("Name", fieldInfo.InternalName),
-                new XAttribute("Type", fieldInfo.Type),
+                new XAttribute("Type", fieldInfo.FieldType),
                 new XAttribute("ID", "{" + fieldInfo.Id + "}"),
                 new XAttribute("StaticName", fieldInfo.InternalName),
                 new XAttribute("DisplayName", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DisplayNameResourceKey)),

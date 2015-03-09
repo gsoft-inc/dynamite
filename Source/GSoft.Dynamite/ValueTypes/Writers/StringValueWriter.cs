@@ -55,7 +55,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                     "WriteValueToFieldDefault - Initializing {0} field (fieldName={0}) with default value \"{1}\"."
                     + " Be aware that field default values on {0}-type field are not well supported by SharePoint and that this default"
                     + " value will not be editable through your site column's settings page.",
-                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.FieldType,
                     fieldValueInfo.FieldInfo.InternalName,
                     defaultValue);
             }
@@ -89,7 +89,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                         exceptionMessage,
                         defaultValue,
                         fieldValueInfo.FieldInfo.InternalName,
-                        fieldValueInfo.FieldInfo.Type));
+                        fieldValueInfo.FieldInfo.FieldType));
             }
 
             if (defaultValue != null)
@@ -100,7 +100,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                         "WriteValueToFolderDefault - Initializing {0} field (fieldName={1}) with default value \"{2}\"."
                         + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default" 
                         + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
-                        fieldValueInfo.FieldInfo.Type,
+                        fieldValueInfo.FieldInfo.FieldType,
                         fieldValueInfo.FieldInfo.InternalName,
                         defaultValue);
                 }

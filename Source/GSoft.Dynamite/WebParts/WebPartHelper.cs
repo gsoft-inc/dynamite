@@ -2,7 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Web.UI.WebControls.WebParts;
 using System.Xml;
+using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Serializers;
 using Microsoft.SharePoint;
@@ -10,9 +12,6 @@ using Microsoft.SharePoint.WebPartPages;
 
 namespace GSoft.Dynamite.WebParts
 {
-    using System.Web.UI.WebControls.WebParts;
-    using GSoft.Dynamite.Fields.Constants;
-
     /// <summary>
     /// Class to manage WebParts, add WebPart to WebPartZone and other stuff
     /// </summary>
@@ -33,15 +32,18 @@ namespace GSoft.Dynamite.WebParts
         }
 
         /// <summary>
-        /// Method to generate the html code to embed a web part in a Publishing Page Content
+        /// Method to generate the html code to embed a web part in a Publishing Page Content,
+        /// when you don't have access to the WebPart object. This will create a web part with
+        /// all its properties set to default values.
+        /// This method adds the web part to the "wpz" web part zone.
         /// </summary>
         /// <param name="web">the SPWeb</param>
         /// <param name="item">The item to set the web part to</param>
         /// <param name="webPartName">the name of the web part</param>
         /// <returns>The html code that embed a web part</returns>
-        public string GenerateWebPartHtml(SPWeb web, SPListItem item, string webPartName)
+        public string GenerateWebPartHtmlByName(SPWeb web, SPListItem item, string webPartName)
         {
-            Guid storageKey = this.AddWebPartToZone(web, item, webPartName, "wpz", 0);
+            Guid storageKey = this.EnsureWebPartByName(web, item, webPartName, "wpz", 0);
             string richContentEmbed = @"<div class='ms-rtestate-read ms-rte-wpbox'>
                       <div class='ms-rtestate-notify ms-rtestate-read {0}' id='div_{0}'></div>
                       <div id='vid_{0}' style='display:none'></div>
@@ -52,14 +54,16 @@ namespace GSoft.Dynamite.WebParts
 
         /// <summary>
         /// Method to generate the html code to embed a web part in a Publishing Page Content
+        /// when you can create the WebPart object yourself.
+        /// This method adds the web part to the "wpz" web part zone.
         /// </summary>
-        /// <param name="item">The item to set the web part to</param>
+        /// <param name="item">The item of the page to set the web part to</param>
         /// <param name="webPart">the name of the web part</param>
         /// <returns>The html code that embed a web part</returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Called method uses ListItem.")]
         public string GenerateWebPartHtml(SPListItem item, System.Web.UI.WebControls.WebParts.WebPart webPart)
         {
-            Guid storageKey = this.EnsureWebPartToZone(item, webPart, "wpz", 0);
+            Guid storageKey = this.EnsureWebPart(item, new WebPartInfo("wpz", webPart, 0));
             string richContentEmbed = "<div class=\"ms-rtestate-read ms-rte-wpbox\" contenteditable=\"false\">" +
                       "<div class=\"ms-rtestate-notify ms-rtestate-read {0}\" id=\"div_{0}\"></div>" +
                       "<div id=\"vid_{0}\" style=\"display:none\"></div>" +
@@ -69,22 +73,24 @@ namespace GSoft.Dynamite.WebParts
         }
 
         /// <summary>
-        /// Method to add a Web Part to a Web Part Zone
+        /// Method to add a Web Part to a Web Part Zone when you don't have access to 
+        /// the WebPart object. This will create a web part with all its properties set
+        /// to default values as defined in the Web Part gallery.
         /// </summary>
         /// <param name="web">The web</param>
-        /// <param name="item">the item to add the web part to</param>
-        /// <param name="webPartName">The web part name to get</param>
+        /// <param name="item">The item of the page to add the web part to</param>
+        /// <param name="webPartName">The filename of web part name to instanciate (name of the file in the Web Part gallery)</param>
         /// <param name="webPartZoneName">the web part zone to add the web part to</param>
         /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
         /// <returns>Return the Storage key of the web part</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public Guid AddWebPartToZone(SPWeb web, SPListItem item, string webPartName, string webPartZoneName, int webPartZoneIndex)
+        public Guid EnsureWebPartByName(SPWeb web, SPListItem item, string webPartName, string webPartZoneName, int webPartZoneIndex)
         {
             Guid storageKey = Guid.Empty;
 
             using (var manager = item.File.GetLimitedWebPartManager(System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared))
             {
-                var webPart = this.CreateWebPart(web, webPartName, manager);
+                var webPart = this.CreateWebPartByFileName(web, webPartName, manager);
 
                 if (webPart != null)
                 {
@@ -99,64 +105,35 @@ namespace GSoft.Dynamite.WebParts
         }
 
         /// <summary>
-        /// Method to add a Web Part to a Web Part Zone
+        /// Method to add a Web Part to a Web Part Zone when you have the fully-constructed WebPart
+        /// instance available
         /// </summary>
-        /// <param name="item">the item to add the web part to</param>
-        /// <param name="webPart">The web part name to get</param>
-        /// <param name="webPartZoneName">the web part zone to add the web part to</param>
-        /// <param name="webPartZoneIndex">the web part zone index for ordering. (first = 0)</param>
+        /// <param name="item">The item of the page to add the web part to</param>
+        /// <param name="webPartInfo">The web part instance and its zone metadata</param>
         /// <returns>Return the Storage key of the web part</returns>
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Keeping this signature for backwards compat with iO.")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public Guid EnsureWebPartToZone(SPListItem item, WebPart webPart, string webPartZoneName, int webPartZoneIndex)
+        public Guid EnsureWebPart(SPListItem item, WebPartInfo webPartInfo)
         {
             Guid storageKey = Guid.Empty;
 
             using (var manager = item.File.GetLimitedWebPartManager(System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared))
             {
-                if (webPart != null)
+                if (webPartInfo.WebPart != null)
                 {
-                    if (manager.WebParts.Cast<WebPart>().All(wp => wp.Title != webPart.Title))
+                    if (manager.WebParts.Cast<System.Web.UI.WebControls.WebParts.WebPart>()
+                        .All(wp => wp.Title != webPartInfo.WebPart.Title))
                     {
-                        manager.AddWebPart(webPart, webPartZoneName, webPartZoneIndex);
-                        storageKey = manager.GetStorageKey(webPart);
+                        manager.AddWebPart(webPartInfo.WebPart, webPartInfo.ZoneName, webPartInfo.ZoneIndex);
+                        storageKey = manager.GetStorageKey(webPartInfo.WebPart);
                     }
                     else
                     {
-                        this.logger.Warn("A WebPart with the name {0} already exists on the page {1}", webPart.Title, item[BuiltInFields.TitleName]);
+                        this.logger.Warn("A WebPart with the name {0} already exists on the page {1}", webPartInfo.WebPart.Title, item[BuiltInFields.TitleName]);
                     }
                 }
             }
 
             return storageKey;
-        }
-
-        /// <summary>
-        /// Method to create a web part.
-        /// </summary>
-        /// <param name="web">The SPWeb where to create the web part</param>
-        /// <param name="webPartName">The name of the web part to add</param>
-        /// <param name="manager">The Web Part manager</param>
-        /// <returns>The web part object</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public System.Web.UI.WebControls.WebParts.WebPart CreateWebPart(SPWeb web, string webPartName, SPLimitedWebPartManager manager)
-        {
-            SPQuery query = new SPQuery();
-            query.Query = string.Format(CultureInfo.InvariantCulture, "<Where><Eq><FieldRef Name='FileLeafRef'/><Value Type='File'>{0}</Value></Eq></Where>", webPartName);
-
-            SPList webPartGallery = web.Site.RootWeb.GetCatalog(SPListTemplateType.WebPartCatalog);
-
-            SPListItemCollection webParts = webPartGallery.GetItems(query);
-
-            System.Web.UI.WebControls.WebParts.WebPart webPart = null;
-            if (webParts.Count > 0)
-            {
-                XmlReader xmlReader = new XmlTextReader(webParts[0].File.OpenBinaryStream());
-                string errorMessage;
-                webPart = manager.ImportWebPart(xmlReader, out errorMessage);
-            }
-
-            return webPart;
         }
 
         /// <summary>
@@ -201,6 +178,35 @@ namespace GSoft.Dynamite.WebParts
             placeHolderWebPart.Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent);
 
             return placeHolderWebPart;
+        }
+
+        /// <summary>
+        /// Method to create a web part with its default properties by matching with its
+        /// file name from the Web Part gallery at the root of the site collection.
+        /// </summary>
+        /// <param name="web">The SPWeb where to create the web part</param>
+        /// <param name="webPartName">The name of the web part to add</param>
+        /// <param name="manager">The Web Part manager</param>
+        /// <returns>The web part object</returns>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        private System.Web.UI.WebControls.WebParts.WebPart CreateWebPartByFileName(SPWeb web, string webPartName, SPLimitedWebPartManager manager)
+        {
+            SPQuery query = new SPQuery();
+            query.Query = string.Format(CultureInfo.InvariantCulture, "<Where><Eq><FieldRef Name='FileLeafRef'/><Value Type='File'>{0}</Value></Eq></Where>", webPartName);
+
+            SPList webPartGallery = web.Site.RootWeb.GetCatalog(SPListTemplateType.WebPartCatalog);
+
+            SPListItemCollection webParts = webPartGallery.GetItems(query);
+
+            System.Web.UI.WebControls.WebParts.WebPart webPart = null;
+            if (webParts.Count > 0)
+            {
+                XmlReader xmlReader = new XmlTextReader(webParts[0].File.OpenBinaryStream());
+                string errorMessage;
+                webPart = manager.ImportWebPart(xmlReader, out errorMessage);
+            }
+
+            return webPart;
         }
     }
 }

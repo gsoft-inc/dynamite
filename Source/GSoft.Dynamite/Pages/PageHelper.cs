@@ -107,7 +107,7 @@ namespace GSoft.Dynamite.Pages
             // Insert WebParts
             foreach (WebPartInfo webPartSetting in page.WebParts)
             {
-                this.webPartHelper.EnsureWebPartToZone(publishingPage.ListItem, webPartSetting.WebPart, webPartSetting.ZoneName, webPartSetting.ZoneIndex);
+                this.webPartHelper.EnsureWebPart(publishingPage.ListItem, webPartSetting);
             }
 
             // Publish

@@ -11,19 +11,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace GSoft.Dynamite.IntegrationTests.Features
 {
     /// <summary>
-    /// Validates the entire stack of behavior behind <see cref="FeactureDependencyActivatorTest"/>.
+    /// Validates the entire stack of behavior behind <see cref="FeatureDependencyActivatorTest"/>.
     /// The GSoft.Dynamite.wsp package (GSoft.Dynamite.SP project) needs to be 
     /// deployed to the current server environment before running these tests.
     /// Redeploy the WSP package every time GSoft.Dynamite.dll changes.
     /// </summary>
     [TestClass]
-    public class FeactureDependencyActivatorTest
+    public class FeatureDependencyActivatorTest
     {
         /// <summary>
         /// Validates that EnsureFeatureActivation activates the site scoped feature on the site collection if it hasn't already been activated.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFeatureActivation_WhenSiteScopedFeatureNotActivated_ShouldActivate()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -56,7 +55,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// Validates that EnsureFeatureActivation activates the web scoped feature on the web if it hasn't already been activated.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFeatureActivation_WhenWebScopedFeatureNotActivated_ShouldActivate()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -89,7 +87,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// Validates that EnsureFeatureActivation activates all the features, no matter the scope.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFeatureActivation_WhenMultipleFeaturesAreActivated_ShouldActivateAll()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -141,7 +138,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// activated and the "ForceReactivation" is set to true
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureFeatureActivation_WhenFeatureIsActivatedAndForceReactivation_SholdDeactivationAndReactivate()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -180,7 +176,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// ex: Try to activate a web scoped feature while injecting the web object but using the "CurrentSite" activation mode.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         [ExpectedException(typeof(InvalidOperationException), "Invalid operation exception not thrown")]
         public void EnsureFeatureActivation_WhenWebScopedFeatureActivatedWithWrongActivationMode_ShouldThrowInvalidOperationException()
         {
@@ -214,7 +209,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// ex: Try to activate a web scoped feature while injecting a site object and using the "CurrentSite" activation mode.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         [ExpectedException(typeof(InvalidOperationException), "Invalid operation exception not thrown by SharePoint")]
         public void EnsureFeatureActivation_WhenWebScopedFeatureActivatedOnWrongScope_ShouldThrowInvalidOperationException()
         {
@@ -247,7 +241,6 @@ namespace GSoft.Dynamite.IntegrationTests.Features
         /// trying to activate the feature and not defining a feature ID.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         [ExpectedException(typeof(ArgumentException), "Argument exception not thrown")]
         public void EnsureFeatureActivation_WhenFeatureActivatedWithNoIdSpecified_ShouldThrowArgumentException()
         {

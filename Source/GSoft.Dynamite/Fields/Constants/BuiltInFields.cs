@@ -257,7 +257,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Title field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Title
+        public static BaseFieldInfo Title
         {
             get 
             { 
@@ -268,7 +268,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Title linked to item with edit menu (OOTB type = Computed)
         /// </summary>
-        public static IFieldInfo TitleLink
+        public static BaseFieldInfo TitleLink
         { 
             get { return new MinimalFieldInfo<string>(TitleLinkName, SPBuiltInFieldId.LinkTitle); } 
         }
@@ -276,7 +276,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Title linked to item with no edit menu (OOTB type = Computed)
         /// </summary>
-        public static IFieldInfo TitleLinkNoMenu 
+        public static BaseFieldInfo TitleLinkNoMenu 
         { 
             get 
             { 
@@ -287,7 +287,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// FileRef (i.e. File Url Path) field info (OOTB type = Lookup)
         /// </summary>
-        public static IFieldInfo FileRef 
+        public static BaseFieldInfo FileRef 
         { 
             get 
             { 
@@ -298,7 +298,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// FileLeafRef (i.e. Document Name) field info (OOTB type = File)
         /// </summary>
-        public static IFieldInfo FileLeafRef 
+        public static BaseFieldInfo FileLeafRef 
         { 
             get 
             {
@@ -309,7 +309,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// ContentType field info (OOTB type = Computed)
         /// </summary>
-        public static IFieldInfo ContentType 
+        public static BaseFieldInfo ContentType 
         { 
             get 
             { 
@@ -320,7 +320,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// ContentTypeId field info (OOTB type = ContentTypeId)
         /// </summary>
-        public static IFieldInfo ContentTypeId 
+        public static BaseFieldInfo ContentTypeId 
         { 
             get 
             { 
@@ -331,7 +331,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// URL field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo Url 
+        public static BaseFieldInfo Url 
         { 
             get 
             { 
@@ -343,7 +343,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// TaxCatchAll field info (OOTB type = LookupMulti)
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static IFieldInfo TaxCatchAll 
+        public static BaseFieldInfo TaxCatchAll 
         { 
             get 
             { 
@@ -355,7 +355,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// TaxCatchAllLabel field info (OOTB type = LookupMulti)
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "CatchAll", Justification = "This is the actual SharePoint field name")]
-        public static IFieldInfo TaxCatchAllLabel 
+        public static BaseFieldInfo TaxCatchAllLabel 
         { 
             get 
             { 
@@ -366,7 +366,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The assigned to field info (OOTB type = User)
         /// </summary>
-        public static IFieldInfo AssignedTo 
+        public static BaseFieldInfo AssignedTo 
         { 
             get 
             { 
@@ -377,7 +377,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The percent complete field info (OOTB type = Number, Min = 0, Max = 1, Percentage = TRUE)
         /// </summary>
-        public static IFieldInfo PercentComplete 
+        public static BaseFieldInfo PercentComplete 
         { 
             get 
             { 
@@ -388,7 +388,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The predecessors field info (OOTB type = LookupMulti)
         /// </summary>
-        public static IFieldInfo Predecessors 
+        public static BaseFieldInfo Predecessors 
         { 
             get 
             { 
@@ -399,7 +399,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The priority field info (OOTB type = Choice)
         /// </summary>
-        public static IFieldInfo Priority 
+        public static BaseFieldInfo Priority 
         { 
             get 
             { 
@@ -410,7 +410,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The task status field info (OOTB type = Choice)
         /// </summary>
-        public static IFieldInfo TaskStatus
+        public static BaseFieldInfo TaskStatus
         {
             get
             {
@@ -421,7 +421,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The home phone field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo HomePhone 
+        public static BaseFieldInfo HomePhone 
         { 
             get 
             { 
@@ -432,7 +432,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work fax field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkFax 
+        public static BaseFieldInfo WorkFax 
         { 
             get 
             { 
@@ -443,7 +443,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work address field info (OOTB type = Note)
         /// </summary>
-        public static IFieldInfo WorkAddress 
+        public static BaseFieldInfo WorkAddress 
         { 
             get 
             { 
@@ -454,7 +454,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work country field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkCountry 
+        public static BaseFieldInfo WorkCountry 
         { 
             get 
             { 
@@ -465,7 +465,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work city field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkCity 
+        public static BaseFieldInfo WorkCity 
         { 
             get 
             { 
@@ -476,7 +476,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work state field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkState 
+        public static BaseFieldInfo WorkState 
         { 
             get 
             { 
@@ -487,7 +487,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work zip field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkZip 
+        public static BaseFieldInfo WorkZip 
         { 
             get 
             { 
@@ -498,7 +498,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The web page field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo Webpage 
+        public static BaseFieldInfo Webpage 
         { 
             get 
             { 
@@ -509,7 +509,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The comments field info (OOTB type = Note)
         /// </summary>
-        public static IFieldInfo Comments 
+        public static BaseFieldInfo Comments 
         { 
             get 
             { 
@@ -520,7 +520,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The department field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Department 
+        public static BaseFieldInfo Department 
         { 
             get 
             { 
@@ -531,7 +531,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The role field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Role 
+        public static BaseFieldInfo Role 
         { 
             get 
             { 
@@ -542,7 +542,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The related items field info (OOTB type = RelatedItems)
         /// </summary>
-        public static IFieldInfo RelatedItems 
+        public static BaseFieldInfo RelatedItems 
         { 
             get 
             { 
@@ -553,7 +553,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The display order field info - used in composed looks (OOTB type = Number)
         /// </summary>
-        public static IFieldInfo DisplayOrder 
+        public static BaseFieldInfo DisplayOrder 
         { 
             get 
             { 
@@ -564,7 +564,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The master page URL field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo MasterPageUrl 
+        public static BaseFieldInfo MasterPageUrl 
         { 
             get 
             { 
@@ -575,7 +575,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The theme URL field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo ThemeUrl 
+        public static BaseFieldInfo ThemeUrl 
         { 
             get 
             { 
@@ -586,7 +586,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The image URL field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo ImageUrl 
+        public static BaseFieldInfo ImageUrl 
         { 
             get 
             { 
@@ -597,7 +597,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The font scheme URL field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo FontSchemeUrl 
+        public static BaseFieldInfo FontSchemeUrl 
         { 
             get 
             { 
@@ -608,7 +608,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The enterprise keywords field info (OOTB type = TaxonomyMulti)
         /// </summary>
-        public static IFieldInfo EnterpriseKeywords 
+        public static BaseFieldInfo EnterpriseKeywords 
         { 
             get 
             {
@@ -619,7 +619,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The cell phone (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Cellphone 
+        public static BaseFieldInfo Cellphone 
         { 
             get 
             { 
@@ -630,7 +630,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The full name (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo FullName 
+        public static BaseFieldInfo FullName 
         { 
             get 
             { 
@@ -641,7 +641,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The email (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Email 
+        public static BaseFieldInfo Email 
         { 
             get 
             { 
@@ -652,7 +652,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The first name (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo FirstName 
+        public static BaseFieldInfo FirstName 
         { 
             get 
             { 
@@ -663,7 +663,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The work phone (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo WorkPhone 
+        public static BaseFieldInfo WorkPhone 
         { 
             get 
             { 
@@ -674,7 +674,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The job title (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo JobTitle 
+        public static BaseFieldInfo JobTitle 
         { 
             get 
             { 
@@ -685,7 +685,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The company (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Company 
+        public static BaseFieldInfo Company 
         { 
             get 
             { 
@@ -696,7 +696,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The Author (OOTB type = User)
         /// </summary>
-        public static IFieldInfo CreatedBy 
+        public static BaseFieldInfo CreatedBy 
         { 
             get 
             { 
@@ -707,7 +707,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The Created date (OOTB type = DateTime)
         /// </summary>
-        public static IFieldInfo Created 
+        public static BaseFieldInfo Created 
         { 
             get 
             { 
@@ -718,7 +718,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The Editor (OOTB type = User)
         /// </summary>
-        public static IFieldInfo ModifiedBy
+        public static BaseFieldInfo ModifiedBy
         {
             get
             {
@@ -729,7 +729,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The Modified date (OOTB type = DateTime)
         /// </summary>
-        public static IFieldInfo Modified 
+        public static BaseFieldInfo Modified 
         { 
             get 
             { 
@@ -740,7 +740,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The body note field.
         /// </summary>
-        public static IFieldInfo Body
+        public static BaseFieldInfo Body
         {
             get
             {
@@ -751,7 +751,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// The content expiration date time field.
         /// </summary>
-        public static IFieldInfo Expires
+        public static BaseFieldInfo Expires
         {
             get
             {

@@ -9,6 +9,13 @@ namespace GSoft.Dynamite.Navigation
     public class ManagedNavigationInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public ManagedNavigationInfo()
+        {            
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="ManagedNavigationInfo"/> instance
         /// </summary>
         /// <param name="termSet">Metadata about the term set driving navigation</param>
@@ -56,7 +63,7 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Link to navigation's language
         /// </summary>
-        public CultureInfo AssociatedLanguage { get; private set; }
+        public CultureInfo AssociatedLanguage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to [add new pages to navigation].
@@ -64,7 +71,7 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// <c>true</c> if [add new pages to navigation]; otherwise, <c>false</c>.
         /// </value>
-        public bool AddNewPagesToNavigation { get; private set; }
+        public bool AddNewPagesToNavigation { get; set; }
 
         /// <summary>
         /// Whether friendly URLs should be created for Catalog-type pages
@@ -72,7 +79,7 @@ namespace GSoft.Dynamite.Navigation
         /// <remarks>
         /// TODO: Change this from News to something more general
         /// </remarks>
-        public bool CreateFriendlyUrlsForNewsPages { get; private set; }
+        public bool CreateFriendlyUrlsForNewsPages { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the term set.
@@ -80,7 +87,7 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The name of the term set.
         /// </value>
-        public TermSetInfo TermSet { get; private set; }
+        public TermSetInfo TermSet { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the term group.
@@ -88,7 +95,7 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The name of the term group.
         /// </value>
-        public TermGroupInfo TermGroup { get; private set; }
+        public TermGroupInfo TermGroup { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [preserve tagging on term set].
@@ -96,6 +103,6 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// <c>true</c> if [preserve tagging on term set]; otherwise, <c>false</c>.
         /// </value>
-        public bool PreserveTaggingOnTermSet { get; private set; }
+        public bool PreserveTaggingOnTermSet { get; set; }
     }
 }

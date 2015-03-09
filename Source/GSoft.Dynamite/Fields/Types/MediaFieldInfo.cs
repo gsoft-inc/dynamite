@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a Rich Media (publishing audio/video) field
     /// </summary>
-    public class MediaFieldInfo : FieldInfo<MediaValue>
+    public class MediaFieldInfo : BaseFieldInfoWithValueType<MediaValue>
     {
         /// <summary>
         /// Initializes a new <see cref="GuidFieldInfo"/> instance

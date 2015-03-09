@@ -1,20 +1,19 @@
 ﻿using System;
-using System.Globalization;
 using System.Xml.Linq;
 using GSoft.Dynamite.Binding;
+using Newtonsoft.Json;
 
 namespace GSoft.Dynamite.Fields
 {
     /// <summary>
-    /// Defines the field info structure.
+    /// Basic metadata about a SharePoint field/site column
     /// </summary>
-    /// <typeparam name="T">ValueType associated to that particular Field type</typeparam>
-    public abstract class FieldInfo<T> : BaseTypeInfo, IFieldInfo
+    public class BaseFieldInfo : BaseTypeInfo
     {
         /// <summary>
-        /// Default constructor
+        /// Default constructor for serialization purposes
         /// </summary>
-        protected FieldInfo()
+        public BaseFieldInfo() : base()
         {
         }
 
@@ -27,7 +26,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content Group resource key</param>
-        protected FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        public BaseFieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             if (string.IsNullOrEmpty(internalName))
@@ -45,14 +44,14 @@ namespace GSoft.Dynamite.Fields
 
             this.InternalName = internalName;
             this.Id = id;
-            this.Type = fieldTypeName;
+            this.FieldType = fieldTypeName;
         }
 
         /// <summary>
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        protected FieldInfo(XElement fieldSchemaXml)
+        public BaseFieldInfo(XElement fieldSchemaXml)
         {
             if (fieldSchemaXml == null)
             {
@@ -66,7 +65,7 @@ namespace GSoft.Dynamite.Fields
 
             this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
             this.InternalName = fieldSchemaXml.Attribute("Name").Value;
-            this.Type = fieldSchemaXml.Attribute("Type").Value;
+            this.FieldType = fieldSchemaXml.Attribute("Type").Value;
 
             if (fieldSchemaXml.Attribute("DisplayName") != null)
             {
@@ -130,18 +129,18 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// Unique identifier of the field
         /// </summary>
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
         /// <summary>
         /// The internal name of the field
         /// </summary>
-        public string InternalName { get; private set; }
+        public string InternalName { get; set; }
 
         /// <summary>
-        /// SharePoint Field Type name of the field
+        /// Type of the field
         /// </summary>
-        public string Type { get; private set; }
-
+        public string FieldType { get; set; }
+        
         /// <summary>
         /// Indicates if the field is required
         /// </summary>
@@ -153,7 +152,36 @@ namespace GSoft.Dynamite.Fields
         public bool EnforceUniqueValues { get; set; }
 
         /// <summary>
-        /// Indicates if field should be hidden
+        /// Returns the FieldInfo's associated ValueType.
+        /// For example, a TextFieldInfo should return typeof(string)
+        /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
+        /// </summary>
+        [JsonIgnore]
+        public virtual Type AssociatedValueType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Full name of the field's associated value type, convenient
+        /// for serialization.
+        /// </summary>
+        public string AssociatedValueTypeAsString
+        {
+            get
+            {
+                return this.AssociatedValueType.FullName;
+            }
+
+            set
+            {
+                this.AssociatedValueType = Type.GetType(value);
+            }
+        }
+
+        /// <summary>
+        /// Indicates if field is hidden by default
         /// </summary>
         public bool IsHidden { get; set; }
 
@@ -183,32 +211,17 @@ namespace GSoft.Dynamite.Fields
         public string DefaultFormula { get; set; }
 
         /// <summary>
-        /// Returns the FieldInfo's associated ValueType.
-        /// For example, a TextFieldInfo should return typeof(string)
-        /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
-        /// </summary>
-        public Type AssociatedValueType
-        {
-            get
-            {
-                return typeof(T);
-            }
-        }
-
-        /// <summary>
-        /// Default field value.
-        /// </summary>
-        public T DefaultValue { get; set; }
-
-        /// <summary>
-        /// The XML schema of the Note field
+        /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
         /// <param name="baseFieldSchema">
         /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
         /// we want to add field type-specific attributes
         /// </param>
         /// <returns>The full field XML schema</returns>
-        public abstract XElement Schema(XElement baseFieldSchema);
+        public virtual XElement Schema(XElement baseFieldSchema)
+        {
+            throw new NotSupportedException("Can't use Schema method on BaseFieldInfo object. Use a field type that derives from FieldInfoWithValueType<T> instead.");
+        }
 
         private static bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
         {

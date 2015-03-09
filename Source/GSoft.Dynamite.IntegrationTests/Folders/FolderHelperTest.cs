@@ -870,7 +870,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
                     // By default, a GenericList/CustomList will be created
-                    FieldDefinitions = new List<IFieldInfo>() { dateTimeFieldInfoEmpty }
+                    FieldDefinitions = new List<BaseFieldInfo>() { dateTimeFieldInfoEmpty }
                 };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
@@ -933,7 +933,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                     {
                         ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                        FieldDefinitions = new List<IFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
+                        FieldDefinitions = new List<BaseFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
                     };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
@@ -1014,7 +1014,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
+                    FieldDefinitions = new List<BaseFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
                 };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
@@ -1078,7 +1078,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
+                    FieldDefinitions = new List<BaseFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
                 };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
@@ -1175,7 +1175,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 var listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
+                    FieldDefinitions = new List<BaseFieldInfo>() { dateTimeFieldInfoEmpty, dateTimeFieldInfoFormula }
                 };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
@@ -1257,7 +1257,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() { boolFieldInfoDefaultTrue }
+                    FieldDefinitions = new List<BaseFieldInfo>() { boolFieldInfoDefaultTrue }
                 };
 
                 var folderInfoLvl2 = new FolderInfo("somelevel2path")
@@ -1329,7 +1329,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() 
+                    FieldDefinitions = new List<BaseFieldInfo>() 
                     { 
                         lookupFieldInfo,
                         lookupFieldInfoAlt,
@@ -1445,7 +1445,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
                 {
                     ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
-                    FieldDefinitions = new List<IFieldInfo>() 
+                    FieldDefinitions = new List<BaseFieldInfo>() 
                     { 
                         userFieldInfo,
                         userMultiFieldInfo
@@ -1625,7 +1625,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
@@ -1674,7 +1674,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 };
 
                 // Create a list that contains all the fields we've prepared
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -1990,7 +1990,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
@@ -2039,7 +2039,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 };
 
                 // Create a list that contains all the fields we've prepared
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -2292,7 +2292,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     DefaultValue = false
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                 {
                     boolFieldInfoBasic,
                     boolFieldInfoDefaultTrue,
@@ -2402,7 +2402,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     DefaultValue = new DateTime(2005, 10, 21)
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                 {
                     dateTimeFieldInfoFormula,
                     dateTimeFieldInfoDefault
@@ -2500,7 +2500,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyAlt",
                     "GroupKey");
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                 {
                     textFieldInfo,
                     noteFieldInfo,
@@ -2598,7 +2598,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 {
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                 {
                     imageFieldInfo
                 };
@@ -2715,7 +2715,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     // Important that there be no DefaultFormula and no DefaultValue, otherwise the
                     // folder default column value would be ignored.
                     // See related test above: EnsureFolderHierarchy_WhenDateTimeFieldDefaultAlreadyDefined_AndAttemptingToSetFolderDefaultDate_ShouldThrownNotSupportedException
-                    Format = "DateTime"
+                    Format = DateTimeFieldFormat.DateTime
                 };
 
                 UrlFieldInfo urlFieldInfo = new UrlFieldInfo(
@@ -2734,7 +2734,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                     "DescriptionKeyUrlImg",
                     "GroupKey")
                 {
-                    Format = "Image"
+                    Format = UrlFieldFormat.Image
                 };
 
                 MediaFieldInfo mediaFieldInfo = new MediaFieldInfo(
@@ -2783,7 +2783,7 @@ namespace GSoft.Dynamite.IntegrationTests.Folders
                 };
 
                 // Create a list that contains all the fields we've prepared
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,

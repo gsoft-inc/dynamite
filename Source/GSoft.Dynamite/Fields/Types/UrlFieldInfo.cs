@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UrlField info
     /// </summary>
-    public class UrlFieldInfo : FieldInfo<UrlValue>
+    public class UrlFieldInfo : BaseFieldInfoWithValueType<UrlValue>
     {
         /// <summary>
         /// Initializes a new UrlFieldFieldInfo
@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.Fields.Types
             : base(internalName, id, "URL", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // default format
-            this.Format = "Hyperlink";
+            this.Format = UrlFieldFormat.Hyperlink;
         }
 
         /// <summary>
@@ -33,14 +33,15 @@ namespace GSoft.Dynamite.Fields.Types
         {
             if (fieldSchemaXml.Attribute("Format") != null)
             {
-                this.Format = fieldSchemaXml.Attribute("Format").Value;
+                this.Format = fieldSchemaXml.Attribute("Format").Value == UrlFieldFormat.Image.ToString() ?
+                    UrlFieldFormat.Image : UrlFieldFormat.Hyperlink;
             }
         }
 
         /// <summary>
-        /// Hyperlink or Image
+        /// Format can be Hyperlink or Image
         /// </summary>
-        public string Format { get; set; }
+        public UrlFieldFormat Format { get; set; }
 
         /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes
@@ -52,7 +53,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// <returns>The full field XML schema</returns>
         public override XElement Schema(XElement baseFieldSchema)
         {
-            baseFieldSchema.Add(new XAttribute("Format", this.Format));
+            baseFieldSchema.Add(new XAttribute("Format", this.Format.ToString()));
 
             return baseFieldSchema;
         }

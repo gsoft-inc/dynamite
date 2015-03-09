@@ -5,26 +5,17 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.Events
 {
     /// <summary>
-    /// Types of event receivers
-    /// </summary>
-    public enum EventReceiverOwner
-    {
-        /// <summary>
-        /// Receiver for all instances of items with a particular content type
-        /// </summary>
-        ContentType,
-
-        /// <summary>
-        /// Receiver for all items in a list
-        /// </summary>
-        List
-    }
-
-    /// <summary>
     /// Easily serializable representation of event receiver metadata
     /// </summary>
     public class EventReceiverInfo
     {
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public EventReceiverInfo()
+        {
+        }
+
         /// <summary>
         /// Event Receiver Info (Content Type)
         /// </summary>
@@ -75,17 +66,17 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// The associated content type
         /// </summary>
-        public ContentTypeInfo ContentType { get; private set; }
+        public ContentTypeInfo ContentType { get; set; }
 
         /// <summary>
         /// The associated list
         /// </summary>
-        public ListInfo List { get; private set; }
+        public ListInfo List { get; set; }
 
         /// <summary>
         /// The receiver type
         /// </summary>
-        public SPEventReceiverType ReceiverType { get; private set; }
+        public SPEventReceiverType ReceiverType { get; set; }
 
         /// <summary>
         /// The assembly name
@@ -100,7 +91,7 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// The owner of the event receiver
         /// </summary>
-        public EventReceiverOwner EventOwner { get; private set; }
+        public EventReceiverOwner EventOwner { get; set; }
 
         /// <summary>
         /// Synchronization type for the event receiver

@@ -9,6 +9,13 @@ namespace GSoft.Dynamite.Pages
     public class TermDrivenPageSettingInfo
     {
         /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public TermDrivenPageSettingInfo()
+        {
+        }
+
+        /// <summary>
         /// Initializes a new <see cref="TermDrivenPageSettingInfo"/> instance
         /// </summary>
         /// <param name="termSet">The term set</param>
@@ -77,65 +84,65 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// Term set of the page's term
         /// </summary>
-        public TermSetInfo TermSet { get; private set; }
+        public TermSetInfo TermSet { get; set; }
 
         /// <summary>
         /// The page's associated term
         /// </summary>
-        public TermInfo Term { get; private set; }
+        public TermInfo Term { get; set; }
 
         /// <summary>
         /// Was defined with a term set
         /// </summary>
-        public bool IsTermSet { get; private set; }
+        public bool IsTermSet { get; set; }
 
         /// <summary>
         /// Was defined with a term
         /// </summary>
-        public bool IsTerm { get; private set; }
+        public bool IsTerm { get; set; }
 
         /// <summary>
         /// Target navigation URL for items tagged with the current term
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
-        public string TargetUrl { get; private set; }
+        public string TargetUrl { get; set; }
 
         /// <summary>
         /// Target navigation URL for all items tagged with child terms of the current term
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
-        public string TargetUrlForChildTerms { get; private set; }
+        public string TargetUrlForChildTerms { get; set; }
 
         /// <summary>
         /// The catalog target URL
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
-        public string CatalogTargetUrl { get; private set; }
+        public string CatalogTargetUrl { get; set; }
 
         /// <summary>
         /// The catalog child terms target URL
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Cross-site publishing term target URLs should be stored as strings because they may include magic SharePoint tokens such as ~site or ~sitecollection.")]
-        public string CatalogTargetUrlForChildTerms { get; private set; }
+        public string CatalogTargetUrlForChildTerms { get; set; }
 
         /// <summary>
         /// Whether term should be excluded from global navigation
         /// </summary>
-        public bool ExcludeFromGlobalNavigation { get; private set; }
+        public bool ExcludeFromGlobalNavigation { get; set; }
 
         /// <summary>
         /// Whether term should be excluded from current navigation
         /// </summary>
-        public bool ExcludeFromCurrentNavigation { get; private set; }
+        public bool ExcludeFromCurrentNavigation { get; set; }
 
         /// <summary>
         /// Simple link or header metadata
         /// </summary>
-        public string SimpleLinkOrHeader { get; private set; }
+        public string SimpleLinkOrHeader { get; set; }
 
         /// <summary>
         /// Whether simple link or header metadata is provided
         /// </summary>
-        public bool IsSimpleLinkOrHeader { get; private set; }
+        public bool IsSimpleLinkOrHeader { get; set; }
     }
 }

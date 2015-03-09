@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a DateTime info
     /// </summary>
-    public class DateTimeFieldInfo : FieldInfo<DateTime?>
+    public class DateTimeFieldInfo : BaseFieldInfoWithValueType<DateTime?>
     {
         /// <summary>
         /// Initializes a new DateTimeFieldInfo
@@ -20,7 +20,7 @@ namespace GSoft.Dynamite.Fields.Types
             : base(internalName, id, "DateTime", displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
             // default format
-            this.Format = "DateOnly";
+            this.Format = DateTimeFieldFormat.DateOnly;
             this.HasFriendlyRelativeDisplay = false;
         }
 
@@ -33,7 +33,8 @@ namespace GSoft.Dynamite.Fields.Types
         {
             if (fieldSchemaXml.Attribute("Format") != null)
             {
-                this.Format = fieldSchemaXml.Attribute("Format").Value;
+                this.Format = fieldSchemaXml.Attribute("Format").Value == DateTimeFieldFormat.DateTime.ToString() ?
+                    DateTimeFieldFormat.DateTime : DateTimeFieldFormat.DateOnly;
             }
 
             if (fieldSchemaXml.Attribute("FriendlyDisplayFormat") != null
@@ -44,9 +45,9 @@ namespace GSoft.Dynamite.Fields.Types
         }
 
         /// <summary>
-        /// DateTime or DateOnly
+        /// Format can be DateTime or DateOnly
         /// </summary>
-        public string Format { get; set; }
+        public DateTimeFieldFormat Format { get; set; }
 
         /// <summary>
         /// Toggle to show a friendly relative-time string instead of timestamp
@@ -63,7 +64,7 @@ namespace GSoft.Dynamite.Fields.Types
         /// <returns>The full field XML schema</returns>
         public override XElement Schema(XElement baseFieldSchema)
         {
-            baseFieldSchema.Add(new XAttribute("Format", this.Format));
+            baseFieldSchema.Add(new XAttribute("Format", this.Format.ToString()));
 
             if (this.HasFriendlyRelativeDisplay)
             {

@@ -5,6 +5,7 @@ using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
+using Newtonsoft.Json;
 
 namespace GSoft.Dynamite.ContentTypes
 {
@@ -18,7 +19,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         public ContentTypeInfo()
         {
-            this.Fields = new List<IFieldInfo>();
+            this.Fields = new List<BaseFieldInfo>();
         }
 
         /// <summary>
@@ -70,18 +71,39 @@ namespace GSoft.Dynamite.ContentTypes
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
         {
             this.ContentTypeId = contentTypeId;
-            this.Fields = new List<IFieldInfo>();
+            this.Fields = new List<BaseFieldInfo>();
         }
 
         /// <summary>
         /// The content type identifier
         /// </summary>
+        [JsonIgnore]
         public SPContentTypeId ContentTypeId { get; private set; }
+
+        /// <summary>
+        /// String representation of the content type ID,
+        /// convenient for serialization/deserialization.
+        /// </summary>
+        public string ContentTypeIdAsString 
+        { 
+            get
+            {
+                return this.ContentTypeId.ToString();
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    this.ContentTypeId = new SPContentTypeId(value);
+                }
+            }
+        }
 
         /// <summary>
         /// Field description for all of the content type's fields (not including fields from parent content types)
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
-        public ICollection<IFieldInfo> Fields { get; set; }
+        public ICollection<BaseFieldInfo> Fields { get; set; }
     }
 }

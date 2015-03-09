@@ -91,13 +91,22 @@
     <Compile Include="Binding\EntitySchemaFactory.cs" />
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
+    <Compile Include="Branding\DisplayTemplateCategory.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Events\EventReceiverOwner.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
     <Compile Include="Features\FeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyConfig.cs" />
     <Compile Include="Features\Types\FeatureDependencyInfo.cs" />
+    <Compile Include="Fields\Types\UserFieldSelectionMode.cs" />
+    <Compile Include="Fields\Types\UrlFieldFormat.cs" />
+    <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\IQueryRuleHelper.cs" />
+    <Compile Include="Search\QueryRuleInfo.cs" />
+    <Compile Include="Search\QueryRuleHelper.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />
@@ -173,14 +182,12 @@
     <Compile Include="Search\Enums\RefinerType.cs" />
     <Compile Include="Search\ResultTypeInfo.cs" />
     <Compile Include="Search\ResultTypeRuleInfo.cs" />
-    <Compile Include="Search\UpdateBehaviorEnum.cs" />
+    <Compile Include="Search\Enums\ResultSourceUpdateBehavior.cs" />
     <Compile Include="Sites\SiteInfo.cs" />
     <Compile Include="Pages\TermDrivenPageSettingInfo.cs" />
     <Compile Include="Globalization\Variations\VariationSettingsInfo.cs" />
     <Compile Include="Fields\Types\GuidFieldInfo.cs" />
-    <Compile Include="Globalization\IDateHelper.cs" />
     <Compile Include="Globalization\IMuiHelper.cs" />
-    <Compile Include="Globalization\IRegionalSettingsHelper.cs" />
     <Compile Include="Globalization\Languages.cs" />
     <Compile Include="Globalization\Variations\IVariationHelper.cs" />
     <Compile Include="Globalization\Variations\IVariationSyncHelper.cs" />
@@ -204,7 +211,7 @@
     <Compile Include="Fields\Types\UserFieldInfo.cs" />
     <Compile Include="Fields\Types\UrlFieldInfo.cs" />
     <Compile Include="Fields\Types\MinimalFieldInfo.cs" />
-    <Compile Include="Fields\IFieldInfo.cs" />
+    <Compile Include="Fields\BaseFieldInfo.cs" />
     <Compile Include="Lists\ListInfo.cs" />
     <Compile Include="Search\ManagedPropertyInfo.cs" />
     <Compile Include="Pages\PageInfo.cs" />
@@ -306,9 +313,7 @@
     <Compile Include="Fields\Constants\PublishingFields.cs" />
     <Compile Include="Branding\ComposedLookRepository.cs" />
     <Compile Include="Branding\Entities\ComposedLook.cs" />
-    <Compile Include="Folders\FolderRepository.cs" />
     <Compile Include="Branding\IComposedLookRepository.cs" />
-    <Compile Include="Folders\IFolderRepository.cs" />
     <Compile Include="Caml\IQueryHelper.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Lists\ListLocator.cs" />
@@ -354,7 +359,6 @@
     <Compile Include="Utils\CryptoHelper.cs" />
     <Compile Include="Utils\CustomActionHelper.cs" />
     <Compile Include="Documents\CustomDocumentSetFeatureReceiver.cs" />
-    <Compile Include="Globalization\DateHelper.cs" />
     <Compile Include="Utils\DelegateComparer.cs" />
     <Compile Include="Pages\DialogLayoutsPageBase.cs">
       <SubType>ASPXCodeBehind</SubType>
@@ -368,7 +372,7 @@
     <Compile Include="Search\ISearchHelper.cs" />
     <Compile Include="Branding\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Fields\FieldHelper.cs" />
-    <Compile Include="Fields\FieldInfo.cs" />
+    <Compile Include="Fields\BaseFieldInfoWithValueType.cs" />
     <Compile Include="Utils\GacAssemblyLocator.cs" />
     <Compile Include="Branding\IExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Globalization\IResourceLocator.cs" />
@@ -376,7 +380,6 @@
     <Compile Include="Lists\ListSecurityHelper.cs" />
     <Compile Include="Branding\MasterPageHelper.cs" />
     <Compile Include="Globalization\MuiHelper.cs" />
-    <Compile Include="Globalization\RegionalSettingsHelper.cs" />
     <Compile Include="Globalization\ResourceLocator.cs" />
     <Compile Include="Utils\NamedReaderWriterLocker.cs" />
     <Compile Include="Search\SearchHelper.cs" />

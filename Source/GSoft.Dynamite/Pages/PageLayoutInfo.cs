@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
+using Newtonsoft.Json;
 
 namespace GSoft.Dynamite.Pages
 {
@@ -53,7 +54,28 @@ namespace GSoft.Dynamite.Pages
         /// <summary>
         /// The associated content type id
         /// </summary>
+        [JsonIgnore]
         public SPContentTypeId AssociatedContentTypeId { get; set; }
+        
+        /// <summary>
+        /// String representation of the content type ID,
+        /// convenient for serialization/deserialization.
+        /// </summary>
+        public string AssociatedContentTypeIdAsString
+        {
+            get
+            {
+                return this.AssociatedContentTypeId.ToString();
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    this.AssociatedContentTypeId = new SPContentTypeId(value);
+                }
+            }
+        }
 
         ///// <summary>
         ///// The relative path of the preview picture of the page layout

@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a ImageFieldInfo info
     /// </summary>
-    public class ImageFieldInfo : FieldInfo<ImageValue>
+    public class ImageFieldInfo : BaseFieldInfoWithValueType<ImageValue>
     {
         /// <summary>
         /// Initializes a new HtmlFieldInfo

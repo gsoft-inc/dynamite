@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a TextField info
     /// </summary>
-    public class TextFieldInfo : FieldInfo<string>
+    public class TextFieldInfo : BaseFieldInfoWithValueType<string>
     {
         /// <summary>
         /// Initializes a new TextFieldInfo
