@@ -157,11 +157,26 @@ namespace GSoft.Dynamite.Fields
         /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
         /// </summary>
         [JsonIgnore]
-        public virtual Type AssociatedValueType 
+        public virtual Type AssociatedValueType
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Full name of the field's associated value type, convenient
+        /// for serialization.
+        /// </summary>
+        public string AssociatedValueTypeAsString
         {
             get
             {
-                throw new NotSupportedException("Associated value type is determined by type argument on BaseFieldInfoWithValueType. Use a derived type instead.");
+                return this.AssociatedValueType.FullName;
+            }
+
+            set
+            {
+                this.AssociatedValueType = Type.GetType(value);
             }
         }
 

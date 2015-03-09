@@ -85,6 +85,9 @@ namespace GSoft.Dynamite.UnitTests.Catalogs
                 objectToSerialize.Pages.ElementAt(0).FieldValues.ElementAt(0).FieldInfo.InternalName, 
                 deserializedObject.Pages.ElementAt(0).FieldValues.ElementAt(0).FieldInfo.InternalName);
             Assert.AreEqual(
+                objectToSerialize.Pages.ElementAt(0).FieldValues.ElementAt(0).FieldInfo.AssociatedValueType,
+                deserializedObject.Pages.ElementAt(0).FieldValues.ElementAt(0).FieldInfo.AssociatedValueType);
+            Assert.AreEqual(
                 objectToSerialize.Pages.ElementAt(0).FieldValues.ElementAt(0).Value,
                 deserializedObject.Pages.ElementAt(0).FieldValues.ElementAt(0).Value);
             Assert.AreEqual(
