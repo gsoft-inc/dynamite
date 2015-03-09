@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a NumberFieldInfo info
     /// </summary>
-    public class NumberFieldInfo : FieldInfo<double?>
+    public class NumberFieldInfo : BaseFieldInfoWithValueType<double?>
     {
         /// <summary>
         /// Initializes a new NumberFieldInfo

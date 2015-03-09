@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -7,6 +8,13 @@ namespace GSoft.Dynamite.Lists
     /// </summary>
     public class MetadataNavigationSettingsInfo
     {
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public MetadataNavigationSettingsInfo()
+        {
+        }
+
         /// <summary>
         /// Creates a new instance of MetadataNavigationSettingsInfo. Use this constructor if you have custom configurations
         /// </summary>
@@ -59,17 +67,19 @@ namespace GSoft.Dynamite.Lists
         /// <summary>
         /// The associated list
         /// </summary>
-        public ListInfo List { get; private set; }
+        public ListInfo List { get; set; }
 
         /// <summary>
         /// Fields internal names act as key filters
         /// </summary>
-        public IList<string> KeyFilters { get; private set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
+        public IList<string> KeyFilters { get; set; }
 
         /// <summary>
         /// Treeview hierachies to add based on fields internal names
         /// </summary>
-        public IList<string> Hierarchies { get; private set; }
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
+        public IList<string> Hierarchies { get; set; }
 
         /// <summary>
         /// True to view the folder hierachy in the treeview. False otherwise

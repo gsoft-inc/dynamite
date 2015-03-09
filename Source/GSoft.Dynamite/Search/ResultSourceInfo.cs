@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Search.Enums;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint.JSGrid;
@@ -19,7 +20,7 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         public ResultSourceInfo()
         {
-            this.UpdateMode = UpdateBehavior.NoChangesIfAlreadyExists;
+            this.UpdateMode = ResultSourceUpdateBehavior.NoChangesIfAlreadyExists;
             this.SortSettings = new Dictionary<string, SortDirection>();
         }
 
@@ -42,7 +43,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Set the update behavior for the result source
         /// </summary>
-        public UpdateBehavior UpdateMode { get; set; }
+        public ResultSourceUpdateBehavior UpdateMode { get; set; }
 
         /// <summary>
         /// The KQL Query

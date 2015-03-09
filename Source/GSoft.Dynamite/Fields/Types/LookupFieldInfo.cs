@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a LookupFieldInfo
     /// </summary>
-    public class LookupFieldInfo : FieldInfo<LookupValue>
+    public class LookupFieldInfo : BaseFieldInfoWithValueType<LookupValue>
     {
         /// <summary>
         /// Initializes a new LookupFieldInfo

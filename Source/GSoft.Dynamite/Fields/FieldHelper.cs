@@ -53,7 +53,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfo">The field info configuration</param>
         /// <returns>The internal name of the field</returns>
-        public SPField EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        public SPField EnsureField(SPFieldCollection fieldCollection, BaseFieldInfo fieldInfo)
         {
             SPList parentList = null;
             bool isListField = TryGetListFromFieldCollection(fieldCollection, out parentList);
@@ -95,11 +95,11 @@ namespace GSoft.Dynamite.Fields
         /// <param name="fieldCollection">The field collection</param>
         /// <param name="fieldInfos">The field info configuration</param>
         /// <returns>The internal names of the field</returns>
-        public IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos)
+        public IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<BaseFieldInfo> fieldInfos)
         {
             var createdFields = new List<SPField>();
 
-            foreach (IFieldInfo fieldInfo in fieldInfos)
+            foreach (BaseFieldInfo fieldInfo in fieldInfos)
             {
                 createdFields.Add(this.EnsureField(fieldCollection, fieldInfo));
             }
@@ -108,7 +108,7 @@ namespace GSoft.Dynamite.Fields
         }
 
         [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "refetchedField", Justification = "Variable exists just to attempt to trigger ArgumentException to handle weird edge-case.")]
-        private SPField InnerEnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo)
+        private SPField InnerEnsureField(SPFieldCollection fieldCollection, BaseFieldInfo fieldInfo)
         {
             SPField field = null;
             
@@ -225,7 +225,7 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private static void ClearTermStoreMapping(SPFieldCollection fieldCollection, IFieldInfo taxonomyFieldInfo)
+        private static void ClearTermStoreMapping(SPFieldCollection fieldCollection, BaseFieldInfo taxonomyFieldInfo)
         {
             var taxoField = (TaxonomyField)fieldCollection[taxonomyFieldInfo.Id];
             taxoField.AnchorId = Guid.Empty;
@@ -262,7 +262,7 @@ namespace GSoft.Dynamite.Fields
             }
         }
 
-        private void UpdateFieldVisibility(SPField field, IFieldInfo fieldInfo)
+        private void UpdateFieldVisibility(SPField field, BaseFieldInfo fieldInfo)
         {
             field.ShowInListSettings = !fieldInfo.IsHiddenInListSettings;
             field.ShowInDisplayForm = !fieldInfo.IsHiddenInDisplayForm;
@@ -300,7 +300,7 @@ namespace GSoft.Dynamite.Fields
             }   
         }
 
-        private void UpdateFieldTypeSpecificProperties(SPFieldCollection parentFieldCollection, SPField field, IFieldInfo fieldInfo)
+        private void UpdateFieldTypeSpecificProperties(SPFieldCollection parentFieldCollection, SPField field, BaseFieldInfo fieldInfo)
         {
             // Set field properties
             var asTaxonomyFieldInfo = fieldInfo as TaxonomyFieldInfo;

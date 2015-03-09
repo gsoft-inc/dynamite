@@ -166,7 +166,7 @@ namespace GSoft.Dynamite.Catalogs
             var catalog = catalogConnectionInfo.Catalog;
 
             // Be careful, you must launch a search crawl before creating a catalog connection.
-            // If a previous connection with the same catalog root folder ULR is already exists, this one will be taken instead of your new catalog
+            // If a previous connection with the same catalog root folder URL already exists, this one will be taken instead of your new catalog
             var connectionSettings = this.GetCatalogConnectionSettings(site, catalogConnectionInfo.SourceWeb.Url, catalog.WebRelativeUrl.ToString());
 
             if (connectionSettings != null)

@@ -72,14 +72,14 @@ namespace GSoft.Dynamite.Navigation
                     using (new SPMonitoredScope("GetNavigationNodeItems"))
                     {
                         // Get navigation items from search
-                        items = this.GetNavigationNodeItems(properties, properties.CatalogItemContentTypeId, null).ToArray();
+                        items = this.GetNavigationNodeItems(web, properties, properties.CatalogItemContentTypeId, null).ToArray();
 
                         // If the cache contains corrupted data,
                         // clear it and fetch the data again
                         // If no items are returned, we do not make the query again since the items are not cached.
                         if (items == null)
                         {
-                            items = this.GetNavigationNodeItems(properties);
+                            items = this.GetNavigationNodeItems(web, properties);
                         }
                     }
 
@@ -129,24 +129,26 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Get the pages tagged with terms across the search service
         /// </summary>
+        /// <param name="web">The current web</param>
         /// <param name="properties">The Managed Properties</param>
         /// <returns>Navigation node</returns>
-        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties)
+        private IEnumerable<NavigationNode> GetNavigationNodeItems(SPWeb web, NavigationManagedProperties properties)
         {
-            return this.GetNavigationNodeItems(properties, SPContentTypeId.Empty, null);
+            return this.GetNavigationNodeItems(web, properties, SPContentTypeId.Empty, null);
         }
         
         /// <summary>
         /// Get the pages tagged with terms across the search service
         /// </summary>
+        /// <param name="web">The current web</param>
         /// <param name="properties">The Managed Properties</param>
         /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="term">The current term</param>
         /// <returns>Navigation node</returns>
-        private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, string term)
+        private IEnumerable<NavigationNode> GetNavigationNodeItems(SPWeb web, NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, string term)
         {
             // Use 'all menu items' result source for search query
-            var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
+            var searchResultSource = this.searchHelper.GetResultSourceByName(web.Site, properties.ResultSourceName, SearchObjectLevel.Ssa);
             
             // Check if find result source
             if (searchResultSource == null)
@@ -157,7 +159,7 @@ namespace GSoft.Dynamite.Navigation
 
             // Build query to return items in current variation label language
             var labelLocalAgnosticLanguage = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-            var query = new KeywordQuery(SPContext.Current.Web)
+            var query = new KeywordQuery(web)
             {
                 SourceId = searchResultSource.Id,
                 QueryText = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", properties.ItemLanguage, labelLocalAgnosticLanguage),
@@ -228,7 +230,7 @@ namespace GSoft.Dynamite.Navigation
 
             // Gets terms which are not excluded from global navigation
             var filteredTerms = navigationTerms.Where(
-                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemContentTypeId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(web, properties, properties.TargetItemContentTypeId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
 
             var terms = filteredTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
 

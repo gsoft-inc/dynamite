@@ -24,6 +24,7 @@ namespace GSoft.Dynamite.Folders
             this.Pages = new List<PageInfo>();
             this.Subfolders = new List<FolderInfo>();
             this.FieldDefaultValues = new List<FieldValueInfo>();
+            this.UniqueContentTypeOrder = new List<ContentTypeInfo>();
         }
 
         /// <summary>

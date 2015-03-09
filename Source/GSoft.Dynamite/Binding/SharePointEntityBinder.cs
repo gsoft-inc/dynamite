@@ -60,7 +60,7 @@ namespace GSoft.Dynamite.Binding
                 var minimalFieldInfoType = typeof(MinimalFieldInfo<>).MakeGenericType(writer.AssociatedValueType);
                 string fieldInternalName = binding.ValueKey;
                 SPField itemField = listItemFields.GetFieldByInternalName(fieldInternalName);
-                var minimalFieldInfo = (IFieldInfo)Activator.CreateInstance(minimalFieldInfoType, new object[] { fieldInternalName, itemField.Id });
+                var minimalFieldInfo = (BaseFieldInfo)Activator.CreateInstance(minimalFieldInfoType, new object[] { fieldInternalName, itemField.Id });
                 var fieldValueInfo = new FieldValueInfo(minimalFieldInfo, valueFromEntity);
 
                 // Update the list item through the IBaseValueWriter

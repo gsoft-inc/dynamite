@@ -108,7 +108,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// EventDate field info (OOTB type = Date, Format = DateOnly)
         /// </summary>
-        public static IFieldInfo StartDate 
+        public static BaseFieldInfo StartDate 
         { 
             get 
             { 
@@ -119,7 +119,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// EndDate field info (OOTB type = DateTime, format = DateTime)
         /// </summary>
-        public static IFieldInfo EndDate
+        public static BaseFieldInfo EndDate
         {
             get
             {
@@ -130,7 +130,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Location field info (OOTB type = Text)
         /// </summary>
-        public static IFieldInfo Location 
+        public static BaseFieldInfo Location 
         { 
             get 
             { 
@@ -141,7 +141,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Comments field info (OOTB type = Note, RichText = TRUE, Display Name = "Description")
         /// </summary>
-        public static IFieldInfo Comments 
+        public static BaseFieldInfo Comments 
         { 
             get 
             { 
@@ -152,7 +152,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Category field info (OOTB type = Choice)
         /// </summary>
-        public static IFieldInfo Category 
+        public static BaseFieldInfo Category 
         { 
             get 
             { 
@@ -163,7 +163,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// fAllDayEvent field info (OOTB type = AllDayEvent)
         /// </summary>
-        public static IFieldInfo AllDayEvent 
+        public static BaseFieldInfo AllDayEvent 
         { 
             get 
             { 
@@ -174,7 +174,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// EventType field info (OOTB type = Integer)
         /// </summary>
-        public static IFieldInfo EventType 
+        public static BaseFieldInfo EventType 
         { 
             get 
             { 
@@ -185,7 +185,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// UID field info (OOTB type = Guid)
         /// </summary>
-        public static IFieldInfo UID 
+        public static BaseFieldInfo UID 
         { 
             get 
             { 
@@ -196,7 +196,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// EventCanceled field info (OOTB type = Boolean)
         /// </summary>
-        public static IFieldInfo EventCanceled 
+        public static BaseFieldInfo EventCanceled 
         { 
             get 
             { 
@@ -207,7 +207,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Duration field info (OOTB type = Integer)
         /// </summary>
-        public static IFieldInfo Duration 
+        public static BaseFieldInfo Duration 
         { 
             get 
             { 
@@ -218,7 +218,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// fRecurrence field info - indicates whether recurrence is configured on the item or not (OOTB type = Recurrence)
         /// </summary>
-        public static IFieldInfo HasRecurrence
+        public static BaseFieldInfo HasRecurrence
         {
             get
             {
@@ -229,7 +229,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// RecurrenceID field info (OOTB type = DateTime, Format = ISO8601Gregorian)
         /// </summary>
-        public static IFieldInfo RecurrenceID
+        public static BaseFieldInfo RecurrenceID
         {
             get
             {
@@ -240,7 +240,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// RecurrenceData field info (OOTB type = Note)
         /// </summary>
-        public static IFieldInfo RecurrenceData 
+        public static BaseFieldInfo RecurrenceData 
         { 
             get 
             { 
@@ -251,7 +251,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// TimeZone field info (OOTB type = Integer)
         /// </summary>
-        public static IFieldInfo TimeZone 
+        public static BaseFieldInfo TimeZone 
         { 
             get 
             { 
@@ -262,7 +262,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// XMLTZone field info (OOTB type = Note)
         /// </summary>
-        public static IFieldInfo XMLTZone 
+        public static BaseFieldInfo XMLTZone 
         { 
             get 
             { 
@@ -273,7 +273,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// MasterSeriesItemID field info (OOTB type = Integer)
         /// </summary>
-        public static IFieldInfo MasterSeriesItemID 
+        public static BaseFieldInfo MasterSeriesItemID 
         { 
             get 
             { 
@@ -284,7 +284,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// WorkspaceLink field info (OOTB type = CrossProjectLink)
         /// </summary>
-        public static IFieldInfo WorkspaceLink
+        public static BaseFieldInfo WorkspaceLink
         {
             get
             {
@@ -295,7 +295,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Workspace field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo Workspace 
+        public static BaseFieldInfo Workspace 
         { 
             get 
             { 

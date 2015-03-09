@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a NoteField info
     /// </summary>
-    public class NoteFieldInfo : FieldInfo<string>
+    public class NoteFieldInfo : BaseFieldInfoWithValueType<string>
     {
         /// <summary>
         /// Initializes a new NoteFieldInfo

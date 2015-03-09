@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a IntegerFieldInfo info
     /// </summary>
-    public class IntegerFieldInfo : FieldInfo<int?>
+    public class IntegerFieldInfo : BaseFieldInfoWithValueType<int?>
     {
         /// <summary>
         /// Initializes a new IntegerFieldInfo

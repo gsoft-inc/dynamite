@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a HtmlFieldInfo info. Represents a Publishing HTML field definition.
     /// </summary>
-    public class HtmlFieldInfo : FieldInfo<string>
+    public class HtmlFieldInfo : BaseFieldInfoWithValueType<string>
     {
         /// <summary>
         /// Initializes a new HtmlFieldInfo

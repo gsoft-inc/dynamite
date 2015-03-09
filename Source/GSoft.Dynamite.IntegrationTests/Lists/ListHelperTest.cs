@@ -1689,7 +1689,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfoRequired
                     }
@@ -1701,7 +1701,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     {
                         contentTypeInfo     // this includes testFieldInfoRequired 
                     },
-                FieldDefinitions = new List<IFieldInfo>()
+                FieldDefinitions = new List<BaseFieldInfo>()
                     {
                         sameTestFieldInfoButNotRequired     // this is the list-specific field definition override
                     }
@@ -1780,7 +1780,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo = new ContentTypeInfo(contentTypeId, "ContentTypeNameKey", "ContentTypeDescKey", "GroupKey")
             {
-                Fields = new List<IFieldInfo>()
+                Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfoRequired
                     }
@@ -1792,7 +1792,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     {
                         contentTypeInfo     // this includes testFieldInfoRequired 
                     },
-                FieldDefinitions = new List<IFieldInfo>()
+                FieldDefinitions = new List<BaseFieldInfo>()
                     {
                         sameTestFieldInfoButNotRequired     // this is the list-specific field definition override
                     }
@@ -1873,7 +1873,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
             {
-                Fields = new List<IFieldInfo>()
+                Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfo
                     }
@@ -1881,7 +1881,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo2 = new ContentTypeInfo(contentTypeId2, "ContentTypeNameKey2", "ContentTypeDescKey2", "GroupKey")
             {
-                Fields = new List<IFieldInfo>()
+                Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfo
                     }
@@ -1939,7 +1939,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo1 = new ContentTypeInfo(contentTypeId1, "ContentTypeNameKey1", "ContentTypeDescKey1", "GroupKey")
             {
-                Fields = new List<IFieldInfo>()
+                Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfo
                     }
@@ -1947,7 +1947,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
             var contentTypeInfo2 = new ContentTypeInfo(contentTypeId2, "ContentTypeNameKey2", "ContentTypeDescKey2", "GroupKey")
             {
-                Fields = new List<IFieldInfo>()
+                Fields = new List<BaseFieldInfo>()
                     {
                         testFieldInfo
                     }

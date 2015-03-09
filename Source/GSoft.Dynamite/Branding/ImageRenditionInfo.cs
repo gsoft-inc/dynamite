@@ -23,13 +23,13 @@ namespace GSoft.Dynamite.Branding
         /// Initializes a new instance of the <see cref="ImageRenditionInfo"/> class.
         /// </summary>
         /// <param name="name">The name</param>
-        /// <param name="width">The  Width</param>
-        /// <param name="height">The Height</param>
-        public ImageRenditionInfo(string name, int width, int height)
+        /// <param name="pixelWidth">The  Width</param>
+        /// <param name="pixelHeight">The Height</param>
+        public ImageRenditionInfo(string name, int pixelWidth, int pixelHeight)
         {
             this.Name = name;
-            this.Width = width;
-            this.Height = height;
+            this.Width = pixelWidth;
+            this.Height = pixelHeight;
         }
 
         /// <summary>
@@ -44,27 +44,18 @@ namespace GSoft.Dynamite.Branding
         }
 
         /// <summary>
-        /// Gets or Sets the name
-        /// </summary>
-        /// <value>
         /// The name of the image rendition
-        /// </value>
+        /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or Sets the width
+        /// The width of the image in pixels
         /// </summary>
-        /// <value>
-        /// The width of the image
-        /// </value>
         public int Width { get; set; }
 
         /// <summary>
-        /// Gets or Sets the height
+        /// The height of the image in pixels
         /// </summary>
-        /// <value>
-        /// The height of the image
-        /// </value>
         public int Height { get; set; }
     }
 }
