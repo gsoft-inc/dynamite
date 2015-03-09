@@ -131,7 +131,7 @@ namespace GSoft.Dynamite.Navigation
         private IEnumerable<NavigationNode> GetNavigationNodeItems(NavigationManagedProperties properties, SPContentTypeId filteredContentTypeId, string term)
         {
             // Use 'all menu items' result source for search query
-            var searchResultSource = this.searchHelper.GetResultSourceByName(properties.ResultSourceName, SPContext.Current.Site, SearchObjectLevel.Ssa);
+            var searchResultSource = this.searchHelper.GetResultSourceByName(SPContext.Current.Site, properties.ResultSourceName, SearchObjectLevel.Ssa);
             
             // Check if find result source
             if (searchResultSource == null)
