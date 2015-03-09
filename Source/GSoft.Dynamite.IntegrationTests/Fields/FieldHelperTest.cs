@@ -3362,7 +3362,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -3877,11 +3877,11 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
-                IFieldInfo textFieldInfo = new MinimalFieldInfo<string>(
+                BaseFieldInfo textFieldInfo = new MinimalFieldInfo<string>(
                     "Hobbies",
                     new Guid("{203fa378-6eb8-4ed9-a4f9-221a4c1fbf46}"));
 
-                IFieldInfo dateFieldInfo = new MinimalFieldInfo<DateTime?>(
+                BaseFieldInfo dateFieldInfo = new MinimalFieldInfo<DateTime?>(
                     "Birthday",
                     new Guid("{C4C7D925-BC1B-4f37-826D-AC49B4FB1BC1}"));
 
@@ -3925,7 +3925,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 // Arrange
                 ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
-                    FieldDefinitions = new List<IFieldInfo>()
+                    FieldDefinitions = new List<BaseFieldInfo>()
                         {
                             BuiltInFields.AssignedTo,   // OOTB User field
                             BuiltInFields.Cellphone,    // OOTB Text field
@@ -3982,7 +3982,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                 // Arrange
                 ListInfo listInfo = new ListInfo("somelistpath", "ListNameKey", "ListDescrKey")
                 {
-                    FieldDefinitions = new List<IFieldInfo>()
+                    FieldDefinitions = new List<BaseFieldInfo>()
                         {
                             PublishingFields.PublishingPageContent  // Should be missing from site columns (only available in Publishing sites)
                         }
@@ -4136,7 +4136,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -4408,7 +4408,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     TermStoreMapping = new TaxonomyContext(testTermSet)     // choices limited to all terms in test term set
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -4837,7 +4837,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
         #endregion
 
-        private void ValidateFieldBasicValues(IFieldInfo fieldInfo, SPField field)
+        private void ValidateFieldBasicValues(BaseFieldInfo fieldInfo, SPField field)
         {
             Assert.AreEqual(fieldInfo.Id, field.Id);
             Assert.AreEqual(fieldInfo.InternalName, field.InternalName);

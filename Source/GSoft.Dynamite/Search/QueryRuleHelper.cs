@@ -30,17 +30,14 @@ namespace GSoft.Dynamite.Search
     /// </summary>
     public class QueryRuleHelper : IQueryRuleHelper
     {
-        private readonly ILogger logger;
         private readonly ISearchHelper searchHelper;
 
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="logger">The logger</param>
         /// <param name="searchHelper">The search helper instance</param>
-        public QueryRuleHelper(ILogger logger, ISearchHelper searchHelper)
+        public QueryRuleHelper(ISearchHelper searchHelper)
         {
-            this.logger = logger;
             this.searchHelper = searchHelper;
         }
         

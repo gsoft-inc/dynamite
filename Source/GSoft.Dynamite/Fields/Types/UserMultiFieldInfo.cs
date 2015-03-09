@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UserMultiField info
     /// </summary>
-    public class UserMultiFieldInfo : FieldInfo<UserValueCollection>
+    public class UserMultiFieldInfo : BaseFieldInfoWithValueType<UserValueCollection>
     {
         /// <summary>
         /// Initializes a new UserMultiFieldFieldInfo

@@ -34,7 +34,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
         {
             var noteFieldDefinition = this.CreateNoteFieldInfo(Guid.NewGuid());
 
-            Assert.AreEqual("Note", noteFieldDefinition.Type);
+            Assert.AreEqual("Note", noteFieldDefinition.FieldType);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace GSoft.Dynamite.UnitTests.Fields
             var noteFieldDefinition = new NoteFieldInfo(xmlElement);
 
             Assert.AreEqual("SomeInternalName", noteFieldDefinition.InternalName);
-            Assert.AreEqual("Note", noteFieldDefinition.Type);
+            Assert.AreEqual("Note", noteFieldDefinition.FieldType);
             Assert.AreEqual(new Guid("{7a937493-3c82-497c-938a-d7a362bd8086}"), noteFieldDefinition.Id);
             Assert.AreEqual("SomeDisplayName", noteFieldDefinition.DisplayNameResourceKey);
             Assert.AreEqual("SomeDescription", noteFieldDefinition.DescriptionResourceKey);

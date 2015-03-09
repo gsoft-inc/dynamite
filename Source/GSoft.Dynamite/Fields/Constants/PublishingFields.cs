@@ -99,7 +99,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// ModerationStatus field info (OOTB type = ModStat)
         /// </summary>
-        public static IFieldInfo ModerationStatus 
+        public static BaseFieldInfo ModerationStatus 
         { 
             get 
             { 
@@ -110,7 +110,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingPageContent field info (OOTB type = HTML)
         /// </summary>
-        public static IFieldInfo PublishingPageContent 
+        public static BaseFieldInfo PublishingPageContent 
         { 
             get 
             { 
@@ -121,7 +121,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingPageLayout field info (OOTB type = URL)
         /// </summary>
-        public static IFieldInfo PublishingPageLayout 
+        public static BaseFieldInfo PublishingPageLayout 
         { 
             get 
             { 
@@ -132,7 +132,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingStartDate field info (OOTB type = DateTime)
         /// </summary>
-        public static IFieldInfo PublishingStartDate 
+        public static BaseFieldInfo PublishingStartDate 
         { 
             get 
             { 
@@ -143,7 +143,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingEndDate field info (OOTB type = DateTime)
         /// </summary>
-        public static IFieldInfo PublishingEndDate 
+        public static BaseFieldInfo PublishingEndDate 
         { 
             get 
             { 
@@ -154,7 +154,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// ArticleStartDate field info (OOTB type = DateTime, Format = DateOnly)
         /// </summary>
-        public static IFieldInfo ArticleStartDate 
+        public static BaseFieldInfo ArticleStartDate 
         { 
             get 
             { 
@@ -165,7 +165,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Reusable Content AutomaticUpdate field (OOTB type = Boolean)
         /// </summary>
-        public static IFieldInfo AutomaticUpdate 
+        public static BaseFieldInfo AutomaticUpdate 
         { 
             get 
             { 
@@ -176,7 +176,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Reusable Content ShowInRibbon name (OOTB type = Boolean)
         /// </summary>
-        public static IFieldInfo ShowInRibbon 
+        public static BaseFieldInfo ShowInRibbon 
         { 
             get 
             { 
@@ -187,7 +187,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Reusable Content ReusableHtml name (OOTB type = HTML)
         /// </summary>
-        public static IFieldInfo ReusableHtml 
+        public static BaseFieldInfo ReusableHtml 
         { 
             get 
             { 
@@ -198,7 +198,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// Reusable Content ContentCategory name (OOTB type = Choice)
         /// </summary>
-        public static IFieldInfo ContentCategory 
+        public static BaseFieldInfo ContentCategory 
         { 
             get 
             { 
@@ -209,7 +209,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingContact field info (OOTB type = User)
         /// </summary>
-        public static IFieldInfo PublishingContact 
+        public static BaseFieldInfo PublishingContact 
         { 
             get 
             { 
@@ -220,7 +220,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// PublishingPageImage field info (OOTB type = Image)
         /// </summary>
-        public static IFieldInfo PublishingPageImage 
+        public static BaseFieldInfo PublishingPageImage 
         { 
             get 
             { 
@@ -231,7 +231,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// BrowserTitle field info (OOTB type = string)
         /// </summary>
-        public static IFieldInfo BrowserTitle
+        public static BaseFieldInfo BrowserTitle
         {
             get
             {
@@ -242,7 +242,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// MetaDescription field info (OOTB type = string)
         /// </summary>
-        public static IFieldInfo MetaDescription
+        public static BaseFieldInfo MetaDescription
         {
             get
             {
@@ -253,7 +253,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// MetaKeywords field info (OOTB type = string)
         /// </summary>
-        public static IFieldInfo MetaKeywords
+        public static BaseFieldInfo MetaKeywords
         {
             get
             {
@@ -264,7 +264,7 @@ namespace GSoft.Dynamite.Fields.Constants
         /// <summary>
         /// HideFromInternetSearchEngines field info (OOTB type = string)
         /// </summary>
-        public static IFieldInfo HideFromInternetSearchEngines
+        public static BaseFieldInfo HideFromInternetSearchEngines
         {
             get
             {

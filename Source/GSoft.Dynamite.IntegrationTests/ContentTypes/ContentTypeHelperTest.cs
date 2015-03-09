@@ -439,7 +439,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -501,7 +501,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                     var actualContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
 
                     // Change the CTInfo to add field
-                    contentTypeInfo.Fields = new List<IFieldInfo>() { textFieldInfo };
+                    contentTypeInfo.Fields = new List<BaseFieldInfo>() { textFieldInfo };
 
                     // Act
                     var ensuredContentType = contentTypeHelper.EnsureContentType(testScope.SiteCollection.RootWeb.ContentTypes, contentTypeInfo);
@@ -551,7 +551,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -621,7 +621,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -696,7 +696,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -753,7 +753,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -828,7 +828,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                     // Change CT definition a little bit
                     contentTypeInfo.DescriptionResourceKey = "DescriptionKeyAlt";
-                    contentTypeInfo.Fields = new List<IFieldInfo>()
+                    contentTypeInfo.Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     };
@@ -874,7 +874,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
 
                 var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                     {
                         textFieldInfo
                     }
@@ -1077,7 +1077,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                     "CTDescrKey",
                     "GroupKey")
                     {
-                        Fields = new List<IFieldInfo>()
+                        Fields = new List<BaseFieldInfo>()
                         {
                             BuiltInFields.AssignedTo,   // OOTB User field
                             BuiltInFields.Cellphone,    // OOTB Text field
@@ -1149,7 +1149,7 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
                     "CTDescrKey",
                     "GroupKey")
                 {
-                    Fields = new List<IFieldInfo>()
+                    Fields = new List<BaseFieldInfo>()
                         {
                             PublishingFields.PublishingPageContent  // Should be missing from site columns (only available in Publishing sites)
                         }

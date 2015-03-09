@@ -8,7 +8,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UserField info
     /// </summary>
-    public class UserFieldInfo : FieldInfo<UserValue>
+    public class UserFieldInfo : BaseFieldInfoWithValueType<UserValue>
     {
         /// <summary>
         /// Initializes a new UserFieldInfo

@@ -211,7 +211,7 @@
     <Compile Include="Fields\Types\UserFieldInfo.cs" />
     <Compile Include="Fields\Types\UrlFieldInfo.cs" />
     <Compile Include="Fields\Types\MinimalFieldInfo.cs" />
-    <Compile Include="Fields\IFieldInfo.cs" />
+    <Compile Include="Fields\BaseFieldInfo.cs" />
     <Compile Include="Lists\ListInfo.cs" />
     <Compile Include="Search\ManagedPropertyInfo.cs" />
     <Compile Include="Pages\PageInfo.cs" />
@@ -372,7 +372,7 @@
     <Compile Include="Search\ISearchHelper.cs" />
     <Compile Include="Branding\ExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Fields\FieldHelper.cs" />
-    <Compile Include="Fields\FieldInfo.cs" />
+    <Compile Include="Fields\BaseFieldInfoWithValueType.cs" />
     <Compile Include="Utils\GacAssemblyLocator.cs" />
     <Compile Include="Branding\IExtraMasterPageBodyCssClasses.cs" />
     <Compile Include="Globalization\IResourceLocator.cs" />

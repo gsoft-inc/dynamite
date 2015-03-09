@@ -60,7 +60,7 @@
         /// </summary>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields);
+        void AddFieldsToDefaultView(SPList list, ICollection<BaseFieldInfo> fields);
 
         /// <summary>
         /// Add fields in the default view of the list
@@ -68,7 +68,7 @@
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields);
+        void AddFieldsToDefaultView(SPList list, ICollection<BaseFieldInfo> fields, bool removeExistingViewFields);
 
         /// <summary>
         /// Ensure the field in the view

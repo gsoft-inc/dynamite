@@ -617,21 +617,6 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
-        /// Get all query rules for a search level.
-        /// </summary>
-        /// <param name="ssa">The search service.</param>
-        /// <param name="level">The search object level.</param>
-        /// <param name="contextWeb">The SPWeb context.</param>
-        /// <returns>A query rule collection.</returns>
-        private static QueryRuleCollection GetQueryRules(SearchServiceApplication ssa, SearchObjectLevel level, SPWeb contextWeb)
-        {
-            var queryRuleManager = new QueryRuleManager(ssa);
-            var searchOwner = new SearchObjectOwner(level, contextWeb);
-
-            return queryRuleManager.GetQueryRules(new SearchObjectFilter(searchOwner));
-        }
-
-        /// <summary>
         /// Ensure a search result source
         /// </summary>
         /// <param name="ssa">The search service application.</param>

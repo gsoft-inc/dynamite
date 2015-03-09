@@ -18,12 +18,12 @@
         /// <param name="fieldInfos">The fields' information.</param>
         /// <returns>A collection of the new fields.</returns>
         /// <exception cref="System.ArgumentNullException">Null fieldsXml parameter</exception>
-        IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<IFieldInfo> fieldInfos);
+        IEnumerable<SPField> EnsureField(SPFieldCollection fieldCollection, ICollection<BaseFieldInfo> fieldInfos);
 
         /// <summary>The ensure field.</summary>
         /// <param name="fieldCollection">The field collection.</param>
         /// <param name="fieldInfo">The field info.</param>
         /// <returns>The field.</returns>
-        SPField EnsureField(SPFieldCollection fieldCollection, IFieldInfo fieldInfo);
+        SPField EnsureField(SPFieldCollection fieldCollection, BaseFieldInfo fieldInfo);
     }
 }

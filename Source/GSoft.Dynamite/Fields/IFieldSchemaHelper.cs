@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="fieldInfo">The field definition for which we want to print out the full XML schema</param>
         /// <returns>The XML schema of the field</returns>
-        XElement SchemaForField(IFieldInfo fieldInfo);
+        XElement SchemaForField(BaseFieldInfo fieldInfo);
 
         /// <summary>
         /// Adds a field defined in xml to a collection of fields.

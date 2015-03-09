@@ -431,7 +431,7 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
-        public void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields)
+        public void AddFieldsToDefaultView(SPList list, ICollection<BaseFieldInfo> fields)
         {
             this.AddFieldsToDefaultView(list, fields, false);
         }
@@ -442,7 +442,7 @@ namespace GSoft.Dynamite.Lists
         /// <param name="list">the current list</param>
         /// <param name="fields">the collection of fields</param>
         /// <param name="removeExistingViewFields">if set to <c>true</c> [remove existing view fields].</param>
-        public void AddFieldsToDefaultView(SPList list, ICollection<IFieldInfo> fields, bool removeExistingViewFields)
+        public void AddFieldsToDefaultView(SPList list, ICollection<BaseFieldInfo> fields, bool removeExistingViewFields)
         {
             var defaultView = list.DefaultView;
             var fieldCollection = defaultView.ViewFields;
@@ -453,7 +453,7 @@ namespace GSoft.Dynamite.Lists
                 fieldCollection.DeleteAll();
             }
 
-            foreach (IFieldInfo field in fields)
+            foreach (BaseFieldInfo field in fields)
             {
                 if (list.Fields.Contains(field.Id))
                 {

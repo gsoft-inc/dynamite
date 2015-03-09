@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.Fields
         /// </summary>
         /// <param name="fieldInfo">The field information for which the value will be set to.</param>
         /// <param name="value">The value to set to the field. The type of the object must be the same as the FieldInfo AssociatedValueType.</param>
-        public FieldValueInfo(IFieldInfo fieldInfo, object value)
+        public FieldValueInfo(BaseFieldInfo fieldInfo, object value)
         {
             this.FieldInfo = fieldInfo;
             this.Value = value;
@@ -28,7 +28,7 @@ namespace GSoft.Dynamite.Fields
         /// <summary>
         /// The field information for which the value will be set to.
         /// </summary>
-        public IFieldInfo FieldInfo { get; set; }
+        public BaseFieldInfo FieldInfo { get; set; }
 
         /// <summary>
         /// The value to set to the field. The type of the object must be the same as the FieldInfo AssociatedValueType.

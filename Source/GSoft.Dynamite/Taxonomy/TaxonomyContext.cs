@@ -81,11 +81,6 @@ namespace GSoft.Dynamite.Taxonomy
         { 
             get
             {
-                //if (this.TermSet == null)
-                //{
-                //    throw new InvalidOperationException("TaxonomyContext property TermSet should never be empty.");
-                //}
-
                 if (this.TermSet != null && this.TermSet.Group != null)
                 {
                     // We're not dealing with a term set belonging to the default

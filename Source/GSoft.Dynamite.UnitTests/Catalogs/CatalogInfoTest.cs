@@ -94,6 +94,9 @@ namespace GSoft.Dynamite.UnitTests.Catalogs
             Assert.AreEqual(1, deserializedObject.FieldDefinitions.Count);
             Assert.AreEqual(objectToSerialize.FieldDefinitions.ElementAt(0).Id, deserializedObject.FieldDefinitions.ElementAt(0).Id);
             Assert.AreEqual(objectToSerialize.FieldDefinitions.ElementAt(0).InternalName, deserializedObject.FieldDefinitions.ElementAt(0).InternalName);
+
+            // TODO: maybe figure out a way for AssociatedValueType to survive serialization... not sure it's worth it though
+            ////Assert.AreEqual(objectToSerialize.FieldDefinitions.ElementAt(0).AssociatedValueType, deserializedObject.FieldDefinitions.ElementAt(0).AssociatedValueType);
         }
     }
 }

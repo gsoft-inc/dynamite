@@ -9,12 +9,12 @@ namespace GSoft.Dynamite.Fields
     /// Defines the field info structure.
     /// </summary>
     /// <typeparam name="T">ValueType associated to that particular Field type</typeparam>
-    public abstract class FieldInfo<T> : IFieldInfo
+    public abstract class BaseFieldInfoWithValueType<T> : BaseFieldInfo
     {
         /// <summary>
         /// Default constructor
         /// </summary>
-        public FieldInfo() : base()
+        protected BaseFieldInfoWithValueType() : base()
         {
         }
 
@@ -27,7 +27,7 @@ namespace GSoft.Dynamite.Fields
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
         /// <param name="groupResourceKey">Content Group resource key</param>
-        public FieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        protected BaseFieldInfoWithValueType(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(internalName, id, fieldTypeName, displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
         }
@@ -36,7 +36,8 @@ namespace GSoft.Dynamite.Fields
         /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
         /// <param name="fieldSchemaXml">Field's XML definition</param>
-        public FieldInfo(XElement fieldSchemaXml) : base(fieldSchemaXml)
+        protected BaseFieldInfoWithValueType(XElement fieldSchemaXml)
+            : base(fieldSchemaXml)
         {
         }
 
@@ -50,11 +51,6 @@ namespace GSoft.Dynamite.Fields
             get
             {
                 return typeof(T);
-            }
-
-            set
-            {
-                throw new NotSupportedException("Associated value type is determined by type argument and cannot be set.");
             }
         }
 

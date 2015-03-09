@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Office.Server.Search.Administration;
 
 namespace GSoft.Dynamite.Search
@@ -13,6 +14,7 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         public ResultTypeRuleInfo()
         {
+            this.Values = new List<string>();
         }
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The associated values
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public ICollection<string> Values { get; set; }   
     }
 }

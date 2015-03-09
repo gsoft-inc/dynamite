@@ -313,7 +313,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -755,7 +755,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -1246,7 +1246,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -1740,7 +1740,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -2107,7 +2107,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyGuid",
                     "GroupKey");
                 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -2236,7 +2236,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyGuid",
                     "GroupKey");
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -2322,7 +2322,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
         [TestCategory(IntegrationTestCategories.Sanity)]
         public void ToEntity_AllValueTypesShouldBeEasyToSerializeAndDeserialize()
         {
-
             using (var testScope = SiteTestScope.BlankSite())
             {
                 // Arrange
@@ -2522,7 +2521,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -2932,7 +2931,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -3308,7 +3307,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -3773,7 +3772,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
                 };
 
-                var fieldsToEnsure = new List<IFieldInfo>()
+                var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
                         numberFieldInfo,
@@ -3938,8 +3937,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                 }
             }
         }
-
-
 
         // MORE TEST CASE Suggestions:
         // - Non SiteCollection-specific term group bindings

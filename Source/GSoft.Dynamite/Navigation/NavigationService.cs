@@ -129,6 +129,7 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Get the pages tagged with terms across the search service
         /// </summary>
+        /// <param name="web">The current web</param>
         /// <param name="properties">The Managed Properties</param>
         /// <returns>Navigation node</returns>
         private IEnumerable<NavigationNode> GetNavigationNodeItems(SPWeb web, NavigationManagedProperties properties)
@@ -139,6 +140,7 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Get the pages tagged with terms across the search service
         /// </summary>
+        /// <param name="web">The current web</param>
         /// <param name="properties">The Managed Properties</param>
         /// <param name="filteredContentTypeId">The content type id</param>
         /// <param name="term">The current term</param>

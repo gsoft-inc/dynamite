@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a GUID field
     /// </summary>
-    public class GuidFieldInfo : FieldInfo<Guid?>
+    public class GuidFieldInfo : BaseFieldInfoWithValueType<Guid?>
     {
         /// <summary>
         /// Initializes a new <see cref="GuidFieldInfo"/> instance

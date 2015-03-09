@@ -95,7 +95,6 @@ namespace GSoft.Dynamite.UnitTests.Catalogs
             Assert.AreEqual(
                 objectToSerialize.Subfolders.ElementAt(0).Pages.ElementAt(0).WebParts.Count,
                 deserializedObject.Subfolders.ElementAt(0).Pages.ElementAt(0).WebParts.Count);
-
         }
     }
 }

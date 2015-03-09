@@ -7,7 +7,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a UrlField info
     /// </summary>
-    public class UrlFieldInfo : FieldInfo<UrlValue>
+    public class UrlFieldInfo : BaseFieldInfoWithValueType<UrlValue>
     {
         /// <summary>
         /// Initializes a new UrlFieldFieldInfo

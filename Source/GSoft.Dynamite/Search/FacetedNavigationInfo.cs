@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Search
@@ -13,6 +14,7 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         public FacetedNavigationInfo()
         {
+            this.Refiners = new List<RefinerInfo>();
         }
 
         /// <summary>
@@ -34,6 +36,7 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// The refiners list
         /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IList<RefinerInfo> Refiners { get; set; } 
     }
 }

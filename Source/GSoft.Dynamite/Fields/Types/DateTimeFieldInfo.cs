@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a DateTime info
     /// </summary>
-    public class DateTimeFieldInfo : FieldInfo<DateTime?>
+    public class DateTimeFieldInfo : BaseFieldInfoWithValueType<DateTime?>
     {
         /// <summary>
         /// Initializes a new DateTimeFieldInfo

@@ -6,7 +6,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// <summary>
     /// Definition of a Boolean field
     /// </summary>
-    public class BooleanFieldInfo : FieldInfo<bool?>
+    public class BooleanFieldInfo : BaseFieldInfoWithValueType<bool?>
     {
         /// <summary>
         /// Initializes a new <see cref="BooleanFieldInfo"/> instance

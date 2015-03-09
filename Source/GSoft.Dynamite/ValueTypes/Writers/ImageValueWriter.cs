@@ -108,7 +108,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                     "WriteValueToFolderDefault - Initializing {0} field (fieldName={1}) with default value \"{2}\"."
                     + " Be aware that folder default values on {0}-type field are not well supported by SharePoint and that this default"
                     + " value will not be editable through your document library's \"List Settings > Column default value settings\" options page.",
-                    fieldValueInfo.FieldInfo.Type,
+                    fieldValueInfo.FieldInfo.FieldType,
                     fieldValueInfo.FieldInfo.InternalName,
                     sharePointFieldImageValue.ToString());
                 

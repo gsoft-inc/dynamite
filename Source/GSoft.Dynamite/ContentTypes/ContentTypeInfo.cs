@@ -19,7 +19,7 @@ namespace GSoft.Dynamite.ContentTypes
         /// </summary>
         public ContentTypeInfo()
         {
-            this.Fields = new List<IFieldInfo>();
+            this.Fields = new List<BaseFieldInfo>();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace GSoft.Dynamite.ContentTypes
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
         {
             this.ContentTypeId = contentTypeId;
-            this.Fields = new List<IFieldInfo>();
+            this.Fields = new List<BaseFieldInfo>();
         }
 
         /// <summary>
@@ -104,6 +104,6 @@ namespace GSoft.Dynamite.ContentTypes
         /// Field description for all of the content type's fields (not including fields from parent content types)
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
-        public ICollection<IFieldInfo> Fields { get; set; }
+        public ICollection<BaseFieldInfo> Fields { get; set; }
     }
 }
