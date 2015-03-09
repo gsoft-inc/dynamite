@@ -18,17 +18,14 @@ namespace GSoft.Dynamite.Taxonomy
     /// </remarks>
     public class TaxonomyService : ITaxonomyService
     {
-        private ILogger logger;
         private ISiteTaxonomyCacheManager taxonomyCacheManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyService" /> class.
         /// </summary>
-        /// <param name="logger">The logger.</param>
         /// <param name="taxonomyCacheManager">The taxonomy cache manager</param>
-        public TaxonomyService(ILogger logger, ISiteTaxonomyCacheManager taxonomyCacheManager)
+        public TaxonomyService(ISiteTaxonomyCacheManager taxonomyCacheManager)
         {
-            this.logger = logger;
             this.taxonomyCacheManager = taxonomyCacheManager;
         }
 
@@ -458,6 +455,29 @@ namespace GSoft.Dynamite.Taxonomy
 
             return termSet;
         }
+        
+        /// <summary>
+        /// Gets the term set group from the term store.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">The term set group name, in the term store's default working language.</param>
+        /// <returns>The term set group</returns>
+        public Group GetTermGroupFromStore(TermStore termStore, string groupName)
+        {
+            int originalWorkingLanguage = termStore.WorkingLanguage;
+            termStore.WorkingLanguage = termStore.DefaultLanguage;
+
+            Group group = termStore.Groups[groupName];
+
+            if (group == null)
+            {
+                throw new ArgumentException("Could not find term set group with name " + groupName + " in term store " + termStore.Name);
+            }
+
+            termStore.WorkingLanguage = originalWorkingLanguage;
+
+            return group;
+        }
 
         #region GetTermPathFromRootToTerm
         /// <summary>
@@ -470,7 +490,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
         {
             IList<Term> termHierarchy = new List<Term>();
 
@@ -572,7 +592,7 @@ namespace GSoft.Dynamite.Taxonomy
 
             if (termSet == null)
             {
-                throw new ArgumentNullException("termSetName");
+                throw new ArgumentNullException("termSet");
             }
 
             if (string.IsNullOrEmpty(termLabel))
@@ -726,8 +746,6 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 throw new ArgumentNullException("termSetName");
             }
-
-            IList<Term> termsList = new List<Term>();
 
             Group group = GetGroupFromTermStore(termStore, termStoreGroupName);
             TermSet termSet = this.GetTermSetFromGroup(termStore, group, termSetName);

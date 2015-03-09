@@ -494,7 +494,7 @@ namespace GSoft.Dynamite.Caml
         /// <param name="rightCondition">The right condition.</param>
         /// <returns>
         /// A string representation of the CAML query.
-        /// </returns>
+        /// </returns>        
         public string Or(string leftCondition, string rightCondition)
         {
             return Tag(CamlConstants.Or, null, null, leftCondition + rightCondition);
@@ -552,7 +552,7 @@ namespace GSoft.Dynamite.Caml
         /// </returns>
         public string Value(int fieldValue)
         {
-            return Tag(CamlConstants.Value, CamlConstants.Type, CamlConstants.Integer, fieldValue.ToString());
+            return Tag(CamlConstants.Value, CamlConstants.Type, CamlConstants.Integer, fieldValue.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -862,7 +862,7 @@ namespace GSoft.Dynamite.Caml
         {
             if (string.IsNullOrEmpty(attribute) || string.IsNullOrEmpty(attributeValue))
             {
-                return !string.IsNullOrEmpty(value) ? string.Format("<{0}>{1}</{0}>", tag, value) : string.Format("<{0} />", tag);
+                return !string.IsNullOrEmpty(value) ? string.Format(CultureInfo.InvariantCulture, "<{0}>{1}</{0}>", tag, value) : string.Format(CultureInfo.InvariantCulture, "<{0} />", tag);
             }
 
             if (!string.IsNullOrEmpty(value))
@@ -874,10 +874,10 @@ namespace GSoft.Dynamite.Caml
                     attributeValue,
                     value
                 };
-                return string.Format("<{0} {1}=\"{2}\">{3}</{0}>", formatArguments);
+                return string.Format(CultureInfo.InvariantCulture, "<{0} {1}=\"{2}\">{3}</{0}>", formatArguments);
             }
 
-            return string.Format("<{0} {1}=\"{2}\" />", tag, attribute, attributeValue);
+            return string.Format(CultureInfo.InvariantCulture, "<{0} {1}=\"{2}\" />", tag, attribute, attributeValue);
         }
 
         private static string Tag(string tag, string value, params object[] attributeValuePairs)

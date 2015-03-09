@@ -15,7 +15,7 @@ if (window.chrome) {
     });
 }*/
 
-moment.lang('fr', {
+moment.locale('fr', {
     longDateFormat: {
         // Use the Microsoft official fr-CA regional setting date format, for consistency between presentation and SharePoint backend format
         L: "YYYY-MM-DD"
@@ -23,24 +23,18 @@ moment.lang('fr', {
 });
 
 
-moment.lang('en', {
+moment.locale('en', {
     longDateFormat: {
-        // Use the Microsoft official fr-CA regional setting date format, for consistency between presentation and SharePoint backend format
+        // Use the Microsoft official en-US regional setting date format, for consistency between presentation and SharePoint backend format
         L: "DD/MM/YYYY"
     }
 });
-
 
 // GSoft namespace root
 window.GSoft = window.GSoft || {};
 
 // GSoft.Dynamite namespace root
 window.GSoft.Dynamite = window.GSoft.Dynamite || {};
-
-
-// GSoft.Dynamite Client namespace root
-window.GSoft.Dynamite = window.GSoft.Dynamite || {};
-
 
 // ====================
 // Core module
@@ -50,29 +44,31 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     Core.initialize = function (params) {
 
     };
-} (GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
+}(GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
 
 // ====================
 // Resources module
 // ====================
-(function(Res, $, undefined) {
+(function (Resource, $, undefined) {
     // SharePoint resource files can be fetched through the OOTB ScriptResource.ashx HttpHandler.
-    // However, all resource files that get loaded tend to hog the Res namespace exclusivaly,
+    // However, all resource files that get loaded tend to hog the Resource namespace exclusivaly,
     // leading to problems when you wanna have multiple resources files loaded on the same page.
     //
     // The solution is that, before applying any KO bindings in your page, call this ensure method
     // which will sequentially load all the pre-req resourfiles (or at least confirm than they were 
     // already loaded) then execture your binding-applying snippet of code.
     //
-    // For example, IntactNet.Res.ensureResThenExecute(["IFC.IntactNet", "IFC.IntactNet.News"], function () { // apply some bindings here });
-    Res.ensureResThenExecute = function(prerequisiteResourceFiles, funcToExecute) {
-        innerEnsureResThenExecute(prerequisiteResourceFiles, prerequisiteResourceFiles, funcToExecute);
+    // For example, GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite", "GSoft.Dynamite.News"], function () { // apply some bindings here });
+    Resource.ensureResourceThenExecute = function (prerequisiteResourceFiles, functionToExecute) {
+        innerensureResourceThenExecute(prerequisiteResourceFiles, prerequisiteResourceFiles, functionToExecute);
     };
 
-    function innerEnsureResThenExecute(allPrerequisiteResourceFiles, restOfPrerequisiteResourceFiles, funcToExecute) {
-        if (!$.isArray(allPrerequisiteResourceFiles) || allPrerequisiteResourceFiles.length == 0
-            || !$.isArray(restOfPrerequisiteResourceFiles) || restOfPrerequisiteResourceFiles.length == 0) {
-            throw new Exception("Only call ensureResThenExecute with a non-empty array. E.g. ['IFC.IntactNet', 'IFC.IntactNet.News']");
+    function innerensureResourceThenExecute(allPrerequisiteResourceFiles, restOfPrerequisiteResourceFiles, functionToExecute) {
+        if (!$.isArray(allPrerequisiteResourceFiles) ||
+            allPrerequisiteResourceFiles.length == 0 ||
+            !$.isArray(restOfPrerequisiteResourceFiles) ||
+            restOfPrerequisiteResourceFiles.length == 0) {
+            throw new Exception("Only call ensureResourceThenExecute with a non-empty array. E.g. ['GSoft.Dynamite', 'GSoft.Dynamite.News']");
         }
 
         if (restOfPrerequisiteResourceFiles.length > 0) {
@@ -80,70 +76,72 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             var first = restOfPrerequisiteResourceFiles[0];
             var tail = _.tail(restOfPrerequisiteResourceFiles);
 
-            if (!Res[first]) {
+            if (!Resource[first]) {
                 // this file in particular was never fetched yet, wait for it
-                Res[first] = "fetching"; // flag this as "currently fetching" so that we don't attempt to fetch it multiple times (and wait for it to 
+                Resource[first] = "fetching"; // flag this as "currently fetching" so that we don't attempt to fetch it multiple times (and wait for it to 
 
                 $.getScript(formatScriptResxLink(first))
-                    .done(function() {
+                    .done(function () {
                         // when we load the SharePoint Resx script from its dedicated handler,
-                        // it automatically assigns itself to the window.Res global object,
+                        // it automatically assigns itself to the window.Resource global object,
                         // wiping out any previously assigned value (which is why we're maintaining
-                        // references to those other resource data in our own Res object).
-                        Res[first] = window.Res;
+                        // references to those other resource data in our own Resource object).
+                        Resource[first] = window.Res;
                     })
-                    .fail(function() { console.log("Failed to load resource file for module: " + first); });
+                    .fail(function () { console.log("Failed to load resource file for module: " + first); });
             }
 
             if (tail.length > 0) {
-                innerEnsureResThenExecute(allPrerequisiteResourceFiles, tail, funcToExecute);
+                innerensureResourceThenExecute(allPrerequisiteResourceFiles, tail, functionToExecute);
             } else {
-                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute);
+                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
             }
         }
     }
 
-    function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute) {
-            setTimeout(function() {
-                var allLoaded = _.all(allPrerequisiteResourceFiles, function(prereqFileKey) {
-                    return Res[prereqFileKey] && Res[prereqFileKey] != "fetching";
-                });
+    function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute) {
+        setTimeout(function () {
+            var allLoaded = _.all(allPrerequisiteResourceFiles, function (prereqFileKey) {
+                return Resource[prereqFileKey] && Resource[prereqFileKey] != "fetching";
+            });
 
-                if (allLoaded) {
-                    // We're ready, all resource file AJAX calls have come back
-                    funcToExecute();
-                } else {
-                    // still waiting for some resource file to load, try again a bit later
-                    waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, funcToExecute);
-                }
-            }, 100);
-        }
+            if (allLoaded) {
+                // We're ready, all resource file AJAX calls have come back
+                functionToExecute();
+            } else {
+                // still waiting for some resource file to load, try again a bit later
+                waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute);
+            }
+        }, 100);
+    }
 
     function formatScriptResxLink(resourceFileName) {
-        return GSoft.Dynamite.Utils.CurrentWebUrl + "/_layouts/scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
+        return GSoft.Dynamite.Utilities.CurrentWebUrl + GSoft.Dynamite.Utilities.LayoutFolder() + "scriptresx.ashx?culture=" + currentCulture() + "&name=" + resourceFileName;
     }
 
     function currentCulture() {
-        if (_spPageContextInfo.currentLanguage == 1033) {
+        if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1033) {
             return "en-US";
-        } else {
+        } else if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1036) {
             return "fr-FR";
+        } else {
+            return "en-US";
         }
     }
 
-    return Res;
-} (GSoft.Dynamite.Res = GSoft.Dynamite.Res || {}, jq110));
+    return Resource;
+}(GSoft.Dynamite.Resource = GSoft.Dynamite.Resource || {}, jq110));
 
 // ====================
 // File loader module
 // ====================
-(function (fileLoader, $, undefined) {
+(function (FileLoader, $, undefined) {
 
     // GET files and return deferred object when done.
     // See http://api.jquery.com/category/deferred-object/ for more information on deferred objects in jQuery.
     // Usage example: 
     // GSoft.Dynamite.FileLoader.load("/_layouts/folder/file1.html", "/_layouts/folder/file2.html").done(function(files) { /*Use files here*/});,
-    fileLoader.load = function () {
+    FileLoader.load = function () {
 
         // Build promises and resolve them when GET operation is done
         var promises = [];
@@ -166,11 +164,11 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 // ====================
 // Edit-mode Metadata Panel module
 // ====================
-(function(MetadataPanel, $, undefined) {
+(function (MetadataPanel, $, undefined) {
     MetadataPanel.viewModelInstance = null;
 
-    MetadataPanel.initialize = function(tabs) {
-        $(document).ready(function() {
+    MetadataPanel.initialize = function (tabs) {
+        $(document).ready(function () {
             if (MetadataPanel.viewModelInstance == null) {
                 if ($("#metadata-panel").length == 1) {
                     MetadataPanel.viewModelInstance = new MetadataPanel.MetadataPanelViewModel(tabs);
@@ -182,21 +180,21 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         });
     };
 
-    MetadataPanel.MetadataPanelViewModel = function(tabs) {
+    MetadataPanel.MetadataPanelViewModel = function (tabs) {
         var self = this;
 
         self.tabs = ko.observableArray(tabs);
 
-        self.findTab = function(tabId) {
-            return _.find(self.tabs(), function(oneTab) {
+        self.findTab = function (tabId) {
+            return _.find(self.tabs(), function (oneTab) {
                 return oneTab.id() == tabId;
             });
         };
 
-        self.toggleTab = function(tab) {
+        self.toggleTab = function (tab) {
             if (!tab.isSelected()) {
                 // un-select all the other tabs then activate the newly selected one
-                _.each(self.tabs(), function(oneOfTheTabs) {
+                _.each(self.tabs(), function (oneOfTheTabs) {
                     oneOfTheTabs.isSelected(false);
                 });
 
@@ -209,8 +207,8 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
         self.lastSelectedTab = null;
 
-        self.toggleAllTabs = function() {
-            var alreadySelected = _.find(self.tabs(), function(oneTab) {
+        self.toggleAllTabs = function () {
+            var alreadySelected = _.find(self.tabs(), function (oneTab) {
                 return oneTab.isSelected();
             });
 
@@ -220,7 +218,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 alreadySelected.isSelected(false);
 
                 // deselect all
-                _.each(self.tabs(), function(oneOfTheTabs) {
+                _.each(self.tabs(), function (oneOfTheTabs) {
                     oneOfTheTabs.isSelected(false);
                 });
             } else if (self.lastSelectedTab) {
@@ -233,7 +231,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         };
     };
 
-    MetadataPanel.Tab = function(id, res, isSelected) {
+    MetadataPanel.Tab = function (id, res, isSelected) {
         var self = this;
 
         self.id = ko.observable(id);
@@ -245,17 +243,41 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 }(GSoft.Dynamite.MetadataPanel = GSoft.Dynamite.MetadataPanel || {}, jq110));
 
 // ====================
-// Utils module
+// Utilities module
 // ====================
-(function(Utils, $, undefined) {
-    Utils.CurrentWebUrl = null;
-    Utils.ParentFolderUrl = "#";
+(function (Utilities, $, undefined) {
+    Utilities.CurrentWebUrl = null;
+    Utilities.ParentFolderUrl = "#";
 
-    Utils.initialize = function(params) {
+    Utilities.initialize = function (params) {
 
     };
 
-    Utils.shortenAndEllipsis = function(text, size) {
+    Utilities.ExtractTaxonomyInfo = function (taxonomyValue) {
+        if (taxonomyValue) {
+
+            var results = [];
+            var regex = /L0\|#0([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})\|([\d \w \s áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ']*);/gi;
+
+            while ((match = regex.exec(taxonomyValue)) !== null) {
+                results.push({ id: match[1], label: match[2] });
+            }
+
+            return results;
+        }
+
+        return { id: undefined, label: undefined };
+    };
+
+    Utilities.LayoutFolder = function () {
+        if (_spPageContextInfo && _spPageContextInfo.webUIVersion === 15) {
+            return "/_layouts/15/";
+        }
+
+        return "/_layouts/";
+    }
+
+    Utilities.shortenAndEllipsis = function (text, size) {
         if (text != null && text.length > size) {
             text = text.substring(0, size);
 
@@ -266,34 +288,110 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return text;
     };
 
-    Utils.QueryObject = function() {
-        var result = {}, queryString = location.search.slice(1),
-            re = /([^&=]+)=([^&]*)/g, m;
+    Utilities.QueryObject = function () {
+        var result = {},
+            queryString = location.search.slice(1),
+            regex = /([^&=]+)=([^&]*)/g,
+            match;
 
-        while (m = re.exec(queryString)) {
-            result[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+        while (match = regex.exec(queryString)) {
+            result[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
         }
 
         return result;
     };
 
-    Utils.initializeParentFolderLink = function() {
-        if (Utils.ParentFolderUrl.length > 1) {
+    Utilities.initializeParentFolderLink = function () {
+        if (Utilities.ParentFolderUrl.length > 1) {
             ExecuteOrDelayUntilScriptLoaded(addLinkToSiteActions, "sp.js");
         }
     };
 
+    // When you are on a cross site publishing site, and you need to get the absolute picture file from a managed property of the type image field,
+    // this method returns an absolute path of the image.
+    // The method parses the value with a regex instead of jQuery because jq add an element to the DOM and so the browser gets the url with a 404.
+    // elementString : the string version of the html element of the image (the value of the image field type)
+    // spSiteUrl : The value of the managed property spSiteUrl
+    Utilities.GetAbsoluteImagePath = function (elementString, spSiteUrl) {
+        var sourceAttributeMatch = elementString.match(/src=\"(.+?)\"/i);
+        var imageSource = sourceAttributeMatch.length > 1 ? sourceAttributeMatch[1] : null;
+
+        // If the image URL is relative, prepend the site URL
+        if (imageSource && imageSource.startsWith("/")) {
+
+            return spSiteUrl + imageSource;
+        }
+        return "";
+    };
+
+    // Provides the mecanism to create a accordion and show/hide element when the click event is handled on the header's title.
+    // clickableElement : represents the title of each section.
+    // visibleCssClass : The class added when the section below the clickable element is shown.
+    // Exemple : 'div.experience-steps> h3' => represents all the sections' titles
+    // <div class='experience-steps'>
+    // <h3></h3>
+    // <div></div>
+    // <h3></h3>
+    // <div></div>
+    // </div>
+    Utilities.ToggleElement = function (clickableElement, visibleCssClass) {
+        $(document).ready(function () {
+            $(clickableElement).click(function () {
+                var $nextSection = $(this).next();
+                if ($nextSection.is(":hidden")) {
+                    $(this).addClass(visibleCssClass);
+                    $nextSection.show("slow");
+                } else {
+                    $(this).removeClass(visibleCssClass);
+                    $nextSection.slideUp();
+                }
+            });
+        });
+    }
+
     function addLinkToSiteActions() {
-        GSoft.Dynamite.Res.ensureResThenExecute(["GSoft.Dynamite"], function() {
+        GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
             var newLink = $('<div class="parent-folder-link"><a title="'
-                + GSoft.Dynamite.Res["GSoft.Dynamite"].siteAction_OpenParentFolder
-                + '" href="' + Utils.ParentFolderUrl
+                + GSoft.Dynamite.Resource["GSoft.Dynamite"].siteAction_OpenParentFolder
+                + '" href="' + Utilities.ParentFolderUrl
                 + '"><img /></a></div>');
             var img = newLink.find("img");
-            img.attr("src", "/_layouts/GSoft.Dynamite/Img/icon_open_parent.png");
+            img.attr("src", Utilities.LayoutFolder() + "GSoft.Dynamite/Img/icon_open_parent.png");
             $(".ms-siteactionscontainer .s4-breadcrumb-anchor").after(newLink);
         });
     };
-}(GSoft.Dynamite.Utils = GSoft.Dynamite.Utils || {}, jq110));
+}(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq110));
+
+// ====================
+// DisplayTemplateHelper module
+// ====================
+(function (DisplayTemplateHelper, $, undefined) {
+    
+    DisplayTemplateHelper.ensureAbsoluteImageUrl = function (pictureUrlItemValue, spSiteUrl) {
+
+        // Get search item values
+        var siteUrlItemValue = spSiteUrl;
+
+        // Check if indexed values aren't null or empty
+        if ((pictureUrlItemValue != null) &&
+			(!siteUrlItemValue.isNull && !siteUrlItemValue.isEmpty)) {
+
+            // Get the image source attribute
+            var sourceAttributeMatch = pictureUrlItemValue.match(/src=\"(.+?)\"/i);
+            var imageSource = sourceAttributeMatch.length > 1 ? sourceAttributeMatch[1] : null;
+
+            // If the image URL is relative, prepend the site URL
+            if (imageSource.startsWith("/")) {
+                var siteUrl = siteUrlItemValue.value;
+
+                // Update the src attribute value
+                pictureUrlItemValue = pictureUrlItemValue.replace(sourceAttributeMatch[1], siteUrl + imageSource);
+            }
+        }
+
+        return pictureUrlItemValue;
+    };
+
+}(GSoft.Dynamite.DisplayTemplateHelper = GSoft.Dynamite.DisplayTemplateHelper || {}, jq110));
 
 

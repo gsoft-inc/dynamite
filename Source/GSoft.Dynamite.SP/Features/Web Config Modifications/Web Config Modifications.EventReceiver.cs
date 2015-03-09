@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
+using Autofac;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ServiceLocator;
-using GSoft.Dynamite.WebConfig;
+using GSoft.Dynamite.ServiceLocator.Lifetime;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
 
@@ -19,7 +21,7 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
     {
         private const string RequestLifetimeWebConfigModificationOwner = "GSoftDynamite-RequestLifetimeHttpModule";
 
-        private SPWebConfigModification AutofacRequestHttpModuleWebConfigModification
+        private static SPWebConfigModification AutofacRequestHttpModuleWebConfigModification
         {
             get
             {
@@ -57,17 +59,20 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
         /// </param>
         public override void FeatureActivated(SPFeatureReceiverProperties properties)
         {
-            var webConfigModificationHelper = new WebConfigModificationHelper();
-            var parent = properties.Feature.Parent as SPWebApplication;
-            if (parent != null)
+            using (var scope = DynamiteWspContainerProxy.BeginLifetimeScope(properties.Feature))
             {
-                // Apply Web.config modifications
-                webConfigModificationHelper.AddAndCleanWebConfigModification(
-                    parent, 
-                    new Collection<SPWebConfigModification>() 
+                var webConfigModificationHelper = scope.Resolve<IWebConfigModificationHelper>();
+                var parent = properties.Feature.Parent as SPWebApplication;
+                if (parent != null)
+                {
+                    // Apply Web.config modifications
+                    webConfigModificationHelper.AddAndCleanWebConfigModification(
+                        parent,
+                        new Collection<SPWebConfigModification>() 
                     { 
-                        this.AutofacRequestHttpModuleWebConfigModification 
+                        AutofacRequestHttpModuleWebConfigModification 
                     });
+                }
             }
         }
 
@@ -79,14 +84,17 @@ namespace GSoft.Dynamite.Features.WebConfig_Modifications
         /// </param>
         public override void FeatureDeactivating(SPFeatureReceiverProperties properties)
         {
-            var webConfigModificationHelper = new WebConfigModificationHelper();
-            var parent = properties.Feature.Parent as SPWebApplication;
-            if (parent != null)
+            using (var scope = DynamiteWspContainerProxy.BeginLifetimeScope(properties.Feature))
             {
-                // Remove any changes by owner
-                webConfigModificationHelper.RemoveExistingModificationsFromOwner(
-                    parent, 
-                    RequestLifetimeWebConfigModificationOwner);
+                var webConfigModificationHelper = scope.Resolve<IWebConfigModificationHelper>();
+                var parent = properties.Feature.Parent as SPWebApplication;
+                if (parent != null)
+                {
+                    // Remove any changes by owner
+                    webConfigModificationHelper.RemoveExistingModificationsFromOwner(
+                        parent,
+                        RequestLifetimeWebConfigModificationOwner);
+                }
             }
         }
     }

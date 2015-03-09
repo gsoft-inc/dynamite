@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 
@@ -10,26 +11,6 @@ namespace GSoft.Dynamite.Branding
     /// </summary>
     public class DisplayTemplateHelper : IDisplayTemplateHelper
     {
-        /// <summary>
-        /// Folder name for Display Templates
-        /// </summary>
-        public readonly string DisplayTemplatesFolder = "Display Templates";
-
-        /// <summary>
-        /// Folder name for Content WebPart Folder
-        /// </summary>
-        public readonly string ContentWebPartFolder = "Content Web Parts";
-
-        /// <summary>
-        /// Folder name for Search 
-        /// </summary>
-        public readonly string SearchFolder = "Search";
-
-        /// <summary>
-        /// Folder name for Filter
-        /// </summary>
-        public readonly string FilterFolder = "Filters";
-
         private readonly ILogger logger;
 
         /// <summary>
@@ -42,9 +23,54 @@ namespace GSoft.Dynamite.Branding
         }
 
         /// <summary>
+        /// Folder name for Display Templates
+        /// </summary>
+        public string DisplayTemplatesFolder 
+        {
+            get
+            {
+                return "Display Templates";
+            }
+        }
+
+        /// <summary>
+        /// Folder name for Content WebPart Folder
+        /// </summary>
+        public string ContentWebPartFolder
+        {
+            get 
+            { 
+                return "Content Web Parts"; 
+            }
+        }
+
+        /// <summary>
+        /// Folder name for Search 
+        /// </summary>
+        public string SearchFolder
+        {
+            get
+            {
+                return "Search";
+            }
+        }
+
+        /// <summary>
+        /// Folder name for Filter
+        /// </summary>
+        public string FilterFolder
+        {
+            get
+            {
+                return "Filters";         
+            }
+        }
+
+        /// <summary>
         /// Generates the java script file corresponding to the HTML file.
         /// </summary>
         /// <param name="htmlFiles">The HTML files.</param>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "SPFile-generated exceptions are hard to anticipate. General exceptions are properly logged here.")]
         public void GenerateJavaScriptFile(IList<SPFile> htmlFiles)
         {
             foreach (var htmlFile in htmlFiles)

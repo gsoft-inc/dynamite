@@ -15,11 +15,12 @@ namespace GSoft.Dynamite.ServiceLocator
         /// <summary>
         /// The keys for the resource files
         /// </summary>
-        public string[] ResourceFileKeys
+        public ICollection<string> ResourceFileKeys
         {
             get 
             { 
-                return new string[] { }; 
+                // By default, only match on resource files provisionned by the GSoft.Dynamite.WSP solution package
+                return new List<string>() { "GSoft.Dynamite" };
             }
         }
     }

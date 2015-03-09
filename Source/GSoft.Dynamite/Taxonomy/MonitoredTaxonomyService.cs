@@ -427,11 +427,25 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
         {
             using (var timeTracker = this.timeTracker.BeginTimeTrackerScope(TimeTrackerKey))
             {
                 return this.decorated.GetTermPathFromRootToTerm(site, termSetId, termId, parentFirst);
+            }
+        }
+
+        /// <summary>
+        /// Gets the term set group from the term store.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">The term set group name, in the term store's default working language.</param>
+        /// <returns>The term set group</returns>
+        public Group GetTermGroupFromStore(TermStore termStore, string groupName)
+        {
+            using (var timeTracker = this.timeTracker.BeginTimeTrackerScope(TimeTrackerKey))
+            {
+                return this.decorated.GetTermGroupFromStore(termStore, groupName);
             }
         }
     }

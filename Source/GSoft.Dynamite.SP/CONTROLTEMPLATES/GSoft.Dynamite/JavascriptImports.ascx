@@ -5,16 +5,16 @@
 <%@ Register Tagprefix="asp" Namespace="System.Web.UI" Assembly="System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" %>
 <%@ Import Namespace="Microsoft.SharePoint" %> 
 <%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="JavascriptImports.ascx.cs" Inherits="GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite.JavascriptImports" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="JavaScriptImports.ascx.cs" Inherits="GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite.JavaScriptImports" %>
 
 <%-- 3rd party JS libraries --%>
 <SharePoint:ScriptLink ID="JqueryScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-1.10.2.min.js" Localizable="false" OnDemand="false" runat="server" />
-<SharePoint:ScriptLink ID="JqueryPlaceHolderShim" Language="javascript" Name="GSoft.Dynamite/Lib/jquery.html5-placeholder-shim.js" Localizable="false" OnDemand="false" runat="server" />
+<SharePoint:ScriptLink ID="JqueryPlaceholderShim" Language="javascript" Name="GSoft.Dynamite/Lib/jquery.html5-placeholder-shim.js" Localizable="false" OnDemand="false" runat="server" />
 <SharePoint:ScriptLink ID="JqueryNoConflictScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-noconflict.js" Localizable="false" OnDemand="false" runat="server" />
 
-<SharePoint:ScriptLink ID="KnockOutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.0.0.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="KnockoutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.2.0.js" Localizable="false" OnDemand="false" runat="server"/>
 <SharePoint:ScriptLink ID="MomentScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/moment-with-langs.min.js" Localizable="false" OnDemand="false" runat="server"/>
-<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-min.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-1.7.0.min.js" Localizable="false" OnDemand="false" runat="server"/>
 
 <%-- Dynamite JS libraries --%>
 <SharePoint:ScriptLink ID="DynamiteCoreScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Core.js" Localizable="false" OnDemand="false" runat="server" />
@@ -40,7 +40,7 @@
 <%-- Global JS initialization --%>
 
 <script type="text/javascript">
-    GSoft.Dynamite.Utils.CurrentWebUrl = "<asp:Literal ID="CurrentWebUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utils.ParentFolderUrl = "<asp:Literal ID="ParentFolderUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utils.initializeParentFolderLink();
+    GSoft.Dynamite.Utilities.CurrentWebUrl = "<asp:Literal ID="CurrentWebUrlLiteral" runat="server" />";
+    GSoft.Dynamite.Utilities.ParentFolderUrl = "<asp:Literal ID="ParentFolderUrlLiteral" runat="server" />";
+    GSoft.Dynamite.Utilities.initializeParentFolderLink();
 </script>

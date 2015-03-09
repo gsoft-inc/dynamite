@@ -1,65 +1,38 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using GSoft.Dynamite.Binding.Converters;
+using System.Linq;
+using GSoft.Dynamite.Fields;
+using GSoft.Dynamite.Fields.Types;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.ValueTypes;
+using GSoft.Dynamite.ValueTypes.Readers;
+using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Binding
 {
-    using System.Collections.Generic;
-    using System.Data;
-
-    using GSoft.Dynamite.Logging;
-
     /// <summary>
-    /// The default entity binder for SharePoint.
+    /// An entity mapping utility for SharePoint.
     /// </summary>
     public class SharePointEntityBinder : ISharePointEntityBinder
     {
         #region Fields
 
-        private readonly ILogger logger;
-
-        private readonly IEntitySchemaBuilder entitySchemaDataRowBuilder;
-
-        private readonly IEntitySchemaBuilder entityListItemSchemaBuilder;
-
-        private readonly TaxonomyValueDataRowConverter taxonomyValueDataRowConverter;
-        private readonly TaxonomyValueCollectionDataRowConverter taxonomyValueCollectionDataRowConverter;
-
-        private readonly TaxonomyValueConverter taxonomyValueConverter;
-        private readonly TaxonomyValueCollectionConverter taxonomyValueCollectionConverter;
+        private readonly IEntitySchemaFactory entitySchemaFactory;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SharePointEntityBinder"/> class.
+        /// Creates a new instance of <see cref="SharePointEntityBinder"/>
         /// </summary>
-        /// <param name="logger">The logger</param>
-        /// <param name="entitySchemaDataRowBuilder">Entity schema data builder</param>
-        /// <param name="taxonomyValueDataRowConverter">Data row converter</param>
-        /// <param name="taxonomyValueCollectionDataRowConverter">Taxonomy collection data row converter</param>
-        /// <param name="taxonomyValueConverter">The taxonomy value converter</param>
-        /// <param name="taxonomyValueCollectionConverter">The Taxonomy value collection converter</param>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "The types must be registred in the constructor.")]
-        public SharePointEntityBinder(ILogger logger, IEntitySchemaBuilder entitySchemaDataRowBuilder, TaxonomyValueDataRowConverter taxonomyValueDataRowConverter, TaxonomyValueCollectionDataRowConverter taxonomyValueCollectionDataRowConverter, TaxonomyValueConverter taxonomyValueConverter, TaxonomyValueCollectionConverter taxonomyValueCollectionConverter)
+        /// <param name="entitySchemaFactory">The entity schema building utility</param>
+        public SharePointEntityBinder(IEntitySchemaFactory entitySchemaFactory)
         {
-            // Create a new instance of the schema builder to patch the binder.
-            var schemaBuilder = new EntitySchemaBuilder<SharePointEntitySchema>();
-             var cachedBuilder = new CachedSchemaBuilder(schemaBuilder, logger);
-
-            this.logger = logger;
-            this.entitySchemaDataRowBuilder = entitySchemaDataRowBuilder;
-            this.entityListItemSchemaBuilder = cachedBuilder;
-
-            this.taxonomyValueConverter = taxonomyValueConverter;
-            this.taxonomyValueCollectionConverter = taxonomyValueCollectionConverter;
-
-            this.taxonomyValueDataRowConverter = taxonomyValueDataRowConverter;
-            this.taxonomyValueCollectionDataRowConverter = taxonomyValueCollectionDataRowConverter;
-            this.RegisterTypeConverters();
+            this.entitySchemaFactory = entitySchemaFactory;
         }
 
         #endregion
@@ -74,7 +47,25 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void FromEntity<T>(T entity, SPListItem listItem)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).FromEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields, listItem.Web);
+            var schema = this.entitySchemaFactory.GetSchema(typeof(T));
+            var listItemFields = listItem.Fields;
+
+            foreach (var binding in schema.PropertyConversionDetails.ToList().Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.WriteOnly))
+            {
+                var valueFromEntity = binding.EntityProperty.GetValue(entity, null);
+                IBaseValueWriter writer = binding.ValueWriter;
+                
+                // Create a MinimalFieldInfo<TValueType> to feed into the FieldValueInfo needed to
+                // interact with IBaseValueWriter
+                var minimalFieldInfoType = typeof(MinimalFieldInfo<>).MakeGenericType(writer.AssociatedValueType);
+                string fieldInternalName = binding.ValueKey;
+                SPField itemField = listItemFields.GetFieldByInternalName(fieldInternalName);
+                var minimalFieldInfo = (BaseFieldInfo)Activator.CreateInstance(minimalFieldInfoType, new object[] { fieldInternalName, itemField.Id });
+                var fieldValueInfo = new FieldValueInfo(minimalFieldInfo, valueFromEntity);
+
+                // Update the list item through the IBaseValueWriter
+                writer.WriteValueToListItem(listItem, fieldValueInfo);
+            }
         }
 
         /// <summary>
@@ -128,12 +119,24 @@ namespace GSoft.Dynamite.Binding
 
             if (listItems.Count > 0)
             {
+                // Using GetDataTable is great because it eagerly fetches all
+                // the data of the SPListItemCollection. Without a GetDataTable
+                // each step in the SPListItemCollection enumeration will trigger
+                // a database call. If you are truly careless and forgot to specify
+                // your SPQuery.ViewFields, each field value access on the item will
+                // also trigger a database call.
+                // Lessons: 
+                // 1) always use ISharePointEntityBinder.Get<T>(SPListItemCollection)
+                // because it eagerly fetches all the data
+                // and 
+                // 2) always specify SPQuery.ViewFields to avoid per-field-access
+                // database calls.
                 var table = listItems.GetDataTable();
                 var rows = table.AsEnumerable();
 
                 foreach (var dataRow in rows)
                 {
-                    returnList.Add(this.Get<T>(dataRow, listItems.Fields, listItems.List.ParentWeb));
+                    returnList.Add(this.Get<T>(dataRow, listItems.Fields));
                 }
             }
 
@@ -146,15 +149,14 @@ namespace GSoft.Dynamite.Binding
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="dataRow">The data row.</param>
         /// <param name="fieldCollection">The collection of field to get</param>
-        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>
-        public T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web) where T : new()
+        public T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection) where T : new()
         {
             var entity = new T();
 
-            this.ToEntity(entity, dataRow, fieldCollection, web);
+            this.ToEntity(entity, dataRow, fieldCollection);
 
             return entity;
         }
@@ -167,7 +169,17 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItem">The list item.</param>
         public void ToEntity<T>(T entity, SPListItem listItem)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemValuesAdapter(listItem), listItem.Fields, listItem.Web);
+            var schema = this.entitySchemaFactory.GetSchema(typeof(T));
+
+            foreach (var binding in schema.PropertyConversionDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
+            {
+                IBaseValueReader reader = binding.ValueReader;
+                var value = reader.GetType()
+                    .GetMethod("ReadValueFromListItem")
+                    .Invoke(reader, new object[] { listItem, binding.ValueKey });
+
+                binding.EntityProperty.SetValue(entity, value, null);
+            }
         }
 
         /// <summary>
@@ -185,12 +197,19 @@ namespace GSoft.Dynamite.Binding
         /// <param name="fieldCollection">
         /// The field Collection.
         /// </param>
-        /// <param name="web">
-        /// The web.
-        /// </param>
-        public void ToEntity<T>(T entity, DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web)
+        public void ToEntity<T>(T entity, DataRow dataRow, SPFieldCollection fieldCollection)   // TODO: get rid of field collection here... only useful for Write purposes..
         {
-            this.entitySchemaDataRowBuilder.GetSchema(typeof(T)).ToEntity(entity, new DataRowValuesAdapter(dataRow), fieldCollection, web);
+            var schema = this.entitySchemaFactory.GetSchema(typeof(T));
+
+            foreach (var binding in schema.PropertyConversionDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
+            {
+                IBaseValueReader reader = binding.ValueReader;
+                var value = reader.GetType()
+                    .GetMethod("ReadValueFromCamlResultDataRow")
+                    .Invoke(reader, new object[] { fieldCollection.Web, dataRow, binding.ValueKey });
+
+                binding.EntityProperty.SetValue(entity, value, null);
+            }
         }
 
         /// <summary>
@@ -201,34 +220,17 @@ namespace GSoft.Dynamite.Binding
         /// <param name="listItemVersion">The list item version.</param>
         public void ToEntity<T>(T entity, SPListItemVersion listItemVersion)
         {
-            this.entityListItemSchemaBuilder.GetSchema(typeof(T)).ToEntity(entity, new ListItemVersionValuesAdapter(listItemVersion), listItemVersion.Fields, listItemVersion.ListItem.Web);
-        }
+            var schema = this.entitySchemaFactory.GetSchema(typeof(T));
 
-        #endregion
+            foreach (var binding in schema.PropertyConversionDetails.Where(x => x.BindingType == BindingType.Bidirectional || x.BindingType == BindingType.ReadOnly))
+            {
+                IBaseValueReader reader = binding.ValueReader;
+                var value = reader.GetType()
+                    .GetMethod("ReadValueFromListItemVersion")
+                    .Invoke(reader, new object[] { listItemVersion, binding.ValueKey });
 
-        #region Methods
-
-        /// <summary>
-        /// Registers the type converters.
-        /// </summary>
-        protected internal virtual void RegisterTypeConverters()
-        {
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueDataRowConverter());
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this.taxonomyValueDataRowConverter);
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionDataRowConverter);
-            this.entitySchemaDataRowBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
-
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(LookupValue), new LookupValueConverter(this.logger));
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(PrincipalValue), new PrincipalValueConverter());
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValue), new UserValueConverter());
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UserValueCollection), new UserValueCollectionConverter());
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(UrlValue), new UrlValueConverter());
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValue), this.taxonomyValueConverter);
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(TaxonomyValueCollection), this.taxonomyValueCollectionConverter);
-            this.entityListItemSchemaBuilder.RegisterTypeConverter(typeof(ImageValue), new ImageValueConverter());
+                binding.EntityProperty.SetValue(entity, value, null);
+            }
         }
 
         #endregion

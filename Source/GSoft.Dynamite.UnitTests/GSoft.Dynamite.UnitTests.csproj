@@ -40,35 +40,35 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="GSoft.Dynamite.Fakes">
+      <HintPath>FakesAssemblies\GSoft.Dynamite.Fakes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files\Common Files\microsoft shared\Web Server Extensions\15\ISAPI\Microsoft.Office.Server.Search.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.14.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\Microsoft.SharePoint.14.0.0.0.Fakes.dll</HintPath>
+    <Reference Include="Microsoft.SharePoint.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.SharePoint.Publishing, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Publishing.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.SharePoint.Taxonomy, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.SharePoint.Taxonomy.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib.2.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\mscorlib.2.0.0.0.Fakes.dll</HintPath>
-    </Reference>
-    <Reference Include="NMock3">
-      <HintPath>..\packages\NMock3.3.5.44\lib\net35\NMock3.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.2.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\System.2.0.0.0.Fakes.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.2.0.0.0.Fakes">
-      <HintPath>FakesAssemblies\System.Web.2.0.0.0.Fakes.dll</HintPath>
-    </Reference>
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -83,27 +83,32 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Binding\Converters\LookupValueConverterTest.cs" />
+    <Compile Include="Branding\ImageRenditionInfoTest.cs" />
+    <Compile Include="Branding\DisplayTemplateInfoTest.cs" />
+    <Compile Include="BaseSerializationTest.cs" />
+    <Compile Include="Folders\FolderInfoTest.cs" />
+    <Compile Include="Catalogs\CatalogInfoTest.cs" />
+    <Compile Include="ValueTypes\ImageFieldValue.cs" />
+    <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
+    <Compile Include="ValueTypes\Writers\FieldValueWriterTest.cs" />
+    <Compile Include="Fields\NoteFieldInfoTest.cs" />
+    <Compile Include="Fields\TextFieldInfoTest.cs" />
+    <Compile Include="UnitTestServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueTypes\ImageValueTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
-    <Fakes Include="Fakes\System.fakes">
-      <SubType>Designer</SubType>
-    </Fakes>
-    <Fakes Include="Fakes\System.Web.fakes" />
-    <Fakes Include="Fakes\mscorlib.fakes" />
+    <Fakes Include="Fakes\GSoft.Dynamite.fakes" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>
       <Name>GSoft.Dynamite</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

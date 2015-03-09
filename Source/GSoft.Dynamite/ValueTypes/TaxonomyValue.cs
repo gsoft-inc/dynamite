@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.ValueTypes
@@ -18,26 +22,37 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
+        /// Initializes a new instance of <see cref="TaxonomyValue"/> with a 
+        /// default TaxonomyContext determined by the parent term set of the TermInfo
+        /// </summary>
+        /// <param name="termInfo">The term metadata corresponding to the taxonomy value</param>
+        public TaxonomyValue(TermInfo termInfo)
+        {
+            this.Term = termInfo;
+            this.Context = new TaxonomyContext(termInfo.TermSet);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
         /// </summary>
         /// <remarks>This constructor will not ensure the label respect the CurrentUICulture</remarks>
-        /// <param name="taxonomyValue">The taxonomy value.</param>
-        public TaxonomyValue(TaxonomyFieldValue taxonomyValue)
+        /// <param name="fieldValue">The actual taxonomy field value.</param>
+        public TaxonomyValue(TaxonomyFieldValue fieldValue)
         {
             Guid termGuid;
 
-            if (taxonomyValue == null)
+            if (fieldValue == null)
             {
-                throw new ArgumentNullException("taxonomyValue");
+                throw new ArgumentNullException("fieldValue");
             }
 
-            if (!GuidExtension.TryParse(taxonomyValue.TermGuid, out termGuid))
+            if (!Guid.TryParse(fieldValue.TermGuid, out termGuid))
             {
-                throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "taxonomyValue");
+                throw new ArgumentException("Cannot parse the Taxonomy field value's TermGuid.", "fieldValue");
             }
 
-            this.Id = termGuid;
-            this.Label = taxonomyValue.Label;
+            this.Term = new TermInfo(termGuid, fieldValue.Label, null);
+            this.Context = null;
         }
 
         /// <summary>
@@ -51,74 +66,40 @@ namespace GSoft.Dynamite.ValueTypes
                 throw new ArgumentNullException("term");
             }
 
-            this.Id = term.Id;
-
-            // Respect the current user's MUI language selection
-            string currentUiLabel = term.GetDefaultLabel(CultureInfo.CurrentUICulture.LCID);
-
-            if (!string.IsNullOrEmpty(currentUiLabel))
-            {
-                this.Label = currentUiLabel;
-            }
-            else if (term.Labels.Count > 0)
-            {
-                // if no label exists in the current UI language, just fall back on the first of the bunch 
-                this.Label = term.Labels[0].Value;
-            }
-            
-            this.CustomSortPosition = GetCustomSortOrderFromParent(term);
+            this.Term = new TermInfo(term);
+            this.Context = new TaxonomyContext(new TermSetInfo(term.TermSet));
         }
 
         /// <summary>
-        /// Gets or sets the id.
+        /// Gets or sets the Term definition
         /// </summary>
-        public Guid Id { get; set; }
+        public TermInfo Term { get; set; }
 
         /// <summary>
-        /// Gets or sets the label.
+        /// Gets or sets the Term's parent context objects.
         /// </summary>
-        public string Label { get; set; }
+        public TaxonomyContext Context { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom sort position.
+        /// Gets the Term's unique Id
         /// </summary>
-        public int CustomSortPosition { get; set; }
+        public Guid Id 
+        { 
+            get
+            {
+                return this.Term.Id;
+            }
+        }
 
-        private static int GetCustomSortOrderFromParent(Term term)
+        /// <summary>
+        /// Gets the Term's label in the current UI culture
+        /// </summary>
+        public string Label
         {
-            int sortPosition = 0;
-            string parentCustomSortOrder = string.Empty;
-
-            if (term.Parent != null)
+            get
             {
-                // Parent term holds the custom sort order
-                parentCustomSortOrder = term.Parent.CustomSortOrder;
+                return this.Term.Label;
             }
-            else
-            {
-                // At root of term set the TermSet object holds the wacky ordering string
-                parentCustomSortOrder = term.TermSet.CustomSortOrder;
-            }
-
-            if (!string.IsNullOrEmpty(parentCustomSortOrder))
-            {
-                // Format is {GUID}:{GUID}:{GUID} and so on for all child terms
-                string[] split = parentCustomSortOrder.Split(':');
-
-                var currentPosition = 0;
-                foreach (string guid in split)
-                {
-                    currentPosition++;
-
-                    if (new Guid(guid) == term.Id)
-                    {
-                        sortPosition = currentPosition;
-                        break;
-                    }
-                }
-            }
-
-            return sortPosition;
         }
     }
 }

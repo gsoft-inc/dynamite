@@ -55,7 +55,7 @@ namespace GSoft.Dynamite.Security
         {
             get
             {
-                return this.listLocator.GetByUrl(this.Web, this.SecurableObjectLocation);
+                return this.listLocator.GetByUrl(this.Web, new Uri(this.SecurableObjectLocation, UriKind.Relative));
             }
         }
     }

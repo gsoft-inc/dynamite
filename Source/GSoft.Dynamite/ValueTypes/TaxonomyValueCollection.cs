@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
         /// </summary>
         /// <param name="taxonomyValues">The taxonomy value.</param>
         public TaxonomyValueCollection(IList<TaxonomyValue> taxonomyValues) :
@@ -27,7 +27,7 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
         /// </summary>
         /// <param name="termsCollection">The taxonomy values.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "SharePoint is the dirty culprit in exposing Generic Lists, isn't it?")]
@@ -37,7 +37,7 @@ namespace GSoft.Dynamite.ValueTypes
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaxonomyValue"/> class.
+        /// Initializes a new instance of the <see cref="TaxonomyValueCollection"/> class.
         /// </summary>
         /// <remarks>This constructor will not ensure that the labels respect the CurrentUICulture</remarks>
         /// <param name="taxonomyFieldValueCollection">The taxonomy values.</param>

@@ -1,9 +1,14 @@
+using System;
+
 namespace GSoft.Dynamite.Globalization.Variations
 {
     using System.Collections.ObjectModel;
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// SharePoint variations helper
+    /// </summary>
     public interface IVariationHelper
     {
         /// <summary>
@@ -30,17 +35,40 @@ namespace GSoft.Dynamite.Globalization.Variations
         ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site, string labelToSync);
 
         /// <summary>
-        /// Sync a SPList for a target label
+        /// Get the variations labels for the site collection.
+        /// NOTE: Also possible with the static Microsoft.SharePoint.Publishing Variations object by faking a SPContext
         /// </summary>
-        /// <param name="listToSync">The source SPList instance to sync.</param>
-        /// <param name="labelToSync">The label name to Sync. example: <c>"en"</c> or <c>"fr"</c>.</param>
-        void SyncList(SPList listToSync, string labelToSync);
+        /// <param name="site">The site.</param>
+        /// <returns>A collection of unique label.</returns>
+        ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(SPSite site);
 
         /// <summary>
-        /// Sync a SPWeb with variations
+        /// Get the variations labels using current the current SPContext
         /// </summary>
-        /// <param name="web">The source web instance to sync.</param>
-        /// <param name="labelToSync">Source label to sync</param>
-        void SyncWeb(SPWeb web, string labelToSync);
+        /// <param name="currentUrl">The current url context</param>
+        /// <returns>A collection of unique label.</returns>
+        /// <param name="excludeCurrentLabel">True to exclude the current context label. False otherwise</param>
+        ReadOnlyCollection<Microsoft.SharePoint.Publishing.VariationLabel> GetVariationLabels(Uri currentUrl, bool excludeCurrentLabel);
+
+        /// <summary>
+        /// Setup variations on a site
+        /// </summary>
+        /// <param name="site">The site</param>
+        /// <param name="variationSettings">The variation settings</param>
+        void SetupVariations(SPSite site, VariationSettingsInfo variationSettings);
+        
+        /// <summary>
+        /// Get the hidden relationships list for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>The relationships list.</returns>
+        SPList GetVariationLabelHiddenList(SPSite site);
+
+        /// <summary>
+        /// Get the hidden variation labels for a site collection.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <returns>the variation labels list.</returns>
+        SPList GetRelationshipsHiddenList(SPSite site);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GSoft.Dynamite.Logging
 {
@@ -78,5 +79,11 @@ namespace GSoft.Dynamite.Logging
         /// <param name="format">The format to use.</param>
         /// <param name="args">The arguments to pass to the formatter.</param>
         void Fatal(string format, params object[] args);
+
+        /// <summary>
+        /// Output information on an exception
+        /// </summary>
+        /// <param name="exceptionToLog">The exception to log</param>
+        void Exception(Exception exceptionToLog);
     }
 }

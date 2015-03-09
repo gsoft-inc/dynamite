@@ -9,8 +9,14 @@ namespace GSoft.Dynamite.Lists
     /// <summary>
     /// Enumeration Security Options
     /// </summary>
+    [Flags]
     public enum WriteSecurityOptions
     {
+        /// <summary>
+        /// Undefined security permissions
+        /// </summary>
+        None = 0,
+
         /// <summary>
         /// All users can modify all items.
         /// </summary>

@@ -9,6 +9,13 @@ namespace GSoft.Dynamite.ValueTypes
     public class UserValue : PrincipalValue
     {
         #region Constructors
+        
+        /// <summary>
+        /// Default constructor for serialization purposes
+        /// </summary>
+        public UserValue()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserValue"/> class.
@@ -44,37 +51,37 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
-        public string Email { get; private set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is domain group.
         /// </summary>
-        public bool IsDomainGroup { get; private set; }
+        public bool IsDomainGroup { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is site admin.
         /// </summary>
-        public bool IsSiteAdmin { get; private set; }
+        public bool IsSiteAdmin { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is site auditor.
         /// </summary>
-        public bool IsSiteAuditor { get; private set; }
+        public bool IsSiteAuditor { get; set; }
 
         /// <summary>
         /// Gets or sets the notes.
         /// </summary>
-        public string Notes { get; private set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// Gets or sets the regional settings.
         /// </summary>
-        public RegionalSettings RegionalSettings { get; private set; }
+        public RegionalSettings RegionalSettings { get; set; }
 
         /// <summary>
         /// Gets or sets the sid.
         /// </summary>
-        public string Sid { get; private set; }
+        public string Sid { get; set; }
 
         #endregion
     }

@@ -253,7 +253,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>
         /// List of terms.
         /// </returns>
-        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst = false);
+        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst);  // TODO: Review this "parent first" meaning... doesn't "GetTermPathFromRootToTerm" imply parentFirst=true as default? Just plain weird...
 
         /// <summary>
         /// Retrieves all Terms corresponding to a term set in the default term store from the site collection's reserved group
@@ -272,8 +272,16 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="termStore">The term store.</param>
         /// <param name="group">The group.</param>
-        /// <param name="termSetName">Name of the term set.</param>
+        /// <param name="termSetName">Name of the term set, in the term store's default working language.</param>
         /// <returns>The term set for the specified store, group and term set name.</returns>
         TermSet GetTermSetFromGroup(TermStore termStore, Group group, string termSetName);
+
+        /// <summary>
+        /// Gets the term set group from the term store.
+        /// </summary>
+        /// <param name="termStore">The term store.</param>
+        /// <param name="groupName">The term set group name, in the term store's default working language.</param>
+        /// <returns>The term set group</returns>
+        Group GetTermGroupFromStore(TermStore termStore, string groupName);
     }
 }

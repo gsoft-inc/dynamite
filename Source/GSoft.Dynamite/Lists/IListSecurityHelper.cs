@@ -4,6 +4,9 @@
 
     using Microsoft.SharePoint;
 
+    /// <summary>
+    /// Utility to change lists' permissions
+    /// </summary>
     public interface IListSecurityHelper
     {
         /// <summary>

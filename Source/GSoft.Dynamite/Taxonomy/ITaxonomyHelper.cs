@@ -3,11 +3,26 @@ namespace GSoft.Dynamite.Taxonomy
     using System;
     using System.Diagnostics.CodeAnalysis;
 
+    using GSoft.Dynamite.ValueTypes;
+
     using Microsoft.SharePoint;
     using Microsoft.SharePoint.Taxonomy;
 
+    /// <summary>
+    /// Helper for managing Taxonomy.
+    /// </summary>
     public interface ITaxonomyHelper
     {
+        /// <summary>
+        /// Applies a term store mapping to a SharePoint field
+        /// </summary>
+        /// <param name="site">The current site collection</param>
+        /// <param name="field">The site or list column to map to the term store</param>
+        /// <param name="columnTermStoreMapping">
+        /// The term set or sub-term-specific anchor which will determine what's available in the field's taxonomy picker
+        /// </param>
+        void AssignTermStoreMappingToField(SPSite site, SPField field, TaxonomyContext columnTermStoreMapping);
+
         /// <summary>
         /// Assigns a term set to a site column.
         /// </summary>
@@ -17,7 +32,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreName, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -29,7 +43,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -40,7 +53,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="fieldId">The field to associate with the term set.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -49,11 +61,10 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="web">The web containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
+        void AssignTermSetToSiteColumn(SPWeb web, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId);
 
         /// <summary>
         /// Assigns a term set to a list column.
@@ -64,7 +75,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreName, string termStoreGroupName, string termSetName, string termSubsetName);
 
         /// <summary>
@@ -73,14 +83,13 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="list">The list containing the field.</param>
         /// <param name="fieldId">The field to associate with the term set.</param>
-        /// <param name="termStoreGroupName">The name of the term store group.</param>
-        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termStoreGroupId">The term store group identifier.</param>
+        /// <param name="termSetId">The term set identifier.</param>
         /// <param name="termSubsetId">The ID of the term sub set the term is attached to.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, Guid termSubsetId);
+        void AssignTermSetToListColumn(SPList list, Guid fieldId, Guid termStoreGroupId, Guid termSetId, Guid termSubsetId);
 
         /// <summary>
-        /// Assigns a term set to a site column in the default site collection
+        /// Assigns a global farm-wide term set to a list column
         /// term store.
         /// </summary>
         /// <param name="list">The list containing the field.</param>
@@ -88,8 +97,17 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreGroupName">The name of the term store group.</param>
         /// <param name="termSetName">The name of the term set to assign to the column.</param>
         /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void AssignTermSetToListColumn(SPList list, Guid fieldId, string termStoreGroupName, string termSetName, string termSubsetName);
+
+        /// <summary>
+        /// Assigns a local site-collection-specific term set to a list column
+        /// term store.
+        /// </summary>
+        /// <param name="list">The list containing the field.</param>
+        /// <param name="fieldId">The field to associate with the term set.</param>
+        /// <param name="termSetName">The name of the term set to assign to the column.</param>
+        /// <param name="termSubsetName">The name of the term sub set the term is attached to. This parameter can be null.</param>
+        void AssignTermSetToListColumn(SPList list, Guid fieldId, string termSetName, string termSubsetName);
 
         /// <summary>
         /// Ensures the taxonomy event receivers.
@@ -104,71 +122,6 @@ namespace GSoft.Dynamite.Taxonomy
         /// <remarks>To disable Enterprise Keywords, delete the field from the list manually.</remarks>
         /// <param name="list">The list</param>
         /// <param name="keywordsAsSocialTags">Whether the list's keywords should be used as MySite social tags</param>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
         void EnableListEnterpriseKeywordsSetting(SPList list, bool keywordsAsSocialTags);
-
-        /// <summary>
-        /// Get the validated string for a Taxonomy Field
-        /// </summary>
-        /// <param name="web">Web to look for</param>
-        /// <param name="fieldName">Field to search</param>
-        /// <param name="termGroup">The term group</param>
-        /// <param name="termSet">The term set</param>
-        /// <param name="termLabel">The term label</param>
-        /// <returns>The validated string.</returns>
-        string GetTaxonomyFieldValueValidatedString(SPWeb web, string fieldName, string termGroup, string termSet, string termLabel);
-
-        /// <summary>
-        /// Set default value for a taxonomy site column
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="termGroupName">The term group name.</param>
-        /// <param name="termSetName">the term set name.</param>
-        /// <param name="termLabel">The term label.</param>
-        void SetDefaultTaxonomyValue(SPWeb web, SPField field, string termGroupName, string termSetName, string termLabel);
-
-        /// <summary>
-        /// Set default value for a multi valued taxonomy site column
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="field">The field.</param>
-        /// <param name="termGroupName">Term group name</param>
-        /// <param name="termSetName">Term set name</param>
-        /// <param name="terms">Term label</param>
-        void SetDefaultTaxonomyMultiValue(
-            SPWeb web, SPField field, string termGroupName, string termSetName, string[] terms);
-
-        /// <summary>
-        /// Gets the term group by name.
-        /// </summary>
-        /// <param name="termStore">The term store.</param>
-        /// <param name="groupName">Name of the group.</param>
-        /// <returns>
-        /// The term group.
-        /// </returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        Group GetTermGroupByName(TermStore termStore, string groupName);
-
-        /// <summary>
-        /// Gets the term set by name.
-        /// </summary>
-        /// <param name="termStore">The term store.</param>
-        /// <param name="group">The term group.</param>
-        /// <param name="termSetName">Name of the term set.</param>
-        /// <returns>The term set.</returns>
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        TermSet GetTermSetByName(TermStore termStore, Group group, string termSetName);
-
-        /// <summary>
-        /// Set a taxonomy value for a SPListItem
-        /// </summary>
-        /// <param name="web">The web.</param>
-        /// <param name="item">The SPListItem.</param>
-        /// <param name="fieldName">Field name to update.</param>
-        /// <param name="termGroupName">Term group name.</param>
-        /// <param name="termSetName">Term Set Name.</param>
-        /// <param name="termLabel">Term Label.</param>
-        void SetTaxonomyFieldValue(SPWeb web, SPListItem item, string fieldName, string termGroupName, string termSetName, string termLabel);
     }
 }

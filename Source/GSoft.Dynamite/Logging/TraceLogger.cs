@@ -1,4 +1,7 @@
-﻿using Microsoft.SharePoint.Administration;
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
+using Microsoft.SharePoint.Administration;
 
 namespace GSoft.Dynamite.Logging
 {
@@ -137,6 +140,27 @@ namespace GSoft.Dynamite.Logging
         }
 
         /// <summary>
+        /// Output the information on an exception
+        /// </summary>
+        /// <param name="exceptionToLog">The exception to log</param>
+        public void Exception(Exception exceptionToLog)
+        {
+            if (exceptionToLog == null)
+            {
+                throw new ArgumentNullException("exceptionToLog");
+            }
+
+            string formatted = string.Format(
+                CultureInfo.InvariantCulture, 
+                "[{0}: {1}] {2}", 
+                exceptionToLog.GetType().Name, 
+                exceptionToLog.Message, 
+                new StackTrace(exceptionToLog).ToString());
+
+            this.InnerLog(TraceSeverity.Unexpected, formatted);
+        }
+
+        /// <summary>
         /// Logs to the ULS.
         /// </summary>
         /// <param name="traceSeverity">The trace severity.</param>
@@ -144,12 +168,23 @@ namespace GSoft.Dynamite.Logging
         /// <param name="args">The message arguments.</param>
         protected virtual void InnerLog(TraceSeverity traceSeverity, string message, params object[] args)
         {
-            SPDiagnosticsService.Local.WriteTrace(
-                0,
-                new SPDiagnosticsCategory(this.CategoryName, TraceSeverity.Medium, EventSeverity.Information),
-                traceSeverity,
-                this.Name + " - " + message, 
-                args);
+            try
+            {
+                SPDiagnosticsService.Local.WriteTrace(
+                    0,
+                    new SPDiagnosticsCategory(this.CategoryName, TraceSeverity.Medium, EventSeverity.Information),
+                    traceSeverity,
+                    this.Name + " - " + message,
+                    args);
+            }
+            catch (TypeInitializationException)
+            {
+                // Failed to initialize local diagnostics service. Swallow exception and simply fail to log.
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // We're running this code outside of a proper x64 process meant for SharePoint (for some reason)
+            }
         }
     }
 }

@@ -3,7 +3,7 @@
 namespace GSoft.Dynamite.Caml
 {
     /// <summary>
-    /// TODO: CAML utility methods.
+    /// CAML utility methods.
     /// </summary>
     public class CamlUtils : ICamlUtils
     {

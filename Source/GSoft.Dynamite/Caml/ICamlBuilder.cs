@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Taxonomy;
 
@@ -18,6 +19,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "And", Justification = "We mean to format a CAML AND statement. 'And' is the proper method name.")]
         string And(string leftCondition, string rightCondition);
 
         /// <summary>
@@ -333,6 +335,7 @@ namespace GSoft.Dynamite.Caml
         /// <returns>
         /// A string representation of the CAML query.
         /// </returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Or", Justification = "We mean to format a CAML OR statement. 'Or' is the proper method name.")]
         string Or(string leftCondition, string rightCondition);
 
         /// <summary>

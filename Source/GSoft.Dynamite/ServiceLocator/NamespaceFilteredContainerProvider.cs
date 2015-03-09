@@ -14,16 +14,6 @@ namespace GSoft.Dynamite.ServiceLocator
     public class NamespaceFilteredContainerProvider : IContainerProvider
     {
         /// <summary>
-        /// The App Root namespace
-        /// </summary>
-        protected readonly string AppRootNamespace;
-
-        /// <summary>
-        /// The Assembly file matcher
-        /// </summary>
-        protected readonly Func<string, bool> AssemblyFileNameMatcher;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ContainerScopeProvider"/> class.
         /// </summary>
         /// <param name="appRootNamespace">
@@ -49,7 +39,7 @@ namespace GSoft.Dynamite.ServiceLocator
             this.AppRootNamespace = appRootNamespace;
             this.AssemblyFileNameMatcher = assemblyFileNameMatcher;
         }
-        
+
         /// <summary>
         /// A unique string to distinguish the provided container
         /// from all other containers in the current AppDomain.
@@ -74,5 +64,15 @@ namespace GSoft.Dynamite.ServiceLocator
                 return AppDomainContainers.CurrentContainer(this.AppRootNamespace, this.AssemblyFileNameMatcher);
             }
         }
+
+        /// <summary>
+        /// The App Root namespace
+        /// </summary>
+        protected string AppRootNamespace { get; private set; }
+
+        /// <summary>
+        /// The Assembly file matcher
+        /// </summary>
+        protected Func<string, bool> AssemblyFileNameMatcher { get; private set; }
     }
 }

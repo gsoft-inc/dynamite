@@ -29,7 +29,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -38,7 +38,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -80,7 +80,7 @@
     </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx.designer.cs">
       <DependentUpon>GoogleAnalyticsTracking.ascx.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.cs">
       <DependentUpon>CssImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -88,12 +88,12 @@
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx.designer.cs">
       <DependentUpon>CssImports.ascx.cs</DependentUpon>
     </Compile>
-    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.cs">
-      <DependentUpon>JavascriptImports.ascx</DependentUpon>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx.cs">
+      <DependentUpon>JavaScriptImports.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx.designer.cs">
-      <DependentUpon>JavascriptImports.ascx.cs</DependentUpon>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx.designer.cs">
+      <DependentUpon>JavaScriptImports.ascx.cs</DependentUpon>
     </Compile>
     <Compile Include="DynamiteWspContainerProxy.cs" />
     <Compile Include="Features\Web Config Modifications\Web Config Modifications.EventReceiver.cs">
@@ -108,15 +108,27 @@
     <None Include="CONTROLTEMPLATES\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{434adeb6-fd4d-4761-a7cb-91cd790d0a95}</SharePointProjectItemId>
     </None>
+    <None Include="DynamiteBootstrapNonResponsive\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{5b161480-587e-4f8d-9b49-63bdb0fde0f4}</SharePointProjectItemId>
+    </None>
+    <None Include="DynamiteBootstrapResponsive\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{fb43b44b-6b22-47e3-a33a-75237d4fa14f}</SharePointProjectItemId>
+    </None>
     <None Include="DynamiteGoogleAnalyticsSearchSend\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{031177f7-6718-4c69-99c4-81ce1a852ab8}</SharePointProjectItemId>
     </None>
     <None Include="DynamiteGoogleAnalyticsTracking\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{b2c07b03-3b43-43b6-9380-d0614cd74dc8}</SharePointProjectItemId>
     </None>
+    <None Include="Features\Bootstrap Non Responsive\Bootstrap Non Responsive.feature">
+      <FeatureId>{3c2d4a5a-fdb7-4127-9fcb-fc0d2215aea8}</FeatureId>
+    </None>
+    <None Include="Features\Bootstrap Responsive\Bootstrap Responsive.feature">
+      <FeatureId>{2bd8393f-2785-45b0-a806-5f524101d8a7}</FeatureId>
+    </None>
     <None Include="Features\Google Analytics Tracking\Google Analytics Tracking.feature">
       <FeatureId>{dad6f710-ef35-479c-a057-55f6e5931656}</FeatureId>
-	</None>
+    </None>
     <None Include="DynamiteCssImports\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{8f027e41-5904-4451-90b2-55fdf3cbaea3}</SharePointProjectItemId>
     </None>
@@ -133,6 +145,7 @@
       <SharePointProjectItemId>{720cb6d9-4c7a-4ed4-a8ff-e3c297dd0c74}</SharePointProjectItemId>
     </None>
     <None Include="GSoft.Dynamite.SP.nuspec" />
+    <None Include="Layouts\GSoft.Dynamite\Lib\underscore-min.map" />
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{ff112f9f-2429-46c2-a407-771ef33b1d94}</SharePointProjectItemId>
     </None>
@@ -143,9 +156,6 @@
     <None Include="Package\Package.Template.xml">
       <DependentUpon>Package.package</DependentUpon>
     </None>
-    <None Include="POWERSHELL\SharePointProjectItem.spdata">
-      <SharePointProjectItemId>{597673a7-c184-4d62-806f-c6999181f8c5}</SharePointProjectItemId>
-    </None>
     <None Include="Resources\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{01a6a883-104e-4560-8f3a-516fb755f156}</SharePointProjectItemId>
     </None>
@@ -153,15 +163,28 @@
   <ItemGroup>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx" />
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx" />
+    <Content Include="DynamiteBootstrapResponsive\bootstrap.min.js" />
+    <Content Include="DynamiteBootstrapResponsive\Elements.xml" />
+    <Content Include="Features\Bootstrap Responsive\Bootstrap Responsive.Template.xml">
+      <DependentUpon>Bootstrap Responsive.feature</DependentUpon>
+    </Content>
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap-sharepoint.css" />
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap-theme.min.css" />
+    <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap.min.css" />
+    <Content Include="DynamiteBootstrapNonResponsive\bootstrap.min.js" />
+    <Content Include="DynamiteBootstrapNonResponsive\Elements.xml" />
     <Content Include="DynamiteGoogleAnalyticsSearchSend\Elements.xml" />
     <Content Include="DynamiteGoogleAnalyticsTracking\Elements.xml" />
+    <Content Include="Features\Bootstrap Non Responsive\Bootstrap Non Responsive.Template.xml">
+      <DependentUpon>Bootstrap Non Responsive.feature</DependentUpon>
+    </Content>
     <Content Include="Features\Google Analytics Tracking\Google Analytics Tracking.Template.xml">
       <DependentUpon>Google Analytics Tracking.feature</DependentUpon>
-	</Content>
+    </Content>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\CssImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
-    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavascriptImports.ascx">
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx">
       <SubType>ASPXCodeBehind</SubType>
     </Content>
     <Content Include="DynamiteCssImports\Elements.xml" />
@@ -185,14 +208,11 @@
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-1.10.2.min.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-noconflict.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery.html5-placeholder-shim.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.0.0.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.2.0.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\moment-with-langs.min.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-min.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.7.0.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="POWERSHELL\Registration\GSoft.Dynamite.Cmdlets.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>
@@ -202,9 +222,7 @@
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="POWERSHELL\Help\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
       <Project>{0a3eb4a1-3004-4f23-b046-6ef2e20f53a4}</Project>

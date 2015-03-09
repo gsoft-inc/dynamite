@@ -24,7 +24,7 @@
     /// <summary>
     /// The Requirement status of a field
     /// </summary>
-    public enum RequiredTypes
+    public enum RequiredType
     {
         /// <summary>
         /// Inherit its value from the Field Definition

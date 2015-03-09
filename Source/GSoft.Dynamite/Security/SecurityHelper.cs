@@ -210,9 +210,9 @@ namespace GSoft.Dynamite.Security
             // Check the current list item, then the current folder.
             // Somewhat weird, but we assume also that if you have the perms on the Pages
             // library, then you should be granted those permissions throughout.
-            return this.DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.AddListItems)
-                || this.DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.AddListItems)
-                || this.DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.AddListItems);
+            return DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.AddListItems)
+                || DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.AddListItems)
+                || DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.AddListItems);
         }
 
         /// <summary>
@@ -231,9 +231,9 @@ namespace GSoft.Dynamite.Security
             // Check the current list item, then the current folder.
             // Somewhat weird, but we assume also that if you have the perms on the Pages
             // library, then you should be granted those permissions throughout.
-            return this.DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.ApproveItems)
-                || this.DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.ApproveItems)
-                || this.DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.ApproveItems);
+            return DoesUserHavePermissionOnCurrentListItem(SPBasePermissions.ApproveItems)
+                || DoesUserHavePermissionOnCurrentFolder(SPBasePermissions.ApproveItems)
+                || DoesUserHavePermissionOnPagesLibrary(SPBasePermissions.ApproveItems);
         }
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace GSoft.Dynamite.Security
             }
         }
 
-        private bool DoesUserHavePermissionOnPagesLibrary(SPBasePermissions permissionsMask)
+        private static bool DoesUserHavePermissionOnPagesLibrary(SPBasePermissions permissionsMask)
         {
             bool hasPermissions = false;
 
@@ -346,13 +346,13 @@ namespace GSoft.Dynamite.Security
             return hasPermissions;
         }
 
-        private bool DoesUserHavePermissionOnCurrentListItem(SPBasePermissions permissionsMask)
+        private static bool DoesUserHavePermissionOnCurrentListItem(SPBasePermissions permissionsMask)
         {
             return SPContext.Current.ListItem != null
                 && SPContext.Current.ListItem.DoesUserHavePermissions(SPContext.Current.Web.CurrentUser, permissionsMask);
         }
 
-        private bool DoesUserHavePermissionOnCurrentFolder(SPBasePermissions permissionsMask)
+        private static bool DoesUserHavePermissionOnCurrentFolder(SPBasePermissions permissionsMask)
         {
             bool hasPermissionsOnCurrentRootFolderUrl = false;
 

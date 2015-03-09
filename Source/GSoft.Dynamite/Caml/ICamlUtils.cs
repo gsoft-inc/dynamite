@@ -2,6 +2,9 @@ namespace GSoft.Dynamite.Caml
 {
     using System.Diagnostics.CodeAnalysis;
 
+    /// <summary>
+    /// CAML utility methods.
+    /// </summary>
     public interface ICamlUtils
     {
         /// <summary>

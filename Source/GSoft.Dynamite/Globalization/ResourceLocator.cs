@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Resources;
+using System.Runtime.InteropServices;
 using System.Web;
-using GSoft.Dynamite.Structures;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.Globalization
@@ -38,18 +39,7 @@ namespace GSoft.Dynamite.Globalization
         {
             return this.Find(resourceKey, CultureInfo.CurrentUICulture.LCID);
         }
-
-        /// <summary>
-        /// Finds the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource value configuration.</param>
-        /// <returns>The resource value in the current UI language.</returns>
-        [Obsolete("See ResourceValue class")]
-        public string Find(ResourceValue resource)
-        {
-            return this.Find(resource.File, resource.Key, CultureInfo.CurrentUICulture);
-        }
-
+        
         /// <summary>
         /// Retrieves the resource object specified by the key and language
         /// </summary>
@@ -58,33 +48,7 @@ namespace GSoft.Dynamite.Globalization
         /// <returns>The resource in the specified language</returns>
         public string Find(string resourceKey, int lcid)
         {
-            string resourceValue = null;
-
-            // Scan all the default resource files
-            foreach (var fileName in this._defaultResourceFileNames)
-            {
-                resourceValue = this.Find(fileName, resourceKey, new CultureInfo(lcid));
-
-                if (!string.IsNullOrEmpty(resourceValue) && !resourceValue.StartsWith("$Resources"))
-                {
-                    // exit as soon as you find the resource in one of the default files
-                    break;
-                }
-            }
-
-            return resourceValue;
-        }
-
-        /// <summary>
-        /// Finds the specified resource.
-        /// </summary>
-        /// <param name="resource">The resource value configuration.</param>
-        /// <param name="lcid">The LCID.</param>
-        /// <returns>The resource in the specified language.</returns>
-        [Obsolete("See ResourceValue class")]
-        public string Find(ResourceValue resource, int lcid)
-        {
-            return this.Find(resource.File, resource.Key, new CultureInfo(lcid));
+            return this.Find(string.Empty, resourceKey, lcid);
         }
 
         /// <summary>
@@ -121,23 +85,105 @@ namespace GSoft.Dynamite.Globalization
         {
             string found = string.Empty;
 
-            try
+            if (string.IsNullOrEmpty(resourceFileName))
             {
-                // First, attempt to find the resource in VirtualDir/AppGlobalResources
-                found = HttpContext.GetGlobalResourceObject(resourceFileName, resourceKey, culture) as string;
+                // Scan all the default resource files
+                foreach (var fileName in this._defaultResourceFileNames)
+                {
+                    // Avoid an infinite loop
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        found = this.Find(fileName, resourceKey, culture);
+
+                        if (!string.IsNullOrEmpty(found) && found != resourceKey)
+                        {
+                            // exit as soon as you find the resource in one of the default files
+                            break;
+                        }
+                    }
+                }
             }
-            catch (MissingManifestResourceException)
+
+            if (string.IsNullOrEmpty(found))
             {
-                // Swallow the exception
+                try
+                {
+                    // First, attempt to find the resource in VirtualDir/AppGlobalResources
+                    found = HttpContext.GetGlobalResourceObject(resourceFileName, resourceKey, culture) as string;
+                }
+                catch (MissingManifestResourceException)
+                {
+                    // Swallow the exception
+                }
             }
 
             if (string.IsNullOrEmpty(found))
             {
                 // Second, look into the 14/Resources
-                found = SPUtility.GetLocalizedString("$Resources:" + resourceKey, resourceFileName, Convert.ToUInt32(culture.LCID));
+                try
+                {
+                    found = SPUtility.GetLocalizedString("$Resources:" + resourceKey, resourceFileName, Convert.ToUInt32(culture.LCID));
+                }
+                catch (COMException)
+                {
+                    // Failed to access ambient SPRequest object constructor. Fail to locate resource silently.
+                }
+            }
+
+            if (string.IsNullOrEmpty(found) || found.StartsWith("$Resources:", StringComparison.OrdinalIgnoreCase))
+            {
+                // Don't return a big dollar-sign resource string if we failed: just return the untouched resource key
+                found = resourceKey;
             }
 
             return found;
+        }
+
+        /// <summary>
+        /// Get the resource string with dollar format
+        /// </summary>
+        /// <param name="resourceFileName">The resource file name</param>
+        /// <param name="resourceKey">The resource key</param>
+        /// <returns>The resource string for the key and filename</returns>
+        public string GetResourceString(string resourceFileName, string resourceKey)
+        {
+            if (string.IsNullOrEmpty(resourceFileName))
+            {
+                return this.GetResourceString(resourceKey);
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", resourceFileName, resourceKey);
+        }
+
+        /// <summary>
+        /// Get the resource string with dollar format
+        /// </summary>
+        /// <param name="resourceKey">The resource key</param>
+        /// <returns>The resource string for the key and filename</returns>
+        [SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "GSoft.Dynamite.Globalization.ResourceLocator.Find(System.String,System.String)", Justification = "We want to use the loose version of Find - without CultureInfo - to match against any resource value.")]
+        public string GetResourceString(string resourceKey)
+        {
+            string resourceString = null;
+
+            // Scan all the default resource files
+            foreach (var fileName in this._defaultResourceFileNames)
+            {
+                var resourceValue = this.Find(fileName, resourceKey);
+
+                if (!string.IsNullOrEmpty(resourceValue) && resourceValue != resourceKey && !resourceValue.StartsWith("$Resources", StringComparison.OrdinalIgnoreCase))
+                {
+                    resourceString = string.Format(CultureInfo.InvariantCulture, "$Resources:{0},{1};", fileName, resourceKey);
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(resourceString))
+            {
+                // We failed to figure out which file the resource key belongs to. Just return the resourceKey itself.
+                resourceString = resourceKey;
+            }
+
+            return resourceString;
         }
     }
 }

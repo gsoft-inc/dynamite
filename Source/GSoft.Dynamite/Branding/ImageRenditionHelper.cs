@@ -30,9 +30,11 @@ namespace GSoft.Dynamite.Branding
         /// Method to ensure an image matchingRenditions in the current site
         /// </summary>
         /// <param name="site">The current site</param>
-        /// <param name="imageRendition">The image matchingRenditions to add/update</param>
-        public void EnsureImageRendition(SPSite site, ImageRendition imageRendition)
+        /// <param name="imageRenditionInfo">The image matchingRenditions to add/update</param>
+        public void EnsureImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)
         {
+            var imageRendition = SetImageRenditionProperties(imageRenditionInfo);
+
             // Error checking
             if (site == null || imageRendition == null || !imageRendition.IsValid)
             {
@@ -65,9 +67,11 @@ namespace GSoft.Dynamite.Branding
         /// Method to remove an image matchingRenditions if is exist
         /// </summary>
         /// <param name="site">The current site</param>
-        /// <param name="imageRendition">The image matchingRenditions to remove</param>
-        public void RemoveImageRendition(SPSite site, ImageRendition imageRendition)
+        /// <param name="imageRenditionInfo">The image matchingRenditions to remove</param>
+        public void RemoveImageRendition(SPSite site, ImageRenditionInfo imageRenditionInfo)
         {
+            var imageRendition = SetImageRenditionProperties(imageRenditionInfo);
+
             if (site == null || imageRendition == null || !imageRendition.IsValid)
             {
                 this.logger.Error("Error removing image rendition. Argument is null or invalid.");
@@ -104,7 +108,7 @@ namespace GSoft.Dynamite.Branding
             // Get the image existingImageRendition collection of the current site.
             var imageRenditionCollection = SiteImageRenditions.GetRenditions(site);
 
-            var matchingRenditions = imageRenditionCollection.Where(x => x.Name.ToLower().Contains(containsPattern.ToLower())).ToList();
+            var matchingRenditions = imageRenditionCollection.Where(x => x.Name.ToUpperInvariant().Contains(containsPattern.ToUpperInvariant())).ToList();
 
             if (matchingRenditions != null && matchingRenditions.Any())
             {
@@ -116,6 +120,16 @@ namespace GSoft.Dynamite.Branding
             }
 
             imageRenditionCollection.Update();
+        }
+
+        private static ImageRendition SetImageRenditionProperties(ImageRenditionInfo imageRenditionInfo)
+        {
+            var imageRendition = new ImageRendition();
+            imageRendition.Name = imageRenditionInfo.Name;
+            imageRendition.Height = imageRenditionInfo.Height;
+            imageRendition.Width = imageRenditionInfo.Width;
+
+            return imageRendition;
         }
     }
 }

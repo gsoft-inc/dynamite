@@ -10,7 +10,7 @@
 namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite {
     
     
-    public partial class JavascriptImports {
+    public partial class JavaScriptImports {
         
         /// <summary>
         /// JqueryScriptLink control.
@@ -22,13 +22,13 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite {
         protected global::Microsoft.SharePoint.WebControls.ScriptLink JqueryScriptLink;
         
         /// <summary>
-        /// JqueryPlaceHolderShim control.
+        /// JqueryPlaceholderShim control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.ScriptLink JqueryPlaceHolderShim;
+        protected global::Microsoft.SharePoint.WebControls.ScriptLink JqueryPlaceholderShim;
         
         /// <summary>
         /// JqueryNoConflictScriptLink control.
@@ -40,13 +40,13 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite {
         protected global::Microsoft.SharePoint.WebControls.ScriptLink JqueryNoConflictScriptLink;
         
         /// <summary>
-        /// KnockOutScriptLink control.
+        /// KnockoutScriptLink control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.SharePoint.WebControls.ScriptLink KnockOutScriptLink;
+        protected global::Microsoft.SharePoint.WebControls.ScriptLink KnockoutScriptLink;
         
         /// <summary>
         /// MomentScriptLink control.

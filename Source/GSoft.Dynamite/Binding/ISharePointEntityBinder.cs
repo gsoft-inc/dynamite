@@ -39,12 +39,11 @@ namespace GSoft.Dynamite.Binding
         /// <typeparam name="T">The type of the entity.</typeparam>
         /// <param name="dataRow">The data row.</param>
         /// <param name="fieldCollection">The collection of fields</param>
-        /// <param name="web">The current web</param>
         /// <returns>
         /// The newly created and filled entity.
         /// </returns>
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
-        T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection, SPWeb web) where T : new();
+        T Get<T>(DataRow dataRow, SPFieldCollection fieldCollection) where T : new();
 
         /// <summary>
         /// Creates an entity of the specified type and fills it using the values.
@@ -65,6 +64,7 @@ namespace GSoft.Dynamite.Binding
         /// <returns>
         /// The <see cref="IList"/>.
         /// </returns>
+        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "Get is the right word in this context.")]
         IList<T> Get<T>(SPListItemCollection listItems) where T : new();
 
         /// <summary>
