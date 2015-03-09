@@ -5,105 +5,8 @@ using GSoft.Dynamite.Binding;
 namespace GSoft.Dynamite.Fields
 {
     /// <summary>
-    /// Metadata about a SharePoint field/site column
+    /// Basic metadata about a SharePoint field/site column
     /// </summary>
-    //public interface IFieldInfo
-    //{
-    //    /// <summary>
-    //    /// Unique identifier of the field
-    //    /// </summary>
-    //    Guid Id { get; }
-
-    //    /// <summary>
-    //    /// The internal name of the field
-    //    /// </summary>
-    //    string InternalName { get; }
-
-    //    /// <summary>
-    //    /// Type of the field
-    //    /// </summary>
-    //    string Type { get; }
-
-    //    /// <summary>
-    //    /// Field display title
-    //    /// </summary>
-    //    string DisplayNameResourceKey { get; }
-
-    //    /// <summary>
-    //    /// Field description
-    //    /// </summary>
-    //    string DescriptionResourceKey { get; }
-
-    //    /// <summary>
-    //    /// Content group in SharePoint definitions
-    //    /// </summary>
-    //    string GroupResourceKey { get; }
-
-    //    /// <summary>
-    //    /// Resource file name (optional - if kept empty,
-    //    /// the ResourceLocator will scan through all resource files
-    //    /// configured through IResourceLocatorConfig in
-    //    /// search for your ResourceKeys)
-    //    /// </summary>
-    //    string ResourceFileName { get; set; }
-        
-    //    /// <summary>
-    //    /// Indicates if the field is required
-    //    /// </summary>
-    //    RequiredType Required { get; set; }
-
-    //    /// <summary>
-    //    /// Indicates if the field must enforce unique values
-    //    /// </summary>
-    //    bool EnforceUniqueValues { get; set; }
-
-    //    /// <summary>
-    //    /// Returns the FieldInfo's associated ValueType.
-    //    /// For example, a TextFieldInfo should return typeof(string)
-    //    /// and a TaxonomyFieldInfo should return typeof(TaxonomyValue)
-    //    /// </summary>
-    //    Type AssociatedValueType { get; }
-
-    //    /// <summary>
-    //    /// Indicates if field is hidden by default
-    //    /// </summary>
-    //    bool IsHidden { get; set; }
-
-    //    /// <summary>
-    //    /// Indicates if field should be shown in the display form
-    //    /// </summary>
-    //    bool IsHiddenInDisplayForm { get; set; }
-
-    //    /// <summary>
-    //    /// Indicates if field should be shown in the new form
-    //    /// </summary>
-    //    bool IsHiddenInNewForm { get; set; }
-
-    //    /// <summary>
-    //    /// Indicates if field should be shown in the edit form
-    //    /// </summary>
-    //    bool IsHiddenInEditForm { get; set; }
-
-    //    /// <summary>
-    //    /// Indicates if field should be shown in the list settings
-    //    /// </summary>
-    //    bool IsHiddenInListSettings { get; set; }
-
-    //    /// <summary>
-    //    /// Default formula for the field
-    //    /// </summary>
-    //    string DefaultFormula { get; set; }
-
-    //    /// <summary>
-    //    /// Extends a basic XML schema with the field type's extra attributes
-    //    /// </summary>
-    //    /// <param name="baseFieldSchema">
-    //    /// The basic field schema XML (Id, InternalName, DisplayName, etc.) on top of which 
-    //    /// we want to add field type-specific attributes
-    //    /// </param>
-    //    /// <returns>The full field XML schema</returns>
-    //    XElement Schema(XElement baseFieldSchema);
-    //}
     public class IFieldInfo : BaseTypeInfo
     {
         /// <summary>
@@ -114,26 +17,112 @@ namespace GSoft.Dynamite.Fields
         }
 
         /// <summary>
-        /// Creates a new base information objects with keys to resources
+        /// Initializes a new FieldInfo
         /// </summary>
+        /// <param name="internalName">The internal name of the field</param>
+        /// <param name="id">The field identifier</param>
+        /// <param name="fieldTypeName">Name of the type of field (site column type)</param>
         /// <param name="displayNameResourceKey">Display name resource key</param>
         /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Content group resource key</param>
-        public IFieldInfo(string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
+        /// <param name="groupResourceKey">Content Group resource key</param>
+        public IFieldInfo(string internalName, Guid id, string fieldTypeName, string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey)
             : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey)
         {
+            if (string.IsNullOrEmpty(internalName))
+            {
+                throw new ArgumentNullException("internalName");
+            }
+            else if (id == null || id == Guid.Empty)
+            {
+                throw new ArgumentNullException("id");
+            }
+            else if (internalName.Length > 32)
+            {
+                throw new ArgumentOutOfRangeException("internalName", "SharePoint field internal name cannot have more than 32 characters");
+            }
+
+            this.InternalName = internalName;
+            this.Id = id;
+            this.Type = fieldTypeName;
         }
 
         /// <summary>
-        /// Creates a new base information objects with keys to resources
+        /// Creates a new FieldInfo object from an existing field schema XML
         /// </summary>
-        /// <param name="displayNameResourceKey">Display name resource key</param>
-        /// <param name="descriptionResourceKey">Description resource key</param>
-        /// <param name="groupResourceKey">Content group resource key</param>
-        /// <param name="resourceFileName">Name of the resource file.</param>
-        public IFieldInfo(string displayNameResourceKey, string descriptionResourceKey, string groupResourceKey, string resourceFileName)
-            : base(displayNameResourceKey, descriptionResourceKey, groupResourceKey, resourceFileName)
+        /// <param name="fieldSchemaXml">Field's XML definition</param>
+        public IFieldInfo(XElement fieldSchemaXml)
         {
+            if (fieldSchemaXml == null)
+            {
+                throw new ArgumentNullException("fieldSchemaXml");
+            }
+
+            if (!XmlHasAllBasicAttributes(fieldSchemaXml))
+            {
+                throw new ArgumentException("Attribute missing from field definitions: ID, Name or Type.", "fieldSchemaXml");
+            }
+
+            this.Id = new Guid(fieldSchemaXml.Attribute("ID").Value);
+            this.InternalName = fieldSchemaXml.Attribute("Name").Value;
+            this.Type = fieldSchemaXml.Attribute("Type").Value;
+
+            if (fieldSchemaXml.Attribute("DisplayName") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.DisplayNameResourceKey = fieldSchemaXml.Attribute("DisplayName").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("Description") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.DescriptionResourceKey = fieldSchemaXml.Attribute("Description").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("Group") != null)
+            {
+                // TODO: maybe try to parse $Resource string here... maybe not?
+                this.GroupResourceKey = fieldSchemaXml.Attribute("Group").Value;
+            }
+
+            if (fieldSchemaXml.Attribute("Required") != null)
+            {
+                this.Required = bool.Parse(fieldSchemaXml.Attribute("Required").Value) ? RequiredType.Required : RequiredType.NotRequired;
+            }
+
+            if (fieldSchemaXml.Attribute("EnforceUniqueValues") != null)
+            {
+                this.EnforceUniqueValues = bool.Parse(fieldSchemaXml.Attribute("EnforceUniqueValues").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("Hidden") != null)
+            {
+                this.IsHidden = bool.Parse(fieldSchemaXml.Attribute("Hidden").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInDisplayForm") != null)
+            {
+                this.IsHiddenInDisplayForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInDisplayForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInEditForm") != null)
+            {
+                this.IsHiddenInEditForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInEditForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInNewForm") != null)
+            {
+                this.IsHiddenInNewForm = !bool.Parse(fieldSchemaXml.Attribute("ShowInNewForm").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("ShowInListSettings") != null)
+            {
+                this.IsHiddenInListSettings = !bool.Parse(fieldSchemaXml.Attribute("ShowInListSettings").Value);
+            }
+
+            if (fieldSchemaXml.Attribute("DefaultFormula") != null)
+            {
+                this.DefaultFormula = fieldSchemaXml.Attribute("DefaultFormula").Value;
+            }
         }
 
         /// <summary>
@@ -208,7 +197,14 @@ namespace GSoft.Dynamite.Fields
         /// <returns>The full field XML schema</returns>
         public virtual XElement Schema(XElement baseFieldSchema)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Can't use Schema method on BaseFieldInfo object. Use a field type that derives from FieldInfoWithValueType<T> instead.");
+        }
+
+        private static bool XmlHasAllBasicAttributes(XElement fieldSchemaXml)
+        {
+            return fieldSchemaXml.Attribute("ID") != null
+                || fieldSchemaXml.Attribute("Name") != null
+                || fieldSchemaXml.Attribute("Type") != null;
         }
     }
 }
