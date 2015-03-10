@@ -103,6 +103,9 @@
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Navigation\INavigationConfig.cs" />
+    <Compile Include="Navigation\INavigationSearchConfig.cs" />
+    <Compile Include="Navigation\INavigationTaxonomyConfig.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
@@ -250,7 +253,6 @@
     <Compile Include="Branding\Minification.cs" />
     <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Navigation\INavigationService.cs" />
-    <Compile Include="Navigation\NavigationManagedProperties.cs" />
     <Compile Include="Navigation\NavigationNode.cs" />
     <Compile Include="Navigation\NavigationService.cs" />
     <Compile Include="Repositories\ItemLocator.cs" />
