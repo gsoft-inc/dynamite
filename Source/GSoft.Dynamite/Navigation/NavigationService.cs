@@ -73,12 +73,27 @@ namespace GSoft.Dynamite.Navigation
                     {
                         // Get navigation items from search
                         items = this.GetNavigationNodeItems(properties, properties.CatalogItemContentTypeId, null).ToArray();
+
+                        // If the cache contains corrupted data,
+                        // clear it and fetch the data again
+                        // If no items are returned, we do not make the query again since the items are not cached.
+                        if (items == null)
+                        {
+                            items = this.GetNavigationNodeItems(properties);
+                        }
                     }
 
                     using (new SPMonitoredScope("GetNavigationNodeTerms"))
                     {
                         // Get navigation terms from taxonomy
                         terms = this.GetNavigationNodeTerms(web, properties, navigationTermSet.Terms);
+
+                        // If the cache contains corrupted data,
+                        // clear it and fetch the data again
+                        if ((terms == null) || !terms.Any())
+                        {
+                            terms = this.GetNavigationNodeTerms(web, properties, navigationTermSet.Terms);
+                        }
                     }
 
                     using (new SPMonitoredScope("MapNavigationNodeTree"))
@@ -212,8 +227,12 @@ namespace GSoft.Dynamite.Navigation
             var session = new TaxonomySession(web.Site);
 
             // Gets terms which are not excluded from global navigation
-            var terms = navigationTerms.Where(x => !x.ExcludeFromGlobalNavigation).Select(x => x.GetAsEditable(session)).ToArray();
-            var nodes = terms.Select(x => new NavigationNode(x)).ToArray();
+            var filteredTerms = navigationTerms.Where(
+                x => !x.ExcludeFromGlobalNavigation && this.GetNavigationNodeItems(properties, properties.TargetItemContentTypeId, x.Title.ToString()).Any()).Select(x => x.GetAsEditable(session)).ToList();
+
+            var terms = filteredTerms.Where(x => !x.ExcludeFromGlobalNavigation).ToArray();
+
+            var nodes = filteredTerms.Select(x => new NavigationNode(x)).ToArray();
 
             if (maxLevel > 0)
             {
