@@ -85,5 +85,18 @@ namespace GSoft.Dynamite.WebParts
         /// <param name="fontColor">Font hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
         /// <returns>A ContentEditorWebPart containing a PlaceHolder image</returns>
         ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor);
+
+        /// <summary>
+        /// Method to create a Content Editor Web Part containing a place holder image
+        /// </summary>
+        /// <param name="x">x axis dimension in pixel</param>
+        /// <param name="y">y axis dimension in pixel</param>
+        /// <param name="backgroundColor">Background hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
+        /// <param name="fontColor">Font hexadecimal color ex: <c>"ffffff"</c> or <c>"e3b489"</c></param>
+        /// <param name="text">Custom text to show instead of the resolution.</param>
+        /// <returns>
+        /// A ContentEditorWebPart containing a PlaceHolder image
+        /// </returns>
+        ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor, string text);
     }
 }
