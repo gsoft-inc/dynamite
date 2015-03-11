@@ -40,6 +40,7 @@ namespace GSoft.Dynamite.Search
             this.Queryable = true;
             this.Searchable = true;
             this.Refinable = true;
+            this.Retrievable = true;
             this.RespectPriority = false;
             this.HasMultipleValues = false;
             this.FullTextIndex = "Default";
