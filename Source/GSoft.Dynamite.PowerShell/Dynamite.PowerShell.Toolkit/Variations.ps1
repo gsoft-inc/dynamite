@@ -358,3 +358,39 @@ function Sync-DSPWeb {
 
 	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
 }
+
+function Get-VariationLabels {
+
+	Param
+	(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPWeb]$Web
+	)
+
+    $Labels = @{}
+    
+    # To know if a site has variatiosn enabled, we need to check labels in the variation hidden list
+    $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
+
+    if ($PublishingWeb)
+    {
+        $ListGuid = $Web.GetProperty("_VarLabelsListId")
+        if ($ListGuid -ne $null)
+        {
+            
+            $List = $Web.Lists[[Guid]$ListGuid]
+		
+            $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
+            $CamlQuery.Query = "<OrderBy><FieldRef Name='Title' /></OrderBy>"
+            $CamlQuery.ViewFields = "<FieldRef Name='Title' /><FieldRef Name='Locale' />"
+            $LabelItems = $List.GetItems($CamlQuery) 
+
+            $LabelItems | ForEach-Object {
+                
+                $Labels.Add($_.Title, $_["Locale"])
+            }          
+        }
+    }
+
+    return $Labels
+}

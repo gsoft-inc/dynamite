@@ -419,7 +419,7 @@ function Export-DSPWebStructure {
                 # - The current web is the source variation site created by SharePoint (e.g /sites/<sitename>/en)
                 # - The current web is a peer variation site automatically created by SharePoint for a variation target label (e.g /sites/<sitename>/fr/subweb where 'en' label is the variation source)
                 # In all cases, it makes no sense to export a web generated automatically by SharePoint. To reproduce the same structure, you have to create the original structure and synchronize again.
-                if ([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $CurrentPublishingWeb.Label.Title -or ($SourcePublishingWeb.DefaultPage.Name -match "VariationRoot.aspx" -and $CurrentPublishingWeb.Label.IsSource -eq $false))
+                if ([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $CurrentPublishingWeb.Label.Title -or ($VariationLabels.Count -gt 0 -and $CurrentPublishingWeb.Label.IsSource -eq $false))
                 {
                         $url =$Web.Url
                         Write-Warning "Web with URL '$url' is a variation generated site. Skipping export..."
@@ -472,6 +472,9 @@ function Export-DSPWebStructure {
     {
         $Site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)
         $RootWeb = $Site.OpenWeb()
+
+        # Check if the current web is a variation root site
+        $VariationLabels =  $RootWeb | Get-VariationLabels
 
         # Create a new XML File
         [System.Xml.XmlDocument]$XMLDocument = New-Object System.Xml.XmlDocument

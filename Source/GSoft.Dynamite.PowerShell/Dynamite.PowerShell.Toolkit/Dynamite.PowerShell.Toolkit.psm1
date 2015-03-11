@@ -125,6 +125,9 @@ Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStruct
 # User Profile 
 Export-ModuleMember Set-DSPUserProfileSchema
 
+# Excel
+Export-ModuleMember Merge-Columns, Remove-Column, Copy-Column, Add-Column, Edit-ColumnValue
+
 # Faceted Search
 Export-ModuleMember New-DSPFacetedSearchSettings
 
@@ -137,11 +140,14 @@ Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache
 # Security 
 Export-ModuleMember Set-DSPWebPermissions
 
+# Sharegate
+Export-ModuleMember  Test-SharegateModule, Import-Data
+
 # Timer Job
 Export-ModuleMember Set-DSPTimerJobs
 
 # Utilities
-Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions, Resolve-DSPType
+Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions, Resolve-DSPType, Invoke-GenericMethod
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession
