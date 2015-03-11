@@ -233,34 +233,37 @@ namespace GSoft.Dynamite.Search
                 managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
 
                 // Ensure crawl properties mappings
-                foreach (KeyValuePair<string, int> crawledProperty in managedPropertyInfo.CrawledProperties)
+                foreach (KeyValuePair<string, int> crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
                 {
-                    // Get the crawled property
-                    var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
+                    // Get the crawled property (there may be more than one matching that name)
+                    var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
 
-                    if (cp != null)
+                    if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
                     {
-                        // Create mapping information
-                        var mapping = new Mapping
+                        foreach (var cp in matchingCrawledProperties)
                         {
-                            CrawledPropertyName = cp.Name,
-                            CrawledPropset = cp.Propset,
-                            ManagedPid = managedProperty.PID,
-                            MappingOrder = crawledProperty.Value
-                        };
+                            // Create mapping information
+                            var mapping = new Mapping
+                            {
+                                CrawledPropertyName = cp.Name,
+                                CrawledPropset = cp.Propset,
+                                ManagedPid = managedProperty.PID,
+                                MappingOrder = crawledPropertyKeyAndOrder.Value
+                            };
 
-                        if (!managedProperty.GetMappings().Contains(mapping))
-                        {
-                            mappingCollection.Add(mapping);
-                        }
-                        else
-                        {
-                            this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledProperty);
+                            if (!managedProperty.GetMappings().Contains(mapping))
+                            {
+                                mappingCollection.Add(mapping);
+                            }
+                            else
+                            {
+                                this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledPropertyKeyAndOrder);
+                            }
                         }
                     }
                     else
                     {
-                        this.logger.Info("Crawled property with name {0} not found!", crawledProperty);
+                        this.logger.Info("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
                     }
                 }
 
@@ -665,10 +668,10 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The context site</param>
         /// <param name="crawledPropertyName">The crawl property name</param>
-        /// <returns>The crawled property</returns>
-        private CrawledProperty GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
+        /// <returns>All crawled properties that match the name</returns>
+        private IList<CrawledProperty> GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
         {
-            CrawledProperty crawledProperty = null;
+            IList<CrawledProperty> crawledPropertiesMatchingName = new List<CrawledProperty>();
 
             var ssa = this.GetDefaultSearchServiceApplication(site);
 
@@ -682,12 +685,12 @@ namespace GSoft.Dynamite.Search
                 {
                     if (string.CompareOrdinal(property.Name, crawledPropertyName) == 0)
                     {
-                        crawledProperty = property;
+                        crawledPropertiesMatchingName.Add(property);
                     }
                 }
             }
 
-            return crawledProperty;
+            return crawledPropertiesMatchingName;
         }
     }
 }
