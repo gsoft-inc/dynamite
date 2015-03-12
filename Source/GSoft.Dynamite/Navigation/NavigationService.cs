@@ -180,7 +180,8 @@ namespace GSoft.Dynamite.Navigation
         private IEnumerable<NavigationNode> FilterNavigationNodesToReacheableTargetItems(IEnumerable<NavigationNode> nodes, IEnumerable<NavigationNode> targetItems)
         {
             // Only keep navigation terms that are included in the target item nodes
-            var filteredNodes = nodes.Where(term => targetItems.Any(target => target.Id.Equals(term.Id))).ToArray();
+            // Note: Target item id's are tagged with the parent node id
+            var filteredNodes = nodes.Where(node => targetItems.Any(target => target.ParentNodeId.Equals(node.Id))).ToArray();
             foreach (var filteredNode in filteredNodes)
             {
                 var filteredNodeChildren = filteredNode.ChildNodes.ToArray();
