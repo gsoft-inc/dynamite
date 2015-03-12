@@ -62,15 +62,15 @@ namespace GSoft.Dynamite.Navigation
                     // Get navigation terms from taxonomy
                     var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web);
 
+                    // If specified, filter to the restricted term set
+                    if (!queryParameters.RestrictedTermSetId.Equals(Guid.Empty))
+                    {
+                        navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters.RestrictedTermSetId, navigationNodes);
+                    }
+
                     // If match settings are defined
                     if (queryParameters.NodeMatchingSettings != null)
                     {
-                        // If specified, filter to the restricted term set
-                        if (!queryParameters.RestrictedTermSetId.Equals(Guid.Empty))
-                        {
-                            navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web,  queryParameters.RestrictedTermSetId, navigationNodes);
-                        }
-
                         // If specified, filter the navigation nodes to only the ones who are reacheable
                         // (i.e.) The nodes that have a target item search result
                         if (queryParameters.NodeMatchingSettings.RestrictToReachableTargetItems)
