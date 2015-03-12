@@ -12,10 +12,10 @@ namespace GSoft.Dynamite.Navigation
         /// Gets all the navigation terms.
         /// </summary>
         /// <param name="web">The Current web</param>
-        /// <param name="config">The navigation configuration.</param>
+        /// <param name="queryParameters">The navigation query parameters.</param>
         /// <returns>
-        /// List of navigation node
+        /// List of navigation node.
         /// </returns>
-        IEnumerable<NavigationNode> GetAllNavigationNodes(SPWeb web, INavigationConfig config);
+        IEnumerable<NavigationNode> GetAllNavigationNodes(SPWeb web, NavigationQueryParameters queryParameters);
     }
 }

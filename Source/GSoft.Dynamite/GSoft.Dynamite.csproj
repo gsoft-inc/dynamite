@@ -103,9 +103,9 @@
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
-    <Compile Include="Navigation\INavigationConfig.cs" />
-    <Compile Include="Navigation\INavigationSearchConfig.cs" />
-    <Compile Include="Navigation\INavigationTaxonomyConfig.cs" />
+    <Compile Include="Navigation\NavigationQueryParameters.cs" />
+    <Compile Include="Navigation\NavigationSearchSettings.cs" />
+    <Compile Include="Navigation\NavigationNodeMatchingSettings.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
