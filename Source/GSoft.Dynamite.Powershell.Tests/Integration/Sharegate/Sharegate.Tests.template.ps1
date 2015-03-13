@@ -162,9 +162,9 @@ function GetListItem {
         $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
         $CamlQuery.Query = "<Where><Eq><FieldRef Name='Title' /><Value Type='Text'>" + $ItemTitle + "</Value></Eq></Where>"
         $CamlQuery.RowLimit = 1
-        $Item = $List.GetItems($CamlQuery) 
+        $Items = $List.GetItems($CamlQuery) 
 
-        return $Item
+        return $Items
     }
     else
     {
@@ -192,11 +192,11 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 		It "[Single site] should import images, documents and list items including custom items and reusable content items into the target URL site" {
        
             Write-Host "     --Test Setup--"
-            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSiteData"
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSite"
 
             # Create site hierarchy
 		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
-
+            
         	Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl		
 
             $Web = Get-SPWeb $siteUrl
@@ -214,15 +214,15 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             GetListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItem" | Should Not be $null
 
             # Check for a document item into a custom library
-            GetListItem -Web $Web -ListName "CustomLibrary" -ItemTitle "TestDocument" | Should Not be $null
-
+            GetListItem -Web $Web -ListName "CustomLibrary" -ItemTitle "TestDocument" | Should Not be $null   
+            
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false       
+	        Remove-SPSite $siteUrl -Confirm:$false   
 		}
 
         It "[Multiples sites and sub sites with variations] should import images, documents and list items including custom items and reusable content items across the whole site structure"   {            
             Write-Host "     --Test Setup--"
-            $folderPath = Join-Path -Path "$here" -ChildPath ".\MultipleSitesData"
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\MultipleSites"
 
 		    # Create site hierarchy
 		    CreateSiteWithSubsitesAndVariationsWithCustomLists
@@ -265,12 +265,109 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 	        Remove-SPSite $siteUrl -Confirm:$false        }
 	}
 
-    Context "Non mirror structure between folders and site" {
+    Context "Duplicates behavior" {
+      
+        It "[Single site] should duplicate items if no custom keys specified" {
+
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomList"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl
+
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomListDuplicates"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl
+
+            $Web = Get-SPWeb $siteUrl
+
+            # Check for a list item into a custom list#
+            GetListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItem" | Should Not be $null
+
+            GetListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItemDuplicate" | Should Not be  $null
+            
+            Write-Host "     --Tests Teardown--"
+	        Remove-SPSite $siteUrl -Confirm:$false             
+        }
+
+        It "[Single site] should not duplicate items with the same custom keys passed as parameter even if the title and created date are different" {
+
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomList"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl
+
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomListDuplicates"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -Keys "ID","ContentType"
+
+            $Web = Get-SPWeb $siteUrl
+
+            # Check for a list item into a custom list#
+            GetListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItem" | Should Not be $null
+
+            GetListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItemDuplicate" | Should be  $null
+            
+            Write-Host "     --Tests Teardown--"
+	        Remove-SPSite $siteUrl -Confirm:$false             
+        }
+
+        It "[Single site] should not ignore property if no property template is specified (Sharegate default behavior)" {
+
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSite"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl 
+            $Web = Get-SPWeb $siteUrl
+            
+            $Item = GetListItem -Web $Web -ListName "Pages" -ItemTitle "TestPage" 
+
+            # Check for a list item into a custom list#
+            $Item | Should Not be $null
+            $Item["Comments"] | Should be "TestIgnore"
+            
+            Write-Host "     --Tests Teardown--"
+	        Remove-SPSite $siteUrl -Confirm:$false             
+        }
+
+        It "[Single site] should ignore property configured in the property template file" {
+
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSite"
+            $propertytemplateFile = Join-Path -Path "$here" -ChildPath ".\TestPropertyTemplate.sgt"
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -PropertyTemplateFile $propertytemplateFile -TemplateName "TestTemplate"
+
+            $Web = Get-SPWeb $siteUrl
+            
+            $Item = GetListItem -Web $Web -ListName "Pages" -ItemTitle "TestPage" 
+
+            # Check for a list item into a custom list#
+            $Item | Should Not be $null
+            $Item["Comments"] | Should BeNullOrEmpty 
+            
+            Write-Host "     --Tests Teardown--"
+	        Remove-SPSite $siteUrl -Confirm:$false             
+        }
+    }
+
+    Context "Non mirror structure between folders and sites" {
     
         It "[Single site] should ignore not found lists and webs but import other found artefacts" {
 
             Write-Host "     --Test Setup--"
-            $folderPath = Join-Path -Path "$here" -ChildPath ".\NonMirrorData"
+            $folderPath = Join-Path -Path "$here" -ChildPath ".\NonMirror"
 
             # Create site hierarchy
 		    CreateSingleSiteNoSubsitesNoVariationsWithoutCustomLists

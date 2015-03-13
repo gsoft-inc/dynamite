@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<ArrayOfPropertyTemplate xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PropertyTemplate Id="8b8cd63b-7ce0-47a1-8e7a-d1d909a046f6" ListId="55a918a5-315a-483b-ae53-f97a2847e5b3" Name="TestTemplate" CheckInType="CopySource" ModerationStatusType="Ignore" KeepAuthorsAndTimestamps="false" CopyVersionHistory="false" CopyPermissions="false" CorrectLinks="true" FlattenFolders="false" CopyWebParts="false" TemplateType="Copy" HasVersionsLimit="false" VersionsLimit="5">
+    <ContentTypes>
+      <ContentTypes ParentContentTypeId="0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900242457EFB8B24247815D688C526CD44D">
+        <Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="PageLayout" Name="PublishingPageLayout" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="Title">
+            <Value />
+          </Columns>
+          <Columns Action="Ignore" ApplyActionToAllVersions="true" FieldType="Note" Name="Comments">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="PublishingContact">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactEmail">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactName">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="URL" Name="PublishingContactPicture">
+            <Value>&lt;Url&gt;
+  &lt;Value&gt;&lt;/Value&gt;
+  &lt;Description&gt;&lt;/Description&gt;
+&lt;/Url&gt;</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingRollupImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="TargetTo" Name="Audience" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="PublishingIsFurlPage">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingPageImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingPageContent" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="ArticleByLine">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="ArticleStartDate" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingImageCaption" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoBrowserTitle">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoMetaDescription">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoKeywords">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="RobotsNoIndex">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks2" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Author">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Created" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Editor">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Modified" />
+        </Columns>
+      </ContentTypes>
+      <ContentTypes ParentContentTypeId="0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF3900796F542FC5E446758C697981E370458C">
+        <Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="PageLayout" Name="PublishingPageLayout" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="Title">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Note" Name="Comments">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="PublishingContact">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactEmail">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactName">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="URL" Name="PublishingContactPicture">
+            <Value>&lt;Url&gt;
+  &lt;Value&gt;&lt;/Value&gt;
+  &lt;Description&gt;&lt;/Description&gt;
+&lt;/Url&gt;</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingRollupImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="TargetTo" Name="Audience" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="PublishingIsFurlPage">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoBrowserTitle">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoMetaDescription">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoKeywords">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="RobotsNoIndex">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingPageImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingPageContent" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="ArticleByLine">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="ArticleStartDate" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingImageCaption" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks2" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Author">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Created" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Editor">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Modified" />
+        </Columns>
+      </ContentTypes>
+      <ContentTypes ParentContentTypeId="0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF39">
+        <Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="PageLayout" Name="PublishingPageLayout" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="Title">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Note" Name="Comments">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="PublishingContact">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactEmail">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactName">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="URL" Name="PublishingContactPicture">
+            <Value>&lt;Url&gt;
+  &lt;Value&gt;&lt;/Value&gt;
+  &lt;Description&gt;&lt;/Description&gt;
+&lt;/Url&gt;</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingRollupImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="TargetTo" Name="Audience" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="PublishingIsFurlPage">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoBrowserTitle">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoMetaDescription">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoKeywords">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="RobotsNoIndex">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingPageImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingPageContent" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="ArticleByLine">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="ArticleStartDate" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingImageCaption" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks2" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Author">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Created" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Editor">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Modified" />
+        </Columns>
+      </ContentTypes>
+      <ContentTypes ParentContentTypeId="0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4">
+        <Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="PageLayout" Name="PublishingPageLayout" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="Title">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Note" Name="Comments">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="PublishingContact">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactEmail">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactName">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="URL" Name="PublishingContactPicture">
+            <Value>&lt;Url&gt;
+  &lt;Value&gt;&lt;/Value&gt;
+  &lt;Description&gt;&lt;/Description&gt;
+&lt;/Url&gt;</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingRollupImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="TargetTo" Name="Audience" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="PublishingIsFurlPage">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingPageImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingPageContent" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks2" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoBrowserTitle">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoMetaDescription">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoKeywords">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="RobotsNoIndex">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="ArticleByLine">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="ArticleStartDate" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingImageCaption" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Author">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Created" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Editor">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Modified" />
+        </Columns>
+      </ContentTypes>
+      <ContentTypes ParentContentTypeId="0x0120">
+        <Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="Title">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Note" Name="Comments">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="PublishingContact">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactEmail">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="PublishingContactName">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="URL" Name="PublishingContactPicture">
+            <Value>&lt;Url&gt;
+  &lt;Value&gt;&lt;/Value&gt;
+  &lt;Description&gt;&lt;/Description&gt;
+&lt;/Url&gt;</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="PageLayout" Name="PublishingPageLayout" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingRollupImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="TargetTo" Name="Audience" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="PublishingIsFurlPage">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoBrowserTitle">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoMetaDescription">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="SeoKeywords">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Boolean" Name="RobotsNoIndex">
+            <Value>0</Value>
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Image" Name="PublishingPageImage" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingPageContent" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="Text" Name="ArticleByLine">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="ArticleStartDate" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="HTML" Name="PublishingImageCaption" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="SummaryLinks" Name="SummaryLinks2" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Author">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Created" />
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="User" Name="Editor">
+            <Value />
+          </Columns>
+          <Columns Action="UseSource" ApplyActionToAllVersions="true" FieldType="DateTime" Name="Modified" />
+        </Columns>
+      </ContentTypes>
+    </ContentTypes>
+  </PropertyTemplate>
+</ArrayOfPropertyTemplate>
