@@ -62,38 +62,42 @@ namespace GSoft.Dynamite.Navigation
                     // Get navigation terms from taxonomy
                     var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web);
 
-                    // If specified, filter to the restricted term set
-                    if (!queryParameters.RestrictedTermSetId.Equals(Guid.Empty))
+                    // Make sure the nodes are not null
+                    if (navigationNodes.Any(node => node != null))
                     {
-                        navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters.RestrictedTermSetId, navigationNodes);
-                    }
-
-                    // If match settings are defined
-                    if (queryParameters.NodeMatchingSettings != null)
-                    {
-                        // If specified, filter the navigation nodes to only the ones who are reacheable
-                        // (i.e.) The nodes that have a target item search result
-                        if (queryParameters.NodeMatchingSettings.RestrictToReachableTargetItems)
+                        // If specified, filter to the restricted term set
+                        if (!queryParameters.RestrictedTermSetId.Equals(Guid.Empty))
                         {
-                            var targetItemNodes = this.GetTargetItemNavigationNodes(web, queryParameters, navigationNodes);
-                            navigationNodes = this.FilterNavigationNodesToReacheableTargetItems(navigationNodes, targetItemNodes);
+                            navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters.RestrictedTermSetId, navigationNodes);
                         }
 
-                        // If specified, include the catalog items from the search
-                        if (queryParameters.NodeMatchingSettings.IncludeCatalogItems)
+                        // If match settings are defined
+                        if (queryParameters.NodeMatchingSettings != null)
                         {
-                            // Get catalog items from search
-                            var catalogItemNavigationNodes = this.GetCatalogItemNavigationNodes(web, queryParameters);
+                            // If specified, filter the navigation nodes to only the ones who are reacheable
+                            // (i.e.) The nodes that have a target item search result
+                            if (queryParameters.NodeMatchingSettings.RestrictToReachableTargetItems)
+                            {
+                                var targetItemNodes = this.GetTargetItemNavigationNodes(web, queryParameters, navigationNodes);
+                                navigationNodes = this.FilterNavigationNodesToReacheableTargetItems(navigationNodes, targetItemNodes);
+                            }
 
-                            // Map navigation terms to node object, including search items
-                            navigationNodes = this.MapNavigationNodeTree(navigationNodes, catalogItemNavigationNodes);
-                        } 
+                            // If specified, include the catalog items from the search
+                            if (queryParameters.NodeMatchingSettings.IncludeCatalogItems)
+                            {
+                                // Get catalog items from search
+                                var catalogItemNavigationNodes = this.GetCatalogItemNavigationNodes(web, queryParameters);
+
+                                // Map navigation terms to node object, including search items
+                                navigationNodes = this.MapNavigationNodeTree(navigationNodes, catalogItemNavigationNodes);
+                            }
+                        }
+
+                        this.logger.Info(
+                            "GetAllNavigationNodes: Found {0} first level navigation nodes in result source '{1}'.",
+                            navigationNodes.Count(),
+                            queryParameters.SearchSettings.ResultSourceName); 
                     }
-
-                    this.logger.Info(
-                        "GetAllNavigationNodes: Found {0} first level navigation nodes in result source '{1}'.", 
-                        navigationNodes.Count(),
-                        queryParameters.SearchSettings.ResultSourceName);
 
                     return navigationNodes;
                 }
