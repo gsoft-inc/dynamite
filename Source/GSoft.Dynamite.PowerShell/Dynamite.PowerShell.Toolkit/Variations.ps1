@@ -352,11 +352,30 @@ function Sync-DSPWeb {
 
 	$sourceUrl = $SourceWeb.Url
 	$labelToUpper = $LabelToSync.ToUpper()
-    Write-Warning "Sync SPWeb $sourceUrl to the variation label..."
+    Write-Warning "Sync SPWeb '$sourceUrl' to the variation label '$labelToUpper'..."
 
 	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
 
 	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
+}
+
+function Sync-DSPList {
+	param
+	(
+        [Parameter(Mandatory=$true, HelpMessage = "The variation source list", Position=0, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPList]$SourceList,
+
+		[Parameter(Mandatory=$true, HelpMessage = "The label to Sync", Position=1)]
+		[string]$LabelToSync
+	)
+
+	$listTitle = $SourceList.Title
+	$labelToUpper = $LabelToSync.ToUpper()
+    Write-Warning "Sync SPList '$listTitle' to the variation label '$labelToUpper'..."
+
+	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
+
+	$variationSyncHelper.SyncList($SourceList, $LabelToSync)
 }
 
 function Get-VariationLabels {

@@ -108,7 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 Export-ModuleMember New-DSPTaxonomyNavigationSettings
 
 # Variations
-Export-ModuleMember New-DSPSiteVariations, <# Sync-DSPList,#> Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
+Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
 
 # Administration
 Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
@@ -141,7 +141,7 @@ Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache
 Export-ModuleMember Set-DSPWebPermissions
 
 # Sharegate
-Export-ModuleMember  Test-SharegateModule, Import-Data
+Export-ModuleMember  Test-SharegateModule, Import-DSPData
 
 # Timer Job
 Export-ModuleMember Set-DSPTimerJobs
