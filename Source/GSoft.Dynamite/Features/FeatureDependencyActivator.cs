@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GSoft.Dynamite.Features.Types;
 using GSoft.Dynamite.Logging;
@@ -55,6 +56,30 @@ namespace GSoft.Dynamite.Features
         private FeatureDependencyActivator(ILogger logger)
         {
             this.logger = logger;
+        }
+
+        /// <summary>
+        /// Ensures the feature activation.
+        /// </summary>
+        /// <param name="featureDependencyConfig">The feature dependency configuration.</param>
+        public void EnsureFeatureActivation(IFeatureDependencyConfig featureDependencyConfig)
+        {
+            if (featureDependencyConfig != null)
+            {
+                this.EnsureFeatureActivation(featureDependencyConfig.FeatureDependencies);
+            }
+        }
+
+        /// <summary>
+        /// Ensures the feature activation.
+        /// </summary>
+        /// <param name="featureDependencies">The feature dependencies.</param>
+        public void EnsureFeatureActivation(IEnumerable<FeatureDependencyInfo> featureDependencies)
+        {
+            foreach (var featureDependency in featureDependencies)
+            {
+                this.EnsureFeatureActivation(featureDependency);
+            }
         }
 
         /// <summary>

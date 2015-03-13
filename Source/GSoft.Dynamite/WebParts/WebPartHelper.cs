@@ -188,9 +188,6 @@ namespace GSoft.Dynamite.WebParts
         /// </returns>
         public ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor, string text)
         {
-            var placeHolderWebPart = new ContentEditorWebPart();
-            placeHolderWebPart.ChromeType = System.Web.UI.WebControls.WebParts.PartChromeType.None;
-
             var textQueryString = string.IsNullOrEmpty(text) ? string.Empty : string.Format(CultureInfo.InvariantCulture, "&text={0}", HttpUtility.UrlEncode(text));
             var fontColorSlug = !string.IsNullOrEmpty(backgroundColor) && !string.IsNullOrEmpty(fontColor) ? string.Format(CultureInfo.InvariantCulture, "/{0}", fontColor) : string.Empty;
             var formattedContent = string.Format(
@@ -202,9 +199,12 @@ namespace GSoft.Dynamite.WebParts
                 fontColorSlug, 
                 textQueryString);
 
-            placeHolderWebPart.Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent);
-
-            return placeHolderWebPart;
+            return new ContentEditorWebPart
+            {
+                Title = !string.IsNullOrEmpty(text) ? text : GenerateRandomPlaceholderTitle("Placeholder"),
+                ChromeType = PartChromeType.None,
+                Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent)
+            };
         }
 
         /// <summary>
@@ -234,6 +234,12 @@ namespace GSoft.Dynamite.WebParts
             }
 
             return webPart;
+        }
+
+        private static string GenerateRandomPlaceholderTitle(string prefix)
+        {
+            var random = new Random();
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", prefix, random.Next(1, 100));
         }
     }
 }
