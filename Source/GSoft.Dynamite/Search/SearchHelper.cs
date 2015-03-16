@@ -22,6 +22,7 @@ using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
+using SPManagedPropertyInfo = Microsoft.Office.Server.Search.Administration.ManagedPropertyInfo;
 
 namespace GSoft.Dynamite.Search
 {
@@ -185,11 +186,13 @@ namespace GSoft.Dynamite.Search
         /// <returns>The managed property</returns>
         public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
         {
-            ManagedProperty managedProperty = null;
-            var mappingCollection = new MappingCollection();
+            SPManagedPropertyInfo managedPropertyDefinition = null;
+
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var propertyName = managedPropertyInfo.Name;
             var propertyType = managedPropertyInfo.DataType;
+            var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, site.RootWeb);     // this forces managed prop definition to SSA-scope 
+                                                                                        // (i.e. all managed props will be farm-wide)
 
             // Get the search schema
             var sspSchema = new Schema(ssa);
@@ -208,29 +211,18 @@ namespace GSoft.Dynamite.Search
                     {
                         prop.DeleteAllMappings();
                         prop.Delete();
-                        managedProperty = managedProperties.Create(propertyName, propertyType);
+                        managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
                     }
                 }
             }
             else
             {
-                managedProperty = managedProperties.Create(propertyName, propertyType);
+                managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
             }
 
-            if (managedProperty != null)
+            if (managedPropertyDefinition != null)
             {
-                // Configure the managed property
-                managedProperty.Sortable = managedPropertyInfo.Sortable;
-                managedProperty.SortableType = managedPropertyInfo.SortableType;
-                managedProperty.Refinable = managedPropertyInfo.Refinable;
-                managedProperty.Retrievable = managedPropertyInfo.Retrievable;
-                managedProperty.RespectPriority = managedPropertyInfo.RespectPriority;
-                managedProperty.Queryable = managedPropertyInfo.Queryable;
-                managedProperty.Searchable = managedPropertyInfo.Searchable;
-                managedProperty.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
-                managedProperty.FullTextIndex = managedPropertyInfo.FullTextIndex;
-                managedProperty.Context = managedPropertyInfo.Context;
-                managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+                var mappingCollection = new List<MappingInfo>(); // new MappingCollection();
 
                 // Ensure crawl properties mappings
                 foreach (KeyValuePair<string, int> crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
@@ -243,40 +235,77 @@ namespace GSoft.Dynamite.Search
                         foreach (var cp in matchingCrawledProperties)
                         {
                             // Create mapping information
-                            var mapping = new Mapping
+                            var mapping = new MappingInfo
                             {
                                 CrawledPropertyName = cp.Name,
                                 CrawledPropset = cp.Propset,
-                                ManagedPid = managedProperty.PID,
+                                ManagedPid = managedPropertyDefinition.Pid,
                                 MappingOrder = crawledPropertyKeyAndOrder.Value
                             };
 
-                            if (!managedProperty.GetMappings().Contains(mapping))
+                            if (!ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner).Any(m => m.CrawledPropertyName == mapping.CrawledPropertyName))
                             {
                                 mappingCollection.Add(mapping);
                             }
                             else
                             {
-                                this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledPropertyKeyAndOrder);
+                                this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedPropertyDefinition.Name, crawledPropertyKeyAndOrder);
                             }
                         }
                     }
                     else
                     {
-                        this.logger.Info("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
+                        this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
                     }
                 }
 
                 // Apply mappings to the managed property
                 if (mappingCollection.Count > 0)
                 {
-                    managedProperty.SetMappings(mappingCollection);
+                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
                 }
 
-                managedProperty.Update();
+                // Configure the managed property
+                managedPropertyDefinition.Sortable = managedPropertyInfo.Sortable;
+                if (managedPropertyDefinition.Sortable)
+                {
+                    managedPropertyDefinition.SortableType = managedPropertyInfo.SortableType;
+                }
+
+                managedPropertyDefinition.Refinable = managedPropertyInfo.Refinable;
+                if (managedPropertyDefinition.Refinable)
+                {
+                    // use "active" refine mode whenever refinable=TRUE
+                    managedPropertyDefinition.RefinerConfiguration.Type = Microsoft.Office.Server.Search.Administration.RefinerType.Deep;
+                }
+
+                managedPropertyDefinition.Retrievable = managedPropertyInfo.Retrievable;
+                managedPropertyDefinition.RespectPriority = managedPropertyInfo.RespectPriority;
+                managedPropertyDefinition.Queryable = managedPropertyInfo.Queryable;
+                managedPropertyDefinition.Searchable = managedPropertyInfo.Searchable;
+
+                if (managedPropertyDefinition.Searchable)
+                {
+                    managedPropertyDefinition.FullTextIndex = managedPropertyInfo.FullTextIndex;
+                    managedPropertyDefinition.Context = managedPropertyInfo.Context;
+                }
+                else
+                {
+                    managedPropertyDefinition.FullTextIndex = string.Empty;
+                    managedPropertyDefinition.Context = (short)0;
+                }
+
+                managedPropertyDefinition.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
+                managedPropertyDefinition.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+
+                // Save through the schema manager (don't call .Update on the managed property object itself, its config won't get saved properly)
+                ssa.UpdateManagedProperty(managedPropertyDefinition, owner);
             }
 
-            return managedProperty;
+            // Re-fetch schema, it might be stale at this point
+            sspSchema = new Schema(ssa);
+
+            return sspSchema.AllManagedProperties[propertyName];
         }
 
         /// <summary>
