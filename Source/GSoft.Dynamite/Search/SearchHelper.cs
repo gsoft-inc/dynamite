@@ -4,23 +4,17 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search.Enums;
 using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.Utils;
-using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
-using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Taxonomy;
-using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
 using SPManagedPropertyInfo = Microsoft.Office.Server.Search.Administration.ManagedPropertyInfo;
 
@@ -480,9 +474,6 @@ namespace GSoft.Dynamite.Search
         /// <returns>The result type item</returns>
         public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
         {
-            ResultItemType resType = null;
-
-            var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
             var resultSource = this.GetResultSourceByName(site, resultType.ResultSource.Name, resultType.ResultSource.Level);
 
@@ -490,12 +481,11 @@ namespace GSoft.Dynamite.Search
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
 
             // Get the existing result type
-            resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
+            var resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
 
             if (resType == null)
             {
                 resType = new ResultItemType(searchOwner);
-
                 resType.Name = resultType.Name;
                 resType.SourceID = resultSource.Id;
 
