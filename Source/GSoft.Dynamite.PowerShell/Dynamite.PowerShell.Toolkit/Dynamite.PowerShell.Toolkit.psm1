@@ -108,7 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 Export-ModuleMember New-DSPTaxonomyNavigationSettings
 
 # Variations
-Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
+Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy, Get-VariationLabels
 
 # Administration
 Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
