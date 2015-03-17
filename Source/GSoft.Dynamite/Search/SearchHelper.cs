@@ -334,7 +334,7 @@ namespace GSoft.Dynamite.Search
         /// </returns>
         public ISource GetResultSourceByName(SPSite site, string resultSourceName, SearchObjectLevel scopeOwnerLevel)
         {
-            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel);
+            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel, site.RootWeb);
 
             var context = SPServiceContext.GetContext(site);
             var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
