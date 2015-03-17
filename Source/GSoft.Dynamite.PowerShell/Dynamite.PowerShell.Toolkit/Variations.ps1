@@ -386,7 +386,7 @@ function Get-VariationLabels {
 		[Microsoft.SharePoint.SPWeb]$Web
 	)
 
-    $Labels = @{}
+    $Labels = @() 
     
     # To know if a site has variatiosn enabled, we need to check labels in the variation hidden list
     $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
@@ -401,12 +401,17 @@ function Get-VariationLabels {
 		
             $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
             $CamlQuery.Query = "<OrderBy><FieldRef Name='Title' /></OrderBy>"
-            $CamlQuery.ViewFields = "<FieldRef Name='Title' /><FieldRef Name='Locale' />"
             $LabelItems = $List.GetItems($CamlQuery) 
 
             $LabelItems | ForEach-Object {
                 
-                $Labels.Add($_.Title, $_["Locale"])
+                $CurrentLabel =New-Object PSObject
+
+                $CurrentLabel | Add-Member Noteproperty Label $_.Title 
+                $CurrentLabel | Add-Member Noteproperty LCID $_["Locale"]
+                $CurrentLabel | Add-Member Noteproperty IsSource $_["Is_x0020_Source"]
+
+                $Labels += $CurrentLabel
             }          
         }
     }
