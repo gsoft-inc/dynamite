@@ -721,12 +721,16 @@ function Remove-DSPTermGroup {
     .PARAMETER TermSetName
 	    [REQUIRED] The name of the taxonomy term set
 
-    .PARAMETER Exclude
-	    [OPTIONAL] List of tokens to exclude. Applied on the title of each web. You can pass an array of string if you have multiple tokens. Regex expressions are supported.
+    .PARAMETER ExcludeWeb
+	    [OPTIONAL] List of tokens to exclude. Applies on the title and template ID of each web. You can pass an array of string if you have multiple tokens. Regex expressions are supported.
+		An all pages in the web are excluded too.
+
+    .PARAMETER ExcludePage
+	    [OPTIONAL] List of tokens to exclude. Applies on the title of a single page. You can pass an array of string if you have multiple tokens. Regex expressions are supported.
 
     .EXAMPLE
 
-        PS C:\> Export-DSPWebStructureAsTaxonomy -SourceWeb "http://<webapp>/sites/site1" -OutputFileName "C:\export.xml" -TermSetName "Navigation"  -Exclude "HomeSubWeb2"
+        PS C:\> Export-DSPWebStructureAsTaxonomy -SourceWeb "http://<webapp>/sites/site1" -OutputFileName "C:\export.xml" -TermSetName "Navigation" -ExcludeWeb "HomeSubWeb2","STS#1" -ExcludePage "Home"
         PS C:\> Import-SPTerms -ParentGroup $TermGroup -InputFile "C:\export.xml"
 
         The following structure:
@@ -801,7 +805,10 @@ function Export-DSPWebStructureAsTaxonomy {
 		[string]$TermSetName,
 
         [Parameter(Mandatory=$false)]
-		[System.Array]$Exclude
+		[System.Array]$ExcludeWeb,
+
+        [Parameter(Mandatory=$false)]
+		[System.Array]$ExcludePage
     )    
 
     function Process-Web {
@@ -811,31 +818,37 @@ function Export-DSPWebStructureAsTaxonomy {
             [System.XML.XMLElement]$ParentXMLElement,
 
 		    [Parameter(Mandatory=$true)]
-		    [Microsoft.SharePoint.SPWeb]$CurrentWeb      
+		    [Microsoft.SharePoint.SPWeb]$CurrentWeb,
+	
+			[Parameter(Mandatory=$false)]
+		    [switch]$ExcludePages     
         )      
 
         $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($CurrentWeb)
-                     
-        # If the current web has the publishing feature activated
-        if ($PublishingWeb.PagesList -ne $null)
-        {
-            $RootFolder = $PublishingWeb.PagesList.RootFolder
+            		
+		if ($ExcludePages.IsPresent -eq $false)
+		{         
+			# If the current web has the publishing feature activated
+			if ($PublishingWeb.PagesList -ne $null)
+			{
+				$RootFolder = $PublishingWeb.PagesList.RootFolder
 
-            # Recursively add taxonomy terms corresponding to pages and folders
-            Process-Folder $ParentXMLElement $RootFolder
-        }
-        else
-        {
-            # Get the Site Pages instead
-            $SitePagesName = [Microsoft.SharePoint.Utilities.SPUtility]::GetLocalizedString("`$Resources:WikiLibDefaultTitle", "core", $CurrentWeb.RegionalSettings.LocaleId);
+				# Recursively add taxonomy terms corresponding to pages and folders
+				Process-Folder $ParentXMLElement $RootFolder
+			}
+			else
+			{
+				# Get the Site Pages instead
+				$SitePagesName = [Microsoft.SharePoint.Utilities.SPUtility]::GetLocalizedString("`$Resources:WikiLibDefaultTitle", "core", $CurrentWeb.RegionalSettings.LocaleId);
 
-            $SitePages = $CurrentWeb.Lists.TryGetList($SitePagesName)
+				$SitePages = $CurrentWeb.Lists.TryGetList($SitePagesName)
             
-            if ($SitePages)
-            {
-               Process-Folder $ParentXMLElement $SitePages.RootFolder
-            }
-        }
+				if ($SitePages)
+				{
+				   Process-Folder $ParentXMLElement $SitePages.RootFolder
+				}
+			}
+		}
 
         $AllSubWebs = $CurrentWeb.Webs
 
@@ -850,6 +863,7 @@ function Export-DSPWebStructureAsTaxonomy {
                
                 $IsExcluded = $false
                 $SubWeb = $_
+				$SubWebTemplateId = $SubWeb.WebTemplate + "#" + $SubWeb.Configuration
 
                 # We need to use a different variable name because of PowerShell variable scope
                 # Reusing ParentXMLElement cause a ambigous context call in PowerShell due to recursivity
@@ -882,14 +896,14 @@ function Export-DSPWebStructureAsTaxonomy {
                 }
 
                 # Check exclusion regex patterns
-                if ($Exclude -ne $null)
+                if ($ExcludeWeb -ne $null)
                 {
-                    if (($SubWeb.Title | Select-String -Pattern $Exclude) -ne $null)
+                    if ((($SubWeb.Title | Select-String -Pattern $ExcludeWeb) -ne $null) -or (($SubWebTemplateId | Select-String -Pattern $ExcludeWeb) -ne $null))
                     {
                         $Url =$SubWeb.Url
                         $Title = $SubWeb.Title
-                        $Tokens = $Exclude -Join ","
-                        Write-Warning "Web with URL '$Url' with title '$Title' matches one of exclusion tokens '$Tokens'. Skipping..."
+                        $Tokens = $ExcludeWeb -Join ","
+                        Write-Warning "Web '$Url' with title '$Title' and template '$SubWebTemplateId' matches one of exclusion tokens '$Tokens'. Skipping..."
                         $IsExcluded = $true
                     }
                 }
@@ -897,35 +911,47 @@ function Export-DSPWebStructureAsTaxonomy {
                 # If the current sub web doesn't meet exclusion conditions, create a term node <Term> and add <Terms> sub nodes to potentially allow sub nodes
                 if ($IsExcluded -eq $false)
                 {
-                    # If the site is not a publishing site, we need to get the defaut page item in the site pages library
-                    if ($PublishingSubWeb.DefaultPage.Title -eq $null)
-                    {
-                        # [Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls() doesn't exist in MOSS 2007 ;)
-                        $PageUrl = [Microsoft.SharePoint.Utilities.SPUtility]::GetFullUrl($SubWeb.Site, $PublishingSubWeb.DefaultPage.ServerRelativeUrl)
-                        $PeerSite = New-Object Microsoft.SharePoint.SPSite($PublishingSubWeb.Url)
-                        $PeerWeb = $PeerSite.OpenWeb()
-                        $PeerPage =$PeerWeb.GetListItem($PageUrl)
+					if ($PublishingSubWeb.DefaultPage -ne $null)
+					{
+						# If the site is not a publishing site, we need to get the defaut page item in the site pages library
+						if ($PublishingSubWeb.DefaultPage.Title -eq $null)
+						{
+							# [Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls() doesn't exist in MOSS 2007 ;)
+							$PageUrl = [Microsoft.SharePoint.Utilities.SPUtility]::GetFullUrl($SubWeb.Site, $PublishingSubWeb.DefaultPage.ServerRelativeUrl)
+							$PeerSite = New-Object Microsoft.SharePoint.SPSite($PublishingSubWeb.Url)
+							$PeerWeb = $PeerSite.OpenWeb()
+							$PeerPage =$PeerWeb.GetListItem($PageUrl)
 
-                        $WebTermLabel = $PeerPage.DisplayName 
+							$WebTermLabel = $PeerPage.DisplayName 
 
-                        $PeerWeb.Dispose()
-                        $PeerSite.Dispose();
-                    }
-                    else
-                    {
-                        # We use the default page of the web as corresponding taxomomy term node
-                        $WebTermLabel = $PublishingSubWeb.DefaultPage.Title  
-                    }
+							$PeerWeb.Dispose()
+							$PeerSite.Dispose();
+						}
+						else
+						{
+							# We use the default page of the web as corresponding taxomomy term node
+							$WebTermLabel = $PublishingSubWeb.DefaultPage.Title  
+						}
 
-                    $WebTermLabels.Add($SubWeb.Locale.LCID, $WebTermLabel)
+						$WebTermLabels.Add($SubWeb.Locale.LCID, $WebTermLabel)
 
-                    $SubWebParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $WebTermLabels
-                    $TermsXMLNode = New-XMLTermsNode $SubWebParentXMLElement  
-                    $SubWebParentXMLElement = $TermsXMLNode
+						$SubWebParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $WebTermLabels $SubWeb $SubWeb.Url
+						$TermsXMLNode = New-XMLTermsNode $SubWebParentXMLElement  
+						$SubWebParentXMLElement = $TermsXMLNode
+					}
+					else
+					{
+						$SubWebUrl = $PublishingSubWeb.Url
+						Write-Warning "The web '$SubWebUrl' with template '$SubWebTemplateId' doesn't seem to support pages system. Skipping..."
+					}
+
+					# Process elements in the subweb either if the root node is its home page or if it is the original parent (means the web is excluded)
+					Process-Web $SubWebParentXMLElement $_
                 }
-     
-                # Process elements in the subweb either if the root node is its home page or if it is the original parent (means the web is excluded)
-                Process-Web $SubWebParentXMLElement $_
+				else
+				{
+					Process-Web $SubWebParentXMLElement $_ -ExcludePages
+				}
             }
         }       
     }
@@ -975,7 +1001,7 @@ function Export-DSPWebStructureAsTaxonomy {
                         $FolderTermLabels = @{}
                         $FolderTermLabels.Add($Folder.ParentWeb.Locale.LCID, $_.Folder.Name)
 
-                        $FolderParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $FolderTermLabels
+                        $FolderParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $FolderTermLabels $ParentWeb $_.Folder.Url
                     }
 
                     $TermsXMLNode = New-XMLTermsNode $FolderParentXMLElement    
@@ -1001,6 +1027,7 @@ function Export-DSPWebStructureAsTaxonomy {
         )       
 
         $PageTermLabels = @{}
+        $IsExcluded = $false
 
         # Wiki pages don't have a title property but publishing pages do
         if ([string]::IsNullOrEmpty($PageItem.Title))
@@ -1012,11 +1039,24 @@ function Export-DSPWebStructureAsTaxonomy {
             $PageTermLabel = $PageItem.Title
         }
 
-        $Locale = $PageItem.Web.Locale.LCID
-        $PageTermLabels.Add($Locale, $PageTermLabel)
-
-        if ($IsVariationsEnabled)
+        # Check exclusion regex patterns
+        if ($ExcludePage -ne $null)
         {
+            if ((($PageTermLabel | Select-String -Pattern $ExcludePage) -ne $null) -or (($PageItem.Name | Select-String -Pattern $ExcludePage) -ne $null))
+            {
+                $Tokens = $ExcludePage -Join ","
+                Write-Warning "Page with title '$PageTermLabel' matches one of exclusion tokens '$Tokens'. Skipping..."
+                $IsExcluded = $true
+            }
+        }
+         
+        if ($IsExcluded -eq $false)
+        {
+            $Locale = $PageItem.Web.Locale.LCID
+            $PageTermLabels.Add($Locale, $PageTermLabel)
+
+            if ($IsVariationsEnabled)
+                                                                {
             # If variations are enabled, the page is necessarily a publishing page
             $PublishingPage = $PublishingWeb.GetPublishingPage($_.ID)
 
@@ -1034,9 +1074,10 @@ function Export-DSPWebStructureAsTaxonomy {
             }
         }
 
-        $PageXMLElement = New-XMLSingleTermNode $ParentXMLElement $PageTermLabels
-        
-        return $PageXMLElement
+            $PageXMLElement = New-XMLSingleTermNode $ParentXMLElement $PageTermLabels $PageItem.Web $PageItem.Url
+        }
+
+        return $PageXMLElement  
     }
 
     function New-XMLTermsNode {
@@ -1062,8 +1103,16 @@ function Export-DSPWebStructureAsTaxonomy {
             [System.XML.XMLElement]$ParentXMLElement,
 
             [Parameter(Mandatory=$true)]
-            [hashtable]$Labels       
+            [hashtable]$Labels,
+
+		    [Parameter(Mandatory=$true)]
+		    [Microsoft.SharePoint.SPWeb]$AssociatedWeb,
+
+            [Parameter(Mandatory=$true)]
+		    [string]$AssociatedItemPath
         )    
+
+        New-XMLComment $ParentXMLElement "Associated element: '$AssociatedItemPath'"
 
         [System.XML.XMLElement]$TermXMLElement= $XMLDocument.CreateElement("Term")
 
@@ -1080,7 +1129,7 @@ function Export-DSPWebStructureAsTaxonomy {
             [void]$LabelXMLElement.SetAttribute("Value", $Labels.Get_Item($_))
             [void]$LabelXMLElement.SetAttribute("Language", $_)
 
-            if ($CurrentWeb.Locale.LCID -eq $_)
+            if ($AssociatedWeb.Locale.LCID -eq $_)
             {
                 [void]$LabelXMLElement.SetAttribute("IsDefaultForLanguage", "True") 
                 $DefaultName = $Labels.Get_Item($_)
@@ -1099,6 +1148,21 @@ function Export-DSPWebStructureAsTaxonomy {
         [void]$ParentXMLElement.appendChild($TermXMLElement)     
         
         return $TermXMLElement
+    }
+
+    function New-XMLComment {
+        
+        Param
+	    (
+            [Parameter(Mandatory=$false)]
+            [System.XML.XMLElement]$ParentXMLElement,  
+
+            [Parameter(Mandatory=$false)]
+            [string]$Comment     
+        )
+
+        [System.XML.XmlComment]$CommentElement = $XMLDocument.CreateComment($Comment)
+        [void]$ParentXMLElement.appendChild($CommentElement)
     }
 
     # Load SharePoint assembly to be backward compatible with MOSS 2007

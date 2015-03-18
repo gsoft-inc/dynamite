@@ -83,6 +83,8 @@ function CreateSiteWithSubsitesAndVariations{
 	$site = CreateSingleSite
 	[xml]$config = Get-Content $variationsConfigFile
 		
+	$webApp = Get-SPWebApplication $webApplication
+
 	# Create hierarchies on the root site
 	New-DSPSiteVariations -Config $config.Variations -Site $site
 
@@ -93,10 +95,16 @@ function CreateSiteWithSubsitesAndVariations{
 	$sourceVariationSiteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.RootWeb.Url, "en"))
 
 	# Sync Sub webs
-	CreateSubWebs -SourceWeb (Get-SPWeb $sourceVariationSiteUrl) | ForEach-Object {$_ | Sync-DSPWeb -LabelToSync 'fr'}
+	$SubWebs = CreateSubWebs -SourceWeb (Get-SPWeb $sourceVariationSiteUrl) 
 
-	$webApp = Get-SPWebApplication $webApplication
-	Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
+    $SubWebs| ForEach-Object {
+
+            $_ | Sync-DSPWeb -LabelToSync 'fr'        
+    }
+
+    Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
+    Write-Warning "Waiting for 'VariationsSpawnSites' timer job to finish..."
+    Start-Sleep -Seconds 60
 
 	return Get-SPSite $site.Url
 }
