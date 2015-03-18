@@ -794,7 +794,6 @@ function Export-DSPWebStructureAsTaxonomy {
     [CmdletBinding()]
 	param
 	(
-        [ValidateScript({(Get-SPWeb $_) -ne $null})]
 		[Parameter(Mandatory=$true)]
 		[string]$SourceWeb,
 
