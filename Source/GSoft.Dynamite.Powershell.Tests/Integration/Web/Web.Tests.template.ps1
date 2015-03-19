@@ -118,7 +118,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 	Context "The source web doesn't exist" 	{
 		It "should throw an error " {
 
-			{ Export-DSPWebStructureStructure -SourceWeb "http:///%!" } | Should Throw
+			{ Export-DSPWebStructureStructure -SourceWebUrl "http:///%!" } | Should Throw
 		}
 	}
 
@@ -138,7 +138,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should output a XML file with the correct XSD schema" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# A file should be generated
 			$outputFileName | Should Exist
@@ -163,7 +163,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should export only the source web" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -194,7 +194,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should export all webs and sub webs including the root site" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -218,7 +218,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should exclude webs where title math regex tokens" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -Exclude "\bSubWeb1\b","SubWeb2"
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName -Exclude "\bSubWeb1\b","SubWeb2"
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -251,7 +251,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should export the original webs and sub webs URL structure without automatically generated variations sites (including variations root sites and target sites)" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -275,7 +275,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		It "should export webs and sub webs even if the command is run on a target variation label branch site" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb ($site.RootWeb.Url + "/fr") -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl ($site.RootWeb.Url + "/fr") -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -283,17 +283,17 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes = Select-Xml -Xml $xml -XPath "//Web"
-				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1036']")
-				$subweb1Node = Select-Xml -Xml $xml -XPath "/Configuration/Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1036']"
-				$subweb2Node = Select-Xml -Xml $xml -XPath "/Configuration/Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1036']"
-				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1036']"            
+				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='fr'][@Template='CMSPUBLISHING#0'][@Name='French-FR'][@Language='1036']")
+				$subweb1Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1036']"
+				$subweb2Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1036']"
+				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1036']"            
 			}
 		   
-			$rootNode | Should Be $null
+			$rootNode | Should Not Be $null
 			$subweb1Node | Should Not Be $null
 			$subweb2Node | Should Not Be $null
 			$subweb11Node | Should Not Be $null
-			$allNodes.Length | Should Be 3   
+			$allNodes.Length | Should Be 4  
 		}
 	}
 

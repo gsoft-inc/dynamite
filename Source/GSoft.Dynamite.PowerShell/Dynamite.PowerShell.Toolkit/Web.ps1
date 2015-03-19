@@ -325,8 +325,8 @@ function Remove-DSPWeb {
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
 		
-    .PARAMETER SourceWeb
-	    [REQUIRED] The source web at which to start exporting. Be careful, if the source web is also a variation root site, all webs under target branches will be ignored.
+    .PARAMETER $SourceWebUrl
+	    [REQUIRED] The source web url to start exporting form. Be careful, if the source web is also a variation root site, all webs under target branches will be ignored.
 
     .PARAMETER OutputFileName
 	    [REQUIRED] The output file name in XML format.
@@ -369,7 +369,7 @@ function Export-DSPWebStructure {
 	param
 	(
 		[Parameter(Mandatory=$true, Position=0)]
-		[string]$SourceWeb,
+		[string]$SourceWebUrl,
 
 		[Parameter(Mandatory=$true, Position=1)]
 		[string]$OutputFileName,
@@ -404,34 +404,43 @@ function Export-DSPWebStructure {
             }
         }
 
-        # Check variations settings
         $WebUrl = $Web.ServerRelativeUrl
 
         # To know if variations are enabled on a site, we need to cast the current Web to a PublishingWeb (works for all web templates) and check the Label property
         $CurrentPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
-        $SourcePublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($RootWeb)
 
-        if ($CurrentPublishingWeb -ne $null -and $SourcePublishingWeb -ne $null)
+        if ($CurrentPublishingWeb -ne $null)
         {
-            if ($CurrentPublishingWeb.Label -ne $null)
-            {
-                # Cases were webs are not exported:
-                # - The current web is the source variation site created by SharePoint (e.g /sites/<sitename>/en)
-                # - The current web is a peer variation site automatically created by SharePoint for a variation target label (e.g /sites/<sitename>/fr/subweb where 'en' label is the variation source)
-                # In all cases, it makes no sense to export a web generated automatically by SharePoint. To reproduce the same structure, you have to create the original structure and synchronize again.
-                if ([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $CurrentPublishingWeb.Label.Title -or ($VariationLabels.Count -gt 0 -and $CurrentPublishingWeb.Label.IsSource -eq $false))
-                {
-                        $url =$Web.Url
-                        Write-Warning "Web with URL '$url' is a variation generated site. Skipping export..."
-                        $IsExcluded = $true                   
-                }
-                else
-                {
-                    # Remove the variation label in the web URL to get the original one
-                    $WebUrl = $WebUrl.Replace(("/" +$CurrentPublishingWeb.Label.Title), [string]::Empty)
-                }              
-            }
-            
+		
+			if ($CurrentPublishingWeb.Label -ne $null)
+			{
+				# Cases were webs are not exported:
+				# - The current web is the source variation site created by SharePoint (e.g /sites/<sitename>/en)
+	            # - The current web is a peer variation site automatically created by SharePoint for a variation target label (e.g /sites/<sitename>/fr/subweb where 'en' label is the variation source)
+				# In all cases, it makes no sense to export a web generated automatically by SharePoint. To reproduce the same structure, you have to create the original structure and synchronize again.
+				if ($CurrentPublishingWeb.Label.IsSource)
+				{
+					if ([System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl) -eq $CurrentPublishingWeb.Label.Title)
+					{
+							$url =$Web.Url
+							Write-Warning "Web with URL '$url' is a variation generated site. Skipping export..."
+							$IsExcluded = $true                   
+					}
+					else
+					{
+						# Remove the variation label in the web URL to get the original one
+						$WebUrl = $WebUrl.Replace(("/" +$CurrentPublishingWeb.Label.Title), [string]::Empty)
+					}
+				}
+				else
+				{	
+                    $SourcePublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($SourceWeb)
+					if ($SourcePublishingWeb.Label -eq $null)
+					{
+						$IsExcluded = $true
+					}
+				}              
+			}		            
         }
         
         if($IsExcluded -eq $false)
@@ -470,11 +479,29 @@ function Export-DSPWebStructure {
 	[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
     Try
     {
-        $Site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)
-        $RootWeb = $Site.OpenWeb()
+        $Site = New-Object Microsoft.SharePoint.SPSite($SourceWebUrl)
+        $SourceWeb = $Site.OpenWeb()
+
+		if($SourceWeb.IsRootWeb)
+        {
+            $RootWeb = $SourceWeb
+        }
+        else
+        {
+            $RootWeb = $SourceWeb.Site.RootWeb
+        }  
 
         # Check if the current web is a variation root site
         $VariationLabels =  $RootWeb | Get-VariationLabels
+
+        if( $VariationLabels.Count -gt 0)
+        {
+            $IsVariationsEnabled = $true
+        }
+        else
+        {
+            $IsVariationsEnabled = $false
+        }
 
         # Create a new XML File
         [System.Xml.XmlDocument]$XMLDocument = New-Object System.Xml.XmlDocument
@@ -490,7 +517,7 @@ function Export-DSPWebStructure {
         $XMLDocument.appendChild($RootXMLElement)
 
         # Recursively create nodes
-        Process-WebNode $RootXMLElement $RootWeb
+        Process-WebNode $RootXMLElement $SourceWeb
 
         # Create StreamWriter for encoding
 
