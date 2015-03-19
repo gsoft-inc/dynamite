@@ -38,6 +38,16 @@ namespace GSoft.Dynamite.Search
         /// <summary>
         /// Managed properties for the ArticleStartDate field
         /// </summary>
-        public static readonly string ArticleStartDate = "ArticleStartDateOWSDATE"; 
+        public static readonly string ArticleStartDate = "ArticleStartDateOWSDATE";
+
+        /// <summary>
+        /// Managed properties for the Publishing Image field
+        /// </summary>
+        public static readonly string PublishingImage = "PublishingImage";
+
+        /// <summary>
+        /// Managed properties for the Meta Description field
+        /// </summary>
+        public static readonly string MetaDescription = "SeoMetaDescriptionOWSTEXT";
     }
 }

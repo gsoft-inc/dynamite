@@ -1,4 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
-  <Control Id="AdditionalPageHead" Sequence="0" ControlSrc="~/_controltemplates/GSoft.Dynamite/CssImports.ascx"></Control>
+  <Control Id="AdditionalPageHead" Sequence="0" ControlSrc="~/_controltemplates/15/GSoft.Dynamite/CssImports.ascx"></Control>
 </Elements>

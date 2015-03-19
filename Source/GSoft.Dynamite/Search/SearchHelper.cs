@@ -4,24 +4,19 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search.Enums;
 using GSoft.Dynamite.Taxonomy;
-using GSoft.Dynamite.Utils;
-using Microsoft.Office.Server.Auditing;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Administration.Query;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.Office.Server.Search.Query.Rules;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
-using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Taxonomy;
-using Microsoft.SharePoint.Utilities;
 using Source = Microsoft.Office.Server.Search.Administration.Query.Source;
+using SPManagedPropertyInfo = Microsoft.Office.Server.Search.Administration.ManagedPropertyInfo;
 
 namespace GSoft.Dynamite.Search
 {
@@ -185,11 +180,13 @@ namespace GSoft.Dynamite.Search
         /// <returns>The managed property</returns>
         public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
         {
-            ManagedProperty managedProperty = null;
-            var mappingCollection = new MappingCollection();
+            SPManagedPropertyInfo managedPropertyDefinition = null;
+
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var propertyName = managedPropertyInfo.Name;
             var propertyType = managedPropertyInfo.DataType;
+            var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, site.RootWeb);     // this forces managed prop definition to SSA-scope 
+                                                                                        // (i.e. all managed props will be farm-wide)
 
             // Get the search schema
             var sspSchema = new Schema(ssa);
@@ -208,72 +205,101 @@ namespace GSoft.Dynamite.Search
                     {
                         prop.DeleteAllMappings();
                         prop.Delete();
-                        managedProperty = managedProperties.Create(propertyName, propertyType);
+                        managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
                     }
                 }
             }
             else
             {
-                managedProperty = managedProperties.Create(propertyName, propertyType);
+                managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
             }
 
-            if (managedProperty != null)
+            if (managedPropertyDefinition != null)
             {
-                // Configure the managed property
-                managedProperty.Sortable = managedPropertyInfo.Sortable;
-                managedProperty.SortableType = managedPropertyInfo.SortableType;
-                managedProperty.Refinable = managedPropertyInfo.Refinable;
-                managedProperty.Retrievable = managedPropertyInfo.Retrievable;
-                managedProperty.RespectPriority = managedPropertyInfo.RespectPriority;
-                managedProperty.Queryable = managedPropertyInfo.Queryable;
-                managedProperty.Searchable = managedPropertyInfo.Searchable;
-                managedProperty.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
-                managedProperty.FullTextIndex = managedPropertyInfo.FullTextIndex;
-                managedProperty.Context = managedPropertyInfo.Context;
-                managedProperty.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+                var mappingCollection = new List<MappingInfo>(); // new MappingCollection();
 
                 // Ensure crawl properties mappings
-                foreach (KeyValuePair<string, int> crawledProperty in managedPropertyInfo.CrawledProperties)
+                foreach (KeyValuePair<string, int> crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
                 {
-                    // Get the crawled property
-                    var cp = this.GetCrawledPropertyByName(site, crawledProperty.Key);
+                    // Get the crawled property (there may be more than one matching that name)
+                    var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
 
-                    if (cp != null)
+                    if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
                     {
-                        // Create mapping information
-                        var mapping = new Mapping
+                        foreach (var cp in matchingCrawledProperties)
                         {
-                            CrawledPropertyName = cp.Name,
-                            CrawledPropset = cp.Propset,
-                            ManagedPid = managedProperty.PID,
-                            MappingOrder = crawledProperty.Value
-                        };
+                            // Create mapping information
+                            var mapping = new MappingInfo
+                            {
+                                CrawledPropertyName = cp.Name,
+                                CrawledPropset = cp.Propset,
+                                ManagedPid = managedPropertyDefinition.Pid,
+                                MappingOrder = crawledPropertyKeyAndOrder.Value
+                            };
 
-                        if (!managedProperty.GetMappings().Contains(mapping))
-                        {
-                            mappingCollection.Add(mapping);
-                        }
-                        else
-                        {
-                            this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedProperty.Name, crawledProperty);
+                            if (!ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner).Any(m => m.CrawledPropertyName == mapping.CrawledPropertyName))
+                            {
+                                mappingCollection.Add(mapping);
+                            }
+                            else
+                            {
+                                this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedPropertyDefinition.Name, crawledPropertyKeyAndOrder);
+                            }
                         }
                     }
                     else
                     {
-                        this.logger.Info("Crawled property with name {0} not found!", crawledProperty);
+                        this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
                     }
                 }
 
                 // Apply mappings to the managed property
                 if (mappingCollection.Count > 0)
                 {
-                    managedProperty.SetMappings(mappingCollection);
+                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
                 }
 
-                managedProperty.Update();
+                // Configure the managed property
+                managedPropertyDefinition.Sortable = managedPropertyInfo.Sortable;
+                if (managedPropertyDefinition.Sortable)
+                {
+                    managedPropertyDefinition.SortableType = managedPropertyInfo.SortableType;
+                }
+
+                managedPropertyDefinition.Refinable = managedPropertyInfo.Refinable;
+                if (managedPropertyDefinition.Refinable)
+                {
+                    // use "active" refine mode whenever refinable=TRUE
+                    managedPropertyDefinition.RefinerConfiguration.Type = Microsoft.Office.Server.Search.Administration.RefinerType.Deep;
+                }
+
+                managedPropertyDefinition.Retrievable = managedPropertyInfo.Retrievable;
+                managedPropertyDefinition.RespectPriority = managedPropertyInfo.RespectPriority;
+                managedPropertyDefinition.Queryable = managedPropertyInfo.Queryable;
+                managedPropertyDefinition.Searchable = managedPropertyInfo.Searchable;
+
+                if (managedPropertyDefinition.Searchable)
+                {
+                    managedPropertyDefinition.FullTextIndex = managedPropertyInfo.FullTextIndex;
+                    managedPropertyDefinition.Context = managedPropertyInfo.Context;
+                }
+                else
+                {
+                    managedPropertyDefinition.FullTextIndex = string.Empty;
+                    managedPropertyDefinition.Context = (short)0;
+                }
+
+                managedPropertyDefinition.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
+                managedPropertyDefinition.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+
+                // Save through the schema manager (don't call .Update on the managed property object itself, its config won't get saved properly)
+                ssa.UpdateManagedProperty(managedPropertyDefinition, owner);
             }
 
-            return managedProperty;
+            // Re-fetch schema, it might be stale at this point
+            sspSchema = new Schema(ssa);
+
+            return sspSchema.AllManagedProperties[propertyName];
         }
 
         /// <summary>
@@ -308,7 +334,7 @@ namespace GSoft.Dynamite.Search
         /// </returns>
         public ISource GetResultSourceByName(SPSite site, string resultSourceName, SearchObjectLevel scopeOwnerLevel)
         {
-            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel);
+            var serviceApplicationOwner = new SearchObjectOwner(scopeOwnerLevel, site.RootWeb);
 
             var context = SPServiceContext.GetContext(site);
             var searchProxy = context.GetDefaultProxy(typeof(SearchServiceApplicationProxy)) as SearchServiceApplicationProxy;
@@ -448,9 +474,6 @@ namespace GSoft.Dynamite.Search
         /// <returns>The result type item</returns>
         public ResultItemType EnsureResultType(SPSite site, ResultTypeInfo resultType)
         {
-            ResultItemType resType = null;
-
-            var ssa = this.GetDefaultSearchServiceApplication(site);
             var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, site.RootWeb);
             var resultSource = this.GetResultSourceByName(site, resultType.ResultSource.Name, resultType.ResultSource.Level);
 
@@ -458,12 +481,11 @@ namespace GSoft.Dynamite.Search
             var existingResultTypes = resultTypeManager.GetResultItemTypes(searchOwner, true);
 
             // Get the existing result type
-            resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
+            var resType = existingResultTypes.FirstOrDefault(r => r.Name.Equals(resultType.Name));
 
             if (resType == null)
             {
                 resType = new ResultItemType(searchOwner);
-
                 resType.Name = resultType.Name;
                 resType.SourceID = resultSource.Id;
 
@@ -665,10 +687,10 @@ namespace GSoft.Dynamite.Search
         /// </summary>
         /// <param name="site">The context site</param>
         /// <param name="crawledPropertyName">The crawl property name</param>
-        /// <returns>The crawled property</returns>
-        private CrawledProperty GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
+        /// <returns>All crawled properties that match the name</returns>
+        private IList<CrawledProperty> GetCrawledPropertyByName(SPSite site, string crawledPropertyName)
         {
-            CrawledProperty crawledProperty = null;
+            IList<CrawledProperty> crawledPropertiesMatchingName = new List<CrawledProperty>();
 
             var ssa = this.GetDefaultSearchServiceApplication(site);
 
@@ -682,12 +704,12 @@ namespace GSoft.Dynamite.Search
                 {
                     if (string.CompareOrdinal(property.Name, crawledPropertyName) == 0)
                     {
-                        crawledProperty = property;
+                        crawledPropertiesMatchingName.Add(property);
                     }
                 }
             }
 
-            return crawledProperty;
+            return crawledPropertiesMatchingName;
         }
     }
 }
