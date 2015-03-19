@@ -82,6 +82,7 @@
     <Content Include="Integration\Sharegate\SingleSiteData\Pages\Documents\PageNotFoundError.aspx" />
     <Content Include="Integration\Sharegate\SingleSiteData\Pages\Documents\TestPage.aspx" />
     <Content Include="Integration\Sharegate\TestVariationsSettings.xml" />
+    <Content Include="Integration\Taxonomy\TestVariationsSettings.xml" />
     <Content Include="Integration\Web\ImportWebStructure.xml" />
     <Content Include="Integration\Web\ImportWebStructure_Overwrite.xml" />
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
@@ -129,12 +130,16 @@
     <None Include="Integration\Sharegate\SingleSiteData\Images\Images.xlsx" />
     <None Include="Integration\Sharegate\SingleSiteData\Pages\Pages.xlsx" />
     <None Include="Integration\Sharegate\SingleSiteData\Reusable Content\Reusable Content.xlsx" />
+    <None Include="Integration\Taxonomy\Taxonomy.Tests.template.ps1" />
+    <None Include="Integration\Taxonomy\TestSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Integration\Tokens.DMX.ps1" />
     <None Include="Integration\Tokens.sp2013tao.ps1" />
     <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />
     <None Include="Integration\Token\Token.Tests.ps1" />
     <None Include="Integration\Utilities\Utilities.Tests.ps1" />
-    <None Include="Integration\Web\TestWebSchema.xsd">
+    <None Include="Integration\Web\TestSchema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Integration\Web\Web.Tests.template.ps1" />

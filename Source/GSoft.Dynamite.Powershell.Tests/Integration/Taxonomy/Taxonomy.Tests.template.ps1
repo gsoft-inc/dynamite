@@ -249,7 +249,7 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
 	Context "The source web doesn't exist" 	{
 		It "should throw an error " {
 
-			{ Export-DSPWebStructureAsTaxonomy -SourceWeb "http:///%!" -OutputFileName $outputFileName } | Should Throw
+			{ Export-DSPWebStructureAsTaxonomy -SourceWeb "http:///%!" -OutputFileName $outputFileName -TermSetName "Navigation" } | Should Throw
 		}
 	}
 
@@ -333,6 +333,8 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
             $Folder1Term | Should Not be $null
             $TestPageInFolder1Term | Should Not be $null
             $TestPage | Should Not be $null
+
+			Remove-DSPTermGroup $TermStore "TestGroup" | Out-Null
         }
 
         Write-Host "     --Tests Teardown--"
@@ -507,6 +509,8 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
                 ($Folder1Term.Terms | Where-Object {$_.Name -eq "TestPage"} | Select-Object -First 1) | Should Not be $null
                 ($_.Terms | Where-Object {$_.Name -eq "TestPage"} | Select-Object -First 1) | Should Not be $null
             }    
+
+			Remove-DSPTermGroup $TermStore "TestGroup" | Out-Null
         }
 
         It "[Variations] It should get the correct term labels for all variation target branches" {

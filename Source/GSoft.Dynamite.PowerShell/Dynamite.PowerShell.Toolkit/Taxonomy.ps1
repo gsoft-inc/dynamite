@@ -837,10 +837,10 @@ function Export-DSPWebStructureAsTaxonomy {
 			}
 			else
 			{
-				# Get the Site Pages instead
+				# Get the Site Pages
 				$SitePagesName = [Microsoft.SharePoint.Utilities.SPUtility]::GetLocalizedString("`$Resources:WikiLibDefaultTitle", "core", $CurrentWeb.RegionalSettings.LocaleId);
 
-				$SitePages = $CurrentWeb.Lists.TryGetList($SitePagesName)
+				$SitePages = $CurrentWeb.Lists[$SitePagesName]
             
 				if ($SitePages)
 				{
@@ -857,7 +857,7 @@ function Export-DSPWebStructureAsTaxonomy {
             # Exclusion conditions
             # - The web is a variation root site (i.e /en, /fr)
             # - The web is not in the source variation branch
-            # - The web title matches one or more explicit exclusion token
+            # - The web title or template ID matches one or more explicit exclusion tokens
             $AllSubWebs | ForEach-Object {
                
                 $IsExcluded = $false
@@ -865,7 +865,7 @@ function Export-DSPWebStructureAsTaxonomy {
 				$SubWebTemplateId = $SubWeb.WebTemplate + "#" + $SubWeb.Configuration
 
                 # We need to use a different variable name because of PowerShell variable scope
-                # Reusing ParentXMLElement cause a ambigous context call in PowerShell due to recursivity
+                # Reusing ParentXMLElement causes an ambigous call in PowerShell due to recursivity context
                 $SubWebParentXMLElement = $ParentXMLElement
 
                 $PublishingSubWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($SubWeb)
@@ -876,17 +876,20 @@ function Export-DSPWebStructureAsTaxonomy {
                     # Exclude variation root sites and sites where are not is the source variation branch
                     if([System.IO.Path]::GetFileNameWithoutExtension($_.ServerRelativeUrl) -ne $PublishingSubWeb.Label.Title -and $PublishingSubWeb.Label.IsSource)
                     {
-                        # Get all peers URL
-                        $PublishingSubWeb.VariationPublishingWebUrls | ForEach-Object {
+						if ($PublishingSubWeb.VariationPublishingWebUrls -ne $null)
+						{
+							# Get all peers URL
+							$PublishingSubWeb.VariationPublishingWebUrls | ForEach-Object {
                         
-                            $PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
-                            $PeerWeb = $PeerSite.OpenWeb()
-                            $PeerPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PeerWeb)
-                            $WebTermLabels.Add($PeerWeb.Locale.LCID, $PeerPublishingWeb.DefaultPage.Title)
+								$PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
+								$PeerWeb = $PeerSite.OpenWeb()
+								$PeerPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PeerWeb)
+								$WebTermLabels.Add($PeerWeb.Locale.LCID, $PeerPublishingWeb.DefaultPage.Title)
 
-                            $PeerWeb.Dispose()
-                            $PeerSite.Dispose();
-                        }
+								$PeerWeb.Dispose()
+								$PeerSite.Dispose();
+							}
+						}
                     }
                     else
                     {
@@ -907,7 +910,7 @@ function Export-DSPWebStructureAsTaxonomy {
                     }
                 }
                 
-                # If the current sub web doesn't meet exclusion conditions, create a term node <Term> and add <Terms> sub nodes to potentially allow sub nodes
+                # If the current sub web doesn't meet exclusion conditions, create a term node <Term> and add <Terms> sub nodes to potentially allow sub nodes above
                 if ($IsExcluded -eq $false)
                 {
 					if ($PublishingSubWeb.DefaultPage -ne $null)
@@ -939,7 +942,9 @@ function Export-DSPWebStructureAsTaxonomy {
 						$SubWebParentXMLElement = $TermsXMLNode
 					}
 					else
-					{
+					{	
+						# Unable to determine a welcome page for the web,. Maybe the web template is a blank site (STS#1) or a funky typed site (SPS#0, etc..)
+						# In these cases, we simply ignore the web. It would be too difficult to get the right welcome page for each specific web template
 						$SubWebUrl = $PublishingSubWeb.Url
 						Write-Warning "The web '$SubWebUrl' with template '$SubWebTemplateId' doesn't seem to support pages system. Skipping..."
 					}
@@ -949,6 +954,7 @@ function Export-DSPWebStructureAsTaxonomy {
                 }
 				else
 				{
+					# Process the web but exclude its pages
 					Process-Web $SubWebParentXMLElement $_ -ExcludePages
 				}
             }
@@ -969,7 +975,7 @@ function Export-DSPWebStructureAsTaxonomy {
         $List = $Folder.ParentWeb.Lists[$Folder.ParentListId]
         $ParentWeb = $Folder.ParentWeb
 
-        # Get all items excluding the folder welcome page (including team site welcome page type0
+        # Get all items excluding the folder welcome page (including team site welcome page type)
         $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
         $CamlQuery.Query = "<OrderBy><FieldRef Name='Title'/></OrderBy>"
         $CamlQuery.Folder = $Folder
@@ -982,21 +988,24 @@ function Export-DSPWebStructureAsTaxonomy {
                 
                 if ($_.Folder -ne $null)
                 {       
-                    # If there is a welcome page for the folder, get the corresponding publishing pag 
+                    # If there is a welcome page for the folder, get the corresponding publishing page
                     if ([string]::IsNullOrEmpty($_.Folder.WelcomePage) -eq $false)
                     {
                         # Get the publishing page corresponding to the folder welcome page
-                        $CamlQuery.Folder = $_.Folder
-                        $CamlQuery.Query = "<Where><Eq><FieldRef Name='FileLeafRef'/><Value Type='Text'>" + $_.Folder.WelcomePage + "</Value></Eq></Where><OrderBy><FieldRef Name='Title' /></OrderBy>"
-                        $FolderWelcomePage = $List.GetItems($CamlQuery)
+                        # We can't use $PublishingWeb.GetPublishingPage($_.ID) here because of MOSS 2007 compatibility
+                        $PageQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
+                        $PageQuery.Query = "<Where><Eq><FieldRef Name='FileLeafRef'/><Value Type='Text'>" + $_.Folder.WelcomePage + "</Value></Eq></Where><OrderBy><FieldRef Name='Title' /></OrderBy>"
+                        $PageQuery.Folder = $_.Folder
+                        $PageQuery.ViewAttributes = "Scope='RecursiveAll'"
+                        $PageQuery.RowLimit = 1
 
-                        $WelcomePublishingPage = $PublishingWeb.GetPublishingPage($FolderWelcomePage.ID)
-                        $FolderParentXMLElement = Process-Page $ParentXMLElement $WelcomePublishingPage
+                        $WelcomePublishingPage  = $PublishingWeb.GetPublishingPages($PageQuery)
+                        $FolderParentXMLElement = Process-Page $ParentXMLElement $WelcomePublishingPage[0]
                     }
                     else
                     {
-                        # If there isn't a welcome page for the current folder then use the folder name
-                        # Translations for folders are not maintained by the variation system
+                        # If there isn't a welcome page for the current folder we use the folder name
+                        # Be careful, translations of folders are not maintained by the variation system
                         $FolderTermLabels = @{}
                         $FolderTermLabels.Add($Folder.ParentWeb.Locale.LCID, $_.Folder.Name)
 
@@ -1051,27 +1060,44 @@ function Export-DSPWebStructureAsTaxonomy {
          
         if ($IsExcluded -eq $false)
         {
+			$PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PageItem.ParentList.ParentWeb)
+
             $Locale = $PageItem.Web.Locale.LCID
             $PageTermLabels.Add($Locale, $PageTermLabel)
 
-            if ($IsVariationsEnabled)
-                                                                {
-            # If variations are enabled, the page is necessarily a publishing page
-            $PublishingPage = $PublishingWeb.GetPublishingPage($_.ID)
+            if ($IsVariationsEnabled -and $PublishingWeb.PagesList -ne $null)
+            {
+                # If variations are enabled, the page is necessarily a publishing page
+                # We can't use $PublishingWeb.GetPublishingPage($_.ID) here because of MOSS 2007 compatibility
+                $PageQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
+                $PageQuery.Query = "<Where><Eq><FieldRef Name='ID'/><Value Type='Counter'>" + $_.ID + "</Value></Eq></Where><OrderBy><FieldRef Name='Title' /></OrderBy>"
+                $PageQuery.Folder = $PublishingWeb.PagesList.RootFolder
+                $PageQuery.ViewAttributes = "Scope='RecursiveAll'"
+                $PageQuery.RowLimit = 1
 
-            # Check peer pages in target variations branches
-            $PublishingPage.VariationPageUrls | ForEach-Object {
+				# Be careful, the return type is  Microsoft.SharePoint.Publishing.PublishingPageCollection
+                $PublishingPage = $PublishingWeb.GetPublishingPages($PageQuery)
 
-                $PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
-                $PeerWeb = $PeerSite.OpenWeb()
-                $PeerPage =$PeerWeb.GetListItem($_)
+				if ($PublishingPage)
+				{
+					$VariationLabels = $PublishingPage[0].VariationPageUrls
+					if ($VariationLabels -ne $null)
+					{
+						# Check peer pages in target variations branches
+						$VariationLabels | ForEach-Object {
 
-                $PageTermLabels.Add($PeerWeb.Locale.LCID, $PeerPage.Title)
+							$PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
+							$PeerWeb = $PeerSite.OpenWeb()
+							$PeerPage =$PeerWeb.GetListItem($_)
+
+							$PageTermLabels.Add($PeerWeb.Locale.LCID, $PeerPage.Title)
                 
-                $PeerWeb.Dispose()
-                $PeerSite.Dispose()
-            }
-        }
+							$PeerWeb.Dispose()
+							$PeerSite.Dispose()
+						}
+					}
+				}	
+			}
 
             $PageXMLElement = New-XMLSingleTermNode $ParentXMLElement $PageTermLabels $PageItem.Web $PageItem.Url
         }
@@ -1165,8 +1191,8 @@ function Export-DSPWebStructureAsTaxonomy {
     }
 
     # Load SharePoint assembly to be backward compatible with MOSS 2007
-    [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
-	[System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
+    [void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
+	[void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
     Try
     {
         $Site = New-Object Microsoft.SharePoint.SPSite($SourceWeb)

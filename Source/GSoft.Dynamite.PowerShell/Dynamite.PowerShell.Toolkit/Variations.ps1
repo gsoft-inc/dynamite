@@ -386,18 +386,32 @@ function Get-VariationLabels {
 		[Microsoft.SharePoint.SPWeb]$Web
 	)
 
+	# Load SharePoint assembly to be backward compatible with MOSS 2007
+    [void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
+	[void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
+
     $Labels = @() 
+
+	if($Web.IsRootWeb)
+    {
+        $RootWeb = $Web
+    }
+    else
+    {
+        $RootWeb = $Web.Site.RootWeb
+    } 
     
     # To know if a site has variatiosn enabled, we need to check labels in the variation hidden list
-    $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
+    $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($RootWeb)
 
     if ($PublishingWeb)
     {
-        $ListGuid = $Web.GetProperty("_VarLabelsListId")
+		# We cant't use the GetProperty() method because it doesn't exist in MOSS 2007
+        $ListGuid = $RootWeb.AllProperties["_VarLabelsListId"]
         if ($ListGuid -ne $null)
         {
             
-            $List = $Web.Lists[[Guid]$ListGuid]
+            $List = $RootWeb.Lists[[Guid]$ListGuid]
 		
             $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
             $CamlQuery.Query = "<OrderBy><FieldRef Name='Title' /></OrderBy>"
