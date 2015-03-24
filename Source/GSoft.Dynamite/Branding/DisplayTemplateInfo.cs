@@ -85,7 +85,7 @@ namespace GSoft.Dynamite.Branding
                 return string.Format(
                     CultureInfo.InvariantCulture,
                     "~sitecollection/_catalogs/masterpage/Display Templates/{0}/{1}",
-                    this.Category,
+                    this.CategoryFolderName,
                     this.JavaScriptFileName);
             }
         }
