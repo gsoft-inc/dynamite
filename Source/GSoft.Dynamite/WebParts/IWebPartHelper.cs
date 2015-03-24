@@ -98,5 +98,19 @@ namespace GSoft.Dynamite.WebParts
         /// A ContentEditorWebPart containing a PlaceHolder image
         /// </returns>
         ContentEditorWebPart CreatePlaceholderWebPart(int x, int y, string backgroundColor, string fontColor, string text);
+
+        /// <summary>
+        /// Creates a responsive placeholder web part.
+        /// </summary>
+        /// <param name="height">The height of the placeholder in pixels.</param>
+        /// <param name="backgroundColor">Color of the background (ex: #abc).</param>
+        /// <param name="fontColor">Color of the font (ex: #fff).</param>
+        /// <param name="text">The placeholder text.</param>
+        /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
+        ContentEditorWebPart CreateResponsivePlaceholderWebPart(
+            int height,
+            string backgroundColor,
+            string fontColor,
+            string text);
     }
 }

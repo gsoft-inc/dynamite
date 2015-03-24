@@ -208,6 +208,32 @@ namespace GSoft.Dynamite.WebParts
         }
 
         /// <summary>
+        /// Creates a responsive placeholder web part.
+        /// </summary>
+        /// <param name="height">The height of the placeholder in pixels.</param>
+        /// <param name="backgroundColor">Color of the background (ex: #abc).</param>
+        /// <param name="fontColor">Color of the font (ex: #fff).</param>
+        /// <param name="text">The placeholder text.</param>
+        /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
+        public ContentEditorWebPart CreateResponsivePlaceholderWebPart(int height, string backgroundColor, string fontColor, string text)
+        {
+            var formattedContent = string.Format(
+                CultureInfo.InvariantCulture,
+                "<div class='responsive-placeholder' style='height:{0}px;line-height:{0}px;background-color:{1};color:{2};text-align:center;'>{3}</div>",
+                height,
+                backgroundColor,
+                fontColor,
+                text);
+
+            return new ContentEditorWebPart
+            {
+                Title = !string.IsNullOrEmpty(text) ? text : GenerateRandomPlaceholderTitle("Placeholder"),
+                ChromeType = PartChromeType.None,
+                Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent)
+            };
+        }
+
+        /// <summary>
         /// Method to create a web part with its default properties by matching with its
         /// file name from the Web Part gallery at the root of the site collection.
         /// </summary>
