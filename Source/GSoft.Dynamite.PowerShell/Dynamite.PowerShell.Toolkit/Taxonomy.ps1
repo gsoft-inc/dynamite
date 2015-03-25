@@ -1036,6 +1036,7 @@ function Export-DSPWebStructureAsTaxonomy {
 
         $PageTermLabels = @{}
         $IsExcluded = $false
+		$ParentWeb = $PageItem.ParentList.ParentWeb
 
         # Wiki pages don't have a title property but publishing pages do
         if ([string]::IsNullOrEmpty($PageItem.Title))
@@ -1046,6 +1047,17 @@ function Export-DSPWebStructureAsTaxonomy {
         {
             $PageTermLabel = $PageItem.Title
         }
+
+		# Trim Special characters not allowed for a term label (;"<>|&tab)
+		# See https://msdn.microsoft.com/en-us/library/office/ee565922.aspx
+		
+		$PageTermLabel = $PageTermLabel -replace '[;"<>|\t]+',[string]::Empty
+
+		# Finally, if the title is null, we take the web title
+		if ( $PageTermLabel -eq $null)
+		{
+			$PageTermLabel = $ParentWeb.Title
+		}
 
         # Check exclusion regex patterns
         if ($ExcludePage -ne $null)
@@ -1060,7 +1072,7 @@ function Export-DSPWebStructureAsTaxonomy {
          
         if ($IsExcluded -eq $false)
         {
-			$PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PageItem.ParentList.ParentWeb)
+			$PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($ParentWeb)
 
             $Locale = $PageItem.Web.Locale.LCID
             $PageTermLabels.Add($Locale, $PageTermLabel)
