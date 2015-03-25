@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -217,9 +218,31 @@ namespace GSoft.Dynamite.WebParts
         /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
         public ContentEditorWebPart CreateResponsivePlaceholderWebPart(int height, string backgroundColor, string fontColor, string text)
         {
+            return this.CreateResponsivePlaceholderWebPart(height, backgroundColor, fontColor, text, null);
+        }
+
+        /// <summary>
+        /// Creates a responsive placeholder web part.
+        /// </summary>
+        /// <param name="height">The height of the placeholder in pixels.</param>
+        /// <param name="backgroundColor">Color of the background (ex: #abc).</param>
+        /// <param name="fontColor">Color of the font (ex: #fff).</param>
+        /// <param name="text">The placeholder text.</param>
+        /// <param name="extraCssClasses">Css classes to be added to the webpart.</param>
+        /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
+        public ContentEditorWebPart CreateResponsivePlaceholderWebPart(int height, string backgroundColor, string fontColor, string text, ICollection<string> extraCssClasses)
+        {
+            var cssClasses = "responsive-placeholder";
+
+            if (extraCssClasses != null)
+            {
+                cssClasses = extraCssClasses.Aggregate(cssClasses, (current, cssClass) => current + (" " + cssClass));
+            }
+
             var formattedContent = string.Format(
                 CultureInfo.InvariantCulture,
-                "<div class='responsive-placeholder' style='height:{0}px;line-height:{0}px;background-color:{1};color:{2};text-align:center;'>{3}</div>",
+                "<div class='{0}' style='height:{1}px;line-height:{1}px;background-color:{2};color:{3};text-align:center;'>{4}</div>",
+                cssClasses,
                 height,
                 backgroundColor,
                 fontColor,
