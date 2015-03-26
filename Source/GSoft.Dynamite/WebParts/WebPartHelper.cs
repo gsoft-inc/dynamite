@@ -236,7 +236,7 @@ namespace GSoft.Dynamite.WebParts
 
             if (extraCssClasses != null)
             {
-                cssClasses += string.Join(" ", extraCssClasses);
+                cssClasses += " " + string.Join(" ", extraCssClasses);
             }
 
             var formattedContent = string.Format(
