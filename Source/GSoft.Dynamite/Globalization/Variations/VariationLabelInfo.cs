@@ -37,7 +37,7 @@ namespace GSoft.Dynamite.Globalization.Variations
             this.FlagControlDisplayName = variationLabel.DisplayName;
             this.IsSource = variationLabel.IsSource;
             this.Language = variationLabel.Language;
-            this.Locale = new CultureInfo(variationLabel.Language).LCID;
+            this.Locale = int.Parse(variationLabel.Locale);
             this.Title = variationLabel.Title;
             this.TopWebUrl = new Uri(variationLabel.TopWebUrl);
         }
