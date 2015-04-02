@@ -93,10 +93,7 @@ namespace GSoft.Dynamite.Navigation
                             }
                         }
 
-                        this.logger.Info(
-                            "GetAllNavigationNodes: Found {0} first level navigation nodes in result source '{1}'.",
-                            navigationNodes.Count(),
-                            queryParameters.SearchSettings.ResultSourceName); 
+                        this.logger.Info("GetAllNavigationNodes: Found {0} navigation nodes (including children).", navigationNodes.Flatten(n => n.ChildNodes).Count()); 
                     }
 
                     return navigationNodes;

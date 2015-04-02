@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -21,7 +22,11 @@ namespace GSoft.Dynamite.Navigation
         /// The list of selected properties from the search query.
         /// See https://msdn.microsoft.com/en-us/library/microsoft.sharepoint.client.search.query.keywordquery.selectproperties.aspx
         /// </summary>
-        public IEnumerable<string> SelectedProperties { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Usage", 
+            "CA2227:CollectionPropertiesShouldBeReadOnly", 
+            Justification = "Not making this property read-only helps facilitate setting the value.")]
+        public ICollection<string> SelectedProperties { get; set; }
 
         /// <summary>
         /// Gets the filters to apply to the all search queries.
@@ -30,7 +35,11 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The filters.
         /// </value>
-        public IEnumerable<string> GlobalFilters { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Usage",
+            "CA2227:CollectionPropertiesShouldBeReadOnly",
+            Justification = "Not making this property read-only helps facilitate setting the value.")]
+        public ICollection<string> GlobalFilters { get; set; }
 
         /// <summary>
         /// Gets the filters to apply to the search queries related to target items.
@@ -39,7 +48,11 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The filters.
         /// </value>
-        public IEnumerable<string> TargetItemFilters { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Usage",
+            "CA2227:CollectionPropertiesShouldBeReadOnly",
+            Justification = "Not making this property read-only helps facilitate setting the value.")]
+        public ICollection<string> TargetItemFilters { get; set; }
 
         /// <summary>
         /// Gets the filters to apply to the search queries related to catalog items.
@@ -48,6 +61,10 @@ namespace GSoft.Dynamite.Navigation
         /// <value>
         /// The filters.
         /// </value>
-        public IEnumerable<string> CatalogItemFilters { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Microsoft.Usage",
+            "CA2227:CollectionPropertiesShouldBeReadOnly",
+            Justification = "Not making this property read-only helps facilitate setting the value.")]
+        public ICollection<string> CatalogItemFilters { get; set; }
     }
 }

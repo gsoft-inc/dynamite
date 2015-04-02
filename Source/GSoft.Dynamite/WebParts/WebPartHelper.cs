@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
@@ -198,6 +199,54 @@ namespace GSoft.Dynamite.WebParts
                 backgroundColor, 
                 fontColorSlug, 
                 textQueryString);
+
+            return new ContentEditorWebPart
+            {
+                Title = !string.IsNullOrEmpty(text) ? text : GenerateRandomPlaceholderTitle("Placeholder"),
+                ChromeType = PartChromeType.None,
+                Content = this.xmlHelper.CreateXmlElementInnerTextFromString(formattedContent)
+            };
+        }
+
+        /// <summary>
+        /// Creates a responsive placeholder web part.
+        /// </summary>
+        /// <param name="height">The height of the placeholder in pixels.</param>
+        /// <param name="backgroundColor">Color of the background (ex: #abc).</param>
+        /// <param name="fontColor">Color of the font (ex: #fff).</param>
+        /// <param name="text">The placeholder text.</param>
+        /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
+        public ContentEditorWebPart CreateResponsivePlaceholderWebPart(int height, string backgroundColor, string fontColor, string text)
+        {
+            return this.CreateResponsivePlaceholderWebPart(height, backgroundColor, fontColor, text, null);
+        }
+
+        /// <summary>
+        /// Creates a responsive placeholder web part.
+        /// </summary>
+        /// <param name="height">The height of the placeholder in pixels.</param>
+        /// <param name="backgroundColor">Color of the background (ex: #abc).</param>
+        /// <param name="fontColor">Color of the font (ex: #fff).</param>
+        /// <param name="text">The placeholder text.</param>
+        /// <param name="extraCssClasses">Css classes to be added to the webpart.</param>
+        /// <returns>A content editor Web Part containing a responsive placeholder.</returns>
+        public ContentEditorWebPart CreateResponsivePlaceholderWebPart(int height, string backgroundColor, string fontColor, string text, ICollection<string> extraCssClasses)
+        {
+            var cssClasses = "responsive-placeholder";
+
+            if (extraCssClasses != null)
+            {
+                cssClasses += " " + string.Join(" ", extraCssClasses);
+            }
+
+            var formattedContent = string.Format(
+                CultureInfo.InvariantCulture,
+                "<div class='{0}' style='height:{1}px;line-height:{1}px;background-color:{2};color:{3};text-align:center;'>{4}</div>",
+                cssClasses,
+                height,
+                backgroundColor,
+                fontColor,
+                text);
 
             return new ContentEditorWebPart
             {
