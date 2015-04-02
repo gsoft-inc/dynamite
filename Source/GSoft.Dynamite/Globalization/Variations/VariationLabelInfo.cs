@@ -37,7 +37,7 @@ namespace GSoft.Dynamite.Globalization.Variations
             this.FlagControlDisplayName = variationLabel.DisplayName;
             this.IsSource = variationLabel.IsSource;
             this.Language = variationLabel.Language;
-            this.Locale = int.Parse(variationLabel.Locale);
+            this.Locale = TryParse(variationLabel);
             this.Title = variationLabel.Title;
             this.TopWebUrl = new Uri(variationLabel.TopWebUrl);
         }
@@ -93,5 +93,20 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// Gets or Sets the CssClass property. Add a css class to the label.
         /// </summary>
         public string CssClass { get; set; }
+
+        private static int TryParse(VariationLabel variationLabel)
+        {
+            int number;
+            var result = int.TryParse(variationLabel.Locale, out number);
+            // If the locale is not parsable, we use the Language property.
+            if (result)
+            {
+                return number;
+            }
+            else
+            {
+                return new CultureInfo(variationLabel.Language).LCID;
+            }
+        }
     }
 }
