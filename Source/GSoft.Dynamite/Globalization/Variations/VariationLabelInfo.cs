@@ -98,6 +98,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         {
             int number;
             var result = int.TryParse(variationLabel.Locale, out number);
+
             // If the locale is not parsable, we use the Language property.
             if (result)
             {
