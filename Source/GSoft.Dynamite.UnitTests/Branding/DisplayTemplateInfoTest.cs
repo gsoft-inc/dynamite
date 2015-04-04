@@ -28,5 +28,22 @@ namespace GSoft.Dynamite.UnitTests.Branding
             Assert.AreEqual(objectToSerialize.Name, deserializedObject.Name);
             Assert.AreEqual(objectToSerialize.Category, deserializedObject.Category);
         }
+
+        /// <summary>
+        /// Validates that the display template info correctly generates the tokenized path
+        /// </summary>
+        [TestMethod]
+        public void DisplayTemplateInfo_ShouldGenerateTokenizedPath()
+        {
+            // Arrange
+            var displayTemplateInfo = new DisplayTemplateInfo("TestName", DisplayTemplateCategory.ContentSearch);
+            var expectedTokenizedPath = "~sitecollection/_catalogs/masterpage/Display Templates/Content Web Parts/TestName.js";
+
+            // Act
+            var actualTokenizedPath = displayTemplateInfo.ItemTemplateTokenizedPath;
+
+            // Assert
+            Assert.AreEqual(expectedTokenizedPath, actualTokenizedPath);
+        }
     }
 }

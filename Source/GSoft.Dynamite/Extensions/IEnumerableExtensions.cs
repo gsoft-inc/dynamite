@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace GSoft.Dynamite.Extensions
@@ -27,6 +28,19 @@ namespace GSoft.Dynamite.Extensions
                     yield return element;
                 }
             }
+        }
+
+        /// <summary>
+        /// Flattens the a enumerable tree of objects.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="childrenFunc">The children selector delegate function.</param>
+        /// <returns>A flattened tree.</returns>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Syntax is necessary for recursive call.")] 
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> childrenFunc)
+        {
+            return source.SelectMany(c => childrenFunc(c).Flatten(childrenFunc)).Concat(source);
         }
     }
 }

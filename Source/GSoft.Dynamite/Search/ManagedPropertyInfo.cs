@@ -36,15 +36,19 @@ namespace GSoft.Dynamite.Search
             this.CrawledProperties = new Dictionary<string, int>();
 
             // Default configuration
-            this.Sortable = false;
-            this.Queryable = true;
             this.Searchable = true;
+            this.FullTextIndex = string.Empty;
+            this.Context = 0;
+
+            this.Queryable = true;
+            this.Retrievable = true;
             this.Refinable = true;
+            this.Sortable = false;
+            
             this.RespectPriority = false;
             this.HasMultipleValues = false;
-            this.FullTextIndex = "Default";
             this.SafeForAnonymous = true;
-            this.Context = 2;
+
             this.OverwriteIfAlreadyExists = true;
         }
 

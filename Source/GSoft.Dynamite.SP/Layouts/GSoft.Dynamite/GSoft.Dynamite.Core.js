@@ -394,4 +394,44 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
 }(GSoft.Dynamite.DisplayTemplateHelper = GSoft.Dynamite.DisplayTemplateHelper || {}, jq110));
 
+// ====================
+// Social module
+// ====================
+(function (FacebookHelper, $, undefined) {
 
+    // Initializes the JS SDK of Facebook with the specified application ID
+    // params:
+    // appId: the Facebook application id
+    FacebookHelper.FacebookAsyncInitialize = function (appId) {
+        window.fbAsyncInit = function () {
+            FB.init({
+                appId: appId,
+                xfbml: true,
+                version: 'v2.1'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) { return; }
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    };
+
+    // Trigger a click event. Open a new window to share content on Facebook.
+    // params:
+    // elementId: the id of the html element.
+    // linkUrl: The url of the shared page
+    FacebookHelper.TriggerShareEventOnElement = function (elementId, linkUrl) {
+        document.getElementById(elementId).onclick = function () {
+            var url = 'https://www.facebook.com/sharer/sharer.php?sdk=joey&u=' + encodeURIComponent(linkUrl) + '&display=popup&ref=plugin&src=share_button';
+
+            window.open(
+                url,
+                'sharer',
+                'toolbar=0,status=0,width=548,height=325');
+        }
+    };
+}(GSoft.Dynamite.FacebookHelper = GSoft.Dynamite.FacebookHelper || {}, jq110));

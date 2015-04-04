@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.SharePoint.Publishing.Navigation;
 
 namespace GSoft.Dynamite.Navigation
@@ -57,10 +55,12 @@ namespace GSoft.Dynamite.Navigation
             : this()
         {
             this.Title = row["Title"].ToString();
-            this.Url = new Uri(row["Path"].ToString(), UriKind.RelativeOrAbsolute);         // TODO: this assumes that Path returned by search result is NOT relative (i.e. absolute). 
-                                                                // If the path is relative, we need to forward UriKind.Relative and figure out what the impact 
-                                                                // of relative Uris is down the road.
             this.ParentNodeId = ExtractNavigationTermGuid(row[navigationManagedProperty].ToString());
+
+            // TODO: this assumes that Path returned by search result is NOT relative (i.e. absolute). 
+            // If the path is relative, we need to forward UriKind.Relative and figure out what the impact 
+            // of relative Uris is down the road.
+            this.Url = new Uri(row["Path"].ToString(), UriKind.RelativeOrAbsolute);
         }
 
         /// <summary>
