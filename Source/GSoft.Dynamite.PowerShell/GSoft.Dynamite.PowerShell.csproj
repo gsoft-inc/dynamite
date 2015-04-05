@@ -55,6 +55,7 @@
     <None Include="Dynamite.PowerShell.Toolkit\List.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Logging.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\ManagedPath.ps1" />
+    <None Include="Dynamite.PowerShell.Toolkit\Multithreading.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\PropertyBag.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Remote.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Search.ps1" />
