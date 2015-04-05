@@ -154,4 +154,7 @@ Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemo
 
 #Logging
 Export-ModuleMember Start-DSPLogging, Stop-DSPLogging
+
+#Multithreading
+Export-ModuleMember Invoke-Parallel
 #endregion
