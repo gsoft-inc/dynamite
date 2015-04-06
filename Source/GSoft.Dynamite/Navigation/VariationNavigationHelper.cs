@@ -94,40 +94,37 @@ namespace GSoft.Dynamite.Navigation
         {
             if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
-                Uri relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
-                Uri fullAbsoluteUrl = new Uri(label.TopWebUrl, relativePart);
-                return fullAbsoluteUrl;
+                var relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
+                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
             }
-            else
+
+            try
             {
-                try
-                {
-                    return new Uri(
-                        Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
-                        UriKind.Relative);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
-                    this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
+                return new Uri(
+                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+                    UriKind.Relative);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
+                this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
                                         Using label web URL with path and query strings as navigation URL.");
 
-                    // Keep query string (except source)
-                    var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
-                    queryCollection.Remove("Source");
+                // Keep query string (except source)
+                var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
+                queryCollection.Remove("Source");
 
-                    // Construct peer URL with top web URL + path + query.
-                    var topWebUrl = new Uri(label.TopWebUrl + "/");
-                    var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
+                // Construct peer URL with top web URL + path + query.
+                var topWebUrl = new Uri(label.TopWebUrl + "/");
+                var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
 
-                    // If any query string, add to segments
-                    if (queryCollection.HasKeys())
-                    {
-                        pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
-                    }
-
-                    return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
+                // If any query string, add to segments
+                if (queryCollection.HasKeys())
+                {
+                    pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
                 }
+
+                return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
             }
         }
 
