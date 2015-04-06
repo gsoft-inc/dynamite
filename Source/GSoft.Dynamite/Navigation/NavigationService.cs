@@ -190,7 +190,7 @@ namespace GSoft.Dynamite.Navigation
                 // If term contains children, recurvise call
                 if (filteredNodeChildren.Length > 0)
                 {
-                    filteredNode.ChildNodes = this.FilterNavigationNodesToReacheableTargetItems(filteredNodes, targetItems);
+                    filteredNode.ChildNodes = this.FilterNavigationNodesToReacheableTargetItems(filteredNodeChildren, targetItems);
                 }
             }
 
