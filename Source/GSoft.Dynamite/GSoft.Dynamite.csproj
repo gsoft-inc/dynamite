@@ -102,6 +102,10 @@
     <Compile Include="Features\IFeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyConfig.cs" />
     <Compile Include="Features\Types\FeatureDependencyInfo.cs" />
+    <Compile Include="Fields\Types\BaseChoiceFieldInfo.cs" />
+    <Compile Include="Fields\Types\ChoiceFieldInfo.cs" />
+    <Compile Include="Fields\Types\ChoiceFieldFormat.cs" />
+    <Compile Include="Fields\Types\MultiChoiceFieldInfo.cs" />
     <Compile Include="Fields\Types\UserFieldSelectionMode.cs" />
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />

@@ -69,6 +69,7 @@ namespace GSoft.Dynamite.Fields
                     || fieldInfo is TextFieldInfo
                     || fieldInfo is UserFieldInfo
                     || fieldInfo is LookupFieldInfo
+                    || fieldInfo is ChoiceFieldInfo
                     || fieldInfo is TaxonomyFieldInfo;
 
                 if (!isValidTypeForUniquenessConstraint)
