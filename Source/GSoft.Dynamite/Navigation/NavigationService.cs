@@ -93,10 +93,7 @@ namespace GSoft.Dynamite.Navigation
                             }
                         }
 
-                        this.logger.Info(
-                            "GetAllNavigationNodes: Found {0} first level navigation nodes in result source '{1}'.",
-                            navigationNodes.Count(),
-                            queryParameters.SearchSettings.ResultSourceName); 
+                        this.logger.Info("GetAllNavigationNodes: Found {0} navigation nodes (including children).", navigationNodes.Flatten(n => n.ChildNodes).Count()); 
                     }
 
                     return navigationNodes;
@@ -193,7 +190,7 @@ namespace GSoft.Dynamite.Navigation
                 // If term contains children, recurvise call
                 if (filteredNodeChildren.Length > 0)
                 {
-                    filteredNode.ChildNodes = this.FilterNavigationNodesToReacheableTargetItems(filteredNodes, targetItems);
+                    filteredNode.ChildNodes = this.FilterNavigationNodesToReacheableTargetItems(filteredNodeChildren, targetItems);
                 }
             }
 

@@ -1,4 +1,6 @@
-﻿namespace GSoft.Dynamite.Navigation
+﻿using System.Runtime.Serialization;
+
+namespace GSoft.Dynamite.Navigation
 {
     /// <summary>
     /// Navigation node matching settings.

@@ -94,40 +94,37 @@ namespace GSoft.Dynamite.Navigation
         {
             if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
-                Uri relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
-                Uri fullAbsoluteUrl = new Uri(label.TopWebUrl, relativePart);
-                return fullAbsoluteUrl;
+                var relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
+                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
             }
-            else
+
+            try
             {
-                try
-                {
-                    return new Uri(
-                        Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
-                        UriKind.Relative);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
-                    this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
+                return new Uri(
+                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+                    UriKind.Relative);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
+                this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
                                         Using label web URL with path and query strings as navigation URL.");
 
-                    // Keep query string (except source)
-                    var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
-                    queryCollection.Remove("Source");
+                // Keep query string (except source)
+                var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
+                queryCollection.Remove("Source");
 
-                    // Construct peer URL with top web URL + path + query.
-                    var topWebUrl = new Uri(label.TopWebUrl + "/");
-                    var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
+                // Construct peer URL with top web URL + path + query.
+                var topWebUrl = new Uri(label.TopWebUrl + "/");
+                var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
 
-                    // If any query string, add to segments
-                    if (queryCollection.HasKeys())
-                    {
-                        pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
-                    }
-
-                    return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
+                // If any query string, add to segments
+                if (queryCollection.HasKeys())
+                {
+                    pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
                 }
+
+                return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
             }
         }
 
@@ -210,7 +207,12 @@ namespace GSoft.Dynamite.Navigation
 
             var searchResultSource = this.searchHelper.GetResultSourceByName(SPContext.Current.Site, LocalSharePointResultsSourceName, SearchObjectLevel.Ssa);
 
-            var labelLocaleAgnosticLanguage = label.Language.Split('-').First();
+            // We take the Title of the Label because the Label.Language is always a language from a language pack (supported). Sometimes, we deal with Not implemented language (ie Inuktitut "IU").
+            // Our workaround is to set the Title as the agnostic language label ("en", "fr", "iu", etc).
+            // For backward compatibility purpose, we will test the length of the Title. If it's not 2, we will fallback on the Language of the Label.
+            // This is not 100% robust but it the only way we found to deal with unsupported language.
+            var labelLocaleAgnosticLanguage = label.Title.Length == 2 ? label.Title : label.Language.Split('-').FirstOrDefault();
+
             var queryText = string.Format(
                 CultureInfo.InvariantCulture, 
                 "{0}:{1} {2}={3}", 
@@ -226,14 +228,20 @@ namespace GSoft.Dynamite.Navigation
             };
 
             // Search query must include the following properties for the friendly URL to work
-            query.SelectProperties.AddRange(new[] { catalogNavigationTermManagedPropertyName, "Path", "spSiteUrl", "ListID" });
+            query.SelectProperties.AddRange(new[] 
+            { 
+                catalogNavigationTermManagedPropertyName,
+                BuiltInManagedProperties.Url, 
+                BuiltInManagedProperties.SiteUrl, 
+                BuiltInManagedProperties.ListId 
+            });
             var tables = new SearchExecutor().ExecuteQuery(query);
             if (tables.Exists(KnownTableTypes.RelevantResults))
             {
                 var table = tables.Filter("TableType", KnownTableTypes.RelevantResults).Single(relevantTable => relevantTable.QueryRuleId == Guid.Empty);
-                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains("Path"))
+                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url))
                 {
-                    url = new Uri(table.Table.Rows[0]["Path"].ToString());
+                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url].ToString());
                 }
             }
 
