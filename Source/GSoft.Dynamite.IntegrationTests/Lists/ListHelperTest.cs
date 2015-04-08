@@ -2135,7 +2135,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 // First, create the subweb
                 var rootWeb = testScope.SiteCollection.RootWeb;
                 
-
                 // Now, attempt to create the list which should result in a conflicting relative URL, thus, an exception thrown.
                 var listInfo = new ListInfo(Url, "testListName", "testListDescription");
                 listInfo.PropertyBagKeyForListId = "testProperty";
@@ -2157,6 +2156,5 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             }
         }
         #endregion
-
     }
 }
