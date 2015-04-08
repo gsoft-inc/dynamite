@@ -167,5 +167,12 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<BaseFieldInfo> FieldDefinitions { get; set; }
+
+        /// <summary>
+        /// Name of the key for the property that stores the list ID (GUID) once the list is created. 
+        /// If this property is empty, then the 'ensure' method will not store any value in the property bag. 
+        /// If this property is filled in, the 'ensure' method will write the list ID in a property with the related key in the web property bag
+        /// </summary>
+        public string PropertyBagKeyForListId { get; set; }
     }
 }
