@@ -126,7 +126,7 @@ Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStruct
 Export-ModuleMember Set-DSPUserProfileSchema
 
 # Excel
-Export-ModuleMember Merge-Columns, Remove-Column, Copy-Column, Add-Column, Edit-ColumnValue, Get-FileContent
+Export-ModuleMember Merge-DSPExcelColumns, Remove-DSPExcelColumn, Copy-DSPExcelColumn , Add-DSPExcelColumn , Edit-DSPExcelColumnValue, Get-DSPExcelFileContent
 
 # Faceted Search
 Export-ModuleMember New-DSPFacetedSearchSettings
@@ -155,6 +155,6 @@ Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemo
 #Logging
 Export-ModuleMember Start-DSPLogging, Stop-DSPLogging
 
-#Multithreading
+# Multithreading
 Export-ModuleMember Invoke-Parallel
 #endregion
