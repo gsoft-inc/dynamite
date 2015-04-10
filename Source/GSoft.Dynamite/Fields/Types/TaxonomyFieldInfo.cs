@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
+using Microsoft.Office.Server.Search.Administration;
+using ManagedPropertyInfo = GSoft.Dynamite.Search.ManagedPropertyInfo;
 
 namespace GSoft.Dynamite.Fields.Types
 {
@@ -41,6 +43,15 @@ namespace GSoft.Dynamite.Fields.Types
         /// will be mapped, limiting the user's choices in the Edit Form's taxonomy picker.
         /// </summary>
         public TaxonomyContext TermStoreMapping { get; set; }
+
+        /// <summary>
+        /// Gets the ows tax identifier managed property information.
+        /// This is generated using the field internal name and the prefix "owstaxId".
+        /// </summary>
+        public ManagedPropertyInfo OWSTaxIdManagedPropertyInfo
+        {
+            get { return new ManagedPropertyInfo("owstaxId" + this.InternalName, ManagedDataType.Text); }
+        }
 
         /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes

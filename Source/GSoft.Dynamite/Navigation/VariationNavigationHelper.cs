@@ -231,17 +231,17 @@ namespace GSoft.Dynamite.Navigation
             query.SelectProperties.AddRange(new[] 
             { 
                 catalogNavigationTermManagedPropertyName,
-                BuiltInManagedProperties.Url, 
-                BuiltInManagedProperties.SiteUrl, 
-                BuiltInManagedProperties.ListId 
+                BuiltInManagedProperties.Url.Name, 
+                BuiltInManagedProperties.SiteUrl.Name, 
+                BuiltInManagedProperties.ListId.Name 
             });
             var tables = new SearchExecutor().ExecuteQuery(query);
             if (tables.Exists(KnownTableTypes.RelevantResults))
             {
                 var table = tables.Filter("TableType", KnownTableTypes.RelevantResults).Single(relevantTable => relevantTable.QueryRuleId == Guid.Empty);
-                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url))
+                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url.Name))
                 {
-                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url].ToString());
+                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url.Name].ToString());
                 }
             }
 
