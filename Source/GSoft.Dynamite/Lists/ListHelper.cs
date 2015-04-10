@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
@@ -29,6 +30,7 @@ namespace GSoft.Dynamite.Lists
         private readonly IFieldHelper fieldHelper;
         private readonly ILogger logger;
         private readonly IListLocator listLocator;
+        private readonly IPropertyBagHelper propertyBagHelper;
 
         /// <summary>Creates a list helper</summary>
         /// <param name="contentTypeBuilder">The content Type Builder.</param>
@@ -36,18 +38,21 @@ namespace GSoft.Dynamite.Lists
         /// <param name="resourceLocator">The resource locator</param>
         /// <param name="logger">The logger</param>
         /// <param name="listLocator">List locator</param>
+        /// <param name="propertyBagHelper">Property bag helper</param>
         public ListHelper(
             IContentTypeHelper contentTypeBuilder,
             IFieldHelper fieldHelper,
             IResourceLocator resourceLocator,
             ILogger logger,
-            IListLocator listLocator)
+            IListLocator listLocator,
+            IPropertyBagHelper propertyBagHelper)
         {
             this.contentTypeBuilder = contentTypeBuilder;
             this.fieldHelper = fieldHelper;
             this.resourceLocator = resourceLocator;
             this.logger = logger;
             this.listLocator = listLocator;
+            this.propertyBagHelper = propertyBagHelper;
         }
 
         /// <summary>
@@ -163,6 +168,12 @@ namespace GSoft.Dynamite.Lists
                 }
 
                 list.Update();
+            }
+
+            // Write the list ID in a property bag key-value pair
+            if (!string.IsNullOrEmpty(listInfo.PropertyBagKeyForListId))             
+            {
+                this.SetPropertyBagKeyForListId(web, listInfo.PropertyBagKeyForListId, list.ID.ToString());
             }
 
             list = web.Lists[list.ID];
@@ -573,6 +584,19 @@ namespace GSoft.Dynamite.Lists
             }
 
             return null;
-        }        
+        }
+
+        /// <summary>
+        /// Creates or overwrites a pair in the property bag with the new created list ID
+        /// </summary>
+        /// <param name="web">The current web</param>
+        /// <param name="key">The property key</param>
+        /// <param name="id">The list GUID</param>
+        private void SetPropertyBagKeyForListId(SPWeb web, string key, string id)
+        {
+            var propertiesList = new List<PropertyBagValue>();
+            propertiesList.Add(new PropertyBagValue() { Key = key, Value = id });
+            this.propertyBagHelper.SetWebValues(web, propertiesList);
+        }
     }
 }

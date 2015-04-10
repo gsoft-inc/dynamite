@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading;
 using Autofac;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
@@ -2117,6 +2118,43 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             }
         }
 
+        #endregion
+
+        #region Ensuring that property bag pair (name of the property + list GUID) is created/overwritten if the ListInfo.PropertyBagKeyForGUID has been set
+        /// <summary>
+        /// When EnsureList is used with a listinfo that has its property 'PropertyBagKeyForGuid' set, it create/overwrites a pair in the web property bag
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WithPropertyBagKeyForListId_ShouldCreateAPropertyBagPairWithListIDInListParentWeb()
+        {
+            // Arrange
+            const string Url = "testListUrl";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // First, create the subweb
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                
+                // Now, attempt to create the list which should result in a conflicting relative URL, thus, an exception thrown.
+                var listInfo = new ListInfo(Url, "testListName", "testListDescription");
+                listInfo.PropertyBagKeyForListId = "testProperty";
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var propertyBagHelper = injectionScope.Resolve<IPropertyBagHelper>();
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    
+                    var actualListId = list.ID.ToString();
+                    var expectedListId = propertyBagHelper.GetWebValue(rootWeb, listInfo.PropertyBagKeyForListId);
+
+                    // Asserting that the list wasn't created
+                    Assert.AreEqual(expectedListId, actualListId);                      
+                }
+            }
+        }
         #endregion
     }
 }
