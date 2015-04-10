@@ -34,15 +34,15 @@ namespace GSoft.Dynamite.Fields.Types
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [fill in choice].
+        /// Gets or sets a value indicating whether the field allows users to fill in values for the column.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if [fill in choice]; otherwise, <c>false</c>.
+        ///   <c>true</c> if [the field allows users to fill in values for the column]; otherwise, <c>false</c>.
         /// </value>
         public bool FillInChoice { get; set; }
 
         /// <summary>
-        /// Gets or sets the choices.
+        /// Gets the choices.
         /// </summary>
         /// <value>
         /// The choices.

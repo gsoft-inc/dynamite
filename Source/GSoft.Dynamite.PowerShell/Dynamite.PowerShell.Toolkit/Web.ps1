@@ -51,9 +51,12 @@ function New-DSPWebXml()
 		
 		[Parameter(Position=3)]
 		[switch]$Overwrite
-		
-		
 	)
+
+	if ($UseParentTopNav)
+	{
+		Write-Warning "Usage of 'UseParentTopNav' as switch parameter is obsolete.  Please specify this parameter on the web XML configuration."
+	}
 		
 	foreach ($web in $Webs.Web)
 	{
@@ -61,6 +64,17 @@ function New-DSPWebXml()
 		[string]$Path = $web.Path
 		[string]$Template = $web.Template
 		[string]$Language = $web.Language
+		[string]$WebUseParentTopNavString = $web.UseParentTopNav
+		[string]$UniquePermissionsString = $web.UniquePermissions
+
+        # Parse boolean strings
+        $WebUseParentTopNav = $false
+        $UniquePermissions = $false
+        [bool]::TryParse($WebUseParentTopNavString, [ref]$WebUseParentTopNav) | Out-Null
+        [bool]::TryParse($UniquePermissionsString, [ref]$UniquePermissions) | Out-Null
+
+        # Support legacy switch parameter for parent top navigation
+        $WebUseParentTopNav = $UseParentTopNav
 		
 		$allWebs = @()
 		
@@ -98,13 +112,13 @@ function New-DSPWebXml()
 			#If we can't find the web template in the Get-SPWebTemplate command but it exists in the site, we create the site and apply it after.
 			if(((Get-SPWebTemplate -Identity "$Template" -ErrorAction SilentlyContinue) -eq $null) -and (($parentWeb.Site.GetWebTemplates($Language) | where {$_.Name -eq "$Template"}) -ne $null )) 
 			{
-				$newWeb = New-SPWeb -Url $Url -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language
+				$newWeb = New-SPWeb -Url $Url -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions
 				$newWeb.ApplyWebTemplate("$Template")					
 				$allWebs += $newWeb
 			}
 			else
 			{
-				$newWeb = New-SPWeb -Url $Url -Template "$Template" -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language						
+				$newWeb = New-SPWeb -Url $Url -Template "$Template" -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions						
 				$allWebs += $newWeb
 			}
 
