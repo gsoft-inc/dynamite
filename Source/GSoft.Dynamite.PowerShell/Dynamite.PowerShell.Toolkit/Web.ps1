@@ -112,13 +112,13 @@ function New-DSPWebXml()
 			#If we can't find the web template in the Get-SPWebTemplate command but it exists in the site, we create the site and apply it after.
 			if(((Get-SPWebTemplate -Identity "$Template" -ErrorAction SilentlyContinue) -eq $null) -and (($parentWeb.Site.GetWebTemplates($Language) | where {$_.Name -eq "$Template"}) -ne $null )) 
 			{
-				$newWeb = New-SPWeb -Url $Url -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions
+				$newWeb = New-SPWeb -Url $Url -Name $Name -UseParentTopNav:$WebUseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions
 				$newWeb.ApplyWebTemplate("$Template")					
 				$allWebs += $newWeb
 			}
 			else
 			{
-				$newWeb = New-SPWeb -Url $Url -Template "$Template" -Name $Name -UseParentTopNav:$UseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions						
+				$newWeb = New-SPWeb -Url $Url -Template "$Template" -Name $Name -UseParentTopNav:$WebUseParentTopNav -Language $Language -UniquePermissions:$UniquePermissions						
 				$allWebs += $newWeb
 			}
 
