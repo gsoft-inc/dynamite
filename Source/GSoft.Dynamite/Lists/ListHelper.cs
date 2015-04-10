@@ -595,7 +595,7 @@ namespace GSoft.Dynamite.Lists
         private void SetPropertyBagKeyForListId(SPWeb web, string key, string id)
         {
             var propertiesList = new List<PropertyBagValue>();
-            propertiesList.Add(new PropertyBagValue() { Key = key, Value = id });
+            propertiesList.Add(new PropertyBagValue() { Key = key, Value = id, Overwrite = true });
             this.propertyBagHelper.SetWebValues(web, propertiesList);
         }
     }
