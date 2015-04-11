@@ -143,8 +143,6 @@ function New-DSPWebXml()
 		{
 			New-DSPWebXml -Webs $web.Webs -ParentUrl $Url -UseParentTopNav
 		}
-
-        Write-Output $allWebs
 	}
 }
 
