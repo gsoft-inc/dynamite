@@ -102,7 +102,7 @@ function New-DSPSiteCollectionRecusiveXml()
 	# Create Variations
 	if ($Site.Variations -ne $null)
 	{
-		New-DSPSiteVariations -Config $Site.Variations -Site $spSite -Verbose:$Verbose
+		New-DSPSiteVariations -Config $Site.Variations -Site $spSite
 	}
 
 	# Activate Features 
