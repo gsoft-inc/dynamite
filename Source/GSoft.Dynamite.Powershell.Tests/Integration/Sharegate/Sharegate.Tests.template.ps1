@@ -276,7 +276,7 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 
     Context "Duplicates behavior" {
       
-        It "[Single site] should duplicate items if no custom keys specified" {
+        It "[Single site] should duplicate items if no custom composite key is specified" {
 
             Write-Host "     --Test Setup--"
 
@@ -302,7 +302,7 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 			Remove-Item $LogFilePath -Recurse -Confirm:$false        
         }
 
-        It "[Single site] should not duplicate items with the same custom keys passed as parameter even if the title and created date are different" {
+        It "[Single site] should not duplicate items with the same composite key" {
 
             Write-Host "     --Test Setup--"
 
@@ -314,7 +314,18 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 
             $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomListDuplicates"
 
-            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -Keys "ID","ContentType" -LogFolder $LogFilePath
+			# Custom property mapping settings
+			$MappingSettings = New-MappingSettings 
+
+			# Remove default keys
+			Set-PropertyMapping -MappingSettings $MappingSettings -Source Title -Destination Title
+			Set-PropertyMapping -MappingSettings $MappingSettings -Source Created -Destination Created
+
+			# Add custom keys
+			Set-PropertyMapping -MappingSettings $MappingSettings -Source ID -Destination ID -Key
+			Set-PropertyMapping -MappingSettings $MappingSettings -Source ContentType -Destination ContentType -Key
+
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -MappingSettings $MappingSettings -LogFolder $LogFilePath
 
             $Web = Get-SPWeb $siteUrl
 
@@ -326,28 +337,6 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Write-Host "     --Tests Teardown--"
 	        Remove-SPSite $siteUrl -Confirm:$false    
 			Remove-Item $LogFilePath -Recurse -Confirm:$false        
-        }
-
-        It "[Single site] should not ignore property if no property settings is specified (Sharegate default behavior)" {
-
-            Write-Host "     --Test Setup--"
-
-            # Create site hierarchy
-		    CreateSingleSiteNoSubsitesNoVariationsWithCustomLists
-            $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSite"
-
-            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath
-            $Web = Get-SPWeb $siteUrl
-            
-            $Item = GetListItem -Web $Web -ListName "Pages" -ItemTitle "TestPage" 
-
-            # Check for a list item into a custom list#
-            $Item | Should Not be $null
-            $Item["Comments"] | Should be "TestIgnore"
-            
-            Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false  
-			Remove-Item $LogFilePath -Recurse -Confirm:$false         
         }
     }
 
