@@ -53,34 +53,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Pages\Documents\TestPage.aspx" />
-    <Content Include="Integration\Sharegate\SingleSiteData\Images\Documents\TestImage.jpg" />
-    <Content Include="Integration\Sharegate\SingleSiteData\Pages\Documents\default.aspx" />
-    <Content Include="Integration\Sharegate\SingleSiteData\Pages\Documents\PageNotFoundError.aspx" />
-    <Content Include="Integration\Sharegate\SingleSiteData\Pages\Documents\TestPage.aspx" />
     <Content Include="Integration\Sharegate\TestVariationsSettings.xml" />
     <Content Include="Integration\Taxonomy\TestVariationsSettings.xml" />
     <Content Include="Integration\Web\ImportWebStructure.xml" />
@@ -94,44 +66,7 @@
     <None Include="Integration\Invoke-AllIntegrationTests.ps1" />
     <None Include="Integration\Invoke-SlowIntegrationTests.ps1" />
     <None Include="Integration\Logging\Logging.Tests.ps1" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb2\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\MultipleSitesData\Reusable Content\Reusable Content.xlsx" />
     <None Include="Integration\Sharegate\Sharegate.Tests.template.ps1" />
-    <None Include="Integration\Sharegate\SingleSiteData\CustomLibrary\CustomLibrary.xlsx" />
-    <None Include="Integration\Sharegate\SingleSiteData\CustomLibrary\Documents\TestDocument.docx" />
-    <None Include="Integration\Sharegate\SingleSiteData\CustomList\CustomList.xlsx" />
-    <None Include="Integration\Sharegate\SingleSiteData\Images\Images.xlsx" />
-    <None Include="Integration\Sharegate\SingleSiteData\Pages\Pages.xlsx" />
-    <None Include="Integration\Sharegate\SingleSiteData\Reusable Content\Reusable Content.xlsx" />
     <None Include="Integration\Taxonomy\Taxonomy.Tests.template.ps1" />
     <None Include="Integration\Taxonomy\TestSchema.xsd">
       <SubType>Designer</SubType>
@@ -146,16 +81,7 @@
     </None>
     <None Include="Integration\Web\Web.Tests.template.ps1" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb1\SubWeb11\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\MultipleSitesData\English-US\SubWeb2\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\MultipleSitesData\French-FR\SubWeb1\SubWeb11\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\MultipleSitesData\Reusable Content\Attachments\" />
-    <Folder Include="Integration\Sharegate\SingleSiteData\CustomList\Attachments\" />
-    <Folder Include="Integration\Sharegate\SingleSiteData\Reusable Content\Attachments\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
