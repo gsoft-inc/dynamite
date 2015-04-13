@@ -468,15 +468,15 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         /// <returns>The ServiceLocatorAssemblyName discriminator settings, if found in one of the context objects' property bags</returns>
         private static string FindServiceLocatorAccessorTypeNameFromMostSpecificPropertyBag(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, out string locationWhereDiscriminatorWasFound)
         {
-            if (web != null && web.Properties.ContainsKey(KeyServiceLocatorAssemblyName))
+            if (web != null && web.AllProperties.ContainsKey(KeyServiceLocatorAssemblyName))
             {
                 locationWhereDiscriminatorWasFound = "SPWeb @ " + web.Url;
-                return web.Properties[KeyServiceLocatorAssemblyName];
+                return web.GetProperty(KeyServiceLocatorAssemblyName).ToString();
             }
-            else if (site != null && site.RootWeb.Properties.ContainsKey(KeyServiceLocatorAssemblyName))
+            else if (site != null && site.RootWeb.AllProperties.ContainsKey(KeyServiceLocatorAssemblyName))
             {
                 locationWhereDiscriminatorWasFound = "SPSite.RootWeb @ " + site.RootWeb.Url;
-                return site.RootWeb.Properties[KeyServiceLocatorAssemblyName];
+                return site.RootWeb.GetProperty(KeyServiceLocatorAssemblyName).ToString();
             }
             else if (webApplication != null && webApplication.Properties.ContainsKey(KeyServiceLocatorAssemblyName))
             {
