@@ -322,6 +322,7 @@ function Resolve-DSPType {<#
 	return $returnObject;
 }
 
+# http://stackoverflow.com/questions/4241985/calling-generic-static-method-in-powershell
 function Invoke-GenericMethod {
 
 	Param(

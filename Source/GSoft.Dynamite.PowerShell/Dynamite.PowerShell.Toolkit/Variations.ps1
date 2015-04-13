@@ -378,6 +378,49 @@ function Sync-DSPList {
 	$variationSyncHelper.SyncList($SourceList, $LabelToSync)
 }
 
+<#
+    .SYNOPSIS
+	    Get variation labels for a SharePoint site
+	
+    .DESCRIPTION
+		Get the variation labels associtaed to a SPWeb. You can use this function to check if variations are enable on a SharePoint site. This cmdlet is compatible with MOSS 2007 and above.
+
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+		
+    .PARAMETER Path
+	    [REQUIRED] The SPWeb instance
+
+    .EXAMPLE
+
+			$Web = Get-SPWeb http://mysite	    
+			Get-VariationLabels -Web $Web
+
+	.OUTPUT
+		
+		Returns the variations labels as table like this:
+
+		Label                                   LCID                                                                   IsSource
+		-----                                   ----                                                                   --------
+		en                                      1033                                                                      False
+		fr                                      1036                                                                       True
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
 function Get-VariationLabels {
 
 	Param
@@ -419,7 +462,7 @@ function Get-VariationLabels {
 
             $LabelItems | ForEach-Object {
                 
-                $CurrentLabel =New-Object PSObject
+                $CurrentLabel = New-Object PSObject
 
                 $CurrentLabel | Add-Member Noteproperty Label $_.Title 
                 $CurrentLabel | Add-Member Noteproperty LCID $_["Locale"]
