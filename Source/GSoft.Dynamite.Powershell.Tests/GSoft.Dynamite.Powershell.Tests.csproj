@@ -88,6 +88,8 @@
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Integration\Excel\Excel.Tests.template.ps1" />
+    <None Include="Integration\Excel\ExportSharegate_Valid.xlsx" />
     <None Include="Integration\Invoke-FastIntegrationTests.ps1" />
     <None Include="Integration\Invoke-AllIntegrationTests.ps1" />
     <None Include="Integration\Invoke-SlowIntegrationTests.ps1" />

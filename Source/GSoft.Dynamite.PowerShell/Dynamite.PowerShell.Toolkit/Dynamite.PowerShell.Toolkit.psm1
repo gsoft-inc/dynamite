@@ -126,7 +126,7 @@ Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStruct
 Export-ModuleMember Set-DSPUserProfileSchema
 
 # Excel
-Export-ModuleMember Merge-DSPExcelColumns, Remove-DSPExcelColumn, Copy-DSPExcelColumn , Add-DSPExcelColumn , Edit-DSPExcelColumnValue, Get-DSPExcelFileContent
+Export-ModuleMember Merge-DSPExcelColumns, Remove-DSPExcelColumn, Copy-DSPExcelColumn , Add-DSPExcelColumn , Edit-DSPExcelColumnValue, Get-DSPExcelFileContent, Open-DSPExcelFile
 
 # Faceted Search
 Export-ModuleMember New-DSPFacetedSearchSettings
