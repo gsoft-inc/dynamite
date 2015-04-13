@@ -332,8 +332,12 @@
 
                         #log the results if a log file was indicated
                         if($logFile -and $log){
-                            ($log | ConvertTo-Csv -Delimiter ";" -NoTypeInformation)[1] | out-file $LogFile -append
-                        }
+                            $logLine = ($log | ConvertTo-Csv -Delimiter ";" -NoTypeInformation)[1]
+
+							$StreamWriter = New-Object IO.StreamWriter $LogFile
+							$StreamWriter.WriteLine($logLine)
+							$StreamWriter.Close()		
+						}	
                     }
 
                     #Clean out unused runspace jobs
@@ -479,7 +483,11 @@
             #Set up log file if specified
             if( $LogFile ){
                 New-Item -ItemType file -path $logFile -force | Out-Null
-                ("" | Select Date, Action, Runtime, Status, Details | ConvertTo-Csv -NoTypeInformation -Delimiter ";")[0] | Out-File $LogFile
+                $logLine = ("" | Select Date, Action, Runtime, Status, Details | ConvertTo-Csv -NoTypeInformation -Delimiter ";")[0]
+
+				$StreamWriter = New-Object IO.StreamWriter $LogFile
+				$StreamWriter.WriteLine($logLine)
+				$StreamWriter.Close()	
             }
 
             #write initial log entry
@@ -490,7 +498,11 @@
                 $log.Status = "Started"
                 $log.Details = $null
                 if($logFile) {
-                    ($log | convertto-csv -Delimiter ";" -NoTypeInformation)[1] | Out-File $LogFile -Append
+                    $logLine = ($log | convertto-csv -Delimiter ";" -NoTypeInformation)[1]
+
+					$StreamWriter = New-Object IO.StreamWriter $LogFile
+					$StreamWriter.WriteLine($logLine)
+					$StreamWriter.Close()
                 }
 
 			$timedOutTasks = $false
