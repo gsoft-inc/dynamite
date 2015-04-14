@@ -44,7 +44,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     Core.initialize = function (params) {
 
     };
-}(GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq110));
+}(GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq111));
 
 // ====================
 // Resources module
@@ -130,7 +130,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     }
 
     return Resource;
-}(GSoft.Dynamite.Resource = GSoft.Dynamite.Resource || {}, jq110));
+}(GSoft.Dynamite.Resource = GSoft.Dynamite.Resource || {}, jq111));
 
 // ====================
 // File loader module
@@ -159,7 +159,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             return $.when();
         }
     };
-}(GSoft.Dynamite.FileLoader = GSoft.Dynamite.FileLoader || {}, jq110));
+}(GSoft.Dynamite.FileLoader = GSoft.Dynamite.FileLoader || {}, jq111));
 
 // ====================
 // Edit-mode Metadata Panel module
@@ -240,7 +240,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     };
 
     return MetadataPanel;
-}(GSoft.Dynamite.MetadataPanel = GSoft.Dynamite.MetadataPanel || {}, jq110));
+}(GSoft.Dynamite.MetadataPanel = GSoft.Dynamite.MetadataPanel || {}, jq111));
 
 // ====================
 // Utilities module
@@ -360,7 +360,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
             $(".ms-siteactionscontainer .s4-breadcrumb-anchor").after(newLink);
         });
     };
-}(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq110));
+}(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq111));
 
 // ====================
 // DisplayTemplateHelper module
@@ -392,7 +392,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         return pictureUrlItemValue;
     };
 
-}(GSoft.Dynamite.DisplayTemplateHelper = GSoft.Dynamite.DisplayTemplateHelper || {}, jq110));
+}(GSoft.Dynamite.DisplayTemplateHelper = GSoft.Dynamite.DisplayTemplateHelper || {}, jq111));
 
 // ====================
 // Social module
@@ -434,4 +434,4 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 'toolbar=0,status=0,width=548,height=325');
         }
     };
-}(GSoft.Dynamite.FacebookHelper = GSoft.Dynamite.FacebookHelper || {}, jq110));
+}(GSoft.Dynamite.FacebookHelper = GSoft.Dynamite.FacebookHelper || {}, jq111));

@@ -119,4 +119,4 @@
             ko.utils.registerEventHandler($(element), "mouseout", hideMenu);
         }
     };
-} (jq110));
+} (jq111));

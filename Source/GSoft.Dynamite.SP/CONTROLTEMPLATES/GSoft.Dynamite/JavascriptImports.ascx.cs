@@ -75,6 +75,14 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         {
             try
             {
+#if DEBUG
+                if (!scriptLink.Name.Contains("/Lib/"))
+                {
+                    // we want to be able to debug our JS files more easily
+                    scriptLink.Name = scriptLink.Name.Replace(".min.js", ".js");
+                }
+#endif
+
                 // These are optional module, so trying to build these browser-cache-safe URLs may explode if the modules are missing
                 scriptLink.Name = SPUtility.MakeBrowserCacheSafeLayoutsUrl(scriptLink.Name, false);
             }

@@ -8,18 +8,18 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="JavaScriptImports.ascx.cs" Inherits="GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite.JavaScriptImports" %>
 
 <%-- 3rd party JS libraries --%>
-<SharePoint:ScriptLink ID="JqueryScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-1.10.2.min.js" Localizable="false" OnDemand="false" runat="server" />
+<SharePoint:ScriptLink ID="JqueryScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-1.11.2.min.js" Localizable="false" OnDemand="false" runat="server" />
 <SharePoint:ScriptLink ID="JqueryPlaceholderShim" Language="javascript" Name="GSoft.Dynamite/Lib/jquery.html5-placeholder-shim.js" Localizable="false" OnDemand="false" runat="server" />
 <SharePoint:ScriptLink ID="JqueryNoConflictScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/jquery-noconflict.js" Localizable="false" OnDemand="false" runat="server" />
 
-<SharePoint:ScriptLink ID="KnockoutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.2.0.js" Localizable="false" OnDemand="false" runat="server"/>
-<SharePoint:ScriptLink ID="MomentScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/moment-with-langs.min.js" Localizable="false" OnDemand="false" runat="server"/>
-<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-1.7.0.min.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="KnockoutScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/knockout-3.3.0.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="MomentScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/moment-with-locales.min.js" Localizable="false" OnDemand="false" runat="server"/>
+<SharePoint:ScriptLink ID="UnderscoreScriptLink" Language="javascript" Name="GSoft.Dynamite/Lib/underscore-1.8.3.min.js" Localizable="false" OnDemand="false" runat="server"/>
 
 <%-- Dynamite JS libraries --%>
-<SharePoint:ScriptLink ID="DynamiteCoreScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Core.js" Localizable="false" OnDemand="false" runat="server" />
-<SharePoint:ScriptLink ID="KnockoutBindingHandlersScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Knockout.BindindHandlers.js" Localizable="false" OnDemand="false" runat="server" />
-<SharePoint:ScriptLink ID="KnockoutExtensionsScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Knockout.Extensions.js" Localizable="false" OnDemand="false" runat="server" />
+<SharePoint:ScriptLink ID="DynamiteCoreScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Core.min.js" Localizable="false" OnDemand="false" runat="server" />
+<SharePoint:ScriptLink ID="KnockoutBindingHandlersScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Knockout.BindindHandlers.min.js" Localizable="false" OnDemand="false" runat="server" />
+<SharePoint:ScriptLink ID="KnockoutExtensionsScriptLink" Language="javascript" Name="GSoft.Dynamite/GSoft.Dynamite.Knockout.Extensions.min.js" Localizable="false" OnDemand="false" runat="server" />
 
 <%-- Reusable Knockout.js HTML templates --%>
 <script type="text/html" id="tabs-template">

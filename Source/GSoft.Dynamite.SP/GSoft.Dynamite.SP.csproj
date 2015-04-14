@@ -161,7 +161,15 @@
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.ttf" />
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.woff" />
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.woff2" />
-    <None Include="Layouts\GSoft.Dynamite\Lib\underscore-min.map" />
+    <None Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Core.min.js.map">
+      <DependentUpon>GSoft.Dynamite.Core.min.js</DependentUpon>
+    </None>
+    <None Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.BindindHandlers.min.js.map">
+      <DependentUpon>GSoft.Dynamite.Knockout.BindindHandlers.min.js</DependentUpon>
+    </None>
+    <None Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.Extensions.min.js.map">
+      <DependentUpon>GSoft.Dynamite.Knockout.Extensions.min.js</DependentUpon>
+    </None>
     <None Include="Layouts\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{ff112f9f-2429-46c2-a407-771ef33b1d94}</SharePointProjectItemId>
     </None>
@@ -219,18 +227,27 @@
     </Content>
     <Content Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Layouts\GSoft.Dynamite\CSS\GSoft.Dynamite.Core.css" />
+    <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Core.min.js">
+      <DependentUpon>GSoft.Dynamite.Core.js</DependentUpon>
+    </Content>
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.BindindHandlers.js" />
+    <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.BindindHandlers.min.js">
+      <DependentUpon>GSoft.Dynamite.Knockout.BindindHandlers.js</DependentUpon>
+    </Content>
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.Extensions.js" />
     <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Core.js" />
+    <Content Include="Layouts\GSoft.Dynamite\GSoft.Dynamite.Knockout.Extensions.min.js">
+      <DependentUpon>GSoft.Dynamite.Knockout.Extensions.js</DependentUpon>
+    </Content>
     <Content Include="Layouts\GSoft.Dynamite\Img\icon_open_parent.png" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-1.10.2.min.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-1.11.2.min.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery-noconflict.js" />
     <Content Include="Layouts\GSoft.Dynamite\Lib\jquery.html5-placeholder-shim.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.2.0.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\moment-with-langs.min.js" />
-    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.7.0.min.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\knockout-3.3.0.js" />
+    <Content Include="Layouts\GSoft.Dynamite\Lib\moment-with-locales.min.js" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Layouts\GSoft.Dynamite\Lib\underscore-1.8.3.min.js" />
     <Content Include="Resources\GSoft.Dynamite.en-US.resx" />
   </ItemGroup>
   <ItemGroup>

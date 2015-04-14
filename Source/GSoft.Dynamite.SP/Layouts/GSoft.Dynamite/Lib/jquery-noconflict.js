@@ -1,1 +1,1 @@
-﻿var jq110 = jQuery.noConflict();
+﻿var jq111 = jQuery.noConflict();
