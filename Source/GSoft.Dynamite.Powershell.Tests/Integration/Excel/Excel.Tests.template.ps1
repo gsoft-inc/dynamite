@@ -12,6 +12,9 @@ $ExcelValidFilePath = Join-Path -Path "$here" -ChildPath ".\ExportSharegate_Vali
 
 Describe "Open-DSPExcelFile" {
 
+	# ----------------------
+	# Open-DSPExcelFile
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 
 		It "should open the file" {
@@ -25,6 +28,9 @@ Describe "Open-DSPExcelFile" {
 
 Describe "Get-DSPExcelFileContent" {
 
+	# ----------------------
+	# Get-DSPExcelFileContent
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" 	{
 
 		It "should throw an error if the specified worksheet doesn't exist in the file" {
@@ -81,6 +87,9 @@ Describe "Get-DSPExcelFileContent" {
 
 Describe "Merge-DSPExcelColumns" {
 
+	# ----------------------
+	# Merge-DSPExcelColumns
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 
 		It "should throw an error if the specified worksheet doesn't exist in the file" {
@@ -136,6 +145,9 @@ Describe "Merge-DSPExcelColumns" {
 
 Describe "Add-DSPExcelColumn" {
 
+	# ----------------------
+	# Add-DSPExcelColumn
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 
 		It "should throw an error if the specified worksheet doesn't exist in the file" {
@@ -207,6 +219,9 @@ Describe "Add-DSPExcelColumn" {
 
 Describe "Remove-DSPExcelColumn" {
 
+	# ----------------------
+	# Remove-DSPExcelColumn
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 
 		It "should throw an error if the specified worksheet doesn't exist in the file" {
@@ -261,6 +276,9 @@ Describe "Remove-DSPExcelColumn" {
 
 Describe "Copy-DSPExcelColumn" {
 
+	# ----------------------
+	# Copy-DSPExcelColumn
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 	
 		It "should throw an error if the specified worksheet doesn't exist in the file" {
@@ -321,6 +339,9 @@ Describe "Copy-DSPExcelColumn" {
 
 Describe "Edit-DSPExcelColumn" {
 
+	# ----------------------
+	# Edit-DSPExcelColumn
+	# ----------------------
 	Context "Valid Excel file exported by Sharegate" {
 
 		It "should throw an error if the specified worksheet doesn't exist in the file" {

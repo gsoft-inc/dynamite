@@ -17,235 +17,11 @@ $currentAccountName   = ("[[DSP_CurrentAccount]]").ToLower()
 $variationsConfigFile   = Join-Path -Path "$here" -ChildPath "[[DSP_VariationsConfigFile]]"
 $siteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($webApplication, $tempSiteCollection))
 
-# ----------------------
-# Utility functions
-# ----------------------
-function CreateSingleSite {
-
-	Param
-    (
-        [Parameter(Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		[string]$TemplateName 
-    )
-
-	$site = Get-SPSite $siteUrl -ErrorAction SilentlyContinue
-	if ($site -ne $null)
-	{
-		Remove-SPSite $site -Confirm:$false 	
-	}
-
-	if($webApplication -ne $null)
-	{
-		# Create test structure with the current account login to avoid access denied
-		$site = New-SPSite $siteUrl -OwnerAlias $currentAccountName -Template $TemplateName -Name "RootWeb"
-	}
-
-	return $site
-}
-
-function CreateSubWebs {
-	Param
-	(	
-		[Parameter(Mandatory=$true, Position=0)]
-		[ValidateNotNullOrEmpty()]
-		[Microsoft.SharePoint.SPWeb]$SourceWeb,
-
-        [Parameter(Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		[string]$TemplateName
-	)
-	$webs = @()
-
-	$subWeb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceWeb.Url, "subweb1"))
-	$subWeb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceWeb.Url, "subweb2"))
-	  
-	# Create a site hierarchy
-	$subWeb1 = if ((Get-SPWeb $subWeb1Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb1Url -Template $TemplateName -Name "SubWeb1"  } else { return Get-SPWeb $subWeb1Url }
-	$subWeb2 = if ((Get-SPWeb $subWeb2Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb2Url -Template $TemplateName -Name "SubWeb2"  } else { return Get-SPWeb $subWeb2Url }
-
-	$subWeb11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($subWeb1.Url, "subweb11"))
-	$subWeb11 = if ((Get-SPWeb $subWeb11Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb11Url -Template $TemplateName -Name "SubWeb11"  } else { return Get-SPWeb $subWeb11Url }
-
-	$webs+=$subWeb1
-	$webs+=$subWeb2
-	$webs+=$subWeb11
-
-	return $webs		
-}
-
-function CreateSinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders {
-		
-	$site = CreateSingleSite -TemplateName "BLANKINTERNET#0"
-    
-    CreatePublishingPagesAndFolders $site.RootWeb "TestPage" -WelcomePageTitle "TestHomePage"
-
-    return $site
-}
-
-function CreateTeamSiteWithSubistes {
-
-	$site = CreateSingleSite -TemplateName "STS#0"
-	$subwebs = CreateSubWebs -SourceWeb $site.RootWeb -TemplateName "STS#0"
-
-    return $site
-}
-
-function CreatePublishingPagesAndFolders {
-    
-    Param
-    (
-        [Parameter(Mandatory=$true)]
-		[Microsoft.SharePoint.SPWeb]$Web,
-
-        [Parameter(Mandatory=$true)]
-		[array]$Pages,
-
-        [Parameter(Mandatory=$true)]
-		[string]$WelcomePageTitle    
-    )
-    
-    $PageItems = @()
-    $Folders = @()
-
-    $PubWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($Web)
-    $PagesLib = $PubWeb.PagesList
-
-    $PubSite = New-Object Microsoft.SharePoint.Publishing.PublishingSite($Web.Site)
-
-    $PageLayoutRelUrl = "/_catalogs/masterpage/BlankWebPartPage.aspx"
-
-    # Get the PageLayouts Installed on the Publishing Site
-    $Layouts = $PubSite.GetPageLayouts($False)
-
-    $Folder1 = $PagesLib.AddItem("", [Microsoft.SharePoint.SPFileSystemObjectType]::Folder,"Folder1")
-    $Folder1["Title"] = "Folder1"
-    $Folder1.Update()
-
-    $Folders += $Folder1
-    $Folders += $PagesLib.RootFolder
-
-     # Get our PageLayout
-    $PageLayout = $Layouts | Where-Object { $_.ServerRelativeUrl -match $PageLayoutRelUrl }
-
-    $Folders | ForEach-Object {
-
-        $CurrentFolder = $_
-
-        $Pages | ForEach-Object {
-
-            $PageTitle = $_
-
-            if ($CurrentFolder.Folder -ne $null)
-            {
-                $CurrentFolder = $CurrentFolder.Folder
-            }
-            
-            # Add pages
-            $Page = $PubWeb.AddPublishingPage($PageTitle +".aspx", $PageLayout, $CurrentFolder)
-            $Page.Title = $PageTitle
-            # Be careful, items without content will be ignored by the SharePoint variation system ;)
-            $Page.ListItem[[Microsoft.SharePoint.Publishing.FieldId]::PublishingPageContent] = "Dummy Content"
-            $Page.Update()
-
-            $PageItems += $Page.ListItem
-
-            # Check in the Page with Comments
-            $Page.CheckIn("Test Comment")
-
-            # Publish the Page With Comments
-            $Page.ListItem.File.Publish("Test Publish Comment")
-        }
-    }
-
-    # Add Welcome page
-    $WelcomePage = $PubWeb.AddPublishingPage($WelcomePageTitle +".aspx", $PageLayout,  $PagesLib.RootFolder)
-    $WelcomePage.Title = $WelcomePageTitle
-    $WelcomePage.ListItem[[Microsoft.SharePoint.Publishing.FieldId]::PublishingPageContent] = "Dummy Content"
-    $WelcomePage.Update()
-    # Check in the Page with Comments
-    $WelcomePage.CheckIn("Test Comment")
-    # Publish the Page With Comments
-    $WelcomePage.ListItem.File.Publish("Test Publish Comment")
-
-    $PageItems += $WelcomePage.ListItem
-
-    $newDefaultPageFile = $PubWeb.Web.GetFile($WelcomePage.Url);
-    $PubWeb.DefaultPage = $newDefaultPageFile 
-
-    $PubWeb.Update()
-
-    return $PageItems
-}
-		
-function CreatePublishingSiteWithSubsitesNoVariationsWithPagesAndFolders {
-
-	$site = CreateSingleSite -TemplateName "BLANKINTERNET#0"
-	$subwebs = CreateSubWebs -SourceWeb $site.RootWeb -TemplateName "BLANKINTERNET#0"
-    
-    $i = 1
-    $subwebs | ForEach-Object {
-    
-        CreatePublishingPagesAndFolders $_ "TestPage" -WelcomePageTitle "TestHomePageSubWeb$i"
-        $i++
-    }
-
-	return Get-SPSite $site.Url
-}
-
-function CreatePublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
-
-	$site = CreateSingleSite -TemplateName "BLANKINTERNET#0"
-	[xml]$config = Get-Content $variationsConfigFile
-		
-	$webApp = Get-SPWebApplication $webApplication
-
-	# Create hierarchies on the root site
-	New-DSPSiteVariations -Config $config.Variations -Site $site
-
-	Set-VariationHierarchy -Site $site.Url
-
-	Start-Sleep -s 5
-
-	$sourceVariationSiteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.RootWeb.Url, "en"))
-
-	# Sync Sub webs
-	$SubWebs = CreateSubWebs -SourceWeb (Get-SPWeb $sourceVariationSiteUrl) -TemplateName "BLANKINTERNET#0"
-
-    $SubWebs| ForEach-Object {
-
-            $_ | Sync-DSPWeb -LabelToSync 'fr'        
-    }
-
-    Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
-    Write-Warning "Waiting for 'VariationsSpawnSites' timer job to finish..."
-    Start-Sleep -Seconds 60
-
-    $i = 1
-    $SubWebs | ForEach-Object {
-		
-		$Web = $_
-        $Items = CreatePublishingPagesAndFolders $Web "TestPage" -WelcomePageTitle "TestHomePageSubWeb$i"
-
-        $Items | ForEach-Object {
-
-			$Item = $_
-            Sync-DSPItem -VariationListItem $Item 
-        }
-        $i++
-    }
-
-    # Be careful, you must run the timer job VariationsPropagatePage instead of VariationsPropagateListItem
-    # Dont' forget to set EnableAutoSpawn="true" in variations settings to set the "Publish" action on pages as a trigger for synchronization
-    Wait-SPTimerJob -Name "VariationsPropagatePage" -WebApplication $webApp
-	Write-Verbose "Waiting for 'VariationsPropagatePage' timer job to finish..."
-	Start-Sleep -Seconds 60
-
-	return Get-SPSite $site.Url
-}
-
 Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
 
+	# ----------------------
+	# Export-DSPWebStructureAsTaxonomy
+	# ----------------------
 	Context "The source web doesn't exist" 	{
 		It "should throw an error " {
 
@@ -263,7 +39,7 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
-		$site = CreateSinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders
+		$site = New-SinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders -SiteUrl $siteUrl
 
         It "should output a XML file with the correct schema" {
 
@@ -280,7 +56,7 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
 		It "should export a taxonomy structure corresponding to pages and folders hierarchy under the home page of the web excluding specific tokens" {
 			
 			# Execute the command
-			Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound"
+			Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound"
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -303,7 +79,7 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
         It "should output a XML file allowing the creation of a taxonomy term set via the Gary Lapointe cmdlet Import-SPTerms" {
             
             # Execute the command
-			Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound"
+			Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound"
 
             $TermStore = (Get-SPTaxonomySession -Site $siteUrl).TermStores[0]
 
@@ -350,12 +126,12 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
 	    Write-Host "     --Test Setup--"
 
 		# Create a team site strucutre
-		$site = CreateTeamSiteWithSubistes
+		$site = New-TeamSiteWithSubSites -SiteUrl $siteUrl
 
 	    It "[Team sites] should considering the Site Pages library instead of the Pages library" {
         
             # Execute the command
-		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound" 
+		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound" 
         
             # Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -385,12 +161,12 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
         Write-Host "     --Test Setup--"
 
         # Create web structure with sub webs without variations
-        $site = CreatePublishingSiteWithSubsitesNoVariationsWithPagesAndFolders
+        $site = New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders -SiteUrl $siteUrl
 
         It "[No variations] should export a taxonomy structure corresponding to the site, sub sites, pages and folders" {
         
             # Execute the command
-		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound"
+		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound"
 
 			# Test the number of XML in the output file
 			if (Test-Path $outputFileName)
@@ -451,12 +227,12 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
         Write-Host "     --Test Setup--"
 
         # Create web structure with sub webs and variations
-        $site = CreatePublishingSiteWithSubsitesWithVariationsWithPagesAndFolders
+        $site = New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders  -SiteUrl $siteUrl -SubWebsTemplateID "STS#0" -VariationConfigFilePath $variationsConfigFile 	
 
         It "[Variations] It should exclude root variation sites and sites that are not in the source branch and create a new taxonomy term set" {
         
             # Execute the command
-		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound"
+		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound"
            
 			# Test the number of XML in the output file
 			if (Test-Path $outputFileName)
@@ -516,7 +292,7 @@ Describe "Export-DSPWebStructureAsTaxonomy" -Tags "Local", "Slow" {
         It "[Variations] It should get the correct term labels for all variation target branches" {
        
             # Execute the command
-		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -ExcludePage "default.aspx","NotFound"
+		    Export-DSPWebStructureAsTaxonomy -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -TermSetName "Navigation" -PageExclusionPatterns "default.aspx","NotFound"
            
 			# Test the number of XML in the output file
 			if (Test-Path $outputFileName)

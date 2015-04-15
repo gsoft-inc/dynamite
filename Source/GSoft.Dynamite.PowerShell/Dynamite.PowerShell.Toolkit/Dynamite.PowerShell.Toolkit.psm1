@@ -157,4 +157,9 @@ Export-ModuleMember Start-DSPLogging, Stop-DSPLogging
 
 # Multithreading
 Export-ModuleMember Invoke-Parallel
+
+# Pester Tests
+Export-ModuleMember New-SingleSiteNoSubsitesNoVariationsWithCustomLists, New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists, New-SiteWithSubsitesNoVariations, New-SiteWithSubsitesAndVariationsWithCustomLists,
+ New-CustomList, Get-ListItem, New-SinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders, New-TeamSiteWithSubSites, New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders, New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders
+
 #endregion

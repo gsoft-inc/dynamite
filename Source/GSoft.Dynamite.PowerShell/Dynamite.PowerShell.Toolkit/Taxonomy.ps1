@@ -804,10 +804,10 @@ function Export-DSPWebStructureAsTaxonomy {
 		[string]$TermSetName,
 
         [Parameter(Mandatory=$false)]
-		[System.Array]$ExcludeWeb,
+		[System.Array]$WebExclusionPatterns,
 
         [Parameter(Mandatory=$false)]
-		[System.Array]$ExcludePage
+		[System.Array]$PageExclusionPatterns
     )    
 
     function Process-Web {
@@ -898,13 +898,13 @@ function Export-DSPWebStructureAsTaxonomy {
                 }
 
                 # Check exclusion regex patterns
-                if ($ExcludeWeb -ne $null)
+                if ($WebExclusionPatterns -ne $null)
                 {
-                    if ((($SubWeb.Title | Select-String -Pattern $ExcludeWeb) -ne $null) -or (($SubWebTemplateId | Select-String -Pattern $ExcludeWeb) -ne $null))
+                    if ((($SubWeb.Title | Select-String -Pattern $WebExclusionPatterns) -ne $null) -or (($SubWebTemplateId | Select-String -Pattern $WebExclusionPatterns) -ne $null))
                     {
                         $Url =$SubWeb.Url
                         $Title = $SubWeb.Title
-                        $Tokens = $ExcludeWeb -Join ","
+                        $Tokens = $WebExclusionPatterns -Join ","
                         Write-Warning "Web '$Url' with title '$Title' and template '$SubWebTemplateId' matches one of exclusion tokens '$Tokens'. Skipping..."
                         $IsExcluded = $true
                     }
@@ -1060,11 +1060,11 @@ function Export-DSPWebStructureAsTaxonomy {
 		}
 
         # Check exclusion regex patterns
-        if ($ExcludePage -ne $null)
+        if ($PageExclusionPatterns -ne $null)
         {
-            if ((($PageTermLabel | Select-String -Pattern $ExcludePage) -ne $null) -or (($PageItem.Name | Select-String -Pattern $ExcludePage) -ne $null))
+            if ((($PageTermLabel | Select-String -Pattern $PageExclusionPatterns) -ne $null) -or (($PageItem.Name | Select-String -Pattern $PageExclusionPatterns) -ne $null))
             {
-                $Tokens = $ExcludePage -Join ","
+                $Tokens = $PageExclusionPatterns -Join ","
                 Write-Warning "Page with title '$PageTermLabel' matches one of exclusion tokens '$Tokens'. Skipping..."
                 $IsExcluded = $true
             }
