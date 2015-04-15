@@ -96,7 +96,7 @@ Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-Suggest
 Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens
 
 # Taxonomy
-Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup
+Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup, Export-DSPWebStructureAsTaxonomy
 
 # Features
 Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Initialize-DSPFeatures, Initialize-DSPFeature
@@ -108,7 +108,7 @@ Export-ModuleMember New-DSPManagedPath
 Export-ModuleMember New-DSPTaxonomyNavigationSettings
 
 # Variations
-Export-ModuleMember New-DSPSiteVariations, <# Sync-DSPList,#> Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy
+Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy, Get-VariationLabels
 
 # Administration
 Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
@@ -125,6 +125,9 @@ Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStruct
 # User Profile 
 Export-ModuleMember Set-DSPUserProfileSchema
 
+# Excel
+Export-ModuleMember Merge-DSPExcelColumns, Remove-DSPExcelColumn, Copy-DSPExcelColumn , Add-DSPExcelColumn , Edit-DSPExcelColumnValue, Get-DSPExcelFileContent, Open-DSPExcelFile
+
 # Faceted Search
 Export-ModuleMember New-DSPFacetedSearchSettings
 
@@ -137,15 +140,26 @@ Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache
 # Security 
 Export-ModuleMember Set-DSPWebPermissions
 
+# Sharegate
+Export-ModuleMember  Test-SharegateModule, Import-DSPData
+
 # Timer Job
 Export-ModuleMember Set-DSPTimerJobs
 
 # Utilities
-Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions, Resolve-DSPType
+Export-ModuleMember New-HeaderDrawing, Test-DSPIsAdmin, Copy-DSPFiles, Copy-DSPFile, Copy-DSPSolutions, Test-DSPDeployedSolutions, Resolve-DSPType, Invoke-GenericMethod
 
 # Remote
 Export-ModuleMember Add-DSPTrustedHosts, Get-DSPTrustedHosts, Initialize-DSPRemotePowerShell, Enter-DSPRemoteSession
 
 #Logging
 Export-ModuleMember Start-DSPLogging, Stop-DSPLogging
+
+# Multithreading
+Export-ModuleMember Invoke-Parallel
+
+# Pester Tests
+Export-ModuleMember New-SingleSiteNoSubsitesNoVariationsWithCustomLists, New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists, New-SiteWithSubsitesNoVariations, New-SiteWithSubsitesAndVariationsWithCustomLists,
+ New-CustomList, Get-ListItem, New-SinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders, New-TeamSiteWithSubSites, New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders, New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders
+
 #endregion

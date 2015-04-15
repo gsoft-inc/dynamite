@@ -352,9 +352,126 @@ function Sync-DSPWeb {
 
 	$sourceUrl = $SourceWeb.Url
 	$labelToUpper = $LabelToSync.ToUpper()
-    Write-Warning "Sync SPWeb $sourceUrl to the variation label..."
+    Write-Warning "Sync SPWeb '$sourceUrl' to the variation label '$labelToUpper'..."
 
 	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
 
 	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
+}
+
+function Sync-DSPList {
+	param
+	(
+        [Parameter(Mandatory=$true, HelpMessage = "The variation source list", Position=0, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPList]$SourceList,
+
+		[Parameter(Mandatory=$true, HelpMessage = "The label to Sync", Position=1)]
+		[string]$LabelToSync
+	)
+
+	$listTitle = $SourceList.Title
+	$labelToUpper = $LabelToSync.ToUpper()
+    Write-Warning "Sync SPList '$listTitle' to the variation label '$labelToUpper'..."
+
+	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
+
+	$variationSyncHelper.SyncList($SourceList, $LabelToSync)
+}
+
+<#
+    .SYNOPSIS
+	    Get variation labels for a SharePoint site
+	
+    .DESCRIPTION
+		Get the variation labels associtaed to a SPWeb. You can use this function to check if variations are enable on a SharePoint site. This cmdlet is compatible with MOSS 2007 and above.
+
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+		
+    .PARAMETER Path
+	    [REQUIRED] The SPWeb instance
+
+    .EXAMPLE
+
+			$Web = Get-SPWeb http://mysite	    
+			Get-VariationLabels -Web $Web
+
+	.OUTPUT
+		
+		Returns the variations labels as table like this:
+
+		Label                                   LCID                                                                   IsSource
+		-----                                   ----                                                                   --------
+		en                                      1033                                                                      False
+		fr                                      1036                                                                       True
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Get-VariationLabels {
+
+	Param
+	(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPWeb]$Web
+	)
+
+	# Load SharePoint assembly to be backward compatible with MOSS 2007
+    [void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
+	[void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
+
+    $Labels = @() 
+
+	if($Web.IsRootWeb)
+    {
+        $RootWeb = $Web
+    }
+    else
+    {
+        $RootWeb = $Web.Site.RootWeb
+    } 
+    
+    # To know if a site has variatiosn enabled, we need to check labels in the variation hidden list
+    $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($RootWeb)
+
+    if ($PublishingWeb)
+    {
+		# We cant't use the GetProperty() method because it doesn't exist in MOSS 2007
+        $ListGuid = $RootWeb.AllProperties["_VarLabelsListId"]
+        if ($ListGuid -ne $null)
+        {
+            
+            $List = $RootWeb.Lists[[Guid]$ListGuid]
+		
+            $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
+            $CamlQuery.Query = "<OrderBy><FieldRef Name='Title' /></OrderBy>"
+            $LabelItems = $List.GetItems($CamlQuery) 
+
+            $LabelItems | ForEach-Object {
+                
+                $CurrentLabel = New-Object PSObject
+
+                $CurrentLabel | Add-Member Noteproperty Label $_.Title 
+                $CurrentLabel | Add-Member Noteproperty LCID $_["Locale"]
+                $CurrentLabel | Add-Member Noteproperty IsSource $_["Is_x0020_Source"]
+
+                $Labels += $CurrentLabel
+            }          
+        }
+    }
+
+    return $Labels
 }

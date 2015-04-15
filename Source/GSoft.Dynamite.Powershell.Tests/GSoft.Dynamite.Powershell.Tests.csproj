@@ -53,25 +53,35 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Integration\Sharegate\TestVariationsSettings.xml" />
+    <Content Include="Integration\Taxonomy\TestVariationsSettings.xml" />
     <Content Include="Integration\Web\ImportWebStructure.xml" />
     <Content Include="Integration\Web\ImportWebStructure_Overwrite.xml" />
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Integration\Excel\Excel.Tests.template.ps1" />
+    <None Include="Integration\Excel\ExportSharegate_Valid.xlsx" />
     <None Include="Integration\Invoke-FastIntegrationTests.ps1" />
     <None Include="Integration\Invoke-AllIntegrationTests.ps1" />
     <None Include="Integration\Invoke-SlowIntegrationTests.ps1" />
     <None Include="Integration\Logging\Logging.Tests.ps1" />
+    <None Include="Integration\Sharegate\Sharegate.Tests.template.ps1" />
+    <None Include="Integration\Taxonomy\Taxonomy.Tests.template.ps1" />
+    <None Include="Integration\Taxonomy\TestSchema.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Integration\Tokens.DMX.ps1" />
     <None Include="Integration\Tokens.sp2013tao.ps1" />
     <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />
     <None Include="Integration\Token\Token.Tests.ps1" />
     <None Include="Integration\Utilities\Utilities.Tests.ps1" />
-    <None Include="Integration\Web\TestWebSchema.xsd">
+    <None Include="Integration\Web\TestSchema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Integration\Web\Web.Tests.template.ps1" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

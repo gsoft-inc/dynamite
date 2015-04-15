@@ -19,88 +19,6 @@ $currentAccountName   = ("[[DSP_CurrentAccount]]").ToLower()
 $variationsConfigFile   = Join-Path -Path "$here" -ChildPath "[[DSP_VariationsConfigFile]]"
 $siteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($webApplication, $tempSiteCollection))
 
-# ----------------------
-# Utility functions
-# ----------------------
-function CreateSingleSite {
-
-	$site = Get-SPSite $siteUrl -ErrorAction SilentlyContinue
-	if ($site -ne $null)
-	{
-		Remove-SPSite $site -Confirm:$false 	
-	}
-
-	if($webApplication -ne $null)
-	{
-		# Create test structure with the current account login to avoid access denied
-		$site = New-SPSite $siteUrl -OwnerAlias $currentAccountName -Template "BLANKINTERNET#0" -Name "RootWeb"
-	}
-
-	return $site
-}
-
-function CreateSubWebs {
-	param
-	(	
-		[Parameter(Mandatory=$true, Position=0)]
-		[ValidateNotNullOrEmpty()]
-		[Microsoft.SharePoint.SPWeb]$SourceWeb
-	)
-	$webs = @()
-
-	$subWeb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceWeb.Url, "subweb1"))
-	$subWeb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceWeb.Url, "subweb2"))
-	  
-	# Create a site hierarchy
-	$subWeb1 = if ((Get-SPWeb $subWeb1Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb1Url -Template "STS#0" -Name "SubWeb1"  } else { return Get-SPWeb $subWeb1Url }
-	$subWeb2 = if ((Get-SPWeb $subWeb2Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb2Url -Template "STS#0" -Name "SubWeb2"  } else { return Get-SPWeb $subWeb2Url }
-
-	$subWeb11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($subWeb1.Url, "subweb11"))
-	$subWeb11 = if ((Get-SPWeb $subWeb11Url -ErrorAction SilentlyContinue) -eq $null) { New-SPWeb $subWeb11Url -Template "STS#0" -Name "SubWeb11"  } else { return Get-SPWeb $subWeb11Url }
-
-	$webs+=$subWeb1
-	$webs+=$subWeb2
-	$webs+=$subWeb11
-
-	return $webs		
-}
-
-function CreateSingleSiteNoSubsitesNoVariations {
-		
-	return CreateSingleSite
-}
-		
-function CreateSiteWithSubsitesNoVariations {
-
-	$site = CreateSingleSite
-	CreateSubWebs -SourceWeb $site.RootWeb | Out-Null
-
-	return Get-SPSite $site.Url
-}
-
-function CreateSiteWithSubsitesAndVariations{
-
-	$site = CreateSingleSite
-	[xml]$config = Get-Content $variationsConfigFile
-		
-	# Create hierarchies on the root site
-	New-DSPSiteVariations -Config $config.Variations -Site $site
-
-	Set-VariationHierarchy -Site $site.Url
-
-	Start-Sleep -s 5
-
-	$sourceVariationSiteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.RootWeb.Url, "en"))
-
-	# Sync Sub webs
-	CreateSubWebs -SourceWeb (Get-SPWeb $sourceVariationSiteUrl) | ForEach-Object {$_ | Sync-DSPWeb -LabelToSync 'fr'}
-
-	$webApp = Get-SPWebApplication $webApplication
-	Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
-
-	return Get-SPSite $site.Url
-}
-
 # TODO: Figure out why this test only work in dev Local but not on TeamCity build :(
 Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 
@@ -110,7 +28,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 	Context "The source web doesn't exist" 	{
 		It "should throw an error " {
 
-			{ Export-DSPWebStructureStructure -SourceWeb "http:///%!" } | Should Throw
+			{ Export-DSPWebStructure -SourceWebUrl "http:///%!" } | Should Throw
 		}
 	}
 
@@ -124,13 +42,13 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
-		$site = CreateSingleSiteNoSubsitesNoVariations
+		$site = New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
 		
 
 		It "should output a XML file with the correct XSD schema" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# A file should be generated
 			$outputFileName | Should Exist
@@ -144,18 +62,22 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 
 		AfterEach {
 			Write-Host "     --Test Teardown--"
-			Remove-Item $outputFileName -Force -Confirm:$false
+
+			if (Test-Path -PathType 'Leaf' $outputFileName)
+			{
+				Remove-Item $outputFileName -Force -Confirm:$false
+			}
 		}
 
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
-		$site = CreateSingleSiteNoSubsitesNoVariations
+		$site = New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
 
 		It "should export only the source web" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -163,7 +85,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes = Select-Xml -Xml $xml -XPath "//Web"
-				$testNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Owner='" + $currentAccountName + "']")
+				$testNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='CMSPUBLISHING#0'][@Owner='" + $currentAccountName + "']")
 			}
 		   
 			$testNode | Should Not Be $null
@@ -174,19 +96,24 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 	Context "The source web has multiple subsites"	{
 	
 		AfterEach {
+
 			Write-Host "     --Test Teardown--"
-			Remove-Item $outputFileName -Force -Confirm:$false
+
+			if (Test-Path -PathType 'Leaf' $outputFileName)
+			{
+				Remove-Item $outputFileName -Force -Confirm:$false
+			}
 		}
 
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
-		$site = CreateSiteWithSubsitesNoVariations
+		$site = New-SiteWithSubsitesNoVariations -SiteUrl $siteUrl -SubWebsTemplateID "STS#0"
 
 		It "should export all webs and sub webs including the root site" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -194,7 +121,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes     = Select-Xml -Xml $xml -XPath "//Web"
-				$rootNode     = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
+				$rootNode     = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='CMSPUBLISHING#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
 				$subweb1Node  = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1033']"
 				$subweb2Node  = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1033']"
 				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1033']"            
@@ -207,10 +134,10 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 			$allNodes.Length | Should Be 4          
 		}
 
-		It "should exclude webs where title math regex tokens" {
+		It "should exclude webs where title match regex tokens" {
 			
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName -Exclude "\bSubWeb1\b","SubWeb2"
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName -WebExclusionPatterns @("\bSubWeb1\b","SubWeb2")
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -218,7 +145,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes     = Select-Xml -Xml $xml -XPath "//Web"
-				$rootNode     = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
+				$rootNode     = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='CMSPUBLISHING#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
 				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1033']"            
 			}
 		   
@@ -232,18 +159,22 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 	
 		AfterEach {
 			Write-Host "     --Test Teardown--"
-			Remove-Item $outputFileName -Force -Confirm:$false
+
+			if (Test-Path -PathType 'Leaf' $outputFileName)
+			{
+				Remove-Item $outputFileName -Force -Confirm:$false
+			}
 		}
 
 		Write-Host "     --Test Setup--"
 
 		# Create site hierarchy
-		$site = CreateSiteWithSubsitesAndVariations		
+		$site = New-SiteWithSubsitesAndVariationsWithCustomLists -SiteUrl $siteUrl -SubWebsTemplateID "STS#0" -VariationConfigFilePath $variationsConfigFile 	 
 
-		It "should export the original webs and sub webs URL structure without automatically generated variations sites (including variations root sites and target sites)" {
+		It "should export the original webs and sub webs URL structure with all generated variations sites if '-ExcludeVariationTargetWebs' is not specified" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb $site.RootWeb.Url -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -251,7 +182,35 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes = Select-Xml -Xml $xml -XPath "//Web"
-				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
+				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='CMSPUBLISHING#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
+				$enRootNode = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='en'][@Template='CMSPUBLISHING#0'][@Name='English-US'][@Language='1033']"
+				$frRootNode = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='fr'][@Template='CMSPUBLISHING#0'][@Name='French-FR'][@Language='1036']"
+				$subweb1Node = Select-Xml -Xml $xml -XPath "//Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1']"
+				$subweb2Node = Select-Xml -Xml $xml -XPath "//Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2']"
+				$subweb11Node = Select-Xml -Xml $xml -XPath "//Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11']"            
+			}
+		   
+			$rootNode | Should Not Be $null
+			$enRootNode | Should Not Be $null
+			$frRootNode | Should Not Be $null
+			$subweb1Node.Length | Should Be 2
+			$subweb2Node.Length | Should Be 2
+			$subweb11Node.Length | Should Be 2
+			$allNodes.Length | Should Be 9 
+		}
+
+		It "should ignore all SharePoint sites generated by variation system if '-ExcludeVariationTargetWebs' is specified" {
+
+			# Execute the command
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName -ExcludeVariationTargetWebs
+
+			# Search for the web node which contains the web url
+			if (Test-Path $outputFileName)
+			{
+				[xml]$xml = Get-Content $outputFileName
+
+				$allNodes = Select-Xml -Xml $xml -XPath "//Web"
+				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='CMSPUBLISHING#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1033']")
 				$subweb1Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1033']"
 				$subweb2Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1033']"
 				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1033']"            
@@ -261,13 +220,13 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 			$subweb1Node | Should Not Be $null
 			$subweb2Node | Should Not Be $null
 			$subweb11Node | Should Not Be $null
-			$allNodes.Length | Should Be 4                 
+			$allNodes.Length | Should Be 4  
 		}
 
-		It "should export webs and sub webs even if the command is run on a target variation label branch site" {
+		It "should export webs and sub webs even if the command is run on a target variation label branch site and '-ExcludeVariationTargetWebs' is not specified" {
 
 			# Execute the command
-			Export-DSPWebStructure -SourceWeb ($site.RootWeb.Url + "/fr") -OutputFileName $outputFileName
+			Export-DSPWebStructure -SourceWebUrl ($site.RootWeb.Url + "/fr") -OutputFileName $outputFileName
 
 			# Search for the web node which contains the web url
 			if (Test-Path $outputFileName)
@@ -275,17 +234,17 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 				[xml]$xml = Get-Content $outputFileName
 
 				$allNodes = Select-Xml -Xml $xml -XPath "//Web"
-				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='/'][@IsRoot='True'][@Template='BLANKINTERNET#0'][@Name='RootWeb'][@Owner='" + $currentAccountName + "'][@Language='1036']")
-				$subweb1Node = Select-Xml -Xml $xml -XPath "/Configuration/Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1036']"
-				$subweb2Node = Select-Xml -Xml $xml -XPath "/Configuration/Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1036']"
-				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1036']"            
+				$rootNode = Select-Xml -Xml $xml -XPath ("/Configuration/Web[@Path='fr'][@Template='CMSPUBLISHING#0'][@Name='French-FR'][@Language='1036']")
+				$subweb1Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb1'][@Template='STS#0'][@Name='SubWeb1'][@Language='1036']"
+				$subweb2Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web[@Path='subweb2'][@Template='STS#0'][@Name='SubWeb2'][@Language='1036']"
+				$subweb11Node = Select-Xml -Xml $xml -XPath "/Configuration/Web/Web/Web[@Path='subweb11'][@Template='STS#0'][@Name='SubWeb11'][@Language='1036']"            
 			}
 		   
-			$rootNode | Should Be $null
+			$rootNode | Should Not Be $null
 			$subweb1Node | Should Not Be $null
 			$subweb2Node | Should Not Be $null
 			$subweb11Node | Should Not Be $null
-			$allNodes.Length | Should Be 3   
+			$allNodes.Length | Should Be 4  
 		}
 	}
 
@@ -318,13 +277,13 @@ Describe "Import-DSPWebStructure" -Tag "Slow" {
 			Write-Host "     --Test Setup--"
 
 			# Create site hierarchy
-			$site = CreateSingleSiteNoSubsitesNoVariations
+			$site =  New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
 
 			$subweb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb1"))
 			$subweb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb2"))
 			$subweb11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($subweb1Url, "subweb11"))
 
-			Import-DSPWebStructure -InputFileName $inputFileName -ParentUrl $site.Url 
+			Import-DSPWebStructure -InputFileName $inputFileName -ParentUrl $site.RootWeb.Url 
 
 			$subweb1 = Get-SPWeb $subweb1Url -ErrorAction SilentlyContinue
 			$subweb2 = Get-SPWeb $subweb2Url -ErrorAction SilentlyContinue
@@ -343,7 +302,7 @@ Describe "Import-DSPWebStructure" -Tag "Slow" {
 			Write-Host "     --Test Setup--"
 
 			# Create site hierarchy
-			$site = CreateSiteWithSubsitesNoVariations
+			$site = New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
 
 			$subweb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb1"))
 			$subweb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb2"))
