@@ -184,6 +184,9 @@
     
     Begin {
                 
+		# Define a mutex to write in the log file
+		$Mutex = New-Object System.Threading.Mutex($false, "LogFileMutex")
+
         #No max queue specified?  Estimate one.
         #We use the script scope to resolve an odd PowerShell 2 issue where MaxQueue isn't seen later in the function
         if( -not $PSBoundParameters.ContainsKey('MaxQueue') )
@@ -271,7 +274,7 @@
 
                         #set up log object
                         $log = "" | select Date, Action, Runtime, Status, Details
-                        $log.Action = "Removing:'$($runspace.object)'"
+                        $log.Action = "Processing:'$($runspace.object)'"
                         $log.Date = $currentdate
                         $log.Runtime = "$runMin minutes"
 
@@ -321,7 +324,6 @@
                             $runspace.Runspace = $null
                             $runspace.powershell = $null
                             $completedCount++
-
                         }
                    
                         #If runspace isn't null set more to true  
@@ -334,9 +336,14 @@
                         if($logFile -and $log){
                             $logLine = ($log | ConvertTo-Csv -Delimiter ";" -NoTypeInformation)[1]
 
-							$StreamWriter = New-Object IO.StreamWriter $LogFile
+							[void]$Mutex.WaitOne()
+
+							Write-Verbose "Writing to log file $LogFile..."
+							$StreamWriter = New-Object IO.StreamWriter ($LogFile, $true)
 							$StreamWriter.WriteLine($logLine)
 							$StreamWriter.Close()		
+
+							[void]$Mutex.ReleaseMutex()
 						}	
                     }
 
@@ -485,9 +492,14 @@
                 New-Item -ItemType file -path $logFile -force | Out-Null
                 $logLine = ("" | Select Date, Action, Runtime, Status, Details | ConvertTo-Csv -NoTypeInformation -Delimiter ";")[0]
 
-				$StreamWriter = New-Object IO.StreamWriter $LogFile
+				[void]$Mutex.WaitOne()
+				Write-Verbose "Writing to log file $LogFile..."
+
+				$StreamWriter = New-Object IO.StreamWriter ($LogFile, $true)
 				$StreamWriter.WriteLine($logLine)
 				$StreamWriter.Close()	
+
+				[void]$Mutex.ReleaseMutex()
             }
 
             #write initial log entry
@@ -500,9 +512,14 @@
                 if($logFile) {
                     $logLine = ($log | convertto-csv -Delimiter ";" -NoTypeInformation)[1]
 
-					$StreamWriter = New-Object IO.StreamWriter $LogFile
+					[void]$Mutex.WaitOne()
+					Write-Verbose "Writing to log file $LogFile..."				
+
+					$StreamWriter = New-Object IO.StreamWriter ($LogFile, $true)
 					$StreamWriter.WriteLine($logLine)
 					$StreamWriter.Close()
+
+					[void]$Mutex.ReleaseMutex()
                 }
 
 			$timedOutTasks = $false
