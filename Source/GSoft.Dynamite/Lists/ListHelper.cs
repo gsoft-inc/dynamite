@@ -8,13 +8,10 @@ using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Globalization;
-using GSoft.Dynamite.Lists.Constants;
 using GSoft.Dynamite.Logging;
-using GSoft.Dynamite.Taxonomy;
 using Microsoft.Office.DocumentManagement.MetadataNavigation;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Navigation;
-using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -185,6 +182,14 @@ namespace GSoft.Dynamite.Lists
                 list.DraftVersionVisibility = listInfo.DraftVisibilityType;
             }
 
+            // Versioning settings
+            this.SetVersioning(
+                list, 
+                listInfo.IsVersioningEnabled, 
+                listInfo.AreMinorVersionsEnabled, 
+                listInfo.MajorVersionLimit, 
+                listInfo.MinorVersionLimit);
+
             // Ratings
             this.SetRatings(list, listInfo.RatingType, listInfo.EnableRatings);
 
@@ -245,7 +250,7 @@ namespace GSoft.Dynamite.Lists
 
             return list;
         }
-                
+
         /// <summary>
         /// Ensure a list of lists in the web
         /// </summary>
@@ -262,6 +267,42 @@ namespace GSoft.Dynamite.Lists
             }
 
             return lists;
+        }
+
+        /// <summary>
+        /// Sets the versioning on the list or library.
+        /// Note: The minor versioning enabling/disabling is only available on document libraries.
+        /// </summary>
+        /// <param name="list">The list or library.</param>
+        /// <param name="isVersioningEnabled">if set to <c>true</c> [is versioning enabled].</param>
+        /// <param name="areMinorVersionsEnabled">if set to <c>true</c> [are minor versions enabled].</param>
+        /// <param name="majorVersionLimit">The major version limit (0 is unlimited).</param>
+        /// <param name="minorVersionLimit">The minor version limit (0 is unlimited).</param>
+        public void SetVersioning(
+            SPList list, 
+            bool isVersioningEnabled, 
+            bool areMinorVersionsEnabled, 
+            int majorVersionLimit, 
+            int minorVersionLimit)
+        {
+            list.EnableVersioning = isVersioningEnabled;
+            if (isVersioningEnabled)
+            {
+                list.MajorVersionLimit = majorVersionLimit;
+
+                // If the list is a document library, minor versioning can be controlled.
+                // Else, if it's a normal list, minor versions can
+                // only be set if the moderation (drafts) is enabled.
+                if (list.BaseType == SPBaseType.DocumentLibrary)
+                {
+                    list.EnableMinorVersions = areMinorVersionsEnabled;
+                    list.MajorWithMinorVersionsLimit = minorVersionLimit;
+                }
+                else if (list.EnableModeration)
+                {
+                    list.MajorWithMinorVersionsLimit = minorVersionLimit;
+                }
+            }
         }
 
         /// <summary>

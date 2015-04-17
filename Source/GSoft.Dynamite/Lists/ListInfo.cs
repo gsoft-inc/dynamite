@@ -110,6 +110,40 @@ namespace GSoft.Dynamite.Lists
         public DraftVisibilityType DraftVisibilityType { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether [is versioning enabled].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [is versioning enabled]; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsVersioningEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [are minor versions enabled].
+        /// Applicable for document libraries only.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [are minor versions enabled]; otherwise, <c>false</c>.
+        /// </value>
+        public bool AreMinorVersionsEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the major version limit.
+        /// </summary>
+        /// <value>
+        /// The major version limit.
+        /// </value>
+        public int MajorVersionLimit { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minor version limit.
+        /// Note: 
+        /// </summary>
+        /// <value>
+        /// The minor version limit.
+        /// </value>
+        public int MinorVersionLimit { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether [enable ratings].
         /// </summary>
         /// <value>
