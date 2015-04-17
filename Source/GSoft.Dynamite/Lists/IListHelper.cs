@@ -1,13 +1,9 @@
-﻿namespace GSoft.Dynamite.Lists
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using GSoft.Dynamite.Catalogs;
-    using GSoft.Dynamite.Fields;
-    using GSoft.Dynamite.Lists.Entities;
-    using Microsoft.SharePoint;
+﻿using System.Collections.Generic;
+using GSoft.Dynamite.Fields;
+using Microsoft.SharePoint;
 
+namespace GSoft.Dynamite.Lists
+{
     /// <summary>
     /// Helper to manage lists.
     /// </summary>
@@ -34,6 +30,22 @@
         /// <param name="ratingType">The rating type. Can be "Likes" or "Ratings" </param>
         /// <param name="ratingStatus">True to enable. False to disable.</param>
         void SetRatings(SPList list, string ratingType, bool ratingStatus);
+
+        /// <summary>
+        /// Sets the versioning on the list or library.
+        /// Note: The minor versioning enabling/disabling is only available on document libraries.
+        /// </summary>
+        /// <param name="list">The list or library.</param>
+        /// <param name="isVersioningEnabled">if set to <c>true</c> [is versioning enabled].</param>
+        /// <param name="areMinorVersionsEnabled">if set to <c>true</c> [are minor versions enabled].</param>
+        /// <param name="majorVersionLimit">The major version limit (0 is unlimited).</param>
+        /// <param name="minorVersionLimit">The minor version limit (0 is unlimited).</param>
+        void SetVersioning(
+            SPList list,
+            bool isVersioningEnabled,
+            bool areMinorVersionsEnabled,
+            int majorVersionLimit,
+            int minorVersionLimit);
 
         /// <summary>
         ///  Set WriteSecurity on a SPList

@@ -9,11 +9,10 @@ using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Lists.Constants;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Web.Hosting.Administration;
 
 namespace GSoft.Dynamite.IntegrationTests.Lists
 {
@@ -2155,6 +2154,214 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 }
             }
         }
+        #endregion
+
+        #region Versioning settings
+
+        /// <summary>
+        /// Validates that EnsureList creates a new list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureList_WhenNotAlreadyExists_ShouldCreateWithVersioningSettings()
+        {
+            // Arrange
+            const string ListInfoWithoutVersioningLimitsUrl = "Lists/listInfoWithoutVersioningLimits";
+            const string ListInfoWithMajorLimitsUrl = "Lists/listInfoWithMajorLimits";
+            const string ListInfoWithMajorAndMinorLimitsUrl = "Lists/listInfoWithMajorAndMinorLimits";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfoWithoutVersioningLimits = new ListInfo(
+                    ListInfoWithoutVersioningLimitsUrl,
+                    "listInfoWithoutVersioningLimitsName",
+                    "listInfoWithoutVersioningLimitsDescription")
+                {
+                    IsVersioningEnabled = true
+                };
+
+                var listInfoWithMajorLimits = new ListInfo(
+                    ListInfoWithMajorLimitsUrl,
+                    "listInfoWithMajorLimitsName",
+                    "listInfoWithMajorLimitsDescription")
+                {
+                    IsVersioningEnabled = true,
+                    MajorVersionLimit = 10
+                };
+
+                // For minor versions, you need to enable drafts
+                var listInfoWithMajorAndMinorLimits = new ListInfo(
+                    ListInfoWithMajorAndMinorLimitsUrl, 
+                    "listInfoWithMajorAndMinorLimitsName", 
+                    "listInfoWithMajorAndMinorLimitsDescription")
+                {
+                    IsVersioningEnabled = true,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader,
+                    MajorVersionLimit = 10,
+                    MinorVersionLimit = 5
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var listWithoutVersioningLimits = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioningLimits);
+                    var listWithMajorLimits = listHelper.EnsureList(testRootWeb, listInfoWithMajorLimits);
+                    var listWithMajorAndMinorLimits = listHelper.EnsureList(testRootWeb, listInfoWithMajorAndMinorLimits);
+
+                    // Assert
+                    Assert.AreEqual(listInfoWithoutVersioningLimits.IsVersioningEnabled, listWithoutVersioningLimits.EnableVersioning);
+
+                    Assert.AreEqual(listInfoWithMajorLimits.IsVersioningEnabled, listWithMajorLimits.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorLimits.MajorVersionLimit, listWithMajorLimits.MajorVersionLimit);
+
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.IsVersioningEnabled, listWithMajorAndMinorLimits.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MajorVersionLimit, listWithMajorAndMinorLimits.MajorVersionLimit);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MinorVersionLimit, listWithMajorAndMinorLimits.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void EnsureList_WhenAlreadyExists_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/listWithVersioningSettings";
+            const string ListName = "listWithVersioningSettingsName";
+            const string ListDescription = "listWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfoWithoutVersioning = new ListInfo(ListUrl, ListName, ListDescription);
+
+                var listInfoWithoutVersioningLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true
+                };
+
+                var listInfoWithMajorLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true,
+                    MajorVersionLimit = 10
+                };
+
+                // For minor versions, you need to enable drafts
+                var listInfoWithMajorAndMinorLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader,
+                    MajorVersionLimit = 20,
+                    MinorVersionLimit = 5
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioning);
+
+                    // Assert
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioningLimits);
+                    Assert.AreEqual(listInfoWithoutVersioningLimits.IsVersioningEnabled, list.EnableVersioning);
+
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithMajorLimits);
+                    Assert.AreEqual(listInfoWithMajorLimits.IsVersioningEnabled, list.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorLimits.MajorVersionLimit, list.MajorVersionLimit);
+
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithMajorAndMinorLimits);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.IsVersioningEnabled, list.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MajorVersionLimit, list.MajorVersionLimit);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MinorVersionLimit, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void SetValidation_WithList_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/listWithVersioningSettings";
+            const string ListName = "listWithVersioningSettingsName";
+            const string ListDescription = "listWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+                    listHelper.SetVersioning(list, true, true, 10, 5);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableVersioning);
+                    Assert.AreEqual(10, list.MajorVersionLimit);
+                    Assert.AreEqual(5, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        [TestCategory(IntegrationTestCategories.Sanity)]
+        public void SetValidation_WithLibrary_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+                    listHelper.SetVersioning(list, true, true, 10, 5);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableVersioning);
+                    Assert.AreEqual(true, list.EnableMinorVersions);
+                    Assert.AreEqual(10, list.MajorVersionLimit);
+                    Assert.AreEqual(5, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
         #endregion
     }
 }

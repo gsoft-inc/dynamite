@@ -140,15 +140,11 @@ function Enable-DSPBlobCache {
 	    $WebApp.WebConfigModifications.Add($configMod4)
     }	
 		
-		
-	
-	# Update, and apply
 	$WebApp.Update()
-	
-	# Added a 5 second sleep period for multiple server farms
-	Write-Host "Waiting for web config modifications to propagate..."
-	Start-Sleep -s 5
 	$WebApp.WebService.ApplyWebConfigModifications()
+	
+	# Need to wait in  a multiple server farms
+	WaitForOneTimeTimerJobToComplete "job-webconfig-modification"
 } 
 
 <#
@@ -216,9 +212,23 @@ function Disable-DSPBlobCache {
 	}
 		
 	$WebApp.Update()
-	
-	# Added a 5 second sleep period for multiple server farms
-	Write-Host "Waiting for web config modifications to propagate..."
-	Start-Sleep -s 5
 	$WebApp.WebService.ApplyWebConfigModifications()
-} 
+	
+	# Need to wait in  a multiple server farms
+	WaitForOneTimeTimerJobToComplete "job-webconfig-modification"
+}
+	 
+function WaitForOneTimeTimerJobToComplete([string]$timerJobName) {
+	$timerJob = $null
+	do {
+		# See if the one-time timer job exists (i.e. has been scheduled)
+		$timerJob = Get-SPTimerJob $timerJobName
+	 
+		# If it exists then wait and repeat until it no longer exists
+		if ($timerJob) {
+			Write-Host "Waiting a while for the '$timerJobName' to complete."
+			Sleep 2
+		}
+	}
+	while ($timerJob)
+}
