@@ -192,7 +192,7 @@ namespace GSoft.Dynamite.Fields
                     field.DefaultFormula = fieldInfo.DefaultFormula;
                 }
 
-                field.Update();
+                field.Update(fieldInfo.AreChangesPushedToList);
             }
 
             return field;
@@ -232,7 +232,7 @@ namespace GSoft.Dynamite.Fields
             taxoField.AnchorId = Guid.Empty;
             taxoField.TermSetId = Guid.Empty;
             taxoField.SspId = Guid.Empty;
-            taxoField.Update();
+            taxoField.Update(taxonomyFieldInfo.AreChangesPushedToList);
         }
 
         private void ApplyTaxonomyMultiTermStoreMapping(SPFieldCollection fieldCollection, SPField field, TaxonomyMultiFieldInfo taxonomyMultiFieldInfo)

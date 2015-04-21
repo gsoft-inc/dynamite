@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Web;
-using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Collections;
@@ -17,7 +16,6 @@ using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.ValueTypes;
 using GSoft.Dynamite.ValueTypes.Writers;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.BusinessData.MetadataModel;
 using Microsoft.SharePoint.Publishing.Fields;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -4974,6 +4972,85 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     Assert.AreEqual(fieldInfo.DefaultValue, fieldRefetched.DefaultValue);
                 }
             }
+        }
+
+        #endregion
+
+        #region "Ensure" should mean "Create if new or return existing"
+
+        /// <summary>
+        /// Validates that EnsureField updates the field on a list if it is updated as a site column when the property "AreChangesPushedToList" is set to true.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenFieldIsUpdatedOnRootSiteAndIsUsedInAListAndFieldInfoAreChangesPushedToListIsTrue_ShouldUpdateFieldOnList()
+        {
+            // Arrange
+            // Configure a field
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+            {
+                Required = RequiredType.NotRequired,
+                MaxLength = 50,
+                AreChangesPushedToList = true
+            };           
+
+            // Configure a content type
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Fields = new List<BaseFieldInfo>()
+                {
+                    textFieldInfo
+                }
+            };
+
+            // Configure a list
+            var listInfo = new ListInfo("Lists/SomeList", "nameKey", "descriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                {
+                    contentTypeInfo
+                }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+            {
+                // Act
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                
+                var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                var listHelper = injectionScope.Resolve<IListHelper>();
+                var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                // Create content type if initial field
+                var contentType = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                // Create list with the above content type
+                var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                // Update the field definition
+                var updatedTextFieldInfo = textFieldInfo;
+                updatedTextFieldInfo.MaxLength = 200;
+
+                // Update the field in the root site
+                var updatedField = fieldHelper.EnsureField(rootWeb.Fields, updatedTextFieldInfo) as SPFieldText;
+
+                // Get Field from list
+                var updatedListField = list.Fields.Cast<SPField>().Single(f => f.InternalName.Equals(textFieldInfo.InternalName, StringComparison.InvariantCultureIgnoreCase)) as SPFieldText;
+                
+                // Assert
+                Assert.AreEqual(updatedTextFieldInfo.MaxLength, updatedField.MaxLength);
+                Assert.AreEqual(updatedTextFieldInfo.MaxLength, updatedListField.MaxLength);
+            }            
         }
 
         #endregion
