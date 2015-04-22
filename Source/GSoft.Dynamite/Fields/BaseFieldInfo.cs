@@ -211,6 +211,11 @@ namespace GSoft.Dynamite.Fields
         public string DefaultFormula { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether to propagate the changes done to this definition to the lists that implement the field.
+        /// </summary>
+        public bool AreChangesPushedToList { get; set; }
+
+        /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes
         /// </summary>
         /// <param name="baseFieldSchema">
