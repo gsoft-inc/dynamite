@@ -14,6 +14,7 @@
         /// </summary>
         /// <param name="site">The site to which the work item will be associated</param>
         /// <param name="workItemType">The ID of the type of timer job to launch</param>
+        /// <returns>The Id of the created work item</returns>
         Guid CreateWorkItem(SPSite site, Guid workItemType);
 
         /// <summary>

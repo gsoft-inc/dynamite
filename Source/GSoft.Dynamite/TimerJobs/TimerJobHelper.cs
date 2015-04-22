@@ -17,11 +17,11 @@ namespace GSoft.Dynamite.TimerJobs
         /// </summary>
         /// <param name="site">The site to which the work item will be associated</param>
         /// <param name="workItemType">The ID of the type of timer job to launch</param>
+        /// <returns>The Id of the created work item</returns>
         public Guid CreateWorkItem(SPSite site, Guid workItemType)
         {
             var rootWeb = site.RootWeb;
-            var workItemId = site.AddWorkItem(Guid.NewGuid(), DateTime.Now.ToUniversalTime(), workItemType, rootWeb.ID, site.ID, 1, false, Guid.Empty, Guid.Empty, rootWeb.CurrentUser.ID, null, string.Empty, Guid.Empty, false);
-            return workItemId;
+            return site.AddWorkItem(Guid.NewGuid(), DateTime.Now.ToUniversalTime(), workItemType, rootWeb.ID, site.ID, 1, false, Guid.Empty, Guid.Empty, rootWeb.CurrentUser.ID, null, string.Empty, Guid.Empty, false);
         }
 
         /// <summary>
