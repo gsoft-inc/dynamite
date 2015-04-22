@@ -88,9 +88,10 @@ function Wait-SPTimerJob()
     }
     else
     {
+        $JobLastRunTime = $job.LastRunTime
+
 		Start-SPTimerJob $job
 		
-        $JobLastRunTime = $job.LastRunTime
         Write-Verbose "Waiting to finish job $JobFullName last run on $JobLastRunTime"
         
         while ((Get-SPTimerJob $job.Id).LastRunTime -eq $JobLastRunTime) 

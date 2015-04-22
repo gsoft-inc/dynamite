@@ -10,48 +10,42 @@
     public interface ITimerJobHelper
     {
         /// <summary>
-        /// The create job.
+        /// Creates a work item to be processed by the next associated timer job.
         /// </summary>
-        /// <param name="site">
-        /// The site.
-        /// </param>
-        /// <param name="workItemType">
-        /// The work item type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        Guid CreateJob(SPSite site, Guid workItemType);
+        /// <param name="site">The site to which the work item will be associated</param>
+        /// <param name="workItemType">The ID of the type of timer job to launch</param>
+        /// <returns>The Id of the created work item</returns>
+        Guid CreateWorkItem(SPSite site, Guid workItemType);
 
         /// <summary>
-        /// The start job.
+        /// Starts a timer job (runs it only once)
         /// </summary>
         /// <param name="site">
-        /// The site.
+        /// The site that will determine which web app's timer job definition will be used
         /// </param>
         /// <param name="jobName">
-        /// The job name.
+        /// The job name (i.e. the CamelCaseTimerJobTypeName).
         /// </param>
         /// <exception cref="ArgumentException">
         /// If jobName is not found, exception is thrown
         /// </exception>
         /// <returns>
-        /// The job id<see cref="Guid"/>.
+        /// The started job id <see cref="Guid"/>.
         /// </returns>
-        Guid StartJob(SPSite site, string jobName);
+        Guid StartJobAndReturn(SPSite site, string jobName);
 
         /// <summary>
-        /// The wait for job.
+        /// Starts a timer job (runs it only once) and blocks until it is done.
         /// </summary>
         /// <param name="site">
-        /// The site.
+        /// The site that will determine which web app's timer job definition will be used.
         /// </param>
-        /// <param name="jobId">
-        /// The job id.
+        /// <param name="jobName">
+        /// The job name (i.e. the CamelCaseTimerJobTypeName).
         /// </param>
-        /// <param name="startDate">
-        /// The start date.
-        /// </param>
-        void WaitForJob(SPSite site, Guid jobId, DateTime startDate);
+        /// <exception cref="ArgumentException">
+        /// If jobName is not found, exception is thrown
+        /// </exception>
+        void StartAndWaitForJob(SPSite site, string jobName);
     }
 }

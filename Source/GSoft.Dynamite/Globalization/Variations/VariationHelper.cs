@@ -286,13 +286,8 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labels">The variation labels</param>
         public void CreateHierarchies(SPSite site, IList<VariationLabelInfo> labels)
         {
-            this.timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
-
-            var jobId = this.timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
-
-            DateTime startTime = DateTime.Now.ToUniversalTime();
-
-            this.timerJobHelper.WaitForJob(site, jobId, startTime);
+            this.timerJobHelper.CreateWorkItem(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
+            this.timerJobHelper.StartAndWaitForJob(site, "VariationsCreateHierarchies");
 
             // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
             // Also take care of setting the regional settings on each site.
