@@ -406,7 +406,6 @@ function Export-DSPWebStructure {
     [CmdletBinding()]
 	param
 	(
-		[ValidateScript({(Get-SPWeb $_) -ne $null})]
 		[Parameter(Mandatory=$true, Position=0)]
 		[string]$SourceWebUrl,
 
@@ -418,12 +417,14 @@ function Export-DSPWebStructure {
 
 		[Parameter(Mandatory=$false)]
 		[ValidateScript({
-		  If ((Get-SPSite $SourceWebUrl) -ne $null){			
-			Return $true
-		  }
-		  Else {
-			Throw "You can only use this parameter on a root web of a site collection"
-		  }
+			$Site = New-Object Microsoft.SharePoint.SPSite($SourceWebUrl)
+			$SourceWeb = $Site.OpenWeb()
+			If ($SourceWeb.IsRootWeb){			
+				Return $true
+			}
+			Else {
+				Throw "You can only use this parameter on a root web of a site collection"
+			}
 		})]
 		[switch]$IgnoreVariations
 	)   

@@ -39,7 +39,7 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 	Context "The source web doesn't exist" 	{
 		It "should throw an error " {
 
-			{ Export-DSPWebStructure -SourceWebUrl "http:///%!" } | Should Throw
+			{ Export-DSPWebStructure -SourceWebUrl "http:///%!" -OutputFileName $outputFileName } | Should Throw
 		}
 	}
 
