@@ -130,7 +130,8 @@ function Get-DSPTermStore()
 		}
 		
 		"default" {
-			$serviceApp = @(Get-SPServiceApplicationProxy | Where {$_.TypeName -like "*Metadata*"})[0]
+			#$serviceApp = @(Get-SPServiceApplicationProxy | Where {$_.TypeName -like "*Metadata*"})[0]
+			$serviceApp = @(Get-SPServiceApplicationProxy | Where {$_.GetType().Name -like "*Metadata*"})[0]
 			$identifier = $serviceApp.Name
 		}
 	}
