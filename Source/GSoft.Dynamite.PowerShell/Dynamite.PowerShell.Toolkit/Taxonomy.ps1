@@ -1173,7 +1173,7 @@ function ConvertTo-DSPTaxonomyStructure {
 			# SharePoint taxonomy term set does not allow duplicate labels for a language at the same level
 			$duplicateNodes = $ParentXMLElement.SelectNodes(".//Label") | Where-Object { ($_.Value -eq $Label) -and ($_.Language -eq $Language) }
 
-			if ($duplicateNodes.Count -eq 0)
+			if ($duplicateNodes -eq $null)
 			{
 				[System.XML.XMLElement]$LabelXMLElement= $XMLDocument.CreateElement("Label")
             
