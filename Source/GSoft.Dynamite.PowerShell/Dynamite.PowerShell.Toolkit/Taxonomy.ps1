@@ -1037,22 +1037,19 @@ function ConvertTo-DSPTaxonomyStructure {
         $PageTermLabels = @{}
         $IsExcluded = $false
 		$ParentWeb = $PageItem.ParentList.ParentWeb
+		$PageTermLabel = $PageItem.Title
 
         # Wiki pages don't have a title property but publishing pages do
-        if ([string]::IsNullOrEmpty($PageItem.Title))
+        if ([string]::IsNullOrEmpty($PageTermLabel))
         {
             $PageTermLabel = $PageItem.DisplayName
-        }
-        else
-        {
-            $PageTermLabel = $PageItem.Title
-        }
 
-		# Finally, if the title is null, we take the web title
-		if ( $PageTermLabel -eq $null)
-		{
-			$PageTermLabel = $ParentWeb.Title
-		}
+			# Finally, if the title is null, we take the item name (cannot be null)
+			if ($PageTermLabel -eq $null)
+			{
+				$PageTermLabel = $PageItem.Name
+			}
+        }
 
         # Check exclusion regex patterns
         if ($PageExclusionPatterns -ne $null)
@@ -1095,9 +1092,22 @@ function ConvertTo-DSPTaxonomyStructure {
 
 							$PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
 							$PeerWeb = $PeerSite.OpenWeb()
-							$PeerPage =$PeerWeb.GetListItem($_)
+							$PeerPage = $PeerWeb.GetListItem($_)
+							$PeerPageTermLabel = $PeerPage.Title
 
-							$PageTermLabels.Add($PeerWeb.Locale.LCID, $PeerPage.Title)
+							# Wiki pages don't have a title property but publishing pages do
+							if ([string]::IsNullOrEmpty($PeerPageTermLabel))
+							{
+								$PeerPageTermLabel = $PageItem.DisplayName
+
+								# Finally, if the title is null, we take the web title
+								if ($PeerPageTermLabel -eq $null)
+								{
+									$PeerPageTermLabel = $PeerPage.Name
+								}
+							}
+
+							$PageTermLabels.Add($PeerWeb.Locale.LCID, $PeerPageTermLabel)
                 
 							$PeerWeb.Dispose()
 							$PeerSite.Dispose()
