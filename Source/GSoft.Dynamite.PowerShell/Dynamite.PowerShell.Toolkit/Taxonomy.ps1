@@ -1217,6 +1217,10 @@ function ConvertTo-DSPTaxonomyStructure {
             [string]$Comment     
         )
 
+		# Normalize comment
+		# https://msdn.microsoft.com/en-us/library/bb514668%28v=vs.90%29.aspx
+		$Comment =  $Comment.Replace("--", [string]::Empty)
+
         [System.XML.XmlComment]$CommentElement = $XMLDocument.CreateComment($Comment)
         [void]$ParentXMLElement.appendChild($CommentElement)
     }
