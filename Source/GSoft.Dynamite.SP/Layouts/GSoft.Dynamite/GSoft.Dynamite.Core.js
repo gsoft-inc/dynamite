@@ -36,14 +36,19 @@ window.GSoft = window.GSoft || {};
 // GSoft.Dynamite namespace root
 window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
+// GSoft Exception Object
+function Exception(message) {
+    this.message = message;
+}
+
 // ====================
 // Core module
 // ====================
 (function (Core, $, undefined) {
 
-    Core.initialize = function (params) {
-
+    Core.initialize = function () {
     };
+
 }(GSoft.Dynamite.Core = GSoft.Dynamite.Core || {}, jq111));
 
 // ====================
@@ -65,9 +70,9 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
     function innerensureResourceThenExecute(allPrerequisiteResourceFiles, restOfPrerequisiteResourceFiles, functionToExecute) {
         if (!$.isArray(allPrerequisiteResourceFiles) ||
-            allPrerequisiteResourceFiles.length == 0 ||
+            allPrerequisiteResourceFiles.length === 0 ||
             !$.isArray(restOfPrerequisiteResourceFiles) ||
-            restOfPrerequisiteResourceFiles.length == 0) {
+            restOfPrerequisiteResourceFiles.length === 0) {
             throw new Exception("Only call ensureResourceThenExecute with a non-empty array. E.g. ['GSoft.Dynamite', 'GSoft.Dynamite.News']");
         }
 
@@ -102,7 +107,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     function waitUntilAllResourceFilesAreLoadedThenExecute(allPrerequisiteResourceFiles, functionToExecute) {
         setTimeout(function () {
             var allLoaded = _.all(allPrerequisiteResourceFiles, function (prereqFileKey) {
-                return Resource[prereqFileKey] && Resource[prereqFileKey] != "fetching";
+                return Resource[prereqFileKey] && Resource[prereqFileKey] !== "fetching";
             });
 
             if (allLoaded) {
@@ -120,9 +125,9 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     }
 
     function currentCulture() {
-        if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1033) {
+        if (_spPageContextInfo && _spPageContextInfo.currentLanguage === 1033) {
             return "en-US";
-        } else if (_spPageContextInfo && _spPageContextInfo.currentLanguage == 1036) {
+        } else if (_spPageContextInfo && _spPageContextInfo.currentLanguage === 1036) {
             return "fr-FR";
         } else {
             return "en-US";
@@ -169,8 +174,8 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
     MetadataPanel.initialize = function (tabs) {
         $(document).ready(function () {
-            if (MetadataPanel.viewModelInstance == null) {
-                if ($("#metadata-panel").length == 1) {
+            if (MetadataPanel.viewModelInstance === null) {
+                if ($("#metadata-panel").length === 1) {
                     MetadataPanel.viewModelInstance = new MetadataPanel.MetadataPanelViewModel(tabs);
 
                     // support only one metadata panel per page
@@ -187,7 +192,7 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
 
         self.findTab = function (tabId) {
             return _.find(self.tabs(), function (oneTab) {
-                return oneTab.id() == tabId;
+                return oneTab.id() === tabId;
             });
         };
 
@@ -249,19 +254,21 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     Utilities.CurrentWebUrl = null;
     Utilities.ParentFolderUrl = "#";
 
-    Utilities.initialize = function (params) {
-
+    Utilities.initialize = function () {
     };
 
     Utilities.ExtractTaxonomyInfo = function (taxonomyValue) {
         if (taxonomyValue) {
 
             var results = [];
+
+            /* jshint ignore:start */
             var regex = /L0\|#0([a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12})\|([\d \w \s áàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ']*);/gi;
 
             while ((match = regex.exec(taxonomyValue)) !== null) {
                 results.push({ id: match[1], label: match[2] });
             }
+            /* jshint ignore:end */
 
             return results;
         }
@@ -275,10 +282,10 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
         }
 
         return "/_layouts/";
-    }
+    };
 
     Utilities.shortenAndEllipsis = function (text, size) {
-        if (text != null && text.length > size) {
+        if (text !== null && text.length > size) {
             text = text.substring(0, size);
 
             // find the last blank space to cut the text
@@ -289,14 +296,17 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
     };
 
     Utilities.QueryObject = function () {
-        var result = {},
-            queryString = location.search.slice(1),
+        var result = {};
+
+        /* jshint ignore:start */
+        var queryString = location.search.slice(1),
             regex = /([^&=]+)=([^&]*)/g,
             match;
 
         while (match = regex.exec(queryString)) {
             result[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
         }
+        /* jshint ignore:end */
 
         return result;
     };
@@ -347,34 +357,34 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 }
             });
         });
-    }
+    };
 
     function addLinkToSiteActions() {
         GSoft.Dynamite.Resource.ensureResourceThenExecute(["GSoft.Dynamite"], function () {
-            var newLink = $('<div class="parent-folder-link"><a title="'
-                + GSoft.Dynamite.Resource["GSoft.Dynamite"].siteAction_OpenParentFolder
-                + '" href="' + Utilities.ParentFolderUrl
-                + '"><img /></a></div>');
+            var newLink = $('<div class="parent-folder-link"><a title="' +
+                GSoft.Dynamite.Resource["GSoft.Dynamite"].siteAction_OpenParentFolder +
+                '" href="' + Utilities.ParentFolderUrl +
+                '"><img /></a></div>');
             var img = newLink.find("img");
             img.attr("src", Utilities.LayoutFolder() + "GSoft.Dynamite/Img/icon_open_parent.png");
             $(".ms-siteactionscontainer .s4-breadcrumb-anchor").after(newLink);
         });
-    };
+    }
 }(GSoft.Dynamite.Utilities = GSoft.Dynamite.Utilities || {}, jq111));
 
 // ====================
 // DisplayTemplateHelper module
 // ====================
 (function (DisplayTemplateHelper, $, undefined) {
-    
+
     DisplayTemplateHelper.ensureAbsoluteImageUrl = function (pictureUrlItemValue, spSiteUrl) {
 
         // Get search item values
         var siteUrlItemValue = spSiteUrl;
 
         // Check if indexed values aren't null or empty
-        if ((pictureUrlItemValue != null) &&
-			(!siteUrlItemValue.isNull && !siteUrlItemValue.isEmpty)) {
+        if ((pictureUrlItemValue !== null) &&
+            (!siteUrlItemValue.isNull && !siteUrlItemValue.isEmpty)) {
 
             // Get the image source attribute
             var sourceAttributeMatch = pictureUrlItemValue.match(/src=\"(.+?)\"/i);
@@ -432,6 +442,6 @@ window.GSoft.Dynamite = window.GSoft.Dynamite || {};
                 url,
                 'sharer',
                 'toolbar=0,status=0,width=548,height=325');
-        }
+        };
     };
 }(GSoft.Dynamite.FacebookHelper = GSoft.Dynamite.FacebookHelper || {}, jq111));

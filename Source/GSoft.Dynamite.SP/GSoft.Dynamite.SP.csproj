@@ -157,6 +157,7 @@
     <None Include="ISAPI\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{7c47e56b-8f3c-43b2-b706-66be67fe7db1}</SharePointProjectItemId>
     </None>
+    <None Include="JSHintConfig.json" />
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.eot" />
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.ttf" />
     <None Include="Layouts\GSoft.Dynamite\CSS\fonts\glyphicons-halflings-regular.woff" />

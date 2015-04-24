@@ -1,0 +1,52 @@
+﻿{
+    "output": "Warning",
+    "runOnSave": false,
+    "runOnBuild": false,
+    "cancelBuild": false,
+    "ignore": [
+        "JSHint.js",
+        "\\bin",
+        "\\pkg",
+        "\\DynamiteBootstrapResponsive",
+        "\\DynamiteBootstrapNonResponsive",
+        "\\Layouts\\GSoft.Dynamite\\Lib",
+        "\\Layouts\\GSoft.Dynamite\\GSoft.Dynamite.Core.min.js",
+        "\\Layouts\\GSoft.Dynamite\\GSoft.Dynamite.Knockout.Extensions.min.js",
+        "\\Layouts\\GSoft.Dynamite\\GSoft.Dynamite.Knockout.BindindHandlers.min.js"
+    ],
+    "options": {
+        "predef": {
+            "define": false,
+            "ko": false,
+            "window": false,
+            "namespace": false,
+            "g": false,
+            "gsoft": false,
+            "GSoft": false,
+            "SP": false,
+            "Srch":  false,
+            "_spPageContextInfo": false,
+            "jq111":  false,
+            "$": false,
+            "_": false,
+            "moment": false,
+            "FB": false,
+            "$registerResourceDictionary": false,
+            "$getItemValue":  false,
+            "AddPostRenderCallback":  false,
+            "ExecuteOrDelayUntilScriptLoaded": false,
+            "g_workspaceResizedHandlers":  false
+        },
+        "unused": true,
+        "undef": true,
+        "bitwise": true,
+        "browser": true,
+        "curly": true,
+        "jquery": true,
+        "noarg": true,
+        "noempty": true,
+        "nonew": true,
+        "devel": true,
+        "forin": true
+    }
+}
