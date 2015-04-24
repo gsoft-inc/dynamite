@@ -1048,11 +1048,6 @@ function ConvertTo-DSPTaxonomyStructure {
             $PageTermLabel = $PageItem.Title
         }
 
-		# Trim Special characters not allowed for a term label (;"<>|&tab)
-		# See https://msdn.microsoft.com/en-us/library/office/ee565922.aspx
-		
-		$PageTermLabel = $PageTermLabel -replace '[;"<>|\t]+',[string]::Empty
-
 		# Finally, if the title is null, we take the web title
 		if ( $PageTermLabel -eq $null)
 		{
@@ -1161,19 +1156,30 @@ function ConvertTo-DSPTaxonomyStructure {
         $Labels.Keys | ForEach-Object  {
 			
 			$Label = $Labels.Get_Item($_)
-            $LabelXPAth = $Label.Replace('"',"&quot;").Replace("'","&apos;")
+			$Language = $_
 
+			# Replace encoded characters ($quot; $amp; etc.) with real values
+			$Label = [System.Web.HttpUtility]::HtmlDecode($Label)
+
+			# Trim Special characters not allowed for a term label (;"<>|&tab)
+			# See https://msdn.microsoft.com/en-us/library/office/ee565922.aspx
+		
+			$Label = $Label -replace '[;"<>|\t]+',[string]::Empty
+
+			# Trim consecutive whitespaces
+			$Label = $Label -replace '\s+', ' '
+				
 			# Check if a similar node is present at the same level (Terms node)
 			# SharePoint taxonomy term set does not allow duplicate labels for a language at the same level
-			$duplicateNodes = $ParentXMLElement.SelectNodes(".//Label[@Value='"+ $LabelXPAth +"'][@Language='"+ $_ +"'][@IsDefaultForLanguage='True']")
+			$duplicateNodes = $ParentXMLElement.SelectNodes(".//Label") | Where-Object { ($_.Value -eq $Label) -and ($_.Language -eq $Language) }
 
 			if ($duplicateNodes.Count -eq 0)
 			{
 				[System.XML.XMLElement]$LabelXMLElement= $XMLDocument.CreateElement("Label")
             
 				# Ex: <Label Value="MyTerm" Language="1033" IsDefaultForLanguage="True" />
-				[void]$LabelXMLElement.SetAttribute("Value", $Labels.Get_Item($_))
-				[void]$LabelXMLElement.SetAttribute("Language", $_)
+				[void]$LabelXMLElement.SetAttribute("Value", $Label)
+				[void]$LabelXMLElement.SetAttribute("Language", $Language)
 
 				if ($AssociatedWeb.Locale.LCID -eq $_)
 				{
