@@ -792,7 +792,10 @@ function Import-DSPWebStructure {
 									}
 									else
 									{
-										Write-Warning "Web with url '$NewUrl' already exists in the site collection. Skipping..."  
+										Write-Warning "Web with url '$NewUrl' already exists in the site collection. Update only the title..."  
+																				
+										$web.Title = $TargetWeb.Name
+										$web.Update()
 									}
 								}	
 								else
