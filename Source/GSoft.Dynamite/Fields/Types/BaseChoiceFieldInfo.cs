@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.Fields.Types
     /// </summary>
     public abstract class BaseChoiceFieldInfo : BaseFieldInfoWithValueType<string>
     {
-        private List<string> choices = new List<string>(); 
+        private readonly IList<string> choices = new List<string>(); 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseChoiceFieldInfo"/> class.
