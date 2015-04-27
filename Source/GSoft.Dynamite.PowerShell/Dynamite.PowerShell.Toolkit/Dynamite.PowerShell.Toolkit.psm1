@@ -96,7 +96,7 @@ Export-ModuleMember -Function New-DSPStructure, Remove-DSPStructure, New-Suggest
 Export-ModuleMember -Function Update-DSPTokens, Initialize-DSPTokens
 
 # Taxonomy
-Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup, Export-DSPWebStructureAsTaxonomy
+Export-ModuleMember -Function Get-DSPTaxonomySession, Get-DSPTermStore, Get-DSPTermSet, New-DSPTaxonomyField, Set-DSPTaxonomyField, Set-DSPTaxonomyTerms, Set-DSPTaxonomyFieldMultiValue, Set-DSPTaxonomyFieldValue, Remove-DSPTermGroup, ConvertTo-DSPTaxonomyStructure
 
 # Features
 Export-ModuleMember Initialize-DSPFarmFeatures, Initialize-DSPWebApplicationFeatures, Initialize-DSPSiteCollectionsFeatures, Initialize-DSPSiteAllWebsFeatures, Initialize-DSPWebFeatures, Initialize-DSPFeatures, Initialize-DSPFeature
@@ -120,7 +120,7 @@ Export-ModuleMember Add-DSPFile, Set-DSPAlerts, Add-DSPAlert
 Export-ModuleMember Add-DSPSampleContent, Add-DSPReusableContentSnippets
 
 # Web
-Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStructure, Import-DSPWebStructure
+Export-ModuleMember New-DSPWebXml, Set-DSPWebSearchSettings, Export-DSPWebStructure, Import-DSPWebStructure, Remove-DSPWeb
 
 # User Profile 
 Export-ModuleMember Set-DSPUserProfileSchema

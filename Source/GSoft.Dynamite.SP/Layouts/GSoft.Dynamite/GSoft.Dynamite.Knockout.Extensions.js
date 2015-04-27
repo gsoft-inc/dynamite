@@ -1,10 +1,10 @@
 ﻿// This extender allow you to add paging functionality to any observableArray
-ko.extenders.paging = function (target, argument) {
+ko.extenders.paging = function (target) {
     var _currentPageNumber = ko.observable(1);
 
     target.currentPageNumber = ko.computed({
         read: _currentPageNumber,
-        write: function(newValue) {
+        write: function (newValue) {
             if (newValue > target.pageCount()) {
                 _currentPageNumber(target.pageCount());
             } else if (newValue <= 0) {
@@ -45,4 +45,4 @@ ko.extenders.paging = function (target, argument) {
     target.moveLast = function () {
         target.currentPageNumber(target.pageCount());
     };
-}
+};

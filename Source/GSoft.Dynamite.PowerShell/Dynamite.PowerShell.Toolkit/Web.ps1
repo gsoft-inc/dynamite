@@ -374,17 +374,17 @@ function Remove-DSPWeb {
           <Web Name="Home" Path="/" Template="BLANKINTERNET#0" IsRoot="True" Owner="office\joe.blow">
             <Web Name="Sub Web 1" Path="subweb1" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 1" Path="soussite1" Template="BLANKINTERNET#2" Language="1036" Label="fr" />
+					<Variation Name="Sous Site 1" Path="soussite1" Language="1036" Label="fr" />
 				</Variations>
               <Web Name="Sub Sub Web 1" Path="subweb11" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 11" Path="soussite11" Template="BLANKINTERNET#2" Language="1036" Label="fr" />
+					<Variation Name="Sous Site 11" Path="soussite11" Language="1036" Label="fr" />
 				</Variations>
               </Web>
             </Web>
             <Web Name="Sub Web 2" Path="subweb2" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 2" Path="soussite2" Template="BLANKINTERNET#2" Language="1036" Label="fr" />
+					<Variation Name="Sous Site 2" Path="soussite2" Language="1036" Label="fr" />
 				</Variations>
             </Web>
           </Web>
@@ -792,7 +792,10 @@ function Import-DSPWebStructure {
 									}
 									else
 									{
-										Write-Warning "Web with url '$NewUrl' already exists in the site collection. Skipping..."  
+										Write-Warning "Web with url '$NewUrl' already exists in the site collection. Update only the title..."  
+																				
+										$web.Title = $TargetWeb.Name
+										$web.Update()
 									}
 								}	
 								else
