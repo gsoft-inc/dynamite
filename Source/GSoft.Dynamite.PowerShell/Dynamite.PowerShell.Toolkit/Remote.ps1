@@ -1,16 +1,16 @@
 function Get-DSPTrustedHosts()
 {
-	(get-item wsman:\localhost\Client\TrustedHosts).value
+    (get-item wsman:\localhost\Client\TrustedHosts).value
 }
 
 function Add-DSPTrustedHosts()
 {
-	[CmdletBinding()]
-	param
-	(
-		[Parameter(Mandatory=$true, Position=1)]
-		[string]$proposedHost
-	)
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$proposedHost
+    )
 
     if (Test-DSPIsAdmin)
     {
@@ -45,45 +45,48 @@ function Add-DSPTrustedHosts()
 
 function Initialize-DSPRemotePowerShell()
 {
-	[CmdletBinding()]
-	param
-	(
-		[Parameter(Mandatory=$true, Position=1)]
-		[string]$proposedHost
-	)
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$proposedHost
+    )
 
     # Enable PowerShell Remoting
     Enable-PSRemoting -Force
 
     # Add Hostname to Trusted Hostname
     Add-DSPTrustedHosts $proposedHost
+
+    # Enable CredSSP
+    Enable-WSManCredSSP -Role Client -Force -DelegateComputer $proposedHost
 }
 
 function Enter-DSPRemoteSession()
 {
-	[CmdletBinding()]
-	param
-	(
-		[Parameter(Mandatory=$true, Position=0)]
-		[string]$Username,
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$Username,
 
         [Parameter(Mandatory=$true, Position=1)]
-		[string]$Password,
+        [string]$Password,
 
         [Parameter(Mandatory=$true, Position=2)]
-		[string]$ComputerName 
-	)
+        [string]$ComputerName 
+    )
 
-	[SecureString]$securePassword = $null
-	# If password is a path, consider it an encrypted password file
-	if(Test-Path $Password)
-	{
-		$securePassword = Get-Content $Password | ConvertTo-SecureString
-	}
-	else
-	{
-		$securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
-	}
+    [SecureString]$securePassword = $null
+    # If password is a path, consider it an encrypted password file
+    if(Test-Path $Password)
+    {
+        $securePassword = Get-Content $Password | ConvertTo-SecureString
+    }
+    else
+    {
+        $securePassword = ConvertTo-SecureString $Password -AsPlainText -Force
+    }
 
     $cred = New-Object System.Management.Automation.PSCredential ($Username, $securePassword)
     Enter-PSSession –ComputerName $ComputerName –Credential $cred -Authentication Credssp
