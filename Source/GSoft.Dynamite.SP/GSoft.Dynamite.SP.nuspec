@@ -8,7 +8,7 @@
     <owners>GSoft</owners>
     <licenseUrl>https://github.com/GSoft-SharePoint/Dynamite/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/GSoft-SharePoint/Dynamite/</projectUrl>
-    <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
+    <iconUrl>http://www.gsoft.com/support/img/dynamite-logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A SharePoint full-trust solution package (WSP) with PowerShell tools to help you deploy the GSoft.Dynamite C# toolkit to your SharePoint 2013 farm</description>
     <releaseNotes></releaseNotes>
@@ -16,7 +16,7 @@
     <tags>SharePoint</tags>
   </metadata>
   <files>
-	  <file src="bin\Release\GSoft.Dynamite.wsp" target="tools" />
+    <file src="bin\Release\GSoft.Dynamite.wsp" target="tools" />
     <file src="..\GSoft.Dynamite.PowerShell\*" target="tools" />
     <file src="..\GSoft.Dynamite.PowerShell\Dynamite.PowerShell.Toolkit\*" target="tools\Dynamite.PowerShell.Toolkit" />
   </files>
