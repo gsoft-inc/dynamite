@@ -149,7 +149,18 @@ namespace GSoft.Dynamite.Pages
                 // Applies the preview picture of the page layout
                 if (pageLayoutInfo.PreviewImageUrl != null)
                 {
-                    pageLayout.PreviewImageUrl = pageLayoutInfo.PreviewImageUrl.AbsoluteUri;
+                    Uri previewImageUrl;
+
+                    if (!pageLayoutInfo.PreviewImageUrl.IsAbsoluteUri)
+                    {
+                        previewImageUrl = new Uri(new Uri(site.Url), pageLayoutInfo.PreviewImageUrl);
+                    }
+                    else
+                    {
+                        previewImageUrl = pageLayoutInfo.PreviewImageUrl;
+                    }
+
+                    pageLayout.PreviewImageUrl = previewImageUrl.AbsoluteUri;
                 }
 
                 // Update the publishing associated content type
