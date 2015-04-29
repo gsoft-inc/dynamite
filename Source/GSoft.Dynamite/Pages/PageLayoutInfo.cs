@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.SharePoint;
 using Newtonsoft.Json;
@@ -56,7 +57,18 @@ namespace GSoft.Dynamite.Pages
         /// </summary>
         [JsonIgnore]
         public SPContentTypeId AssociatedContentTypeId { get; set; }
-        
+
+        /// <summary>
+        /// The preview image in the drop down menu of a page (when you want to switch page layout)
+        /// </summary>
+        /// <remarks>
+        /// This field is a Uri because it require an absolute URL.
+        /// Because the Page Layouts are deployed in the Site Scope, usually, the preview images are too.
+        /// The default place to put PreviewImage is :
+        /// http://siteCollection/_catalogs/masterpage/en-US/Preview%20Images/PageLayoutPreviewImage.png
+        /// </remarks>
+        public Uri PreviewImageUrl { get; set; }
+
         /// <summary>
         /// String representation of the content type ID,
         /// convenient for serialization/deserialization.
@@ -76,10 +88,5 @@ namespace GSoft.Dynamite.Pages
                 }
             }
         }
-
-        ///// <summary>
-        ///// The relative path of the preview picture of the page layout
-        ///// </summary>
-        // public string PreviewImagePath { get; set; }
     }
 }
