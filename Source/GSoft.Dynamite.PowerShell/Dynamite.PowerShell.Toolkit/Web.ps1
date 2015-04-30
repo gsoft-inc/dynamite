@@ -374,17 +374,17 @@ function Remove-DSPWeb {
           <Web Name="Home" Path="/" Template="BLANKINTERNET#0" IsRoot="True" Owner="office\joe.blow">
             <Web Name="Sub Web 1" Path="subweb1" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 1" Path="soussite1" Language="1036" Label="fr" />
+					<TargetWeb Name="Sous Site 1" Path="soussite1" Language="1036" Label="fr" />
 				</Variations>
               <Web Name="Sub Sub Web 1" Path="subweb11" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 11" Path="soussite11" Language="1036" Label="fr" />
+					<TargetWeb Name="Sous Site 11" Path="soussite11" Language="1036" Label="fr" />
 				</Variations>
               </Web>
             </Web>
             <Web Name="Sub Web 2" Path="subweb2" Template="CMSPUBLISHING#0" Language="1033" Label="en">
 				<Variations>
-					<Variation Name="Sous Site 2" Path="soussite2" Language="1036" Label="fr" />
+					<TargetWeb Name="Sous Site 2" Path="soussite2" Language="1036" Label="fr" />
 				</Variations>
             </Web>
           </Web>
@@ -771,7 +771,7 @@ function Import-DSPWebStructure {
 							if ([string]::IsNullOrEmpty($VariationLabel) -eq $false)
 							{
 								# Looking for a web matching the specified variation label
-								$TargetWeb = $_.Variations.TargetWeb | Where-Object {$_.Label -eq 'en'}
+								$TargetWeb = $_.Variations.TargetWeb | Where-Object {$_.Label -eq $VariationLabel}
 				
 								if ($TargetWeb -ne $null)	
 								{
