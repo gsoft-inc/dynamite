@@ -47,5 +47,12 @@ namespace GSoft.Dynamite.Pages
         /// <param name="pageLayoutInfo">The page layout info</param>
         /// <returns>The page layout</returns>
         PageLayout EnsurePageLayout(SPSite site, PageLayoutInfo pageLayoutInfo);
+
+        /// <summary>
+        /// Method that take a list of PageLayoutInfo and Set them as the Available Page Layout. 
+        /// </summary>
+        /// <param name="site">The Site Collection to Set the available Page Layout</param>
+        /// <param name="pageLayoutInfos">The List of Page Layout Info to set as default</param>
+        void SetAvailablePageLayouts(SPSite site, IList<PageLayoutInfo> pageLayoutInfos);
     }
 }
