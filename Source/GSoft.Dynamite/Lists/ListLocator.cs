@@ -83,7 +83,7 @@ namespace GSoft.Dynamite.Lists
             try
             {
                 listName = this.resources.Find(listNameResourceKey, web.UICulture.LCID);    // same as (int)web.Language (do not confuse with web.Locale, which refers to culture for currency, etc.)
-                    
+
                 if (!string.IsNullOrEmpty(listName))
                 {
                     list = web.Lists[listName];
@@ -95,6 +95,17 @@ namespace GSoft.Dynamite.Lists
             }
 
             return list;
+        }
+
+        /// <summary>
+        /// Method to find a list with the ListInfo
+        /// </summary>
+        /// <param name="web">The Web where to find the list</param>
+        /// <param name="listInfo">The ListInfo of the list to locate</param>
+        /// <returns>A SharePoint SPList</returns>
+        public SPList TryGetList(SPWeb web, ListInfo listInfo)
+        {
+            return this.TryGetList(web, listInfo.WebRelativeUrl.ToString());
         }
 
         /// <summary>
