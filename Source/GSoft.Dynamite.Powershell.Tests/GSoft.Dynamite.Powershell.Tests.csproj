@@ -55,6 +55,7 @@
   <ItemGroup>
     <Content Include="Integration\Sharegate\TestVariationsSettings.xml" />
     <Content Include="Integration\Taxonomy\TestVariationsSettings.xml" />
+    <Content Include="Integration\Web\ImportWebStructure_Variations.xml" />
     <Content Include="Integration\Web\ImportWebStructure.xml" />
     <Content Include="Integration\Web\ImportWebStructure_Overwrite.xml" />
     <Content Include="Integration\Web\TestVariationsSettings.xml" />
