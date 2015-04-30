@@ -40,13 +40,31 @@
         /// </summary>
         /// <param name="site">The site</param>
         /// <param name="eventReceiver">The event receiver definition</param>
-        void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        void AddContentTypeEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
+
+        /// <summary>
+        /// Add an event receiver
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        void AddListEventReceiverDefinition(SPWeb web, EventReceiverInfo eventReceiver);
 
         /// <summary>
         /// Remove an event receiver
         /// </summary>
         /// <param name="site">The site</param>
         /// <param name="eventReceiver">The event receiver definition</param>
-        void DeleteEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        void DeleteContentTypeEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver);
+
+                /// <summary>
+        /// Remove an event receiver
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        void DeleteListEventReceiverDefinition(SPWeb web, EventReceiverInfo eventReceiver);
     }
 }

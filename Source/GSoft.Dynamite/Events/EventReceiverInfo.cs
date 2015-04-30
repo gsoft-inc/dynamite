@@ -9,6 +9,8 @@ namespace GSoft.Dynamite.Events
     /// </summary>
     public class EventReceiverInfo
     {
+        #region Constructors
+
         /// <summary>
         /// Default constructor for serialization purposes
         /// </summary>
@@ -33,11 +35,25 @@ namespace GSoft.Dynamite.Events
         /// <param name="type">The event receiver type</param>
         /// <param name="syncType">The synchronization type</param>
         public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
+            : this(contentType, type, syncType, string.Empty, string.Empty)
+        {
+        }
+
+        /// <summary>
+        /// Event Receiver Info (Content Type)
+        /// </summary>
+        /// <param name="contentType">The content type</param>
+        /// <param name="type">The event receiver type</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <param name="assemblyName">The full name of the Assembly</param>
+        /// <param name="className">The fullname of the Type/Class </param>
+        public EventReceiverInfo(ContentTypeInfo contentType, SPEventReceiverType type, SPEventReceiverSynchronization syncType, string assemblyName, string className)
         {
             this.ContentType = contentType;
             this.ReceiverType = type;
-            this.EventOwner = EventReceiverOwner.ContentType;
             this.SynchronizationType = syncType;
+            this.AssemblyName = assemblyName;
+            this.ClassName = className;
         }
 
         /// <summary>
@@ -45,7 +61,8 @@ namespace GSoft.Dynamite.Events
         /// </summary>
         /// <param name="list">The list</param>
         /// <param name="type">The event receiver type</param>
-        public EventReceiverInfo(ListInfo list, SPEventReceiverType type) : this(list, type, SPEventReceiverSynchronization.Default)
+        public EventReceiverInfo(ListInfo list, SPEventReceiverType type)
+            : this(list, type, SPEventReceiverSynchronization.Default)
         {
         }
 
@@ -56,12 +73,28 @@ namespace GSoft.Dynamite.Events
         /// <param name="type">The event receiver type</param>
         /// <param name="syncType">The synchronization type</param>
         public EventReceiverInfo(ListInfo list, SPEventReceiverType type, SPEventReceiverSynchronization syncType)
+            : this(list, type, syncType, string.Empty, string.Empty)
+        {
+        }
+
+        /// <summary>
+        /// Event Receiver Info (List)
+        /// </summary>
+        /// <param name="list">The list</param>
+        /// <param name="type">The event receiver type</param>
+        /// <param name="syncType">The synchronization type</param>
+        /// <param name="assemblyName">The full name of the Assembly</param>
+        /// <param name="className">The fullname of the Type/Class </param>
+        public EventReceiverInfo(ListInfo list, SPEventReceiverType type, SPEventReceiverSynchronization syncType, string assemblyName, string className)
         {
             this.List = list;
-            this.EventOwner = EventReceiverOwner.List;
             this.ReceiverType = type;
             this.SynchronizationType = syncType;
+            this.AssemblyName = assemblyName;
+            this.ClassName = className;
         }
+
+        #endregion Constructors
 
         /// <summary>
         /// The associated content type
@@ -86,12 +119,7 @@ namespace GSoft.Dynamite.Events
         /// <summary>
         /// The class name
         /// </summary>
-        public string ClassName { get;  set; }
-
-        /// <summary>
-        /// The owner of the event receiver
-        /// </summary>
-        public EventReceiverOwner EventOwner { get; set; }
+        public string ClassName { get; set; }
 
         /// <summary>
         /// Synchronization type for the event receiver
