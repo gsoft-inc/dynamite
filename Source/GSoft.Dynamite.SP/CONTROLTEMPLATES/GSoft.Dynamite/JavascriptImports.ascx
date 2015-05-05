@@ -36,11 +36,3 @@
         </li>
     </ul>
 </script>
-
-<%-- Global JS initialization --%>
-
-<script type="text/javascript">
-    GSoft.Dynamite.Utilities.CurrentWebUrl = "<asp:Literal ID="CurrentWebUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utilities.ParentFolderUrl = "<asp:Literal ID="ParentFolderUrlLiteral" runat="server" />";
-    GSoft.Dynamite.Utilities.initializeParentFolderLink();
-</script>

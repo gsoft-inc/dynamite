@@ -92,23 +92,5 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Microsoft.SharePoint.WebControls.ScriptLink KnockoutExtensionsScriptLink;
-        
-        /// <summary>
-        /// CurrentWebUrlLiteral control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal CurrentWebUrlLiteral;
-        
-        /// <summary>
-        /// ParentFolderUrlLiteral control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ParentFolderUrlLiteral;
     }
 }

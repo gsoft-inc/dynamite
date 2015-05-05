@@ -101,6 +101,13 @@
     <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\JavaScriptImports.ascx.designer.cs">
       <DependentUpon>JavaScriptImports.ascx.cs</DependentUpon>
     </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\ParentFolder.ascx.cs">
+      <DependentUpon>ParentFolder.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CONTROLTEMPLATES\GSoft.Dynamite\ParentFolder.ascx.designer.cs">
+      <DependentUpon>ParentFolder.ascx.cs</DependentUpon>
+    </Compile>
     <Compile Include="DynamiteWspContainerProxy.cs" />
     <Compile Include="Features\Web Config Modifications\Web Config Modifications.EventReceiver.cs">
       <DependentUpon>Web Config Modifications.feature</DependentUpon>
@@ -129,11 +136,17 @@
     <None Include="DynamiteGoogleAnalyticsTracking\SharePointProjectItem.spdata">
       <SharePointProjectItemId>{b2c07b03-3b43-43b6-9380-d0614cd74dc8}</SharePointProjectItemId>
     </None>
+    <None Include="DynamiteParentFolder\SharePointProjectItem.spdata">
+      <SharePointProjectItemId>{3298d212-bd6a-480f-b300-dffaa4fec0f0}</SharePointProjectItemId>
+    </None>
     <None Include="Features\Bootstrap Non Responsive\Bootstrap Non Responsive.feature">
       <FeatureId>{3c2d4a5a-fdb7-4127-9fcb-fc0d2215aea8}</FeatureId>
     </None>
     <None Include="Features\Bootstrap Responsive\Bootstrap Responsive.feature">
       <FeatureId>{2bd8393f-2785-45b0-a806-5f524101d8a7}</FeatureId>
+    </None>
+    <None Include="Features\Parent Folder\Parent Folder.feature">
+      <FeatureId>{34023cc4-ba3f-4db0-8f6f-f330fd6758e5}</FeatureId>
     </None>
     <None Include="Features\Google Analytics Tracking\Google Analytics Tracking.feature">
       <FeatureId>{dad6f710-ef35-479c-a057-55f6e5931656}</FeatureId>
@@ -188,10 +201,15 @@
   <ItemGroup>
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsSearchSend.ascx" />
     <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\GoogleAnalyticsTracking.ascx" />
+    <Content Include="CONTROLTEMPLATES\GSoft.Dynamite\ParentFolder.ascx" />
     <Content Include="DynamiteBootstrapResponsive\bootstrap.min.js" />
     <Content Include="DynamiteBootstrapResponsive\Elements.xml" />
+    <Content Include="DynamiteParentFolder\Elements.xml" />
     <Content Include="Features\Bootstrap Responsive\Bootstrap Responsive.Template.xml">
       <DependentUpon>Bootstrap Responsive.feature</DependentUpon>
+    </Content>
+    <Content Include="Features\Parent Folder\Parent Folder.Template.xml">
+      <DependentUpon>Parent Folder.feature</DependentUpon>
     </Content>
     <Content Include="ISAPI\GSoft.Dynamite\NavigationWebService.svc" />
     <Content Include="Layouts\GSoft.Dynamite\CSS\Bootstrap\bootstrap-sharepoint.css" />
