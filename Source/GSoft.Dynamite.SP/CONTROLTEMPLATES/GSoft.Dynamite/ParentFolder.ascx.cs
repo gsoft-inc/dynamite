@@ -16,14 +16,14 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         private string ListRootFolderUrlFormat = "{0}" + ListRootSlug + "{1}";
 
         /// <summary>
-        /// The Current Web Url
+        /// The Current Web absolute link
         /// </summary>
-        public string CurrentWebUrl { get; set; }
+        public string CurrentWebAbsolutePath { get; set; }
 
         /// <summary>
-        /// The Parent Folder Url
+        /// The Parent Folder server-relative link
         /// </summary>
-        public string ParentFolderUrl { get; set; }
+        public string ParentFolderServerRelativePath { get; set; }
 
         /// <summary>
         /// The Parent Folder Label
@@ -38,9 +38,9 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
         protected void Page_Load(object sender, EventArgs e)
         {
             // TODO: Add resource
-            this.ParentFolderLabel = "Parent Folder";
+            this.ParentFolderLabel = CultureInfo.CurrentUICulture.LCID == Language.French.Culture.LCID ? "Dossier parent" : "Parent Folder";
 
-            this.CurrentWebUrl = SPContext.Current.Web.Url;
+            this.CurrentWebAbsolutePath = SPContext.Current.Web.Url;
 
             if (SPContext.Current.List != null)
             {
@@ -60,7 +60,11 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
 
                             if (parentFolderUrl.Contains(listUrl))
                             {
-                                this.ParentFolderUrl = string.Format(CultureInfo.InvariantCulture, this.ListRootFolderUrlFormat, listUrl, parentFolderUrl);
+                                this.ParentFolderServerRelativePath = string.Format(
+                                    CultureInfo.InvariantCulture, 
+                                    this.ListRootFolderUrlFormat, 
+                                    listUrl, 
+                                    parentFolderUrl);
                             }
                         }
                     }
@@ -68,7 +72,7 @@ namespace GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite
                 else if (SPContext.Current.File != null)
                 {
                     // go to AllItems view for current item's folder
-                    this.ParentFolderUrl = string.Format(CultureInfo.InvariantCulture, this.ListRootFolderUrlFormat, listUrl, SPContext.Current.File.ParentFolder.ServerRelativeUrl);
+                    this.ParentFolderServerRelativePath = string.Format(CultureInfo.InvariantCulture, this.ListRootFolderUrlFormat, listUrl, SPContext.Current.File.ParentFolder.ServerRelativeUrl);
                 }
             }
         }

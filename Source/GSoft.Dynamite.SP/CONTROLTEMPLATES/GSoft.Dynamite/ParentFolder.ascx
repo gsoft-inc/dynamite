@@ -16,7 +16,7 @@
 
 <%-- Global JS initialization --%>
 <script type="text/javascript">
-    GSoft.Dynamite.Utilities.CurrentWebUrl = "<%=this.CurrentWebUrl%>";
-    GSoft.Dynamite.Utilities.ParentFolderUrl = "<%=this.ParentFolderUrl%>";
+    GSoft.Dynamite.Utilities.CurrentWebUrl = "<%=this.CurrentWebAbsolutePath%>";
+    GSoft.Dynamite.Utilities.ParentFolderUrl = "<%=this.ParentFolderServerRelativePath%>";
     GSoft.Dynamite.Utilities.initializeParentFolderLink();
 </script>

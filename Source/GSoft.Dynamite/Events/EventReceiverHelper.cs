@@ -15,17 +15,14 @@ namespace GSoft.Dynamite.Events
     /// </summary>
     public class EventReceiverHelper : IEventReceiverHelper
     {
-        private ILogger logger;
         private IListLocator listLocator;
 
         /// <summary>
         /// Initializes a new <see cref="EventReceiverHelper"/> instance.
         /// </summary>
-        /// <param name="logger">The Logger</param>
         /// <param name="listLocator">List locator to find the list with event receiver</param>
-        public EventReceiverHelper(ILogger logger, IListLocator listLocator)
+        public EventReceiverHelper(IListLocator listLocator)
         {
-            this.logger = logger;
             this.listLocator = listLocator;
         }
 
