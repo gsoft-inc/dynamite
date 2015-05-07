@@ -428,6 +428,38 @@ namespace GSoft.Dynamite.Taxonomy
 
             return GetTermsForTermSetInternal(termStore, siteCollectionGroup, termSet);
         }
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within a desired term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        public IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName)
+        {
+            var session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            var termStore = session.TermStores[termStoreName];
+
+            return this.GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, termStoreGroupName, termSetName);
+        }
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within the default term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        public IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreGroupName, string termSetName)
+        {
+            var session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
+            var termStore = session.DefaultSiteCollectionTermStore;
+
+            return this.GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, termStoreGroupName, termSetName);
+        }
+
         #endregion
 
         /// <summary>
@@ -751,6 +783,74 @@ namespace GSoft.Dynamite.Taxonomy
             TermSet termSet = this.GetTermSetFromGroup(termStore, group, termSetName);
 
             return GetTermsForTermSetInternal(termStore, group, termSet);
+        }
+
+        private IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSetInternal(TermStore termStore, string termStoreGroupName, string termSetName)
+        {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (string.IsNullOrEmpty(termStoreGroupName))
+            {
+                throw new ArgumentNullException("termStoreGroupName");
+            }
+
+            if (string.IsNullOrEmpty(termSetName))
+            {
+                throw new ArgumentNullException("termSetName");
+            }
+
+            var group = GetGroupFromTermStore(termStore, termStoreGroupName);
+            var termSet = this.GetTermSetFromGroup(termStore, group, termSetName);
+
+            return GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, group, termSet);
+        }
+
+        private static IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSetInternal(TermStore termStore, Group termStoreGroup, TermSet termSet)
+        {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (termStoreGroup == null)
+            {
+                throw new ArgumentNullException("termStoreGroup");
+            }
+
+            if (termSet == null)
+            {
+                throw new ArgumentNullException("termSet");
+            }
+
+            IList<SimpleLinkTermInfo> termsList = new List<SimpleLinkTermInfo>();
+
+            if (termSet.Terms.Any())
+            {
+                // If custom sort order is set, build term list in sorted order
+                var customSortOrder = termSet.CustomSortOrder;
+                if (!string.IsNullOrEmpty(customSortOrder))
+                {
+                    var terms = termSet.Terms.ToList();
+                    var sortedIds = customSortOrder.Split(':').Select(id => new Guid(id)).ToList();
+                    foreach (var sortedId in sortedIds)
+                    {
+                        var sortedTerm = terms.SingleOrDefault(term => term.Id.Equals(sortedId));
+                        if (sortedTerm != null)
+                        {
+                            termsList.Add(new SimpleLinkTermInfo(sortedTerm));
+                        }
+                    }
+                }
+                else
+                {
+                    termsList = termSet.Terms.Select(x => new SimpleLinkTermInfo(x)).ToList();
+                }
+            }
+
+            return termsList;
         }
 
         #endregion

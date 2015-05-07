@@ -117,6 +117,7 @@
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
+    <Compile Include="Taxonomy\SimpleLinkTermInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />

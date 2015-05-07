@@ -283,5 +283,24 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="groupName">The term set group name, in the term store's default working language.</param>
         /// <returns>The term set group</returns>
         Group GetTermGroupFromStore(TermStore termStore, string groupName);
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within a desired term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName);
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within the default term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreGroupName, string termSetName);
     }
 }
