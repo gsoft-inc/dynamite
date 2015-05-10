@@ -60,7 +60,7 @@ namespace GSoft.Dynamite.Navigation
                 using (new SPMonitoredScope("GSoft.Dynamite.NavigationService::GetAllNavigationNodes"))
                 {
                     // Get navigation terms from taxonomy
-                    var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web, queryParameters.NodeMatchingSettings);
+                    var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web, queryParameters);
 
                     // Make sure the nodes are not null
                     if (navigationNodes.Any(node => node != null))
@@ -68,7 +68,7 @@ namespace GSoft.Dynamite.Navigation
                         // If specified, filter to the restricted term set
                         if (!queryParameters.RestrictedTermSetId.Equals(Guid.Empty))
                         {
-                            navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters.RestrictedTermSetId, navigationNodes);
+                            navigationNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters, navigationNodes);
                         }
 
                         // If match settings are defined
@@ -106,11 +106,12 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private IEnumerable<NavigationNode> GetGlobalNavigationTaxonomyNodes(SPWeb web, NavigationNodeMatchingSettings nodeMatchingSettings, IEnumerable<NavigationTerm> navigationTerms = null)
+        private IEnumerable<NavigationNode> GetGlobalNavigationTaxonomyNodes(SPWeb web, NavigationQueryParameters queryParameters, IEnumerable<NavigationTerm> navigationTerms = null)
         {
             // If navigation terms is null, fetch this initial terms from the taxonomy navigation term set
             if (navigationTerms == null)
             {
+                var nodeMatchingSettings = queryParameters.NodeMatchingSettings;
                 if ((nodeMatchingSettings != null) && nodeMatchingSettings.RestrictToCurrentNavigationLevel)
                 {
                     navigationTerms = TaxonomyNavigationContext.Current.NavigationTerm.Parent.Terms;
@@ -148,14 +149,14 @@ namespace GSoft.Dynamite.Navigation
                 // If term contains children, recurvise call
                 if (term.Terms.Count > 0)
                 {
-                    node.ChildNodes = this.GetGlobalNavigationTaxonomyNodes(web, nodeMatchingSettings, term.Terms);
+                    node.ChildNodes = this.GetGlobalNavigationTaxonomyNodes(web, queryParameters, term.Terms);
                 }
             }
 
             return nodes;
         }
 
-        private IEnumerable<NavigationNode> FilterNavigationNodesToRestrictedTermSet(SPWeb web, Guid restrictedTermSetId, IEnumerable<NavigationNode> nodes, Term[] restrictedTerms = null)
+        private IEnumerable<NavigationNode> FilterNavigationNodesToRestrictedTermSet(SPWeb web, NavigationQueryParameters queryParameters, IEnumerable<NavigationNode> nodes, Term[] restrictedTerms = null)
         {
             // If first pass, initialize the restricted nodes with first level terms
             if (restrictedTerms == null)
@@ -163,8 +164,18 @@ namespace GSoft.Dynamite.Navigation
                 // Get restricted term set
                 var session = new TaxonomySession(web.Site);
                 var termStore = session.DefaultSiteCollectionTermStore;
-                var termSet = termStore.GetTermSet(restrictedTermSetId);
-                restrictedTerms = termSet.Terms.ToArray();
+                var termSet = termStore.GetTermSet(queryParameters.RestrictedTermSetId);
+
+                var nodeMatchingSettings = queryParameters.NodeMatchingSettings;
+                if ((nodeMatchingSettings != null) && nodeMatchingSettings.RestrictToCurrentNavigationLevel)
+                {
+                    var currentTermId = TaxonomyNavigationContext.Current.NavigationTerm.Id;
+                    restrictedTerms = termSet.GetTerm(currentTermId).Parent.Terms.ToArray();
+                }
+                else
+                {
+                    restrictedTerms = termSet.Terms.ToArray();
+                }
             }
 
             // Flattened navigation nodes for easier search
@@ -178,7 +189,7 @@ namespace GSoft.Dynamite.Navigation
                 // If term contains children, recurvise call
                 if (restrictedTerm.Terms.Count > 0)
                 {
-                    restrictedNode.ChildNodes = this.FilterNavigationNodesToRestrictedTermSet(web, restrictedTermSetId, nodes, restrictedTerm.Terms.ToArray());
+                    restrictedNode.ChildNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters, nodes, restrictedTerm.Terms.ToArray());
                 }
             }
 
