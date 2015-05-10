@@ -60,7 +60,7 @@ namespace GSoft.Dynamite.Navigation
                 using (new SPMonitoredScope("GSoft.Dynamite.NavigationService::GetAllNavigationNodes"))
                 {
                     // Get navigation terms from taxonomy
-                    var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web);
+                    var navigationNodes = this.GetGlobalNavigationTaxonomyNodes(web, queryParameters.NodeMatchingSettings);
 
                     // Make sure the nodes are not null
                     if (navigationNodes.Any(node => node != null))
@@ -106,26 +106,33 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private IEnumerable<NavigationNode> GetGlobalNavigationTaxonomyNodes(SPWeb web, IEnumerable<NavigationTerm> navigationTerms = null)
+        private IEnumerable<NavigationNode> GetGlobalNavigationTaxonomyNodes(SPWeb web, NavigationNodeMatchingSettings nodeMatchingSettings, IEnumerable<NavigationTerm> navigationTerms = null)
         {
             // If navigation terms is null, fetch this initial terms from the taxonomy navigation term set
             if (navigationTerms == null)
             {
-                // Create view to return all navigation terms
-                var view = new NavigationTermSetView(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider)
+                if ((nodeMatchingSettings != null) && nodeMatchingSettings.RestrictToCurrentNavigationLevel)
                 {
-                    ExcludeTermsByProvider = false
-                };
-
-                var navigationTermSet = TaxonomyNavigation.GetTermSetForWeb(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true);
-
-                // Navigation termset might be null when crawling
-                if (navigationTermSet == null)
-                {
-                    return new NavigationNode[] { };
+                    navigationTerms = TaxonomyNavigationContext.Current.NavigationTerm.Parent.Terms;
                 }
+                else
+                {
+                    // Create view to return all navigation terms
+                    var view = new NavigationTermSetView(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider)
+                    {
+                        ExcludeTermsByProvider = false
+                    };
 
-                navigationTerms = navigationTermSet.GetWithNewView(view).Terms;
+                    var navigationTermSet = TaxonomyNavigation.GetTermSetForWeb(web, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider, true);
+
+                    // Navigation termset might be null when crawling
+                    if (navigationTermSet == null)
+                    {
+                        return new NavigationNode[] { };
+                    }
+
+                    navigationTerms = navigationTermSet.GetWithNewView(view).Terms;
+                }
             }
 
             // Gets terms which are not excluded from global navigation
@@ -141,7 +148,7 @@ namespace GSoft.Dynamite.Navigation
                 // If term contains children, recurvise call
                 if (term.Terms.Count > 0)
                 {
-                    node.ChildNodes = this.GetGlobalNavigationTaxonomyNodes(web, term.Terms);
+                    node.ChildNodes = this.GetGlobalNavigationTaxonomyNodes(web, nodeMatchingSettings, term.Terms);
                 }
             }
 
@@ -206,7 +213,7 @@ namespace GSoft.Dynamite.Navigation
         {
             // Adds the filter for each first level navigation term id
             var targetItemFilters = new List<string>();
-            var additionalFilters = new List<string>(queryParameters.SearchSettings.TargetItemFilters);
+            var additionalFilters = new List<string>(queryParameters.SearchSettings.TargetItemFilters ?? new string[] { });
             foreach (var node in nodes)
             {
                 targetItemFilters.Add(
