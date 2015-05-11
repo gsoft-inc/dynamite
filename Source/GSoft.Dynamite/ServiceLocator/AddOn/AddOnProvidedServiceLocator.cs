@@ -35,7 +35,6 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         /// </summary>
         public const string KeyServiceLocatorAssemblyName = "ServiceLocatorAssemblyName";
 
-        //private ISharePointServiceLocatorAccessor locatorAccessor;
         private IDictionary<Guid, ISharePointServiceLocatorAccessor> locatorAccessors = new Dictionary<Guid, ISharePointServiceLocatorAccessor>();
         private object lockObject = new object();
 
@@ -533,6 +532,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         /// <param name="site">The context's SPSite. Keep null if none available.</param>
         /// <param name="webApplication">The context's SPWebApplication. Keep null if none available.</param>
         /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
+        /// <param name="locatorAccessor">The SharePoint locator accessor we want to add.</param>
         private void AddLocatorAccessor(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, ISharePointServiceLocatorAccessor locatorAccessor)
         {
             // Get the identifier that represents the most specific context.
