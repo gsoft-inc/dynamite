@@ -104,11 +104,15 @@ namespace GSoft.Dynamite.Navigation
                     Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
                     UriKind.Relative);
             }
-            catch (ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException ex)
             {
                 // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
-                this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
-                                        Using label web URL with path and query strings as navigation URL.");
+                this.logger.Warn(
+                    "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
+                    SPContext.Current.Web.Url,
+                    currentUrl.AbsoluteUri,
+                    label.Title,
+                    ex.Message);
 
                 // Keep query string (except source)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
