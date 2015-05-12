@@ -20,6 +20,7 @@
     </dependencies>
   </metadata>
   <files>
-      <file src="bin\Release\GSoft.Dynamite.dll" target="lib\net45" /> 
+      <file src="bin\Release\GSoft.Dynamite.dll" target="lib\net45" />
+      <file src="bin\Release\GSoft.Dynamite.xml" target="lib\net45" />
   </files>
 </package>
