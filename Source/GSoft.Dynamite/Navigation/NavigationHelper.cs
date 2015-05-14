@@ -23,32 +23,32 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// System custom property for the Target Url
         /// </summary>
-        public readonly string SystemTargetUrl = "_Sys_Nav_TargetUrl";
+        public const string SystemTargetUrl = "_Sys_Nav_TargetUrl";
 
         /// <summary>
         /// System custom property for the Catalog Target Url
         /// </summary>
-        public readonly string SystemCatalogTargetUrl = "_Sys_Nav_CatalogTargetUrl";
+        public const string SystemCatalogTargetUrl = "_Sys_Nav_CatalogTargetUrl";
 
         /// <summary>
         /// System custom property for the Simple Link Url
         /// </summary>
-        public readonly string SystemSimpleLinkUrl = "_Sys_Nav_SimpleLinkUrl";
+        public const string SystemSimpleLinkUrl = "_Sys_Nav_SimpleLinkUrl";
 
         /// <summary>
         /// System custom property Fo the Navigation Term Set
         /// </summary>
-        public readonly string SystemIsNavigationTermSet = "_Sys_Nav_IsNavigationTermSet";
+        public const string SystemIsNavigationTermSet = "_Sys_Nav_IsNavigationTermSet";
 
         /// <summary>
         /// System custom property for the Target Url for Child terms
         /// </summary>
-        public readonly string SystemTargetUrlForChildTerms = "_Sys_Nav_TargetUrlForChildTerms";
+        public const string SystemTargetUrlForChildTerms = "_Sys_Nav_TargetUrlForChildTerms";
 
         /// <summary>
         /// System custom property for the catalog target url for child terms
         /// </summary>
-        public readonly string SystemCatalogTargetUrlForChildTerms = "_Sys_Nav_CatalogTargetUrlForChildTerms";
+        public const string SystemCatalogTargetUrlForChildTerms = "_Sys_Nav_CatalogTargetUrlForChildTerms";
 
         private readonly ITaxonomyService taxonomyService;
 
@@ -77,7 +77,7 @@ namespace GSoft.Dynamite.Navigation
                 var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                 // Flag the term set as a navigation term set
-                termSet.SetCustomProperty(this.SystemIsNavigationTermSet, "True");
+                termSet.SetCustomProperty(SystemIsNavigationTermSet, "True");
                 termSet.TermStore.CommitAll();
 
                 var navigationSettings = new WebNavigationSettings(web);
@@ -120,9 +120,9 @@ namespace GSoft.Dynamite.Navigation
                     var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                     string propertyValue;
-                    if (termSet.CustomProperties.TryGetValue(this.SystemIsNavigationTermSet, out propertyValue))
+                    if (termSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out propertyValue))
                     {
-                        termSet.DeleteCustomProperty(this.SystemIsNavigationTermSet);
+                        termSet.DeleteCustomProperty(SystemIsNavigationTermSet);
                         termSet.TermStore.CommitAll();
                     }
                 }
@@ -145,11 +145,10 @@ namespace GSoft.Dynamite.Navigation
             {
                 if (termInfo != null)
                 {
-                    var termStore = taxonomySession.DefaultSiteCollectionTermStore;
                     var term = this.taxonomyService.GetTermForId(site, termInfo.Id);
 
-                    term.SetLocalCustomProperty(this.SystemTargetUrl, string.Empty);
-                    term.SetLocalCustomProperty(this.SystemSimpleLinkUrl, string.Empty);
+                    term.SetLocalCustomProperty(SystemTargetUrl, string.Empty);
+                    term.SetLocalCustomProperty(SystemSimpleLinkUrl, string.Empty);
                     term.TermSet.TermStore.CommitAll();
                 }
             }
@@ -288,7 +287,7 @@ namespace GSoft.Dynamite.Navigation
 
                     // Check if the term term set is flagged as navigation term set
                     // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
-                    currentTerm.TermSet.CustomProperties.TryGetValue(this.SystemIsNavigationTermSet, out isNavigationTermSet);
+                    currentTerm.TermSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out isNavigationTermSet);
 
                     // If the term set allow navigation
                     if (!string.IsNullOrEmpty(isNavigationTermSet))
@@ -311,7 +310,7 @@ namespace GSoft.Dynamite.Navigation
                         {
                             if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
                             {
-                                currentTerm.SetLocalCustomProperty(this.SystemSimpleLinkUrl, termDrivenPageInfo.SimpleLinkOrHeader);
+                                currentTerm.SetLocalCustomProperty(SystemSimpleLinkUrl, termDrivenPageInfo.SimpleLinkOrHeader);
                             }
                         }
                         else
@@ -319,22 +318,22 @@ namespace GSoft.Dynamite.Navigation
                             // Set URLs properties
                             if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
                             {
-                                currentTerm.SetLocalCustomProperty(this.SystemTargetUrl, termDrivenPageInfo.TargetUrl);
+                                currentTerm.SetLocalCustomProperty(SystemTargetUrl, termDrivenPageInfo.TargetUrl);
                             }
 
                             if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
                             {
-                                currentTerm.SetLocalCustomProperty(this.SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
+                                currentTerm.SetLocalCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
                             }
 
                             if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
                             {
-                                currentTerm.SetLocalCustomProperty(this.SystemCatalogTargetUrl, termDrivenPageInfo.CatalogTargetUrl);
+                                currentTerm.SetLocalCustomProperty(SystemCatalogTargetUrl, termDrivenPageInfo.CatalogTargetUrl);
                             }
 
                             if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
                             {
-                                currentTerm.SetLocalCustomProperty(this.SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                                currentTerm.SetLocalCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
                             }
                         }
 
@@ -359,12 +358,12 @@ namespace GSoft.Dynamite.Navigation
                 // Set URLs
                 if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
                 {
-                    termSet.SetCustomProperty(this.SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
+                    termSet.SetCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
                 }
 
                 if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
                 {
-                    termSet.SetCustomProperty(this.SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                    termSet.SetCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
                 }
 
                 termSet.TermStore.CommitAll();
