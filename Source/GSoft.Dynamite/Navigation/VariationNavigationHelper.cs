@@ -100,8 +100,11 @@ namespace GSoft.Dynamite.Navigation
 
             try
             {
+                // Important: Use the server relative URL (absolute path) as the current URL parameter.
+                // In the case where a load balancer is used, the server URL might be changed.  
+                // Omit this problem by using the server relative URL.
                 return new Uri(
-                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsolutePath, label.Title),
                     UriKind.Relative);
             }
             catch (ArgumentOutOfRangeException ex)
