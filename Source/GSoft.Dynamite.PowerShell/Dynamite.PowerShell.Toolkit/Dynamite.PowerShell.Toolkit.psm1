@@ -14,11 +14,11 @@
 #endregion
 
 <#
-	.SYNOPSIS
-		Get The Version of the Dynamite PowerShell Toolkit
+    .SYNOPSIS
+        Get The Version of the Dynamite PowerShell Toolkit
 
-	.DESCRIPTION
-		Get The Version of the Dynamite PowerShell Toolkit
+    .DESCRIPTION
+        Get The Version of the Dynamite PowerShell Toolkit
     
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -28,26 +28,26 @@
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
     
-	.EXAMPLE
-		PS C:\> Get-DSPVersion
-		
-	.OUTPUTS
-		Name and Version Properties
+    .EXAMPLE
+        PS C:\> Get-DSPVersion
+        
+    .OUTPUTS
+        Name and Version Properties
 
-	.NOTES
-		The version should be incremented and the Changelog should be updated
+    .NOTES
+        The version should be incremented and the Changelog should be updated
 
 #>
 function Get-DSPVersion {
-	return GetDSPModule | Select Name, Version
+    return GetDSPModule | Select Name, Version
 }
 
 <#
-	.SYNOPSIS
-		Get The name of the Dynamite PowerShell Toolkit module
+    .SYNOPSIS
+        Get The name of the Dynamite PowerShell Toolkit module
 
-	.DESCRIPTION
-		Get The name of the Dynamite PowerShell Toolkit module
+    .DESCRIPTION
+        Get The name of the Dynamite PowerShell Toolkit module
 
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -57,22 +57,22 @@ function Get-DSPVersion {
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
     
-	.EXAMPLE
-		PS C:\> Get-DSPModuleName
-		
-	.OUTPUTS
-		System.String
+    .EXAMPLE
+        PS C:\> Get-DSPModuleName
+        
+    .OUTPUTS
+        System.String
 
-	.NOTES
-		It's dynamic, the command is going to get the name from the imported module
+    .NOTES
+        It's dynamic, the command is going to get the name from the imported module
 
 #>
 function Get-DSPModuleName {
-	return $($MyInvocation.MyCommand.Module | Select-Object Name).Name
+    return $($MyInvocation.MyCommand.Module | Select-Object Name).Name
 }
 
 function GetDSPModule {
-	return $MyInvocation.MyCommand.Module
+    return $MyInvocation.MyCommand.Module
 }
 
 #region Export-ModuleMember
@@ -135,7 +135,7 @@ Export-ModuleMember New-DSPFacetedSearchSettings
 Export-ModuleMember Set-DSPListWorkflows
 
 # Blob Cache 
-Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache
+Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache, Clear-DSPBlobCache
 
 # Security 
 Export-ModuleMember Set-DSPWebPermissions

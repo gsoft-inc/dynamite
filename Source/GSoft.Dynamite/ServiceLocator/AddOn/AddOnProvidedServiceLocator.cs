@@ -35,7 +35,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         /// </summary>
         public const string KeyServiceLocatorAssemblyName = "ServiceLocatorAssemblyName";
 
-        private ISharePointServiceLocatorAccessor locatorAccessor;
+        private IDictionary<Guid, ISharePointServiceLocatorAccessor> locatorAccessors = new Dictionary<Guid, ISharePointServiceLocatorAccessor>();
         private object lockObject = new object();
 
         /// <summary>
@@ -78,18 +78,17 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         public ILifetimeScope Current
         {
             get 
-            {               
+            {
                 if (SPContext.Current != null && SPContext.Current.Web != null)
                 {
                     this.EnsureServiceLocatorAccessorForCurrentContext(SPContext.Current.Web);
+                    return this.GetLocatorAccessor(SPContext.Current.Web, null, null, null).ServiceLocatorInstance.Current;
                 }
                 else
                 {
-                    // Empty context (not an HttpRequest within a SharePoint site collection)
-                    this.EnsureServiceLocatorAccessorForCurrentContext();
+                    // A lifetime scope is no longer supported in the case where no context exists.
+                    throw new NotSupportedException("In order to use a lifetime scope, a context (SPWeb, SPSite, SPWebApplication, or SPFarm) needs to be passed.");
                 }
-
-                return this.locatorAccessor.ServiceLocatorInstance.Current;
             }
         }
 
@@ -192,10 +191,10 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
             }
             else
             {
-                this.EnsureServiceLocatorAccessorForCurrentContext();
+                throw new NotSupportedException("In order to use a lifetime scope, a context (SPWeb, SPSite, SPWebApplication, or SPFarm) needs to be passed.");
             }
 
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(feature);
+            return this.GetLocatorAccessor(currentFeatureWeb, currentFeatureSite, currentFeatureWebApp, currentFeatureFarm).ServiceLocatorInstance.BeginLifetimeScope(feature);
         }
 
         /// <summary>
@@ -223,7 +222,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         public ILifetimeScope BeginLifetimeScope(SPWeb web)
         {
             this.EnsureServiceLocatorAccessorForCurrentContext(web);
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(web);
+            return this.GetLocatorAccessor(web, null, null, null).ServiceLocatorInstance.BeginLifetimeScope(web);
         }
 
         /// <summary>
@@ -251,7 +250,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         public ILifetimeScope BeginLifetimeScope(SPSite site)
         {
             this.EnsureServiceLocatorAccessorForCurrentContext(site);
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(site);
+            return this.GetLocatorAccessor(null, site, null, null).ServiceLocatorInstance.BeginLifetimeScope(site);
         }
 
         /// <summary>
@@ -279,7 +278,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         public ILifetimeScope BeginLifetimeScope(SPWebApplication webApplication)
         {
             this.EnsureServiceLocatorAccessorForCurrentContext(webApplication);
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(webApplication);
+            return this.GetLocatorAccessor(null, null, webApplication, null).ServiceLocatorInstance.BeginLifetimeScope(webApplication);
         }
 
         /// <summary>
@@ -306,16 +305,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         public ILifetimeScope BeginLifetimeScope(SPFarm farm)
         {
             this.EnsureServiceLocatorAccessorForCurrentContext(farm);
-            return this.locatorAccessor.ServiceLocatorInstance.BeginLifetimeScope(farm);
-        }
-
-        private void EnsureServiceLocatorAccessorForCurrentContext()
-        {
-            // Empty context, this is ok until we find more than one *.ServiceLocator.DLL
-            // assemblies in the GAC. At that point, without a context to look in for
-            // property bags and the ServiceLocatorAssemblyName setting, we won't be
-            // able to disambiguate between the many service locators.
-            this.EnsureServiceLocatorAccessor(null, null, null, null);
+            return this.GetLocatorAccessor(null, null, null, farm).ServiceLocatorInstance.BeginLifetimeScope(farm);
         }
 
         private void EnsureServiceLocatorAccessorForCurrentContext(SPWeb web)
@@ -348,11 +338,11 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
         private void EnsureServiceLocatorAccessor(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm)
         {
-            if (this.locatorAccessor == null)
+            if (this.GetLocatorAccessor(web, site, webApplication, farm) == null)
             {
                 lock (this.lockObject)
                 {
-                    if (this.locatorAccessor == null)
+                    if (this.GetLocatorAccessor(web, site, webApplication, farm) == null)
                     {
                         try
                         {
@@ -432,7 +422,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
                             if (accessorType != null)
                             {
                                 // 3) Create the accessor instance
-                                this.locatorAccessor = (ISharePointServiceLocatorAccessor)Activator.CreateInstance(accessorType);
+                                this.AddLocatorAccessor(web, site, webApplication, farm,  (ISharePointServiceLocatorAccessor)Activator.CreateInstance(accessorType));
                             }
                             else
                             {
@@ -449,7 +439,7 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
                             // Either no assembly in the GAC matches the pattern *.ServiceLocator.DLL pattern, 
                             // or in the matching assembly that was found, no class implements ISharePointServiceLocatorAccessor.
                             // In this case, use our default all-available-Dynamite-modules-only service locator
-                            this.locatorAccessor = new FallbackServiceLocator();
+                            this.AddLocatorAccessor(web, site, webApplication, farm,  new FallbackServiceLocator());
                         }
                     }
                 }
@@ -506,6 +496,89 @@ namespace GSoft.Dynamite.ServiceLocator.AddOn
         {
             var accessorInterfaceType = typeof(ISharePointServiceLocatorAccessor);
             return assembly.GetTypes().Where(someType => accessorInterfaceType.IsAssignableFrom(someType) && !someType.IsInterface).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the SharePoint Service Locator Accessor for the context.
+        /// Null is returned if no accessor is found for any context.
+        /// </summary>
+        /// <param name="web">The context's SPWeb. Keep null if none available.</param>
+        /// <param name="site">The context's SPSite. Keep null if none available.</param>
+        /// <param name="webApplication">The context's SPWebApplication. Keep null if none available.</param>
+        /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
+        /// <returns>The SharePoint Service Locator Accessor.</returns>
+        private ISharePointServiceLocatorAccessor GetLocatorAccessor(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm)
+        {
+            // Get the identifier that represents the most specific context.
+            Guid? mostSpecificIdentifier = GetMostSpecificIdentifier(web, site, webApplication, farm);
+            if (mostSpecificIdentifier.HasValue)
+            {
+                // If we already have an accessor specified for that context, lets use that one.
+                if (this.locatorAccessors.ContainsKey(mostSpecificIdentifier.Value))
+                {
+                    return this.locatorAccessors[mostSpecificIdentifier.Value];
+                }
+            }
+
+            // In case no accessor was found.
+            return null;
+        }
+
+        /// <summary>
+        /// Adds the locator accessor to the available accessors.
+        /// If all parameters are null or an accessor already exists with that context, an exception is thrown.
+        /// </summary>
+        /// <param name="web">The context's SPWeb. Keep null if none available.</param>
+        /// <param name="site">The context's SPSite. Keep null if none available.</param>
+        /// <param name="webApplication">The context's SPWebApplication. Keep null if none available.</param>
+        /// <param name="farm">The context's SPFarm. Keep null if none available.</param>
+        /// <param name="locatorAccessor">The SharePoint locator accessor we want to add.</param>
+        private void AddLocatorAccessor(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm, ISharePointServiceLocatorAccessor locatorAccessor)
+        {
+            // Get the identifier that represents the most specific context.
+            Guid? mostSpecificIdentifier = GetMostSpecificIdentifier(web, site, webApplication, farm);
+            if (!mostSpecificIdentifier.HasValue)
+            {
+                throw new NotSupportedException("Unable to get the most specific identifier for the context. Make sure at lest one parameter is not null.");
+            }
+
+            if (this.GetLocatorAccessor(web, site, webApplication, farm) != null)
+            {
+                throw new NotSupportedException("Trying to add a SharePoint Locator Accessor for a context that is already added.");
+            }
+
+            // Add the accessor to the dictionary.
+            this.locatorAccessors.Add(mostSpecificIdentifier.Value, locatorAccessor);
+        }
+
+        private static Guid? GetMostSpecificIdentifier(SPWeb web, SPSite site, SPWebApplication webApplication, SPFarm farm)
+        {
+            // Check the SPWeb
+            if (web != null)
+            {
+                return web.ID;
+            }
+
+            // Check the SPSite
+            if (site != null)
+            {
+                return site.ID;
+            }
+
+            // Check the SPWebApplication
+            if (webApplication != null)
+            {
+                return webApplication.Id;
+            }
+
+            // Check the SPFarm
+            if (farm != null)
+            {
+                return farm.Id;
+            }
+
+            // All parameters were null.
+            return null;
         }
     }
 }

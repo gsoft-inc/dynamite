@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Branding
 {
@@ -90,6 +91,23 @@ namespace GSoft.Dynamite.Branding
                 htmlFile.CheckIn("Generate JS File");
                 htmlFile.Update();
                 htmlFile.Publish("Publish JS File Generation");
+            }
+
+            if (htmlFiles.Count > 0)
+            {
+                // Flush the blob cache accross the entire web application (otherwise the old 
+                // version of the Display Template will stay stuck in the cache, especially when
+                // your Display Templates are associated with Result Types)
+                try
+                {
+                    // WARNING: You need security_admin SQL server role and the db_owner role on the web app's content DB
+                    // in order to successfully flush the web app's BLOB cache.
+                    PublishingCache.FlushBlobCache(htmlFiles[0].ParentFolder.ParentWeb.Site.WebApplication);
+                }
+                catch (SPException exception)
+                {
+                    this.logger.Error("DisplayTemplateHelper.GenerateJavascriptFile: Failed to flush the BLOB cache accross the web app. You need You need security_admin SQL server role and the db_owner role on the web app's content DB. Caught and swallowed exception: {0}", exception);
+                }
             }
         }
     }
