@@ -47,7 +47,7 @@ namespace GSoft.Dynamite.Taxonomy
             TermStore store = null;
             if (columnTermStoreMapping.TermStore == null)
             {
-                store = session.DefaultSiteCollectionTermStore;
+                store = GetDefaultSiteCollectionTermStore(session);
             }
             else
             {
@@ -113,7 +113,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (web.Fields.Contains(fieldId))
             {
                 TaxonomySession session = new TaxonomySession(web.Site);
-                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                TermStore termStore = GetDefaultSiteCollectionTermStore(session);
                 TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
                 AssignTermSetToAllListUsagesOfSiteColumn(web.Site, termStore, fieldId, termStoreGroupName, termSetName, termSubsetName);
@@ -134,7 +134,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (web.Fields.Contains(fieldId))
             {
                 TaxonomySession session = new TaxonomySession(web.Site);
-                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                TermStore termStore = GetDefaultSiteCollectionTermStore(session);
                 Group siteCollectionGroup = termStore.GetSiteCollectionGroup(web.Site);
                 TaxonomyField field = (TaxonomyField)web.Site.RootWeb.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
@@ -157,7 +157,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (web.Fields.Contains(fieldId))
             {
                 var session = new TaxonomySession(web.Site);
-                var termStore = session.DefaultSiteCollectionTermStore;
+                var termStore = GetDefaultSiteCollectionTermStore(session);
                 var field = (TaxonomyField)web.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupId, termSetId, termSubsetId);
             }
@@ -199,7 +199,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (list.Fields.Contains(fieldId))
             {
                 var session = new TaxonomySession(list.ParentWeb.Site);
-                var termStore = session.DefaultSiteCollectionTermStore;
+                var termStore = GetDefaultSiteCollectionTermStore(session);
                 var field = (TaxonomyField)list.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupId, termSetId, termSubsetId);
             }
@@ -220,7 +220,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (list.Fields.Contains(fieldId))
             {
                 TaxonomySession session = new TaxonomySession(list.ParentWeb.Site);
-                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                TermStore termStore = GetDefaultSiteCollectionTermStore(session);
                 TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
                 InternalAssignTermSetToTaxonomyField(termStore, field, termStoreGroupName, termSetName, termSubsetName);
             }
@@ -240,7 +240,7 @@ namespace GSoft.Dynamite.Taxonomy
             if (list.Fields.Contains(fieldId))
             {
                 TaxonomySession session = new TaxonomySession(list.ParentWeb.Site);
-                TermStore termStore = session.DefaultSiteCollectionTermStore;
+                TermStore termStore = GetDefaultSiteCollectionTermStore(session);
                 TaxonomyField field = (TaxonomyField)list.Fields[fieldId];
                 Group siteCollectionGroup = termStore.GetSiteCollectionGroup(list.ParentWeb.Site);
                 InternalAssignTermSetToTaxonomyField(termStore, field, siteCollectionGroup.Name, termSetName, termSubsetName);
@@ -299,6 +299,32 @@ namespace GSoft.Dynamite.Taxonomy
 
             // Update the list
             listFieldSettings.GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(listSettings, null);
+        }
+
+        public TermStore GetDefaultSiteCollectionTermStore(TaxonomySession session)
+        {
+            TermStore store = null;
+
+            if (session.DefaultSiteCollectionTermStore == null)
+            {
+                if (session.DefaultKeywordsTermStore == null)
+                {
+                    if (session.TermStores != null && session.TermStores.Count > 0)
+                    {
+                        store = session.TermStores[0];
+                    }
+                }
+                else
+                {
+                    store = session.DefaultKeywordsTermStore;
+                }
+            }
+            else
+            {
+                store = session.DefaultSiteCollectionTermStore;
+            }
+
+            return store;
         }
 
         #region Private Methods

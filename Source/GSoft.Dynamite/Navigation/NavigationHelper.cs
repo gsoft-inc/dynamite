@@ -21,14 +21,16 @@ namespace GSoft.Dynamite.Navigation
     public class NavigationHelper : INavigationHelper
     {
         private readonly ITaxonomyService taxonomyService;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
         /// <param name="taxonomyService">The taxonomy service</param>
-        public NavigationHelper(ITaxonomyService taxonomyService)
+        public NavigationHelper(ITaxonomyService taxonomyService, ITaxonomyHelper taxonomyHelper)
         {
             this.taxonomyService = taxonomyService;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace GSoft.Dynamite.Navigation
             if (taxonomySession.TermStores.Count > 0)
             {
                 // we assume we're always dealing with the site coll's default term store
-                var termStore = taxonomySession.DefaultSiteCollectionTermStore;
+                var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
                 var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
                 var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
@@ -85,7 +87,7 @@ namespace GSoft.Dynamite.Navigation
                 if (settings != null)
                 {
                     // Disable the navigation flag on the the term set
-                    var termStore = taxonomySession.DefaultSiteCollectionTermStore;
+                    var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
                     var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
                     var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
@@ -204,7 +206,7 @@ namespace GSoft.Dynamite.Navigation
             var taxonomySession = new TaxonomySession(site, true);
             if (taxonomySession.TermStores.Count > 0)
             {
-                var defaultTermStore = taxonomySession.DefaultSiteCollectionTermStore;
+                var defaultTermStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
 
                 // Term Set setting
                 if (termDrivenPageInfo.IsTermSet)

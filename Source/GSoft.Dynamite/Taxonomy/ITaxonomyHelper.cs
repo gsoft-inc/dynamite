@@ -123,5 +123,11 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="list">The list</param>
         /// <param name="keywordsAsSocialTags">Whether the list's keywords should be used as MySite social tags</param>
         void EnableListEnterpriseKeywordsSetting(SPList list, bool keywordsAsSocialTags);
+
+        /// <summary>
+        /// Gets the default term store for the site collection.
+        /// </summary>
+        /// <param name="session">The taxonomy session.</param>
+        TermStore GetDefaultSiteCollectionTermStore(TaxonomySession session);
     }
 }

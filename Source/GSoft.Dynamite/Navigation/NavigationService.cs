@@ -12,6 +12,7 @@ using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
+using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -24,6 +25,7 @@ namespace GSoft.Dynamite.Navigation
         private readonly INavigationHelper navigationHelper;
         private readonly ISearchHelper searchHelper;
         private readonly IVariationNavigationHelper catalogNavigation;
+        private readonly ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationService" /> class.
@@ -36,12 +38,14 @@ namespace GSoft.Dynamite.Navigation
             ILogger logger, 
             INavigationHelper navigationHelper, 
             ISearchHelper searchHelper, 
-            IVariationNavigationHelper catalogNavigation)
+            IVariationNavigationHelper catalogNavigation,
+            ITaxonomyHelper taxonomyHelper)
         {
             this.logger = logger;
             this.navigationHelper = navigationHelper;
             this.searchHelper = searchHelper;
             this.catalogNavigation = catalogNavigation;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -163,7 +167,7 @@ namespace GSoft.Dynamite.Navigation
             {
                 // Get restricted term set
                 var session = new TaxonomySession(web.Site);
-                var termStore = session.DefaultSiteCollectionTermStore;
+                var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
                 var termSet = termStore.GetTermSet(queryParameters.RestrictedTermSetId);
 
                 var nodeMatchingSettings = queryParameters.NodeMatchingSettings;
