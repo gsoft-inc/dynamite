@@ -72,6 +72,7 @@
     <None Include="Dynamite.PowerShell.Toolkit\Variations.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Web.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Workflow.ps1" />
+    <None Include="Install-DSPModuleImproved.ps1" />
     <None Include="Install-DSPModule.ps1" />
     <None Include="LICENSE" />
     <None Include="README.md" />

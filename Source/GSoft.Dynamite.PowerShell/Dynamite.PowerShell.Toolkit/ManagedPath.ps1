@@ -8,11 +8,11 @@
 #
 
 <#
-	.SYNOPSIS
-		Commandlet to create a new Managed Path
+    .SYNOPSIS
+        Commandlet to create a new Managed Path
 
-	.DESCRIPTION
-		Commandlet to create a new Managed Path for a SharePoint Site
+    .DESCRIPTION
+        Commandlet to create a new Managed Path for a SharePoint Site
 
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -22,20 +22,20 @@
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
     
-	.PARAMETER  SiteRelativePath
-		The Path of the managed path to create relative the the WebApplication
+    .PARAMETER  SiteRelativePath
+        The Path of the managed path to create relative the the WebApplication
 
-	.PARAMETER  WebApplicationUrl
-		The URL of the Web Application where to create the Managed Path
+    .PARAMETER  WebApplicationUrl
+        The URL of the Web Application where to create the Managed Path
 
-	.EXAMPLE
-		PS C:\> New-DSPManagedPath -SiteRelativePath 'mySite' -WebApplicationUrl 'http://myWebApp'
+    .EXAMPLE
+        PS C:\> New-DSPManagedPath -SiteRelativePath 'mySite' -WebApplicationUrl 'http://myWebApp'
 
-	.INPUTS
-		System.String,System.String
+    .INPUTS
+        System.String,System.String
 
-	.OUTPUTS
-		System.String    
+    .OUTPUTS
+        System.String    
     
   .LINK
     GSoft, Team Dynamite on Github
@@ -50,51 +50,51 @@
 #>
 function New-DSPManagedPath()
 {
-	[CmdletBinding()]
-	param
-	(
-		[Parameter(Mandatory=$true, Position=0)]
-		[string]$SiteRelativePath,
-		
-		[Parameter(Mandatory=$true, Position=1)]
-		[string]$WebApplicationUrl,
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$SiteRelativePath,
+        
+        [Parameter(Mandatory=$true, Position=1)]
+        [string]$WebApplicationUrl,
 
-		[Parameter(Mandatory=$false, Position=2)]
-		[switch]$HostHeader
-	)
-	
-	$SiteRelativeUrl = "/$SiteRelativePath"
-	$SiteAbsoluteUrl = "$WebApplicationUrl$SiteRelativeUrl"
-	
-	$ManagedPath = $SiteRelativeUrl.Trim("/")
-	
-	# Create Managed Path
-	if ($HostHeader) 
-	{
-		$ExistingManagedPath = Get-SPManagedPath -HostHeader | Select-Object Name | Where {$_.Name -eq $ManagedPath}
-		if ($ExistingManagedPath -eq $null)
-		{
-			Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl is being created ..."
-			New-SPManagedPath -RelativeURL $SiteRelativeUrl -HostHeader -Explicit
-			Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl was successfully created."
-		}
-		else
-		{
-			Write-Verbose "The host header managed path '$ManagedPath' already exists"
-		}
-	}
-	else 
-	{
-		$ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplicationUrl | Select-Object Name | Where {$_.Name -eq $ManagedPath}
-		if ($ExistingManagedPath -eq $null)
-		{
-			Write-Verbose "The managed path at the address $SiteAbsoluteUrl is being created ..."
-			New-SPManagedPath -RelativeURL $SiteRelativeUrl -WebApplication $WebApplicationUrl -Explicit
-			Write-Verbose "The managed path at the address $SiteAbsoluteUrl was successfully created."
-		}
-		else
-		{
-			Write-Verbose "The managed path '$ManagedPath' already exists"
-		}
-	}
+        [Parameter(Mandatory=$false, Position=2)]
+        [switch]$HostHeader
+    )
+    
+    $SiteRelativeUrl = "/$SiteRelativePath"
+    $SiteAbsoluteUrl = "$WebApplicationUrl$SiteRelativeUrl"
+    
+    $ManagedPath = $SiteRelativeUrl.Trim("/")
+    
+    # Create Managed Path
+    if ($HostHeader) 
+    {
+        $ExistingManagedPath = Get-SPManagedPath -HostHeader | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+        if ($ExistingManagedPath -eq $null)
+        {
+            Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl is being created ..."
+            New-SPManagedPath -RelativeURL $SiteRelativeUrl -HostHeader -Explicit
+            Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl was successfully created."
+        }
+        else
+        {
+            Write-Verbose "The host header managed path '$ManagedPath' already exists"
+        }
+    }
+    else 
+    {
+        $ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplicationUrl | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+        if ($ExistingManagedPath -eq $null)
+        {
+            Write-Verbose "The managed path at the address $SiteAbsoluteUrl is being created ..."
+            New-SPManagedPath -RelativeURL $SiteRelativeUrl -WebApplication $WebApplicationUrl -Explicit
+            Write-Verbose "The managed path at the address $SiteAbsoluteUrl was successfully created."
+        }
+        else
+        {
+            Write-Verbose "The managed path '$ManagedPath' already exists"
+        }
+    }
 }
