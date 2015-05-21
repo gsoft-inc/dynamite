@@ -56,7 +56,8 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
-        /// <param name="taxonomyService">The taxonomy service</param>
+        /// <param name="taxonomyService">The taxonomy service.</param>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         public NavigationHelper(ITaxonomyService taxonomyService, ITaxonomyHelper taxonomyHelper)
         {
             this.taxonomyService = taxonomyService;

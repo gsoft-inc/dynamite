@@ -6,13 +6,13 @@ using System.Linq;
 using GSoft.Dynamite.Extensions;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search;
+using GSoft.Dynamite.Taxonomy;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.SharePoint.Utilities;
-using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Navigation
 {
@@ -34,6 +34,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="navigationHelper">The navigation helper.</param>
         /// <param name="searchHelper">The search helper.</param>
         /// <param name="catalogNavigation">The catalog navigation.</param>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         public NavigationService(
             ILogger logger, 
             INavigationHelper navigationHelper, 

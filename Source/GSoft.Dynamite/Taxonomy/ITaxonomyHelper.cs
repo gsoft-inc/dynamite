@@ -128,6 +128,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// Gets the default term store for the site collection.
         /// </summary>
         /// <param name="session">The taxonomy session.</param>
+        /// <returns>The default term store or null if none is found.</returns>
         TermStore GetDefaultSiteCollectionTermStore(TaxonomySession session);
     }
 }

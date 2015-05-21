@@ -12,6 +12,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// </summary>
         /// <param name="site">The site containing the cache</param>
         /// <param name="termStoreName">The name of the term store</param>
+        /// <param name="taxonomyHelper">The taxonomy helper to use.</param>
         /// <returns>A site taxonomy cache</returns>
         SiteTaxonomyCache GetSiteTaxonomyCache(SPSite site, string termStoreName, ITaxonomyHelper taxonomyHelper);
     }

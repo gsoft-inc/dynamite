@@ -32,6 +32,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreName">
         /// The term store name.
         /// </param>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         public SiteTaxonomyCache(SPSite site, string termStoreName, ITaxonomyHelper taxonomyHelper)
         {
             SPMonitoredScope monitor = null;
@@ -68,7 +69,8 @@ namespace GSoft.Dynamite.Taxonomy
             {
                 // Use default term store
                 TermStore termStore = null;
-                if(taxonomyHelper != null)
+
+                if (taxonomyHelper != null)
                 {
                     termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(this.TaxonomySession);
                 }

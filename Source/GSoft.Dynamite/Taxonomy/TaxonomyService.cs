@@ -25,6 +25,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// Initializes a new instance of the <see cref="TaxonomyService" /> class.
         /// </summary>
         /// <param name="taxonomyCacheManager">The taxonomy cache manager</param>
+        /// <param name="taxonomyHelper">The taxonomy helper to use.</param>
         public TaxonomyService(ISiteTaxonomyCacheManager taxonomyCacheManager, ITaxonomyHelper taxonomyHelper)
         {
             this.taxonomyCacheManager = taxonomyCacheManager;

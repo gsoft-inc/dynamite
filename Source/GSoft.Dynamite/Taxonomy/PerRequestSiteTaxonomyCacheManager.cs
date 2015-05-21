@@ -19,6 +19,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <summary>
         /// Per-request taxonomy cache manager (using HttpContext.Items)
         /// </summary>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         public PerRequestSiteTaxonomyCacheManager(ITaxonomyHelper taxonomyHelper)
         {
             this.taxonomyHelper = taxonomyHelper;
@@ -33,6 +34,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreName">
         /// The term store name.
         /// </param>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <returns>
         /// The <see cref="SiteTaxonomyCache"/>.
         /// </returns>
