@@ -214,19 +214,13 @@ namespace GSoft.Dynamite.Navigation
 
             var searchResultSource = this.searchHelper.GetResultSourceByName(SPContext.Current.Site, LocalSharePointResultsSourceName, SearchObjectLevel.Ssa);
 
-            // We take the Title of the Label because the Label.Language is always a language from a language pack (supported). Sometimes, we deal with Not implemented language (ie Inuktitut "IU").
-            // Our workaround is to set the Title as the agnostic language label ("en", "fr", "iu", etc).
-            // For backward compatibility purpose, we will test the length of the Title. If it's not 2, we will fallback on the Language of the Label.
-            // This is not 100% robust but it the only way we found to deal with unsupported language.
-            var labelLocaleAgnosticLanguage = label.Title.Length == 2 ? label.Title : label.Language.Split('-').FirstOrDefault();
-
             var queryText = string.Format(
-                CultureInfo.InvariantCulture, 
-                "{0}:{1} {2}={3}", 
-                associationKeyManagedPropertyName, 
-                associationKeyValue, 
-                languageManagedPropertyName, 
-                labelLocaleAgnosticLanguage);
+                CultureInfo.InvariantCulture,
+                "{0}:{1} {2}:{3}",
+                associationKeyManagedPropertyName,
+                associationKeyValue,
+                languageManagedPropertyName,
+                label.Language);
 
             var query = new KeywordQuery(SPContext.Current.Web)
             {
