@@ -97,6 +97,8 @@
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="Branding\DisplayTemplateCategory.cs" />
+    <Compile Include="Cache\BlobCacheHelper.cs" />
+    <Compile Include="Cache\IBlobCacheHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
     <Compile Include="Events\EventReceiverOwner.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
