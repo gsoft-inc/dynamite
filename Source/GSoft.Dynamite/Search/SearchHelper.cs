@@ -561,16 +561,29 @@ namespace GSoft.Dynamite.Search
         [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "We want lowercase here.")]
         public void AddFacetedRefinersForTerm(SPSite site, FacetedNavigationInfo navigationInfo)
         {
-            // Get the term
-            var termItem = this.taxonomyService.GetTermForId(site, navigationInfo.Term.Id);
+            Term termItem;
+
+            // Get the term from the term set if specified (supports reused terms in other term sets)
+            // Else, default to the source term set to find the term.
+            if (navigationInfo.Term.TermSet != null)
+            {
+                termItem = this.taxonomyService.GetTermForIdInTermSet(
+                    site,
+                    navigationInfo.Term.TermSet.Group.Name,
+                    navigationInfo.Term.TermSet.Label,
+                    navigationInfo.Term.Id);
+            }
+            else
+            {
+                termItem = this.taxonomyService.GetTermForId(site, navigationInfo.Term.Id);
+            }
 
             // Flag the term set to use faceted navigation
             termItem.TermSet.SetCustomProperty("_Sys_Facet_IsFacetedTermSet", "True");
             termItem.TermStore.CommitAll();
 
-            var termList = new List<Term>();
+            var termList = new List<Term> { termItem };
 
-            termList.Add(termItem);
             termList.AddRange(termItem.ReusedTerms);
 
             foreach (var term in termList)
