@@ -128,6 +128,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
+            builder.RegisterType<BlobCacheHelper>().As<IBlobCacheHelper>();
 
             // CAML query builder and utilities
             builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();

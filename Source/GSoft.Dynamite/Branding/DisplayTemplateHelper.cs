@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Cache;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Publishing;
 
 namespace GSoft.Dynamite.Branding
@@ -13,20 +15,23 @@ namespace GSoft.Dynamite.Branding
     public class DisplayTemplateHelper : IDisplayTemplateHelper
     {
         private readonly ILogger logger;
+        private readonly IBlobCacheHelper blobCacheHelper;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayTemplateHelper"/> class.
+        /// Initializes a new instance of the <see cref="DisplayTemplateHelper" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public DisplayTemplateHelper(ILogger logger)
+        /// <param name="blobCacheHelper">The BLOB cache helper.</param>
+        public DisplayTemplateHelper(ILogger logger, IBlobCacheHelper blobCacheHelper)
         {
             this.logger = logger;
+            this.blobCacheHelper = blobCacheHelper;
         }
 
         /// <summary>
         /// Folder name for Display Templates
         /// </summary>
-        public string DisplayTemplatesFolder 
+        public string DisplayTemplatesFolder
         {
             get
             {
@@ -39,9 +44,9 @@ namespace GSoft.Dynamite.Branding
         /// </summary>
         public string ContentWebPartFolder
         {
-            get 
-            { 
-                return "Content Web Parts"; 
+            get
+            {
+                return "Content Web Parts";
             }
         }
 
@@ -63,7 +68,7 @@ namespace GSoft.Dynamite.Branding
         {
             get
             {
-                return "Filters";         
+                return "Filters";
             }
         }
 
@@ -79,7 +84,7 @@ namespace GSoft.Dynamite.Branding
                 try
                 {
                     // undo the custization, necessary only upon successive feature re-activations (because the Checkout and edits below cause the unghosting/customization of the file)
-                    htmlFile.RevertContentStream(); 
+                    htmlFile.RevertContentStream();
                 }
                 catch (Exception exception)
                 {
@@ -98,16 +103,7 @@ namespace GSoft.Dynamite.Branding
                 // Flush the blob cache accross the entire web application (otherwise the old 
                 // version of the Display Template will stay stuck in the cache, especially when
                 // your Display Templates are associated with Result Types)
-                try
-                {
-                    // WARNING: You need security_admin SQL server role and the db_owner role on the web app's content DB
-                    // in order to successfully flush the web app's BLOB cache.
-                    PublishingCache.FlushBlobCache(htmlFiles[0].ParentFolder.ParentWeb.Site.WebApplication);
-                }
-                catch (SPException exception)
-                {
-                    this.logger.Error("DisplayTemplateHelper.GenerateJavascriptFile: Failed to flush the BLOB cache accross the web app. You need You need security_admin SQL server role and the db_owner role on the web app's content DB. Caught and swallowed exception: {0}", exception);
-                }
+                this.blobCacheHelper.FlushBlobCache(htmlFiles[0].ParentFolder.ParentWeb.Site.WebApplication);
             }
         }
     }
