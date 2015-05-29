@@ -60,6 +60,14 @@ namespace GSoft.Dynamite.Search
         }
 
         /// <summary>
+        /// The OOTB Content Type managed property
+        /// </summary>
+        public static ManagedPropertyInfo ContentType
+        {
+            get { return new ManagedPropertyInfo("ContentType", ManagedDataType.Text); }
+        }
+
+        /// <summary>
         /// The OOTB ContentTypeId managed property
         /// </summary>
         public static ManagedPropertyInfo ContentTypeId
