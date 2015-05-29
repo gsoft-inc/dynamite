@@ -151,7 +151,6 @@ namespace GSoft.Dynamite.Navigation
                     var term = this.taxonomyService.GetTermForId(site, termInfo.Id);
 
                     term.SetLocalCustomProperty(SystemTargetUrl, string.Empty);
-                    term.SetLocalCustomProperty(SystemSimpleLinkUrl, string.Empty);
                     term.TermSet.TermStore.CommitAll();
                 }
             }
