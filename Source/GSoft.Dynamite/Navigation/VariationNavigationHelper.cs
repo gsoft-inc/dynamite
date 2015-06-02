@@ -242,7 +242,11 @@ namespace GSoft.Dynamite.Navigation
                 var table = tables.Filter("TableType", KnownTableTypes.RelevantResults).Single(relevantTable => relevantTable.QueryRuleId == Guid.Empty);
                 if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url.Name))
                 {
-                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url.Name].ToString());
+                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url.Name].ToString(), UriKind.Absolute);
+
+                    // Convert the absolute Uri into a relative Uri. This is required for environments using a load balancer,
+                    // because we need to ignore the load balancer's port found in the absolute Uri.
+                    url = new Uri(url.AbsolutePath, UriKind.Relative);
                 }
             }
 
