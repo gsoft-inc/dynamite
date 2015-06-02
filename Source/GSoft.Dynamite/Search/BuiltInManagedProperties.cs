@@ -98,5 +98,29 @@ namespace GSoft.Dynamite.Search
         {
             get { return new ManagedPropertyInfo("PublishingImage", ManagedDataType.Text); }
         }
+
+        /// <summary>
+        /// The OOTB Filename managed property
+        /// </summary>
+        public static ManagedPropertyInfo FileName
+        {
+            get { return new ManagedPropertyInfo("Filename", ManagedDataType.Text); }
+        }
+
+        /// <summary>
+        /// The OOTB FileExtension managed property
+        /// </summary>
+        public static ManagedPropertyInfo FileExtension
+        {
+            get { return new ManagedPropertyInfo("FileExtension", ManagedDataType.Text); }
+        }
+
+        /// <summary>
+        /// The OOTB SecondaryFileExtension managed property
+        /// </summary>
+        public static ManagedPropertyInfo SecondaryFileExtension
+        {
+            get { return new ManagedPropertyInfo("SecondaryFileExtension", ManagedDataType.Text); }
+        }
     }
 }
