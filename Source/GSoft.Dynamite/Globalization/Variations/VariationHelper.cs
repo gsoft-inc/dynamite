@@ -262,6 +262,7 @@ namespace GSoft.Dynamite.Helpers
                 item["Locale"] = label.Locale.ToString(CultureInfo.InvariantCulture);
                 item["Hierarchy Creation Mode"] = label.HierarchyCreationMode;
                 item["Is Source"] = label.IsSource.ToString();
+                item["NotificationMode"] = label.IsAutomaticUpdate.ToString();
 
                 if (existingItems.Count > 0)
                 {

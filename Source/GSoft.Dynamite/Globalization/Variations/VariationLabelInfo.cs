@@ -90,6 +90,12 @@ namespace GSoft.Dynamite.Globalization.Variations
         public string CustomTitleValue { get; set; }
 
         /// <summary>
+        /// This is the "Page Update Behavior" option. In the variation wizard (at /_layouts/15/VariationLabelWizard.aspx)
+        /// there is an option for automatic update. Sadly, the Field in the list item is "NotificationMode". We decided to keep the UI name here because it is more meaningful.
+        /// </summary>
+        public bool IsAutomaticUpdate { get; set; }
+
+        /// <summary>
         /// Gets or Sets the CssClass property. Add a css class to the label.
         /// </summary>
         public string CssClass { get; set; }
