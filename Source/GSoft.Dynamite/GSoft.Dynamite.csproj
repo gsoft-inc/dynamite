@@ -100,6 +100,10 @@
     <Compile Include="Cache\BlobCacheHelper.cs" />
     <Compile Include="Cache\IBlobCacheHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Email\EmailHelper.cs" />
+    <Compile Include="Email\EmailInfo.cs" />
+    <Compile Include="Email\EmailPriorityType.cs" />
+    <Compile Include="Email\IEmailHelper.cs" />
     <Compile Include="Events\EventReceiverOwner.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
     <Compile Include="Features\FeatureDependencyActivator.cs" />
