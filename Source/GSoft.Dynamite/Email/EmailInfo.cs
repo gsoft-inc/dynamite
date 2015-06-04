@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Email
 {
