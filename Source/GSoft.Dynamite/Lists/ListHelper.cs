@@ -242,6 +242,12 @@ namespace GSoft.Dynamite.Lists
             // Ensure the field definitions to make sure that all fields are present and to override/apply column default Values
             this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
+            // List Validation Settings
+            if (!string.IsNullOrEmpty(listInfo.ValidationFormula))
+            {
+                this.ConfigureValidationSettings(list, listInfo.ValidationFormula, listInfo.ValidationMessage);
+            }
+
             // Default View Fields
             this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
 
@@ -267,6 +273,26 @@ namespace GSoft.Dynamite.Lists
             }
 
             return lists;
+        }
+
+        /// <summary>
+        /// Configures the validation settings.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="validationFormula">The validation formula.</param>
+        /// <param name="validationMessage">The validation message.</param>
+        public void ConfigureValidationSettings(SPList list, string validationFormula, string validationMessage)
+        {
+            try
+            {
+                list.ValidationFormula = validationFormula;
+                list.ValidationMessage = validationMessage;
+                list.Update();
+            }
+            catch (SPException invalidFormulaException)
+            {
+                throw new ArgumentException("The validation formula of the list info is not valid.", invalidFormulaException);
+            }
         }
 
         /// <summary>

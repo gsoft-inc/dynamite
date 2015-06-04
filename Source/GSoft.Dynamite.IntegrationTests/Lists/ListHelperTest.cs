@@ -1194,6 +1194,193 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             }
         }
 
+        /// <summary>
+        /// Ensure a non existing list with a validation formula and a validation message, it should set
+        /// both validation settings right.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithValidationFormulaAndMessage_ItShouldSetThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+            var expectedFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+            const string ExpectedMessage = "Name needs to be Bob";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationFormula = expectedFormula;
+            listInfo.ValidationMessage = ExpectedMessage;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(expectedFormula, list.ValidationFormula);
+                    Assert.AreEqual(ExpectedMessage, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure anexisting list with a validation formula and a validation message, it should set
+        /// both validation settings right.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListWithValidationFormulaAndMessage_ItShouldSetNewSettings()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+            const string FormulaNewRequiredValue = "\"John\"";
+
+            var validationFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            var expectedNewFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaNewRequiredValue);
+
+            const string FormulaMessage = "Name needs to be Bob";
+            const string ExpectedNewMessage = "Name needs to be John";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationFormula = validationFormula;
+            listInfo.ValidationMessage = FormulaMessage;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    
+                    // Creating initial list
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    listInfo.ValidationFormula = expectedNewFormula;
+                    listInfo.ValidationMessage = ExpectedNewMessage;
+
+                    list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore, rootWeb.Lists.Count);
+                    Assert.AreEqual(expectedNewFormula, list.ValidationFormula);
+                    Assert.AreEqual(ExpectedNewMessage, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with an invalid validation formula it should
+        /// throw an exception.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenEnsuringANonExistingListWithInvalidFormula_ItShouldThrowException()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "'Bob'";
+            var expectedFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationFormula = expectedFormula;
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsTrue(false);   // Exception should have been thrown already
+                }
+            }
+        }
+
         #endregion
 
         #region Make sure fields definitions defined on ListInfo are correctly created and saved on a list when ensuring that list.

@@ -5,6 +5,7 @@ using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Lists.Constants;
 using Microsoft.SharePoint;
+using Microsoft.SqlServer.Server;
 
 namespace GSoft.Dynamite.Lists
 {
@@ -22,6 +23,7 @@ namespace GSoft.Dynamite.Lists
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
+            this.ValidationMessage = string.Empty;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
@@ -44,6 +46,7 @@ namespace GSoft.Dynamite.Lists
             this.Overwrite = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
             this.EnableAttachements = true;
+            this.ValidationMessage = string.Empty;
 
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
@@ -187,6 +190,16 @@ namespace GSoft.Dynamite.Lists
         /// Enable attachments on the list
         /// </summary>
         public bool EnableAttachements { get; set; }
+
+        /// <summary>
+        /// Gets or sets the validation formula.
+        /// </summary>
+        public string ValidationFormula { get; set; }
+
+        /// <summary>
+        /// Gets or sets the message to display when validation fails
+        /// </summary>
+        public string ValidationMessage { get; set; }
 
         /// <summary>
         /// The default view fields for the list
