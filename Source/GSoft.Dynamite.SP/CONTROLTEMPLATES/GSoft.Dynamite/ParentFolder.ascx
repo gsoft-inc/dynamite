@@ -7,7 +7,7 @@
 <%@ Register Tagprefix="WebPartPages" Namespace="Microsoft.SharePoint.WebPartPages" Assembly="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c" %>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ParentFolder.ascx.cs" Inherits="GSoft.Dynamite.CONTROLTEMPLATES.GSoft.Dynamite.ParentFolder" %>
 
-<a class="ms-promotedActionButton parent-folder-link" title="<%=this.ParentFolderLabel%>" href="<%=this.ParentFolderUrl%>">
+<a class="ms-promotedActionButton parent-folder-link" title="<%=this.ParentFolderLabel%>" href="<%=this.ParentFolderServerRelativePath%>">
     <span style="height: 16px; width: 16px; position: relative; display: inline-block; overflow: hidden;" class="s4-clust ms-promotedActionButton-icon">
         <img src="/_layouts/15/images/spcommon.png?rev=23" alt="Follow" style="position: absolute; left: -215px; top: -120px;">
     </span>
