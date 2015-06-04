@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using GSoft.Dynamite.Configuration;
+using GSoft.Dynamite.Email;
 using GSoft.Dynamite.Extensions;
 using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
@@ -27,17 +28,20 @@ namespace GSoft.Dynamite.Utils
     /// </remarks>
     public class CatchallExceptionHandler : ICatchallExceptionHandler
     {
-        private ILogger logger;
-        private IConfiguration configuration;
+        private readonly ILogger logger;
+        private readonly IEmailHelper emailHelper;
+        private readonly IConfiguration configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CatchallExceptionHandler"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
+        /// <param name="emailHelper">The email helper</param>
         /// <param name="configuration">The project configuration</param>
-        public CatchallExceptionHandler(ILogger logger, IConfiguration configuration)
+        public CatchallExceptionHandler(ILogger logger, IEmailHelper emailHelper, IConfiguration configuration)
         {
             this.logger = logger;
+            this.emailHelper = emailHelper;
             this.configuration = configuration;
         }
 
@@ -99,7 +103,7 @@ namespace GSoft.Dynamite.Utils
                     errorUrl = HttpContext.Current.Request.Url.AbsoluteUri;
                 }
 
-                SendEmail(web, devTeamEmail, string.Format(CultureInfo.InvariantCulture, "[Automatic Error Email] {0} - Error at {1}", web.Title, errorUrl), message);
+                this.SendEmail(web, devTeamEmail, string.Format(CultureInfo.InvariantCulture, "[Automatic Error Email] {0} - Error at {1}", web.Title, errorUrl), message);
             }
             else
             {
@@ -107,16 +111,15 @@ namespace GSoft.Dynamite.Utils
             }
         }
 
-        private static void SendEmail(SPWeb web, string emailTo, string emailTitle, string body)
+        private void SendEmail(SPWeb web, string emailTo, string emailTitle, string body)
         {
-            var headers = new StringDictionary();
-            headers.Add("to", emailTo);
-            headers.Add("subject", emailTitle);
+            var emailInfo = new EmailInfo();
+            emailInfo.To.Add(emailTo);
+            emailInfo.Subject = emailTitle;
+            emailInfo.Body = body;
+            emailInfo.Priority = EmailPriorityType.High;
 
-            web.RunAsSystem(elevatedWeb =>
-            {
-                SPUtility.SendEmail(elevatedWeb, headers, body);
-            });
+            this.emailHelper.SendEmail(web, emailInfo);
         }
     }
 }
