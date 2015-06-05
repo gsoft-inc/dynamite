@@ -243,9 +243,18 @@ namespace GSoft.Dynamite.Lists
             this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
             // List Validation Settings
-            if (!string.IsNullOrEmpty(listInfo.ValidationFormula))
+            if (listInfo.ValidationSettings.Any())
             {
-                this.ConfigureValidationSettings(list, listInfo.ValidationFormula, listInfo.ValidationMessage);
+                ListValidationInfo currentLocaleSettings;
+
+                if (listInfo.ValidationSettings.TryGetValue(web.Locale.Name, out currentLocaleSettings))
+                {
+                    this.ConfigureValidationSettings(list, currentLocaleSettings.ValidationFormula, currentLocaleSettings.ValidationMessage);
+                }
+                else
+                {
+                    this.logger.Warn("No validation settings found in the dictionnary corresponding to the current web locale {0}. Skipping this step.", web.Locale.Name);
+                }
             }
 
             // Default View Fields
@@ -291,7 +300,7 @@ namespace GSoft.Dynamite.Lists
             }
             catch (SPException invalidFormulaException)
             {
-                throw new ArgumentException("The validation formula of the list info is not valid.", invalidFormulaException);
+                throw new ArgumentException("The validation formula is not valid. Check the syntax and make sure you have the right field's display name(s).", invalidFormulaException);
             }
         }
 

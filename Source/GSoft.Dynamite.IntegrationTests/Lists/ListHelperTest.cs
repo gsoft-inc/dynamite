@@ -1206,12 +1206,15 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             const string Name = "NameFieldKey";
             const string Desc = "DescriptionFieldKey";
             const string FormulaRequiredValue = "\"Bob\"";
+            
             var expectedFormula = string.Format(
                 CultureInfo.InvariantCulture,
                 "={0}={1}",
                 Name,
                 FormulaRequiredValue);
+
             const string ExpectedMessage = "Name needs to be Bob";
+            const string WebLocale = "en-US";
 
             var textFieldInfo = new TextFieldInfo(
                     "TestInternalName",
@@ -1227,8 +1230,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 textFieldInfo
             };
 
-            listInfo.ValidationFormula = expectedFormula;
-            listInfo.ValidationMessage = ExpectedMessage;
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedFormula, ExpectedMessage));
 
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1254,7 +1256,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         }
 
         /// <summary>
-        /// Ensure anexisting list with a validation formula and a validation message, it should set
+        /// Ensure an existing list with a validation formula and a validation message, it should set
         /// both validation settings right.
         /// </summary>
         [TestMethod]
@@ -1266,6 +1268,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             const string Desc = "DescriptionFieldKey";
             const string FormulaRequiredValue = "\"Bob\"";
             const string FormulaNewRequiredValue = "\"John\"";
+            const string WebLocale = "en-US";
 
             var validationFormula = string.Format(
                 CultureInfo.InvariantCulture,
@@ -1296,8 +1299,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 textFieldInfo
             };
 
-            listInfo.ValidationFormula = validationFormula;
-            listInfo.ValidationMessage = FormulaMessage;
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(validationFormula, FormulaMessage));
 
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1312,8 +1314,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     var numberOfListsBefore = rootWeb.Lists.Count;
 
                     // Act
-                    listInfo.ValidationFormula = expectedNewFormula;
-                    listInfo.ValidationMessage = ExpectedNewMessage;
+                    listInfo.ValidationSettings.Clear();
+                    listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedNewFormula, ExpectedNewMessage));
 
                     list = listHelper.EnsureList(rootWeb, listInfo);
 
@@ -1340,6 +1342,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
             const string Url = "testUrl";
             const string Name = "NameFieldKey";
             const string Desc = "DescriptionFieldKey";
+            const string WebLocale = "en-US";
             const string FormulaRequiredValue = "'Bob'";
             var expectedFormula = string.Format(
                 CultureInfo.InvariantCulture,
@@ -1361,7 +1364,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 textFieldInfo
             };
 
-            listInfo.ValidationFormula = expectedFormula;
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedFormula));
 
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -1377,6 +1380,152 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                     // Assert
                     Assert.IsTrue(false);   // Exception should have been thrown already
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with a dictionnary of validation settings when the current Web Locale
+        /// is not part of the dictionnary keys. It should not apply any validation settings.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithNotFoundLocale_ItShouldDoNothing()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+
+            var validationFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            const string ValidationMessage = "Name needs to be Bob";
+            const string ValidationLocale = "fr-FR";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(ValidationLocale, new ListValidationInfo(validationFormula, ValidationMessage));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(string.Empty, list.ValidationFormula);
+                    Assert.AreEqual(string.Empty, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with a dictionnary of validation settings (different Locale).
+        /// The settings applied should be the ones corresponding to the current Web Locale.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithMultipleValidationLocales_ItShouldApplyTheCorrectOnes()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string NameFr = "NameFieldKeyFr";
+            const string NameEn = "NameFieldKeyEn";
+            const string NameDe = "NameFieldKeyDe";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+
+            var validationFormulaFr = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameFr,
+                FormulaRequiredValue);
+
+            var validationFormulaEn = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameEn,
+                FormulaRequiredValue);
+
+            var validationFormulaDe = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameDe,
+                FormulaRequiredValue);
+
+            const string ValidationMessageEn = "Name needs to be Bill";
+            const string ValidationMessageFr = "Name needs to be Robert";
+            const string ValidationMessageDe = "Name needs to be Franz";
+
+            const string ValidationLocaleEn = "en-US";
+            const string ValidationLocaleFr = "fr-FR";
+            const string ValidationLocaleDe = "de-DE";
+
+            // Web will be in de-DE Locale, so field will be using the DE Name
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    NameDe,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(ValidationLocaleEn, new ListValidationInfo(validationFormulaEn, ValidationMessageEn));
+            listInfo.ValidationSettings.Add(ValidationLocaleFr, new ListValidationInfo(validationFormulaFr, ValidationMessageFr));
+            listInfo.ValidationSettings.Add(ValidationLocaleDe, new ListValidationInfo(validationFormulaDe, ValidationMessageDe));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                rootWeb.Locale = new CultureInfo("de-DE");
+                rootWeb.Update();
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(validationFormulaDe, list.ValidationFormula);
+                    Assert.AreEqual(ValidationMessageDe, list.ValidationMessage);
                 }
             }
         }
