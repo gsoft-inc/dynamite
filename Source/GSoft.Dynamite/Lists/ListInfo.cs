@@ -23,6 +23,7 @@ namespace GSoft.Dynamite.Lists
             this.Overwrite = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
+            this.ValidationSettings = new Dictionary<string, ListValidationInfo>();
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
             this.FieldDefinitions = new List<BaseFieldInfo>();
@@ -45,6 +46,7 @@ namespace GSoft.Dynamite.Lists
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
             this.EnableAttachements = true;
 
+            this.ValidationSettings = new Dictionary<string, ListValidationInfo>();
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
             this.FieldDefinitions = new List<BaseFieldInfo>();
@@ -187,6 +189,13 @@ namespace GSoft.Dynamite.Lists
         /// Enable attachments on the list
         /// </summary>
         public bool EnableAttachements { get; set; }
+
+        /// <summary>
+        /// Gets or sets the validation settings. Key is the locale, value is
+        /// a ListValidationInfo object containing the formula and the message.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
+        public IDictionary<string, ListValidationInfo> ValidationSettings { get; set; }
 
         /// <summary>
         /// The default view fields for the list

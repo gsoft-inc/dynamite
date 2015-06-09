@@ -8,6 +8,7 @@ using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Documents;
+using GSoft.Dynamite.Email;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Features;
 using GSoft.Dynamite.Fields;
@@ -148,6 +149,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Documents
             builder.RegisterType<ContentOrganizerHelper>().As<IContentOrganizerHelper>();
+
+            // Email
+            builder.RegisterType<EmailHelper>().As<IEmailHelper>();
 
             // Events
             builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();

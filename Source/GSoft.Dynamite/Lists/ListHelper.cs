@@ -242,6 +242,21 @@ namespace GSoft.Dynamite.Lists
             // Ensure the field definitions to make sure that all fields are present and to override/apply column default Values
             this.fieldHelper.EnsureField(list.Fields, listInfo.FieldDefinitions);
 
+            // List Validation Settings
+            if (listInfo.ValidationSettings.Any())
+            {
+                ListValidationInfo currentLocaleSettings;
+
+                if (listInfo.ValidationSettings.TryGetValue(web.Locale.Name, out currentLocaleSettings))
+                {
+                    this.ConfigureValidationSettings(list, currentLocaleSettings.ValidationFormula, currentLocaleSettings.ValidationMessage);
+                }
+                else
+                {
+                    this.logger.Warn("No validation settings found in the dictionnary corresponding to the current web locale {0}. Skipping this step.", web.Locale.Name);
+                }
+            }
+
             // Default View Fields
             this.AddFieldsToDefaultView(list, listInfo.DefaultViewFields);
 
@@ -267,6 +282,26 @@ namespace GSoft.Dynamite.Lists
             }
 
             return lists;
+        }
+
+        /// <summary>
+        /// Configures the validation settings.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="validationFormula">The validation formula.</param>
+        /// <param name="validationMessage">The validation message.</param>
+        public void ConfigureValidationSettings(SPList list, string validationFormula, string validationMessage)
+        {
+            try
+            {
+                list.ValidationFormula = validationFormula;
+                list.ValidationMessage = validationMessage;
+                list.Update();
+            }
+            catch (SPException invalidFormulaException)
+            {
+                throw new ArgumentException("The validation formula is not valid. Check the syntax and make sure you have the right field's display name(s).", invalidFormulaException);
+            }
         }
 
         /// <summary>

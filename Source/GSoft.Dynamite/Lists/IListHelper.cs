@@ -94,5 +94,13 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         /// <param name="list">List that should be added to Quick Launch</param>
         void AddtoQuickLaunch(SPList list);
+
+        /// <summary>
+        /// Configures the validation settings.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="validationFormula">The validation formula.</param>
+        /// <param name="validationMessage">The validation message.</param>
+        void ConfigureValidationSettings(SPList list, string validationFormula, string validationMessage);
     }
 }

@@ -118,6 +118,7 @@
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Lists\ListValidationInfo.cs" />
     <Compile Include="Navigation\NavigationQueryParameters.cs" />
     <Compile Include="Navigation\NavigationSearchSettings.cs" />
     <Compile Include="Navigation\NavigationNodeMatchingSettings.cs" />

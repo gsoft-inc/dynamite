@@ -30,6 +30,15 @@ moment.locale('en', {
     }
 });
 
+// IE9 fix
+window.console = window.console || {
+    log: function() {},
+    warn: function() {},
+    error: function() {},
+    time: function() {},
+    timeEnd: function() {}
+};
+
 // GSoft namespace root
 window.GSoft = window.GSoft || {};
 
