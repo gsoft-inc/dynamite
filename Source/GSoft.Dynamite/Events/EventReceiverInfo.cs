@@ -9,6 +9,8 @@ namespace GSoft.Dynamite.Events
     /// </summary>
     public class EventReceiverInfo
     {
+        private int sequenceNumber = 10000;
+
         #region Constructors
 
         /// <summary>
@@ -125,5 +127,15 @@ namespace GSoft.Dynamite.Events
         /// Synchronization type for the event receiver
         /// </summary>
         public SPEventReceiverSynchronization SynchronizationType { get; set; }
+
+        /// <summary>
+        /// Gets or sets an integer that represents the relative sequence of the event.
+        /// Must be greater than zero and less than 65,536. 10000 by default
+        /// </summary>
+        public int SequenceNumber 
+        { 
+            get { return this.sequenceNumber; } 
+            set { this.sequenceNumber = value; } 
+        }
     }
 }
