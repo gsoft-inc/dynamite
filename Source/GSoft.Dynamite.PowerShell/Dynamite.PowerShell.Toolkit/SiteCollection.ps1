@@ -26,6 +26,7 @@ function New-DSPSiteCollectionRecusiveXml()
     [string]$OwnerAlias = $Site.OwnerAlias
     [string]$SecondaryOwnerAlias = if ([string]::IsNullOrEmpty($Site.SecondaryOwnerAlias)) { "$env:USERDOMAIN\$env:USERNAME" } else { $Site.SecondaryOwnerAlias }
     [string]$Language = $Site.Language
+    [string]$Locale = $Site.Locale	
     [string]$Template = $Site.Template
     [bool]$IsHostNamedSite = -not [string]::IsNullOrEmpty($SiteHostNamePath)
     [bool]$IsAnonymous = [bool]$Site.IsAnonymous
@@ -62,14 +63,22 @@ function New-DSPSiteCollectionRecusiveXml()
         {
             $spSite = New-SPSite -URL $SiteAbsoluteUrl -OwnerAlias $OwnerAlias -SecondaryOwnerAlias $SecondaryOwnerAlias -Name $Name -Language $Language -Template $Template -ContentDatabase $ContentDatabaseName
         }
+
+        $web = $spSite.RootWeb
         
         if ($IsAnonymous)
-        {
-            $web = $spSite.RootWeb
+        {            
             $web.AnonymousState = 2
             $web.AnonymousPermMask64 = "ViewListItems, ViewVersions, ViewFormPages, Open, ViewPages"
             $web.update()
             Write-Verbose "Enable the Site for Anonymous"
+        }
+
+        if ((-not [string]::IsNullOrEmpty($Locale)) -and ($Locale -ne $Language)) {
+            [int]$LocaleAsInt = $Locale -as [int]
+            $culture = New-Object System.Globalization.CultureInfo($LocaleAsInt)
+            $web.Locale = $culture
+            $web.Update()
         }
         
         $elapsedTime = ($(get-date) - $StartTime).TotalSeconds
@@ -151,7 +160,7 @@ function New-DSPSiteCollectionRecusiveXml()
   Here is the Structure XML schema.
   
 <WebApplication Url="http://myWebApp">
-  <Site Name="Site Name" RelativePath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME" IsAnonymous="True">
+  <Site Name="Site Name" RelativePath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Locale="4105" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME" IsAnonymous="True">
     <Groups>
       <Group Name="Site_Admin" OwnerName="ORG\admin" Description="Admin Group" IsAssociatedOwnerGroup="true">
         <PermissionLevels>
