@@ -121,7 +121,7 @@ namespace GSoft.Dynamite.Events
                 var contentType = site.RootWeb.ContentTypes[eventReceiver.ContentType.ContentTypeId];
                 if (contentType != null)
                 {
-                    this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
+                    this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType, eventReceiver.SequenceNumber);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace GSoft.Dynamite.Events
                 var list = this.listLocator.TryGetList(web, eventReceiver.List);
                 if (list != null)
                 {
-                    this.AddEventReceiverDefinition(list, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
+                    this.AddEventReceiverDefinition(list, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType, eventReceiver.SequenceNumber);
                 }
             }
         }
@@ -229,9 +229,10 @@ namespace GSoft.Dynamite.Events
         /// <param name="assemblyName">The assembly name.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
+        /// <param name="sequenceNumber">An integer that represents the relative sequence of the event</param>
         /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        private SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType)
+        private SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType, int sequenceNumber)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
@@ -250,6 +251,7 @@ namespace GSoft.Dynamite.Events
                     eventReceiverDefinition.Assembly = assembly.FullName;
                     eventReceiverDefinition.Synchronization = syncType;
                     eventReceiverDefinition.Class = className;
+                    eventReceiverDefinition.SequenceNumber = sequenceNumber;
                     eventReceiverDefinition.Update();
                     contentType.Update(true);
                 }
@@ -266,9 +268,10 @@ namespace GSoft.Dynamite.Events
         /// <param name="assemblyName">The assembly name.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
+        /// <param name="sequenceNumber">An integer that represents the relative sequence of the event</param>
         /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        private SPEventReceiverDefinition AddEventReceiverDefinition(SPList list, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType)
+        private SPEventReceiverDefinition AddEventReceiverDefinition(SPList list, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType, int sequenceNumber)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
@@ -287,6 +290,7 @@ namespace GSoft.Dynamite.Events
                     eventReceiverDefinition.Assembly = assembly.FullName;
                     eventReceiverDefinition.Synchronization = syncType;
                     eventReceiverDefinition.Class = className;
+                    eventReceiverDefinition.SequenceNumber = sequenceNumber;
                     eventReceiverDefinition.Update();
                     list.Update();
                 }
