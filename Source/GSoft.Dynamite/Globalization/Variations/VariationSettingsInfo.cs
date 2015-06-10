@@ -38,8 +38,8 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// deleted, then the target page will be re-created.
         /// If false, then re-publishing a source page will not cause previously
         /// deleted target pages to get created.
-        /// This will be mapped to the "AutoSpawnStopAfterDeletePropertyName" property bag
-        /// value on the root folder of the variations relationships list.
+        /// The OPPOSITE of this value will be mapped to the "AutoSpawnStopAfterDeletePropertyName" 
+        /// property bag value on the root folder of the variations relationships list.
         /// This value is false by default (i.e. target page deletions become
         /// permanent, regardless of subsequent source major version publish events).
         /// </summary>

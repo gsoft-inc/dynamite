@@ -195,7 +195,7 @@ namespace GSoft.Dynamite.Helpers
             rootFolder.Properties["EnableAutoSpawnPropertyName"] = variationSettings.IsAutomaticTargetPageCreation.ToString();
 
             // Recreate Deleted Target Page; set to false to enable recreation
-            rootFolder.Properties["AutoSpawnStopAfterDeletePropertyName"] = variationSettings.IsRecreateDeletedTargetPage.ToString();
+            rootFolder.Properties["AutoSpawnStopAfterDeletePropertyName"] = (!variationSettings.IsRecreateDeletedTargetPage).ToString();
 
             // Update Target Page Web Parts
             rootFolder.Properties["UpdateWebPartsPropertyName"] = variationSettings.IsUpdateTargetPageWebParts.ToString();
