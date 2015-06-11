@@ -124,6 +124,7 @@
     <Compile Include="Navigation\NavigationSearchSettings.cs" />
     <Compile Include="Navigation\NavigationNodeMatchingSettings.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\BuiltInRankingModels.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
