@@ -18,15 +18,15 @@ namespace GSoft.Dynamite.Security
         ICollection<string> GetUserSharePointGroups(SPWeb web, string userName);
 
         /// <summary>
-        /// Gets the users in the SharePoint group.
-        /// This method will also check users in the active directory groups if any are in the SharePoint group.
+        /// Gets the users of the SharePoint principal.
+        /// This method will also check users in the active directory groups.
         /// </summary>
-        /// <param name="group">The SharePoint group.</param>
-        /// <returns>A list of the SPUsers in the SharePoint Group</returns>
+        /// <param name="principal">The SharePoint principal.</param>
+        /// <returns>A list of the SPUsers in the SharePoint principal</returns>
         /// <exception cref="System.ArgumentNullException">
-        /// group is null
+        /// Principal is null
         /// </exception>
-        IList<SPUser> GetUsersInGroup(SPGroup group);
+        IList<SPUser> GetUsersInPrincipal(SPPrincipal principal);
 
         /// <summary>
         /// Determines whether The specified user is part of the specified SharePoint user group.

@@ -24,25 +24,6 @@ namespace GSoft.Dynamite.Security
         }
 
         /// <summary>
-        /// Gets the users in the SharePoint group.
-        /// This method will also check users in the active directory groups if any are in the SharePoint group.
-        /// </summary>
-        /// <param name="group">The SharePoint group.</param>
-        /// <returns>A list of the SPUsers in the SharePoint Group</returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// group is null
-        /// </exception>
-        public IList<SPUser> GetUsersInGroup(SPGroup group)
-        {
-            if (group == null)
-            {
-                throw new ArgumentNullException("group");
-            }
-
-            return GetUsersInPrincipal(group);
-        }
-
-        /// <summary>
         /// Determines whether The specified user is part of the specified SharePoint user group.
         /// This method will also check users in the active directory groups if any are in the SharePoint group.
         /// </summary>
@@ -64,12 +45,26 @@ namespace GSoft.Dynamite.Security
                 throw new ArgumentNullException("group");
             }
 
-            var usersInGroup = GetUsersInPrincipal(group);
+            var usersInGroup = this.GetUsersInPrincipal(group);
             return HasUserInList(usersInGroup, user);
         }
 
-        private static IList<SPUser> GetUsersInPrincipal(SPPrincipal principal)
+        /// <summary>
+        /// Gets the users of the SharePoint principal.
+        /// This method will also check users in the active directory groups.
+        /// </summary>
+        /// <param name="principal">The SharePoint principal.</param>
+        /// <returns>A list of the SPUsers in the SharePoint principal</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// Principal is null
+        /// </exception>
+        public IList<SPUser> GetUsersInPrincipal(SPPrincipal principal)
         {
+            if (principal == null)
+            {
+                throw new ArgumentNullException("principal");
+            }
+
             List<SPUser> allUsers = new List<SPUser>();
 
             principal.ParentWeb.RunAsSystem(elevatedWeb =>

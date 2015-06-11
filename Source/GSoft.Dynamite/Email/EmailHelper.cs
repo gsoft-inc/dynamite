@@ -47,7 +47,7 @@ namespace GSoft.Dynamite.Email
         /// <param name="emailInformation">The email information.</param>
         public void AddGroupMembersToRecipients(SPGroup group, EmailInfo emailInformation)
         {
-            var users = this.userHelper.GetUsersInGroup(group);
+            var users = this.userHelper.GetUsersInPrincipal(group);
             var userEmails = users.Where(u => !string.IsNullOrEmpty(u.Email)).Select(u => u.Email).ToList();
             userEmails.ForEach(ue => emailInformation.To.Add(ue));
         }
