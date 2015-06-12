@@ -32,15 +32,15 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="category">The category (choice)</param>
         /// <param name="isAutomaticUpdate">Is the reusable content update automaticaly</param>
         /// <param name="isShowInRibbon">Do we show the reusable content in the ribbon</param>
-        /// <param name="filename">The filename of the html content</param>
+        /// <param name="fileName">The filename of the html content</param>
         /// <param name="folderInLayouts">The folder inside the Layouts hive</param>
-        public ReusableContentInfo(string title, string category, bool isAutomaticUpdate, bool isShowInRibbon, string filename, string folderInLayouts)
+        public ReusableContentInfo(string title, string category, bool isAutomaticUpdate, bool isShowInRibbon, string fileName, string folderInLayouts)
             : this(title)
         {
             this.Category = category;
             this.IsAutomaticUpdate = isAutomaticUpdate;
             this.IsShowInRibbon = isShowInRibbon;
-            this.Filename = filename;
+            this.FileName = fileName;
             this.FolderInLayouts = folderInLayouts;
         }
 
@@ -74,7 +74,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <summary>
         /// The filename of the reusable content HTML file. Eg: "footer.html"
         /// </summary>
-        public string Filename { get; set; }
+        public string FileName { get; set; }
 
         /// <summary>
         /// The folder inside the Layouts hive. Eg: "GSoft.Dynamite"
@@ -88,7 +88,7 @@ namespace GSoft.Dynamite.ReusableContent
         {
             get
             {
-                return SPUtility.GetVersionedGenericSetupPath(string.Format(CultureInfo.InvariantCulture, @"TEMPLATE\LAYOUTS\{0}\{1}", this.FolderInLayouts, this.Filename), 15);
+                return SPUtility.GetVersionedGenericSetupPath(string.Format(CultureInfo.InvariantCulture, @"TEMPLATE\LAYOUTS\{0}\{1}", this.FolderInLayouts, this.FileName), 15);
             }
         }
 

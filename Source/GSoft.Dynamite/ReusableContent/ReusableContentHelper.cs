@@ -46,7 +46,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="reusableContents">The information on the reusable contents to ensure</param>
         public void EnsureReusableContent(SPSite site, IList<ReusableContentInfo> reusableContents)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListName);
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
 
             // Load the HTML Content first
             foreach (var reusableContent in reusableContents)
@@ -90,9 +90,9 @@ namespace GSoft.Dynamite.ReusableContent
             var isSuccess = false;
 
             // Validate the Filename
-            if (!reusableContentInfo.Filename.EndsWith(".html", true, CultureInfo.InstalledUICulture))
+            if (!reusableContentInfo.FileName.EndsWith(".html", true, CultureInfo.InstalledUICulture))
             {
-                this.logger.Error("ReusableContentHelper.ParseReusableContent: Invalid filename for the HTML File, it does not ends with .html. (value : {0}", reusableContentInfo.Filename);
+                this.logger.Error("ReusableContentHelper.ParseReusableContent: Invalid filename for the HTML File, it does not ends with .html. (value : {0}", reusableContentInfo.FileName);
             }
 
             // HTML Content of the file

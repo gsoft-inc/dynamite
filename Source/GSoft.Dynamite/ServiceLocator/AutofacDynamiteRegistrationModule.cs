@@ -23,6 +23,7 @@ using GSoft.Dynamite.Monitoring;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.ReusableContent;
 using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
@@ -198,6 +199,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Repositories
             builder.RegisterType<ItemLocator>().As<IItemLocator>();
+
+            // Reusable Content
+            builder.RegisterType<ReusableContentHelper>().As<IReusableContentHelper>();
 
             // Search
             builder.RegisterType<SearchHelper>().As<ISearchHelper>();
