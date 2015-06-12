@@ -16,9 +16,32 @@ namespace GSoft.Dynamite.ReusableContent
     /// </remarks>
     public class ReusableContentInfo
     {
+        /// <summary>
+        /// Simple constructor with only the title.
+        /// </summary>
+        /// <param name="title">The Title of the reusable content</param>
         public ReusableContentInfo(string title)
         {
             this.Title = title;
+        }
+
+        /// <summary>
+        /// Constructor with needed properties
+        /// </summary>
+        /// <param name="title">The title of the reusable content</param>
+        /// <param name="category">The category (choice)</param>
+        /// <param name="isAutomaticUpdate">Is the reusable content update automaticaly</param>
+        /// <param name="isShowInRibbon">Do we show the reusable content in the ribbon</param>
+        /// <param name="filename">The filename of the html content</param>
+        /// <param name="folderInLayouts">The folder inside the Layouts hive</param>
+        public ReusableContentInfo(string title, string category, bool isAutomaticUpdate, bool isShowInRibbon, string filename, string folderInLayouts)
+            : this(title)
+        {
+            this.Category = category;
+            this.IsAutomaticUpdate = isAutomaticUpdate;
+            this.IsShowInRibbon = isShowInRibbon;
+            this.Filename = filename;
+            this.FolderInLayouts = folderInLayouts;
         }
 
         /// <summary>
@@ -40,7 +63,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// Do we show the Reusable Content in the Ribbon Dropdown as available
         /// </summary>
         public bool IsShowInRibbon { get; set; }
-        
+
         /// <summary>
         /// The HTML content of the Reusable Content
         /// </summary>

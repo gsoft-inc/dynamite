@@ -44,7 +44,6 @@ namespace GSoft.Dynamite.ReusableContent
         /// </summary>
         /// <param name="site">The Site Collection to ensure the reusablec content</param>
         /// <param name="reusableContents">The information on the reusable contents to ensure</param>
-        /// <returns>The reusable content (with the content of the html file)</returns>
         public void EnsureReusableContent(SPSite site, IList<ReusableContentInfo> reusableContents)
         {
             var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListName);
