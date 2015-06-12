@@ -123,6 +123,9 @@
     <Compile Include="Navigation\NavigationQueryParameters.cs" />
     <Compile Include="Navigation\NavigationSearchSettings.cs" />
     <Compile Include="Navigation\NavigationNodeMatchingSettings.cs" />
+    <Compile Include="ReusableContent\IReusableContentHelper.cs" />
+    <Compile Include="ReusableContent\ReusableContentHelper.cs" />
+    <Compile Include="ReusableContent\ReusableContentInfo.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
