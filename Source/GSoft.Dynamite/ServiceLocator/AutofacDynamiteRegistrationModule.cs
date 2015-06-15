@@ -240,7 +240,7 @@ namespace GSoft.Dynamite.ServiceLocator
             builder.RegisterType<FeatureDependencyActivator>().As<IFeatureDependencyActivator>();
 
             // User profile
-            builder.RegisterType<UserProfileHelper>().As<IUserProfileHelper>();
+            builder.RegisterType<UserProfilePropertyHelper>().As<IUserProfilePropertyHelper>();
         }
     }
 }

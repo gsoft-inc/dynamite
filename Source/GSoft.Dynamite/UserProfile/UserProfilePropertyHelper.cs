@@ -6,21 +6,21 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.UserProfile
 {
     /// <summary>
-    /// User profile helper methods.
+    /// User profile property helper methods.
     /// </summary>
-    public class UserProfileHelper : IUserProfileHelper
+    public class UserProfilePropertyHelper : IUserProfilePropertyHelper
     {
         private readonly ILogger logger;
         private readonly ITaxonomyHelper taxonomyHelper;
         private readonly ISiteTaxonomyCacheManager siteTaxonomyCacheManager;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserProfileHelper" /> class.
+        /// Initializes a new instance of the <see cref="UserProfilePropertyHelper" /> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <param name="siteTaxonomyCacheManager">The site taxonomy cache manager.</param>
-        public UserProfileHelper(
+        public UserProfilePropertyHelper(
             ILogger logger, 
             ITaxonomyHelper taxonomyHelper, 
             ISiteTaxonomyCacheManager siteTaxonomyCacheManager)

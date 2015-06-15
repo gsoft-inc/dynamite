@@ -133,8 +133,8 @@
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
     <Compile Include="Taxonomy\SimpleLinkTermInfo.cs" />
-    <Compile Include="UserProfile\IUserProfileHelper.cs" />
-    <Compile Include="UserProfile\UserProfileHelper.cs" />
+    <Compile Include="UserProfile\IUserProfilePropertyHelper.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyHelper.cs" />
     <Compile Include="UserProfile\UserProfilePropertyInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />

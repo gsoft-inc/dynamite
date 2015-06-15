@@ -82,7 +82,7 @@
     <Compile Include="Search\SearchHelperTest.cs" />
     <Compile Include="SiteTestScope.cs" />
     <Compile Include="Taxonomy\TaxonomyServiceTest.cs" />
-    <Compile Include="UserProfile\UserProfileHelperTest.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
