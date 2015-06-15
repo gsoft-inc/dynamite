@@ -366,6 +366,15 @@ namespace GSoft.Dynamite.Search
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortCollection;
 
+            // If the SortCollection contains "Rank" as one of its keys, specifiy the ranking model to be used
+            if (resultSourceInfo.SortSettings != null && resultSourceInfo.SortSettings.ContainsKey(BuiltInManagedProperties.Rank.Name))
+            {
+                // If no ranking model is specified in the ResultSourceInfo, use "Default Search Model"
+                queryProperties["RankingModelId"] = resultSourceInfo.RankingModelId != Guid.Empty ?
+                    resultSourceInfo.RankingModelId.ToString() :
+                        BuiltInRankingModels.DefaultSearchModelId.ToString();
+            }
+
             // Get the search service application for the current site
             var searchServiceApplication = this.GetDefaultSearchServiceApplication(contextSite);
             if (searchServiceApplication != null)

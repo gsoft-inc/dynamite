@@ -63,6 +63,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Server.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -118,6 +119,7 @@
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Globalization\Variations\BuiltInVariationsTimerJobs.cs" />
     <Compile Include="Globalization\Variations\HierarchyCreationMode.cs" />
     <Compile Include="Lists\ListValidationInfo.cs" />
     <Compile Include="Navigation\NavigationQueryParameters.cs" />
@@ -127,10 +129,14 @@
     <Compile Include="ReusableContent\ReusableContentHelper.cs" />
     <Compile Include="ReusableContent\ReusableContentInfo.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\BuiltInRankingModels.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
     <Compile Include="Taxonomy\SimpleLinkTermInfo.cs" />
+    <Compile Include="UserProfile\IUserProfilePropertyHelper.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyHelper.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />

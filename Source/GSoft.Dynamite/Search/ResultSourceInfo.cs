@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Search.Enums;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
-using Microsoft.SharePoint.JSGrid;
-using Microsoft.SqlServer.Server;
 
 namespace GSoft.Dynamite.Search
 {
@@ -35,10 +34,15 @@ namespace GSoft.Dynamite.Search
         public SearchObjectLevel Level { get; set; }
 
         /// <summary>
-        /// The sorting setting by field. The Key corresponds the field name.
+        /// The sorting setting by field. The Key corresponds to the field name.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IDictionary<string, SortDirection> SortSettings { get; set; }
+
+        /// <summary>
+        /// Specifies the Ranking Model Id to be used (only taken into account if "Rank" is specified in the SortSettings)
+        /// </summary>
+        public Guid RankingModelId { get; set; }
 
         /// <summary>
         /// Set the update behavior for the result source
