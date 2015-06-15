@@ -40,6 +40,62 @@ namespace GSoft.Dynamite.ReusableContent
         }
 
         /// <summary>
+        /// Gets the reusable content by title.
+        /// </summary>
+        /// <param name="site">The Site Collection.</param>
+        /// <param name="reusableContentTitle">The reusable content title.</param>
+        /// <returns>The reusable content</returns>
+        public ReusableContentInfo GetByTitle(SPSite site, string reusableContentTitle)
+        {
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+
+            var cultureSufix = CultureInfo.CurrentUICulture.LCID == Language.English.Culture.LCID ? "_EN" : "_FR";
+            var listItem = this.GetListItemByTitle(list, reusableContentTitle);
+
+            if (listItem == null)
+            {
+                listItem = this.GetListItemByTitle(list, reusableContentTitle + cultureSufix);
+            }
+
+            if (listItem != null)
+            {
+                // TODO: Use the Entity Binder 
+                return new ReusableContentInfo(listItem.Title)
+                {
+                    Category = (listItem[PublishingFields.ContentCategory.InternalName] ?? string.Empty).ToString(),
+                    IsAutomaticUpdate = listItem[PublishingFields.AutomaticUpdate.InternalName].ToString() == true.ToString(),
+                    IsShowInRibbon = listItem[PublishingFields.ShowInRibbon.InternalName].ToString() == true.ToString(),
+                    Content = (listItem[PublishingFields.ReusableHtml.InternalName] ?? string.Empty).ToString()
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Method to get all available Reusable Content Titles
+        /// </summary>
+        /// <param name="site">The current Site collection context</param>
+        /// <returns>A list of string (reusable content title) or null.</returns>
+        public IList<string> GetAllReusableContentTitles(SPSite site)
+        {
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+
+            var itemCollection = list.Items;
+
+            if (itemCollection.Count > 0)
+            {
+                return itemCollection.Cast<SPListItem>().Select(item => item.Title).ToList();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Method to ensure (create if not exist) and update a reusable content in a specific site.
         /// </summary>
         /// <param name="site">The Site Collection to ensure the reusablec content</param>
@@ -54,35 +110,44 @@ namespace GSoft.Dynamite.ReusableContent
                 // If the HTML Content load was successful, ensure the list item
                 if (this.LoadContentFile(reusableContent))
                 {
-                    var query = new SPQuery();
+                    SPListItem item = this.GetListItemByTitle(list, reusableContent.Title);
 
-                    query.Query = this.camlBuilder.Where(this.camlBuilder.Equal(this.camlBuilder.FieldRef(BuiltInFields.Title.InternalName), this.camlBuilder.Value(reusableContent.Title)));
-                    var itemCollection = list.GetItems(query);
-
-                    SPListItem item;
-
-                    if (itemCollection.Count > 0)
-                    {
-                        // The Reusable Content Exist, let's ensure it's properties.
-                        item = itemCollection[0];
-                    }
-                    else
+                    if (item == null)
                     {
                         // The Reusable Content does not exists, let's create it.
                         item = list.Items.Add();
                         item[BuiltInFields.Title.InternalName] = reusableContent.Title;
                     }
 
+                    // Ensure the Category
+                    this.EnsureContentCategory(list, reusableContent.Category);
+
                     item[PublishingFields.AutomaticUpdate.InternalName] = reusableContent.IsAutomaticUpdate.ToString();
                     item[PublishingFields.ShowInRibbon.InternalName] = reusableContent.IsShowInRibbon.ToString();
-                    item[PublishingFields.ReusableHtml.InternalName] = reusableContent.Content.ToString();
-                    item[PublishingFields.ContentCategory.InternalName] = reusableContent.Category.ToString();
+                    item[PublishingFields.ReusableHtml.InternalName] = reusableContent.Content;
+                    item[PublishingFields.ContentCategory.InternalName] = reusableContent.Category;
 
                     item.Update();
 
                     this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
                 }
             }
+        }
+
+        private SPListItem GetListItemByTitle(SPList reusableContentList, string reusableContentTitle)
+        {
+            var query = new SPQuery();
+
+            query.Query = this.camlBuilder.Where(this.camlBuilder.Equal(this.camlBuilder.FieldRef(BuiltInFields.TitleName), this.camlBuilder.Value(reusableContentTitle)));
+            var itemCollection = reusableContentList.GetItems(query);
+
+            SPListItem item = null;
+            if (itemCollection.Count > 0)
+            {
+                item = itemCollection[0];
+            }
+
+            return item;
         }
 
         private bool LoadContentFile(ReusableContentInfo reusableContentInfo)
@@ -136,6 +201,29 @@ namespace GSoft.Dynamite.ReusableContent
             reusableContentInfo.Content = htmlContent;
 
             return isSuccess;
+        }
+
+        private void EnsureContentCategory(SPList reusableContentList, string category)
+        {
+            SPFieldChoice categoryField = null;
+            try
+            {
+                categoryField = reusableContentList.Fields.GetFieldByInternalName(PublishingFields.ContentCategory.InternalName) as SPFieldChoice;
+            }
+            catch (ArgumentException ex)
+            {
+                this.logger.Error("Unable to find the field with internal name '{0}' on list '{1}'.", PublishingFields.ContentCategory.InternalName, reusableContentList.RootFolder.Url);
+                this.logger.Exception(ex);
+            }
+
+            if (categoryField != null)
+            {
+                if (!categoryField.Choices.Contains(category))
+                {
+                    categoryField.Choices.Add(category);
+                    categoryField.Update();
+                }
+            }
         }
     }
 }
