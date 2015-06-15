@@ -77,14 +77,34 @@ namespace GSoft.Dynamite.TimerJobs
             Guid jobId = this.StartJobAndReturn(site, jobName);
             var webApplication = site.WebApplication;
 
+            Console.WriteLine();
+            Console.Write(string.Format(CultureInfo.InvariantCulture, ">>> Waiting for timer job {0} with ID={1} to finish...", jobName, jobId));
+
             // wait until the job is finished
-            while ((from SPJobHistory j in webApplication.JobHistoryEntries
-                    where j.JobDefinitionId == jobId && j.StartTime >= justBeforeJobStartTime && j.Status == SPRunningJobStatus.Succeeded && j.DatabaseName == site.ContentDatabase.Name
-                    select j).Any() == false)
+            bool jobIsDone = false;
+            while (!jobIsDone)
             {
-                // wait for a relatively long while to avoid poking the content database too often
-                Thread.Sleep(3000);
+                Console.Write(".");
+
+                var jobDefinition = webApplication.JobDefinitions.Single(jd => jd.Id == jobId);
+                jobIsDone = jobDefinition.HistoryEntries.Any(
+                    historyEntry =>  
+                        historyEntry.StartTime >= justBeforeJobStartTime 
+                        && historyEntry.Status == SPRunningJobStatus.Succeeded 
+                        && historyEntry.DatabaseName == site.ContentDatabase.Name);
+
+                Console.Write(".");
+
+                if (!jobIsDone)
+                {
+                    // wait for a relatively long while to avoid poking the content database too often
+                    Thread.Sleep(3000);
+                    Console.Write(".");
+                }
             }
+
+            Console.WriteLine();
+            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, ">>> Timer job ID={0} done!", jobId));
         }
     }
 }
