@@ -25,7 +25,6 @@ namespace GSoft.Dynamite.IntegrationTests.Search
         /// Validates that EnsureResultSource applies the appropriate ranking model if a sorting by rank is specified
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureResultSource_WhenSortingByRank_ShouldApplySpecifiedRankingModel()
         {
             const string ResultSourceName = "Test Result Source";
@@ -70,7 +69,6 @@ namespace GSoft.Dynamite.IntegrationTests.Search
         /// Validates that EnsureResultSource applies the "Default Search Model" if Ranking is used but no model is specified
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureResultSource_WhenSortingByRank_ShouldApplyDefaultRankingModelIfNothingSpecified()
         {
             const string ResultSourceName = "Test Result Source";
@@ -114,7 +112,6 @@ namespace GSoft.Dynamite.IntegrationTests.Search
         /// Validates that EnsureResultSource doesn't apply a ranking model if Rank is not in the specified SortSettings
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureResultSource_WhenNotSortingByRank_ShouldNotApplyARankingModel()
         {
             const string ResultSourceName = "Test Result Source";
