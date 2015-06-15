@@ -4,9 +4,9 @@ using Microsoft.SharePoint;
 namespace GSoft.Dynamite.UserProfile
 {
     /// <summary>
-    /// User profile helper interface,
+    /// User profile property helper interface
     /// </summary>
-    public interface IUserProfileHelper
+    public interface IUserProfilePropertyHelper
     {
         /// <summary>
         /// Gets the user profile configuration manager.
