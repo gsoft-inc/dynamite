@@ -12,6 +12,21 @@ namespace GSoft.Dynamite.ReusableContent
     public interface IReusableContentHelper
     {
         /// <summary>
+        /// Gets the reusable content by title.
+        /// </summary>
+        /// <param name="site">The Site Collection.</param>
+        /// <param name="reusableContentTitle">The reusable content title.</param>
+        /// <returns>The reusable content</returns>
+        ReusableContentInfo GetByTitle(SPSite site, string reusableContentTitle);
+
+        /// <summary>
+        /// Method to get all available Reusable Content Titles
+        /// </summary>
+        /// <param name="site">The current Site collection context</param>
+        /// <returns>A list of string (reusable content title) or null.</returns>
+        IList<string> GetAllReusableContentTitles(SPSite site);
+
+        /// <summary>
         /// Method to ensure (create if not exist) and update a reusable content in a specific site.
         /// </summary>
         /// <param name="site">The Site Collection to ensure the reusablec content</param>

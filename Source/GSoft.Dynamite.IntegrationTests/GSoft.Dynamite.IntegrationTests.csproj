@@ -76,6 +76,7 @@
     <Compile Include="Lists\ListHelperTest.cs" />
     <Compile Include="Pages\PageHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReusableContent\ReusableContentHelperTest.cs" />
     <Compile Include="SiteTestScope.cs" />
     <Compile Include="Taxonomy\TaxonomyServiceTest.cs" />
   </ItemGroup>
