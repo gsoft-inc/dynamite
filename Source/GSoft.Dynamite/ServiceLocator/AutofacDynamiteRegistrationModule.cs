@@ -30,6 +30,7 @@ using GSoft.Dynamite.Serializers;
 using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
+using GSoft.Dynamite.UserProfile;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes.Readers;
 using GSoft.Dynamite.ValueTypes.Writers;
@@ -237,6 +238,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Features
             builder.RegisterType<FeatureDependencyActivator>().As<IFeatureDependencyActivator>();
+
+            // User profile
+            builder.RegisterType<UserProfileHelper>().As<IUserProfileHelper>();
         }
     }
 }
