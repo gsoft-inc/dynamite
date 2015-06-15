@@ -92,10 +92,18 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>The url of the peer page</returns>
         public Uri GetPeerPageUrl(Uri currentUrl, VariationLabelInfo label)
         {
+            // Special case for application pages under /_layouts and site home page
             if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
                 var relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
                 return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
+            }
+
+            // Special case for home page
+            if (SPContext.Current.ListItem != null
+                && SPContext.Current.Web.RootFolder.WelcomePage == SPContext.Current.ListItem.Url)
+            {
+                return new Uri(label.TopWebUrl.ToString());
             }
 
             try
@@ -120,6 +128,14 @@ namespace GSoft.Dynamite.Navigation
                 // Keep query string (except source)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
                 queryCollection.Remove("Source");
+
+                if (queryCollection["RootFolder"] != null)
+                {
+                    string rootFolderParam = queryCollection["RootFolder"];
+                    string currentServerWebRelativeUrl = SPContext.Current.Web.RootFolder.ServerRelativeUrl;
+                    rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, label.TopWebUrl.AbsolutePath + "/");
+                    queryCollection["RootFolder"] = rootFolderParam;
+                }
 
                 // Construct peer URL with top web URL + path + query.
                 var topWebUrl = new Uri(label.TopWebUrl + "/");
