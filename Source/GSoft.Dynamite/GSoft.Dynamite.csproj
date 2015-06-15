@@ -127,6 +127,7 @@
     <Compile Include="ReusableContent\ReusableContentHelper.cs" />
     <Compile Include="ReusableContent\ReusableContentInfo.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\BuiltInRankingModels.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />

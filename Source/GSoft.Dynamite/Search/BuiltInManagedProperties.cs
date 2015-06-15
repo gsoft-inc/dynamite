@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using Microsoft.Office.Server.Search.Administration;
 
 namespace GSoft.Dynamite.Search
@@ -121,6 +119,14 @@ namespace GSoft.Dynamite.Search
         public static ManagedPropertyInfo SecondaryFileExtension
         {
             get { return new ManagedPropertyInfo("SecondaryFileExtension", ManagedDataType.Text); }
+        }
+
+        /// <summary>
+        /// The OOTB Rank managed property
+        /// </summary>
+        public static ManagedPropertyInfo Rank
+        {
+            get { return new ManagedPropertyInfo("Rank", ManagedDataType.Integer); }
         }
     }
 }
