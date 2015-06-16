@@ -102,3 +102,59 @@ function Wait-SPTimerJob()
         Write-Verbose  "Finished waiting for job.."
     }
 }
+
+<#
+	.SYNOPSIS
+		Enables the email Failsafe for the specified web application.
+		Run this only after a site collection has been created.      
+	
+	.DESCRIPTION
+		When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+    
+	.PARAMETER $WebApplication
+		The web application this setting will affect.
+
+	.PARAMETER $FailsafeEmailAddress
+		The email address emails will be sent to.
+#>
+function Enable-DSPEmailFailsafe
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication,
+
+		[Parameter(Mandatory=$true, Position=1)]
+		[string]$FailsafeEmailAddress
+	)
+
+	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
+	$emailHelper.EnableFailsafe($WebApplication.Read(), $FailsafeEmailAddress)
+}
+
+<#
+	.SYNOPSIS
+		Disables the email Failsafe for the specified web application.
+		Run this only after a site collection has been created.        
+	
+	.DESCRIPTION
+		When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+    
+	.PARAMETER $WebApplication
+		The web application this setting will affect.
+#>
+function Disable-DSPEmailFailsafe
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication
+	)
+
+	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
+	$emailHelper.EnableFailsafe($WebApplication.Read(), "")
+}
