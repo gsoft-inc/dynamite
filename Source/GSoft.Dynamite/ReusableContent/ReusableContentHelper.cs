@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.ReusableContent
     /// </summary>
     public class ReusableContentHelper : IReusableContentHelper
     {
-        private readonly string ReusableContentListName = "ReusableContent";
+        private const string ReusableContentListName = "ReusableContent";
 
         private ILogger logger;
         private IListLocator listLocator;
@@ -51,14 +51,14 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>The reusable content</returns>
         public ReusableContentInfo GetByTitle(SPSite site, string reusableContentTitle)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
 
-            var cultureSufix = CultureInfo.CurrentUICulture.LCID == Language.English.Culture.LCID ? "_EN" : "_FR";
+            var cultureSuffix = CultureInfo.CurrentUICulture.LCID == Language.English.Culture.LCID ? "_EN" : "_FR";
             var listItem = this.GetListItemByTitle(list, reusableContentTitle);
 
             if (listItem == null)
             {
-                listItem = this.GetListItemByTitle(list, reusableContentTitle + cultureSufix);
+                listItem = this.GetListItemByTitle(list, reusableContentTitle + cultureSuffix);
             }
 
             if (listItem != null)
@@ -67,10 +67,8 @@ namespace GSoft.Dynamite.ReusableContent
                 this.binder.ToEntity<ReusableContentInfo>(entity, listItem);
                 return entity;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -80,7 +78,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>A list of string (reusable content title) or null.</returns>
         public IList<string> GetAllReusableContentTitles(SPSite site)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
 
             var itemCollection = list.Items;
 
@@ -88,20 +86,21 @@ namespace GSoft.Dynamite.ReusableContent
             {
                 return itemCollection.Cast<SPListItem>().Select(item => item.Title).ToList();
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
         /// Method to ensure (create if not exist) and update a reusable content in a specific site.
         /// </summary>
-        /// <param name="site">The Site Collection to ensure the reusablec content</param>
+        /// <remarks>
+        /// Reusable Content exist in the same name list in the RootWeb of the Site Collection.
+        /// </remarks>
+        /// <param name="site">The Site Collection to ensure the reusable content</param>
         /// <param name="reusableContents">The information on the reusable contents to ensure</param>
         public void EnsureReusableContent(SPSite site, IList<ReusableContentInfo> reusableContents)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
 
             // Load the HTML Content first
             foreach (var reusableContent in reusableContents)
