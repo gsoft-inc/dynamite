@@ -34,6 +34,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="logger">The logger to log info and errors</param>
         /// <param name="listLocator">List locator to find the ReusableContentList</param>
         /// <param name="camlBuilder">Caml Builder for the query</param>
+        /// <param name="binder">The entity binder</param>
         public ReusableContentHelper(ILogger logger, IListLocator listLocator, ICamlBuilder camlBuilder, ISharePointEntityBinder binder)
         {
             this.logger = logger;
