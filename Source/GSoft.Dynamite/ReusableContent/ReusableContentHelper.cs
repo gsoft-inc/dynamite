@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Lists;
@@ -25,6 +26,7 @@ namespace GSoft.Dynamite.ReusableContent
         private ILogger logger;
         private IListLocator listLocator;
         private ICamlBuilder camlBuilder;
+        private ISharePointEntityBinder binder;
 
         /// <summary>
         /// Helper class constructor to work with Reusable Content.
@@ -32,11 +34,12 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="logger">The logger to log info and errors</param>
         /// <param name="listLocator">List locator to find the ReusableContentList</param>
         /// <param name="camlBuilder">Caml Builder for the query</param>
-        public ReusableContentHelper(ILogger logger, IListLocator listLocator, ICamlBuilder camlBuilder)
+        public ReusableContentHelper(ILogger logger, IListLocator listLocator, ICamlBuilder camlBuilder, ISharePointEntityBinder binder)
         {
             this.logger = logger;
             this.listLocator = listLocator;
             this.camlBuilder = camlBuilder;
+            this.binder = binder;
         }
 
         /// <summary>
@@ -59,14 +62,9 @@ namespace GSoft.Dynamite.ReusableContent
 
             if (listItem != null)
             {
-                // TODO: Use the Entity Binder 
-                return new ReusableContentInfo(listItem.Title)
-                {
-                    Category = (listItem[PublishingFields.ContentCategory.InternalName] ?? string.Empty).ToString(),
-                    IsAutomaticUpdate = listItem[PublishingFields.AutomaticUpdate.InternalName].ToString() == true.ToString(),
-                    IsShowInRibbon = listItem[PublishingFields.ShowInRibbon.InternalName].ToString() == true.ToString(),
-                    Content = (listItem[PublishingFields.ReusableHtml.InternalName] ?? string.Empty).ToString()
-                };
+                var entity = new ReusableContentInfo();
+                this.binder.ToEntity<ReusableContentInfo>(entity, listItem);
+                return entity;
             }
             else
             {
@@ -116,17 +114,13 @@ namespace GSoft.Dynamite.ReusableContent
                     {
                         // The Reusable Content does not exists, let's create it.
                         item = list.Items.Add();
-                        item[BuiltInFields.Title.InternalName] = reusableContent.Title;
                     }
 
                     // Ensure the Category
                     this.EnsureContentCategory(list, reusableContent.Category);
 
-                    item[PublishingFields.AutomaticUpdate.InternalName] = reusableContent.IsAutomaticUpdate.ToString();
-                    item[PublishingFields.ShowInRibbon.InternalName] = reusableContent.IsShowInRibbon.ToString();
-                    item[PublishingFields.ReusableHtml.InternalName] = reusableContent.Content;
-                    item[PublishingFields.ContentCategory.InternalName] = reusableContent.Category;
-
+                    // Bind the entity to the list item
+                    this.binder.FromEntity<ReusableContentInfo>(reusableContent, item);
                     item.Update();
 
                     this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
