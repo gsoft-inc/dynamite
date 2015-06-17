@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.ReusableContent
     /// </summary>
     public class ReusableContentHelper : IReusableContentHelper
     {
-        private const string ReusableContentListName = "ReusableContent";
+        private readonly Uri ReusableContentListRelativeUrl = new Uri("ReusableContent", UriKind.Relative);
 
         private ILogger logger;
         private IListLocator listLocator;
@@ -51,7 +51,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>The reusable content</returns>
         public ReusableContentInfo GetByTitle(SPSite site, string reusableContentTitle)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
             var cultureSuffix = "_" + CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpperInvariant();
 
@@ -79,7 +79,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>A list of string (reusable content title) or null.</returns>
         public IList<string> GetAllReusableContentTitles(SPSite site)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
             var itemCollection = list.Items;
 
@@ -101,7 +101,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="reusableContents">The information on the reusable contents to ensure</param>
         public void EnsureReusableContent(SPSite site, IList<ReusableContentInfo> reusableContents)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
             // Load the HTML Content first
             foreach (var reusableContent in reusableContents)
