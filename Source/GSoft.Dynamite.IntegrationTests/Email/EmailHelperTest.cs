@@ -21,10 +21,10 @@ namespace GSoft.Dynamite.IntegrationTests.Email
     public class EmailHelperTest
     {
         /// <summary>
-        /// Validates that SendEmail only sends the email to the Failsafe email and modifies the body of the email to include the original recipients.
+        /// Validates that SendEmail only sends the email to the recipient override email and modifies the body of the email to include the original recipients.
         /// </summary>
         [TestMethod]
-        public void SendEmail_WhenFailsafeEnabled_ShouldSendEmailOnlyToFailsafeAddressAndModifyEmailBody()
+        public void SendEmail_WhenRecipientOverrideEnabled_ShouldSendEmailOnlyToRecipientOverrideAddressAndModifyEmailBody()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -32,7 +32,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
                 var web = testScope.SiteCollection.RootWeb;
                 var webApplication = testScope.SiteCollection.WebApplication;
 
-                var failSafeEmail = "edouard.shaar@gsoft.com";
+                var RecipientOverrideEmail = "edouard.shaar@gsoft.com";
                 var emailInformation = new EmailInfo();
                 emailInformation.To.Add("yohan.belval@gsoft.com");
                 emailInformation.To.Add("marianne.lemay@gsoft.com");
@@ -46,7 +46,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
                 // Actual values
                 StringDictionary actualHeaders = null;
                 string actualBody = null;
-                bool? actualIsFailsafeEnabled = null;
+                bool? actualIsRecipientOverrideEnabled = null;
 
                 using (ShimsContext.Create())
                 {
@@ -63,13 +63,13 @@ namespace GSoft.Dynamite.IntegrationTests.Email
                         var emailHelper = injectionScope.Resolve<IEmailHelper>();
 
                         // Act
-                        emailHelper.EnableFailsafe(webApplication, failSafeEmail);
-                        actualIsFailsafeEnabled = emailHelper.IsFailsafeEnabled(webApplication);
+                        emailHelper.EnableRecipientOverride(webApplication, RecipientOverrideEmail);
+                        actualIsRecipientOverrideEnabled = emailHelper.IsRecipientOverrideEnabled(webApplication);
                         emailHelper.SendEmail(web, emailInformation);
 
                         // Assert
-                        Assert.IsTrue(actualIsFailsafeEnabled.HasValue && actualIsFailsafeEnabled.Value, "Failsafe should have been enabled.");
-                        Assert.IsTrue(actualHeaders["to"] == failSafeEmail, "The email should have been sent only to the Failsafe email address.");
+                        Assert.IsTrue(actualIsRecipientOverrideEnabled.HasValue && actualIsRecipientOverrideEnabled.Value, "Recipient override should have been enabled.");
+                        Assert.IsTrue(actualHeaders["to"] == RecipientOverrideEmail, "The email should have been sent only to the recipient override email address.");
                         Assert.IsTrue(!actualHeaders.ContainsKey("cc"), "No carbon copy should have been in the email headers.");
                         Assert.IsTrue(!actualHeaders.ContainsKey("bcc"), "No blind carbon copy should have been in the email headers.");
                         Assert.IsTrue(actualBody.Length > originalBody.Length, "Text should have been added to the body of the email.");
@@ -82,7 +82,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
         /// Validates that SendEmail sends the email to the entended addresses and does not change the email content.
         /// </summary>
         [TestMethod]
-        public void SendEmail_WhenFailsafeDisabled_ShouldSendEmailWithoutManipulatingTheReceiversOrChangingTheEmailContent()
+        public void SendEmail_WhenRecipientOverrideDisabled_ShouldSendEmailWithoutManipulatingTheReceiversOrChangingTheEmailContent()
         {
             using (var testScope = SiteTestScope.BlankSite())
             {
@@ -109,7 +109,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
                 // Actual values
                 StringDictionary actualHeaders = null;
                 string actualBody = null;
-                bool? actualIsFailsafeEnabled = null;
+                bool? actualIsRecipientOverrideEnabled = null;
 
                 using (ShimsContext.Create())
                 {
@@ -126,11 +126,11 @@ namespace GSoft.Dynamite.IntegrationTests.Email
                         var emailHelper = injectionScope.Resolve<IEmailHelper>();
 
                         // Act
-                        actualIsFailsafeEnabled = emailHelper.IsFailsafeEnabled(webApplication);
+                        actualIsRecipientOverrideEnabled = emailHelper.IsRecipientOverrideEnabled(webApplication);
                         emailHelper.SendEmail(web, emailInformation);
 
                         // Assert
-                        Assert.IsTrue(actualIsFailsafeEnabled.HasValue && !actualIsFailsafeEnabled.Value, "Failsafe should not have been enabled.");
+                        Assert.IsTrue(actualIsRecipientOverrideEnabled.HasValue && !actualIsRecipientOverrideEnabled.Value, "Recipient override should not have been enabled.");
                         Assert.IsTrue(actualHeaders.Count == expectedHeaders.Count, "The headers should not have changed.");
                         Assert.IsTrue(actualBody == expectedBody, "The email body should not have changed.");
 

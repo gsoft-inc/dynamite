@@ -366,13 +366,24 @@ namespace GSoft.Dynamite.Search
             var queryProperties = new QueryTransformProperties();
             queryProperties["SortList"] = sortCollection;
 
-            // If the SortCollection contains "Rank" as one of its keys, specifiy the ranking model to be used
-            if (resultSourceInfo.SortSettings != null && resultSourceInfo.SortSettings.ContainsKey(BuiltInManagedProperties.Rank.Name))
+            // If the SortCollection contains "Rank" as one of its keys, specifiy the ranking model to be used. If a ranking model is
+            // specified but sorting by Rank is not in the sort setting, throw an exception.
+            if (resultSourceInfo.RankingModelId != Guid.Empty)
             {
-                // If no ranking model is specified in the ResultSourceInfo, use "Default Search Model"
-                queryProperties["RankingModelId"] = resultSourceInfo.RankingModelId != Guid.Empty ?
-                    resultSourceInfo.RankingModelId.ToString() :
-                        BuiltInRankingModels.DefaultSearchModelId.ToString();
+                if ((resultSourceInfo.SortSettings != null && !resultSourceInfo.SortSettings.ContainsKey(BuiltInManagedProperties.Rank.Name)) || resultSourceInfo.SortSettings == null)
+                {
+                    throw new ArgumentException(
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "You can't specify a ranking model id ({0}) if you are not sorting by rank. Make sure to include Rank as the first Sorting Key in the sort settings if you want to use a ranking model.",
+                            resultSourceInfo.RankingModelId));
+                }
+
+                queryProperties["RankingModelId"] = resultSourceInfo.RankingModelId.ToString();
+            }
+            else if (resultSourceInfo.SortSettings != null && resultSourceInfo.SortSettings.ContainsKey(BuiltInManagedProperties.Rank.Name))
+            {
+                queryProperties["RankingModelId"] = BuiltInRankingModels.DefaultSearchModelId.ToString();
             }
 
             // Get the search service application for the current site

@@ -109,9 +109,10 @@ namespace GSoft.Dynamite.IntegrationTests.Search
         }
 
         /// <summary>
-        /// Validates that EnsureResultSource doesn't apply a ranking model if Rank is not in the specified SortSettings
+        /// Validates that EnsureResultSource throws an exception if a Ranking Model ID is specified but Rank is not found in the specified SortSettings
         /// </summary>
         [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
         public void EnsureResultSource_WhenNotSortingByRank_ShouldNotApplyARankingModel()
         {
             const string ResultSourceName = "Test Result Source";
@@ -131,21 +132,14 @@ namespace GSoft.Dynamite.IntegrationTests.Search
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     var searchHelper = injectionScope.Resolve<ISearchHelper>();
-                    var ssa = searchHelper.GetDefaultSearchServiceApplication(testScope.SiteCollection);
-                    var federationManager = new FederationManager(ssa);
-                    var searchOwner = new SearchObjectOwner(SearchObjectLevel.SPSite, testScope.SiteCollection.RootWeb);
 
                     // Act
                     searchHelper.EnsureResultSource(testScope.SiteCollection, resultSourceInfo);
 
                     // Assert
-                    var source = federationManager.GetSourceByName(ResultSourceName, searchOwner);
-                    var sortListProperty = source.QueryTransform.OverrideProperties["SortList"] as SortCollection;
 
-                    Assert.IsNotNull(source);
-                    Assert.AreEqual(ResultSourceName, source.Name);
-                    Assert.AreEqual(0, sortListProperty.Count);
-                    Assert.IsFalse(source.QueryTransform.OverrideProperties.ContainsKey("RankingModelId"));
+                    // Exception should have been thrown already
+                    Assert.IsTrue(false);
                 }
             }
         }

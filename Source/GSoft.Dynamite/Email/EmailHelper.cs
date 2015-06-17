@@ -18,7 +18,7 @@ namespace GSoft.Dynamite.Email
     /// </summary>
     public class EmailHelper : IEmailHelper
     {
-        private const string FailsafePropertyBagKey = "DynamiteEmailFailsafeAddress";
+        private const string RecipientOverridePropertyBagKey = "DynamiteEmailRecipientOverrideAddress";
         private readonly IUserHelper userHelper;
         private readonly IPropertyBagHelper propertyBagHelper;
         private readonly ILogger logger;
@@ -43,16 +43,16 @@ namespace GSoft.Dynamite.Email
         /// <param name="emailInformation">The email information.</param>
         public void SendEmail(SPWeb web, EmailInfo emailInformation)
         {
-            if (this.IsFailsafeEnabled(web.Site.WebApplication))
+            if (this.IsRecipientOverrideEnabled(web.Site.WebApplication))
             {
-                var failsafeEmail = this.propertyBagHelper.GetWebApplicationValue(web.Site.WebApplication, FailsafePropertyBagKey);
-                emailInformation.Body = GetFailsafeMessage(emailInformation) + emailInformation.Body;
+                var RecipientOverrideEmail = this.propertyBagHelper.GetWebApplicationValue(web.Site.WebApplication, RecipientOverridePropertyBagKey);
+                emailInformation.Body = GetRecipientOverrideMessage(emailInformation) + emailInformation.Body;
                 emailInformation.To.Clear();
-                emailInformation.To.Add(failsafeEmail);
+                emailInformation.To.Add(RecipientOverrideEmail);
                 emailInformation.CarbonCopy.Clear();
                 emailInformation.BlindCarbonCopy.Clear();
 
-                this.logger.Warn("An email with the subject line '{0}' is being sent with the failsafe email address '{1}'.", emailInformation.Subject, failsafeEmail);
+                this.logger.Warn("An email with the subject line '{0}' is being sent with the recipient override email address '{1}'.", emailInformation.Subject, RecipientOverrideEmail);
             }
 
             var headers = EmailHelper.GetEmailHeaders(emailInformation);
@@ -63,22 +63,22 @@ namespace GSoft.Dynamite.Email
         }
 
         /// <summary>
-        /// Enables the email Failsafe for the specified web application.
-        /// When this Failsafe is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
+        /// Enables the email recipient override for the specified web application.
+        /// When this recipient override is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
         /// and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
         /// </summary>
         /// <param name="webApplication">The web application.</param>
         /// <param name="emailAddress">
         /// The email address.
-        /// Setting this to an empty string will disable the Failsafe.
+        /// Setting this to an empty string will disable the recipient override.
         /// </param>
-        public void EnableFailsafe(SPWebApplication webApplication, string emailAddress)
+        public void EnableRecipientOverride(SPWebApplication webApplication, string emailAddress)
         {
             var uri = webApplication.AlternateUrls[0].Uri;
             var property = new PropertyBagValue()
             {
                 Indexed = false,
-                Key = FailsafePropertyBagKey,
+                Key = RecipientOverridePropertyBagKey,
                 Overwrite = true,
                 Value = emailAddress
             };
@@ -100,13 +100,13 @@ namespace GSoft.Dynamite.Email
         }
 
         /// <summary>
-        /// Is the email Failsafe enabled.
+        /// Is the email recipient override enabled.
         /// </summary>
         /// <param name="webApplication">The web application to check.</param>
-        /// <returns>True if the Failsafe is activated for the specified web application.</returns>
-        public bool IsFailsafeEnabled(SPWebApplication webApplication)
+        /// <returns>True if the override is activated for the specified web application.</returns>
+        public bool IsRecipientOverrideEnabled(SPWebApplication webApplication)
         {
-            var value = this.propertyBagHelper.GetWebApplicationValue(webApplication, FailsafePropertyBagKey);
+            var value = this.propertyBagHelper.GetWebApplicationValue(webApplication, RecipientOverridePropertyBagKey);
             return !string.IsNullOrEmpty(value);
         }
 
@@ -161,14 +161,14 @@ namespace GSoft.Dynamite.Email
             return headers;
         }
 
-        private static string GetFailsafeMessage(EmailInfo emailInformation)
+        private static string GetRecipientOverrideMessage(EmailInfo emailInformation)
         {
             var originalTo = emailInformation.To.ToList();
             var originalCC = emailInformation.CarbonCopy.ToList();
             var originalBCC = emailInformation.BlindCarbonCopy.ToList();
 
             var builder = new StringBuilder();
-            builder.Append("<p style=\"color:red; font-weight: bold; font-size: 20px;\">This email was send using a Failsafe in order to not accidentally spam people who should not receive emails from a development environment.</p>");
+            builder.Append("<p style=\"color:red; font-weight: bold; font-size: 20px;\">This email was send while overriding the recipients in order to not accidentally spam people who should not receive emails from a development environment.</p>");
             builder.Append("<table>");
             builder.Append("<tr>");
             builder.Append("<th>Original To:</th>");

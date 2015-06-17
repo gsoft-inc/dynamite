@@ -105,20 +105,23 @@ function Wait-SPTimerJob()
 
 <#
 	.SYNOPSIS
-		Enables the email Failsafe for the specified web application.
+		Enables the email recipient override for the specified web application.
 		Run this only after a site collection has been created.      
 	
 	.DESCRIPTION
-		When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+		When receipient override is Enabled, all emails send with the email helper will only be send to the specified address clearing all original To, CC, and BCC addresses
         and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+
+	.EXAMPLE 
+		C:\PS> Enable-DSPEmailRecipientOverride -WebApplication http://HOSTNAME -EmailAddress me@cie.com
     
 	.PARAMETER $WebApplication
 		The web application this setting will affect.
 
-	.PARAMETER $FailsafeEmailAddress
+	.PARAMETER $RecipientOverrideEmailAddress
 		The email address emails will be sent to.
 #>
-function Enable-DSPEmailFailsafe
+function Enable-DSPEmailRecipientOverride
 {
 	[CmdletBinding()]
 	param
@@ -127,26 +130,29 @@ function Enable-DSPEmailFailsafe
 		[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication,
 
 		[Parameter(Mandatory=$true, Position=1)]
-		[string]$FailsafeEmailAddress
+		[string]$EmailAddress
 	)
 
 	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
-	$emailHelper.EnableFailsafe($WebApplication.Read(), $FailsafeEmailAddress)
+	$emailHelper.EnableRecipientOverride($WebApplication.Read(), $EmailAddress)
 }
 
 <#
 	.SYNOPSIS
-		Disables the email Failsafe for the specified web application.
+		Disables the email recipient override for the specified web application.
 		Run this only after a site collection has been created.        
 	
 	.DESCRIPTION
-		When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+		When recipient override is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
         and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+
+	.EXAMPLE 
+		C:\PS> Disable-DSPEmailRecipientOverride -WebApplication http://HOSTNAME
     
 	.PARAMETER $WebApplication
 		The web application this setting will affect.
 #>
-function Disable-DSPEmailFailsafe
+function Disable-DSPEmailRecipientOverride
 {
 	[CmdletBinding()]
 	param
@@ -156,5 +162,5 @@ function Disable-DSPEmailFailsafe
 	)
 
 	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
-	$emailHelper.EnableFailsafe($WebApplication.Read(), "")
+	$emailHelper.EnableRecipientOverride($WebApplication.Read(), "")
 }
