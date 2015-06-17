@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Binding;
 using GSoft.Dynamite.Caml;
 using GSoft.Dynamite.Fields.Constants;
 using GSoft.Dynamite.Lists;
@@ -20,11 +21,12 @@ namespace GSoft.Dynamite.ReusableContent
     /// </summary>
     public class ReusableContentHelper : IReusableContentHelper
     {
-        private readonly string ReusableContentListName = "ReusableContent";
+        private readonly Uri ReusableContentListRelativeUrl = new Uri("ReusableContent", UriKind.Relative);
 
         private ILogger logger;
         private IListLocator listLocator;
         private ICamlBuilder camlBuilder;
+        private ISharePointEntityBinder binder;
 
         /// <summary>
         /// Helper class constructor to work with Reusable Content.
@@ -32,11 +34,13 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="logger">The logger to log info and errors</param>
         /// <param name="listLocator">List locator to find the ReusableContentList</param>
         /// <param name="camlBuilder">Caml Builder for the query</param>
-        public ReusableContentHelper(ILogger logger, IListLocator listLocator, ICamlBuilder camlBuilder)
+        /// <param name="binder">The entity binder</param>
+        public ReusableContentHelper(ILogger logger, IListLocator listLocator, ICamlBuilder camlBuilder, ISharePointEntityBinder binder)
         {
             this.logger = logger;
             this.listLocator = listLocator;
             this.camlBuilder = camlBuilder;
+            this.binder = binder;
         }
 
         /// <summary>
@@ -47,31 +51,25 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>The reusable content</returns>
         public ReusableContentInfo GetByTitle(SPSite site, string reusableContentTitle)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
-            var cultureSufix = CultureInfo.CurrentUICulture.LCID == Language.English.Culture.LCID ? "_EN" : "_FR";
+            var cultureSuffix = "_" + CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpperInvariant();
+
             var listItem = this.GetListItemByTitle(list, reusableContentTitle);
 
             if (listItem == null)
             {
-                listItem = this.GetListItemByTitle(list, reusableContentTitle + cultureSufix);
+                listItem = this.GetListItemByTitle(list, reusableContentTitle + cultureSuffix);
             }
 
             if (listItem != null)
             {
-                // TODO: Use the Entity Binder 
-                return new ReusableContentInfo(listItem.Title)
-                {
-                    Category = (listItem[PublishingFields.ContentCategory.InternalName] ?? string.Empty).ToString(),
-                    IsAutomaticUpdate = listItem[PublishingFields.AutomaticUpdate.InternalName].ToString() == true.ToString(),
-                    IsShowInRibbon = listItem[PublishingFields.ShowInRibbon.InternalName].ToString() == true.ToString(),
-                    Content = (listItem[PublishingFields.ReusableHtml.InternalName] ?? string.Empty).ToString()
-                };
+                var entity = new ReusableContentInfo();
+                this.binder.ToEntity<ReusableContentInfo>(entity, listItem);
+                return entity;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -81,7 +79,7 @@ namespace GSoft.Dynamite.ReusableContent
         /// <returns>A list of string (reusable content title) or null.</returns>
         public IList<string> GetAllReusableContentTitles(SPSite site)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
             var itemCollection = list.Items;
 
@@ -89,20 +87,21 @@ namespace GSoft.Dynamite.ReusableContent
             {
                 return itemCollection.Cast<SPListItem>().Select(item => item.Title).ToList();
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
         /// Method to ensure (create if not exist) and update a reusable content in a specific site.
         /// </summary>
-        /// <param name="site">The Site Collection to ensure the reusablec content</param>
+        /// <remarks>
+        /// Reusable Content exist in the same name list in the RootWeb of the Site Collection.
+        /// </remarks>
+        /// <param name="site">The Site Collection to ensure the reusable content</param>
         /// <param name="reusableContents">The information on the reusable contents to ensure</param>
         public void EnsureReusableContent(SPSite site, IList<ReusableContentInfo> reusableContents)
         {
-            var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(this.ReusableContentListName, UriKind.Relative));
+            var list = this.listLocator.GetByUrl(site.RootWeb, this.ReusableContentListRelativeUrl);
 
             // Load the HTML Content first
             foreach (var reusableContent in reusableContents)
@@ -116,17 +115,13 @@ namespace GSoft.Dynamite.ReusableContent
                     {
                         // The Reusable Content does not exists, let's create it.
                         item = list.Items.Add();
-                        item[BuiltInFields.Title.InternalName] = reusableContent.Title;
                     }
 
                     // Ensure the Category
                     this.EnsureContentCategory(list, reusableContent.Category);
 
-                    item[PublishingFields.AutomaticUpdate.InternalName] = reusableContent.IsAutomaticUpdate.ToString();
-                    item[PublishingFields.ShowInRibbon.InternalName] = reusableContent.IsShowInRibbon.ToString();
-                    item[PublishingFields.ReusableHtml.InternalName] = reusableContent.Content;
-                    item[PublishingFields.ContentCategory.InternalName] = reusableContent.Category;
-
+                    // Bind the entity to the list item
+                    this.binder.FromEntity<ReusableContentInfo>(reusableContent, item);
                     item.Update();
 
                     this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
