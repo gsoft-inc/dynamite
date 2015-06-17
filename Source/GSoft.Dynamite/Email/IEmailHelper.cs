@@ -22,7 +22,7 @@ namespace GSoft.Dynamite.Email
 
         /// <summary>
         /// Enables the email Failsafe for the specified web application.
-        /// When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        /// When this Failsafe is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
         /// and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
         /// </summary>
         /// <param name="webApplication">The web application.</param>

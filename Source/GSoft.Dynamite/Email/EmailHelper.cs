@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Security;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Administration;
@@ -20,16 +21,19 @@ namespace GSoft.Dynamite.Email
         private const string FailsafePropertyBagKey = "DynamiteEmailFailsafeAddress";
         private readonly IUserHelper userHelper;
         private readonly IPropertyBagHelper propertyBagHelper;
-        
+        private readonly ILogger logger;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="EmailHelper" /> class.
+        /// Initializes a new instance of the <see cref="EmailHelper"/> class.
         /// </summary>
         /// <param name="userHelper">The user helper.</param>
         /// <param name="propertyBagHelper">The property bag helper.</param>
-        public EmailHelper(IUserHelper userHelper, IPropertyBagHelper propertyBagHelper)
+        /// <param name="logger">The logger.</param>
+        public EmailHelper(IUserHelper userHelper, IPropertyBagHelper propertyBagHelper, ILogger logger)
         {
             this.userHelper = userHelper;
             this.propertyBagHelper = propertyBagHelper;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -41,11 +45,14 @@ namespace GSoft.Dynamite.Email
         {
             if (this.IsFailsafeEnabled(web.Site.WebApplication))
             {
+                var failsafeEmail = this.propertyBagHelper.GetWebApplicationValue(web.Site.WebApplication, FailsafePropertyBagKey);
                 emailInformation.Body = GetFailsafeMessage(emailInformation) + emailInformation.Body;
                 emailInformation.To.Clear();
-                emailInformation.To.Add(this.propertyBagHelper.GetWebApplicationValue(web.Site.WebApplication, FailsafePropertyBagKey));
+                emailInformation.To.Add(failsafeEmail);
                 emailInformation.CarbonCopy.Clear();
                 emailInformation.BlindCarbonCopy.Clear();
+
+                this.logger.Warn("An email with the subject line '{0}' is being sent with the failsafe email address '{1}'.", emailInformation.Subject, failsafeEmail);
             }
 
             var headers = EmailHelper.GetEmailHeaders(emailInformation);
@@ -57,7 +64,7 @@ namespace GSoft.Dynamite.Email
 
         /// <summary>
         /// Enables the email Failsafe for the specified web application.
-        /// When this Failsafe is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        /// When this Failsafe is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
         /// and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
         /// </summary>
         /// <param name="webApplication">The web application.</param>
