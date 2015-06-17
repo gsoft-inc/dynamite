@@ -53,7 +53,8 @@ namespace GSoft.Dynamite.ReusableContent
         {
             var list = this.listLocator.GetByUrl(site.RootWeb, new Uri(ReusableContentListName, UriKind.Relative));
 
-            var cultureSuffix = CultureInfo.CurrentUICulture.LCID == Language.English.Culture.LCID ? "_EN" : "_FR";
+            var cultureSuffix = "_" + CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.ToUpperInvariant();
+
             var listItem = this.GetListItemByTitle(list, reusableContentTitle);
 
             if (listItem == null)
