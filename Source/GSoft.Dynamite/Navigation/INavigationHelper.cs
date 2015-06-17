@@ -56,9 +56,9 @@ using Microsoft.SharePoint.Publishing.Navigation;
         /// <summary>
         /// Set term driven page settings in the term store
         /// </summary>
-        /// <param name="site">The site</param>
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
         /// <param name="termDrivenPageInfo">The term driven page setting info</param>
-        void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
+        void SetTermDrivenPageSettings(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo);
 
         /// <summary>
         /// Reset web navigation to its default configuration. Disabled the term set as avigation term set.
@@ -70,8 +70,8 @@ using Microsoft.SharePoint.Publishing.Navigation;
         /// <summary>
         /// Method to take a term configured as a term driven page to a simple link url.
         /// </summary>
-        /// <param name="site">The Site Collection</param>
-        /// <param name="termInfo">The term to reset</param>
-        void ResetTermDrivenPageToSimpleLinkUrl(SPSite site, TermInfo termInfo);
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
+        /// <param name="termInfo">The metadata term to reset</param>
+        void ResetTermDrivenPageToSimpleLinkUrl(SPWeb web, TermInfo termInfo);
     }
 }
