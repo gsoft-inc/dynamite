@@ -34,7 +34,11 @@ namespace GSoft.Dynamite.Search
         public SearchObjectLevel Level { get; set; }
 
         /// <summary>
-        /// The sorting setting by field. The Key corresponds to the field name.
+        /// The sorting setting by field. The Key corresponds to the field name. SharePoint is supposed to use the Rank by default
+        /// to sort search results but, as experience showed, if you create a new Result Source but don't specify any sort settings nor ranking model,
+        /// all your search results will have the value 0 for their rank, and therefore, no valid sorting will be made. If you want to be sure of your
+        /// rank sorting, use the Rank managed property as the first Sort criteria (sorting Descending to display the most relevant results first),
+        /// and specify a ranking model in the RankingModelId property.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow overwrite of backing store to enable easier initialization of object.")]
         public IDictionary<string, SortDirection> SortSettings { get; set; }
