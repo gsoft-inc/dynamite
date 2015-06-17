@@ -378,7 +378,8 @@ namespace GSoft.Dynamite.Search
                             "You can't specify a ranking model id ({0}) if you are not sorting by rank. Make sure to include Rank as the first Sorting Key in the sort settings if you want to use a ranking model.",
                             resultSourceInfo.RankingModelId));
                 }
-                    queryProperties["RankingModelId"] = resultSourceInfo.RankingModelId.ToString();
+
+                queryProperties["RankingModelId"] = resultSourceInfo.RankingModelId.ToString();
             }
             else if (resultSourceInfo.SortSettings != null && resultSourceInfo.SortSettings.ContainsKey(BuiltInManagedProperties.Rank.Name))
             {
