@@ -21,16 +21,16 @@ namespace GSoft.Dynamite.Email
         void SendEmail(SPWeb web, EmailInfo emailInformation);
 
         /// <summary>
-        /// Enables the email Failsafe for the specified web application.
-        /// When this Failsafe is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
+        /// Enables the email recipient override for the specified web application.
+        /// When recipient override is Enabled, all emails send with this helper will only be sent to the specified address clearing all original To, CC, and BCC addresses
         /// and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
         /// </summary>
         /// <param name="webApplication">The web application.</param>
         /// <param name="emailAddress">
         /// The email address.
-        /// Setting this to an empty string will disable the Failsafe.
+        /// Setting this to an empty string will disable the recipient override.
         /// </param>
-        void EnableFailsafe(SPWebApplication webApplication, string emailAddress);
+        void EnableRecipientOverride(SPWebApplication webApplication, string emailAddress);
 
         /// <summary>
         /// Adds the group members (including AD group members) to the 'To' property of the email information.
@@ -41,10 +41,10 @@ namespace GSoft.Dynamite.Email
         void AddGroupMembersToRecipients(SPGroup group, EmailInfo emailInformation);
 
         /// <summary>
-        /// Is the email Failsafe enabled.
+        /// Is the email recipient override enabled.
         /// </summary>
         /// <param name="webApplication">The web application to check.</param>
-        /// <returns>True if the Failsafe is activated for the specified web application.</returns>
-        bool IsFailsafeEnabled(SPWebApplication webApplication);
+        /// <returns>True if the recipient override is activated for the specified web application.</returns>
+        bool IsRecipientOverrideEnabled(SPWebApplication webApplication);
     }
 }
