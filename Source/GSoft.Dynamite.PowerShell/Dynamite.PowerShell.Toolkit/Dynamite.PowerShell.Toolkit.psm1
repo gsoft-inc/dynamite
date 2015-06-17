@@ -111,7 +111,7 @@ Export-ModuleMember New-DSPTaxonomyNavigationSettings
 Export-ModuleMember New-DSPSiteVariations, Sync-DSPList, Sync-DSPItem, Start-ListItemPropagation, Sync-DSPWeb, Set-VariationHierarchy, Get-VariationLabels
 
 # Administration
-Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer
+Export-ModuleMember Wait-SPTimerJob, Restart-SPTimer, Enable-DSPEmailFailsafe, Disable-DSPEmailFailsafe
 
 # List
 Export-ModuleMember Add-DSPFile, Set-DSPAlerts, Add-DSPAlert
