@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Fields.Constants;
 using Microsoft.SharePoint.Utilities;
 
 namespace GSoft.Dynamite.ReusableContent
@@ -14,15 +16,13 @@ namespace GSoft.Dynamite.ReusableContent
     /// <remarks>
     /// The pattern here is to fill the Filename and FolderInLayouts so the Helper can read a HTML file and fill the Content property with it.
     /// </remarks>
-    public class ReusableContentInfo
+    public class ReusableContentInfo : BaseEntity
     {
         /// <summary>
-        /// Simple constructor with only the title.
+        /// Simple constructor.
         /// </summary>
-        /// <param name="title">The Title of the reusable content</param>
-        public ReusableContentInfo(string title)
+        public ReusableContentInfo()
         {
-            this.Title = title;
         }
 
         /// <summary>
@@ -35,8 +35,9 @@ namespace GSoft.Dynamite.ReusableContent
         /// <param name="fileName">The filename of the html content</param>
         /// <param name="folderInLayouts">The folder inside the Layouts hive</param>
         public ReusableContentInfo(string title, string category, bool isAutomaticUpdate, bool isShowInRibbon, string fileName, string folderInLayouts)
-            : this(title)
+            : this()
         {
+            this.Title = title;
             this.Category = category;
             this.IsAutomaticUpdate = isAutomaticUpdate;
             this.IsShowInRibbon = isShowInRibbon;
@@ -45,28 +46,27 @@ namespace GSoft.Dynamite.ReusableContent
         }
 
         /// <summary>
-        /// The Title of the Reusable Content. This is used as the key in the list.
-        /// </summary>
-        public string Title { get; set; }
-
-        /// <summary>
         /// The Category of the Reusable Content. In SharePoint it is stored as a choice.
         /// </summary>
+        [Property(PublishingFields.ContentCategoryName)]
         public string Category { get; set; }
 
         /// <summary>
         /// Does the Reusable Content update itself when the source is updated (true) or is it a copy of the html content (false).
         /// </summary>
+        [Property(PublishingFields.AutomaticUpdateName)]
         public bool IsAutomaticUpdate { get; set; }
 
         /// <summary>
         /// Do we show the Reusable Content in the Ribbon Dropdown as available
         /// </summary>
+        [Property(PublishingFields.ShowInRibbonName)]
         public bool IsShowInRibbon { get; set; }
 
         /// <summary>
         /// The HTML content of the Reusable Content
         /// </summary>
+        [Property(PublishingFields.ReusableHtmlName)]
         public string Content { get; set; }
 
         #region Content HTML File information

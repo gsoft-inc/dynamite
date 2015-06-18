@@ -10,6 +10,7 @@ using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.Utils;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing;
 using Microsoft.SharePoint.Publishing.Navigation;
 using Microsoft.SharePoint.Taxonomy;
 
@@ -137,26 +138,6 @@ namespace GSoft.Dynamite.Navigation
         }
 
         /// <summary>
-        /// Method to take a term configured as a term driven page to a simple link url.
-        /// </summary>
-        /// <param name="site">The Site Collection</param>
-        /// <param name="termInfo">The term to reset</param>
-        public void ResetTermDrivenPageToSimpleLinkUrl(SPSite site, TermInfo termInfo)
-        {
-            var taxonomySession = new TaxonomySession(site);
-            if (taxonomySession.TermStores.Count > 0)
-            {
-                if (termInfo != null)
-                {
-                    var term = this.taxonomyService.GetTermForId(site, termInfo.Id);
-
-                    term.SetLocalCustomProperty(SystemTargetUrl, string.Empty);
-                    term.TermSet.TermStore.CommitAll();
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets the navigation term by identifier.
         /// </summary>
         /// <param name="navigationTerms">The navigation terms.</param>
@@ -247,13 +228,14 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Set term driven page settings in the term store
         /// </summary>
-        /// <param name="site">The site</param>
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
         /// <param name="termDrivenPageInfo">The term driven page setting info</param>
-        public void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo)
+        public void SetTermDrivenPageSettings(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo)
         {
             // Force the taxonomy session to update the cache due to previous changes
             // Note: this is necessary in the context of the components installation script
-            var taxonomySession = new TaxonomySession(site, true);
+            var taxonomySession = new TaxonomySession(web.Site, true);
+
             if (taxonomySession.TermStores.Count > 0)
             {
                 var defaultTermStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
@@ -267,82 +249,32 @@ namespace GSoft.Dynamite.Navigation
                 // Term setting
                 if (termDrivenPageInfo.IsTerm)
                 {
-                    this.SetTermDrivenPageSettingsOnTerm(site, termDrivenPageInfo);
+                    SetTermDrivenPageSettingsOnTerm(web, termDrivenPageInfo);
                 }
             }
         }
-
-        private void SetTermDrivenPageSettingsOnTerm(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo)
+        
+        /// <summary>
+        /// Method to take a term configured as a term driven page to a simple link url.
+        /// </summary>
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
+        /// <param name="termInfo">The metadata term to reset</param>
+        public void ResetTermDrivenPageToSimpleLinkUrl(SPWeb web, TermInfo termInfo)
         {
+            // Get the web-specific navigation settings
+            var webNavigationSettings = new WebNavigationSettings(web);
+            
+            var taxonomySession = new TaxonomySession(web.Site);
+            var defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+            var termSet = defaultStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
+
             // Get the taxonomy term
-            var term = this.taxonomyService.GetTermForId(site, termDrivenPageInfo.Term.Id);
+            var term = termSet.GetTerm(termInfo.Id);
 
             if (term != null)
             {
-                var terms = new List<Term> { term };
-                terms.AddRange(term.ReusedTerms);
-
-                // For the orginal term and its reuses
-                foreach (var currentTerm in terms)
-                {
-                    string isNavigationTermSet;
-
-                    // Check if the term term set is flagged as navigation term set
-                    // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
-                    currentTerm.TermSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out isNavigationTermSet);
-
-                    // If the term set allow navigation
-                    if (!string.IsNullOrEmpty(isNavigationTermSet))
-                    {
-                        // Get the associated navigation term set 
-                        var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
-                            currentTerm.TermSet,
-                            site.RootWeb,
-                            StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
-
-                        // Get the navigation term
-                        var navigationTerm = navigationTermSet.Terms.FirstOrDefault(t => t.Id.Equals(currentTerm.Id));
-                        if (navigationTerm != null)
-                        {
-                            navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
-                            navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
-                        }
-
-                        if (termDrivenPageInfo.IsSimpleLinkOrHeader)
-                        {
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
-                            {
-                                currentTerm.SetLocalCustomProperty(SystemSimpleLinkUrl, termDrivenPageInfo.SimpleLinkOrHeader);
-                            }
-                        }
-                        else
-                        {
-                            // Set URLs properties
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
-                            {
-                                currentTerm.SetLocalCustomProperty(SystemTargetUrl, termDrivenPageInfo.TargetUrl);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
-                            {
-                                currentTerm.SetLocalCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
-                            {
-                                currentTerm.SetLocalCustomProperty(SystemCatalogTargetUrl, termDrivenPageInfo.CatalogTargetUrl);
-                            }
-
-                            if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
-                            {
-                                currentTerm.SetLocalCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
-                            }
-                        }
-
-                        // Commit all updates
-                        currentTerm.TermStore.CommitAll();
-                    }
-                }
+                term.SetLocalCustomProperty(SystemTargetUrl, string.Empty);
+                term.TermSet.TermStore.CommitAll();
             }
         }
 
@@ -369,6 +301,80 @@ namespace GSoft.Dynamite.Navigation
                 }
 
                 termSet.TermStore.CommitAll();
+            }
+        }
+
+        private static void SetTermDrivenPageSettingsOnTerm(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo)
+        {
+            // Get the web-specific navigation settings
+            var webNavigationSettings = new WebNavigationSettings(web);
+
+            var taxonomySession = new TaxonomySession(web.Site);
+            var defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+            var termSet = defaultStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
+
+            // Get the taxonomy term
+            var term = termSet.GetTerm(termDrivenPageInfo.Term.Id);
+
+            if (term != null)
+            {
+                string isNavigationTermSet;
+
+                // Check if the term term set is flagged as navigation term set
+                // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
+                term.TermSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out isNavigationTermSet);
+
+                // If the term set allow navigation
+                if (!string.IsNullOrEmpty(isNavigationTermSet))
+                {
+                    // Get the associated navigation term set 
+                    var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
+                        term.TermSet,
+                        web,
+                        StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
+
+                    // Get the navigation term
+                    var navigationTerm = navigationTermSet.Terms.FirstOrDefault(t => t.Id.Equals(term.Id));
+                    if (navigationTerm != null)
+                    {
+                        navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
+                        navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
+                    }
+
+                    if (termDrivenPageInfo.IsSimpleLinkOrHeader)
+                    {
+                        if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
+                        {
+                            term.SetLocalCustomProperty(SystemSimpleLinkUrl, termDrivenPageInfo.SimpleLinkOrHeader);
+                        }
+                    }
+                    else
+                    {
+                        // Set URLs properties
+                        if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
+                        {
+                            term.SetLocalCustomProperty(SystemTargetUrl, termDrivenPageInfo.TargetUrl);
+                        }
+
+                        if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
+                        {
+                            term.SetLocalCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
+                        }
+
+                        if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
+                        {
+                            term.SetLocalCustomProperty(SystemCatalogTargetUrl, termDrivenPageInfo.CatalogTargetUrl);
+                        }
+
+                        if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
+                        {
+                            term.SetLocalCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                        }
+                    }
+
+                    // Commit all updates
+                    term.TermStore.CommitAll();
+                }
             }
         }
 
