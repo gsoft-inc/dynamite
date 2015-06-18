@@ -357,7 +357,7 @@ namespace GSoft.Dynamite.Search
 
             if (resultSourceInfo.SortSettings != null)
             {            
-                foreach (KeyValuePair<string, SortDirection> sortSetting in resultSourceInfo.SortSettings)
+                foreach (var sortSetting in resultSourceInfo.SortSettings)
                 {
                     sortCollection.Add(sortSetting.Key, sortSetting.Value);
                 }
@@ -405,19 +405,18 @@ namespace GSoft.Dynamite.Search
                         false, 
                         resultSourceInfo.IsDefaultResultSourceForOwner);
 
-                    string searchQuery = string.Empty;
-
+                    var searchQuery = string.Empty;
                     if (updateMode.Equals(ResultSourceUpdateBehavior.OverwriteQuery))
                     {
                         searchQuery = resultSourceInfo.Query;
                     }
-
-                    if (updateMode.Equals(ResultSourceUpdateBehavior.AppendToQuery))
+                    else if (updateMode.Equals(ResultSourceUpdateBehavior.AppendToQuery))
                     {
                         if (resultSource.QueryTransform != null)
                         {
-                            var rgx = new Regex(resultSourceInfo.Query);
-                            if (!rgx.IsMatch(resultSource.QueryTransform.QueryTemplate))
+                            // Check if appended query is already found on the current result source query template
+                            // Note: remain case sensitive because the revert query option is also case sensitive.
+                            if (!resultSource.QueryTransform.QueryTemplate.Contains(resultSourceInfo.Query))
                             {
                                 searchQuery = resultSource.QueryTransform.QueryTemplate + " " + resultSourceInfo.Query;
                             }
@@ -427,13 +426,11 @@ namespace GSoft.Dynamite.Search
                             searchQuery = resultSourceInfo.Query;
                         }
                     }
-
-                    if (updateMode.Equals(ResultSourceUpdateBehavior.RevertQuery))
+                    else if (updateMode.Equals(ResultSourceUpdateBehavior.RevertQuery))
                     {
                         if (resultSource.QueryTransform != null)
                         {
-                            var rgx = new Regex(resultSourceInfo.Query);
-                            searchQuery = rgx.Replace(resultSource.QueryTransform.QueryTemplate, string.Empty);
+                            searchQuery = resultSource.QueryTransform.QueryTemplate.Replace(resultSourceInfo.Query, string.Empty).Trim();
                         }
                     }
 
