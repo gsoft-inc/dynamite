@@ -208,6 +208,7 @@ namespace GSoft.Dynamite.UserProfile
                 profileTypeProperty.IsReplicable = userProfilePropertyInfo.IsReplicable;
             }
 
+            profileTypeProperty.Commit();
             return profileTypeProperty;
         }
 
@@ -228,6 +229,7 @@ namespace GSoft.Dynamite.UserProfile
                 profileSubtypeProperty.IsUserEditable = userProfilePropertyInfo.IsUserEditable;
             }
 
+            profileSubtypeProperty.Commit();
             return profileSubtypeProperty;
         }
     }

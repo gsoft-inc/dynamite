@@ -156,6 +156,37 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         }
 
         /// <summary>
+        /// Validates that using the IUserProfileHelper to ensure a user profile property updates
+        /// the security properties if it already exists.
+        /// </summary>
+        [TestMethod]
+        public void EnsureProfileProperty_WhenUpdatingSecurity_GivenUpdatedUserProfilePropertyInfo_ThenUpdatesProperty()
+        {
+            // Arrange
+            var userProfilePropertyInfo = new UserProfilePropertyInfo(
+                ProfilePropertyName,
+                "Test Profile Property",
+                PropertyDataType.StringSingleValue)
+                {
+                    IsUserEditable = true
+                };
+
+            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
+            {
+                // Act
+                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                userProfilePropertyInfo.IsUserEditable = false;
+                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+
+                // Assert
+                var profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
+                var profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+                Assert.AreEqual(profileSubtypeProperty.IsUserEditable, profileSubtypeProperty.IsUserEditable);
+            }
+        }
+
+        /// <summary>
         /// Validates that using the IUserProfileHelper to ensure a user profile property assigns
         /// the term set property with a custom term set.
         /// </summary>
