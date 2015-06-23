@@ -151,7 +151,7 @@ function global:New-DSPSiteVariations() {
 		
 	    $webApplication = $Site.WebApplication;
 
-		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -WebApplication $webApplication
+		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -Site $site
 		Write-Verbose "Waiting for 'VariationsCreateHierarchies' timer job to finish..."
 		Start-Sleep -Seconds 30
 	}	
@@ -292,10 +292,10 @@ function Start-ListItemPropagation
     param
 	(
         [Parameter(Mandatory=$true, Position=0)]
-		$WebApplication
+		$Site
 	)
 
-    Wait-SPTimerJob -Name "VariationsPropagateListItem" -WebApplication $WebApplication
+    Wait-SPTimerJob -Name "VariationsPropagateListItem" -Site -$Site
 	Write-Verbose "Waiting for 'VariationsPropagateListItem' timer job to finish..."
 	Start-Sleep -Seconds 15
 }

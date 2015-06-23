@@ -76,31 +76,13 @@ function Wait-SPTimerJob()
 	(
 		[Parameter(Mandatory=$true, Position=0)]
 		[string]$Name,
-		
+
 		[Parameter(Mandatory=$true, Position=1)]
-		$WebApplication
+		[Microsoft.SharePoint.SPSite]$Site
 	)
 	
-    $job = Get-SPTimerJob -WebApplication $WebApplication | ?{ $_.Name -match $Name }
-    if ($job -eq $null) 
-    {
-        Write-Verbose 'Timer job not found for ' $WebApplication.DisplayName
-    }
-    else
-    {
-        $JobLastRunTime = $job.LastRunTime
-
-		Start-SPTimerJob $job
-		
-        Write-Verbose "Waiting to finish job $JobFullName last run on $JobLastRunTime"
-        
-        while ((Get-SPTimerJob $job.Id).LastRunTime -eq $JobLastRunTime) 
-        {
-            Start-Sleep -Seconds 2
-        }
-
-        Write-Verbose  "Finished waiting for job.."
-    }
+	$timerJobHelper = Resolve-DSPType GSoft.Dynamite.TimerJobs.ITimerJobHelper
+	$timerJobHelper.StartAndWaitForJob($Site, $Name)
 }
 
 <#

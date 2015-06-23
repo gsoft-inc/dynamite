@@ -129,8 +129,6 @@ function New-SiteWithSubsitesAndVariationsWithCustomLists {
 
 	[xml]$config = Get-Content $VariationConfigFilePath
 		
-	$webApp = $site.WebApplication 
-
 	# Create hierarchies on the root site
 	New-DSPSiteVariations -Config $config.Variations -Site $site
 
@@ -148,7 +146,7 @@ function New-SiteWithSubsitesAndVariationsWithCustomLists {
             $_ | Sync-DSPWeb -LabelToSync 'fr'        
     }
 
-    Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
+    Wait-SPTimerJob -Name "VariationsSpawnSites" -Site $site
     Write-Warning "Waiting for 'VariationsSpawnSites' timer job to finish..."
     Start-Sleep -Seconds 60
 
@@ -158,7 +156,7 @@ function New-SiteWithSubsitesAndVariationsWithCustomLists {
         New-CustomList -Web $_ -ListName "CustomLibrary" -TemplateName "DocumentLibrary" | Sync-DSPList -LabelToSync 'fr'         
     }  
 
-    Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
+    Wait-SPTimerJob -Name "VariationsSpawnSites" -Site $site
     Write-Warning "Waiting for 'VariationsSpawnSites' timer job to finish..."
     Start-Sleep -Seconds 60
 
@@ -378,8 +376,6 @@ function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
 
 	[xml]$config = Get-Content $VariationConfigFilePath
 		
-	$webApp = $site.WebApplication 
-
 	# Create hierarchies on the root site
 	New-DSPSiteVariations -Config $config.Variations -Site $site
 
@@ -397,7 +393,7 @@ function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
             $_ | Sync-DSPWeb -LabelToSync 'fr'        
     }
 
-    Wait-SPTimerJob -Name "VariationsSpawnSites" -WebApplication $webApp
+    Wait-SPTimerJob -Name "VariationsSpawnSites" -Site $site
     Write-Warning "Waiting for 'VariationsSpawnSites' timer job to finish..."
     Start-Sleep -Seconds 60
 
@@ -417,7 +413,7 @@ function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
 
     # Be careful, you must run the timer job VariationsPropagatePage instead of VariationsPropagateListItem
     # Dont' forget to set EnableAutoSpawn="true" in variations settings to set the "Publish" action on pages as a trigger for synchronization
-    Wait-SPTimerJob -Name "VariationsPropagatePage" -WebApplication $webApp
+    Wait-SPTimerJob -Name "VariationsPropagatePage" -Site $site
 	Write-Verbose "Waiting for 'VariationsPropagatePage' timer job to finish..."
 	Start-Sleep -Seconds 60
 
