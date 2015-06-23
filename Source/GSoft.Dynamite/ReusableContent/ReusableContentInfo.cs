@@ -30,7 +30,9 @@ namespace GSoft.Dynamite.ReusableContent
         /// </summary>
         /// <param name="title">The title of the reusable content</param>
         /// <param name="category">The category (choice)</param>
-        /// <param name="isAutomaticUpdate">Is the reusable content update automaticaly</param>
+        /// <param name="isAutomaticUpdate">If the reusable content update automatically, 
+        /// the content of every inserted reusable content will be changed if the item in the list is changed.
+        /// Otherwise, if false, when inserting a reusable content, it will duplicate the html and will be independant to the item in the reusable content list.</param>
         /// <param name="isShowInRibbon">Do we show the reusable content in the ribbon</param>
         /// <param name="fileName">The filename of the html content</param>
         /// <param name="folderInLayouts">The folder inside the Layouts hive</param>
