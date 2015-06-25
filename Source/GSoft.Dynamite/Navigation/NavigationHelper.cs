@@ -345,35 +345,38 @@ namespace GSoft.Dynamite.Navigation
                     {
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
                         {
-                            term.SetLocalCustomProperty(SystemSimpleLinkUrl, termDrivenPageInfo.SimpleLinkOrHeader);
+                            navigationTerm.LinkType = NavigationLinkType.SimpleLink;
+                            navigationTerm.SimpleLinkUrl = termDrivenPageInfo.SimpleLinkOrHeader;
                         }
                     }
                     else
                     {
                         // Set URLs properties
+                        navigationTerm.LinkType = NavigationLinkType.FriendlyUrl;
+
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
                         {
-                            term.SetLocalCustomProperty(SystemTargetUrl, termDrivenPageInfo.TargetUrl);
+                            navigationTerm.TargetUrl.Value = termDrivenPageInfo.TargetUrl;
                         }
 
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
                         {
-                            term.SetLocalCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
+                            navigationTerm.TargetUrlForChildTerms.Value = termDrivenPageInfo.TargetUrlForChildTerms;
                         }
 
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
                         {
-                            term.SetLocalCustomProperty(SystemCatalogTargetUrl, termDrivenPageInfo.CatalogTargetUrl);
+                            navigationTerm.CatalogTargetUrl.Value = termDrivenPageInfo.CatalogTargetUrl;
                         }
 
                         if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
                         {
-                            term.SetLocalCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                            navigationTerm.CatalogTargetUrlForChildTerms.Value = termDrivenPageInfo.CatalogTargetUrlForChildTerms;
                         }
                     }
 
                     // Commit all updates
-                    term.TermStore.CommitAll();
+                    defaultStore.CommitAll();
                 }
             }
         }
