@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using GSoft.Dynamite.Globalization.Variations;
@@ -99,21 +100,22 @@ namespace GSoft.Dynamite.Navigation
                 return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
             }
 
-            // Special case for home page
-            if (SPContext.Current.ListItem != null
-                && SPContext.Current.Web.RootFolder.WelcomePage == SPContext.Current.ListItem.Url)
-            {
-                return new Uri(label.TopWebUrl.ToString());
-            }
-
             try
             {
                 // Important: Use the server relative URL (absolute path) as the current URL parameter.
                 // In the case where a load balancer is used, the server URL might be changed.  
                 // Omit this problem by using the server relative URL.
-                return new Uri(
-                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsolutePath, label.Title),
-                    UriKind.Relative);
+                var peerPageUri = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsolutePath, label.Title), UriKind.Relative);
+                
+                // Special case for home page
+                if (SPContext.Current.ListItem != null
+                    && SPContext.Current.Web.RootFolder.WelcomePage == SPContext.Current.ListItem.Url)
+                {
+                    var peerHomePageUrl = Regex.Replace(peerPageUri.OriginalString, @"\/Pages\/.*", string.Empty);
+                    peerPageUri = new Uri(peerHomePageUrl, UriKind.Relative);
+                }
+
+                return peerPageUri;
             }
             catch (ArgumentOutOfRangeException ex)
             {
