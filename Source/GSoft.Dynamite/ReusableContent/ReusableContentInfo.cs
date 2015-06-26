@@ -51,19 +51,19 @@ namespace GSoft.Dynamite.ReusableContent
         /// The Category of the Reusable Content. In SharePoint it is stored as a choice.
         /// </summary>
         [Property(PublishingFields.ContentCategoryName)]
-        public string Category { get; private set; }
+        public string Category { get; set; }
 
         /// <summary>
         /// Does the Reusable Content update itself when the source is updated (true) or is it a copy of the html content (false).
         /// </summary>
         [Property(PublishingFields.AutomaticUpdateName)]
-        public bool IsAutomaticUpdate { get; private set; }
+        public bool IsAutomaticUpdate { get; set; }
 
         /// <summary>
         /// Do we show the Reusable Content in the Ribbon Dropdown as available
         /// </summary>
         [Property(PublishingFields.ShowInRibbonName)]
-        public bool IsShowInRibbon { get; private set; }
+        public bool IsShowInRibbon { get; set; }
 
         /// <summary>
         /// The HTML content of the Reusable Content
@@ -76,12 +76,12 @@ namespace GSoft.Dynamite.ReusableContent
         /// <summary>
         /// The filename of the reusable content HTML file. Eg: "footer.html"
         /// </summary>
-        public string FileName { get; private set; }
+        public string FileName { get; set; }
 
         /// <summary>
         /// The folder inside the Layouts hive. Eg: "GSoft.Dynamite"
         /// </summary>
-        public string FolderInLayouts { get; private set; }
+        public string FolderInLayouts { get; set; }
 
         /// <summary>
         /// The generated Path for the HTML file.
