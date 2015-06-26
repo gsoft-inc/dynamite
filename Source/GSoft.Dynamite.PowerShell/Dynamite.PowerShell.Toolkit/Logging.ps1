@@ -57,27 +57,27 @@
     process {
         Write-Verbose "Stopping transcript if it's already started"
         
-		# Only try to log when in a console host
-		if ($host.name -eq 'ConsoleHost') {
-			try {
-				Stop-Transcript | out-null
-			}
-			catch [System.InvalidOperationException]{}
+        # Only try to log when in a console host
+        if ($host.name -eq 'ConsoleHost') {
+            try {
+                Stop-Transcript | out-null
+            }
+            catch [System.InvalidOperationException]{}
 
-			if(!(Test-Path -Path $folder)) {
-				Write-Verbose "Creating folder '$folder'"
-				New-Item -ItemType directory -Path $folder
-			}
-			elseif ($resetFolder) {
-				# Reset the log folder
-				Get-ChildItem $folder | Foreach-Object { Remove-Item  $_.FullName -Force }
-			}
+            if(!(Test-Path -Path $folder)) {
+                Write-Verbose "Creating folder '$folder'"
+                New-Item -ItemType directory -Path $folder
+            }
+            elseif ($resetFolder) {
+                # Reset the log folder
+                Get-ChildItem $folder | Foreach-Object { Remove-Item  $_.FullName -Force }
+            }
 
-			# Stat log transcript
-			Start-Transcript -Path $file | Write-Output
-		} else {
-			Write-Warning -Message "Unable to start transcript on host '$($host.name)'.  Please use the console host."
-		}
+            # Stat log transcript
+            Start-Transcript -Path $file | Write-Output
+        } else {
+            Write-Warning -Message "Unable to start transcript on host '$($host.name)'.  Please use the console host."
+        }
     }
 }
 
@@ -93,13 +93,13 @@ function Stop-DSPLogging {
 
     process {
         try {
-			# Only try to stop log when in a console host
-			if ($host.name -eq 'ConsoleHost') {
-				Stop-Transcript | Write-Output
-				Write-Verbose "Stopped transcript"
-			} else {
-				Write-Warning -Message "Unable to stop transcript on host '$($host.name)'.  Please use the console host."
-			}
+            # Only try to stop log when in a console host
+            if ($host.name -eq 'ConsoleHost') {
+                Stop-Transcript | Write-Output
+                Write-Verbose "Stopped transcript"
+            } else {
+                Write-Warning -Message "Unable to stop transcript on host '$($host.name)'.  Please use the console host."
+            }
         }
         catch [System.InvalidOperationException]{
             Write-Warning "Tryed to stop transcript when it wasn't started."

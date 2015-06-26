@@ -74,6 +74,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Integration\Tokens.DMX.ps1" />
+    <None Include="Integration\Tokens.vmspphil.ps1" />
     <None Include="Integration\Tokens.sp2013tao.ps1" />
     <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />
     <None Include="Integration\Token\Token.Tests.ps1" />
