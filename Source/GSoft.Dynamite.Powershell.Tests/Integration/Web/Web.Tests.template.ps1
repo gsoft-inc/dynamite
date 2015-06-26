@@ -265,6 +265,39 @@ Describe "Export-DSPWebStructure" -Tags "Local", "Slow" {
 			$subweb11Node | Should Not Be $null
 			$allNodes.Length | Should Be 4  
 		}
+
+		It "should export a folder structure corresponding to sites an subsites if 'OutputFolderStructure' parameter in specified" {
+
+			# Use the CurrentUICulture of OS
+
+			# Execute the command
+			Export-DSPWebStructure -SourceWebUrl $site.RootWeb.Url -OutputFileName $outputFileName -OutputFolderStructure
+
+			$WorkingDirectory = Split-Path $outputFileName -Parent
+
+			$RootFolderPath = Join-Path -Path $WorkingDirectory -ChildPath "RootWeb"
+			$FrenchBranchPath = Join-Path -Path $RootFolderPath -ChildPath "French-FR"
+			$EnglishBranchPath = Join-Path -Path $RootFolderPath -ChildPath "English-US"
+			$ENSubWeb1Path = Join-Path -Path $EnglishBranchPath -ChildPath "SubWeb1"
+			$ENSubWeb11Path = Join-Path -Path $ENSubWeb1Path -ChildPath "SubWeb11"
+			$ENSubWeb2Path = Join-Path -Path $EnglishBranchPath -ChildPath "SubWeb2"
+			$FRSubWeb1Path = Join-Path -Path $FrenchBranchPath -ChildPath "SubWeb1"
+			$FRSubWeb11Path = Join-Path -Path $FRSubWeb1Path -ChildPath "SubWeb11"
+			$FRSubWeb2Path = Join-Path -Path $FrenchBranchPath -ChildPath "SubWeb2"
+		   
+			Test-path $RootFolderPath | Should Be $true
+			Test-path $FrenchBranchPath | Should Be $true
+			Test-path $EnglishBranchPath | Should Be $true
+			Test-path $ENSubWeb1Path | Should Be $true
+			Test-path $ENSubWeb11Path | Should Be $true
+			Test-path $ENSubWeb2Path | Should Be $true
+			Test-path $FRSubWeb1Path | Should Be $true
+			Test-path $FRSubWeb11Path | Should Be $true
+			Test-path $FRSubWeb2Path | Should Be $true
+
+			# Remove the folder structure
+			Remove-Item $RootFolderPath -Recurse -Force
+		}
 	}
 
 	Write-Host "     --Tests Teardown--"

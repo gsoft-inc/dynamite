@@ -178,7 +178,7 @@ function Add-DSPSampleContent
 
         if($SyncVariations)
         {
-            Start-ListItemPropagation $web.Site.WebApplication
+            Start-ListItemPropagation $web.Site
         }
     }
     else

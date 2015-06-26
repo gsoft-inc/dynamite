@@ -89,6 +89,7 @@
     <Compile Include="Fields\ChoiceFieldInfoTest.cs" />
     <Compile Include="Folders\FolderInfoTest.cs" />
     <Compile Include="Catalogs\CatalogInfoTest.cs" />
+    <Compile Include="ReusableContent\ReusableContentInfoTest.cs" />
     <Compile Include="ValueTypes\ImageFieldValue.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
     <Compile Include="ValueTypes\Writers\FieldValueWriterTest.cs" />

@@ -151,7 +151,7 @@ function global:New-DSPSiteVariations() {
 		
 	    $webApplication = $Site.WebApplication;
 
-		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -WebApplication $webApplication
+		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -Site $site
 		Write-Verbose "Waiting for 'VariationsCreateHierarchies' timer job to finish..."
 		Start-Sleep -Seconds 30
 	}	
@@ -292,10 +292,10 @@ function Start-ListItemPropagation
     param
 	(
         [Parameter(Mandatory=$true, Position=0)]
-		$WebApplication
+		$Site
 	)
 
-    Wait-SPTimerJob -Name "VariationsPropagateListItem" -WebApplication $WebApplication
+    Wait-SPTimerJob -Name "VariationsPropagateListItem" -Site -$Site
 	Write-Verbose "Waiting for 'VariationsPropagateListItem' timer job to finish..."
 	Start-Sleep -Seconds 15
 }
@@ -474,4 +474,86 @@ function Get-VariationLabels {
     }
 
     return $Labels
+}
+
+<#
+    .SYNOPSIS
+	    Get the variation peer web for a specified label
+	
+    .DESCRIPTION
+	    Get the peer web in the variation structure according to a specific label
+       
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+		
+    .PARAMETER SourceWeb
+	    [REQUIRED] A source SPWeb object
+
+    .PARAMETER Label
+	    [REQUIRED] The web variation label to look for. This label corresponds to the VariationLabel.Title property configured during the variations setup.
+
+    .EXAMPLE
+		    PS C:\> Get-VariationPeerWeb (Get-SPWeb <my_url>) -Label 'en'
+
+	.OUTPUTS
+
+		Returns a SPWeb object corresponding to the peer web. Return null otherwise.
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Get-VariationPeerWeb {
+
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.SPWeb]$SourceWeb,
+
+		[Parameter(Mandatory=$true, Position=1)]
+		[string]$Label
+	)   
+
+	# To know acces variations properties on a site, we need to cast the current Web to a PublishingWeb (works for all web templates) and check the Label property
+	$SourcePublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($SourceWeb)
+	$SourceWebUrl = $SourceWeb.Url
+
+	if ($SourcePublishingWeb -ne $null)
+	{	
+		if ($SourcePublishingWeb.Label -ne $null)
+		{
+			if ($SourcePublishingWeb.VariationPublishingWebUrls -ne $null)
+			{
+				$SourcePublishingWeb.VariationPublishingWebUrls | ForEach-Object {
+                        
+					$PeerWeb = Get-SPWeb $_
+					if ($PeerWeb -ne $null)
+					{
+						$PeerPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PeerWeb)
+						if ([string]::Compare($PeerPublishingWeb.Label.Title, $Label) -eq 0)
+						{
+							return $PeerWeb
+						}				
+					}
+				}
+			}	
+		}
+		else
+		{
+			Write-Warning "The web '$SourceWebUrl' doesn't seem to have variations enabled"
+		}
+	}
 }

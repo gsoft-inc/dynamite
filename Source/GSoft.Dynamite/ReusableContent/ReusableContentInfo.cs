@@ -30,7 +30,9 @@ namespace GSoft.Dynamite.ReusableContent
         /// </summary>
         /// <param name="title">The title of the reusable content</param>
         /// <param name="category">The category (choice)</param>
-        /// <param name="isAutomaticUpdate">Is the reusable content update automaticaly</param>
+        /// <param name="isAutomaticUpdate">If the reusable content update automatically, 
+        /// the content of every inserted reusable content will be changed if the item in the list is changed.
+        /// Otherwise, if false, when inserting a reusable content, it will duplicate the html and will be independant to the item in the reusable content list.</param>
         /// <param name="isShowInRibbon">Do we show the reusable content in the ribbon</param>
         /// <param name="fileName">The filename of the html content</param>
         /// <param name="folderInLayouts">The folder inside the Layouts hive</param>
@@ -49,19 +51,19 @@ namespace GSoft.Dynamite.ReusableContent
         /// The Category of the Reusable Content. In SharePoint it is stored as a choice.
         /// </summary>
         [Property(PublishingFields.ContentCategoryName)]
-        public string Category { get; set; }
+        public string Category { get; private set; }
 
         /// <summary>
         /// Does the Reusable Content update itself when the source is updated (true) or is it a copy of the html content (false).
         /// </summary>
         [Property(PublishingFields.AutomaticUpdateName)]
-        public bool IsAutomaticUpdate { get; set; }
+        public bool IsAutomaticUpdate { get; private set; }
 
         /// <summary>
         /// Do we show the Reusable Content in the Ribbon Dropdown as available
         /// </summary>
         [Property(PublishingFields.ShowInRibbonName)]
-        public bool IsShowInRibbon { get; set; }
+        public bool IsShowInRibbon { get; private set; }
 
         /// <summary>
         /// The HTML content of the Reusable Content
@@ -74,12 +76,12 @@ namespace GSoft.Dynamite.ReusableContent
         /// <summary>
         /// The filename of the reusable content HTML file. Eg: "footer.html"
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName { get; private set; }
 
         /// <summary>
         /// The folder inside the Layouts hive. Eg: "GSoft.Dynamite"
         /// </summary>
-        public string FolderInLayouts { get; set; }
+        public string FolderInLayouts { get; private set; }
 
         /// <summary>
         /// The generated Path for the HTML file.
