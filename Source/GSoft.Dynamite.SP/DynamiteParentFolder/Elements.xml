@@ -1,4 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
-    <Control ControlSrc="/_controltemplates/15/GSoft.Dynamite/ParentFolder.ascx" Id="PromotedActions" Sequence="20" />
-</Elements>

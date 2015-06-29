@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
-  <Module Name="DynamiteBootstrapResponsive"  Url="Style Library/Bootstrap" RootWebOnly="TRUE" Path="DynamiteBootstrapResponsive">
-    <File Path="bootstrap.min.js" Url="bootstrap.min.js" Type="GhostableInLibrary" ReplaceContent="TRUE"/>
-  </Module>
-</Elements>

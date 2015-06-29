@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<feature xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="3f8b6fe1-18db-44df-b36f-b266d507dbd8" description="Deploys Bootstrap Javascript library with non responsive features into the Style library. To use associated CSS, use a CSSRegistration in your master page for the following files:&#xD;&#xA;- /_layouts/GSoft.Dynamite/CSS/Bootstrap/bootstrap.min.css&#xD;&#xA;- /_layouts/GSoft.Dynamite/CSS/Bootstrap/bootstrap-theme.min.css&#xD;&#xA;/_layouts/GSoft.Dynamite/CSS/Bootstrap/bootstrap-sharepoint.min.css" featureId="3f8b6fe1-18db-44df-b36f-b266d507dbd8" imageUrl="" scope="Site" solutionId="00000000-0000-0000-0000-000000000000" title="GSoft.Dynamite Bootstrap (Responsive)" version="" deploymentPath="$SharePoint.Project.FileNameWithoutExtension$_$SharePoint.Feature.FileNameWithoutExtension$" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/FeatureModel">
-  <projectItems>
-    <projectItemReference itemId="fb43b44b-6b22-47e3-a33a-75237d4fa14f" />
-  </projectItems>
-</feature>
