@@ -5,6 +5,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using GSoft.Dynamite.Extensions;
+using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Taxonomy;
@@ -51,18 +54,21 @@ namespace GSoft.Dynamite.Navigation
         /// </summary>
         public const string SystemCatalogTargetUrlForChildTerms = "_Sys_Nav_CatalogTargetUrlForChildTerms";
 
-        private readonly ITaxonomyService taxonomyService;
-        private readonly ITaxonomyHelper taxonomyHelper;
+        private ITaxonomyService taxonomyService;
+        private ITaxonomyHelper taxonomyHelper;
+        private ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
         /// <param name="taxonomyService">The taxonomy service.</param>
         /// <param name="taxonomyHelper">The taxonomy helper.</param>
-        public NavigationHelper(ITaxonomyService taxonomyService, ITaxonomyHelper taxonomyHelper)
+        /// <param name="logger">Logging utility</param>
+        public NavigationHelper(ITaxonomyService taxonomyService, ITaxonomyHelper taxonomyHelper, ILogger logger)
         {
             this.taxonomyService = taxonomyService;
             this.taxonomyHelper = taxonomyHelper;
+            this.logger = logger;
         }
 
         /// <summary>
@@ -249,7 +255,7 @@ namespace GSoft.Dynamite.Navigation
                 // Term setting
                 if (termDrivenPageInfo.IsTerm)
                 {
-                    SetTermDrivenPageSettingsOnTerm(web, termDrivenPageInfo);
+                    this.SetTermDrivenPageSettingsOnTerm(web, termDrivenPageInfo);
                 }
             }
         }
@@ -304,81 +310,188 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private static void SetTermDrivenPageSettingsOnTerm(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo)
+        private void SetTermDrivenPageSettingsOnTerm(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo)
         {
-            // Get the web-specific navigation settings
-            var webNavigationSettings = new WebNavigationSettings(web);
+            var webNavigationSettings = FindTaxonomyWebNavigationSettingsInWebOrInParents(web);
 
-            var taxonomySession = new TaxonomySession(web.Site);
-            var defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
-            var termSet = defaultStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
-
-            // Get the taxonomy term
-            var term = termSet.GetTerm(termDrivenPageInfo.Term.Id);
-
-            if (term != null)
+            if (webNavigationSettings != null
+                && webNavigationSettings.GlobalNavigation.Source == StandardNavigationSource.TaxonomyProvider)
             {
-                string isNavigationTermSet;
+                var taxonomySession = new TaxonomySession(web.Site, true);
+                var defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
 
-                // Check if the term term set is flagged as navigation term set
-                // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
-                term.TermSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out isNavigationTermSet);
+                var previousThreadCulture = CultureInfo.CurrentCulture;
+                var previousThreadUiCulture = CultureInfo.CurrentUICulture;
+                var previousWorkingLanguage = defaultStore.WorkingLanguage;
 
-                // If the term set allow navigation
-                if (!string.IsNullOrEmpty(isNavigationTermSet))
+                try
                 {
-                    // Get the associated navigation term set 
-                    var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
-                        term.TermSet,
-                        web,
-                        StandardNavigationProviderNames.CurrentNavigationTaxonomyProvider);
+                    CultureInfo currentWebCulture = web.Locale;
+                    CultureInfo currentWebUiCulture = new CultureInfo((int)web.Language);
 
-                    // Get the navigation term
-                    var navigationTerm = navigationTermSet.Terms.FirstOrDefault(t => t.Id.Equals(term.Id));
-                    if (navigationTerm != null)
+                    // Force thread culture/uiculture and term store working language
+                    Thread.CurrentThread.CurrentCulture = currentWebCulture;
+                    Thread.CurrentThread.CurrentUICulture = currentWebUiCulture;
+                    defaultStore.WorkingLanguage = currentWebCulture.LCID;   // force the working language to fit with the current web language
+
+                    var termSet = defaultStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
+
+                    // Get the taxonomy term
+                    var term = termSet.GetTerm(termDrivenPageInfo.Term.Id);
+
+                    if (term != null)
                     {
-                        navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
-                        navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
-                    }
+                        string isNavigationTermSet;
 
-                    if (termDrivenPageInfo.IsSimpleLinkOrHeader)
-                    {
-                        if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
+                        // Check if the term term set is flagged as navigation term set
+                        // By default a TermSet doesn't have the custom property "_Sys_Nav_IsNavigationTermSet" so we can't acces it directly in the collection
+                        term.TermSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out isNavigationTermSet);
+
+                        // If the term set allow navigation
+                        if (!string.IsNullOrEmpty(isNavigationTermSet))
                         {
-                            navigationTerm.LinkType = NavigationLinkType.SimpleLink;
-                            navigationTerm.SimpleLinkUrl = termDrivenPageInfo.SimpleLinkOrHeader;
+                            // Get the associated navigation term set 
+                            var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
+                                term.TermSet,
+                                web,
+                                StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider);
+
+                            navigationTermSet = navigationTermSet.GetAsEditable(taxonomySession);
+
+                            // Get the navigation term
+                            var navigationTerm = FindTermInNavigationTermsCollection(navigationTermSet.Terms, term.Id);
+                            if (navigationTerm != null)
+                            {
+                                // Gotta re-fetch the navigation term as an "editable" instance in order to avoid UnauthorizedAccessExceptions
+                                navigationTerm = navigationTerm.GetAsEditable(taxonomySession);
+
+                                navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
+                                navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
+
+                                if (termDrivenPageInfo.IsSimpleLinkOrHeader)
+                                {
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.SimpleLinkOrHeader))
+                                    {
+                                        if (navigationTerm.LinkType == NavigationLinkType.FriendlyUrl)
+                                        {
+                                            // clear any existing target URL on the term
+                                            navigationTerm.TargetUrl.Value = string.Empty;
+                                            navigationTerm.TargetUrlForChildTerms.Value = string.Empty;
+                                            navigationTerm.CatalogTargetUrl.Value = string.Empty;
+                                            navigationTerm.CatalogTargetUrlForChildTerms.Value = string.Empty;
+                                        }
+
+                                        if (navigationTerm.LinkType != NavigationLinkType.SimpleLink)
+                                        {
+                                            navigationTerm.LinkType = NavigationLinkType.SimpleLink;
+                                        }
+
+                                        navigationTerm.SimpleLinkUrl = termDrivenPageInfo.SimpleLinkOrHeader;
+                                    }
+                                }
+                                else
+                                {
+                                    // Set URLs properties
+                                    if (navigationTerm.LinkType != NavigationLinkType.FriendlyUrl)
+                                    {
+                                        navigationTerm.LinkType = NavigationLinkType.FriendlyUrl;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
+                                    {
+                                        navigationTerm.TargetUrl.Value = termDrivenPageInfo.TargetUrl;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
+                                    {
+                                        navigationTerm.TargetUrlForChildTerms.Value = termDrivenPageInfo.TargetUrlForChildTerms;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
+                                    {
+                                        navigationTerm.CatalogTargetUrl.Value = termDrivenPageInfo.CatalogTargetUrl;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
+                                    {
+                                        navigationTerm.CatalogTargetUrlForChildTerms.Value = termDrivenPageInfo.CatalogTargetUrlForChildTerms;
+                                    }
+                                }
+
+                                // Commit all updates
+                                defaultStore.CommitAll();
+                            }
+                            else
+                            {
+                                this.logger.Warn(
+                                    "TaxonomyHelper.SetTermDrivenPageSettingsOnTerm: Failed to find corresponding NavigationTerm for term ID={0} in term set ID={1} Name={2}",
+                                    term.Id,
+                                    navigationTermSet.Id,
+                                    navigationTermSet.TaxonomyName);
+                            }
                         }
                     }
-                    else
-                    {
-                        // Set URLs properties
-                        navigationTerm.LinkType = NavigationLinkType.FriendlyUrl;
-
-                        if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrl))
-                        {
-                            navigationTerm.TargetUrl.Value = termDrivenPageInfo.TargetUrl;
-                        }
-
-                        if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
-                        {
-                            navigationTerm.TargetUrlForChildTerms.Value = termDrivenPageInfo.TargetUrlForChildTerms;
-                        }
-
-                        if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrl))
-                        {
-                            navigationTerm.CatalogTargetUrl.Value = termDrivenPageInfo.CatalogTargetUrl;
-                        }
-
-                        if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
-                        {
-                            navigationTerm.CatalogTargetUrlForChildTerms.Value = termDrivenPageInfo.CatalogTargetUrlForChildTerms;
-                        }
-                    }
-
-                    // Commit all updates
-                    defaultStore.CommitAll();
+                }
+                finally
+                {
+                    // Restore previous thread cultures and term store working language
+                    Thread.CurrentThread.CurrentCulture = previousThreadCulture;
+                    Thread.CurrentThread.CurrentUICulture = previousThreadUiCulture;
+                    defaultStore.WorkingLanguage = previousWorkingLanguage;
                 }
             }
+            else
+            {
+                this.logger.Warn(
+                    "TaxonomyHelper.SetTermDrivenPageSettingsOnTerm: Failed to find taxonomy-type WebNavigationSettings in web ID={0} Url={1} or in any of its parent webs. At least one SPWeb in the hierarchy should have a GlobalNavigation setting of source type Taxonomy.",
+                    web.ID,
+                    web.Url);
+            }
+        }
+
+        /// <summary>
+        /// Finds a term by ID recursively in a navigation term collection
+        /// </summary>
+        /// <param name="navigationTerms">
+        /// The current level of terms to look through (each term's children will be looped through recursively 
+        /// if none match in the current level)
+        /// </param>
+        /// <param name="termId">The term ID to look for</param>
+        /// <returns>The navigation term or null if not found</returns>
+        private static NavigationTerm FindTermInNavigationTermsCollection(ICollection<NavigationTerm> navigationTerms, Guid termId)
+        {
+            var foundTerm = navigationTerms.FirstOrDefault(termAtThisLevel => termAtThisLevel.Id == termId);
+
+            if (foundTerm == null)
+            {
+                foreach (NavigationTerm termAtThisLevel in navigationTerms)
+                {
+                    foundTerm = FindTermInNavigationTermsCollection(termAtThisLevel.Terms, termId);
+
+                    if (foundTerm != null)
+                    {
+                        // stop looping and recursing as soon as we hit a match
+                        break;
+                    }
+                }
+            }
+
+            return foundTerm;
+        }
+
+        private static WebNavigationSettings FindTaxonomyWebNavigationSettingsInWebOrInParents(SPWeb web)
+        {
+            var currentWebNavSettings = new WebNavigationSettings(web);
+
+            if (currentWebNavSettings.GlobalNavigation.Source == StandardNavigationSource.InheritFromParentWeb
+                && web.ParentWeb != null)
+            {
+                // current web inherits its settings from its parent, so we gotta look upwards to the parent webs
+                // recursively until we find a match
+                FindTaxonomyWebNavigationSettingsInWebOrInParents(web);
+            }
+
+            return currentWebNavSettings;
         }
 
         private static string RemoveDiacritics(string text)
