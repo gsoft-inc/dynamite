@@ -8,11 +8,11 @@
 #
 
 <#
-	.SYNOPSIS
-		Commandlet to add a file to a SharePoint library
+    .SYNOPSIS
+        Commandlet to add a file to a SharePoint library
 
-	.DESCRIPTION
-		Add a new file to a SharePoint library
+    .DESCRIPTION
+        Add a new file to a SharePoint library
 
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -22,24 +22,24 @@
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
    
-	.PARAMETER  WebUrl
-		Url of the SPweb that contains the library.
-		
-	.PARAMETER  DocLibName
-		The library name.
+    .PARAMETER  WebUrl
+        Url of the SPweb that contains the library.
+        
+    .PARAMETER  DocLibName
+        The library name.
 
-	.PARAMETER  FilePath
-		Physical file path to upload.
+    .PARAMETER  FilePath
+        Physical file path to upload.
 
-	.PARAMETER  Force
-		If true, overwrite existing file. Otherwise, prompt for a confirmation.
-		
-		
-	.EXAMPLE
-		PS C:\> Add-DSPFile "http://mysite/sites/mysubsite" "Images" "C:\Photo.jpeg" $true
+    .PARAMETER  Force
+        If true, overwrite existing file. Otherwise, prompt for a confirmation.
+        
+        
+    .EXAMPLE
+        PS C:\> Add-DSPFile "http://mysite/sites/mysubsite" "Images" "C:\Photo.jpeg" $true
 
-	.OUTPUTS
-		The server relative url of the new added file.  
+    .OUTPUTS
+        The server relative url of the new added file.  
     
   .LINK
     GSoft, Team Dynamite on Github
@@ -108,11 +108,11 @@ function Add-DSPFile
 #
 
 <#
-	.SYNOPSIS
-		Commandlet to set alerts configuration on SharePoint lists
+    .SYNOPSIS
+        Commandlet to set alerts configuration on SharePoint lists
 
-	.DESCRIPTION
-		Creates or deletes alerts for SharePoint Lists
+    .DESCRIPTION
+        Creates or deletes alerts for SharePoint Lists
 
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
@@ -126,43 +126,43 @@ function Add-DSPFile
          Here is the Structure XML schema.
 
         <Configuration>
-	        <Web Url="http://mysite">
-		        <List Title="List Title">		
-			        <!-- AlertType: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalerttype(v=office.15).aspx -->
-			             DeliveryChannels: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalertdeliverychannels(v=office.15).aspx
-			             EventType: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventtype(v=office.15).aspx 
-			             AlertFrequency: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalertfrequency(v=office.15).aspx 
+            <Web Url="http://mysite">
+                <List Title="List Title">		
+                    <!-- AlertType: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalerttype(v=office.15).aspx -->
+                         DeliveryChannels: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalertdeliverychannels(v=office.15).aspx
+                         EventType: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.speventtype(v=office.15).aspx 
+                         AlertFrequency: http://msdn.microsoft.com/en-us/library/microsoft.sharepoint.spalertfrequency(v=office.15).aspx 
 
                          Users: Insert here all users separated by a semicolon ';'
                          Groups: Insert here all groups separated by a semicolon ';'. The cmdlet will process all users in this group.
 
                          CAUTION: Don't user empty "Users" or "Groups" XML atributes. If you don't need it, just delete the attribute in the schema but not leave it empty.
                     -->	
-			        <Alert 	Title="My Alert" 
-					        Users=""
-					        Groups=""
-					        AlertType="List"					
-					        DeliveryChannels="Email"					
-					        EventType="Add"				
-					        AlertFrequency="Daily"
-			        />
-		        </List>
-	        </Web>
+                    <Alert 	Title="My Alert" 
+                            Users=""
+                            Groups=""
+                            AlertType="List"					
+                            DeliveryChannels="Email"					
+                            EventType="Add"				
+                            AlertFrequency="Daily"
+                    />
+                </List>
+            </Web>
         </Configuration>
 
 
-	.PARAMETER  XmlPath (Mandatory)
-		Physical path of the XML configuration file.
-		
-	.PARAMETER  Delete (Optionnal)
-		If true, delete existing alerts in the list for users. Otherwise, create new alerts.
+    .PARAMETER  XmlPath (Mandatory)
+        Physical path of the XML configuration file.
+        
+    .PARAMETER  Delete (Optionnal)
+        If true, delete existing alerts in the list for users. Otherwise, create new alerts.
 
-	.EXAMPLE
-		PS C:\> Set-DSPAlerts "D:\Alerts.xml"
+    .EXAMPLE
+        PS C:\> Set-DSPAlerts "D:\Alerts.xml"
         PS C:\> Set-DSPAlerts "D:\Alerts.xml" -Delete 
 
-	.OUTPUTS
-		n/a. 
+    .OUTPUTS
+        n/a. 
     
   .LINK
     GSoft, Team Dynamite on Github
@@ -177,20 +177,20 @@ function Add-DSPFile
 #>
 function Set-DSPAlerts
 {
-	[CmdletBinding(DefaultParametersetName="Default")] 
-	param
-	(
-		[Parameter(ParameterSetName="Default", Mandatory=$true, Position=0)]
-		[string]$XmlPath,
+    [CmdletBinding(DefaultParametersetName="Default")] 
+    param
+    (
+        [Parameter(ParameterSetName="Default", Mandatory=$true, Position=0)]
+        [string]$XmlPath,
 
         [Parameter(ParameterSetName="Default",Mandatory=$false, Position=1)]
-		[switch]$Delete=$false
-	)
+        [switch]$Delete=$false
+    )
 
     $Config = [xml](Get-Content $XmlPath)
 
     # Process all Webs
-	$Config.Configuration.Web | ForEach-Object {
+    $Config.Configuration.Web | ForEach-Object {
         
         $webUrl = $_.Url
         $web = Get-SPWeb -Identity $webUrl
@@ -219,15 +219,15 @@ function Set-DSPAlerts
 function Add-DSPAlert
 {
     param
-	(
+    (
         [Parameter(ParameterSetName="Default", Mandatory=$true, Position=0)]
-		[Microsoft.SharePoint.SPList]$List,
+        [Microsoft.SharePoint.SPList]$List,
 
         [Parameter(ParameterSetName="Default", Mandatory=$true, Position=1)]
-		$Schema,
+        $Schema,
 
         [Parameter(ParameterSetName="Default",Mandatory=$false, Position=2)]
-		[bool]$Delete=$false 
+        [bool]$Delete=$false 
     )
 
     if ($Schema -ne $null -and $List -ne $null)

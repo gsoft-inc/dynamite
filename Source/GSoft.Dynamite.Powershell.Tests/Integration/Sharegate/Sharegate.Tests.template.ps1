@@ -20,35 +20,35 @@ $siteUrl = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($webApplicati
 
 Describe "Import-DSPData" -Tags "Local", "Slow" {
 
-	# ----------------------
-	# Import-DSPData
-	# ----------------------
+    # ----------------------
+    # Import-DSPData
+    # ----------------------
     Import-Module Sharegate
 
-	Context "Parameters are invalid" 	{
+    Context "Parameters are invalid" 	{
 
-		It "should throw an error if folder path if invalid " {
-		
+        It "should throw an error if folder path if invalid " {
+        
             { Import-DSPData -FromFolder "C:\DoesntExist" -ToUrl $siteUrl -LogFolder $LogFilePath } | Should Throw
-		}
+        }
 
         It "should throw an error if target URL is invalid " {
 
-			{ Import-DSPData -FromFolder "C:\Users" -ToUrl "http:///%!" -LogFolder $LogFilePath } | Should Throw
-		}
-	}
+            { Import-DSPData -FromFolder "C:\Users" -ToUrl "http:///%!" -LogFolder $LogFilePath } | Should Throw
+        }
+    }
 
     Context "Mirror structure between folders and site and lists" 	{
 
-		It "[Single site] should import images, documents and list items including custom items and reusable content items into the target URL site" {
+        It "[Single site] should import images, documents and list items including custom items and reusable content items into the target URL site" {
        
             Write-Host "     --Test Setup--"
             $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleSite"
 
             # Create site hierarchy
-		    $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
+            $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
             
-        	Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath	 
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath	 
 
             $Web = Get-SPWeb $siteUrl
 
@@ -68,17 +68,17 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Get-ListItem -Web $Web -ListName "CustomLibrary" -ItemTitle "TestDocument" | Should Not be $null   
             
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false  
-			Remove-Item $LogFilePath -Recurse -Confirm:$false
-		}
+            Remove-SPSite $siteUrl -Confirm:$false  
+            Remove-Item $LogFilePath -Recurse -Confirm:$false
+        }
 
         It "[Multiples sites and sub sites with variations] should import images, documents and list items including custom items and reusable content items across the whole site structure"   {
             
             Write-Host "     --Test Setup--"
             $folderPath = Join-Path -Path "$here" -ChildPath ".\MultipleSites"
 
-		    # Create site hierarchy
-		    $site = New-SiteWithSubsitesAndVariationsWithCustomLists -SiteUrl $siteUrl -SubWebsTemplateID "BLANKINTERNET#0" -VariationConfigFilePath $variationsConfigFile
+            # Create site hierarchy
+            $site = New-SiteWithSubsitesAndVariationsWithCustomLists -SiteUrl $siteUrl -SubWebsTemplateID "BLANKINTERNET#0" -VariationConfigFilePath $variationsConfigFile
             
             Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath		
 
@@ -86,12 +86,12 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 
             # French URL to check
             $subWeb1UrlFr = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "fr/subweb1"))
-	        $subWeb2UrlFr = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "fr/subweb2"))
+            $subWeb2UrlFr = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "fr/subweb2"))
             $subWeb11Fr = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "fr/subweb1/subweb11"))
 
             # English URL to check
             $subWeb1UrlEn = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "en/subweb1"))
-	        $subWeb2UrlEn = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "en/subweb2"))
+            $subWeb2UrlEn = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "en/subweb2"))
             $subWeb11En = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($siteUrl, "en/subweb1/subweb11"))
 
             $SubWebs = @($subWeb1UrlFr, $subWeb2UrlFr, $subWeb11Fr, $subWeb1UrlEn, $subWeb2UrlEn, $subWeb11En)
@@ -117,10 +117,10 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             }
 
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false
-			Remove-Item $LogFilePath -Recurse -Confirm:$false
+            Remove-SPSite $siteUrl -Confirm:$false
+            Remove-Item $LogFilePath -Recurse -Confirm:$false
         }
-	}
+    }
 
     Context "Duplicates behavior" {
       
@@ -129,7 +129,7 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Write-Host "     --Test Setup--"
 
             # Create site hierarchy
-		    $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
+            $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
 
             $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomList"
 
@@ -147,8 +147,8 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Get-ListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItemDuplicate" | Should Not be  $null
             
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false    
-			Remove-Item $LogFilePath -Recurse -Confirm:$false        
+            Remove-SPSite $siteUrl -Confirm:$false    
+            Remove-Item $LogFilePath -Recurse -Confirm:$false        
         }
 
         It "[Single site] should not duplicate items with the same composite key" {
@@ -156,7 +156,7 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Write-Host "     --Test Setup--"
 
             # Create site hierarchy
-		    $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
+            $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
 
             $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomList"
 
@@ -164,16 +164,16 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
 
             $folderPath = Join-Path -Path "$here" -ChildPath ".\SingleCustomListDuplicates"
 
-			# Custom property mapping settings
-			$MappingSettings = New-MappingSettings 
+            # Custom property mapping settings
+            $MappingSettings = New-MappingSettings 
 
-			# Remove default keys
-			Set-PropertyMapping -MappingSettings $MappingSettings -Source Title -Destination Title
-			Set-PropertyMapping -MappingSettings $MappingSettings -Source Created -Destination Created
+            # Remove default keys
+            Set-PropertyMapping -MappingSettings $MappingSettings -Source Title -Destination Title
+            Set-PropertyMapping -MappingSettings $MappingSettings -Source Created -Destination Created
 
-			# Add custom keys
-			Set-PropertyMapping -MappingSettings $MappingSettings -Source ID -Destination ID -Key
-			Set-PropertyMapping -MappingSettings $MappingSettings -Source ContentType -Destination ContentType -Key
+            # Add custom keys
+            Set-PropertyMapping -MappingSettings $MappingSettings -Source ID -Destination ID -Key
+            Set-PropertyMapping -MappingSettings $MappingSettings -Source ContentType -Destination ContentType -Key
 
             Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -MappingSettings $MappingSettings -LogFolder $LogFilePath
 
@@ -185,8 +185,8 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Get-ListItem -Web $Web -ListName "CustomList" -ItemTitle "TestListItemDuplicate" | Should be  $null
             
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false    
-			Remove-Item $LogFilePath -Recurse -Confirm:$false        
+            Remove-SPSite $siteUrl -Confirm:$false    
+            Remove-Item $LogFilePath -Recurse -Confirm:$false        
         }
     }
 
@@ -198,9 +198,9 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             $folderPath = Join-Path -Path "$here" -ChildPath ".\NonMirror"
 
             # Create site hierarchy
-		    $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
+            $site = New-SingleSiteNoSubsitesNoVariationsWithCustomLists -SiteUrl $siteUrl
 
-        	Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath	
+            Import-DSPData -FromFolder $folderPath -ToUrl $siteUrl -LogFolder $LogFilePath	
 
             $Web = Get-SPWeb $siteUrl
 
@@ -217,8 +217,8 @@ Describe "Import-DSPData" -Tags "Local", "Slow" {
             Get-ListItem -Web $Web -ListName "CustomLibrary" -ItemTitle "TestDocument" | Should Be $null
 
             Write-Host "     --Tests Teardown--"
-	        Remove-SPSite $siteUrl -Confirm:$false 
-			Remove-Item $LogFilePath -Recurse -Confirm:$false
+            Remove-SPSite $siteUrl -Confirm:$false 
+            Remove-Item $LogFilePath -Recurse -Confirm:$false
         }
     }
 }
