@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" itemscope itemtype="http://schema.org/Article">
+<head>
+    <!-- Styles (CSS) -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <!-- Javascript -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/driver.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row header">
+            <h1><span class="logo"></span>Dynamite Documentation <span class="version">v0.1</span></h1>
+        </div>
+        <div class="row main">
+            <div class="col-md-3 menu">
+                <ul class="list-unstyled" data-bind="foreach: Types.sort(function (l, r) { return l.Name() > r.Name() ? 1 : -1 })">
+                    <li><a data-bind="text: Name, click: OnClick"></a></li>
+                </ul>
+            </div>
+            <div class="col-md-9 detail" data-bind="template: {name: 'type-detail', data: SelectedType}"></div>
+        </div>
+    </div>
+    <!-- Template Knockout -->
+    <script type="text/html" id="type-detail">
+        <h2 data-bind="text: Name"></h2>
+        <!-- ko foreach: Summaries -->
+        <p data-bind="text: $data"></p>
+        <!-- /ko -->
+        <label>Namespace:&nbsp;</label>
+        <span data-bind="text: Namespace"></span>
+        <h3 data-bind="visible: Properties().length > 0">Properties</h3>
+        <div class="properties" data-bind="foreach: Properties.sort(function (l, r) { return l.Name() > r.Name() ? 1 : -1 })">
+            <div class="bs-callout bs-callout-primary property">
+                <h4 data-bind="text: Name"></h4>
+                <!-- ko foreach: Summaries -->
+                <p data-bind="text: $data"></p>
+                <!-- /ko -->
+            </div>
+        </div>
+        <h3 data-bind="visible: Methods().length > 0">Methods</h3>
+        <div class="methods" data-bind="foreach: Methods.sort(function (l, r) { return l.Name() > r.Name() ? 1 : -1 })">
+            <div class="bs-callout bs-callout-success method">
+                <!--<h4 data-bind="text: FullName"></h4>-->
+                <h4><span data-bind="html: DisplayName"></span></h4>
+                <h5 data-bind="visible: Parameters().length > 0">Parameters</h5>
+                <!-- ko foreach: Summaries -->
+                <p data-bind="text: $data"></p>
+                <!-- /ko -->
+                <div class="parameters" data-bind="foreach: Parameters">
+                    <h6 data-bind="text: Name"></h6>
+                    <span class="tab2">Type: </span>
+                    <!-- ko template: IsDynamiteType() ? 'dynamite-type-link' : 'span-type' --><!-- /ko -->
+                    <p class="tab2" data-bind="text: Description"></p>
+                </div>
+                <span class="returns" data-bind="visible: Returns()">Returns: </span><span data-bind="text: Returns"></span>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="dynamite-type-link">
+        <a data-bind="text: FullType, click: OnFullTypeClick"></a>
+    </script>
+    <script type="text/html" id="span-type">
+        <span data-bind="text: FullType"></span>
+    </script>
+</body>
+</html>
