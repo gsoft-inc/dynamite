@@ -870,6 +870,7 @@ function ConvertTo-DSPTaxonomyStructure {
 
                 $PublishingSubWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($SubWeb)
                 $WebTermLabels = @{}
+                $WebTermCustomProperties = @{}
                     
                 if ($IsVariationsEnabled)
                 {
@@ -885,6 +886,7 @@ function ConvertTo-DSPTaxonomyStructure {
 								$PeerWeb = $PeerSite.OpenWeb()
 								$PeerPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PeerWeb)
 								$WebTermLabels.Add($PeerWeb.Locale.LCID, $PeerPublishingWeb.DefaultPage.Title)
+                                $WebTermCustomProperties.Add("FileName" + $PeerWeb.Locale.LCID, $PeerPublishingWeb.DefaultPage.Name)
 
 								$PeerWeb.Dispose()
 								$PeerSite.Dispose();
@@ -920,14 +922,13 @@ function ConvertTo-DSPTaxonomyStructure {
 						{
 							# [Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls() doesn't exist in MOSS 2007 ;)
 							$PageUrl = [Microsoft.SharePoint.Utilities.SPUtility]::GetFullUrl($SubWeb.Site, $PublishingSubWeb.DefaultPage.ServerRelativeUrl)
-							$PeerSite = New-Object Microsoft.SharePoint.SPSite($PublishingSubWeb.Url)
-							$PeerWeb = $PeerSite.OpenWeb()
-							$PeerPage =$PeerWeb.GetListItem($PageUrl)
+							$Site = New-Object Microsoft.SharePoint.SPSite($PublishingSubWeb.Url)
+							$Web = $Site.OpenWeb()
+							$Page = $Web.GetListItem($PageUrl)
+							$WebTermLabel = $Page.DisplayName 
 
-							$WebTermLabel = $PeerPage.DisplayName 
-
-							$PeerWeb.Dispose()
-							$PeerSite.Dispose();
+							$Web.Dispose()
+							$Site.Dispose();
 						}
 						else
 						{
@@ -936,8 +937,9 @@ function ConvertTo-DSPTaxonomyStructure {
 						}
 
 						$WebTermLabels.Add($SubWeb.Locale.LCID, $WebTermLabel)
+                        $WebTermCustomProperties.Add("FileName" + $SubWeb.Locale.LCID, $PublishingSubWeb.DefaultPage.Name)
 
-						$SubWebParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $WebTermLabels $SubWeb $SubWeb.Url
+						$SubWebParentXMLElement = New-XMLSingleTermNode $ParentXMLElement $WebTermLabels $SubWeb $SubWeb.Url $WebTermCustomProperties
 						$TermsXMLNode = New-XMLTermsNode $SubWebParentXMLElement  
 						$SubWebParentXMLElement = $TermsXMLNode
 					}
@@ -1035,9 +1037,11 @@ function ConvertTo-DSPTaxonomyStructure {
         )       
 
         $PageTermLabels = @{}
-        $IsExcluded = $false
-		$ParentWeb = $PageItem.ParentList.ParentWeb
-		$PageTermLabel = $PageItem.Title
+        $PageTermCustomProperties = @{}
+        $IsExcluded     = $false
+		$ParentWeb      = $PageItem.ParentList.ParentWeb
+		$PageTermLabel  = $PageItem.Title
+        $PageFileName   = $PageItem["FileLeafRef"]
 
         # Wiki pages don't have a title property but publishing pages do
         if ([string]::IsNullOrEmpty($PageTermLabel))
@@ -1068,6 +1072,7 @@ function ConvertTo-DSPTaxonomyStructure {
 
             $Locale = $PageItem.Web.Locale.LCID
             $PageTermLabels.Add($Locale, $PageTermLabel)
+            $PageTermCustomProperties.Add(("FileName" + $Locale), $PageFileName)
 
             if ($IsVariationsEnabled -and $PublishingWeb.PagesList -ne $null)
             {
@@ -1090,24 +1095,26 @@ function ConvertTo-DSPTaxonomyStructure {
 						# Check peer pages in target variations branches
 						$VariationLabels | ForEach-Object {
 
-							$PeerSite = New-Object Microsoft.SharePoint.SPSite($_)
-							$PeerWeb = $PeerSite.OpenWeb()
-							$PeerPage = $PeerWeb.GetListItem($_)
-							$PeerPageTermLabel = $PeerPage.Title
+							$PeerSite          = New-Object Microsoft.SharePoint.SPSite($_)
+							$PeerWeb           = $PeerSite.OpenWeb()
+							$PeerPageItem       = $PeerWeb.GetListItem($_)
+							$PeerPageTermLabel = $PeerPageItem.Title
+                            $PeerPageFileName  = $PeerPageItem["FileLeafRef"]
 
 							# Wiki pages don't have a title property but publishing pages do
 							if ([string]::IsNullOrEmpty($PeerPageTermLabel))
 							{
-								$PeerPageTermLabel = $PageItem.DisplayName
+								$PeerPageTermLabel = $PeerPageItem.DisplayName
 
-								# Finally, if the title is null, we take the web title
-								if ($PeerPageTermLabel -eq $null)
+								# Finally, if the title is null, we take the name of the file
+								if ([string]::IsNullOrEmpty($PeerPageTermLabel))
 								{
-									$PeerPageTermLabel = $PeerPage.Name
+									$PeerPageTermLabel = $PeerPageItem.Name
 								}
 							}
 
 							$PageTermLabels.Add($PeerWeb.Locale.LCID, $PeerPageTermLabel)
+                            $PageTermCustomProperties.Add(("FileName" + $PeerWeb.Locale.LCID), $PeerPageFileName)
                 
 							$PeerWeb.Dispose()
 							$PeerSite.Dispose()
@@ -1116,7 +1123,7 @@ function ConvertTo-DSPTaxonomyStructure {
 				}	
 			}
 
-            $PageXMLElement = New-XMLSingleTermNode $ParentXMLElement $PageTermLabels $PageItem.Web $PageItem.Url
+            $PageXMLElement = New-XMLSingleTermNode $ParentXMLElement $PageTermLabels $PageItem.Web $PageItem.Url $PageTermCustomProperties
         }
 
         return $PageXMLElement  
@@ -1151,7 +1158,10 @@ function ConvertTo-DSPTaxonomyStructure {
 		    [Microsoft.SharePoint.SPWeb]$AssociatedWeb,
 
             [Parameter(Mandatory=$true)]
-		    [string]$AssociatedItemPath
+		    [string]$AssociatedItemPath,
+
+            [Parameter(Mandatory=$false)]
+            [hashtable]$CustomProperties
         )    
 
         New-XMLComment $ParentXMLElement "Associated element: '$AssociatedItemPath'"
@@ -1163,6 +1173,7 @@ function ConvertTo-DSPTaxonomyStructure {
         
         [System.XML.XMLElement]$LabelsXMLElement= $XMLDocument.CreateElement("Labels")
 
+        # Write labels
         $Labels.Keys | ForEach-Object  {
 			
 			$Label = $Labels.Get_Item($_)
@@ -1211,7 +1222,31 @@ function ConvertTo-DSPTaxonomyStructure {
 		{
 			$TermXMLElement.SetAttribute("Name", $DefaultName)
 
+            # Add term labels
 			[void]$TermXMLElement.appendChild($LabelsXMLElement)
+
+            if ($CustomProperties)
+            {
+                [System.XML.XMLElement]$CustomPropertiesXMLElement= $XMLDocument.CreateElement("CustomProperties")
+
+                $CustomProperties.Keys | ForEach-Object {
+
+                        $Value = $CustomProperties.Get_Item($_)
+			            $Name = $_
+
+                        [System.XML.XMLElement]$CustomPropertyXMLElement = $XMLDocument.CreateElement("CustomProperty")
+
+                        # Ex: <CustomProperty Name="FileNameEN" Value="abouts-us" />
+				        [void]$CustomPropertyXMLElement.SetAttribute("Name", $Name)
+				        [void]$CustomPropertyXMLElement.SetAttribute("Value", $Value)
+
+                        [void]$CustomPropertiesXMLElement.appendChild($CustomPropertyXMLElement)
+                }
+
+                # Add term custom properties (Shared)
+                [void]$TermXMLElement.appendChild($CustomPropertiesXMLElement)
+            }
+            		
 			[void]$ParentXMLElement.appendChild($TermXMLElement)    
 		}
 		else
