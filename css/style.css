@@ -1,0 +1,182 @@
+html, body, .container-fluid, .main, .menu, .detail {
+    height: 100%;
+}
+
+/* Utils */
+.tab1 {
+    padding-left: 10px;
+}
+
+.tab2 {
+    padding-left: 20px;
+}
+
+.tab3 {
+    padding-left: 30px;
+}
+
+/* Layouts */
+
+.header {
+    background-color: #222;
+    height: 70px;
+}
+
+a {
+    cursor: pointer;
+}
+
+h1 {
+    color: #b5be00;
+    text-align: center;
+}
+
+    h1 .logo {
+        background-image: url('https://avatars2.githubusercontent.com/u/5606578?v=3&s=200');
+        background-size: 30px;
+        height: 30px;
+        width: 30px;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    h1 .version {
+        font-size: 12px;
+    }
+
+.main {
+    margin-top: -70px;
+    padding-top: 70px;
+}
+
+.menu {
+    border-right: 1px solid #222;
+    overflow-y: scroll;
+    padding: 10px 20px;
+}
+
+    .menu li {
+        padding: 5px 0;
+    }
+
+    .menu a {
+        font-size: 18px;
+    }
+
+.detail {
+    overflow-x: scroll;
+}
+
+.method {
+}
+
+    .method h5 {
+        font-weight: bold;
+    }
+
+    .method p,
+    .method span {
+        padding-bottom: 10px;
+    }
+
+    .method .method-parameter {
+        padding-left: 40px;
+        font-family: monospace;
+    }
+
+    .method .parameter-type {
+        color: blue;
+    }
+
+    .method .parameter-name {
+        color: black;
+    }
+
+    .method .returns {
+        font-weight: bold;
+    }
+
+.parameters {
+}
+
+    .parameters h6 {
+        font-style: italic;
+    }
+
+    .parameters p {
+        padding-bottom: 10px;
+    }
+
+/* Bootstrap Callout */
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+    .bs-callout h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+
+    .bs-callout p:last-child {
+        margin-bottom: 0;
+    }
+
+    .bs-callout code {
+        border-radius: 3px;
+    }
+
+    .bs-callout + .bs-callout {
+        margin-top: -5px;
+    }
+
+.bs-callout-default {
+    border-left-color: #777;
+}
+
+    .bs-callout-default h4 {
+        color: #777;
+    }
+
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+
+    .bs-callout-primary h4 {
+        color: #428bca;
+    }
+
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+
+    .bs-callout-success h4 {
+        color: #5cb85c;
+    }
+
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+
+    .bs-callout-danger h4 {
+        color: #d9534f;
+    }
+
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+
+    .bs-callout-warning h4 {
+        color: #f0ad4e;
+    }
+
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+
+    .bs-callout-info h4 {
+        color: #5bc0de;
+    }
