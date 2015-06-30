@@ -488,7 +488,7 @@ namespace GSoft.Dynamite.Navigation
             {
                 // current web inherits its settings from its parent, so we gotta look upwards to the parent webs
                 // recursively until we find a match
-                FindTaxonomyWebNavigationSettingsInWebOrInParents(web);
+                return FindTaxonomyWebNavigationSettingsInWebOrInParents(web.ParentWeb);
             }
 
             return currentWebNavSettings;
