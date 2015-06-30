@@ -310,15 +310,21 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private void SetTermDrivenPageSettingsOnTerm(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo)
+        private void SetTermDrivenPageSettingsOnTerm(SPWeb currentWeb, TermDrivenPageSettingInfo termDrivenPageInfo)
         {
-            var webNavigationSettings = FindTaxonomyWebNavigationSettingsInWebOrInParents(web);
+            SPWeb webWithNavSettings = null;
+            var webNavigationSettings = FindTaxonomyWebNavigationSettingsInWebOrInParents(currentWeb, out webWithNavSettings);
 
             if (webNavigationSettings != null
                 && webNavigationSettings.GlobalNavigation.Source == StandardNavigationSource.TaxonomyProvider)
             {
-                var taxonomySession = new TaxonomySession(web.Site, true);
-                var defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+                var taxonomySession = new TaxonomySession(webWithNavSettings, true);
+                var defaultStore = taxonomySession.DefaultSiteCollectionTermStore;
+
+                if (defaultStore.Id != webNavigationSettings.GlobalNavigation.TermStoreId)
+                {
+                    defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+                }
 
                 var previousThreadCulture = CultureInfo.CurrentCulture;
                 var previousThreadUiCulture = CultureInfo.CurrentUICulture;
@@ -326,8 +332,8 @@ namespace GSoft.Dynamite.Navigation
 
                 try
                 {
-                    CultureInfo currentWebCulture = web.Locale;
-                    CultureInfo currentWebUiCulture = new CultureInfo((int)web.Language);
+                    CultureInfo currentWebCulture = webWithNavSettings.Locale;
+                    CultureInfo currentWebUiCulture = new CultureInfo((int)webWithNavSettings.Language);
 
                     // Force thread culture/uiculture and term store working language
                     Thread.CurrentThread.CurrentCulture = currentWebCulture;
@@ -353,7 +359,7 @@ namespace GSoft.Dynamite.Navigation
                             // Get the associated navigation term set 
                             var navigationTermSet = NavigationTermSet.GetAsResolvedByWeb(
                                 term.TermSet,
-                                web,
+                                webWithNavSettings,
                                 StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider);
 
                             navigationTermSet = navigationTermSet.GetAsEditable(taxonomySession);
@@ -444,8 +450,8 @@ namespace GSoft.Dynamite.Navigation
             {
                 this.logger.Warn(
                     "TaxonomyHelper.SetTermDrivenPageSettingsOnTerm: Failed to find taxonomy-type WebNavigationSettings in web ID={0} Url={1} or in any of its parent webs. At least one SPWeb in the hierarchy should have a GlobalNavigation setting of source type Taxonomy.",
-                    web.ID,
-                    web.Url);
+                    currentWeb.ID,
+                    currentWeb.Url);
             }
         }
 
@@ -479,16 +485,17 @@ namespace GSoft.Dynamite.Navigation
             return foundTerm;
         }
 
-        private static WebNavigationSettings FindTaxonomyWebNavigationSettingsInWebOrInParents(SPWeb web)
+        private static WebNavigationSettings FindTaxonomyWebNavigationSettingsInWebOrInParents(SPWeb web, out SPWeb webWithNavigationSettings)
         {
             var currentWebNavSettings = new WebNavigationSettings(web);
+            webWithNavigationSettings = web;
 
             if (currentWebNavSettings.GlobalNavigation.Source == StandardNavigationSource.InheritFromParentWeb
                 && web.ParentWeb != null)
             {
                 // current web inherits its settings from its parent, so we gotta look upwards to the parent webs
                 // recursively until we find a match
-                return FindTaxonomyWebNavigationSettingsInWebOrInParents(web.ParentWeb);
+                return FindTaxonomyWebNavigationSettingsInWebOrInParents(web.ParentWeb, out webWithNavigationSettings);
             }
 
             return currentWebNavSettings;
