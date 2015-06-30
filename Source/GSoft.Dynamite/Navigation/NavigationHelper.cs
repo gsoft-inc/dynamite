@@ -319,7 +319,7 @@ namespace GSoft.Dynamite.Navigation
                 && webNavigationSettings.GlobalNavigation.Source == StandardNavigationSource.TaxonomyProvider)
             {
                 var taxonomySession = new TaxonomySession(webWithNavSettings, true);
-                var defaultStore = taxonomySession.DefaultSiteCollectionTermStore; //taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+                var defaultStore = taxonomySession.DefaultSiteCollectionTermStore;
 
                 if (defaultStore.Id != webNavigationSettings.GlobalNavigation.TermStoreId)
                 {
