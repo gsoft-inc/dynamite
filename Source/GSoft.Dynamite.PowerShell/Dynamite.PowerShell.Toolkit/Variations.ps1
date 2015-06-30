@@ -65,7 +65,8 @@
 	  </Site>
 	</WebApplication>
 #>
-function global:New-DSPSiteVariations() {
+function global:New-DSPSiteVariations() 
+{
 	[CmdletBinding()]
 	param
 	(
@@ -340,7 +341,8 @@ function Set-VariationHierarchy {
 		}
 }
 
-function Sync-DSPWeb {
+function Sync-DSPWeb
+{
 	param
 	(
         [Parameter(Mandatory=$true, HelpMessage = "The variation source web", Position=0, ValueFromPipeline=$true)]
@@ -359,7 +361,8 @@ function Sync-DSPWeb {
 	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
 }
 
-function Sync-DSPList {
+function Sync-DSPList 
+{
 	param
 	(
         [Parameter(Mandatory=$true, HelpMessage = "The variation source list", Position=0, ValueFromPipeline=$true)]
@@ -421,7 +424,8 @@ function Sync-DSPList {
     > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     
 #>
-function Get-VariationLabels {
+function Get-VariationLabels 
+{
 
 	Param
 	(
@@ -515,7 +519,8 @@ function Get-VariationLabels {
     > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     
 #>
-function Get-VariationPeerWeb {
+function Get-VariationPeerWeb 
+{
 
 	[CmdletBinding()]
 	Param

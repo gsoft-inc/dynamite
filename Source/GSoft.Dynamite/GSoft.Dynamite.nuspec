@@ -16,7 +16,7 @@
     <tags>SharePoint</tags>
     <dependencies>
       <dependency id="Autofac" version="[3.5.0]" />
-      <dependency id="Newtonsoft.Json" version="[6.0.3]" />
+      <dependency id="Newtonsoft.Json" version="[6.0.8]" />
     </dependencies>
   </metadata>
   <files>
