@@ -78,7 +78,7 @@ function Wait-SPTimerJob()
 		[string]$Name,
 
 		[Parameter(Mandatory=$true, Position=1)]
-		[Microsoft.SharePoint.SPSite]$Site
+		[Microsoft.SharePoint.PowerShell.SPSitePipeBind]$Site
 	)
 	
 	$timerJobHelper = Resolve-DSPType GSoft.Dynamite.TimerJobs.ITimerJobHelper
