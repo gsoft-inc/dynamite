@@ -1175,7 +1175,6 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// content type fields.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenRedefiningParentFields_ShouldReorderFields()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -1235,7 +1234,6 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// content type fields.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenNotRedefiningParentFields_ShouldRespectParentFieldOrdering()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -1296,7 +1294,6 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// content type fields.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenModifyingFieldRequiredProperty_ShouldUpdateContentTypeFieldLink()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -1344,7 +1341,6 @@ namespace GSoft.Dynamite.IntegrationTests.ContentTypes
         /// content type fields.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureContentType_WhenNotModifyingFieldRequiredProperty_ShouldNotUpdateContentTypeFieldLink()
         {
             using (var testScope = SiteTestScope.BlankSite())

@@ -2002,7 +2002,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// provision those for you)
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenSpecifyingBothContentTypesAndFieldDefinitions_AndNoneOfThemAreProvisionnedYet_ShouldProvisionSiteColumnAndContentType_ThenOverrideFieldDefinitionOnTheList()
         {
             // Arrange
@@ -2498,7 +2497,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that EnsureList creates a new list with the correct versioning settings.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenNotAlreadyExists_ShouldCreateWithVersioningSettings()
         {
             // Arrange
@@ -2565,7 +2563,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that EnsureList updates an existing list with the correct versioning settings.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenAlreadyExists_ShouldUpdateVersioningSettings()
         {
             // Arrange
@@ -2626,7 +2623,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that EnsureList updates an existing list with the correct versioning settings.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void SetValidation_WithList_ShouldUpdateVersioningSettings()
         {
             // Arrange
@@ -2663,7 +2659,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// Validates that EnsureList updates an existing list with the correct versioning settings.
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void SetValidation_WithLibrary_ShouldUpdateVersioningSettings()
         {
             // Arrange
