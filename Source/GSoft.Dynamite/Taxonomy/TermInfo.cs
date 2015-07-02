@@ -56,7 +56,17 @@ namespace GSoft.Dynamite.Taxonomy
         public TermInfo(Term sharePointTerm)
         {
             IDictionary<CultureInfo, string> labels = new Dictionary<CultureInfo, string>();
-            sharePointTerm.Labels.Cast<Label>().ToList().ForEach(l => labels.Add(new CultureInfo(l.Language), l.Value));
+            sharePointTerm.Labels.Cast<Label>().ToList().ForEach(
+                l => 
+                {
+                    var labelCulture = new CultureInfo(l.Language);
+
+                    // Only keep the default label for each culture
+                    if (l.IsDefaultForLanguage && !labels.ContainsKey(labelCulture))
+                    {
+                        labels.Add(labelCulture, l.Value);
+                    }
+                });
 
             this.Id = sharePointTerm.Id;
             this.Labels = labels;
