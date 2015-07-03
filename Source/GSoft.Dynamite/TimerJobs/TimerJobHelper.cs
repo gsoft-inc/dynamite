@@ -77,7 +77,7 @@ namespace GSoft.Dynamite.TimerJobs
             Guid jobId = this.StartJobAndReturn(site, jobName);
             var webApplication = site.WebApplication;
 
-            Console.Write(string.Format(CultureInfo.InvariantCulture, "\t~~~ Waiting for timer job {0} with ID={1} to finish...", jobName, jobId));
+            Console.Write(string.Format(CultureInfo.InvariantCulture, "  ~~~ Waiting for timer job {0} with ID={1} to finish...", jobName, jobId));
 
             // wait until the job is finished
             bool jobIsDone = false;
