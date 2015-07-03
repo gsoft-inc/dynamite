@@ -56,6 +56,9 @@ namespace GSoft.Dynamite.WebParts
         [JsonIgnore]
         public WebPart WebPart { get; set; }
 
+        /// <summary>
+        /// The culture of the webpart.
+        /// </summary>
         public CultureInfo Culture { get; set; }
     }
 }

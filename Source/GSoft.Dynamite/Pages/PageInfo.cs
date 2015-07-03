@@ -94,6 +94,9 @@ namespace GSoft.Dynamite.Pages
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store collection for more flexible object initialization.")]
         public IList<FieldValueInfo> FieldValues { get; set; }
 
+        /// <summary>
+        /// The culture of the Page.
+        /// </summary>
         public CultureInfo Culture { get; set; }
     }
 }
