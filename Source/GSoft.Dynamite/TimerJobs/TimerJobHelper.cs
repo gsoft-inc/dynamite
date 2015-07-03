@@ -77,8 +77,7 @@ namespace GSoft.Dynamite.TimerJobs
             Guid jobId = this.StartJobAndReturn(site, jobName);
             var webApplication = site.WebApplication;
 
-            Console.WriteLine();
-            Console.Write(string.Format(CultureInfo.InvariantCulture, ">>> Waiting for timer job {0} with ID={1} to finish...", jobName, jobId));
+            Console.Write(string.Format(CultureInfo.InvariantCulture, "\t~~~ Waiting for timer job {0} with ID={1} to finish...", jobName, jobId));
 
             // wait until the job is finished
             bool jobIsDone = false;
@@ -98,13 +97,12 @@ namespace GSoft.Dynamite.TimerJobs
                 if (!jobIsDone)
                 {
                     // wait for a relatively long while to avoid poking the content database too often
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
                     Console.Write(".");
                 }
             }
 
-            Console.WriteLine();
-            Console.WriteLine(string.Format(CultureInfo.InvariantCulture, ">>> Timer job ID={0} done!", jobId));
+            Console.WriteLine("..done!");
         }
     }
 }
