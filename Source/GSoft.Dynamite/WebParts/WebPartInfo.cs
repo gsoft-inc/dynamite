@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Web.UI.WebControls.WebParts;
 using Newtonsoft.Json;
 
@@ -54,5 +55,10 @@ namespace GSoft.Dynamite.WebParts
         /// </summary>
         [JsonIgnore]
         public WebPart WebPart { get; set; }
+
+        /// <summary>
+        /// The culture of the webpart.
+        /// </summary>
+        public CultureInfo Culture { get; set; }
     }
 }
