@@ -3,8 +3,6 @@ using Autofac;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.UserProfile;
 using Microsoft.Office.Server.UserProfiles;
-using Microsoft.SharePoint;
-using Microsoft.SharePoint.Administration;
 using Microsoft.SharePoint.Taxonomy;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,55 +20,34 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
     public class UserProfilePropertyHelperTest
     {
         private const string ProfilePropertyName = "testProfileProperty";
-        private const string TermGroupName = "Test Group";
         private const string TermSetName = "Test Term Set";
-
-        private static SPSite CentralAdminSite
-        {
-            get
-            {
-                return SPAdministrationWebApplication.Local.Sites[0];
-            }
-        }
 
         /// <summary>
         /// Cleans up the test data.
         /// </summary>
-        [TestCleanup]
         public void TestCleanup()
         {
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var site = testScope.SiteCollection;
+
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
                 ProfilePropertyName,
                 "Test Profile Property",
                 PropertyDataType.StringSingleValue);
 
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
-            {
-                // Try removing the test profile property
-                try
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
                 {
-                    var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                    userProfileHelper.RemoveProfileProperty(CentralAdminSite, userProfilePropertyInfo);
-                }
-                catch (Exception)
-                {
-                    // Do nothing
-                }
-
-                // Try remove the test term set and group
-                try
-                {
-                    var session = new TaxonomySession(CentralAdminSite);
-                    var defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
-                    var termSet = defaultSiteCollectionTermStore.GetTermSets(TermSetName, 1033)[0];
-                    var group = defaultSiteCollectionTermStore.Groups[TermGroupName];
-                    termSet.Delete();
-                    group.Delete();
-                    defaultSiteCollectionTermStore.CommitAll();
-                }
-                catch (Exception)
-                {
-                    // Do nothing
+                    // Try removing the test profile property
+                    try
+                    {
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        userProfileHelper.RemoveProfileProperty(site, userProfilePropertyInfo);
+                    }
+                    catch (Exception)
+                    {
+                        // Do nothing
+                    }
                 }
             }
         }
@@ -82,20 +59,32 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenCreatingProperty_GivenNewUserProfilePropertyInfo_ThenCreatesProperty()
         {
-            // Arrange
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
-                ProfilePropertyName,
-                "Test Profile Property",
-                PropertyDataType.StringSingleValue);
-
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
+            using (var testScope = SiteTestScope.BlankSite())
             {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                var userProfileProperty = userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                // Arrange
+                var site = testScope.SiteCollection;
 
-                // Assert
-                Assert.IsNotNull(userProfileProperty);
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
+                    ProfilePropertyName,
+                    "Test Profile Property",
+                    PropertyDataType.StringSingleValue);
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
+                {
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        var userProfileProperty = userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
+
+                        // Assert
+                        Assert.IsNotNull(userProfileProperty);
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
+                }
             }
         }
 
@@ -106,22 +95,33 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenUpdatingDisplayName_GivenUpdatedUserProfilePropertyInfo_ThenUpdatesProperty()
         {
-            // Arrange
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
-                ProfilePropertyName,
-                "Test Profile Property",
-                PropertyDataType.StringSingleValue);
-
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
+            using (var testScope = SiteTestScope.BlankSite())
             {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
-                userProfilePropertyInfo.DisplayName = "Test Profile Property Updated";
-                var userProfileProperty = userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                // Arrange
+                var site = testScope.SiteCollection;
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
+                    ProfilePropertyName,
+                    "Test Profile Property",
+                    PropertyDataType.StringSingleValue);
 
-                // Assert
-                Assert.AreEqual(userProfileProperty.DisplayName, "Test Profile Property Updated");
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
+                {
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
+                        userProfilePropertyInfo.DisplayName = "Test Profile Property Updated";
+                        var userProfileProperty = userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
+
+                        // Assert
+                        Assert.AreEqual(userProfileProperty.DisplayName, "Test Profile Property Updated");
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
+                }
             }
         }
 
@@ -132,26 +132,37 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenUpdatingVisibility_GivenUpdatedUserProfilePropertyInfo_ThenUpdatesProperty()
         {
-            // Arrange
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var site = testScope.SiteCollection;
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
                 ProfilePropertyName,
                 "Test Profile Property",
                 PropertyDataType.StringSingleValue);
 
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
-            {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
-                userProfilePropertyInfo.IsVisibleOnEditor = true;
-                userProfilePropertyInfo.IsVisibleOnViewer = true;
-                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
+                {
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
+                        userProfilePropertyInfo.IsVisibleOnEditor = true;
+                        userProfilePropertyInfo.IsVisibleOnViewer = true;
+                        userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
 
-                // Assert
-                var profileTypeManager = userProfileHelper.GetProfileTypePropertyManager(CentralAdminSite);
-                var profileTypeProperty = profileTypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
-                Assert.AreEqual(profileTypeProperty.IsVisibleOnEditor, userProfilePropertyInfo.IsVisibleOnEditor);
-                Assert.AreEqual(profileTypeProperty.IsVisibleOnViewer, userProfilePropertyInfo.IsVisibleOnViewer);
+                        // Assert
+                        var profileTypeManager = userProfileHelper.GetProfileTypePropertyManager(site);
+                        var profileTypeProperty = profileTypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+                        Assert.AreEqual(profileTypeProperty.IsVisibleOnEditor, userProfilePropertyInfo.IsVisibleOnEditor);
+                        Assert.AreEqual(profileTypeProperty.IsVisibleOnViewer, userProfilePropertyInfo.IsVisibleOnViewer);
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
+                }
             }
         }
 
@@ -162,8 +173,11 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenUpdatingSecurity_GivenUpdatedUserProfilePropertyInfo_ThenUpdatesProperty()
         {
-            // Arrange
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var site = testScope.SiteCollection;
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
                 ProfilePropertyName,
                 "Test Profile Property",
                 PropertyDataType.StringSingleValue)
@@ -171,34 +185,35 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
                     IsUserEditable = true
                 };
 
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
-            {
-                try
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
                 {
-                    // Act
-                    var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                    userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
 
-                    // Make sure the default privacy value is set to private
-                    var profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
-                    var profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+                        // Make sure the default privacy value is set to private
+                        var profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(site);
+                        var profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
 
-                    Assert.AreEqual(Privacy.Private, profileSubtypeProperty.DefaultPrivacy);
+                        Assert.AreEqual(Privacy.Private, profileSubtypeProperty.DefaultPrivacy);
 
-                    userProfilePropertyInfo.IsUserEditable = false;
-                    userProfilePropertyInfo.DefaultPrivacy = Privacy.Public;
-                    userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                        userProfilePropertyInfo.IsUserEditable = false;
+                        userProfilePropertyInfo.DefaultPrivacy = Privacy.Public;
+                        userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
 
-                    profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
-                    profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+                        profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(site);
+                        profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
 
-                    // Assert
-                    Assert.AreEqual(profileSubtypeProperty.IsUserEditable, userProfilePropertyInfo.IsUserEditable);
-                    Assert.AreEqual(profileSubtypeProperty.DefaultPrivacy, userProfilePropertyInfo.DefaultPrivacy);
-                }
-                finally
-                {
-                    this.TestCleanup();
+                        // Assert
+                        Assert.AreEqual(profileSubtypeProperty.IsUserEditable, userProfilePropertyInfo.IsUserEditable);
+                        Assert.AreEqual(profileSubtypeProperty.DefaultPrivacy, userProfilePropertyInfo.DefaultPrivacy);
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
                 }
             }
         }
@@ -210,32 +225,42 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenMappedToTermSet_GivenUserProfilePropertyInfo_ThenMapsPropertyToTermSet()
         {
-            // Arrange
-            var termGroupInfo = new TermGroupInfo(Guid.NewGuid(), TermGroupName);
-            var termSetInfo = new TermSetInfo(Guid.NewGuid(), TermSetName, termGroupInfo);
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
-                ProfilePropertyName,
-                "Test Profile Property",
-                PropertyDataType.StringSingleValue)
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var site = testScope.SiteCollection;
+                var termSetInfo = new TermSetInfo(Guid.NewGuid(), TermSetName);
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
+                    ProfilePropertyName,
+                    "Test Profile Property",
+                    PropertyDataType.StringSingleValue)
                 {
                     TermSetInfo = termSetInfo
                 };
 
-            // Create term set
-            var session = new TaxonomySession(CentralAdminSite);
-            var defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
-            var group = defaultSiteCollectionTermStore.CreateGroup(termGroupInfo.Name, termGroupInfo.Id);
-            group.CreateTermSet(termSetInfo.Label, termSetInfo.Id);
-            defaultSiteCollectionTermStore.CommitAll();
+                // Create term set
+                var session = new TaxonomySession(site);
+                var defaultSiteCollectionTermStore = session.DefaultSiteCollectionTermStore;
+                var defaultSiteCollectionGroup = defaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
+                defaultSiteCollectionGroup.CreateTermSet(termSetInfo.Label, termSetInfo.Id);
+                defaultSiteCollectionTermStore.CommitAll();
 
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
-            {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                var userProfileProperty = userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
+                {
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        var userProfileProperty = userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
 
-                // Assert
-                Assert.AreEqual(userProfileProperty.TermSet.Id, termSetInfo.Id);
+                        // Assert
+                        Assert.AreEqual(userProfileProperty.TermSet.Id, termSetInfo.Id);
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
+                }
             }
         }
 
@@ -246,28 +271,39 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
         [TestMethod]
         public void EnsureProfileProperty_WhenLocalizing_GivenUserProfilePropertyInfo_ThenAddsLocalizedValues()
         {
-            // Arrange
-            var userProfilePropertyInfo = new UserProfilePropertyInfo(
-                ProfilePropertyName,
-                "Test Profile Property",
-                PropertyDataType.StringSingleValue)
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var site = testScope.SiteCollection;
+                var userProfilePropertyInfo = new UserProfilePropertyInfo(
+                    ProfilePropertyName,
+                    "Test Profile Property",
+                    PropertyDataType.StringSingleValue)
                 {
                     Description = "Test property description"
                 };
 
-            userProfilePropertyInfo.DisplayNameLocalized.Add(1036, "Propriété de test");
-            userProfilePropertyInfo.DescriptionLocalized.Add(1036, "Description propriété de test");
+                userProfilePropertyInfo.DisplayNameLocalized.Add(1036, "Propriété de test");
+                userProfilePropertyInfo.DescriptionLocalized.Add(1036, "Description propriété de test");
 
-            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
-            {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                var userProfileProperty = userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
+                {
+                    try
+                    {
+                        // Act
+                        var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                        var userProfileProperty = userProfileHelper.EnsureProfileProperty(site, userProfilePropertyInfo);
 
-                // Assert
-                // 2 values: Default (english and french/1036)
-                Assert.IsTrue(userProfileProperty.DisplayNameLocalized.Count == 2);
-                Assert.IsTrue(userProfileProperty.DescriptionLocalized.Count == 2);
+                        // Assert
+                        // 2 values: Default (english and french/1036)
+                        Assert.IsTrue(userProfileProperty.DisplayNameLocalized.Count == 2);
+                        Assert.IsTrue(userProfileProperty.DescriptionLocalized.Count == 2);
+                    }
+                    finally
+                    {
+                        this.TestCleanup();
+                    }
+                }
             }
         }
     }
