@@ -173,16 +173,33 @@ namespace GSoft.Dynamite.IntegrationTests.UserProfile
 
             using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(CentralAdminSite))
             {
-                // Act
-                var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
-                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
-                userProfilePropertyInfo.IsUserEditable = false;
-                userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+                try
+                {
+                    // Act
+                    var userProfileHelper = injectionScope.Resolve<IUserProfilePropertyHelper>();
+                    userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
 
-                // Assert
-                var profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
-                var profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
-                Assert.AreEqual(profileSubtypeProperty.IsUserEditable, profileSubtypeProperty.IsUserEditable);
+                    // Make sure the default privacy value is set to private
+                    var profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
+                    var profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+
+                    Assert.AreEqual(Privacy.Private, profileSubtypeProperty.DefaultPrivacy);
+
+                    userProfilePropertyInfo.IsUserEditable = false;
+                    userProfilePropertyInfo.DefaultPrivacy = Privacy.Public;
+                    userProfileHelper.EnsureProfileProperty(CentralAdminSite, userProfilePropertyInfo);
+
+                    profileSubtypeManager = userProfileHelper.GetProfileSubtypePropertyManager(CentralAdminSite);
+                    profileSubtypeProperty = profileSubtypeManager.GetPropertyByName(userProfilePropertyInfo.Name);
+
+                    // Assert
+                    Assert.AreEqual(profileSubtypeProperty.IsUserEditable, userProfilePropertyInfo.IsUserEditable);
+                    Assert.AreEqual(profileSubtypeProperty.DefaultPrivacy, userProfilePropertyInfo.DefaultPrivacy);
+                }
+                finally
+                {
+                    this.TestCleanup();
+                }
             }
         }
 
