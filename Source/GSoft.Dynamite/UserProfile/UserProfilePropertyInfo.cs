@@ -191,6 +191,15 @@ namespace GSoft.Dynamite.UserProfile
         public bool IsUserEditable { get; set; }
 
         /// <summary>
+        /// Gets or sets the default privacy. In other words, who can see the information. For a user profile
+        /// property to be crawled, the privacy needs to be set to public.
+        /// </summary>
+        /// <value>
+        /// The default privacy.
+        /// </value>
+        public Privacy? DefaultPrivacy { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether [is replicable].
         /// </summary>
         /// <value>

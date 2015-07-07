@@ -92,11 +92,18 @@ namespace GSoft.Dynamite.Navigation
         /// </returns>
         public Uri GetPeerPageUrl(SPWeb web, Uri currentUrl, VariationLabelInfo label)
         {
-            // Special case for application pages under /_layouts and site home page
+            // Special case for application pages under /_layouts:
+            // oftentimes, when on a _layouts page, the Httpcontext.Current.Request.Uri
+            // (a typical input for this method) will give you a false URL (even if visiting a 
+            // sub-web's _layouts page, HttpContext will give you the root web's corresponding 
+            // _layouts page).
             if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
-                var relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
-                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
+                // Build an alternate currentUrl value that will be used at the end of the first catch block below... 
+                // and converted to use the proper peer variated web url (i.e. the peer variation sub-web 
+                // associated to current web might not have the same relative path vs. original language) 
+                string[] splitOnLayouts = currentUrl.ToString().Split(new string[] { "/_layouts" }, StringSplitOptions.None);
+                currentUrl = new Uri(SPUtility.ConcatUrls(SPUtility.ConcatUrls(web.Url, "/_layouts"), splitOnLayouts[1]));                                                                                                
             }
 
             try
@@ -116,31 +123,55 @@ namespace GSoft.Dynamite.Navigation
 
                 return peerPageUri;
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
-                this.logger.Warn(
-                    "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
-                    web.Url,
-                    currentUrl.AbsoluteUri,
-                    label.Title,
-                    ex.Message);
+                string webPeerUrl = string.Empty;
 
                 // Keep query string (except source)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
                 queryCollection.Remove("Source");
 
-                if (queryCollection["RootFolder"] != null)
+                try
                 {
-                    string rootFolderParam = queryCollection["RootFolder"];
-                    string currentServerWebRelativeUrl = web.RootFolder.ServerRelativeUrl;
-                    rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, label.TopWebUrl.AbsolutePath + "/");
-                    queryCollection["RootFolder"] = rootFolderParam;
+                    // Use a trick: use the current web's home page (welcome page on its root folder) to find the peer
+                    // web URL (i.e. the URL of the variated site which corresponds to the translated content - maybe with a 
+                    // different relative path - of the current web)
+                    string currentWebWelcomePageUrl = SPUtility.ConcatUrls(web.Url, web.RootFolder.WelcomePage);
+                    string currentWebWelcomePageUrlRelative = new Uri(currentWebWelcomePageUrl, UriKind.Absolute).AbsolutePath;
+                    webPeerUrl = Variations.GetPeerUrl(web, currentWebWelcomePageUrlRelative, label.Title);
+                    webPeerUrl = webPeerUrl.Replace(web.RootFolder.WelcomePage, string.Empty);
+
+                    if (queryCollection["RootFolder"] != null)
+                    {
+                        // if we're successful, we're probably in a Pages library and we need the RootFolder
+                        // to get a replaced web URL as well
+                        string rootFolderParam = queryCollection["RootFolder"];
+                        string currentServerWebRelativeUrl = web.RootFolder.ServerRelativeUrl;
+                        rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, webPeerUrl);
+                        queryCollection["RootFolder"] = rootFolderParam;
+                    }
+
+                    // the logic below expects an absolute URL with domain etc.
+                    webPeerUrl = SPUtility.ConcatUrls(web.Site.Url, webPeerUrl);
+                }
+                catch (ArgumentOutOfRangeException uglyNestedEx)
+                {
+                    // default to the top web of the target variation hierarchy if all else fails (no peer of current 
+                    // web welcome page found on target web)
+                    webPeerUrl = label.TopWebUrl.ToString() + "/";
+
+                    this.logger.Warn(
+                        "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
+                        web.Url,
+                        currentUrl.AbsoluteUri,
+                        label.Title,
+                        uglyNestedEx.Message);
                 }
 
-                // Construct peer URL with top web URL + path + query.
-                var topWebUrl = new Uri(label.TopWebUrl + "/");
-                var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
+                // Construct peer URL with path + query.
+                var targetWebUrl = new Uri(webPeerUrl);
+                var currentUrlSegmentsMinusTargetses = currentUrl.Segments.Skip(targetWebUrl.Segments.Length);
+                var pathAndQuerySegments = new List<string>(targetWebUrl.Segments.Concat(currentUrlSegmentsMinusTargetses));
 
                 // If any query string, add to segments
                 if (queryCollection.HasKeys())
@@ -148,7 +179,7 @@ namespace GSoft.Dynamite.Navigation
                     pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
                 }
 
-                return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
+                return new Uri(targetWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
             }
         }
 

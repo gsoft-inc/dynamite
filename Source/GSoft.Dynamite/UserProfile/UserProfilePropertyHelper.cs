@@ -222,11 +222,22 @@ namespace GSoft.Dynamite.UserProfile
             {
                 profileSubtypeProperty = profileSubtypePropertyManager.Create(profileTypeProperty);
                 profileSubtypeProperty.IsUserEditable = userProfilePropertyInfo.IsUserEditable;
+
+                if (userProfilePropertyInfo.DefaultPrivacy.HasValue)
+                {
+                    profileSubtypeProperty.DefaultPrivacy = userProfilePropertyInfo.DefaultPrivacy.Value;
+                }
+
                 profileSubtypePropertyManager.Add(profileSubtypeProperty);
             }
             else
             {
                 profileSubtypeProperty.IsUserEditable = userProfilePropertyInfo.IsUserEditable;
+
+                if (userProfilePropertyInfo.DefaultPrivacy.HasValue)
+                {
+                    profileSubtypeProperty.DefaultPrivacy = userProfilePropertyInfo.DefaultPrivacy.Value;
+                }
             }
 
             profileSubtypeProperty.Commit();
