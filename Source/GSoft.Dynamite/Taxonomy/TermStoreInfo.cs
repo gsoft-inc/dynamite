@@ -39,12 +39,12 @@ namespace GSoft.Dynamite.Taxonomy
         }
 
         /// <summary>
-        /// Id of the group
+        /// Id of the term store
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// Name of the group
+        /// Name of the term store
         /// </summary>
         public string Name { get; set; }
     }

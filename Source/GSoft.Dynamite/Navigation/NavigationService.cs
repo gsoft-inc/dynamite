@@ -168,7 +168,17 @@ namespace GSoft.Dynamite.Navigation
             {
                 // Get restricted term set
                 var session = new TaxonomySession(web.Site);
-                var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+                TermStore termStore = null;
+
+                if (queryParameters.TermStoreId == Guid.Empty)
+                {
+                    termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+                }
+                else
+                {
+                    termStore = session.TermStores[queryParameters.TermStoreId];
+                }
+
                 var termSet = termStore.GetTermSet(queryParameters.RestrictedTermSetId);
 
                 var nodeMatchingSettings = queryParameters.NodeMatchingSettings;

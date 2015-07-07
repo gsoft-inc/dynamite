@@ -44,25 +44,8 @@ namespace GSoft.Dynamite.Taxonomy
         {
             TaxonomySession session = new TaxonomySession(site);
 
-            TermStore store = null;
-            if (columnTermStoreMapping.TermStore == null)
-            {
-                store = this.GetDefaultSiteCollectionTermStore(session);
-            }
-            else
-            {
-                store = session.TermStores[columnTermStoreMapping.TermStore.Name];
-            }
-
-            Group termStoreGroup = null;
-            if (columnTermStoreMapping.Group == null)
-            {
-                termStoreGroup = store.GetSiteCollectionGroup(site);
-            }
-            else
-            {
-                termStoreGroup = store.Groups[columnTermStoreMapping.Group.Name];
-            }
+            TermStore store = columnTermStoreMapping.TermSet.ResolveParentTermStore(session);
+            Group termStoreGroup = columnTermStoreMapping.TermSet.ResolveParentGroup(session, site);
 
             TaxonomyField taxoField = (TaxonomyField)field;
 

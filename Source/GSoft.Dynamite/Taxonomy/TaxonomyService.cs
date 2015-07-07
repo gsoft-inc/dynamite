@@ -519,18 +519,28 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from a source term to root term in the term set.
         /// </summary>
         /// <param name="site">The current site collection.</param>
+        /// <param name="termStoreId">The parent term store</param>
         /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
         /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termStoreId, Guid termSetId, Guid termId, bool parentFirst)
         {
             IList<Term> termHierarchy = new List<Term>();
 
             var session = new TaxonomySession(site);
-            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+            TermStore termStore = null;
+
+            if (termStoreId == Guid.Empty)
+            {
+                termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+            }
+            else
+            {
+                termStore = session.TermStores[termStoreId];
+            }
 
             // Always interact with the term sets in the term store's default language
             int originalWorkingLanguage = termStore.WorkingLanguage;
@@ -557,6 +567,22 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = originalWorkingLanguage;
             return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
         }
+        
+        /// <summary>
+        /// Get all parent terms from a source term to root term in the term set.
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
+        {
+            return this.GetTermPathFromRootToTerm(site, Guid.Empty, termSetId, termId, parentFirst);
+        }
+
         #endregion GetTermPathFromRootToTerm
 
         #region Private utility methods     
