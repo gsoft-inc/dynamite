@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-
+﻿using System;
+using System.Collections.Generic;
 using Autofac;
 
 namespace GSoft.Dynamite.ServiceLocator
@@ -10,25 +10,24 @@ namespace GSoft.Dynamite.ServiceLocator
     internal interface IChildScopeFactory
     {
         /// <summary>
-        /// The get Child life time scope.
+        /// Creates a new child scope or returns an existing child scope.
         /// </summary>
-        /// <param name="parentScope">
-        /// The parent scope.
-        /// </param>
+        /// <param name="parentScope">The current parent container.</param>
         /// <param name="scopeKindTag">
         /// A tag to identify this kind of scope so it can be reused to share objects 
         /// through fancy registration extensions (e.g. InstancePerSPSite, InstancePerSPWeb)
         /// </param>
-        /// <param name="childScopeKey">
-        /// The child scope's id, a per-container unique key.
+        /// <param name="childScopeKey">A key to uniquely identify this scope within the container.</param>
+        /// <param name="childSpecificConfigurationAction">
+        /// An Autofac configuration action the will be run upon creation of the child scope 
+        /// (i.e. container registrations specific to the new child scope)
         /// </param>
-        /// <returns>
-        /// The <see cref="ILifetimeScope"/>.
-        /// </returns>
+        /// <returns>The child scope for the uniquely identified resource</returns>
         ILifetimeScope GetChildLifetimeScope(
             ILifetimeScope parentScope,
             string scopeKindTag,
-            string childScopeKey);
+            string childScopeKey,
+            Action<ContainerBuilder> childSpecificConfigurationAction);
     }
 
     /// <summary>
@@ -53,8 +52,16 @@ namespace GSoft.Dynamite.ServiceLocator
         /// through fancy registration extensions (e.g. InstancePerSPSite, InstancePerSPWeb)
         /// </param>
         /// <param name="childScopeKey">A key to uniquely identify this scope within the container.</param>
+        /// <param name="childSpecificConfigurationAction">
+        /// An Autofac configuration action the will be run upon creation of the child scope 
+        /// (i.e. container registrations specific to the new child scope)
+        /// </param>
         /// <returns>The child scope for the uniquely identified resource</returns>
-        public ILifetimeScope GetChildLifetimeScope(ILifetimeScope parentScope, string scopeKindTag, string childScopeKey)
+        public ILifetimeScope GetChildLifetimeScope(
+            ILifetimeScope parentScope, 
+            string scopeKindTag,
+            string childScopeKey, 
+            Action<ContainerBuilder> childSpecificConfigurationAction)
         {
             ILifetimeScope ensuredScope = null;
 
@@ -80,7 +87,7 @@ namespace GSoft.Dynamite.ServiceLocator
                         // container, provided no one calls Dispose on it.
                         // The newly created scope is meant to sandbox InstancePerLifetimeScope-registered objects
                         // so that they get shared only within a boundary uniquely identified by the key.
-                        ensuredScope = parentScope.BeginLifetimeScope(scopeKindTag);
+                        ensuredScope = parentScope.BeginLifetimeScope(scopeKindTag, childSpecificConfigurationAction);
                         this.childScopes[childScopeKey] = ensuredScope;
                     }
                 }

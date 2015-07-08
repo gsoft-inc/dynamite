@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Autofac;
+using GSoft.Dynamite.Sites;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ServiceLocator.Lifetime
@@ -71,7 +72,15 @@ namespace GSoft.Dynamite.ServiceLocator.Lifetime
             var scopeKindTag = SPLifetimeTag.Web;
             var childContainerKey = scopeKindTag + web.ID;
 
-            return this.ChildScopeFactory.GetChildLifetimeScope(parentScope, scopeKindTag, childContainerKey);
+            return this.ChildScopeFactory.GetChildLifetimeScope(
+                parentScope, 
+                scopeKindTag, 
+                childContainerKey,
+                (childContainerBuilder) =>
+                {
+                    // Register the current web context on child scope (equivalent to InstancePerWeb)
+                    childContainerBuilder.RegisterInstance(new WebContext(web)).As<IWebContext>();
+                });
         }
     }
 }

@@ -134,6 +134,10 @@
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
+    <Compile Include="Sites\IWebContext.cs" />
+    <Compile Include="Sites\WebContext.cs" />
+    <Compile Include="Sites\SiteCollectionContext.cs" />
+    <Compile Include="Sites\ISiteCollectionContext.cs" />
     <Compile Include="Taxonomy\SimpleLinkTermInfo.cs" />
     <Compile Include="UserProfile\IUserProfilePropertyHelper.cs" />
     <Compile Include="UserProfile\UserProfilePropertyHelper.cs" />
