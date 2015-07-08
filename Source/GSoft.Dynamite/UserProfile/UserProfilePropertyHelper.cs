@@ -179,7 +179,7 @@ namespace GSoft.Dynamite.UserProfile
             if (userProfilePropertyInfo.TermSetInfo != null)
             {
                 var taxonomyCache = this.siteTaxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
-                var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomyCache.TaxonomySession);
+                var termStore = userProfilePropertyInfo.TermSetInfo.ResolveParentTermStore(taxonomyCache.TaxonomySession);
                 property.TermSet = termStore.GetTermSet(userProfilePropertyInfo.TermSetInfo.Id);
             }
 

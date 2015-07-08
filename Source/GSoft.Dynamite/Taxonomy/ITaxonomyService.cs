@@ -247,6 +247,19 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from source term to root term in the term set
         /// </summary>
         /// <param name="site">The current site collection.</param>
+        /// <param name="termStoreId">The parent term store</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termStoreId, Guid termSetId, Guid termId, bool parentFirst);  // TODO: Review this "parent first" meaning... doesn't "GetTermPathFromRootToTerm" imply parentFirst=true as default? Just plain weird...
+
+        /// <summary>
+        /// Get all parent terms from source term to root term in the term set
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
         /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
         /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>

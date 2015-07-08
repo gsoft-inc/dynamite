@@ -55,19 +55,16 @@ namespace GSoft.Dynamite.Navigation
         public const string SystemCatalogTargetUrlForChildTerms = "_Sys_Nav_CatalogTargetUrlForChildTerms";
 
         private ITaxonomyService taxonomyService;
-        private ITaxonomyHelper taxonomyHelper;
         private ILogger logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper" /> class.
         /// </summary>
         /// <param name="taxonomyService">The taxonomy service.</param>
-        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <param name="logger">Logging utility</param>
-        public NavigationHelper(ITaxonomyService taxonomyService, ITaxonomyHelper taxonomyHelper, ILogger logger)
+        public NavigationHelper(ITaxonomyService taxonomyService, ILogger logger)
         {
             this.taxonomyService = taxonomyService;
-            this.taxonomyHelper = taxonomyHelper;
             this.logger = logger;
         }
 
@@ -81,14 +78,13 @@ namespace GSoft.Dynamite.Navigation
             var taxonomySession = new TaxonomySession(web.Site);
             if (taxonomySession.TermStores.Count > 0)
             {
-                // we assume we're always dealing with the site coll's default term store
-                var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
-                var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
+                var termStore = settings.TermSet.ResolveParentTermStore(taxonomySession);
+                var group = settings.TermSet.ResolveParentGroup(taxonomySession, web.Site);
                 var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                 // Flag the term set as a navigation term set
                 termSet.SetCustomProperty(SystemIsNavigationTermSet, "True");
-                termSet.TermStore.CommitAll();
+                termStore.CommitAll();
 
                 var navigationSettings = new WebNavigationSettings(web);
 
@@ -107,7 +103,7 @@ namespace GSoft.Dynamite.Navigation
                 if (settings.PreserveTaggingOnTermSet)
                 {
                     termSet.IsAvailableForTagging = true;
-                    termSet.TermStore.CommitAll();
+                    termStore.CommitAll();
                 }
             }
         }
@@ -125,15 +121,15 @@ namespace GSoft.Dynamite.Navigation
                 if (settings != null)
                 {
                     // Disable the navigation flag on the the term set
-                    var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
-                    var group = this.taxonomyService.GetTermGroupFromStore(termStore, settings.TermGroup.Name);
+                    var termStore = settings.TermSet.ResolveParentTermStore(taxonomySession);
+                    var group = settings.TermSet.ResolveParentGroup(taxonomySession, web.Site);
                     var termSet = this.taxonomyService.GetTermSetFromGroup(termStore, group, settings.TermSet.Label);
 
                     string propertyValue;
                     if (termSet.CustomProperties.TryGetValue(SystemIsNavigationTermSet, out propertyValue))
                     {
                         termSet.DeleteCustomProperty(SystemIsNavigationTermSet);
-                        termSet.TermStore.CommitAll();
+                        termStore.CommitAll();
                     }
                 }
 
@@ -244,18 +240,16 @@ namespace GSoft.Dynamite.Navigation
 
             if (taxonomySession.TermStores.Count > 0)
             {
-                var defaultTermStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxonomySession);
-
                 // Term Set setting
                 if (termDrivenPageInfo.IsTermSet)
                 {
-                    this.SetTermDrivenPageSettingsOnTermSet(termDrivenPageInfo, defaultTermStore);
+                    SetTermDrivenPageSettingsOnTermSet(termDrivenPageInfo, taxonomySession, web.Site);
                 }
 
                 // Term setting
                 if (termDrivenPageInfo.IsTerm)
                 {
-                    this.SetTermDrivenPageSettingsOnTerm(web, termDrivenPageInfo);
+                    this.SetTermDrivenPageSettingsOnTerm(web, termDrivenPageInfo, taxonomySession);
                 }
             }
         }
@@ -284,33 +278,7 @@ namespace GSoft.Dynamite.Navigation
             }
         }
 
-        private void SetTermDrivenPageSettingsOnTermSet(TermDrivenPageSettingInfo termDrivenPageInfo, TermStore defaultTermStore)
-        {
-            // Get the term set group by name
-            // Note, when you build the term store hierachy by XML using Gary Lapointe Cmdlet, the term group ID isn't kept
-            var group = this.taxonomyService.GetTermGroupFromStore(defaultTermStore, termDrivenPageInfo.TermSet.Group.Name);
-
-            if (group != null)
-            {
-                // Get the term set 
-                var termSet = group.TermSets[termDrivenPageInfo.TermSet.Id];
-
-                // Set URLs
-                if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
-                {
-                    termSet.SetCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
-                }
-
-                if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
-                {
-                    termSet.SetCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
-                }
-
-                termSet.TermStore.CommitAll();
-            }
-        }
-
-        private void SetTermDrivenPageSettingsOnTerm(SPWeb currentWeb, TermDrivenPageSettingInfo termDrivenPageInfo)
+        private void SetTermDrivenPageSettingsOnTerm(SPWeb currentWeb, TermDrivenPageSettingInfo termDrivenPageInfo, TaxonomySession currentSession)
         {
             SPWeb webWithNavSettings = null;
             var webNavigationSettings = FindTaxonomyWebNavigationSettingsInWebOrInParents(currentWeb, out webWithNavSettings);
@@ -318,17 +286,22 @@ namespace GSoft.Dynamite.Navigation
             if (webNavigationSettings != null
                 && webNavigationSettings.GlobalNavigation.Source == StandardNavigationSource.TaxonomyProvider)
             {
-                var taxonomySession = new TaxonomySession(webWithNavSettings, true);
-                var defaultStore = taxonomySession.DefaultSiteCollectionTermStore;
+                var termStore = termDrivenPageInfo.Term.TermSet.ResolveParentTermStore(currentSession);
 
-                if (defaultStore.Id != webNavigationSettings.GlobalNavigation.TermStoreId)
+                if (termStore.Id != webNavigationSettings.GlobalNavigation.TermStoreId)
                 {
-                    defaultStore = taxonomySession.TermStores[webNavigationSettings.GlobalNavigation.TermStoreId];
+                    string termStoreMismatchErrorMsg = string.Format(
+                        CultureInfo.InvariantCulture,
+                        "NavigationHelper.SetTermDrivenPageSettingsOnTerm: The parent term store for the specified TermInfo (TermStoreId={0}) does not match the current webNavigationSettings.GlobalNavigation.TermStoreId ({1}).",
+                        termStore.Id,
+                        webNavigationSettings.GlobalNavigation.TermStoreId);
+
+                    throw new NotSupportedException(termStoreMismatchErrorMsg);
                 }
 
                 var previousThreadCulture = CultureInfo.CurrentCulture;
                 var previousThreadUiCulture = CultureInfo.CurrentUICulture;
-                var previousWorkingLanguage = defaultStore.WorkingLanguage;
+                var previousWorkingLanguage = termStore.WorkingLanguage;
 
                 try
                 {
@@ -338,9 +311,9 @@ namespace GSoft.Dynamite.Navigation
                     // Force thread culture/uiculture and term store working language
                     Thread.CurrentThread.CurrentCulture = currentWebCulture;
                     Thread.CurrentThread.CurrentUICulture = currentWebUiCulture;
-                    defaultStore.WorkingLanguage = currentWebCulture.LCID;   // force the working language to fit with the current web language
+                    termStore.WorkingLanguage = currentWebCulture.LCID;   // force the working language to fit with the current web language
 
-                    var termSet = defaultStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
+                    var termSet = termStore.GetTermSet(webNavigationSettings.GlobalNavigation.TermSetId);
 
                     // Get the taxonomy term
                     var term = termSet.GetTerm(termDrivenPageInfo.Term.Id);
@@ -362,14 +335,14 @@ namespace GSoft.Dynamite.Navigation
                                 webWithNavSettings,
                                 StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider);
 
-                            navigationTermSet = navigationTermSet.GetAsEditable(taxonomySession);
+                            navigationTermSet = navigationTermSet.GetAsEditable(currentSession);
 
                             // Get the navigation term
                             var navigationTerm = FindTermInNavigationTermsCollection(navigationTermSet.Terms, term.Id);
                             if (navigationTerm != null)
                             {
                                 // Gotta re-fetch the navigation term as an "editable" instance in order to avoid UnauthorizedAccessExceptions
-                                navigationTerm = navigationTerm.GetAsEditable(taxonomySession);
+                                navigationTerm = navigationTerm.GetAsEditable(currentSession);
 
                                 navigationTerm.ExcludeFromCurrentNavigation = termDrivenPageInfo.ExcludeFromCurrentNavigation;
                                 navigationTerm.ExcludeFromGlobalNavigation = termDrivenPageInfo.ExcludeFromGlobalNavigation;
@@ -425,7 +398,7 @@ namespace GSoft.Dynamite.Navigation
                                 }
 
                                 // Commit all updates
-                                defaultStore.CommitAll();
+                                termStore.CommitAll();
                             }
                             else
                             {
@@ -443,7 +416,7 @@ namespace GSoft.Dynamite.Navigation
                     // Restore previous thread cultures and term store working language
                     Thread.CurrentThread.CurrentCulture = previousThreadCulture;
                     Thread.CurrentThread.CurrentUICulture = previousThreadUiCulture;
-                    defaultStore.WorkingLanguage = previousWorkingLanguage;
+                    termStore.WorkingLanguage = previousWorkingLanguage;
                 }
             }
             else
@@ -452,6 +425,33 @@ namespace GSoft.Dynamite.Navigation
                     "TaxonomyHelper.SetTermDrivenPageSettingsOnTerm: Failed to find taxonomy-type WebNavigationSettings in web ID={0} Url={1} or in any of its parent webs. At least one SPWeb in the hierarchy should have a GlobalNavigation setting of source type Taxonomy.",
                     currentWeb.ID,
                     currentWeb.Url);
+            }
+        }
+
+        private static void SetTermDrivenPageSettingsOnTermSet(TermDrivenPageSettingInfo termDrivenPageInfo, TaxonomySession currentSession, SPSite currentSite)
+        {
+            // Get the term set group by name
+            // Note, when you build the term store hierachy by XML using Gary Lapointe Cmdlet, the term group ID isn't kept
+            var termSotre = termDrivenPageInfo.TermSet.ResolveParentTermStore(currentSession);
+            var group = termDrivenPageInfo.TermSet.ResolveParentGroup(currentSession, currentSite);
+
+            if (group != null)
+            {
+                // Get the term set 
+                var termSet = group.TermSets[termDrivenPageInfo.TermSet.Id];
+
+                // Set URLs
+                if (!string.IsNullOrEmpty(termDrivenPageInfo.TargetUrlForChildTerms))
+                {
+                    termSet.SetCustomProperty(SystemTargetUrlForChildTerms, termDrivenPageInfo.TargetUrlForChildTerms);
+                }
+
+                if (!string.IsNullOrEmpty(termDrivenPageInfo.CatalogTargetUrlForChildTerms))
+                {
+                    termSet.SetCustomProperty(SystemCatalogTargetUrlForChildTerms, termDrivenPageInfo.CatalogTargetUrlForChildTerms);
+                }
+
+                termSotre.CommitAll();
             }
         }
 

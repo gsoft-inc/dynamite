@@ -452,6 +452,25 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from source term to root term in the term set
         /// </summary>
         /// <param name="site">The current site collection.</param>
+        /// <param name="termStoreId">The parent term store</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termStoreId, Guid termSetId, Guid termId, bool parentFirst)
+        {
+            using (var timeTracker = this.timeTracker.BeginTimeTrackerScope(TimeTrackerKey))
+            {
+                return this.decorated.GetTermPathFromRootToTerm(site, termStoreId, termSetId, termId, parentFirst);
+            }
+        }
+
+        /// <summary>
+        /// Get all parent terms from source term to root term in the term set
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
         /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
         /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>

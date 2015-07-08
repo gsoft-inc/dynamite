@@ -64,6 +64,7 @@ namespace GSoft.Dynamite.Taxonomy
 
         /// <summary>
         /// Parent term store definition.
+        /// If this value is null, assume that we are using the DefaultSiteCollectionTermStore.
         /// </summary>
         public TermStoreInfo TermStore { get; set; }
 
