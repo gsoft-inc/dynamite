@@ -79,6 +79,9 @@ namespace GSoft.Dynamite.ServiceLocator.Lifetime
                 (childContainerBuilder) =>
                 {
                     // Register the current web context on child scope (equivalent to InstancePerWeb)
+                    // WARNING: Don't use anything else than RegisterInstance here and make sure the WebContext
+                    // doesn't hold on to the SPWeb instance... we don't want to cause issues by needlessly keeping
+                    // SPRequest objects in scope after they get disposed.
                     childContainerBuilder.RegisterInstance(new WebContext(web)).As<IWebContext>();
                 });
         }

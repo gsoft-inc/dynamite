@@ -72,7 +72,10 @@ namespace GSoft.Dynamite.ServiceLocator.Lifetime
                 childScopePerSiteContainerUniqueKey,
                 (childContainerBuilder) =>
                 {
-                    // Register the current site context on child scope (equivalent to InstancePerSite)
+                    // Register the current site context on child scope (equivalent to InstancePerSite).
+                    // WARNING: Don't use anything else than RegisterInstance here and make sure the SiteCollectionContext
+                    // doesn't hold on to the SPSite instance... we don't want to cause issues by needlessly keeping
+                    // SPRequest objects in scope after they get disposed.
                     childContainerBuilder.RegisterInstance(new SiteCollectionContext(site)).As<ISiteCollectionContext>();
                 });
         }

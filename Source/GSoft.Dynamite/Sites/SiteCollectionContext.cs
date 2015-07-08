@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Logging;
+using GSoft.Dynamite.Taxonomy;
 using Microsoft.SharePoint;
+using Microsoft.SharePoint.Taxonomy;
 
 namespace GSoft.Dynamite.Sites
 {
@@ -21,6 +24,38 @@ namespace GSoft.Dynamite.Sites
         {
             this.SiteId = site.ID;
             this.SiteAbsoluteUrl = new Uri(site.Url);
+
+            string termStoreName = string.Empty;
+
+            if (site.RootWeb.AllProperties["TermStoreName"] != null)
+            {
+                termStoreName = site.RootWeb.AllProperties["TermStoreName"].ToString();
+            }
+
+            var session = new TaxonomySession(site);
+            TermStore store = null;
+
+            if (string.IsNullOrWhiteSpace(termStoreName))
+            {
+                store = session.DefaultSiteCollectionTermStore;
+            }
+            else
+            {
+                store = session.TermStores[termStoreName];
+            }
+
+            if (store != null)
+            {
+                this.ContextTermStore = new TermStoreInfo(store);
+            }
+            else
+            {
+                new TraceLogger("GSoft.Dynamite", "GSoft.Dynamite", false)
+                    .Error("SiteCollectionContext.ctor: Failed to resolve current term store. " +
+                    "Please register the name of your managed metadata service on your root web property bag under the key 'TermStoreName'. " +
+                    "Alternatively, under Manage Service Applications, configure your managed metadata service connection's properties to " +
+                    "make it the 'Default storage location for column specific term sets.'");
+            }
         }
 
         /// <summary>
@@ -32,5 +67,11 @@ namespace GSoft.Dynamite.Sites
         /// Absolute URL of the site collection
         /// </summary>
         public Uri SiteAbsoluteUrl { get; private set; }
+
+        /// <summary>
+        /// The metadata of the default term store connected to the
+        /// site collection.
+        /// </summary>
+        public TermStoreInfo ContextTermStore { get; private set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSoft.Dynamite.Taxonomy;
 
 namespace GSoft.Dynamite.Sites
 {
@@ -20,5 +21,11 @@ namespace GSoft.Dynamite.Sites
         /// Default zone absolute URL of the site collection
         /// </summary>
         Uri SiteAbsoluteUrl { get; }
+
+        /// <summary>
+        /// The metadata of the default term store connected to the
+        /// site collection.
+        /// </summary>
+        TermStoreInfo ContextTermStore { get; }
     }
 }
