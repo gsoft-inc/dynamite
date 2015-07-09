@@ -48,19 +48,20 @@ namespace GSoft.Dynamite.Navigation
             get
             {
                 var navigationType = VariationNavigationType.None;
+                var catalogConnectionManager = new CatalogConnectionManager(SPContext.Current.Site);
 
-                if (TaxonomyNavigationContext.Current != null)
+                // Only return an non-default VariationNavigationType when you know we have some 
+                // catalog connections (a hint that we're in cross-site publishing instead of classic publishing)
+                if (TaxonomyNavigationContext.Current != null 
+                    && catalogConnectionManager.ConnectedPublishingCatalogs.Count > 0)
                 {
                     if (TaxonomyNavigationContext.Current.HasCatalogUrl)
                     {
                         navigationType = VariationNavigationType.ItemPage;
                     }
-                    else
+                    else if (TaxonomyNavigationContext.Current.NavigationTerm != null)
                     {
-                        if (TaxonomyNavigationContext.Current.NavigationTerm != null)
-                        {
-                            navigationType = VariationNavigationType.CategoryPage;
-                        }
+                        navigationType = VariationNavigationType.CategoryPage;
                     }
                 }
 
