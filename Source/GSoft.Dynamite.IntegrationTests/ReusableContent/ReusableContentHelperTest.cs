@@ -11,7 +11,7 @@ namespace GSoft.Dynamite.IntegrationTests.ReusableContent
     /// </summary>
     [TestClass]
     public class ReusableContentHelperTest
-    {
+   { 
         #region GetByTitle
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.IntegrationTests.ReusableContent
             {
                 var site = testScope.SiteCollection;
 
-                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
                 {
                     var reusableContentHelper = injectionScope.Resolve<IReusableContentHelper>();
 
@@ -53,7 +53,7 @@ namespace GSoft.Dynamite.IntegrationTests.ReusableContent
             {
                 var site = testScope.SiteCollection;
 
-                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
                 {
                     var reusableContentHelper = injectionScope.Resolve<IReusableContentHelper>();
 
@@ -81,7 +81,7 @@ namespace GSoft.Dynamite.IntegrationTests.ReusableContent
             {
                 var site = testScope.SiteCollection;
 
-                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(site))
                 {
                     var reusableContentHelper = injectionScope.Resolve<IReusableContentHelper>();
 
