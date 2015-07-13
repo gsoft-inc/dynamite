@@ -202,14 +202,9 @@ namespace GSoft.Dynamite.Navigation
                 var restrictedNode = restrictedNodes[i];
 
                 // If term contains children, recurvise call
-                // If term doesn't contain children, clean the Childnodes
                 if (restrictedTerm.Terms.Count > 0)
                 {
                     restrictedNode.ChildNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters, nodes, restrictedTerm.Terms.ToArray());
-                }
-                else
-                {
-                    restrictedNode.ChildNodes = new List<NavigationNode>();
                 }
             }
 

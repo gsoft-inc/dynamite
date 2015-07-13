@@ -650,3 +650,82 @@ Describe "Find-DSPExcelFiles" {
 	}
 
 }
+
+Describe "Rename-DSPExcelColumn" {
+
+    It "should throw an error if the specified worksheet doesn't exist in the file" {
+
+        # Create a copy of the file
+		$TempFolder = New-Item -ItemType 'Directory' -Path $here -Name "Temp" -Force
+		$CopiedItem = Copy-Item -Path $ExcelValidFilePath -Destination $TempFolder -PassThru -Force
+		$ExcelFile = Open-DSPExcelFile -Path $CopiedItem.FullName
+
+		{ $ExcelFile | Rename-DSPExcelColumn  -OldColumnName "Column1" -NewColumnName "Column1111" -WorksheetName "FakeWorksheet" } | Should Throw
+						
+		# Test teardown
+        if($ExcelFile)
+        {
+            $ExcelFile.Dispose()
+        }
+
+		Remove-Item $TempFolder -Recurse -Confirm:$false -Force
+    }
+
+    It "should throw an error if the targeted column is not found within the worksheet" {
+
+        # Create a copy of the file
+		$TempFolder = New-Item -ItemType 'Directory' -Path $here -Name "Temp" -Force
+		$CopiedItem = Copy-Item -Path $ExcelValidFilePath -Destination $TempFolder -PassThru -Force
+		$ExcelFile = Open-DSPExcelFile -Path $CopiedItem.FullName
+
+		{ $ExcelFile | Rename-DSPExcelColumn  -OldColumnName "Dynamite" -NewColumnName "Column1111" -WorksheetName "Data" } | Should Throw
+
+        # Test teardown
+        if($ExcelFile)
+        {
+            $ExcelFile.Dispose()
+        }
+
+		Remove-Item $TempFolder -Recurse -Confirm:$false -Force
+    }
+
+    It "should throw an error if the new column name is empty" {
+        # Create a copy of the file
+		$TempFolder = New-Item -ItemType 'Directory' -Path $here -Name "Temp" -Force
+		$CopiedItem = Copy-Item -Path $ExcelValidFilePath -Destination $TempFolder -PassThru -Force
+		$ExcelFile = Open-DSPExcelFile -Path $CopiedItem.FullName
+
+		{ $ExcelFile | Rename-DSPExcelColumn  -OldColumnName "Column1" -NewColumnName "" -WorksheetName "Data" } | Should Throw
+
+        # Test teardown
+        if($ExcelFile)
+        {
+            $ExcelFile.Dispose()
+        }
+
+		Remove-Item $TempFolder -Recurse -Confirm:$false -Force
+    }
+
+    It "should rename the column properly if supplied with valid parameters" {
+        # Create a copy of the file
+		$TempFolder = New-Item -ItemType 'Directory' -Path $here -Name "Temp" -Force
+		$CopiedItem = Copy-Item -Path $ExcelValidFilePath -Destination $TempFolder -PassThru -Force
+		$ExcelFile = Open-DSPExcelFile -Path $CopiedItem.FullName
+        $worksheetName = "Data"
+
+        # Act
+	    $ExcelFile | Rename-DSPExcelColumn  -OldColumnName "Column1" -NewColumnName "Column1234" -WorksheetName $worksheetName -NoDispose
+        $FileContent =  $ExcelFile | Get-DSPExcelFileContent -Columns @("Column1234")
+
+        # Content has been found, column renamed succeeded.
+        $FileContent.Count | Should Be 3
+        
+        # Test teardown
+        if($ExcelFile)
+        {
+            $ExcelFile.Dispose()
+        }
+
+		Remove-Item $TempFolder -Recurse -Confirm:$false -Force
+    }
+}
