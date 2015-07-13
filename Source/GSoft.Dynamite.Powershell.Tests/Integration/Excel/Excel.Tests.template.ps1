@@ -641,7 +641,7 @@ Describe "Find-DSPExcelFiles" {
 
 			$result = Find-DSPExcelFiles -Folder $TempFolder.FullName -Columns "Column1","Column2","User" -Patterns "dev\\danb","Value"
 			
-			$result.Count | Should Be 6
+			$result.Count | Should Be 2
 			$result[0]."Matching lines count" | Should Be 3
 			$result[1]."Matching lines count" | Should Be 3
 
