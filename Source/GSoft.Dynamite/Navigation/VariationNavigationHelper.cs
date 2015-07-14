@@ -127,9 +127,10 @@ namespace GSoft.Dynamite.Navigation
             {
                 string webPeerUrl = string.Empty;
 
-                // Keep query string (except source)
+                // Keep query string (except source, and list,... and whichever other harmful-if-passed-on-variated-page-url argument)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
                 queryCollection.Remove("Source");
+                queryCollection.Remove("List");
 
                 try
                 {
@@ -139,7 +140,10 @@ namespace GSoft.Dynamite.Navigation
                     string currentWebWelcomePageUrl = SPUtility.ConcatUrls(web.Url, web.RootFolder.WelcomePage);
                     string currentWebWelcomePageUrlRelative = new Uri(currentWebWelcomePageUrl, UriKind.Absolute).AbsolutePath;
                     webPeerUrl = Variations.GetPeerUrl(web, currentWebWelcomePageUrlRelative, label.Title);
-                    webPeerUrl = webPeerUrl.Replace(web.RootFolder.WelcomePage, string.Empty);
+
+                    // We heavily assume that all welcome pages lives in a Pages library here:
+                    webPeerUrl = webPeerUrl.Split(new string[] { "/Pages" }, StringSplitOptions.None)[0];     
+                    webPeerUrl = webPeerUrl.EndsWith("/") ? webPeerUrl : webPeerUrl + "/";
 
                     if (queryCollection["RootFolder"] != null)
                     {
