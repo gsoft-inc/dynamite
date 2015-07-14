@@ -24,6 +24,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
         /// Validates that SendEmail only sends the email to the recipient override email and modifies the body of the email to include the original recipients.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.RequiresFakes)]
         public void SendEmail_WhenRecipientOverrideEnabled_ShouldSendEmailOnlyToRecipientOverrideAddressAndModifyEmailBody()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -82,6 +83,7 @@ namespace GSoft.Dynamite.IntegrationTests.Email
         /// Validates that SendEmail sends the email to the entended addresses and does not change the email content.
         /// </summary>
         [TestMethod]
+        [TestCategory(IntegrationTestCategories.RequiresFakes)]
         public void SendEmail_WhenRecipientOverrideDisabled_ShouldSendEmailWithoutManipulatingTheReceiversOrChangingTheEmailContent()
         {
             using (var testScope = SiteTestScope.BlankSite())
