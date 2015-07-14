@@ -143,7 +143,7 @@ namespace GSoft.Dynamite.Navigation
 
                     // We heavily assume that all welcome pages lives in a Pages library here:
                     webPeerUrl = webPeerUrl.Split(new string[] { "/Pages" }, StringSplitOptions.None)[0];     
-                    webPeerUrl = webPeerUrl.EndsWith("/") ? webPeerUrl : webPeerUrl + "/";
+                    webPeerUrl = webPeerUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? webPeerUrl : webPeerUrl + "/";
 
                     if (queryCollection["RootFolder"] != null)
                     {
