@@ -878,7 +878,8 @@ function Add-DSPExcelColumn {
         [REQUIRED] The regex pattern to search for
 
     .PARAMETER Value
-        [REQUIRED] The replacement value
+        [REQUIRED] The replacement value. Note that you can pass a scriptblock instead. In this case, it is executed if a cell content match your pattern. Use the paramater name $CurrentCellValue to manipulate the current cell content in you scriptblock
+                   The return value of your script block will be the new content of the cell.
 
     .PARAMETER Escape
         [OPTIONAL] If the regex pattern contains special characters to escape, use this option. (e.g .DOMAIN\user)
@@ -900,6 +901,9 @@ function Add-DSPExcelColumn {
 
             # Replace value
             $ExcelFile | Edit-ColumnValue -Pattern "OLDDOMAIN\user" -Value "NEWDOMAIN\user" -Escape -Column "Col1" -WorksheetName "Sheet1"
+
+            # Replace value with a script block
+            $ExcelFile | Edit-ColumnValue -Pattern "OLDDOMAIN\user" -Value { Param($CurrentCellValue) return "My new value" }
 
             $ExcelFile | Edit-ColumnValue -Column "Col1" -AsIdentifier
 
@@ -929,7 +933,7 @@ function Edit-DSPExcelColumnValue {
         
         [Parameter(Mandatory=$false)]
         [Parameter(ParameterSetName ="Default")]
-        [string]$Value,
+        $Value,
         
         [Parameter(Mandatory=$false)]
         [Parameter(ParameterSetName ="Default")]
@@ -1008,10 +1012,10 @@ function Edit-DSPExcelColumnValue {
                     Write-Debug $DebugMsg
                 }
             }
-            else #Next rows
+            else
             {
-        
-                if( $ColumnToReplaceOnIndex -ne $null)
+                # Process only the matching columns
+                if ($ColumnToReplaceOnIndex -ne $null)
                 {
                     $ReplacedCell = $CurrentRow | Where-Object { ($_.CellReference.Value -replace "\d",[string]::Empty) -eq  $ColumnToReplaceOnIndex }  | Select-Object -First 1
 
@@ -1021,18 +1025,44 @@ function Edit-DSPExcelColumnValue {
                         $ReplacedCell.DataType = [DocumentFormat.OpenXml.Spreadsheet.CellValues]::Number
                     }
                     else
-                    {
-                        $ReplacedCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $ReplacedCell) -replace $Pattern ,$Value)
-                        $ReplacedCell.DataType = [DocumentFormat.OpenXml.Spreadsheet.CellValues]::String   
-                    }
-                
+                    {    
+                        $CurrentCellValue = Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $ReplacedCell
+                        if ($Value -is [scriptblock] -and ($CurrentCellValue -match $Pattern))
+                        {
+                            $CalculatedValue = &$Value -CurrentCellValue $CurrentCellValue
+
+                            # Replacement is done on the whole cell content
+                            $ReplacedCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue($CalculatedValue)
+
+                        }
+                        else
+                        {
+                            $ReplacedCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue($CurrentCellValue -replace $Pattern, $Value)						    
+                        }   
+
+                        $ReplacedCell.DataType = [DocumentFormat.OpenXml.Spreadsheet.CellValues]::String  
+                    }				
                 }
                 else
                 {
+                    # Process all columns
                     $Cells | ForEach-Object {	
     
-                        $CurrentCell = $_			
-                        $CurrentCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $CurrentCell) -replace $Pattern ,$Value)
+                        $CurrentCell = $_	   
+                        $CurrentCellValue = Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $CurrentCell
+
+                        if ($Value -is [scriptblock] -and ($CurrentCellValue -match $Pattern))
+                        {
+                            $CalculatedValue = &$Value -CurrentCellValue $CurrentCellValue
+
+                            # Replacement is done on the whole cell content according to the script block result
+                            $CurrentCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue($CalculatedValue)
+                        }
+                        else
+                        {
+                            $CurrentCell.CellValue = New-Object DocumentFormat.OpenXml.Spreadsheet.CellValue($CurrentCellValue -replace $Pattern, $Value)					    
+                        }
+
                         $CurrentCell.DataType = [DocumentFormat.OpenXml.Spreadsheet.CellValues]::String
                     }	
                 }
@@ -1443,10 +1473,10 @@ function Find-DSPExcelFiles {
 
 <#
     .SYNOPSIS
-	    Renames a column of an Excel sheet
-	
+        Renames a column of an Excel sheet
+    
     .DESCRIPTION
-		Renames a column of an Excel sheet
+        Renames a column of an Excel sheet
     --------------------------------------------------------------------------------------
     Module 'Dynamite.PowerShell.Toolkit'
     by: GSoft, Team Dynamite.
@@ -1454,30 +1484,30 @@ function Find-DSPExcelFiles {
     > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
-		
+        
     .PARAMETER ExcelFile
-	    [REQUIRED] The Excel file instance
+        [REQUIRED] The Excel file instance
 
     .PARAMETER OldColumnName
-	    [REQUIRED] The name of the column to be renamed
+        [REQUIRED] The name of the column to be renamed
 
     .PARAMETER NewColumnName
-	    [REQUIRED] The new name of the column
+        [REQUIRED] The new name of the column
 
     .PARAMETER Position
-	    [OPTIONAL] The position to insert the new column. If no position is specified, the column is inserted at first position
+        [OPTIONAL] The position to insert the new column. If no position is specified, the column is inserted at first position
 
     .PARAMETER WorksheetName
-	    [OPTIONAL] The Excel worksheet name to work in
+        [OPTIONAL] The Excel worksheet name to work in
 
-	.PARAMETER NoDispose
-	    [OPTIONAL] If this parameter is specified, the cmdlet doesn't release the Excel File oject after execution. Use this option to process multiple operations on the same file instance.
+    .PARAMETER NoDispose
+        [OPTIONAL] If this parameter is specified, the cmdlet doesn't release the Excel File oject after execution. Use this option to process multiple operations on the same file instance.
 
     .EXAMPLE
-		    $ExcelFile = Open-DSPExcelFile -Path "C:\Excel.xslx"
+            $ExcelFile = Open-DSPExcelFile -Path "C:\Excel.xslx"
 
-			# Rename Column
-			$ExcelFile | Rename-DSPExcelColumn -OldColumnName "OldCol"  -NewColumnName "NewCol"
+            # Rename Column
+            $ExcelFile | Rename-DSPExcelColumn -OldColumnName "OldCol"  -NewColumnName "NewCol"
 
     .LINK
     GSoft, Team Dynamite on Github
@@ -1491,73 +1521,73 @@ function Find-DSPExcelFiles {
     
 #>
 function Rename-DSPExcelColumn {
-	[CmdletBinding()]
-	Param
-	(
-		[ValidateNotNullOrEmpty()]
-		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
-		$ExcelFile,
-		
-		[Parameter(Mandatory=$true)]
-		[string]$OldColumnName,
-		
-		[Parameter(Mandatory=$true)]
-		[string]$NewColumnName,
-		
-		[Parameter(Mandatory=$false)]
-		[int]$Position,
-		
-		[Parameter(Mandatory=$false)]
-		[string]$WorksheetName,
+    [CmdletBinding()]
+    Param
+    (
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        $ExcelFile,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$OldColumnName,
+        
+        [Parameter(Mandatory=$true)]
+        [string]$NewColumnName,
+        
+        [Parameter(Mandatory=$false)]
+        [int]$Position,
+        
+        [Parameter(Mandatory=$false)]
+        [string]$WorksheetName,
 
-		[Parameter(Mandatory=$false)]
-		[switch]$NoDispose
-	)
-	
-	Try
-	{
-		$workbookPart = $ExcelFile.WorkbookPart
-		$workbook = $workbookPart.Workbook
+        [Parameter(Mandatory=$false)]
+        [switch]$NoDispose
+    )
+    
+    Try
+    {
+        $workbookPart = $ExcelFile.WorkbookPart
+        $workbook = $workbookPart.Workbook
 
-		if ([string]::IsNullOrEmpty($WorksheetName) -ne $true)
-		{
-			$Sheet = $workbook.Descendants() | Where-Object { $_.Name -like $WorksheetName -and $_.LocalName -eq "sheet" }
-			if ($Sheet -eq $null)
-			{
-				Throw "Workheet '$WorksheetName' not found in the file"
-			}
-		}
-		else
-		{
-			$Sheet = $workbook.Descendants() | Where-Object { $_.LocalName -eq "sheet" } | Select-Object -First 1
-			$SheetName = $Sheet.Name
+        if ([string]::IsNullOrEmpty($WorksheetName) -ne $true)
+        {
+            $Sheet = $workbook.Descendants() | Where-Object { $_.Name -like $WorksheetName -and $_.LocalName -eq "sheet" }
+            if ($Sheet -eq $null)
+            {
+                Throw "Workheet '$WorksheetName' not found in the file"
+            }
+        }
+        else
+        {
+            $Sheet = $workbook.Descendants() | Where-Object { $_.LocalName -eq "sheet" } | Select-Object -First 1
+            $SheetName = $Sheet.Name
 
             $DebugMsg = "No worksheet name specified. Using first sheet '$SheetName'"
-			Write-Debug $DebugMsg
-		}
-	
-		$SheetId = ($Sheet.Id | Select-Object -Property Value -First 1).Value
-		$WorksheetPart = $workbookPart.GetPartById($SheetId)
-	
-		$Rows = Invoke-GenericMethod $WorksheetPart.WorkSheet "Descendants" "DocumentFormat.OpenXml.Spreadsheet.Row" @()
-		$HeaderCell = ($Rows | Select-Object -First 1) | Where-Object {$_.Text -eq $OldColumnName}
+            Write-Debug $DebugMsg
+        }
+    
+        $SheetId = ($Sheet.Id | Select-Object -Property Value -First 1).Value
+        $WorksheetPart = $workbookPart.GetPartById($SheetId)
+    
+        $Rows = Invoke-GenericMethod $WorksheetPart.WorkSheet "Descendants" "DocumentFormat.OpenXml.Spreadsheet.Row" @()
+        $HeaderCell = ($Rows | Select-Object -First 1) | Where-Object {$_.Text -eq $OldColumnName}
 
-		if ($HeaderCell -ne $null)
-		{
-			if([string]::IsNullOrEmpty($NewColumnName))
-			{
-				Throw "No new column name specified"
-			}
-			else
-			{
-				# Old column is found and new column name is specified, proceed with renaming
-				$HeaderCell.CellValue = $NewColumnName
-			}
-		}
-		else
-		{
-			Throw "Column '$OldColumnName' not found in the worksheet"
-		}
+        if ($HeaderCell -ne $null)
+        {
+            if([string]::IsNullOrEmpty($NewColumnName))
+            {
+                Throw "No new column name specified"
+            }
+            else
+            {
+                # Old column is found and new column name is specified, proceed with renaming
+                $HeaderCell.CellValue = $NewColumnName
+            }
+        }
+        else
+        {
+            Throw "Column '$OldColumnName' not found in the worksheet"
+        }
 
         $WorksheetPart.WorkSheet.Save()
 
@@ -1567,17 +1597,17 @@ function Rename-DSPExcelColumn {
             Write-Debug $DebugMsg
             $ExcelFile.Dispose()
         }
-	}
-	Catch
-	{
-		if ($ExcelFile)
-		{
-			$ExcelFile.Dispose()
-		}
+    }
+    Catch
+    {
+        if ($ExcelFile)
+        {
+            $ExcelFile.Dispose()
+        }
 
-		$ErrorMessage = $_.Exception.Message
+        $ErrorMessage = $_.Exception.Message
         Throw $ErrorMessage
-	}
+    }
 }
 
 
