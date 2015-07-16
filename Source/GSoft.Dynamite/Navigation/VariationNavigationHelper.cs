@@ -57,8 +57,17 @@ namespace GSoft.Dynamite.Navigation
                     }
                     else
                     {
-                        if (TaxonomyNavigationContext.Current.NavigationTerm != null)
+                        var currentNavTerm = TaxonomyNavigationContext.Current.NavigationTerm;
+
+                        // If the current taxonomy nav term doesn't have a TargetUrlFforChildTerms,
+                        // we assume that we are using the basic taxonomy navigation without 
+                        // any catalog-specific logic (i.e. we want to return CategoryPage only when 
+                        // we're in a context of fancy catalog connections and url slugs).
+                        if (currentNavTerm != null
+                            && !string.IsNullOrEmpty(currentNavTerm.TargetUrlForChildTerms.Value))
                         {
+                            // Again, this assumes that TargetUrlForChildTerms will always be set in
+                            // a catalog context (e.g. News archive page, etc.).
                             navigationType = VariationNavigationType.CategoryPage;
                         }
                     }
@@ -125,7 +134,7 @@ namespace GSoft.Dynamite.Navigation
             }
             catch (ArgumentOutOfRangeException)
             {
-                string webPeerUrl = string.Empty;
+                string webPeerServerRelativeUrl;
 
                 // Keep query string (except source, and list,... and whichever other harmful-if-passed-on-variated-page-url argument)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
@@ -137,32 +146,33 @@ namespace GSoft.Dynamite.Navigation
                     // Use a trick: use the current web's home page (welcome page on its root folder) to find the peer
                     // web URL (i.e. the URL of the variated site which corresponds to the translated content - maybe with a 
                     // different relative path - of the current web)
-                    string currentWebWelcomePageUrl = SPUtility.ConcatUrls(web.Url, web.RootFolder.WelcomePage);
-                    string currentWebWelcomePageUrlRelative = new Uri(currentWebWelcomePageUrl, UriKind.Absolute).AbsolutePath;
-                    webPeerUrl = Variations.GetPeerUrl(web, currentWebWelcomePageUrlRelative, label.Title);
+                    var currentWebWelcomePageUrl = SPUtility.ConcatUrls(web.Url, web.RootFolder.WelcomePage);
+                    var currentWebWelcomePageUrlRelative = new Uri(currentWebWelcomePageUrl, UriKind.Absolute).AbsolutePath;
+                    webPeerServerRelativeUrl = Variations.GetPeerUrl(web, currentWebWelcomePageUrlRelative, label.Title);
 
                     // We heavily assume that all welcome pages lives in a Pages library here:
-                    webPeerUrl = webPeerUrl.Split(new string[] { "/Pages" }, StringSplitOptions.None)[0];     
-                    webPeerUrl = webPeerUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? webPeerUrl : webPeerUrl + "/";
+                    webPeerServerRelativeUrl = webPeerServerRelativeUrl.Split(new[] { "/Pages" }, StringSplitOptions.None)[0];     
+                    webPeerServerRelativeUrl = webPeerServerRelativeUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? webPeerServerRelativeUrl : webPeerServerRelativeUrl + "/";
 
                     if (queryCollection["RootFolder"] != null)
                     {
                         // if we're successful, we're probably in a Pages library and we need the RootFolder
                         // to get a replaced web URL as well
-                        string rootFolderParam = queryCollection["RootFolder"];
-                        string currentServerWebRelativeUrl = web.RootFolder.ServerRelativeUrl;
-                        rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, webPeerUrl);
+                        var rootFolderParam = queryCollection["RootFolder"];
+                        var currentServerWebRelativeUrl = web.RootFolder.ServerRelativeUrl;
+                        rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, webPeerServerRelativeUrl);
                         queryCollection["RootFolder"] = rootFolderParam;
                     }
 
                     // the logic below expects an absolute URL with domain etc.
-                    webPeerUrl = SPUtility.ConcatUrls(web.Site.Url, webPeerUrl);
+                    var baseSiteAbsoluteUrl = new Uri(web.Site.Url);
+                    webPeerServerRelativeUrl = new Uri(baseSiteAbsoluteUrl, new Uri(webPeerServerRelativeUrl, UriKind.Relative)).ToString();
                 }
                 catch (ArgumentOutOfRangeException uglyNestedEx)
                 {
                     // default to the top web of the target variation hierarchy if all else fails (no peer of current 
                     // web welcome page found on target web)
-                    webPeerUrl = label.TopWebUrl.ToString() + "/";
+                    webPeerServerRelativeUrl = label.TopWebUrl + "/";
 
                     this.logger.Warn(
                         "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
@@ -173,7 +183,7 @@ namespace GSoft.Dynamite.Navigation
                 }
 
                 // Construct peer URL with path + query.
-                var targetWebUrl = new Uri(webPeerUrl);
+                var targetWebUrl = new Uri(webPeerServerRelativeUrl);
                 var currentUrlSegmentsMinusTargetses = currentUrl.Segments.Skip(targetWebUrl.Segments.Length);
                 var pathAndQuerySegments = new List<string>(targetWebUrl.Segments.Concat(currentUrlSegmentsMinusTargetses));
 

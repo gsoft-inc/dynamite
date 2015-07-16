@@ -746,9 +746,6 @@ function Import-DSPWebStructure {
 		[string]$InputFileName,
 
 		[Parameter(Mandatory=$false)]
-		[switch]$Overwrite,
-
-		[Parameter(Mandatory=$false)]
 		[string]$VariationLabel
 	)
 
@@ -785,54 +782,44 @@ function Import-DSPWebStructure {
                     $web = Get-SPWeb -Identity $Url -ErrorAction SilentlyContinue
                     if ($web)
                     {
-                       Write-Warning "Web $Url already exists"
-                       if ($Overwrite)
-                       {
-                            Write-Host "'Overwrite' parameter was specified. Removing web $Url and its subwebs..." -NoNewline     
-                            Remove-DSPWeb -WebUrl $web.Url -Recurse
-                            Write-Host "Done!" -ForegroundColor Green
-                            $newWeb = $true
-                       }
-                       else
-                       {
-							if ([string]::IsNullOrEmpty($VariationLabel) -eq $false)
-							{
-								# Looking for a web matching the specified variation label
-								$TargetWeb = $_.Variations.TargetWeb | Where-Object {$_.Label -eq $VariationLabel}
+                        Write-Warning "Web $Url already exists"
+					    if ([string]::IsNullOrEmpty($VariationLabel) -eq $false)
+						{
+							# Looking for a web matching the specified variation label
+							$TargetWeb = $_.Variations.TargetWeb | Where-Object {$_.Label -eq $VariationLabel}
 				
-								if ($TargetWeb -ne $null)	
+							if ($TargetWeb -ne $null)	
+							{
+								$NewUrl = (([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceUrl, $TargetWeb.Path))).TrimEnd('/')
+								$NewWeb = Get-SPWeb -Identity $NewUrl -ErrorAction SilentlyContinue
+
+								# Test if the site not already exists in the the site collection
+								if($NewWeb -eq $null)
 								{
-									$NewUrl = (([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceUrl, $TargetWeb.Path))).TrimEnd('/')
-									$NewWeb = Get-SPWeb -Identity $NewUrl -ErrorAction SilentlyContinue
+									Write-Warning "Updating properties for web '$Url'"
+									# Update web propeties
+									$web.Title = $TargetWeb.Name
+									$web.ServerRelativeUrl = $TargetWeb.Path
+									$web.Update()
 
-									# Test if the site not already exists in the the site collection
-									if($NewWeb -eq $null)
-									{
-										Write-Warning "Updating properties for web '$Url'"
-										# Update web propeties
-										$web.Title = $TargetWeb.Name
-										$web.ServerRelativeUrl = $TargetWeb.Path
-										$web.Update()
-
-										#Update the URL
-										$Url = $NewUrl
-									}
-									else
-									{
-										Write-Warning "Web with url '$NewUrl' already exists in the site collection. Update only the title..."  
-																				
-										$web.Title = $TargetWeb.Name
-										$web.Update()
-									}
-								}	
+									#Update the URL
+									$Url = $NewUrl
+								}
 								else
 								{
-									Write-Warning "Unable to find web with variation label '$VariationLabel' in the XML file. Skipping..."  
+									Write-Warning "Web with url '$NewUrl' already exists in the site collection. Update only the title..."  
+																				
+									$web.Title = $TargetWeb.Name
+									$web.Update()
 								}
+							}	
+							else
+							{
+								Write-Warning "Unable to find web with variation label '$VariationLabel' in the XML file. Skipping..."  
 							}
+						}
 							
-							$newWeb = $false
-                       }
+						$newWeb = $false
                     }
                     else
                     {
