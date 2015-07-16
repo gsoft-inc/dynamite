@@ -192,6 +192,12 @@ namespace GSoft.Dynamite.Fields
                     field.DefaultFormula = fieldInfo.DefaultFormula;
                 }
 
+                // Set the JavaScript custom rendering file URL
+                if (!string.IsNullOrEmpty(fieldInfo.JsLink))
+                {
+                    field.JSLink = fieldInfo.JsLink;
+                }
+
                 field.Update(fieldInfo.AreChangesPushedToList);
             }
 

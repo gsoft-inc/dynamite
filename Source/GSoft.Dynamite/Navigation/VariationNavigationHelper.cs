@@ -57,8 +57,17 @@ namespace GSoft.Dynamite.Navigation
                     }
                     else
                     {
-                        if (TaxonomyNavigationContext.Current.NavigationTerm != null)
+                        var currentNavTerm = TaxonomyNavigationContext.Current.NavigationTerm;
+
+                        // If the current taxonomy nav term doesn't have a TargetUrlFforChildTerms,
+                        // we assume that we are using the basic taxonomy navigation without 
+                        // any catalog-specific logic (i.e. we want to return CategoryPage only when 
+                        // we're in a context of fancy catalog connections and url slugs).
+                        if (currentNavTerm != null
+                            && !string.IsNullOrEmpty(currentNavTerm.TargetUrlForChildTerms.Value))
                         {
+                            // Again, this assumes that TargetUrlForChildTerms will always be set in
+                            // a catalog context (e.g. News archive page, etc.).
                             navigationType = VariationNavigationType.CategoryPage;
                         }
                     }
@@ -157,7 +166,7 @@ namespace GSoft.Dynamite.Navigation
 
                     // the logic below expects an absolute URL with domain etc.
                     var baseSiteAbsoluteUrl = new Uri(web.Site.Url);
-                    webPeerServerRelativeUrl = new Uri(baseSiteAbsoluteUrl, webPeerServerRelativeUrl).ToString();
+                    webPeerServerRelativeUrl = new Uri(baseSiteAbsoluteUrl, new Uri(webPeerServerRelativeUrl, UriKind.Relative)).ToString();
                 }
                 catch (ArgumentOutOfRangeException uglyNestedEx)
                 {

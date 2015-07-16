@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -246,6 +247,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that EnsureField intializes field definitions will all the FieldInfo's basic metadata
         /// </summary>
         [TestMethod]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "js is an accepted naming prefix.")]
         public void EnsureField_ShouldProperlyInitializeAllFieldBasicProperties()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -291,6 +293,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyDefaults",
                     "GroupKey");
 
+                TextFieldInfo jsLinkTextFieldInfo = new TextFieldInfo(
+                    "TestInternalNameJsLink",
+                    new Guid("{D329F232-7507-4168-A13B-46385C5D78AB}"),
+                    "NameKeyJsLink",
+                    "DescriptionKeyJsLink",
+                    "GroupKey") { JsLink = "/_layouts/15/test_jslink.js" };
+
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
@@ -326,6 +335,16 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     SPField defaultsFieldRefetched = testScope.SiteCollection.RootWeb.Fields[defaultsTextFieldInfo.Id];
                     this.ValidateFieldBasicValues(defaultsTextFieldInfo, defaultsFieldRefetched);
+
+                    // 4) Js link configured field definition
+                    SPField jsLinkEnsuredField = fieldHelper.EnsureField(fieldsCollection, jsLinkTextFieldInfo);
+
+                    Assert.AreEqual(noOfFieldsBefore + 4, fieldsCollection.Count);
+                    Assert.IsNotNull(jsLinkEnsuredField);
+                    Assert.AreEqual(jsLinkTextFieldInfo.JsLink, jsLinkEnsuredField.JSLink);
+
+                    SPField jsLinkFieldRefetched = testScope.SiteCollection.RootWeb.Fields[jsLinkTextFieldInfo.Id];
+                    Assert.AreEqual(jsLinkTextFieldInfo.JsLink, jsLinkFieldRefetched.JSLink);
                 }
             }
         }
