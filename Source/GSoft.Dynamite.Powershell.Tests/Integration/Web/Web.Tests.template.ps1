@@ -324,7 +324,15 @@ Describe "Import-DSPWebStructure" -Tag "Slow" {
 
         It "should throw an error if input file is invalid" {
 
-            { Import-DSPWebStructure -InputFileName "C:\dontexist.xml" -ParentUrl $siteUrl } | Should Throw
+            { Import-DSPWebStructure -InputFileName "C:\noexists.xml" -ParentUrl $siteUrl } | Should Throw
+        }
+
+        It "should throw an error if 'Overwrite' and 'VariationLabel' are used together" {
+
+            # Create site hierarchy
+            $site =  New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
+
+            { Import-DSPWebStructure -InputFileName $inputFileNameVariations -ParentUrl $site.RootWeb.Url -VariationLabel 'fr' -Overwrite  } | Should Throw
         }
     }
 
@@ -493,6 +501,69 @@ Describe "Import-DSPWebStructure" -Tag "Slow" {
 
             Write-Host "     --Tests Teardown--"
             $ConfirmPreference = "High"		
+        }
+
+        It "should update welcome pages of new webs if 'UpdateWelcomePages' parameter is specified" {
+            
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+            $site =  New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
+
+            $subweb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb1"))
+            $subweb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb2"))
+            $subweb11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($subweb1Url, "subweb11"))
+
+            Import-DSPWebStructure -InputFileName $inputFileName -ParentUrl $site.RootWeb.Url -UpdateWelcomePages
+
+            $subweb1 = Get-SPWeb $subweb1Url -ErrorAction SilentlyContinue
+            $subweb2 = Get-SPWeb $subweb2Url -ErrorAction SilentlyContinue
+            $subweb11 = Get-SPWeb $subweb11Url -ErrorAction SilentlyContinue
+
+            $subweb1.RootFolder.WelcomePage | Should Be 'Pages/subweb1.aspx'
+            $subweb2.RootFolder.WelcomePage | Should Be 'Pages/subweb2.aspx'
+            $subweb11.RootFolder.WelcomePage | Should Be 'Pages/subweb11.aspx'	
+
+            Write-Host "     --Tests Teardown--"
+            Remove-SPSite $siteUrl -Confirm:$false
+
+        }
+
+        It "should update welcome pages for existing web if 'UpdateWelcomePages' and 'VariationLabel' parameters are specified" {
+            
+            Write-Host "     --Test Setup--"
+
+            # Create site hierarchy
+            $site = New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists -SiteUrl $siteUrl
+
+            $subweb1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb1"))
+            $subweb2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "subweb2"))
+            $subweb11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($subweb1Url, "subweb11"))
+
+            $soussite1Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "soussite1"))
+            $soussite2Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($site.Url, "soussite2"))
+            $soussite11Url = ([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($soussite1Url, "soussite11"))
+
+            # First import
+            Import-DSPWebStructure -InputFileName $inputFileNameVariations -ParentUrl $site.Url 
+
+            # Override import with variation settinga
+            Import-DSPWebStructure -InputFileName $inputFileNameVariations -ParentUrl $site.Url -VariationLabel 'fr' -UpdateWelcomePages
+
+            $soussite1 = Get-SPWeb $soussite1Url -ErrorAction SilentlyContinue
+            $soussite2 = Get-SPWeb $soussite2Url -ErrorAction SilentlyContinue
+            $soussite11 = Get-SPWeb $soussite11Url -ErrorAction SilentlyContinue
+
+            $soussite1 | Should Not Be $null
+            $soussite2 | Should Not Be $null
+            $soussite11 | Should Not Be $null	
+
+            $soussite1.RootFolder.WelcomePage | Should Be 'Pages/soussite1.aspx'
+            $soussite2.RootFolder.WelcomePage | Should Be 'Pages/soussite2.aspx'
+            $soussite11.RootFolder.WelcomePage | Should Be 'Pages/soussite11.aspx'	
+
+            Write-Host "     --Tests Teardown--"
+            $ConfirmPreference = "High"
         }
     }
 }

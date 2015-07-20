@@ -4,17 +4,17 @@
   <Web Name="RootWeb" Path="/" Template="BLANKINTERNET#0" Language="1033" IsRoot="True" Owner="office\franck.cornu">
     <Web Name="SubWeb1" Path="subweb1" Template="STS#0" Language="1033">
         <Variations>
-            <TargetWeb Name="Sous Site 1" Path="soussite1" Language="1036" Label="fr" />
+            <TargetWeb Name="Sous Site 1" Path="soussite1" Language="1036" Label="fr" WelcomePage="Pages/soussite1.aspx"/>
         </Variations>
         <Web Name="SubWeb11" Path="subweb11" Template="STS#0" Language="1033" >
             <Variations>
-                <TargetWeb Name="Sous Site 11" Path="soussite11" Language="1036" Label="fr" />
+                <TargetWeb Name="Sous Site 11" Path="soussite11" Language="1036" Label="fr" WelcomePage="Pages/soussite11.aspx"/>
             </Variations>
         </Web>
     </Web>
     <Web Name="SubWeb2" Path="subweb2" Template="STS#0" Language="1033" >
         <Variations>
-            <TargetWeb Name="Sous Site 2" Path="soussite2" Language="1036" Label="fr" />
+            <TargetWeb Name="Sous Site 2" Path="soussite2" Language="1036" Label="fr" WelcomePage="Pages/soussite2.aspx"/>
         </Variations>
     </Web>
   </Web>
