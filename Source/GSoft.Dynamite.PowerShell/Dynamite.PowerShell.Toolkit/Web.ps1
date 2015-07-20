@@ -509,6 +509,7 @@ function Export-DSPWebStructure {
 										$VariatedWeb | Add-Member -Type NoteProperty -Name "Path" -Value ([System.IO.Path]::GetFileNameWithoutExtension($PeerWeb.ServerRelativeUrl))
 										$VariatedWeb | Add-Member -Type NoteProperty -Name "Language" -Value $PeerWeb.Language
 										$VariatedWeb | Add-Member -Type NoteProperty -Name "Label" -Value $PeerPublishingWeb.Label.Title
+                                        $VariatedWeb | Add-Member -Type NoteProperty -Name "WelcomePage" -Value $PeerWeb.RootFolder.WelcomePage
 
 										$VariationsWebs += $VariatedWeb
 							
@@ -553,6 +554,7 @@ function Export-DSPWebStructure {
             $WebXMLElement.SetAttribute("Path", [System.IO.Path]::GetFileNameWithoutExtension($Web.ServerRelativeUrl))
             $WebXMLElement.SetAttribute("Template", $Web.WebTemplate + "#" + $Web.Configuration)
             $WebXMLElement.SetAttribute("Language", $Web.Language)
+            $WebXMLElement.SetAttribute("WelcomePage", $Web.RootFolder.WelcomePage)
 
 			if ($IsVariationsEnabled -and $IgnoreVariations.IsPresent)
 			{
@@ -582,6 +584,7 @@ function Export-DSPWebStructure {
 						$VariationXMLElement.SetAttribute("Path", $_.Path)
 						$VariationXMLElement.SetAttribute("Language", $_.Language)
 						$VariationXMLElement.SetAttribute("Label", $_.Label)
+                        $VariationXMLElement.SetAttribute("WelcomePage", $_.WelcomePage)
 							
 						$VariationsXMLElement.appendChild($VariationXMLElement)  	
 				}
@@ -746,7 +749,7 @@ function Import-DSPWebStructure {
 		[string]$InputFileName,
 
 		[Parameter(Mandatory=$false)]
-		[string]$VariationLabel
+		[string]$VariationLabel    
 	)
 
     function CreateWeb
@@ -769,7 +772,8 @@ function Import-DSPWebStructure {
                 $Template = $_.Template
                 $IsRoot = [System.Convert]::ToBoolean($_.IsRoot)
                 $Owner = $_.Owner
-                $Language = $_.Language			
+                $Language = $_.Language
+                $WelcomePageUrl = $_.WelcomePage			
 
                 $Url = (([Microsoft.SharePoint.Utilities.SPUtility]::ConcatUrls($SourceUrl, $Path))).TrimEnd('/')
             

@@ -11,6 +11,7 @@
     <xs:attribute type="xs:string" name="Language" use="required"/>
     <xs:attribute type="xs:string" name="IsRoot" use="optional"/>
     <xs:attribute type="xs:string" name="Owner" use="optional"/>
+    <xs:attribute type="xs:string" name="WelcomePage" use="optional"/>
   </xs:complexType>
   <xs:complexType name="ConfigurationType">
     <xs:sequence>
