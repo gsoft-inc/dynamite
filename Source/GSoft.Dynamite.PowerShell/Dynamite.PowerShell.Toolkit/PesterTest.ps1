@@ -10,7 +10,7 @@ function New-SingleSite {
 		[string]$SiteUrl,
 
 		[Parameter(Mandatory=$false)]
-		[string]$RootTemplateID = "CMSPUBLISHING#0",
+		[string]$RootTemplateID = "BLANKINTERNET#0",
 
 		[Parameter(Mandatory=$false)]
 		[string]$OwnerAlias = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name.ToLower()
@@ -355,7 +355,7 @@ function New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders {
 	return Get-SPSite $site.Url
 }
 
-function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
+function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders {
 
 	Param
 	(	
@@ -419,3 +419,40 @@ function New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders{
 
 	return Get-SPSite $site.Url
 }
+
+function Add-Document {
+
+	Param
+	(	
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPWeb]$Web,
+
+        [Parameter(Mandatory=$true)]
+		[string]$DocumentLibraryName,
+
+		[Parameter(Mandatory=$true)]
+		$File
+	)
+
+    $FileStream = ([System.IO.FileInfo] (Get-Item $File.FullName)).OpenRead()
+
+    #Add file
+    $List =  $Web.Lists.TryGetList("$DocumentLibraryName")
+
+    if ($List -ne $null)
+    {
+        $Folder = $List.RootFolder
+        $FileUrl = $Folder.Url + "/" + $File.Name
+
+        $UploadedFile = $Folder.Files.Add($FileUrl, [System.IO.Stream]$FileStream, $true)
+
+        #Close file stream
+        $FileStream.Close();
+    }
+
+    return $UploadedFile
+}
+
+
+        
+
