@@ -10,43 +10,43 @@
 function Get-BooleanValue() {
   Param
   (
-  	[string]$Value = "",		
-  	[bool]$DefaultValue = $false
+    [string]$Value = "",		
+    [bool]$DefaultValue = $false
   )
 
   try
   {
-  	$parsedValue = [bool]::Parse($Value)
-  	Write-Output $parsedValue
+    $parsedValue = [bool]::Parse($Value)
+    Write-Output $parsedValue
   }
   catch [FormatException]
   {
-  	if($DefaultValue -ne $null)
+    if($DefaultValue -ne $null)
     {
-  		Write-Output $DefaultValue
-  	}
+        Write-Output $DefaultValue
+    }
     else
     {
-  		throw $_
-  	}
+        throw $_
+    }
   }
 }
 
 function New-HeaderDrawing(){
   Param
   (
-  	[hashtable]$Values	
+    [hashtable]$Values	
   )
 
-	Write-Host "`n$("-" * 50)" -ForegroundColor Green
-	
+    Write-Host "`n$("-" * 50)" -ForegroundColor Green
+    
     $Values.Keys | Foreach-Object {
     
-     	Write-Host $_ -ForegroundColor Cyan -NoNewline
-		Write-Host $Values.Item($_) -ForegroundColor Yellow  
+        Write-Host $_ -ForegroundColor Cyan -NoNewline
+        Write-Host $Values.Item($_) -ForegroundColor Yellow  
      }
 
-	Write-Host "$("-" * 50)`n" -ForegroundColor Green
+    Write-Host "$("-" * 50)`n" -ForegroundColor Green
 }
 
 function Test-DSPIsAdmin()
@@ -56,41 +56,41 @@ function Test-DSPIsAdmin()
 }
 
 function Copy-DSPFiles {
-	<#
-	.SYNOPSIS
-		Copies files to a specified destination
-	
-	.DESCRIPTION
-		Copies files from a source folder to a destination folder using the specified
-		match and exclude patterns.
-		Note: See Get-ChildItem documentation for more information on pattern syntax.
-		https://technet.microsoft.com/en-us/library/hh849800.aspx
-	
-		--------------------------------------------------------------------------------------
-		Module 'Dynamite.PowerShell.Toolkit'
-		by: GSoft, Team Dynamite.
-		> GSoft & Dynamite : http://www.gsoft.com
-		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
-		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
-		--------------------------------------------------------------------------------------
+    <#
+    .SYNOPSIS
+        Copies files to a specified destination
     
-	.PARAMETER Path
-		The source path where all the files are located. By default the value is the current working location.
-	
-	.PARAMETER DestinationPath
-		The destination path where the files will be copied.
- 	
-	.PARAMETER Match
-		Array of strings to match files with.
-	
-	.PARAMETER Exclude
-		Array of strings to exclude files with.
-	#>
+    .DESCRIPTION
+        Copies files from a source folder to a destination folder using the specified
+        match and exclude patterns.
+        Note: See Get-ChildItem documentation for more information on pattern syntax.
+        https://technet.microsoft.com/en-us/library/hh849800.aspx
+    
+        --------------------------------------------------------------------------------------
+        Module 'Dynamite.PowerShell.Toolkit'
+        by: GSoft, Team Dynamite.
+        > GSoft & Dynamite : http://www.gsoft.com
+        > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+        > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+        --------------------------------------------------------------------------------------
+    
+    .PARAMETER Path
+        The source path where all the files are located. By default the value is the current working location.
+    
+    .PARAMETER DestinationPath
+        The destination path where the files will be copied.
+    
+    .PARAMETER Match
+        Array of strings to match files with.
+    
+    .PARAMETER Exclude
+        Array of strings to exclude files with.
+    #>
   [CmdletBinding()]
-	param (
+    param (
         [Parameter(Mandatory=$true)]
         [string]$Path = (Get-Location),
-		
+        
         [Parameter(Mandatory=$true)]
         [string]$DestinationPath,
 
@@ -99,49 +99,49 @@ function Copy-DSPFiles {
 
         [Parameter(Mandatory=$false)]
         [string[]]$Exclude
-	)
+    )
     
     # Copy all .ps1 script inside $Path to $DestinationPath
     Copy-DSPFile -Path $Path -DestinationPath $DestinationPath -Match $Match -Exclude $Exclude
 }
 
 function Copy-DSPFile {
-	<#
-	.SYNOPSIS
-		Copies a file to a specified destination
-	
-	.DESCRIPTION
-		Copies a file from a source folder to a destination folder using the specified
-		match and exclude patterns.
-		Note: See Get-ChildItem documentation for more information on pattern syntax.
-		https://technet.microsoft.com/en-us/library/hh849800.aspx
-	
-		--------------------------------------------------------------------------------------
-		Module 'Dynamite.PowerShell.Toolkit'
-		by: GSoft, Team Dynamite.
-		> GSoft & Dynamite : http://www.gsoft.com
-		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
-		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
-		--------------------------------------------------------------------------------------
+    <#
+    .SYNOPSIS
+        Copies a file to a specified destination
     
-	.PARAMETER Path
-		The source path where the file is located. By default the value is the current working location.
-	
-	.PARAMETER DestinationPath
-		The destination path where the file will be copied.
- 	
-	.PARAMETER Match
-		Array of strings to match files with. Default is *.ps1,*.template, *.template.*,*.xlsx,*.jpg,*.jpeg,*.png,*.sgt, README*, *.psd1, *.psm1
-		for components deployment package publishing.
-	
-	.PARAMETER Exclude
-		Array of strings to exclude files with.
-	#>
+    .DESCRIPTION
+        Copies a file from a source folder to a destination folder using the specified
+        match and exclude patterns.
+        Note: See Get-ChildItem documentation for more information on pattern syntax.
+        https://technet.microsoft.com/en-us/library/hh849800.aspx
+    
+        --------------------------------------------------------------------------------------
+        Module 'Dynamite.PowerShell.Toolkit'
+        by: GSoft, Team Dynamite.
+        > GSoft & Dynamite : http://www.gsoft.com
+        > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+        > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+        --------------------------------------------------------------------------------------
+    
+    .PARAMETER Path
+        The source path where the file is located. By default the value is the current working location.
+    
+    .PARAMETER DestinationPath
+        The destination path where the file will be copied.
+    
+    .PARAMETER Match
+        Array of strings to match files with. Default is *.ps1,*.template, *.template.*,*.xlsx,*.jpg,*.jpeg,*.png,*.sgt, README*, *.psd1, *.psm1
+        for components deployment package publishing.
+    
+    .PARAMETER Exclude
+        Array of strings to exclude files with.
+    #>
   [CmdletBinding()]
-	param (
+    param (
         [Parameter(Mandatory=$true)]
         [string]$Path,
-		
+        
         [Parameter(Mandatory=$true)]
         [string]$DestinationPath,
 
@@ -150,13 +150,13 @@ function Copy-DSPFile {
 
         [Parameter(Mandatory=$false)]
         [string[]]$Exclude
-	)
+    )
 
     if ((![String]::IsNullOrEmpty($DestinationPath)))
     {
-    	# Replace tokens in all .template files.
-	    Get-ChildItem -Path $Path -Include $Match -Exclude $Exclude -Recurse | foreach {
-		    Write-Verbose "Copying file '$_'... "
+        # Replace tokens in all .template files.
+        Get-ChildItem -Path $Path -Include $Match -Exclude $Exclude -Recurse | foreach {
+            Write-Verbose "Copying file '$_'... "
 
             # Get the relative Path of the file from where we are.
             $relativePath = $_.FullName.Replace($Path, "")
@@ -172,47 +172,47 @@ function Copy-DSPFile {
             }
 
             # We write the tokenized file
-			Copy-Item $_.FullName $fileFullName -Force -ErrorAction Stop
+            Copy-Item $_.FullName $fileFullName -Force -ErrorAction Stop
         }
     }
 }
 
 function Copy-DSPSolutions {
-	<#
-	.SYNOPSIS
-		Copies WSP files to a specified destination
-	
-	.DESCRIPTION
-		Copies WSP files from a source folder to a destination folder using the specified
-		match and exclude patterns.
-		Note: See Get-ChildItem documentation for more information on pattern syntax.
-		https://technet.microsoft.com/en-us/library/hh849800.aspx
-	
-		--------------------------------------------------------------------------------------
-		Module 'Dynamite.PowerShell.Toolkit'
-		by: GSoft, Team Dynamite.
-		> GSoft & Dynamite : http://www.gsoft.com
-		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
-		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
-		--------------------------------------------------------------------------------------
+    <#
+    .SYNOPSIS
+        Copies WSP files to a specified destination
     
-	.PARAMETER Path
-		The source path where all the files are located. By default the value is the current working location.
-	
-	.PARAMETER DestinationPath
-		The destination path where the files will be copied.
- 	
-	.PARAMETER Match
-		Array of strings to match files with. Default is *.wsp
-	
-	.PARAMETER Exclude
-		Array of strings to exclude files with.
-	#>
-	[CmdletBinding()]
-	param (
+    .DESCRIPTION
+        Copies WSP files from a source folder to a destination folder using the specified
+        match and exclude patterns.
+        Note: See Get-ChildItem documentation for more information on pattern syntax.
+        https://technet.microsoft.com/en-us/library/hh849800.aspx
+    
+        --------------------------------------------------------------------------------------
+        Module 'Dynamite.PowerShell.Toolkit'
+        by: GSoft, Team Dynamite.
+        > GSoft & Dynamite : http://www.gsoft.com
+        > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+        > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+        --------------------------------------------------------------------------------------
+    
+    .PARAMETER Path
+        The source path where all the files are located. By default the value is the current working location.
+    
+    .PARAMETER DestinationPath
+        The destination path where the files will be copied.
+    
+    .PARAMETER Match
+        Array of strings to match files with. Default is *.wsp
+    
+    .PARAMETER Exclude
+        Array of strings to exclude files with.
+    #>
+    [CmdletBinding()]
+    param (
         [Parameter(Mandatory=$true)]
         [string]$Path,
-		
+        
         [Parameter(Mandatory=$true)]
         [string]$DestinationPath,
 
@@ -221,7 +221,7 @@ function Copy-DSPSolutions {
 
         [Parameter(Mandatory=$false)]
         [string[]]$Exclude
-	)
+    )
     
 
     if (!(Test-Path $DestinationPath)) 
@@ -231,7 +231,7 @@ function Copy-DSPSolutions {
     
     Write-Verbose "Searching WSPs in $Path matching $FilterPath"
 
-    Get-ChildItem -Path $Path -Include "*.wsp" -Recurse -Exclude $Exclude | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
+    Get-ChildItem -Path $Path -Include "*.wsp" -Recurse -Exclude $Exclude –ErrorAction SilentlyContinue | where { (Split-Path $_.FullName) -like $FilterPath } | foreach {
         Write-Verbose "Copying WSP file '$_'... "
         Copy-Item $_.FullName $DestinationPath -Force -ErrorAction Stop
         Write-Verbose "Success!"
@@ -239,175 +239,175 @@ function Copy-DSPSolutions {
 }
 
 function Test-DSPDeployedSolutions {
-	<#
-	.SYNOPSIS
-		Checks the SharePoint farm to see if solutions are deployed
-	
-	.DESCRIPTION
-		Checks the SharePoint farm's solution solution store to see if all the solutions in the configuration file are deployed.
-	
-		--------------------------------------------------------------------------------------
-		Module 'Dynamite.PowerShell.Toolkit'
-		by: GSoft, Team Dynamite.
-		> GSoft & Dynamite : http://www.gsoft.com
-		> Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
-		> Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
-		--------------------------------------------------------------------------------------
+    <#
+    .SYNOPSIS
+        Checks the SharePoint farm to see if solutions are deployed
     
-	.PARAMETER SolutionsConfigurationFilePath
-		Path of the XML configuration file of the deployed solutions.
-	#>
-	Param(
+    .DESCRIPTION
+        Checks the SharePoint farm's solution solution store to see if all the solutions in the configuration file are deployed.
+    
+        --------------------------------------------------------------------------------------
+        Module 'Dynamite.PowerShell.Toolkit'
+        by: GSoft, Team Dynamite.
+        > GSoft & Dynamite : http://www.gsoft.com
+        > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+        > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+        --------------------------------------------------------------------------------------
+    
+    .PARAMETER SolutionsConfigurationFilePath
+        Path of the XML configuration file of the deployed solutions.
+    #>
+    Param(
         [Parameter(Mandatory=$true)]
         [string]$SolutionsConfigurationFilePath)
-	
-	# Get configuration file contents
-	[xml]$solutionsXml = Get-Content $SolutionsConfigurationFilePath
-	$expectedSolutionNames = $solutionsXml.SelectNodes("//Solution") | ForEach-Object { $_.Path.Substring($_.Path.LastIndexOf("\") + 1) }
+    
+    # Get configuration file contents
+    [xml]$solutionsXml = Get-Content $SolutionsConfigurationFilePath
+    $expectedSolutionNames = $solutionsXml.SelectNodes("//Solution") | ForEach-Object { $_.Path.Substring($_.Path.LastIndexOf("\") + 1) }
 
-	# Check the farm for deployed solutions
-	$hasSolutionsDeployed = $true
-	$actualSolutionNames = Get-SPSolution | Where-Object Deployed | ForEach-Object Name
-	foreach ($expectedSolutionName in $expectedSolutionNames) {
-		if (-not ($actualSolutionNames -contains $expectedSolutionName)) {
-			$hasSolutionsDeployed = $false
-			Write-Warning "'$expectedSolutionName' not deployed in farm."
-		} else {
-			Write-Verbose "'$expectedSolutionName' deployed in farm."
-		}
-	}
+    # Check the farm for deployed solutions
+    $hasSolutionsDeployed = $true
+    $actualSolutionNames = Get-SPSolution | Where-Object Deployed | ForEach-Object Name
+    foreach ($expectedSolutionName in $expectedSolutionNames) {
+        if (-not ($actualSolutionNames -contains $expectedSolutionName)) {
+            $hasSolutionsDeployed = $false
+            Write-Warning "'$expectedSolutionName' not deployed in farm."
+        } else {
+            Write-Verbose "'$expectedSolutionName' deployed in farm."
+        }
+    }
 
-	return $hasSolutionsDeployed
+    return $hasSolutionsDeployed
 }
 
 function Resolve-DSPType {<#
-	.SYNOPSIS
-		Service locator method that can load up instances of Dynamite utility services and helpers
-	
-	.DESCRIPTION
-		Loads the first Dynamite assembly found in the Global Assembly Cache and attempts to resolve an instance that
-		corresponds to the name of the type that was specified.
+    .SYNOPSIS
+        Service locator method that can load up instances of Dynamite utility services and helpers
     
-	.PARAMETER $NameOfDynamiteTypeToResolve
-		The name of the type within GSoft.Dynamite assembly that we should attempt to resolve (e.g. "GSoft.Dynamite.Logging.ILogger")
-	#>
-	Param(
-		[Parameter(Mandatory=$true, Position=0)]
-		[string]$NameOfDynamiteTypeToResolve
-	)
+    .DESCRIPTION
+        Loads the first Dynamite assembly found in the Global Assembly Cache and attempts to resolve an instance that
+        corresponds to the name of the type that was specified.
+    
+    .PARAMETER $NameOfDynamiteTypeToResolve
+        The name of the type within GSoft.Dynamite assembly that we should attempt to resolve (e.g. "GSoft.Dynamite.Logging.ILogger")
+    #>
+    Param(
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$NameOfDynamiteTypeToResolve
+    )
 
-	# Load Dynamite+Autofac assemblies from GAC
-	$gacPath = "C:\Windows\Microsoft.NET\assembly\GAC_MSIL\"
-	$dynamiteAssemblyFile = Get-ChildItem -Path $gacPath -Filter GSoft.Dynamite.dll -Recurse
-	$autofacAssemblyFile = Get-ChildItem -Path $gacPath -Filter Autofac.dll -Recurse
+    # Load Dynamite+Autofac assemblies from GAC
+    $gacPath = "C:\Windows\Microsoft.NET\assembly\GAC_MSIL\"
+    $dynamiteAssemblyFile = Get-ChildItem -Path $gacPath -Filter GSoft.Dynamite.dll -Recurse
+    $autofacAssemblyFile = Get-ChildItem -Path $gacPath -Filter Autofac.dll -Recurse
 
-	if (($dynamiteAssemblyFile -eq $null) -or ($autofacAssemblyFile -eq $null))
-	{
-		Write-Error "Failed to find the GSoft.Dynamite.dll assembly or the Autofac.dll assembly in the GAC. You must deploy the GSoft.Dynamite.wsp package before using Resolve-DSPType."
-		return $null
-	}
+    if (($dynamiteAssemblyFile -eq $null) -or ($autofacAssemblyFile -eq $null))
+    {
+        Write-Error "Failed to find the GSoft.Dynamite.dll assembly or the Autofac.dll assembly in the GAC. You must deploy the GSoft.Dynamite.wsp package before using Resolve-DSPType."
+        return $null
+    }
 
-	$dynamiteAssembly = [System.Reflection.Assembly]::LoadFrom($dynamiteAssemblyFile.FullName)
+    $dynamiteAssembly = [System.Reflection.Assembly]::LoadFrom($dynamiteAssemblyFile.FullName)
 
-	# Create a temporary service locator that load Dynamite's type registrations only
-	$serviceLocator = New-Object -TypeName GSoft.Dynamite.ServiceLocator.SharePointServiceLocator -ArgumentList "GSoft.Dynamite"
-	$scope = $serviceLocator.BeginLifetimeScope()
+    # Create a temporary service locator that load Dynamite's type registrations only
+    $serviceLocator = New-Object -TypeName GSoft.Dynamite.ServiceLocator.SharePointServiceLocator -ArgumentList "GSoft.Dynamite"
+    $scope = $serviceLocator.BeginLifetimeScope()
 
-	$typeToResolveFullName = $NameOfDynamiteTypeToResolve + ", " + $dynamiteAssembly.FullName
+    $typeToResolveFullName = $NameOfDynamiteTypeToResolve + ", " + $dynamiteAssembly.FullName
 
-	$typeToResolve = [Type]::GetType($typeToResolveFullName)
+    $typeToResolve = [Type]::GetType($typeToResolveFullName)
 
-	$returnObject = [Autofac.ResolutionExtensions]::Resolve($scope, $typeToResolve)
+    $returnObject = [Autofac.ResolutionExtensions]::Resolve($scope, $typeToResolve)
 
-	return $returnObject;
+    return $returnObject;
 }
 
 # http://stackoverflow.com/questions/4241985/calling-generic-static-method-in-powershell
 function Invoke-GenericMethod {
 
-	Param(
-		$instance = $(throw “Please provide an instance on which to invoke the generic method”),
-		[string] $methodName = $(throw “Please provide a method name to invoke”),
-		[string[]] $typeParameters = $(throw “Please specify the type parameters”),
-		[object[]] $methodParameters = $(throw “Please specify the method parameters”)
-	)
+    Param(
+        $instance = $(throw “Please provide an instance on which to invoke the generic method”),
+        [string] $methodName = $(throw “Please provide a method name to invoke”),
+        [string[]] $typeParameters = $(throw “Please specify the type parameters”),
+        [object[]] $methodParameters = $(throw “Please specify the method parameters”)
+    )
 
-	## Determine if the types in $set1 match the types in $set2, replacing generic
-	## parameters in $set1 with the types in $genericTypes
-	function ParameterTypesMatch([type[]] $set1, [type[]] $set2, [type[]] $genericTypes)
-	{
-		$typeReplacementIndex = 0
-		$currentTypeIndex = 0
+    ## Determine if the types in $set1 match the types in $set2, replacing generic
+    ## parameters in $set1 with the types in $genericTypes
+    function ParameterTypesMatch([type[]] $set1, [type[]] $set2, [type[]] $genericTypes)
+    {
+        $typeReplacementIndex = 0
+        $currentTypeIndex = 0
 
-		## Exit if the set lengths are different
-		if($set1.Count -ne $set2.Count)
-		{
-			return $false
-		}
+        ## Exit if the set lengths are different
+        if($set1.Count -ne $set2.Count)
+        {
+            return $false
+        }
 
-		## Go through each of the types in the first set
-		foreach($type in $set1)
-		{
-			## If it is a generic parameter, then replace it with a type from
-			## the $genericTypes list
-			if($type.IsGenericParameter)
-			{
-				$type = $genericTypes[$typeReplacementIndex]
-				$typeReplacementIndex++
-			}
+        ## Go through each of the types in the first set
+        foreach($type in $set1)
+        {
+            ## If it is a generic parameter, then replace it with a type from
+            ## the $genericTypes list
+            if($type.IsGenericParameter)
+            {
+                $type = $genericTypes[$typeReplacementIndex]
+                $typeReplacementIndex++
+            }
 
-			## Check that the current type (i.e.: the original type, or replacement
-			## generic type) matches the type from $set2
-			if($type -ne $set2[$currentTypeIndex])
-			{
-				return $false
-			}
-			$currentTypeIndex++
-		}
+            ## Check that the current type (i.e.: the original type, or replacement
+            ## generic type) matches the type from $set2
+            if($type -ne $set2[$currentTypeIndex])
+            {
+                return $false
+            }
+            $currentTypeIndex++
+        }
 
-		return $true
-	}
+        return $true
+    }
 
-	## Convert the type parameters into actual types
-	[type[]] $typedParameters = $typeParameters
+    ## Convert the type parameters into actual types
+    [type[]] $typedParameters = $typeParameters
 
-	## Determine the type that we will call the generic method on. Initially, assume
-	## that it is actually a type itself.
-	$type = $instance
+    ## Determine the type that we will call the generic method on. Initially, assume
+    ## that it is actually a type itself.
+    $type = $instance
 
-	## If it is not, then it is a real object, and we can call its GetType() method
-	if($instance -isnot “Type”)
-	{
-		$type = $instance.GetType()
-	}
+    ## If it is not, then it is a real object, and we can call its GetType() method
+    if($instance -isnot “Type”)
+    {
+        $type = $instance.GetType()
+    }
 
-	## Search for the method that:
-	## – has the same name
-	## – is public
-	## – is a generic method
-	## – has the same parameter types
-	foreach($method in $type.GetMethods())
-	{
-		# Write-Host $method.Name
-		if(($method.Name -eq $methodName) -and
-		($method.IsPublic) -and
-		($method.IsGenericMethod))
-		{
-			$parameterTypes = @($method.GetParameters() | % { $_.ParameterType })
-			$methodParameterTypes = @($methodParameters | % { $_.GetType() })
-			if(ParameterTypesMatch $parameterTypes $methodParameterTypes $typedParameters)
-			{
-				## Create a closed representation of it
-				$newMethod = $method.MakeGenericMethod($typedParameters)
+    ## Search for the method that:
+    ## – has the same name
+    ## – is public
+    ## – is a generic method
+    ## – has the same parameter types
+    foreach($method in $type.GetMethods())
+    {
+        # Write-Host $method.Name
+        if(($method.Name -eq $methodName) -and
+        ($method.IsPublic) -and
+        ($method.IsGenericMethod))
+        {
+            $parameterTypes = @($method.GetParameters() | % { $_.ParameterType })
+            $methodParameterTypes = @($methodParameters | % { $_.GetType() })
+            if(ParameterTypesMatch $parameterTypes $methodParameterTypes $typedParameters)
+            {
+                ## Create a closed representation of it
+                $newMethod = $method.MakeGenericMethod($typedParameters)
 
-				## Invoke the method
-				$newMethod.Invoke($instance, $methodParameters)
+                ## Invoke the method
+                $newMethod.Invoke($instance, $methodParameters)
 
-				return
-			}
-		}
-	}
+                return
+            }
+        }
+    }
 
-	## Return an error if we couldn’t find that method
-	throw "Could not find method $methodName"
+    ## Return an error if we couldn’t find that method
+    throw "Could not find method $methodName"
 }
