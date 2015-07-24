@@ -867,7 +867,8 @@ function Import-DSPWebStructure {
 							$newWeb = $false
                        }
                     }
-                    else
+                    # If we specify a variation label, make sure we're only creating new webs of source label
+                    elseif ([string]::IsNullOrEmpty($VariationLabel) -or $VariationLabel -eq $_.Label)
                     {
                         Write-Warning "Web $Url does not exist"
                         $newWeb = $true
