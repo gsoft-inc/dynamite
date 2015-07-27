@@ -124,7 +124,6 @@ namespace GSoft.Dynamite.ReusableContent
                         item.Update();
 
                         this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
-
                     }
                 }
             }
