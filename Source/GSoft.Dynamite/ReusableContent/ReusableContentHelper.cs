@@ -115,16 +115,17 @@ namespace GSoft.Dynamite.ReusableContent
                     {
                         // The Reusable Content does not exists, let's create it.
                         item = list.Items.Add();
+
+                        // Ensure the Category
+                        this.EnsureContentCategory(list, reusableContent.Category);
+
+                        // Bind the entity to the list item
+                        this.binder.FromEntity<ReusableContentInfo>(reusableContent, item);
+                        item.Update();
+
+                        this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
+
                     }
-
-                    // Ensure the Category
-                    this.EnsureContentCategory(list, reusableContent.Category);
-
-                    // Bind the entity to the list item
-                    this.binder.FromEntity<ReusableContentInfo>(reusableContent, item);
-                    item.Update();
-
-                    this.logger.Info("Reusable Content with title '{0}' was successfully ensured in site '{1}'.", reusableContent.Title, site.Url);
                 }
             }
         }
