@@ -270,6 +270,16 @@ namespace GSoft.Dynamite.Fields.Constants
         /// </summary>
         public const string ModerationStatusName = "ModerationStatus";
 
+        /// <summary>
+        /// StartDate: Date and time field to display the start date.
+        /// </summary>
+        public const string StartDateName = "StartDate";
+
+        /// <summary>
+        /// EndDate: Date and time field to display the end date.
+        /// </summary>
+        public const string EndDateName = "_EndDate";
+
         #endregion
 
         #region FieldInfo
@@ -820,6 +830,28 @@ namespace GSoft.Dynamite.Fields.Constants
             get
             {
                 return new MinimalFieldInfo<string>(CheckoutUserName, SPBuiltInFieldId._ModerationStatus);
+            }
+        }
+
+        /// <summary>
+        /// Start date field info
+        /// </summary>
+        public static BaseFieldInfo StartDate
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(StartDateName, SPBuiltInFieldId.StartDate);
+            }
+        }
+
+        /// <summary>
+        /// End date field info
+        /// </summary>
+        public static BaseFieldInfo EndDate
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(EndDateName, SPBuiltInFieldId._EndDate);
             }
         }
 
