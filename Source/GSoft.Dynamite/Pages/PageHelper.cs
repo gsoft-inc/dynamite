@@ -77,7 +77,9 @@ namespace GSoft.Dynamite.Pages
             }
 
             var pageServerRelativeUrl = folder.ServerRelativeUrl + "/" + page.FileName + ".aspx";
-            var publishingPage = publishingWeb.GetPublishingPage(pageServerRelativeUrl);
+            Uri baseUri = new Uri(library.ParentWeb.Url, UriKind.Absolute);
+            var publishingPage = publishingPages.ToList().Find(
+                x => Uri.Compare(x.Uri, new Uri(baseUri, pageServerRelativeUrl), UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0);
 
             if (publishingPage == null)
             {
