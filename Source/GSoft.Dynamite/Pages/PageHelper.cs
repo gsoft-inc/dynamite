@@ -62,7 +62,8 @@ namespace GSoft.Dynamite.Pages
             }
 
             var publishingWeb = PublishingWeb.GetPublishingWeb(library.ParentWeb);
-            var publishingPages = publishingWeb.GetPublishingPages();
+            var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+            var publishingPages = publishingWeb.GetPublishingPages(recursivePagesQuery);
 
             PageLayout pageLayout = null;
 
