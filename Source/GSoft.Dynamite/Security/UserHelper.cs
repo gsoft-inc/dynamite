@@ -69,64 +69,73 @@ namespace GSoft.Dynamite.Security
 
             principal.ParentWeb.RunAsSystem(elevatedWeb =>
             {
-                SPUser user = principal as SPUser;
-                if (user != null)
+                try
                 {
-                    if (user.IsDomainGroup)
+                    elevatedWeb.AllowUnsafeUpdates = true;
+
+                    SPUser user = principal as SPUser;
+                    if (user != null)
                     {
-                        bool reachedMaxCount;
-
-                        // Be careful, this method return AD groups too regardless to their permissions in the current SharePoint site
-                        SPPrincipalInfo[] groupMembers = SPUtility.GetPrincipalsInGroup(elevatedWeb, principal.LoginName, 9999, out reachedMaxCount);
-                        if (groupMembers != null)
+                        if (user.IsDomainGroup)
                         {
-                            foreach (SPPrincipalInfo member in groupMembers)
+                            bool reachedMaxCount;
+
+                            // Be careful, this method return AD groups too regardless to their permissions in the current SharePoint site
+                            SPPrincipalInfo[] groupMembers = SPUtility.GetPrincipalsInGroup(elevatedWeb, principal.LoginName, 9999, out reachedMaxCount);
+                            if (groupMembers != null)
                             {
-                                switch (member.PrincipalType)
+                                foreach (SPPrincipalInfo member in groupMembers)
                                 {
-                                    case SPPrincipalType.SecurityGroup:
-                                    case SPPrincipalType.DistributionList:
-                                        {
-                                            var usersInPrincipal = GetUsersInPrincipal(elevatedWeb.EnsureUser(member.LoginName));
-
-                                            // Only add users to the all users list if they are not already there.
-                                            allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
-                                            break;
-                                        }
-
-                                    case SPPrincipalType.User:
-                                        {
-                                            var memberUser = elevatedWeb.EnsureUser(member.LoginName);
-                                            if (!HasUserInList(allUsers, memberUser))
+                                    switch (member.PrincipalType)
+                                    {
+                                        case SPPrincipalType.SecurityGroup:
+                                        case SPPrincipalType.DistributionList:
                                             {
-                                                allUsers.Add(memberUser);
+                                                var usersInPrincipal = GetUsersInPrincipal(elevatedWeb.EnsureUser(member.LoginName));
+
+                                                // Only add users to the all users list if they are not already there.
+                                                allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
+                                                break;
                                             }
 
-                                            break;
-                                        }
+                                        case SPPrincipalType.User:
+                                            {
+                                                var memberUser = elevatedWeb.EnsureUser(member.LoginName);
+                                                if (!HasUserInList(allUsers, memberUser))
+                                                {
+                                                    allUsers.Add(memberUser);
+                                                }
+
+                                                break;
+                                            }
+                                    }
                                 }
+                            }
+                        }
+                        else
+                        {
+                            // Only add the user to the all users list if they are not already there.
+                            if (!HasUserInList(allUsers, user))
+                            {
+                                allUsers.Add(user);
                             }
                         }
                     }
                     else
                     {
-                        // Only add the user to the all users list if they are not already there.
-                        if (!HasUserInList(allUsers, user))
+                        SPGroup group = principal as SPGroup;
+                        foreach (SPUser groupUser in group.Users)
                         {
-                            allUsers.Add(user);
+                            var usersInPrincipal = GetUsersInPrincipal(groupUser);
+
+                            // Only add users to the all users list if they are not already there.
+                            allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
                         }
                     }
                 }
-                else
+                finally
                 {
-                    SPGroup group = principal as SPGroup;
-                    foreach (SPUser groupUser in group.Users)
-                    {
-                        var usersInPrincipal = GetUsersInPrincipal(groupUser);
-
-                        // Only add users to the all users list if they are not already there.
-                        allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
-                    }
+                    elevatedWeb.AllowUnsafeUpdates = false;
                 }
             });
 
