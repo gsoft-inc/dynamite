@@ -194,7 +194,7 @@ namespace GSoft.Dynamite.Events
             // If definition isn't already defined, add it to the content type
             if (eventReceiverDefinition != null)
             {
-                var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => eventReceiver.Type == eventReceiverDefinition.Type).ToList();
+                var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => (eventReceiver.Type == eventReceiverDefinition.Type) && (eventReceiver.Class == eventReceiverDefinition.Class)).ToList();
                 eventToDelete.ForEach(c => c.Delete());
                 contentType.Update(true);
             }

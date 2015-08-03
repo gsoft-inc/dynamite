@@ -63,10 +63,5 @@ namespace GSoft.Dynamite.Catalogs
         /// Specifies if the catalog must be anonymous
         /// </summary>
         public bool IsAnonymous { get; set; }
-
-        /// <summary>
-        /// Indicates whether or not the catalog will be variations-synced
-        /// </summary>
-        public bool IsSynced { get; set; }
     }
 }

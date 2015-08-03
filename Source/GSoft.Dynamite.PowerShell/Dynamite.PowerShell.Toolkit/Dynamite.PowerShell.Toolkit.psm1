@@ -141,7 +141,7 @@ Export-ModuleMember Enable-DSPBlobCache, Disable-DSPBlobCache, Clear-DSPBlobCach
 Export-ModuleMember Set-DSPWebPermissions
 
 # Sharegate
-Export-ModuleMember  Test-SharegateModule, Import-DSPData
+Export-ModuleMember  Test-SharegateModule, Import-DSPData, Copy-DSPData
 
 # Timer Job
 Export-ModuleMember Set-DSPTimerJobs
@@ -160,6 +160,6 @@ Export-ModuleMember Invoke-Parallel
 
 # Pester Tests
 Export-ModuleMember New-SingleSiteNoSubsitesNoVariationsWithCustomLists, New-SingleSiteNoSubsitesNoVariationsWithoutCustomLists, New-SiteWithSubsitesNoVariations, New-SiteWithSubsitesAndVariationsWithCustomLists,
- New-CustomList, Get-ListItem, New-SinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders, New-TeamSiteWithSubSites, New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders, New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders
+ New-CustomList, Get-ListItem, New-SinglePublishingSiteNoSubsitesNoVariationsWithPagesAndFolders, New-TeamSiteWithSubSites, New-PublishingSiteWithSubsitesNoVariationsWithPagesAndFolders, New-PublishingSiteWithSubsitesWithVariationsWithPagesAndFolders, Add-Document, New-PublishingPagesAndFolders, New-SingleSite
 
 #endregion

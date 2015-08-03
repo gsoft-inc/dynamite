@@ -21,6 +21,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.IsSynced = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
             this.ValidationSettings = new Dictionary<string, ListValidationInfo>();
@@ -43,6 +44,7 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.IsSynced = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
             this.EnableAttachements = true;
 
@@ -217,5 +219,12 @@ namespace GSoft.Dynamite.Lists
         /// If this property is filled in, the 'ensure' method will write the list ID in a property with the related key in the web property bag
         /// </summary>
         public string PropertyBagKeyForListId { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not the list will be variations-synced.
+        /// By default, a ListInfo will not be synced while a CatalogInfo
+        /// will be synced.
+        /// </summary>
+        public bool IsSynced { get; set; }
     }
 }
