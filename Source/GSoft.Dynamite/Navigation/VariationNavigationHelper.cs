@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -90,6 +91,7 @@ namespace GSoft.Dynamite.Navigation
         /// <returns>
         /// The url of the peer page
         /// </returns>
+        [SuppressMessage("Microsoft.Usage", "CA2234:PassSystemUriObjectsInsteadOfStrings", Justification = "Sometimes, it's easier to use a string than the Uri object!")]
         public Uri GetPeerPageUrl(SPWeb web, Uri currentUrl, VariationLabelInfo label)
         {
             // Special case for application pages under /_layouts:
