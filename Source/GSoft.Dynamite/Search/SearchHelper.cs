@@ -187,7 +187,15 @@ namespace GSoft.Dynamite.Search
             // (i.e. all managed props will be farm-wide)
             var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, site.RootWeb);
 
+            // Get the managed property and if null, create it
             var managedPropertyDefinition = this.GetManagedProperty(managedPropertyInfo, ssa, owner);
+            if (managedPropertyDefinition == null)
+            {
+                // If managed property was created, make sure it sets the crawled property mappings and configuration
+                managedPropertyInfo.UpdateBehavior = ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists;
+                managedPropertyDefinition = this.CreateManagedProperty(managedPropertyInfo, ssa, owner);
+            }
+
             if (managedPropertyDefinition != null)
             {
                 this.SetCrawledPropertyMappings(site, managedPropertyDefinition, managedPropertyInfo, ssa, owner);
@@ -649,6 +657,32 @@ namespace GSoft.Dynamite.Search
         {
             SPManagedPropertyInfo managedPropertyDefinition = null;
             var propertyName = managedPropertyInfo.Name;
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            // If the managed property already exists
+            // Else create it.
+            if (managedProperties.Contains(propertyName))
+            {
+                managedPropertyDefinition = ssa.GetManagedProperty(propertyName, owner);
+            }
+            else
+            {
+                this.logger.Warn("Managed Property '{0}' not found.", propertyName);
+            }
+
+            return managedPropertyDefinition;
+        }
+
+        private SPManagedPropertyInfo CreateManagedProperty(
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner)
+        {
+            SPManagedPropertyInfo managedPropertyDefinition = null;
+            var propertyName = managedPropertyInfo.Name;
             var propertyType = managedPropertyInfo.DataType;
 
             // Get the search schema
@@ -660,25 +694,15 @@ namespace GSoft.Dynamite.Search
             if (managedProperties.Contains(propertyName))
             {
                 var prop = managedProperties[propertyName];
-
-                // If update mode is "overwrite if already exists", delete and recreate the managed property
-                // Else if update mode is anything else that "no changes id already exists", get the existing managed property.
-                if (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists)
+                if (prop.DeleteDisallowed)
                 {
-                    if (prop.DeleteDisallowed)
-                    {
-                        this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
-                    }
-                    else
-                    {
-                        prop.DeleteAllMappings();
-                        prop.Delete();
-                        managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
-                    }
+                    this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
                 }
-                else if (managedPropertyInfo.UpdateBehavior != ManagedPropertyUpdateBehavior.NoChangesIfAlreadyExists)
+                else
                 {
-                    managedPropertyDefinition = ssa.GetManagedProperty(propertyName, owner);
+                    prop.DeleteAllMappings();
+                    prop.Delete();
+                    managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
                 }
             }
             else

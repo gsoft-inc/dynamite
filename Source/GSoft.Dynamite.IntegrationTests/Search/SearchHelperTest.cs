@@ -689,6 +689,66 @@ namespace GSoft.Dynamite.IntegrationTests.Search
             }
         }
 
+        /// <summary>
+        /// Validates that when calling 'EnsureManagedProperty' on an existing property,
+        /// it creates the managed property with the 'NoChangesIfAlreadyExists' update mode.
+        /// </summary>
+        [TestMethod]
+        public void EnsureManagedProperty_WhenNoChangesWanted_ShouldCreateManagedPropertyIfDoesntExist()
+        {
+            const string ManagedPropertyName = "TestManagedProperty";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, testScope.SiteCollection.RootWeb);
+                var managedPropertyInfo = new ManagedPropertyInfo(ManagedPropertyName, ManagedDataType.Text)
+                {
+                    Sortable = true,
+                    Refinable = true,
+                    Queryable = true,
+                    CrawledProperties = new Dictionary<string, int>()
+                    {
+                        { "ows_Title", 1 }
+                    },
+                    UpdateBehavior = ManagedPropertyUpdateBehavior.NoChangesIfAlreadyExists
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var searchHelper = injectionScope.Resolve<ISearchHelper>();
+                    var ssa = searchHelper.GetDefaultSearchServiceApplication(testScope.SiteCollection);
+
+                    try
+                    {
+                        // Act
+                        var actualManagedProperty = searchHelper.EnsureManagedProperty(testScope.SiteCollection, managedPropertyInfo);
+                        var refetchedActualManagedProperty = ssa.GetManagedProperty(ManagedPropertyName, owner);
+
+                        // Assert
+                        Assert.IsNotNull(actualManagedProperty);
+                        Assert.AreEqual(true, actualManagedProperty.Sortable);
+                        Assert.AreEqual(true, actualManagedProperty.Refinable);
+                        Assert.AreEqual(true, actualManagedProperty.Queryable);
+                        Assert.IsTrue(actualManagedProperty.GetMappedCrawledProperties(2).Count == 1);
+                        Assert.IsTrue(actualManagedProperty.GetMappedCrawledProperties(2)[0].Name == "ows_Title");
+
+                        Assert.IsNotNull(refetchedActualManagedProperty);
+                        Assert.AreEqual(true, refetchedActualManagedProperty.Sortable);
+                        Assert.AreEqual(true, refetchedActualManagedProperty.Refinable);
+                        Assert.AreEqual(true, refetchedActualManagedProperty.Queryable);
+                        Assert.IsTrue(ssa.GetManagedPropertyMappings(refetchedActualManagedProperty, owner).Count == 1);
+                        Assert.IsTrue(ssa.GetManagedPropertyMappings(refetchedActualManagedProperty, owner)[0].CrawledPropertyName == "ows_Title");
+                    }
+                    finally
+                    {
+                        // Clean up
+                        searchHelper.DeleteManagedProperty(testScope.SiteCollection, managedPropertyInfo);
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }
