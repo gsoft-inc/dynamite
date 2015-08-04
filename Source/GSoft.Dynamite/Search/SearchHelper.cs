@@ -198,8 +198,17 @@ namespace GSoft.Dynamite.Search
 
             if (managedPropertyDefinition != null)
             {
-                this.SetCrawledPropertyMappings(site, managedPropertyDefinition, managedPropertyInfo, ssa, owner);
-                this.ConfigureManagerProperty(managedPropertyDefinition, managedPropertyInfo);
+                // If crawled property mappings need to be overwritten or appended
+                if (ShouldUpdateCrawledPropertyMappings(managedPropertyInfo))
+                {
+                    var mappings = GetInitialCrawledPropertyMappings(managedPropertyDefinition, managedPropertyInfo, ssa, owner);
+                    this.SetCrawledPropertyMappings(site, managedPropertyDefinition, managedPropertyInfo, ssa, owner, mappings);
+                }
+
+                if (ShouldUpdateConfiguration(managedPropertyInfo))
+                {
+                    this.ConfigureManagerProperty(managedPropertyDefinition, managedPropertyInfo);
+                }
 
                 // Save through the schema manager (don't call .Update on the managed property object itself, its config won't get saved properly)
                 ssa.UpdateManagedProperty(managedPropertyDefinition, owner);
@@ -718,74 +727,53 @@ namespace GSoft.Dynamite.Search
             SPManagedPropertyInfo managedPropertyDefinition,
             ManagedPropertyInfo managedPropertyInfo,
             SearchServiceApplication ssa,
-            SearchObjectOwner owner)
+            SearchObjectOwner owner,
+            List<MappingInfo> mappings)
         {
-            var mappingCollection = new List<MappingInfo>();
-
-            // If specified to overwrite all crawled property mappings
-            // set an empty mapping info list before recreating the mappings.
-            // Else if, if specified to append the crawled properties, initialize the
-            // mapping collection to the existing mappings on the managed property.
-            switch (managedPropertyInfo.UpdateBehavior)
+            // Ensure crawl properties mappings
+            foreach (var crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
             {
-                case ManagedPropertyUpdateBehavior.OverwriteCrawledProperties:
-                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
-                    break;
-                case ManagedPropertyUpdateBehavior.AppendCrawledProperties:
-                    mappingCollection = ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner);
-                    break;
-            }
-
-            // If crawled property mappings need to be overwritten or appended
-            if ((managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteCrawledProperties) || 
-                (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.AppendCrawledProperties) || 
-                (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists))
-            {
-                // Ensure crawl properties mappings
-                foreach (var crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
+                // Get the crawled property (there may be more than one matching that name)
+                var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
+                if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
                 {
-                    // Get the crawled property (there may be more than one matching that name)
-                    var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
-                    if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
+                    foreach (var crawledProperty in matchingCrawledProperties)
                     {
-                        foreach (var crawledProperty in matchingCrawledProperties)
+                        // Create mapping information
+                        var mapping = new MappingInfo
                         {
-                            // Create mapping information
-                            var mapping = new MappingInfo
-                            {
-                                CrawledPropertyName = crawledProperty.Name,
-                                CrawledPropset = crawledProperty.Propset,
-                                ManagedPid = managedPropertyDefinition.Pid,
-                                MappingOrder = crawledPropertyKeyAndOrder.Value
-                            };
+                            CrawledPropertyName = crawledProperty.Name,
+                            CrawledPropset = crawledProperty.Propset,
+                            ManagedPid = managedPropertyDefinition.Pid,
+                            MappingOrder = crawledPropertyKeyAndOrder.Value
+                        };
 
-                            // If managed property doesn't already contain a mapping for the crawled property, add it
-                            if (
-                                ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner)
-                                    .All(m => m.CrawledPropertyName != mapping.CrawledPropertyName))
-                            {
-                                mappingCollection.Add(mapping);
-                            }
-                            else
-                            {
-                                this.logger.Info(
-                                    "Mapping for managed property {0} and crawled property with name {1} is already exists",
-                                    managedPropertyDefinition.Name,
-                                    crawledPropertyKeyAndOrder);
-                            }
+                        // If managed property doesn't already contain a mapping for the crawled property, add it
+                        if (
+                            ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner)
+                                .All(m => m.CrawledPropertyName != mapping.CrawledPropertyName))
+                        {
+                            mappings.Add(mapping);
+                        }
+                        else
+                        {
+                            this.logger.Info(
+                                "Mapping for managed property {0} and crawled property with name {1} is already exists",
+                                managedPropertyDefinition.Name,
+                                crawledPropertyKeyAndOrder);
                         }
                     }
-                    else
-                    {
-                        this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
-                    }
+                }
+                else
+                {
+                    this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
                 }
             }
 
             // Apply mappings to the managed property
-            if (mappingCollection.Count > 0)
+            if (mappings.Count > 0)
             {
-                ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
+                ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappings, owner);
             }
         }
 
@@ -835,6 +823,44 @@ namespace GSoft.Dynamite.Search
                 managedPropertyDefinition.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
                 managedPropertyDefinition.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
             }
+        }
+
+        private static List<MappingInfo> GetInitialCrawledPropertyMappings(
+            SPManagedPropertyInfo managedPropertyDefinition,
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner)
+        {
+            var mappingCollection = new List<MappingInfo>();
+
+            // If specified to overwrite all crawled property mappings
+            // set an empty mapping info list before recreating the mappings.
+            // Else if, if specified to append the crawled properties, initialize the
+            // mapping collection to the existing mappings on the managed property.
+            switch (managedPropertyInfo.UpdateBehavior)
+            {
+                case ManagedPropertyUpdateBehavior.OverwriteCrawledProperties:
+                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
+                    break;
+                case ManagedPropertyUpdateBehavior.AppendCrawledProperties:
+                    mappingCollection = ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner);
+                    break;
+            }
+
+            return mappingCollection;
+        }
+
+        private static bool ShouldUpdateConfiguration(ManagedPropertyInfo managedPropertyInfo)
+        {
+            return (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.UpdateConfiguration) ||
+                   (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
+        }
+
+        private static bool ShouldUpdateCrawledPropertyMappings(ManagedPropertyInfo managedPropertyInfo)
+        {
+            return (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteCrawledProperties)
+                   || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.AppendCrawledProperties)
+                   || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
         }
     }
 }
