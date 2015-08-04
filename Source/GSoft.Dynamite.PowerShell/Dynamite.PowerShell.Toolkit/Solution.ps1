@@ -91,6 +91,7 @@ function global:Deploy-DSPSolution() {
 		$timeAsleep = 0
 		
 		$spSolution = $Solution.Read()
+        $numberOfWebAppsWithSolutionOriginally = $spSolution.DeployedWebApplications.Count  # in case of globally deployed solution, will be 0
 		
 		Write-Host $(if($Deploying){"Deploying"} else {"Retracting"}) " solution with name '$($spSolution.Name)'."
 
@@ -124,7 +125,11 @@ function global:Deploy-DSPSolution() {
 			}
 			
 			# if the job is finished and either finished deploying or retracting the solution then break
-			if (!$spSolution.JobExists -and (($Deploying -and $spSolution.Deployed) -or (!$Deploying -and !$spSolution.Deployed))) {
+            $wasDeployingAndDeployed = ($Deploying -and $spSolution.Deployed)
+            $numberStillDeployed = $spSolution.DeployedWebApplications.Count      # in case of globally deployed solution, will be 0
+            $wasRetractingAndGoneOrLessDeployedThanBefore = (!$Deploying -and (!$spSolution.Deployed -or ($numberStillDeployed -lt $numberOfWebAppsWithSolutionOriginally)))
+
+			if (!$spSolution.JobExists -and ($wasDeployingAndDeployed -or $wasRetractingAndGoneOrLessDeployedThanBefore)) {
 				Write-Host "Finished " $(if($Deploying){"deploying"} else {"retracting"}) " solution with name '$($spSolution.Name)'."
 				break
 			} elseif ($timeAsleep -ge 90){
@@ -144,13 +149,15 @@ function global:Deploy-DSPSolution() {
 		$spSolution = $Solution.Read()
 		if($spSolution.Deployed) {
 			if ($spSolution.ContainsWebApplicationResource) {
-				Write-Host "The solution contains web app resources, retracting from all web apps."
-				$spSolution | Uninstall-SPSolution -AllWebApplications -Confirm:$false
+				Write-Host "The solution contains web app resources, retracting from all web apps where it is currently deployed."
+                $spSolution.DeployedWebApplications | Foreach-Object { 
+                    Uninstall-SPSolution -Identity $spSolution -WebApplication $_ -Confirm:$false
+			        Block-SPDeployment -Solution $spSolution -Deploying $false
+                }
 			} else {
 				$spSolution | Uninstall-SPSolution -Confirm:$false
+			    Block-SPDeployment -Solution $spSolution -Deploying $false
 			}
-			
-			Block-SPDeployment -Solution $spSolution -Deploying $false		
 		} else {
 			Write-Host "The solution '$($spSolution.Name)' is not currently deployed." -ForegroundColor Yellow
 		}		
