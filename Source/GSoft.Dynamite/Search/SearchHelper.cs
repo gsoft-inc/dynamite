@@ -840,6 +840,7 @@ namespace GSoft.Dynamite.Search
             switch (managedPropertyInfo.UpdateBehavior)
             {
                 case ManagedPropertyUpdateBehavior.OverwriteCrawledProperties:
+                case ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists:
                     ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
                     break;
                 case ManagedPropertyUpdateBehavior.AppendCrawledProperties:
