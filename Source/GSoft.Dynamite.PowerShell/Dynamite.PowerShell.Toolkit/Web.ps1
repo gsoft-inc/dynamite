@@ -850,12 +850,19 @@ function Import-DSPWebStructure {
                                     if ($UpdateWelcomePages)
                                     {
                                         $WelcomePageUrl = $TargetWeb.WelcomePage
-                                    
-                                        Write-Warning "Updating welcome page to '$WelcomePageUrl'..."
-                                        $rootFolder = $web.RootFolder
-                                        $rootFolder.WelcomePage = $WelcomePageUrl
-                                        $rootFolder.Update()
-                                        $web.Update()
+
+                                        if ($WelcomePageUrl -ne $null)
+                                        {
+                                            Write-Warning "Updating welcome page to '$WelcomePageUrl'..."
+                                            $rootFolder = $web.RootFolder
+                                            $rootFolder.WelcomePage = $WelcomePageUrl
+                                            $rootFolder.Update()
+                                            $web.Update()
+                                        }
+                                        else
+                                        {
+                                            Write-Warning "Welcome page XML attribute not found for web '$NewUrl'..."
+                                        }
 							        }
 								}	
 								else
@@ -883,12 +890,19 @@ function Import-DSPWebStructure {
                             Write-Host "Done!" -ForegroundColor Green
 
                             if ($UpdateWelcomePages)
-                            {                                    
-                                Write-Warning "Updating welcome page to '$WelcomePageUrl'..."
-                                $rootFolder = $web.RootFolder
-                                $rootFolder.WelcomePage = $WelcomePageUrl
-                                $rootFolder.Update()
-                                $web.Update()
+                            {                            
+                                if ($WelcomePageUrl -ne $null)
+                                {        
+                                    Write-Warning "Updating welcome page to '$WelcomePageUrl'..."
+                                    $rootFolder = $web.RootFolder
+                                    $rootFolder.WelcomePage = $WelcomePageUrl
+                                    $rootFolder.Update()
+                                    $web.Update()
+                                }
+                                else
+                                {
+                                    Write-Warning "Welcome page XML attribute not found for web '$Url'..."
+                                }
 							}
 
 							$script:WebList += $web

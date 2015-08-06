@@ -1184,8 +1184,9 @@ function ConvertTo-DSPTaxonomyStructure {
 
 			# Trim Special characters not allowed for a term label (;"<>|&tab)
 			# See https://msdn.microsoft.com/en-us/library/office/ee565922.aspx
+            # Add also the ":" term delimiter because it can be misinterpreted by Sharegate during migrations
 		
-			$Label = $Label -replace '[;"<>|\t]+',[string]::Empty
+			$Label = $Label -replace '[;:"<>|\t]+',[string]::Empty
 
 			# Trim consecutive whitespaces
 			$Label = $Label -replace '\s+', ' '
