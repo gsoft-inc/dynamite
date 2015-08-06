@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Search.Enums;
 using Microsoft.Office.Server.Search.Administration;
 
 namespace GSoft.Dynamite.Search
@@ -49,7 +50,7 @@ namespace GSoft.Dynamite.Search
             this.HasMultipleValues = false;
             this.SafeForAnonymous = true;
 
-            this.OverwriteIfAlreadyExists = true;
+            this.UpdateBehavior = ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists;
         }
 
         /// <summary>
@@ -124,10 +125,10 @@ namespace GSoft.Dynamite.Search
         public bool SafeForAnonymous { get; set; }
 
         /// <summary>
-        /// Gets or sets the upgrade behavior of this managed property definition.
-        /// If true, any existing managed property will be deleted, then re-created
-        /// when re-ensured through ISearchHelper.EnsureManagedProperty.
+        /// Gets or sets the upgrate behavior of this managed property definition.
+        /// Note: When using parameterized constructor, the default value is "overwrite if already exists" 
+        /// to support previous automatic configuration of "OverwriteIfAlreadyExists" to true.
         /// </summary>
-        public bool OverwriteIfAlreadyExists { get; set; }
+        public ManagedPropertyUpdateBehavior UpdateBehavior { get; set; }
     }
 }

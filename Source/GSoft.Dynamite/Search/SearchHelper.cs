@@ -180,125 +180,42 @@ namespace GSoft.Dynamite.Search
         /// <returns>The managed property</returns>
         public ManagedProperty EnsureManagedProperty(SPSite site, ManagedPropertyInfo managedPropertyInfo)
         {
-            SPManagedPropertyInfo managedPropertyDefinition = null;
-
             var ssa = this.GetDefaultSearchServiceApplication(site);
             var propertyName = managedPropertyInfo.Name;
-            var propertyType = managedPropertyInfo.DataType;
-            var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, site.RootWeb);     // this forces managed prop definition to SSA-scope 
-                                                                                        // (i.e. all managed props will be farm-wide)
 
-            // Get the search schema
-            var sspSchema = new Schema(ssa);
-            var managedProperties = sspSchema.AllManagedProperties;
+            // this forces managed prop definition to SSA-scope 
+            // (i.e. all managed props will be farm-wide)
+            var owner = new SearchObjectOwner(SearchObjectLevel.Ssa, site.RootWeb);
 
-            if (managedProperties.Contains(propertyName))
+            // Get the managed property and if null, create it
+            var managedPropertyDefinition = this.GetManagedProperty(managedPropertyInfo, ssa, owner);
+            if (managedPropertyDefinition == null)
             {
-                var prop = managedProperties[propertyName];
-                if (managedPropertyInfo.OverwriteIfAlreadyExists)
-                {
-                    if (prop.DeleteDisallowed)
-                    {
-                        this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
-                    }
-                    else
-                    {
-                        prop.DeleteAllMappings();
-                        prop.Delete();
-                        managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
-                    }
-                }
-            }
-            else
-            {
-                managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
+                // If managed property was created, make sure it sets the crawled property mappings and configuration
+                managedPropertyInfo.UpdateBehavior = ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists;
+                managedPropertyDefinition = this.CreateManagedProperty(managedPropertyInfo, ssa, owner);
             }
 
             if (managedPropertyDefinition != null)
             {
-                var mappingCollection = new List<MappingInfo>(); // new MappingCollection();
-
-                // Ensure crawl properties mappings
-                foreach (KeyValuePair<string, int> crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
+                // If crawled property mappings need to be overwritten or appended
+                if (ShouldUpdateCrawledPropertyMappings(managedPropertyInfo))
                 {
-                    // Get the crawled property (there may be more than one matching that name)
-                    var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
-
-                    if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
-                    {
-                        foreach (var cp in matchingCrawledProperties)
-                        {
-                            // Create mapping information
-                            var mapping = new MappingInfo
-                            {
-                                CrawledPropertyName = cp.Name,
-                                CrawledPropset = cp.Propset,
-                                ManagedPid = managedPropertyDefinition.Pid,
-                                MappingOrder = crawledPropertyKeyAndOrder.Value
-                            };
-
-                            if (!ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner).Any(m => m.CrawledPropertyName == mapping.CrawledPropertyName))
-                            {
-                                mappingCollection.Add(mapping);
-                            }
-                            else
-                            {
-                                this.logger.Info("Mapping for managed property {0} and crawled property with name {1} is already exists", managedPropertyDefinition.Name, crawledPropertyKeyAndOrder);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
-                    }
+                    var mappings = GetInitialCrawledPropertyMappings(managedPropertyDefinition, managedPropertyInfo, ssa, owner);
+                    this.SetCrawledPropertyMappings(site, managedPropertyDefinition, managedPropertyInfo, ssa, owner, mappings);
                 }
 
-                // Apply mappings to the managed property
-                if (mappingCollection.Count > 0)
+                if (ShouldUpdateConfiguration(managedPropertyInfo))
                 {
-                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
+                    this.ConfigureManagerProperty(managedPropertyDefinition, managedPropertyInfo);
                 }
-
-                // Configure the managed property
-                managedPropertyDefinition.Sortable = managedPropertyInfo.Sortable;
-                if (managedPropertyDefinition.Sortable)
-                {
-                    managedPropertyDefinition.SortableType = managedPropertyInfo.SortableType;
-                }
-
-                managedPropertyDefinition.Refinable = managedPropertyInfo.Refinable;
-                if (managedPropertyDefinition.Refinable)
-                {
-                    // use "active" refine mode whenever refinable=TRUE
-                    managedPropertyDefinition.RefinerConfiguration.Type = Microsoft.Office.Server.Search.Administration.RefinerType.Deep;
-                }
-
-                managedPropertyDefinition.Retrievable = managedPropertyInfo.Retrievable;
-                managedPropertyDefinition.RespectPriority = managedPropertyInfo.RespectPriority;
-                managedPropertyDefinition.Queryable = managedPropertyInfo.Queryable;
-                managedPropertyDefinition.Searchable = managedPropertyInfo.Searchable;
-
-                if (managedPropertyDefinition.Searchable)
-                {
-                    managedPropertyDefinition.FullTextIndex = managedPropertyInfo.FullTextIndex;
-                    managedPropertyDefinition.Context = managedPropertyInfo.Context;
-                }
-                else
-                {
-                    managedPropertyDefinition.FullTextIndex = string.Empty;
-                    managedPropertyDefinition.Context = (short)0;
-                }
-
-                managedPropertyDefinition.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
-                managedPropertyDefinition.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
 
                 // Save through the schema manager (don't call .Update on the managed property object itself, its config won't get saved properly)
                 ssa.UpdateManagedProperty(managedPropertyDefinition, owner);
             }
 
             // Re-fetch schema, it might be stale at this point
-            sspSchema = new Schema(ssa);
-
+            var sspSchema = new Schema(ssa);
             return sspSchema.AllManagedProperties[propertyName];
         }
 
@@ -740,6 +657,211 @@ namespace GSoft.Dynamite.Search
             }
 
             return crawledPropertiesMatchingName;
+        }
+
+        private SPManagedPropertyInfo GetManagedProperty(
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner)
+        {
+            SPManagedPropertyInfo managedPropertyDefinition = null;
+            var propertyName = managedPropertyInfo.Name;
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            // If the managed property already exists
+            // Else create it.
+            if (managedProperties.Contains(propertyName))
+            {
+                managedPropertyDefinition = ssa.GetManagedProperty(propertyName, owner);
+            }
+            else
+            {
+                this.logger.Warn("Managed Property '{0}' not found.", propertyName);
+            }
+
+            return managedPropertyDefinition;
+        }
+
+        private SPManagedPropertyInfo CreateManagedProperty(
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner)
+        {
+            SPManagedPropertyInfo managedPropertyDefinition = null;
+            var propertyName = managedPropertyInfo.Name;
+            var propertyType = managedPropertyInfo.DataType;
+
+            // Get the search schema
+            var sspSchema = new Schema(ssa);
+            var managedProperties = sspSchema.AllManagedProperties;
+
+            // If the managed property already exists
+            // Else create it.
+            if (managedProperties.Contains(propertyName))
+            {
+                var prop = managedProperties[propertyName];
+                if (prop.DeleteDisallowed)
+                {
+                    this.logger.Warn("Delete is disallowed on the Managed Property {0}", propertyName);
+                }
+                else
+                {
+                    prop.DeleteAllMappings();
+                    prop.Delete();
+                    managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
+                }
+            }
+            else
+            {
+                managedPropertyDefinition = ssa.CreateManagedProperty(propertyName, propertyType, owner);
+            }
+
+            return managedPropertyDefinition;
+        }
+
+        private void SetCrawledPropertyMappings(
+            SPSite site,
+            SPManagedPropertyInfo managedPropertyDefinition,
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner,
+            List<MappingInfo> mappings)
+        {
+            // Ensure crawl properties mappings
+            foreach (var crawledPropertyKeyAndOrder in managedPropertyInfo.CrawledProperties)
+            {
+                // Get the crawled property (there may be more than one matching that name)
+                var matchingCrawledProperties = this.GetCrawledPropertyByName(site, crawledPropertyKeyAndOrder.Key);
+                if (matchingCrawledProperties != null && matchingCrawledProperties.Count > 0)
+                {
+                    foreach (var crawledProperty in matchingCrawledProperties)
+                    {
+                        // Create mapping information
+                        var mapping = new MappingInfo
+                        {
+                            CrawledPropertyName = crawledProperty.Name,
+                            CrawledPropset = crawledProperty.Propset,
+                            ManagedPid = managedPropertyDefinition.Pid,
+                            MappingOrder = crawledPropertyKeyAndOrder.Value
+                        };
+
+                        // If managed property doesn't already contain a mapping for the crawled property, add it
+                        if (
+                            ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner)
+                                .All(m => m.CrawledPropertyName != mapping.CrawledPropertyName))
+                        {
+                            mappings.Add(mapping);
+                        }
+                        else
+                        {
+                            this.logger.Info(
+                                "Mapping for managed property {0} and crawled property with name {1} is already exists",
+                                managedPropertyDefinition.Name,
+                                crawledPropertyKeyAndOrder);
+                        }
+                    }
+                }
+                else
+                {
+                    this.logger.Warn("Crawled property with name {0} not found!", crawledPropertyKeyAndOrder);
+                }
+            }
+
+            // Apply mappings to the managed property
+            if (mappings.Count > 0)
+            {
+                ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappings, owner);
+            }
+        }
+
+        private void ConfigureManagerProperty(
+            SPManagedPropertyInfo managedPropertyDefinition,
+            ManagedPropertyInfo managedPropertyInfo)
+        {
+            if ((managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.UpdateConfiguration) || 
+                (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists))
+            {
+                this.logger.Info(
+                    "Configuring managed property '{0}' on update behavior '{1}'", 
+                    managedPropertyInfo.Name, 
+                    managedPropertyInfo.UpdateBehavior);
+
+                // Configure the managed property
+                managedPropertyDefinition.Sortable = managedPropertyInfo.Sortable;
+                if (managedPropertyDefinition.Sortable)
+                {
+                    managedPropertyDefinition.SortableType = managedPropertyInfo.SortableType;
+                }
+
+                managedPropertyDefinition.Refinable = managedPropertyInfo.Refinable;
+                if (managedPropertyDefinition.Refinable)
+                {
+                    // use "active" refine mode whenever refinable=TRUE
+                    managedPropertyDefinition.RefinerConfiguration.Type =
+                        Microsoft.Office.Server.Search.Administration.RefinerType.Deep;
+                }
+
+                managedPropertyDefinition.Retrievable = managedPropertyInfo.Retrievable;
+                managedPropertyDefinition.RespectPriority = managedPropertyInfo.RespectPriority;
+                managedPropertyDefinition.Queryable = managedPropertyInfo.Queryable;
+                managedPropertyDefinition.Searchable = managedPropertyInfo.Searchable;
+
+                if (managedPropertyDefinition.Searchable)
+                {
+                    managedPropertyDefinition.FullTextIndex = managedPropertyInfo.FullTextIndex;
+                    managedPropertyDefinition.Context = managedPropertyInfo.Context;
+                }
+                else
+                {
+                    managedPropertyDefinition.FullTextIndex = string.Empty;
+                    managedPropertyDefinition.Context = 0;
+                }
+
+                managedPropertyDefinition.HasMultipleValues = managedPropertyInfo.HasMultipleValues;
+                managedPropertyDefinition.SafeForAnonymous = managedPropertyInfo.SafeForAnonymous;
+            }
+        }
+
+        private static List<MappingInfo> GetInitialCrawledPropertyMappings(
+            SPManagedPropertyInfo managedPropertyDefinition,
+            ManagedPropertyInfo managedPropertyInfo,
+            SearchServiceApplication ssa,
+            SearchObjectOwner owner)
+        {
+            var mappingCollection = new List<MappingInfo>();
+
+            // If specified to overwrite all crawled property mappings
+            // set an empty mapping info list before recreating the mappings.
+            // Else if, if specified to append the crawled properties, initialize the
+            // mapping collection to the existing mappings on the managed property.
+            switch (managedPropertyInfo.UpdateBehavior)
+            {
+                case ManagedPropertyUpdateBehavior.OverwriteCrawledProperties:
+                case ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists:
+                    ssa.SetManagedPropertyMappings(managedPropertyDefinition, mappingCollection, owner);
+                    break;
+                case ManagedPropertyUpdateBehavior.AppendCrawledProperties:
+                    mappingCollection = ssa.GetManagedPropertyMappings(managedPropertyDefinition, owner);
+                    break;
+            }
+
+            return mappingCollection;
+        }
+
+        private static bool ShouldUpdateConfiguration(ManagedPropertyInfo managedPropertyInfo)
+        {
+            return (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.UpdateConfiguration) ||
+                   (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
+        }
+
+        private static bool ShouldUpdateCrawledPropertyMappings(ManagedPropertyInfo managedPropertyInfo)
+        {
+            return (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteCrawledProperties)
+                   || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.AppendCrawledProperties)
+                   || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
         }
     }
 }
