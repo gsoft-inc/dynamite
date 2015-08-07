@@ -465,8 +465,8 @@ function Remove-DSPExcelColumn {
             if ($CurrentRowIndex -eq 1)
             {
                 # Get the index of the column to delete			
-                $ExactMatchPattern = "\b" + $ColumnName + "\b"
-                $HeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern $ColumnName) -ne $null }	
+                $ExactMatchPattern = "^\b" + $ColumnName + "\b$"
+                $HeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern $ExactMatchPattern) -ne $null }	
                 
                 if ($HeaderCell -ne $null)
                 {
@@ -635,8 +635,8 @@ function Copy-DSPExcelColumn {
             if ($CurrentRowIndex -eq 1)
             {
                 # Get the index of the column to delete
-                $SourceHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("\b" + $SourceColumn + "\b")) -ne $null }
-                $TargetHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("\b" + $TargetColumn + "\b")) -ne $null }
+                $SourceHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("^\b" + $SourceColumn + "\b$")) -ne $null }
+                $TargetHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("^\b" + $TargetColumn + "\b$")) -ne $null }
             
                 if ($SourceHeaderCell -ne $null -and $TargetHeaderCell -ne $null )
                 {
@@ -1003,7 +1003,7 @@ function Edit-DSPExcelColumnValue {
                 # If the replace is on a specific column, we get the index of it
                 if ([string]::IsNullOrEmpty($Column) -eq $false)
                 {
-                    $SourceHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("\b" + $Column + "\b")) -ne $null }
+                    $SourceHeaderCell = $Cells | Where-Object { ((Get-ExcelCellValue -WorkbookPart $workbookPart -Cell $_) | Select-String -Pattern ("^\b" + $Column + "\b$")) -ne $null }
                     $ColumnToReplaceOnIndex = $SourceHeaderCell.CellReference.Value -replace "\d",[string]::Empty
                 }
                 else			
