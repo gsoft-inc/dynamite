@@ -50,8 +50,15 @@ namespace GSoft.Dynamite.Fields
                 new XAttribute("ID", "{" + fieldInfo.Id + "}"),
                 new XAttribute("StaticName", fieldInfo.InternalName),
                 new XAttribute("DisplayName", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DisplayNameResourceKey)),
-                new XAttribute("Description", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DescriptionResourceKey)),
                 new XAttribute("Group", this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.GroupResourceKey)));
+
+            // Check if description is defined
+            if (!string.IsNullOrEmpty(fieldInfo.DescriptionResourceKey))
+            {
+                schema.Add(new XAttribute(
+                    "Description", 
+                    this.resourceLocator.GetResourceString(fieldInfo.ResourceFileName, fieldInfo.DescriptionResourceKey)));
+            }
 
             // Check the Required type
             if (fieldInfo.Required == RequiredType.Required)
