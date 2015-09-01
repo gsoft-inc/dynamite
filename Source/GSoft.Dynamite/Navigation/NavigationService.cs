@@ -206,6 +206,10 @@ namespace GSoft.Dynamite.Navigation
                 {
                     restrictedNode.ChildNodes = this.FilterNavigationNodesToRestrictedTermSet(web, queryParameters, nodes, restrictedTerm.Terms.ToArray());
                 }
+                else
+                {
+                    restrictedNode.ChildNodes = new List<NavigationNode>();
+                }
             }
 
             return restrictedNodes;
