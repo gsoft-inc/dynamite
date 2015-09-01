@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using GSoft.Dynamite.Configuration;
@@ -58,7 +59,21 @@ namespace GSoft.Dynamite.Email
             var headers = EmailHelper.GetEmailHeaders(emailInformation);
             web.RunAsSystem(elevatedWeb =>
             {
+                var logMsg = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Sending email using the web '{0}' with the following headers... to: '{1}', cc: '{2}', bcc: '{3}', subject: '{4}'",
+                    elevatedWeb.Url,
+                    headers["to"],
+                    headers["cc"],
+                    headers["bcc"],
+                    headers["subject"]);
+
+                this.logger.Info(logMsg);
+
+                // Send the email
                 SPUtility.SendEmail(elevatedWeb, headers, emailInformation.Body);
+
+                this.logger.Info("Email Sent.");
             });
         }
 
