@@ -218,19 +218,19 @@ namespace GSoft.Dynamite.Lists
                         listInfo.WebRelativeUrl);
                 }
             }
-            else if (list.ItemCount == 0)
+            else if (!ListContainsAttachments(web, listInfo))
             {
-                // Want to disable attachments on an empty list.
+                // Want to disable attachments on a list with no attachments already created
                 list.EnableAttachments = listInfo.EnableAttachements;
             }
             else
             {
-                // Case where you would like to disable attachments on a list with one or more items. It is not allowed
+                // Case where you would like to disable attachments on a list which contains attachments. It is not allowed
                 // because it could delete all attachments.
                 throw new ArgumentException(
                     string.Format(
                     CultureInfo.InvariantCulture, 
-                    "Not allowed to disable attachments on list '{0}' because it contains item(s). Attachments on it would be lost.", 
+                    "Not allowed to disable attachments on list '{0}' because it contains attachement(s). Attachments on it would be lost.", 
                     list.TitleResource.Value));
             }
 
@@ -673,6 +673,41 @@ namespace GSoft.Dynamite.Lists
             var propertiesList = new List<PropertyBagValue>();
             propertiesList.Add(new PropertyBagValue() { Key = key, Value = id, Overwrite = true });
             this.propertyBagHelper.SetWebValues(web, propertiesList);
+        }
+
+        private static bool ListContainsAttachments(SPWeb web, ListInfo listInfo)
+        {
+            SPFolder listFolder = null;
+
+            // Get the list folder in the web
+            var folders = listInfo.WebRelativeUrl.ToString().Split('/');
+            for (var i = 0; i < folders.Count(); i++)
+            {
+                // If the first list folder segment, get it in the web folders collection.
+                // Else, get the folder in the subfolders collection.
+                if (i == 0)
+                {
+                    listFolder = web.Folders[folders[i]];
+                }
+                else if (listFolder != null)
+                {
+                    listFolder = listFolder.SubFolders[folders[i]];
+                }
+            }
+
+            // If the list folder exists
+            if (listFolder != null)
+            {
+                // If the attachments folder exists
+                var attachmentsFolder = listFolder.SubFolders["Attachments"];
+                if (attachmentsFolder != null)
+                {
+                    // Return true if any attachments folder contains a subfolder with files.
+                    return attachmentsFolder.SubFolders.Cast<SPFolder>().Any(folder => folder.Files.Count > 0);
+                }
+            }
+
+            return false;
         }
     }
 }
