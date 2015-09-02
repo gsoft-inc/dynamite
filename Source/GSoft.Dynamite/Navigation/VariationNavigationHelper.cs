@@ -179,7 +179,7 @@ namespace GSoft.Dynamite.Navigation
                     this.logger.Warn(
                         "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
                         web.Url,
-                        currentUrl.AbsoluteUri,
+                        currentUrl.AbsolutePath,
                         label.Title,
                         uglyNestedEx.Message);
                 }
@@ -251,7 +251,7 @@ namespace GSoft.Dynamite.Navigation
                     this.logger.Error("GetPeerCatalogCategoryUrl: Navigation term not found for term id '{0}'", termId);
 
                     return new Uri(
-                        Variations.GetPeerUrl(web, currentUrl.AbsoluteUri, label.Title),
+                        Variations.GetPeerUrl(web, currentUrl.AbsolutePath, label.Title),
                         UriKind.Relative);
                 }
             }
@@ -277,7 +277,7 @@ namespace GSoft.Dynamite.Navigation
         {
             ValidateProperties("GetPeerCatalogItemUrl", associationKeyManagedPropertyName, associationKeyValue, catalogNavigationTermManagedPropertyName);
 
-            var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title), UriKind.Relative);
+            var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsolutePath, label.Title), UriKind.Relative);
 
             var searchResultSource = this.searchHelper.GetResultSourceByName(SPContext.Current.Site, LocalSharePointResultsSourceName, SearchObjectLevel.Ssa);
 
