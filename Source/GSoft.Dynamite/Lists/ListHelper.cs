@@ -698,12 +698,19 @@ namespace GSoft.Dynamite.Lists
             // If the list folder exists
             if (listFolder != null)
             {
-                // If the attachments folder exists
-                var attachmentsFolder = listFolder.SubFolders["Attachments"];
-                if (attachmentsFolder != null)
+                try
                 {
-                    // Return true if any attachments folder contains a subfolder with files.
-                    return attachmentsFolder.SubFolders.Cast<SPFolder>().Any(folder => folder.Files.Count > 0);
+                    // If the attachments folder exists
+                    var attachmentsFolder = listFolder.SubFolders["Attachments"];
+                    if (attachmentsFolder != null)
+                    {
+                        // Return true if any attachments folder contains a subfolder with files.
+                        return attachmentsFolder.SubFolders.Cast<SPFolder>().Any(folder => folder.Files.Count > 0);
+                    }
+                }
+                catch (ArgumentException)
+                {
+                    return false;
                 }
             }
 
