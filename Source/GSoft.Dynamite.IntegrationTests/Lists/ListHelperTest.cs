@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Threading;
 using Autofac;
 using GSoft.Dynamite.Binding;
@@ -1157,13 +1159,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         }
 
         /// <summary>
-        /// Make sure that when Ensuring an existing list with item(s) on it, and the new list info has
-        /// property EnableAttachments set to false, it doesn't allow you to disable them to prevent from deleting attachments.
-        /// An ArgumentException is thrown.
+        /// Make sure that when Ensuring an existing list with item(s) on it with no attachments, and the new list info has
+        /// property EnableAttachments set to false, it allows you to disable them to prevent from deleting attachments.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void EnsureList_WhenEnsuringAnExistingListWithItemsOnItAndYouWantToDisableAttachments_ItShouldNotAllowYou()
+        public void EnsureList_WhenEnsuringAnExistingListWithItemsButNoAttachmentsAndYouWantToDisableAttachments_ItShouldAllowYou()
         {
             // Arrange
             const string Url = "testUrl";
@@ -1188,8 +1188,50 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     // Act
                     var updatedList = listHelper.EnsureList(rootWeb, listInfo);
 
-                    // Assert (exception should have been thrown...)
-                    Assert.IsTrue(false);
+                    // Assert
+                    Assert.IsFalse(updatedList.EnableAttachments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list with item(s) on it with attachments, and the new list info has
+        /// property EnableAttachments set to false, it denies you to disable them to prevent from deleting attachments.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenEnsuringAnExistingListWithItemsAndAttachmentsAndYouWantToDisableAttachments_ItShouldDenyYou()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Create dummy attachment content
+                    var unicode = new UnicodeEncoding();
+                    var attachmentData = unicode.GetBytes("Dummy attachment file content.");
+
+                    // Creating an item with an attachment on the list
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Attachments.Add("attachment.txt", attachmentData);
+                    item.Update();
+
+                    listInfo.EnableAttachements = false;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (expect exception)
+                    Assert.IsTrue(updatedList.EnableAttachments);
                 }
             }
         }
