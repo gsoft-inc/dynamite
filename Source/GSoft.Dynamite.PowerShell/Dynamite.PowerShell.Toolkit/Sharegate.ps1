@@ -107,18 +107,6 @@ function Import-DSPData {
 		[Parameter(Mandatory=$true)]
 		[string]$FromFolder,
 
-		[ValidateScript({
-            Try {
-                $Web = New-Object System.Net.WebClient
-                $Web.UseDefaultCredentials = $true
-                $Web.OpenRead($_)
-                return $true
-            } 
-            Catch
-            {
-                return $false
-            }
-        })]
 		[Parameter(Mandatory=$true)]
 		[string]$ToUrl,  
 
