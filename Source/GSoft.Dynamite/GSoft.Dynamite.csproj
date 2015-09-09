@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Debug\GSoft.Dynamite.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>bin\Release\GSoft.Dynamite.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -61,6 +63,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files\Common Files\Microsoft Shared\Web Server Extensions\14\ISAPI\Microsoft.Office.Policy.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Server.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -71,8 +74,9 @@
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -95,24 +99,50 @@
     <Compile Include="Binding\IEntitySchemaFactory.cs" />
     <Compile Include="Binding\SharePointEntityBinder.cs" />
     <Compile Include="Branding\DisplayTemplateCategory.cs" />
+    <Compile Include="Cache\BlobCacheHelper.cs" />
+    <Compile Include="Cache\IBlobCacheHelper.cs" />
     <Compile Include="ContentTypes\ContentTypeIdBuilder.cs" />
+    <Compile Include="Email\EmailHelper.cs" />
+    <Compile Include="Email\EmailInfo.cs" />
+    <Compile Include="Email\EmailPriorityType.cs" />
+    <Compile Include="Email\IEmailHelper.cs" />
     <Compile Include="Events\EventReceiverOwner.cs" />
     <Compile Include="Features\FeatureActivationMode.cs" />
     <Compile Include="Features\FeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyActivator.cs" />
     <Compile Include="Features\IFeatureDependencyConfig.cs" />
     <Compile Include="Features\Types\FeatureDependencyInfo.cs" />
+    <Compile Include="Fields\Types\BaseChoiceFieldInfo.cs" />
+    <Compile Include="Fields\Types\ChoiceFieldInfo.cs" />
+    <Compile Include="Fields\Types\ChoiceFieldFormat.cs" />
+    <Compile Include="Fields\Types\MultiChoiceFieldInfo.cs" />
     <Compile Include="Fields\Types\UserFieldSelectionMode.cs" />
     <Compile Include="Fields\Types\UrlFieldFormat.cs" />
     <Compile Include="Fields\Types\DateTimeFieldFormat.cs" />
     <Compile Include="Fields\Types\IntegerFieldInfo.cs" />
+    <Compile Include="Globalization\Variations\BuiltInVariationsTimerJobs.cs" />
+    <Compile Include="Globalization\Variations\HierarchyCreationMode.cs" />
+    <Compile Include="Lists\ListValidationInfo.cs" />
     <Compile Include="Navigation\NavigationQueryParameters.cs" />
     <Compile Include="Navigation\NavigationSearchSettings.cs" />
     <Compile Include="Navigation\NavigationNodeMatchingSettings.cs" />
+    <Compile Include="ReusableContent\IReusableContentHelper.cs" />
+    <Compile Include="ReusableContent\ReusableContentHelper.cs" />
+    <Compile Include="ReusableContent\ReusableContentInfo.cs" />
     <Compile Include="Search\BestBetInfo.cs" />
+    <Compile Include="Search\BuiltInRankingModels.cs" />
+    <Compile Include="Search\Enums\ManagedPropertyUpdateBehavior.cs" />
     <Compile Include="Search\IQueryRuleHelper.cs" />
     <Compile Include="Search\QueryRuleInfo.cs" />
     <Compile Include="Search\QueryRuleHelper.cs" />
+    <Compile Include="Sites\IWebContext.cs" />
+    <Compile Include="Sites\WebContext.cs" />
+    <Compile Include="Sites\SiteCollectionContext.cs" />
+    <Compile Include="Sites\ISiteCollectionContext.cs" />
+    <Compile Include="Taxonomy\SimpleLinkTermInfo.cs" />
+    <Compile Include="UserProfile\IUserProfilePropertyHelper.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyHelper.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyInfo.cs" />
     <Compile Include="ValueTypes\Readers\BooleanValueReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueCollectionReader.cs" />
     <Compile Include="ValueTypes\Readers\TaxonomyValueReader.cs" />

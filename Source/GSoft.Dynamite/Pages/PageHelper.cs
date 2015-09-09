@@ -62,7 +62,8 @@ namespace GSoft.Dynamite.Pages
             }
 
             var publishingWeb = PublishingWeb.GetPublishingWeb(library.ParentWeb);
-            var publishingPages = publishingWeb.GetPublishingPages();
+            var recursivePagesQuery = new SPQuery() { ViewAttributes = "Scope=\"Recursive\"" };
+            var publishingPages = publishingWeb.GetPublishingPages(recursivePagesQuery);
 
             PageLayout pageLayout = null;
 
@@ -77,7 +78,9 @@ namespace GSoft.Dynamite.Pages
             }
 
             var pageServerRelativeUrl = folder.ServerRelativeUrl + "/" + page.FileName + ".aspx";
-            var publishingPage = publishingWeb.GetPublishingPage(pageServerRelativeUrl);
+            Uri baseUri = new Uri(library.ParentWeb.Url, UriKind.Absolute);
+            var publishingPage = publishingPages.ToList().Find(
+                x => Uri.Compare(x.Uri, new Uri(baseUri, pageServerRelativeUrl), UriComponents.AbsoluteUri, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0);
 
             if (publishingPage == null)
             {
@@ -147,10 +150,21 @@ namespace GSoft.Dynamite.Pages
                 var ct = site.RootWeb.ContentTypes[contentTypeId];
 
                 // Applies the preview picture of the page layout
-                // if (!string.IsNullOrEmpty(pageLayoutInfo.PreviewImagePath))
-                // {
-                //    pageLayout.PreviewImageUrl = SPContext.Current.Site.Url + pageLayoutInfo.PreviewImagePath;
-                // }
+                if (pageLayoutInfo.PreviewImageUrl != null)
+                {
+                    Uri previewImageUrl;
+
+                    if (!pageLayoutInfo.PreviewImageUrl.IsAbsoluteUri)
+                    {
+                        previewImageUrl = new Uri(new Uri(site.Url), pageLayoutInfo.PreviewImageUrl);
+                    }
+                    else
+                    {
+                        previewImageUrl = pageLayoutInfo.PreviewImageUrl;
+                    }
+
+                    pageLayout.PreviewImageUrl = previewImageUrl.AbsoluteUri;
+                }
 
                 // Update the publishing associated content type
                 pageLayout.AssociatedContentType = ct;
@@ -158,6 +172,36 @@ namespace GSoft.Dynamite.Pages
             }
 
             return pageLayout;
+        }
+
+        /// <summary>
+        /// Method that take a list of PageLayoutInfo and Set them as the Available Page Layout. 
+        /// </summary>
+        /// <param name="site">The Site Collection to Set the available Page Layout</param>
+        /// <param name="pageLayoutInfos">The List of Page Layout Info to set as default</param>
+        public void SetAvailablePageLayouts(SPSite site, IList<PageLayoutInfo> pageLayoutInfos)
+        {
+            var publishingSite = new PublishingSite(site);
+            var availablePageLayouts = new List<PageLayout>();
+            var allPageLayouts = publishingSite.GetPageLayouts(false).Cast<PageLayout>();
+
+            // Build the Available Page Layout list
+            foreach (var pageLayout in allPageLayouts)
+            {
+                if (pageLayoutInfos.Any(x => x.Name == pageLayout.Name))
+                {
+                    availablePageLayouts.Add(pageLayout);
+                }
+            }
+
+            // Set The Available Page Layouts for each Webs of the Site
+            foreach (SPWeb web in site.AllWebs)
+            {
+                var publishingWeb = PublishingWeb.GetPublishingWeb(web);
+
+                publishingWeb.SetAvailablePageLayouts(availablePageLayouts.ToArray(), true);
+                publishingWeb.Update();
+            }
         }
 
         private void EnsurePageCheckOut(PublishingPage page)

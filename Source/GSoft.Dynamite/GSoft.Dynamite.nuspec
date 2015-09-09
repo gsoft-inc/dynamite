@@ -8,7 +8,7 @@
     <owners>GSoft</owners>
     <licenseUrl>https://github.com/GSoft-SharePoint/Dynamite/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/GSoft-SharePoint/Dynamite/</projectUrl>
-    <iconUrl>https://avatars3.githubusercontent.com/u/5606578?s=140</iconUrl>
+    <iconUrl>http://www.gsoft.com/support/img/dynamite-logo.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>C# toolkit to help you build maintainable SharePoint 2013 farm solutions</description>
     <releaseNotes></releaseNotes>
@@ -16,10 +16,11 @@
     <tags>SharePoint</tags>
     <dependencies>
       <dependency id="Autofac" version="[3.5.0]" />
-      <dependency id="Newtonsoft.Json" version="[6.0.3]" />
+      <dependency id="Newtonsoft.Json" version="[6.0.8]" />
     </dependencies>
   </metadata>
   <files>
-	  <file src="bin\Release\GSoft.Dynamite.dll" target="lib\net45" /> 
+      <file src="bin\Release\GSoft.Dynamite.dll" target="lib\net45" />
+      <file src="bin\Release\GSoft.Dynamite.xml" target="lib\net45" />
   </files>
 </package>

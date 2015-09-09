@@ -585,28 +585,19 @@ function Initialize-DSPFeature()
 	$isExistingFarmFeature = (Get-SPFeature -Identity $Id -ErrorAction SilentlyContinue -Farm) -ne $null
 
 	$hasDisabled = $false;
+
+	Write-Host "Enabling '$FeatureDisplayName' on '$Url'... " -NoNewLine
+	$time = [Diagnostics.Stopwatch]::StartNew()
 	
 	# 1) Disable any already-enabled feature
 	if($isExistingWebFeature -or $isExistingSiteFeature -or $isExistingWebAppFeature -or $isExistingFarmFeature)
 	{
-		if (![string]::IsNullOrEmpty($Url))
-		{
-			Write-Host "`tDeactivating feature $FeatureDisplayName on $Url..." -NoNewLine
-			Disable-SPFeature -Identity $Id -URL $Url -Confirm:$false
-			Write-Host "Done!" -ForeGroundColor Green
-		}
-		else 
-		{
-			Write-Host "`tDeactivating farm feature $FeatureDisplayName..." -NoNewLine
-			Disable-SPFeature -Identity $Id -Confirm:$false
-			Write-Host "Done!" -ForeGroundColor Green
-		}
+		Write-Host ""
+		Write-Host "This feature is already activated, Disabling it..." -NoNewLine
+		Disable-SPFeature -Identity $Id -URL $Url -Confirm:$false
+		Write-Host "Done." -f Green  
 
 		$hasDisabled = $true;
-	}
-	elseif ($State -eq $false)
-	{
-		Write-Warning "`tFeature with Id $FeatureDisplayName is already disabled on $Url"
 	} 			
 
 	# 2) (Re)enable the feature
@@ -620,15 +611,16 @@ function Initialize-DSPFeature()
 
 		if (![string]::IsNullOrEmpty($Url))
 		{
-			Write-Host "`t$activationVerb feature $FeatureDisplayName on $Url..." -NoNewLine
 			Enable-SPFeature -Identity $Id -URL $Url
-			Write-Host "Done!" -ForeGroundColor Green
 		}
 		else
 		{
-			Write-Host "`t$activationVerb farm feature $FeatureDisplayName..." -NoNewLine
 			Enable-SPFeature -Identity $Id
-			Write-Host "Done!" -ForeGroundColor Green
 		}
+
+		# Finish the timer
+		$time.Stop()
+		$seconds = [math]::Ceiling([decimal]$time.Elapsed.TotalSeconds)	
+		Write-Host "Done $activationVerb in $seconds sec." -f Green
 	}
 }

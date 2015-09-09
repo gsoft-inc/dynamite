@@ -6,14 +6,14 @@
         // Thanks http://stackoverflow.com/a/16281561 for the shim approach
         init: function (element, valueAccessor) {
             var placeholderValue = valueAccessor();
-            ko.applyBindingsToNode(element, { attr: { placeholder: placeholderValue} });
+            ko.applyBindingsToNode(element, { attr: { placeholder: placeholderValue } });
 
             // gotta re-apply shim during screen resize
             g_workspaceResizedHandlers.push(function () {
                 $.placeholder.shim();
             });
         },
-        update: function (element, valueAccessor) {
+        update: function () {
             $.placeholder.shim();
         }
     };
@@ -30,10 +30,11 @@
             var duration = allBindings.get('slideDuration') || 400; // 400ms is default duration unless otherwise specified
 
             // Now manipulate the DOM element
-            if (valueUnwrapped == true)
+            if (valueUnwrapped === true) {
                 $(element).slideDown(duration); // Make the element visible
-            else
+            } else {
                 $(element).slideUp(duration);   // Make the element invisible
+            }
         }
     };
 
@@ -49,15 +50,17 @@
             var duration = allBindings.get('fadeDuration') || 400; // 400ms is default duration unless otherwise specified
 
             // Now manipulate the DOM element
-            if (valueUnwrapped == true)
+            if (valueUnwrapped === true) {
                 $(element).fadeIn(duration); // Make the element visible
-            else
+            } else {
                 $(element).hide();   // Make the element invisible
+            }
         }
     };
 
     ko.bindingHandlers.tab = {
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        update: function (element, valueAccessor) {
+
             // This will be called once when the binding is first applied to an element,
             // and again whenever the associated observable changes value.
             // Update the DOM element based on the supplied values here.
@@ -119,4 +122,4 @@
             ko.utils.registerEventHandler($(element), "mouseout", hideMenu);
         }
     };
-} (jq110));
+}(jq111));

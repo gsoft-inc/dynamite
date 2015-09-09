@@ -17,9 +17,14 @@ namespace GSoft.Dynamite.Fields.Constants
         public const string StartDateName = "StartDate";
 
         /// <summary>
-        /// EndDate field internal name
+        /// EndDate field internal name (this one is hidden by default)
         /// </summary>
         public const string EndDateName = "EndDate";
+
+        /// <summary>
+        /// EndDate: Date and time field to display the end date (this one is visible by default).
+        /// </summary>
+        public const string EndDateVisibleName = "_EndDate";
 
         /// <summary>
         /// Location field internal name
@@ -117,13 +122,24 @@ namespace GSoft.Dynamite.Fields.Constants
         }
 
         /// <summary>
-        /// EndDate field info (OOTB type = DateTime, format = DateTime)
+        /// EndDate field info (this one is hidden by default) (OOTB type = DateTime, format = DateTime)
         /// </summary>
         public static BaseFieldInfo EndDate
         {
             get
             {
                 return new MinimalFieldInfo<DateTime?>(EndDateName, new Guid("{2684f9f2-54be-429f-ba06-76754fc056bf}"));
+            }
+        }
+
+        /// <summary>
+        /// End date field info (this one is visible by default) (OOTB type = DateTime, format = DateTime)
+        /// </summary>
+        public static BaseFieldInfo EndDateVisible
+        {
+            get
+            {
+                return new MinimalFieldInfo<DateTime?>(EndDateVisibleName, new Guid("{8a121252-85a9-443d-8217-a1b57020fadf}"));
             }
         }
 

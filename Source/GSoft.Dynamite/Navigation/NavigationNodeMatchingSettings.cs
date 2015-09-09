@@ -1,12 +1,18 @@
-﻿using System.Runtime.Serialization;
-
-namespace GSoft.Dynamite.Navigation
+﻿namespace GSoft.Dynamite.Navigation
 {
     /// <summary>
     /// Navigation node matching settings.
     /// </summary>
     public class NavigationNodeMatchingSettings
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether [restrict to current navigation level].
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [restrict to current navigation level]; otherwise, <c>false</c>.
+        /// </value>
+        public bool RestrictToCurrentNavigationLevel { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether [restrict to reachable target items].
         /// </summary>

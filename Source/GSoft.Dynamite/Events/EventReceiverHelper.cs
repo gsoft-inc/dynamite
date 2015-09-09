@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using GSoft.Dynamite.ContentTypes;
+using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Logging;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Events
@@ -13,11 +15,15 @@ namespace GSoft.Dynamite.Events
     /// </summary>
     public class EventReceiverHelper : IEventReceiverHelper
     {
+        private IListLocator listLocator;
+
         /// <summary>
         /// Initializes a new <see cref="EventReceiverHelper"/> instance.
         /// </summary>
-        public EventReceiverHelper()
+        /// <param name="listLocator">List locator to find the list with event receiver</param>
+        public EventReceiverHelper(IListLocator listLocator)
         {
+            this.listLocator = listLocator;
         }
 
         /// <summary>
@@ -107,17 +113,35 @@ namespace GSoft.Dynamite.Events
         /// </summary>
         /// <param name="site">The site</param>
         /// <param name="eventReceiver">The event receiver definition</param>
-        public void AddEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddContentTypeEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
-            // Content Types
-            if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
+            if (eventReceiver.ContentType != null)
             {
                 var contentType = site.RootWeb.ContentTypes[eventReceiver.ContentType.ContentTypeId];
                 if (contentType != null)
                 {
-                    this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType);
+                    this.AddEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType, eventReceiver.SequenceNumber);
                 }
-            }  
+            }
+        }
+
+        /// <summary>
+        /// Add an event receiver
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void AddListEventReceiverDefinition(SPWeb web, EventReceiverInfo eventReceiver)
+        {
+            if (eventReceiver.List != null)
+            {
+                var list = this.listLocator.TryGetList(web, eventReceiver.List);
+                if (list != null)
+                {
+                    this.AddEventReceiverDefinition(list, eventReceiver.ReceiverType, eventReceiver.AssemblyName, eventReceiver.ClassName, eventReceiver.SynchronizationType, eventReceiver.SequenceNumber);
+                }
+            }
         }
 
         /// <summary>
@@ -125,15 +149,33 @@ namespace GSoft.Dynamite.Events
         /// </summary>
         /// <param name="site">The site</param>
         /// <param name="eventReceiver">The event receiver definition</param>
-        public void DeleteEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void DeleteContentTypeEventReceiverDefinition(SPSite site, EventReceiverInfo eventReceiver)
         {
-            // Content Types
-            if (eventReceiver.EventOwner == EventReceiverOwner.ContentType)
+            if (eventReceiver.ContentType != null)
             {
                 var contentType = site.RootWeb.ContentTypes[eventReceiver.ContentType.ContentTypeId];
                 if (contentType != null)
                 {
-                    this.DeleteEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
+                    this.DeleteContentTypeEventReceiverDefinition(contentType, eventReceiver.ReceiverType, eventReceiver.ClassName);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove an event receiver
+        /// </summary>
+        /// <param name="web">The web</param>
+        /// <param name="eventReceiver">The event receiver definition</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void DeleteListEventReceiverDefinition(SPWeb web, EventReceiverInfo eventReceiver)
+        {
+            if (eventReceiver.List != null)
+            {
+                var list = this.listLocator.TryGetList(web, eventReceiver.List);
+                if (list != null)
+                {
+                    this.DeleteListEventReceiverDefinition(list, eventReceiver.ReceiverType, eventReceiver.ClassName);
                 }
             }
         }
@@ -145,73 +187,118 @@ namespace GSoft.Dynamite.Events
         /// <param name="type">The receiver type.</param>
         /// <param name="className">Name of the class.</param>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        public void DeleteEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string className)
+        public void DeleteContentTypeEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string className)
         {
             var eventReceiverDefinition = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().FirstOrDefault(x => (x.Class == className) && (x.Type == type));
 
             // If definition isn't already defined, add it to the content type
             if (eventReceiverDefinition != null)
             {
-                var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => eventReceiver.Type == eventReceiverDefinition.Type).ToList();
+                var eventToDelete = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => (eventReceiver.Type == eventReceiverDefinition.Type) && (eventReceiver.Class == eventReceiverDefinition.Class)).ToList();
                 eventToDelete.ForEach(c => c.Delete());
                 contentType.Update(true);
             }
         }
 
         /// <summary>
+        /// Remove the event receiver definition for the list.
+        /// </summary>
+        /// <param name="list">The list.</param>
+        /// <param name="type">The receiver type.</param>
+        /// <param name="className">Name of the class.</param>
+        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
+        public void DeleteListEventReceiverDefinition(SPList list, SPEventReceiverType type, string className)
+        {
+            var eventReceiverDefinition = list.EventReceivers.Cast<SPEventReceiverDefinition>().FirstOrDefault(x => (x.Class == className) && (x.Type == type));
+
+            // If definition isn't already defined, add it to the content type
+            if (eventReceiverDefinition != null)
+            {
+                var eventToDelete = list.EventReceivers.Cast<SPEventReceiverDefinition>().Where(eventReceiver => eventReceiver.Type == eventReceiverDefinition.Type).ToList();
+                eventToDelete.ForEach(c => c.Delete());
+                list.Update();
+            }
+        }
+
+        #region AddEventReceiverDefinition
+        /// <summary>
         /// Adds the event receiver definition to the content type.
         /// </summary>
         /// <param name="contentType">The content type.</param>
         /// <param name="type">The receiver type.</param>
-        /// <param name="assemblyName">Name of the assembly.</param>
+        /// <param name="assemblyName">The assembly name.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
+        /// <param name="sequenceNumber">An integer that represents the relative sequence of the event</param>
         /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        private SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType)
+        private SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType, int sequenceNumber)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
+            // Try Parse the Assembly Name
             var classType = Type.GetType(string.Format(CultureInfo.InvariantCulture, "{0}, {1}", className, assemblyName));
             if (classType != null)
             {
                 var assembly = Assembly.GetAssembly(classType);
-                eventReceiverDefinition = this.AddEventReceiverDefinition(contentType, type, assembly, className, syncType);
+                var isAlreadyDefined = contentType.EventReceivers.Cast<SPEventReceiverDefinition>().Any(x => (x.Class == className) && (x.Type == type));
+
+                // If definition isn't already defined, add it to the content type
+                if (!isAlreadyDefined)
+                {
+                    eventReceiverDefinition = contentType.EventReceivers.Add();
+                    eventReceiverDefinition.Type = type;
+                    eventReceiverDefinition.Assembly = assembly.FullName;
+                    eventReceiverDefinition.Synchronization = syncType;
+                    eventReceiverDefinition.Class = className;
+                    eventReceiverDefinition.SequenceNumber = sequenceNumber;
+                    eventReceiverDefinition.Update();
+                    contentType.Update(true);
+                }
             }
 
             return eventReceiverDefinition;
         }
 
         /// <summary>
-        /// Adds the event receiver definition to the content type.
+        /// Adds the event receiver definition to the list.
         /// </summary>
-        /// <param name="contentType">The content type.</param>
+        /// <param name="list">The list.</param>
         /// <param name="type">The receiver type.</param>
-        /// <param name="assembly">The assembly.</param>
+        /// <param name="assemblyName">The assembly name.</param>
         /// <param name="className">Name of the class.</param>
         /// <param name="syncType">The synchronization type</param>
+        /// <param name="sequenceNumber">An integer that represents the relative sequence of the event</param>
         /// <returns>The event receiver definition</returns>
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of statics is discouraged - this favors more flexibility and consistency with dependency injection.")]
-        private SPEventReceiverDefinition AddEventReceiverDefinition(SPContentType contentType, SPEventReceiverType type, Assembly assembly, string className, SPEventReceiverSynchronization syncType)
+        private SPEventReceiverDefinition AddEventReceiverDefinition(SPList list, SPEventReceiverType type, string assemblyName, string className, SPEventReceiverSynchronization syncType, int sequenceNumber)
         {
             SPEventReceiverDefinition eventReceiverDefinition = null;
 
-            var isAlreadyDefined = contentType.EventReceivers.Cast<SPEventReceiverDefinition>()
-                .Any(x => (x.Class == className) && (x.Type == type));
-
-            // If definition isn't already defined, add it to the content type
-            if (!isAlreadyDefined)
+            // Try Parse the Assembly Name
+            var classType = Type.GetType(string.Format(CultureInfo.InvariantCulture, "{0}, {1}", className, assemblyName));
+            if (classType != null)
             {
-                eventReceiverDefinition = contentType.EventReceivers.Add();
-                eventReceiverDefinition.Type = type;
-                eventReceiverDefinition.Assembly = assembly.FullName;
-                eventReceiverDefinition.Synchronization = syncType;
-                eventReceiverDefinition.Class = className;
-                eventReceiverDefinition.Update();
-                contentType.Update(true);
+                var assembly = Assembly.GetAssembly(classType);
+                var isAlreadyDefined = list.EventReceivers.Cast<SPEventReceiverDefinition>().Any(x => (x.Class == className) && (x.Type == type));
+
+                // If definition isn't already defined, add it to the list
+                if (!isAlreadyDefined)
+                {
+                    eventReceiverDefinition = list.EventReceivers.Add();
+                    eventReceiverDefinition.Type = type;
+                    eventReceiverDefinition.Assembly = assembly.FullName;
+                    eventReceiverDefinition.Synchronization = syncType;
+                    eventReceiverDefinition.Class = className;
+                    eventReceiverDefinition.SequenceNumber = sequenceNumber;
+                    eventReceiverDefinition.Update();
+                    list.Update();
+                }
             }
 
             return eventReceiverDefinition;
         }
+
+        #endregion AddEventReceiverDefinition
     }
 }

@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Threading;
 using Autofac;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Types;
 using GSoft.Dynamite.Lists;
+using GSoft.Dynamite.Lists.Constants;
 using Microsoft.SharePoint;
-using Microsoft.SharePoint.JSGrid;
 using Microsoft.SharePoint.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Web.Hosting.Administration;
 
 namespace GSoft.Dynamite.IntegrationTests.Lists
 {
@@ -1157,13 +1159,11 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         }
 
         /// <summary>
-        /// Make sure that when Ensuring an existing list with item(s) on it, and the new list info has
-        /// property EnableAttachments set to false, it doesn't allow you to disable them to prevent from deleting attachments.
-        /// An ArgumentException is thrown.
+        /// Make sure that when Ensuring an existing list with item(s) on it with no attachments, and the new list info has
+        /// property EnableAttachments set to false, it allows you to disable them to prevent from deleting attachments.
         /// </summary>
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void EnsureList_WhenEnsuringAnExistingListWithItemsOnItAndYouWantToDisableAttachments_ItShouldNotAllowYou()
+        public void EnsureList_WhenEnsuringAnExistingListWithItemsButNoAttachmentsAndYouWantToDisableAttachments_ItShouldAllowYou()
         {
             // Arrange
             const string Url = "testUrl";
@@ -1188,8 +1188,386 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     // Act
                     var updatedList = listHelper.EnsureList(rootWeb, listInfo);
 
-                    // Assert (exception should have been thrown...)
-                    Assert.IsTrue(false);
+                    // Assert
+                    Assert.IsFalse(updatedList.EnableAttachments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that when Ensuring an existing list with item(s) on it with attachments, and the new list info has
+        /// property EnableAttachments set to false, it denies you to disable them to prevent from deleting attachments.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenEnsuringAnExistingListWithItemsAndAttachmentsAndYouWantToDisableAttachments_ItShouldDenyYou()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var initialList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Create dummy attachment content
+                    var unicode = new UnicodeEncoding();
+                    var attachmentData = unicode.GetBytes("Dummy attachment file content.");
+
+                    // Creating an item with an attachment on the list
+                    var item = initialList.AddItem();
+                    item["Title"] = "Item Title";
+                    item.Attachments.Add("attachment.txt", attachmentData);
+                    item.Update();
+
+                    listInfo.EnableAttachements = false;
+
+                    // Act
+                    var updatedList = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert (expect exception)
+                    Assert.IsTrue(updatedList.EnableAttachments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with a validation formula and a validation message, it should set
+        /// both validation settings right.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithValidationFormulaAndMessage_ItShouldSetThem()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+            
+            var expectedFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            const string ExpectedMessage = "Name needs to be Bob";
+            const string WebLocale = "en-US";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedFormula, ExpectedMessage));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(expectedFormula, list.ValidationFormula);
+                    Assert.AreEqual(ExpectedMessage, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure an existing list with a validation formula and a validation message, it should set
+        /// both validation settings right.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringAnExistingListWithValidationFormulaAndMessage_ItShouldSetNewSettings()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+            const string FormulaNewRequiredValue = "\"John\"";
+            const string WebLocale = "en-US";
+
+            var validationFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            var expectedNewFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaNewRequiredValue);
+
+            const string FormulaMessage = "Name needs to be Bob";
+            const string ExpectedNewMessage = "Name needs to be John";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(validationFormula, FormulaMessage));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    
+                    // Creating initial list
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    listInfo.ValidationSettings.Clear();
+                    listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedNewFormula, ExpectedNewMessage));
+
+                    list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore, rootWeb.Lists.Count);
+                    Assert.AreEqual(expectedNewFormula, list.ValidationFormula);
+                    Assert.AreEqual(ExpectedNewMessage, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with an invalid validation formula it should
+        /// throw an exception.
+        /// </summary>
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void EnsureList_WhenEnsuringANonExistingListWithInvalidFormula_ItShouldThrowException()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string WebLocale = "en-US";
+            const string FormulaRequiredValue = "'Bob'";
+            var expectedFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(WebLocale, new ListValidationInfo(expectedFormula));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.IsTrue(false);   // Exception should have been thrown already
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with a dictionnary of validation settings when the current Web Locale
+        /// is not part of the dictionnary keys. It should not apply any validation settings.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithNotFoundLocale_ItShouldDoNothing()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string Name = "NameFieldKey";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+
+            var validationFormula = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                Name,
+                FormulaRequiredValue);
+
+            const string ValidationMessage = "Name needs to be Bob";
+            const string ValidationLocale = "fr-FR";
+
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    Name,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(ValidationLocale, new ListValidationInfo(validationFormula, ValidationMessage));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(string.Empty, list.ValidationFormula);
+                    Assert.AreEqual(string.Empty, list.ValidationMessage);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure a non existing list with a dictionnary of validation settings (different Locale).
+        /// The settings applied should be the ones corresponding to the current Web Locale.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenEnsuringANonExistingListWithMultipleValidationLocales_ItShouldApplyTheCorrectOnes()
+        {
+            // Arrange
+            const string Url = "testUrl";
+            const string NameFr = "NameFieldKeyFr";
+            const string NameEn = "NameFieldKeyEn";
+            const string NameDe = "NameFieldKeyDe";
+            const string Desc = "DescriptionFieldKey";
+            const string FormulaRequiredValue = "\"Bob\"";
+
+            var validationFormulaFr = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameFr,
+                FormulaRequiredValue);
+
+            var validationFormulaEn = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameEn,
+                FormulaRequiredValue);
+
+            var validationFormulaDe = string.Format(
+                CultureInfo.InvariantCulture,
+                "={0}={1}",
+                NameDe,
+                FormulaRequiredValue);
+
+            const string ValidationMessageEn = "Name needs to be Bill";
+            const string ValidationMessageFr = "Name needs to be Robert";
+            const string ValidationMessageDe = "Name needs to be Franz";
+
+            const string ValidationLocaleEn = "en-US";
+            const string ValidationLocaleFr = "fr-FR";
+            const string ValidationLocaleDe = "de-DE";
+
+            // Web will be in de-DE Locale, so field will be using the DE Name
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    NameDe,
+                    Desc,
+                    "GroupKey");
+
+            var listInfo = new ListInfo(Url, "NameKey", "DescriptionKey");
+
+            listInfo.FieldDefinitions = new[]
+            {
+                textFieldInfo
+            };
+
+            listInfo.ValidationSettings.Add(ValidationLocaleEn, new ListValidationInfo(validationFormulaEn, ValidationMessageEn));
+            listInfo.ValidationSettings.Add(ValidationLocaleFr, new ListValidationInfo(validationFormulaFr, ValidationMessageFr));
+            listInfo.ValidationSettings.Add(ValidationLocaleDe, new ListValidationInfo(validationFormulaDe, ValidationMessageDe));
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                rootWeb.Locale = new CultureInfo("de-DE");
+                rootWeb.Update();
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var numberOfListsBefore = rootWeb.Lists.Count;
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
+                    list = rootWeb.GetList(Url);
+                    Assert.IsNotNull(list);
+                    Assert.AreEqual(numberOfListsBefore + 1, rootWeb.Lists.Count);
+                    Assert.AreEqual(validationFormulaDe, list.ValidationFormula);
+                    Assert.AreEqual(ValidationMessageDe, list.ValidationMessage);
                 }
             }
         }
@@ -1666,7 +2044,6 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
         /// provision those for you)
         /// </summary>
         [TestMethod]
-        [TestCategory(IntegrationTestCategories.Sanity)]
         public void EnsureList_WhenSpecifyingBothContentTypesAndFieldDefinitions_AndNoneOfThemAreProvisionnedYet_ShouldProvisionSiteColumnAndContentType_ThenOverrideFieldDefinitionOnTheList()
         {
             // Arrange
@@ -2113,6 +2490,247 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
 
                     // Reset MUI to its old abient value
                     Thread.CurrentThread.CurrentUICulture = ambientThreadCulture;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Ensuring that property bag pair (name of the property + list GUID) is created/overwritten if the ListInfo.PropertyBagKeyForGUID has been set
+        /// <summary>
+        /// When EnsureList is used with a listinfo that has its property 'PropertyBagKeyForGuid' set, it create/overwrites a pair in the web property bag
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WithPropertyBagKeyForListId_ShouldCreateAPropertyBagPairWithListIDInListParentWeb()
+        {
+            // Arrange
+            const string Url = "testListUrl";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // First, create the subweb
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                
+                // Now, attempt to create the list which should result in a conflicting relative URL, thus, an exception thrown.
+                var listInfo = new ListInfo(Url, "testListName", "testListDescription");
+                listInfo.PropertyBagKeyForListId = "testProperty";
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var propertyBagHelper = injectionScope.Resolve<IPropertyBagHelper>();
+
+                    // Act
+                    var list = listHelper.EnsureList(rootWeb, listInfo);
+                    
+                    var actualListId = list.ID.ToString();
+                    var expectedListId = propertyBagHelper.GetWebValue(rootWeb, listInfo.PropertyBagKeyForListId);
+
+                    // Asserting that the list wasn't created
+                    Assert.AreEqual(expectedListId, actualListId);                      
+                }
+            }
+        }
+        #endregion
+
+        #region Versioning settings
+
+        /// <summary>
+        /// Validates that EnsureList creates a new list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenNotAlreadyExists_ShouldCreateWithVersioningSettings()
+        {
+            // Arrange
+            const string ListInfoWithoutVersioningLimitsUrl = "Lists/listInfoWithoutVersioningLimits";
+            const string ListInfoWithMajorLimitsUrl = "Lists/listInfoWithMajorLimits";
+            const string ListInfoWithMajorAndMinorLimitsUrl = "Lists/listInfoWithMajorAndMinorLimits";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfoWithoutVersioningLimits = new ListInfo(
+                    ListInfoWithoutVersioningLimitsUrl,
+                    "listInfoWithoutVersioningLimitsName",
+                    "listInfoWithoutVersioningLimitsDescription")
+                {
+                    IsVersioningEnabled = true
+                };
+
+                var listInfoWithMajorLimits = new ListInfo(
+                    ListInfoWithMajorLimitsUrl,
+                    "listInfoWithMajorLimitsName",
+                    "listInfoWithMajorLimitsDescription")
+                {
+                    IsVersioningEnabled = true,
+                    MajorVersionLimit = 10
+                };
+
+                // For minor versions, you need to enable drafts
+                var listInfoWithMajorAndMinorLimits = new ListInfo(
+                    ListInfoWithMajorAndMinorLimitsUrl, 
+                    "listInfoWithMajorAndMinorLimitsName", 
+                    "listInfoWithMajorAndMinorLimitsDescription")
+                {
+                    IsVersioningEnabled = true,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader,
+                    MajorVersionLimit = 10,
+                    MinorVersionLimit = 5
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var listWithoutVersioningLimits = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioningLimits);
+                    var listWithMajorLimits = listHelper.EnsureList(testRootWeb, listInfoWithMajorLimits);
+                    var listWithMajorAndMinorLimits = listHelper.EnsureList(testRootWeb, listInfoWithMajorAndMinorLimits);
+
+                    // Assert
+                    Assert.AreEqual(listInfoWithoutVersioningLimits.IsVersioningEnabled, listWithoutVersioningLimits.EnableVersioning);
+
+                    Assert.AreEqual(listInfoWithMajorLimits.IsVersioningEnabled, listWithMajorLimits.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorLimits.MajorVersionLimit, listWithMajorLimits.MajorVersionLimit);
+
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.IsVersioningEnabled, listWithMajorAndMinorLimits.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MajorVersionLimit, listWithMajorAndMinorLimits.MajorVersionLimit);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MinorVersionLimit, listWithMajorAndMinorLimits.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenAlreadyExists_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/listWithVersioningSettings";
+            const string ListName = "listWithVersioningSettingsName";
+            const string ListDescription = "listWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfoWithoutVersioning = new ListInfo(ListUrl, ListName, ListDescription);
+
+                var listInfoWithoutVersioningLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true
+                };
+
+                var listInfoWithMajorLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true,
+                    MajorVersionLimit = 10
+                };
+
+                // For minor versions, you need to enable drafts
+                var listInfoWithMajorAndMinorLimits = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    IsVersioningEnabled = true,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader,
+                    MajorVersionLimit = 20,
+                    MinorVersionLimit = 5
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioning);
+
+                    // Assert
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithoutVersioningLimits);
+                    Assert.AreEqual(listInfoWithoutVersioningLimits.IsVersioningEnabled, list.EnableVersioning);
+
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithMajorLimits);
+                    Assert.AreEqual(listInfoWithMajorLimits.IsVersioningEnabled, list.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorLimits.MajorVersionLimit, list.MajorVersionLimit);
+
+                    list = listHelper.EnsureList(testRootWeb, listInfoWithMajorAndMinorLimits);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.IsVersioningEnabled, list.EnableVersioning);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MajorVersionLimit, list.MajorVersionLimit);
+                    Assert.AreEqual(listInfoWithMajorAndMinorLimits.MinorVersionLimit, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        public void SetValidation_WithList_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/listWithVersioningSettings";
+            const string ListName = "listWithVersioningSettingsName";
+            const string ListDescription = "listWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+                    listHelper.SetVersioning(list, true, true, 10, 5);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableVersioning);
+                    Assert.AreEqual(10, list.MajorVersionLimit);
+                    Assert.AreEqual(5, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureList updates an existing list with the correct versioning settings.
+        /// </summary>
+        [TestMethod]
+        public void SetValidation_WithLibrary_ShouldUpdateVersioningSettings()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+                    listHelper.SetVersioning(list, true, true, 10, 5);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableVersioning);
+                    Assert.AreEqual(true, list.EnableMinorVersions);
+                    Assert.AreEqual(10, list.MajorVersionLimit);
+                    Assert.AreEqual(5, list.MajorWithMinorVersionsLimit);
                 }
             }
         }

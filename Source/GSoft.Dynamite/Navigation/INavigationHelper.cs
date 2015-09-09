@@ -1,11 +1,12 @@
 namespace GSoft.Dynamite.Navigation
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using GSoft.Dynamite.Pages;
-    using Microsoft.SharePoint;
-    using Microsoft.SharePoint.Publishing.Navigation;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using GSoft.Dynamite.Pages;
+using GSoft.Dynamite.Taxonomy;
+using Microsoft.SharePoint;
+using Microsoft.SharePoint.Publishing.Navigation;
 
     /// <summary>
     /// Navigation configuration helper.
@@ -55,9 +56,9 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Set term driven page settings in the term store
         /// </summary>
-        /// <param name="site">The site</param>
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
         /// <param name="termDrivenPageInfo">The term driven page setting info</param>
-        void SetTermDrivenPageSettings(SPSite site, TermDrivenPageSettingInfo termDrivenPageInfo);
+        void SetTermDrivenPageSettings(SPWeb web, TermDrivenPageSettingInfo termDrivenPageInfo);
 
         /// <summary>
         /// Reset web navigation to its default configuration. Disabled the term set as avigation term set.
@@ -65,5 +66,12 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="web">The web</param>
         /// <param name="settings">The managed navigation settings. Set null if you want to keep the associated termset unchanged</param>
         void ResetWebNavigationToDefault(SPWeb web, ManagedNavigationInfo settings);
+
+        /// <summary>
+        /// Method to take a term configured as a term driven page to a simple link url.
+        /// </summary>
+        /// <param name="web">The web for which we want to change a term's target URL in its taxonomy navigation term set</param>
+        /// <param name="termInfo">The metadata term to reset</param>
+        void ResetTermDrivenPageToSimpleLinkUrl(SPWeb web, TermInfo termInfo);
     }
 }

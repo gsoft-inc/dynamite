@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Autofac;
+using GSoft.Dynamite.Sites;
 using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.ServiceLocator.Lifetime
@@ -65,7 +66,18 @@ namespace GSoft.Dynamite.ServiceLocator.Lifetime
             var scopeKindTag = SPLifetimeTag.Site;
             var childScopePerSiteContainerUniqueKey = scopeKindTag + site.ID;
 
-            return this.ChildScopeFactory.GetChildLifetimeScope(parentScope, scopeKindTag, childScopePerSiteContainerUniqueKey);
+            return this.ChildScopeFactory.GetChildLifetimeScope(
+                parentScope,
+                scopeKindTag,
+                childScopePerSiteContainerUniqueKey,
+                (childContainerBuilder) =>
+                {
+                    // Register the current site context on child scope (equivalent to InstancePerSite).
+                    // WARNING: Don't use anything else than RegisterInstance here and make sure the SiteCollectionContext
+                    // doesn't hold on to the SPSite instance... we don't want to cause issues by needlessly keeping
+                    // SPRequest objects in scope after they get disposed.
+                    childContainerBuilder.RegisterInstance(new SiteCollectionContext(site)).As<ISiteCollectionContext>();
+                });
         }
     }
 }

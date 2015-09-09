@@ -75,5 +75,29 @@ namespace GSoft.Dynamite.ContentTypes.Constants
         {
             get { return new SPContentTypeId(BuiltInContentTypes.RichMediaAsset.ToString() + "00291D173ECE694D56B19D111489C4369D"); }
         }
+
+        /// <summary>
+        /// The SharePoint Page Content Type
+        /// </summary>
+        public static SPContentTypeId SystemPage
+        {
+            get { return new SPContentTypeId(BuiltInContentTypes.Document.ToString() + "00" + "C568DB52D9D0A14D9B2FDCC96666E9F2"); }
+        }
+
+        /// <summary>
+        /// The SharePoint Page Content Type
+        /// </summary>
+        public static SPContentTypeId Page
+        {
+            get { return new SPContentTypeId(BuiltInContentTypes.SystemPage.ToString() + "00" + "7948130EC3DB064584E219954237AF39"); }
+        }
+
+        /// <summary>
+        /// The SharePoint Article page content type
+        /// </summary>
+        public static SPContentTypeId ArticlePage
+        {
+            get { return new SPContentTypeId(BuiltInContentTypes.Page.ToString() + "00" + "242457EFB8B24247815D688C526CD44D"); }
+        }
     }
 }

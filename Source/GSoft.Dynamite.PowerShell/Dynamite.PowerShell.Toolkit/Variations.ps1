@@ -65,7 +65,8 @@
 	  </Site>
 	</WebApplication>
 #>
-function global:New-DSPSiteVariations() {
+function global:New-DSPSiteVariations() 
+{
 	[CmdletBinding()]
 	param
 	(
@@ -151,7 +152,7 @@ function global:New-DSPSiteVariations() {
 		
 	    $webApplication = $Site.WebApplication;
 
-		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -WebApplication $webApplication
+		Wait-SPTimerJob -Name "VariationsCreateHierarchies" -Site $site
 		Write-Verbose "Waiting for 'VariationsCreateHierarchies' timer job to finish..."
 		Start-Sleep -Seconds 30
 	}	
@@ -292,10 +293,10 @@ function Start-ListItemPropagation
     param
 	(
         [Parameter(Mandatory=$true, Position=0)]
-		$WebApplication
+		$Site
 	)
 
-    Wait-SPTimerJob -Name "VariationsPropagateListItem" -WebApplication $WebApplication
+    Wait-SPTimerJob -Name "VariationsPropagateListItem" -Site -$Site
 	Write-Verbose "Waiting for 'VariationsPropagateListItem' timer job to finish..."
 	Start-Sleep -Seconds 15
 }
@@ -340,7 +341,8 @@ function Set-VariationHierarchy {
 		}
 }
 
-function Sync-DSPWeb {
+function Sync-DSPWeb
+{
 	param
 	(
         [Parameter(Mandatory=$true, HelpMessage = "The variation source web", Position=0, ValueFromPipeline=$true)]
@@ -352,9 +354,211 @@ function Sync-DSPWeb {
 
 	$sourceUrl = $SourceWeb.Url
 	$labelToUpper = $LabelToSync.ToUpper()
-    Write-Warning "Sync SPWeb $sourceUrl to the variation label..."
+    Write-Warning "Sync SPWeb '$sourceUrl' to the variation label '$labelToUpper'..."
 
 	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
 
 	$variationSyncHelper.SyncWeb($SourceWeb, $LabelToSync)
+}
+
+function Sync-DSPList 
+{
+	param
+	(
+        [Parameter(Mandatory=$true, HelpMessage = "The variation source list", Position=0, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPList]$SourceList,
+
+		[Parameter(Mandatory=$true, HelpMessage = "The label to Sync", Position=1)]
+		[string]$LabelToSync
+	)
+
+	$listTitle = $SourceList.Title
+	$labelToUpper = $LabelToSync.ToUpper()
+    Write-Warning "Sync SPList '$listTitle' to the variation label '$labelToUpper'..."
+
+	$variationSyncHelper = Resolve-DSPType "GSoft.Dynamite.Globalization.Variations.IVariationSyncHelper"
+
+	$variationSyncHelper.SyncList($SourceList, $LabelToSync)
+}
+
+<#
+    .SYNOPSIS
+	    Get variation labels for a SharePoint site
+	
+    .DESCRIPTION
+		Get the variation labels associtaed to a SPWeb. You can use this function to check if variations are enable on a SharePoint site. This cmdlet is compatible with MOSS 2007 and above.
+
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+		
+    .PARAMETER Path
+	    [REQUIRED] The SPWeb instance
+
+    .EXAMPLE
+
+			$Web = Get-SPWeb http://mysite	    
+			Get-VariationLabels -Web $Web
+
+	.OUTPUT
+		
+		Returns the variations labels as table like this:
+
+		Label                                   LCID                                                                   IsSource
+		-----                                   ----                                                                   --------
+		en                                      1033                                                                      False
+		fr                                      1036                                                                       True
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Get-VariationLabels 
+{
+
+	Param
+	(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Microsoft.SharePoint.SPWeb]$Web
+	)
+
+	# Load SharePoint assembly to be backward compatible with MOSS 2007
+    [void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint")
+	[void][System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SharePoint.Publishing")
+
+    $Labels = @() 
+
+	if($Web.IsRootWeb)
+    {
+        $RootWeb = $Web
+    }
+    else
+    {
+        $RootWeb = $Web.Site.RootWeb
+    } 
+    
+    # To know if a site has variatiosn enabled, we need to check labels in the variation hidden list
+    $PublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($RootWeb)
+
+    if ($PublishingWeb)
+    {
+		# We cant't use the GetProperty() method because it doesn't exist in MOSS 2007
+        $ListGuid = $RootWeb.AllProperties["_VarLabelsListId"]
+        if ($ListGuid -ne $null)
+        {
+            
+            $List = $RootWeb.Lists[[Guid]$ListGuid]
+		
+            $CamlQuery = New-Object -TypeName Microsoft.SharePoint.SPQuery
+            $CamlQuery.Query = "<OrderBy><FieldRef Name='Title' /></OrderBy>"
+            $LabelItems = $List.GetItems($CamlQuery) 
+
+            $LabelItems | ForEach-Object {
+                
+                $CurrentLabel = New-Object PSObject
+
+                $CurrentLabel | Add-Member Noteproperty Label $_.Title 
+                $CurrentLabel | Add-Member Noteproperty LCID $_["Locale"]
+                $CurrentLabel | Add-Member Noteproperty IsSource $_["Is_x0020_Source"]
+
+                $Labels += $CurrentLabel
+            }          
+        }
+    }
+
+    return $Labels
+}
+
+<#
+    .SYNOPSIS
+	    Get the variation peer web for a specified label
+	
+    .DESCRIPTION
+	    Get the peer web in the variation structure according to a specific label
+       
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+		
+    .PARAMETER SourceWeb
+	    [REQUIRED] A source SPWeb object
+
+    .PARAMETER Label
+	    [REQUIRED] The web variation label to look for. This label corresponds to the VariationLabel.Title property configured during the variations setup.
+
+    .EXAMPLE
+		    PS C:\> Get-VariationPeerWeb (Get-SPWeb <my_url>) -Label 'en'
+
+	.OUTPUTS
+
+		Returns a SPWeb object corresponding to the peer web. Return null otherwise.
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Get-VariationPeerWeb 
+{
+
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.SPWeb]$SourceWeb,
+
+		[Parameter(Mandatory=$true, Position=1)]
+		[string]$Label
+	)   
+
+	# To know acces variations properties on a site, we need to cast the current Web to a PublishingWeb (works for all web templates) and check the Label property
+	$SourcePublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($SourceWeb)
+	$SourceWebUrl = $SourceWeb.Url
+
+	if ($SourcePublishingWeb -ne $null)
+	{	
+		if ($SourcePublishingWeb.Label -ne $null)
+		{
+			if ($SourcePublishingWeb.VariationPublishingWebUrls -ne $null)
+			{
+				$SourcePublishingWeb.VariationPublishingWebUrls | ForEach-Object {
+                        
+					$PeerWeb = Get-SPWeb $_
+					if ($PeerWeb -ne $null)
+					{
+						$PeerPublishingWeb = [Microsoft.SharePoint.Publishing.PublishingWeb]::GetPublishingWeb($PeerWeb)
+						if ([string]::Compare($PeerPublishingWeb.Label.Title, $Label) -eq 0)
+						{
+							return $PeerWeb
+						}				
+					}
+				}
+			}	
+		}
+		else
+		{
+			Write-Warning "The web '$SourceWebUrl' doesn't seem to have variations enabled"
+		}
+	}
 }

@@ -1,9 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" solutionId="d40e8563-ecc4-4066-8f26-2d8e0f8e8a28" resetWebServer="false" sharePointProductVersion="15.0" name="GSoft.Dynamite" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
   <assemblies>
-    <projectOutputAssembly location="GSoft.Dynamite.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\GSoft.Dynamite\GSoft.Dynamite.csproj" />
+    <projectOutputAssembly location="GSoft.Dynamite.dll" deploymentTarget="GlobalAssemblyCache" projectPath="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
+      <safeControls>
+        <safeControl assemblyName="GSoft.Dynamite.dll" namespaceName="GSoft.Dynamite" typeName="*" isSafeAgainstScript="false" />
+      </safeControls>
+    </projectOutputAssembly>
     <customAssembly location="Autofac.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Autofac.3.5.0\lib\net40\Autofac.dll" />
-    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll" />
   </assemblies>
   <features>
     <featureReference itemId="1505bd90-16f1-47d4-a99a-6007e090ca32" />
@@ -12,6 +16,7 @@
     <featureReference itemId="f33ae721-5d4a-477c-a984-6ce3266c2aa7" />
     <featureReference itemId="3c2d4a5a-fdb7-4127-9fcb-fc0d2215aea8" />
     <featureReference itemId="2bd8393f-2785-45b0-a806-5f524101d8a7" />
+    <featureReference itemId="34023cc4-ba3f-4db0-8f6f-f330fd6758e5" />
   </features>
   <projectItems>
     <projectItemReference itemId="ff112f9f-2429-46c2-a407-771ef33b1d94" />

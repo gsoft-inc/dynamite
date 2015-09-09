@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-
+using GSoft.Dynamite.Extensions;
 using Microsoft.SharePoint;
 using Microsoft.SharePoint.Utilities;
 
@@ -19,58 +20,131 @@ namespace GSoft.Dynamite.Security
         /// <returns>List of groups.</returns>
         public ICollection<string> GetUserSharePointGroups(SPWeb web, string userName)
         {
-            return (from SPGroup @group in web.Groups let isMember = this.FetchUserFromGroup(web, @group.Name, userName) where isMember select @group.Name).ToList();
+            return (from SPGroup @group in web.Groups let isMember = this.IsUserInGroup(web.EnsureUser(userName), @group) where isMember select @group.Name).ToList();
         }
 
         /// <summary>
-        /// Determines if the user is in the specified group
+        /// Determines whether The specified user is part of the specified SharePoint user group.
+        /// This method will also check users in the active directory groups if any are in the SharePoint group.
         /// </summary>
-        /// <param name="web">Current web.</param>
-        /// <param name="grpName">The group name.</param>
-        /// <param name="userName">The user name.</param>
-        /// <returns>True if the user is in the group, false otherwise.</returns>
-        private bool FetchUserFromGroup(SPWeb web, string grpName, string userName)
+        /// <param name="user">The SharePoint user.</param>
+        /// <param name="group">The SharePoint group.</param>
+        /// <returns>True if the user is part of the specified group.</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// user or group is null
+        /// </exception>
+        public bool IsUserInGroup(SPUser user, SPGroup group)
         {
-            bool isMember = false;
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
 
-            SPSecurity.RunWithElevatedPrivileges(
-                () =>
+            if (group == null)
+            {
+                throw new ArgumentNullException("group");
+            }
+
+            var usersInGroup = this.GetUsersInPrincipal(group);
+            return HasUserInList(usersInGroup, user);
+        }
+
+        /// <summary>
+        /// Gets the users of the SharePoint principal.
+        /// This method will also check users in the active directory groups.
+        /// </summary>
+        /// <param name="principal">The SharePoint principal.</param>
+        /// <returns>A list of the SPUsers in the SharePoint principal</returns>
+        /// <exception cref="System.ArgumentNullException">
+        /// Principal is null
+        /// </exception>
+        public IList<SPUser> GetUsersInPrincipal(SPPrincipal principal)
+        {
+            if (principal == null)
+            {
+                throw new ArgumentNullException("principal");
+            }
+
+            List<SPUser> allUsers = new List<SPUser>();
+
+            principal.ParentWeb.RunAsSystem(elevatedWeb =>
+            {
+                try
+                {
+                    elevatedWeb.AllowUnsafeUpdates = true;
+
+                    SPUser user = principal as SPUser;
+                    if (user != null)
                     {
-                        // Reinit SharePoint context
-                        using (var newSite = new SPSite(web.Site.ID))
+                        if (user.IsDomainGroup)
                         {
-                            using (var newWeb = newSite.OpenWeb(web.ID))
+                            bool reachedMaxCount;
+
+                            // Be careful, this method return AD groups too regardless to their permissions in the current SharePoint site
+                            SPPrincipalInfo[] groupMembers = SPUtility.GetPrincipalsInGroup(elevatedWeb, principal.LoginName, 9999, out reachedMaxCount);
+                            if (groupMembers != null)
                             {
-                                bool hasMaxCount;
-
-                                // Be careful, this method return AD groups too regardless to their permissions in the current SharePoint site
-                                SPPrincipalInfo[] peoples = SPUtility.GetPrincipalsInGroup(newWeb, grpName, 1000, out hasMaxCount);
-
-                                if (peoples != null)
+                                foreach (SPPrincipalInfo member in groupMembers)
                                 {
-                                    foreach (SPPrincipalInfo people in peoples)
+                                    switch (member.PrincipalType)
                                     {
-                                        if (people.PrincipalType == SPPrincipalType.SecurityGroup)
-                                        {
-                                            // If its a security group, make recursive calls
-                                            isMember = FetchUserFromGroup(newWeb, people.LoginName, userName);
-                                        }
-                                        else
-                                        {
-                                            if (string.CompareOrdinal(
-                                                people.LoginName.ToUpperInvariant(), userName.ToUpperInvariant()) == 0
-                                                && isMember == false)
+                                        case SPPrincipalType.SecurityGroup:
+                                        case SPPrincipalType.DistributionList:
                                             {
-                                                isMember = true;
-                                            }
-                                        }
-                                    }
-                                } 
-                            }
-                        }                   
-                    });
+                                                var usersInPrincipal = GetUsersInPrincipal(elevatedWeb.EnsureUser(member.LoginName));
 
-            return isMember;
+                                                // Only add users to the all users list if they are not already there.
+                                                allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
+                                                break;
+                                            }
+
+                                        case SPPrincipalType.User:
+                                            {
+                                                var memberUser = elevatedWeb.EnsureUser(member.LoginName);
+                                                if (!HasUserInList(allUsers, memberUser))
+                                                {
+                                                    allUsers.Add(memberUser);
+                                                }
+
+                                                break;
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Only add the user to the all users list if they are not already there.
+                            if (!HasUserInList(allUsers, user))
+                            {
+                                allUsers.Add(user);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        SPGroup group = principal as SPGroup;
+                        foreach (SPUser groupUser in group.Users)
+                        {
+                            var usersInPrincipal = GetUsersInPrincipal(groupUser);
+
+                            // Only add users to the all users list if they are not already there.
+                            allUsers.AddRange(usersInPrincipal.Where(u => !HasUserInList(allUsers, u)));
+                        }
+                    }
+                }
+                finally
+                {
+                    elevatedWeb.AllowUnsafeUpdates = false;
+                }
+            });
+
+            return allUsers;
+        }
+
+        private static bool HasUserInList(IList<SPUser> users, SPUser user)
+        {
+            return users.Any(u => u.ID == user.ID);
         }
     }
 }

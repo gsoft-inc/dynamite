@@ -90,8 +90,8 @@ publish
 # Publish Web Output
 *.Publish.xml
 
-# NuGet Packages Directory
-packages
+# NuGet Packages Directory (packages included to ensure codebase portability, even though there isn't much chance for the Autofac and Newtonsoft feeds to go down)
+#packages
 
 # Windows Azure Build Output
 csx

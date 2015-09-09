@@ -1,11 +1,9 @@
 using System;
+using System.Collections.ObjectModel;
+using Microsoft.SharePoint;
 
 namespace GSoft.Dynamite.Globalization.Variations
 {
-    using System.Collections.ObjectModel;
-
-    using Microsoft.SharePoint;
-
     /// <summary>
     /// SharePoint variations helper
     /// </summary>
@@ -56,7 +54,7 @@ namespace GSoft.Dynamite.Globalization.Variations
         /// <param name="site">The site</param>
         /// <param name="variationSettings">The variation settings</param>
         void SetupVariations(SPSite site, VariationSettingsInfo variationSettings);
-        
+
         /// <summary>
         /// Get the hidden relationships list for a site collection.
         /// </summary>

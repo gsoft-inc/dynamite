@@ -60,9 +60,9 @@
     </Reference>
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Web" />
@@ -86,8 +86,10 @@
     <Compile Include="Branding\ImageRenditionInfoTest.cs" />
     <Compile Include="Branding\DisplayTemplateInfoTest.cs" />
     <Compile Include="BaseSerializationTest.cs" />
+    <Compile Include="Fields\ChoiceFieldInfoTest.cs" />
     <Compile Include="Folders\FolderInfoTest.cs" />
     <Compile Include="Catalogs\CatalogInfoTest.cs" />
+    <Compile Include="ReusableContent\ReusableContentInfoTest.cs" />
     <Compile Include="ValueTypes\ImageFieldValue.cs" />
     <Compile Include="ValueTypes\Writers\UrlValueWriterTest.cs" />
     <Compile Include="ValueTypes\Writers\FieldValueWriterTest.cs" />

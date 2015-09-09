@@ -8,6 +8,7 @@ using GSoft.Dynamite.Catalogs;
 using GSoft.Dynamite.Configuration;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Documents;
+using GSoft.Dynamite.Email;
 using GSoft.Dynamite.Events;
 using GSoft.Dynamite.Features;
 using GSoft.Dynamite.Fields;
@@ -22,12 +23,14 @@ using GSoft.Dynamite.Monitoring;
 using GSoft.Dynamite.Navigation;
 using GSoft.Dynamite.Pages;
 using GSoft.Dynamite.Repositories;
+using GSoft.Dynamite.ReusableContent;
 using GSoft.Dynamite.Search;
 using GSoft.Dynamite.Security;
 using GSoft.Dynamite.Serializers;
 using GSoft.Dynamite.ServiceLocator.Lifetime;
 using GSoft.Dynamite.Taxonomy;
 using GSoft.Dynamite.TimerJobs;
+using GSoft.Dynamite.UserProfile;
 using GSoft.Dynamite.Utils;
 using GSoft.Dynamite.ValueTypes.Readers;
 using GSoft.Dynamite.ValueTypes.Writers;
@@ -128,6 +131,7 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Cache
             builder.RegisterType<CacheHelper>().As<ICacheHelper>();
+            builder.RegisterType<BlobCacheHelper>().As<IBlobCacheHelper>();
 
             // CAML query builder and utilities
             builder.RegisterType<CamlBuilder>().As<ICamlBuilder>();
@@ -147,6 +151,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Documents
             builder.RegisterType<ContentOrganizerHelper>().As<IContentOrganizerHelper>();
+
+            // Email
+            builder.RegisterType<EmailHelper>().As<IEmailHelper>();
 
             // Events
             builder.RegisterType<EventReceiverHelper>().As<IEventReceiverHelper>();
@@ -194,6 +201,9 @@ namespace GSoft.Dynamite.ServiceLocator
             // Repositories
             builder.RegisterType<ItemLocator>().As<IItemLocator>();
 
+            // Reusable Content
+            builder.RegisterType<ReusableContentHelper>().As<IReusableContentHelper>();
+
             // Search
             builder.RegisterType<SearchHelper>().As<ISearchHelper>();
             builder.RegisterType<QueryRuleHelper>().As<IQueryRuleHelper>();
@@ -228,6 +238,9 @@ namespace GSoft.Dynamite.ServiceLocator
 
             // Features
             builder.RegisterType<FeatureDependencyActivator>().As<IFeatureDependencyActivator>();
+
+            // User profile
+            builder.RegisterType<UserProfilePropertyHelper>().As<IUserProfilePropertyHelper>();
         }
     }
 }

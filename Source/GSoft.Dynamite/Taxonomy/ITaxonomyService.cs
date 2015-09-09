@@ -247,6 +247,19 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from source term to root term in the term set
         /// </summary>
         /// <param name="site">The current site collection.</param>
+        /// <param name="termStoreId">The parent term store</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termStoreId, Guid termSetId, Guid termId, bool parentFirst);  // TODO: Review this "parent first" meaning... doesn't "GetTermPathFromRootToTerm" imply parentFirst=true as default? Just plain weird...
+
+        /// <summary>
+        /// Get all parent terms from source term to root term in the term set
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
         /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
         /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
@@ -283,5 +296,24 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="groupName">The term set group name, in the term store's default working language.</param>
         /// <returns>The term set group</returns>
         Group GetTermGroupFromStore(TermStore termStore, string groupName);
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within a desired term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName);
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within the default term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreGroupName, string termSetName);
     }
 }

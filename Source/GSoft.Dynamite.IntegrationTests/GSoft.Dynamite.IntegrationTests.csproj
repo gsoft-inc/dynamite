@@ -44,8 +44,14 @@
     <Reference Include="GSoft.Dynamite.Fakes">
       <HintPath>FakesAssemblies\GSoft.Dynamite.Fakes.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Server, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Office.Server.UserProfiles, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Office.Server.Search, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.SharePoint.15.0.0.0.Fakes">
+      <HintPath>FakesAssemblies\Microsoft.SharePoint.15.0.0.0.Fakes.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.SharePoint.Publishing, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.SharePoint.Taxonomy, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -68,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Binding\SharePointEntityBinderTest.cs" />
     <Compile Include="ContentTypes\ContentTypeHelperTest.cs" />
+    <Compile Include="Email\EmailHelperTest.cs" />
     <Compile Include="Features\FeatureDependencyActivatorTest.cs" />
     <Compile Include="Fields\FieldHelperTest.cs" />
     <Compile Include="Folders\FolderHelperTest.cs" />
@@ -76,7 +83,11 @@
     <Compile Include="Lists\ListHelperTest.cs" />
     <Compile Include="Pages\PageHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReusableContent\ReusableContentHelperTest.cs" />
+    <Compile Include="Search\SearchHelperTest.cs" />
     <Compile Include="SiteTestScope.cs" />
+    <Compile Include="Taxonomy\TaxonomyServiceTest.cs" />
+    <Compile Include="UserProfile\UserProfilePropertyHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GSoft.Dynamite\GSoft.Dynamite.csproj">
@@ -86,6 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <Fakes Include="Fakes\GSoft.Dynamite.fakes" />
+    <Fakes Include="Fakes\Microsoft.SharePoint.fakes" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

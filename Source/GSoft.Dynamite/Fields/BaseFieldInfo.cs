@@ -124,6 +124,11 @@ namespace GSoft.Dynamite.Fields
             {
                 this.DefaultFormula = fieldSchemaXml.Attribute("DefaultFormula").Value;
             }
+
+            if (fieldSchemaXml.Attribute("JSLink") != null)
+            {
+                this.JsLink = fieldSchemaXml.Attribute("JSLink").Value;
+            }
         }
 
         /// <summary>
@@ -209,6 +214,19 @@ namespace GSoft.Dynamite.Fields
         /// Default formula for the field
         /// </summary>
         public string DefaultFormula { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to propagate the changes done to this definition to the lists that implement the field.
+        /// </summary>
+        public bool AreChangesPushedToList { get; set; }
+
+        /// <summary>
+        /// Gets or sets the javascript rendering link.
+        /// </summary>
+        /// <value>
+        /// The javascript rendering link.
+        /// </value>
+        public string JsLink { get; set; }
 
         /// <summary>
         /// Extends a basic XML schema with the field type's extra attributes

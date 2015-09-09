@@ -76,28 +76,73 @@ function Wait-SPTimerJob()
 	(
 		[Parameter(Mandatory=$true, Position=0)]
 		[string]$Name,
-		
+
 		[Parameter(Mandatory=$true, Position=1)]
-		$WebApplication
+		[Microsoft.SharePoint.SPSite]$Site
 	)
 	
-    $job = Get-SPTimerJob -WebApplication $WebApplication | ?{ $_.Name -match $Name }
-    if ($job -eq $null) 
-    {
-        Write-Verbose 'Timer job not found for ' $WebApplication.DisplayName
-    }
-    else
-    {
-		Start-SPTimerJob $job
-		
-        $JobLastRunTime = $job.LastRunTime
-        Write-Verbose "Waiting to finish job $JobFullName last run on $JobLastRunTime"
-        
-        while ((Get-SPTimerJob $job.Id).LastRunTime -eq $JobLastRunTime) 
-        {
-            Start-Sleep -Seconds 2
-        }
+	$timerJobHelper = Resolve-DSPType GSoft.Dynamite.TimerJobs.ITimerJobHelper
+	$timerJobHelper.StartAndWaitForJob($Site, $Name)
+}
 
-        Write-Verbose  "Finished waiting for job.."
-    }
+<#
+	.SYNOPSIS
+		Enables the email recipient override for the specified web application.
+		Run this only after a site collection has been created.      
+	
+	.DESCRIPTION
+		When receipient override is Enabled, all emails send with the email helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+
+	.EXAMPLE 
+		C:\PS> Enable-DSPEmailRecipientOverride -WebApplication http://HOSTNAME -EmailAddress me@cie.com
+    
+	.PARAMETER $WebApplication
+		The web application this setting will affect.
+
+	.PARAMETER $RecipientOverrideEmailAddress
+		The email address emails will be sent to.
+#>
+function Enable-DSPEmailRecipientOverride
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication,
+
+		[Parameter(Mandatory=$true, Position=1)]
+		[string]$EmailAddress
+	)
+
+	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
+	$emailHelper.EnableRecipientOverride($WebApplication.Read(), $EmailAddress)
+}
+
+<#
+	.SYNOPSIS
+		Disables the email recipient override for the specified web application.
+		Run this only after a site collection has been created.        
+	
+	.DESCRIPTION
+		When recipient override is Enabled, all emails send with this helper will only be send to the specified address clearing all original To, CC, and BCC addresses
+        and a message will be added to the top of the email body listing the original To, CC, and BCC email addresses.
+
+	.EXAMPLE 
+		C:\PS> Disable-DSPEmailRecipientOverride -WebApplication http://HOSTNAME
+    
+	.PARAMETER $WebApplication
+		The web application this setting will affect.
+#>
+function Disable-DSPEmailRecipientOverride
+{
+	[CmdletBinding()]
+	param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication
+	)
+
+	$emailHelper = Resolve-DSPType GSoft.Dynamite.Email.IEmailHelper
+	$emailHelper.EnableRecipientOverride($WebApplication.Read(), "")
 }

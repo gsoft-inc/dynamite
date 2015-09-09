@@ -69,6 +69,7 @@ namespace GSoft.Dynamite.Fields
                     || fieldInfo is TextFieldInfo
                     || fieldInfo is UserFieldInfo
                     || fieldInfo is LookupFieldInfo
+                    || fieldInfo is ChoiceFieldInfo
                     || fieldInfo is TaxonomyFieldInfo;
 
                 if (!isValidTypeForUniquenessConstraint)
@@ -191,7 +192,13 @@ namespace GSoft.Dynamite.Fields
                     field.DefaultFormula = fieldInfo.DefaultFormula;
                 }
 
-                field.Update();
+                // Set the JavaScript custom rendering file URL
+                if (!string.IsNullOrEmpty(fieldInfo.JsLink))
+                {
+                    field.JSLink = fieldInfo.JsLink;
+                }
+
+                field.Update(fieldInfo.AreChangesPushedToList);
             }
 
             return field;
@@ -231,7 +238,7 @@ namespace GSoft.Dynamite.Fields
             taxoField.AnchorId = Guid.Empty;
             taxoField.TermSetId = Guid.Empty;
             taxoField.SspId = Guid.Empty;
-            taxoField.Update();
+            taxoField.Update(taxonomyFieldInfo.AreChangesPushedToList);
         }
 
         private void ApplyTaxonomyMultiTermStoreMapping(SPFieldCollection fieldCollection, SPField field, TaxonomyMultiFieldInfo taxonomyMultiFieldInfo)

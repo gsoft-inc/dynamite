@@ -21,7 +21,7 @@ namespace GSoft.Dynamite.Navigation
         /// <param name="termSet">Metadata about the term set driving navigation</param>
         /// <param name="language">The current language being configured</param>
         public ManagedNavigationInfo(TermSetInfo termSet, CultureInfo language)
-            : this(termSet, termSet.Group, language, false, false, true)
+            : this(termSet, language, false, false, true)
         {
         }
 
@@ -29,31 +29,18 @@ namespace GSoft.Dynamite.Navigation
         /// Initializes a new <see cref="ManagedNavigationInfo"/> instance
         /// </summary>
         /// <param name="termSet">Metadata about the term set driving navigation</param>
-        /// <param name="termGroup">Metadata about the parent group of the term set driving navigation</param>
-        /// <param name="language">The current language being configured</param>
-        public ManagedNavigationInfo(TermSetInfo termSet, TermGroupInfo termGroup, CultureInfo language) : this(termSet, termGroup, language, false, false, true)
-        {           
-        }
-
-        /// <summary>
-        /// Initializes a new <see cref="ManagedNavigationInfo"/> instance
-        /// </summary>
-        /// <param name="termSet">Metadata about the term set driving navigation</param>
-        /// <param name="termGroup">Metadata about the parent group of the term set driving navigation</param>
         /// <param name="language">The current language being configured</param>
         /// <param name="addNewPagesToNavigation">Whether new pages should be added to navigation term set automatically</param>
         /// <param name="createFriendlyUrlsForNewsPages">Whether catalog-type pages (such as news items) should use friendly URLs</param>
         /// <param name="preserveTaggingOnTermSet">Whether tagging with the term set should still be allowed</param>
         public ManagedNavigationInfo(
-            TermSetInfo termSet, 
-            TermGroupInfo termGroup, 
+            TermSetInfo termSet,
             CultureInfo language, 
             bool addNewPagesToNavigation,
             bool createFriendlyUrlsForNewsPages, 
             bool preserveTaggingOnTermSet)
         {
             this.PreserveTaggingOnTermSet = preserveTaggingOnTermSet;
-            this.TermGroup = termGroup;
             this.AssociatedLanguage = language;
             this.TermSet = termSet;
             this.CreateFriendlyUrlsForNewsPages = createFriendlyUrlsForNewsPages;
@@ -88,14 +75,6 @@ namespace GSoft.Dynamite.Navigation
         /// The name of the term set.
         /// </value>
         public TermSetInfo TermSet { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name of the term group.
-        /// </summary>
-        /// <value>
-        /// The name of the term group.
-        /// </value>
-        public TermGroupInfo TermGroup { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [preserve tagging on term set].

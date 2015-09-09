@@ -21,8 +21,10 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.IsSynced = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
 
+            this.ValidationSettings = new Dictionary<string, ListValidationInfo>();
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
             this.FieldDefinitions = new List<BaseFieldInfo>();
@@ -42,9 +44,11 @@ namespace GSoft.Dynamite.Lists
             // Default value
             this.WriteSecurity = WriteSecurityOptions.AllUser;
             this.Overwrite = false;
+            this.IsSynced = false;
             this.ListTemplateInfo = BuiltInListTemplates.CustomList;
             this.EnableAttachements = true;
 
+            this.ValidationSettings = new Dictionary<string, ListValidationInfo>();
             this.ContentTypes = new List<ContentTypeInfo>();
             this.DefaultViewFields = new List<BaseFieldInfo>();
             this.FieldDefinitions = new List<BaseFieldInfo>();
@@ -110,6 +114,40 @@ namespace GSoft.Dynamite.Lists
         public DraftVisibilityType DraftVisibilityType { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether [is versioning enabled].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [is versioning enabled]; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsVersioningEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [are minor versions enabled].
+        /// Applicable for document libraries only.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [are minor versions enabled]; otherwise, <c>false</c>.
+        /// </value>
+        public bool AreMinorVersionsEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the major version limit.
+        /// </summary>
+        /// <value>
+        /// The major version limit.
+        /// </value>
+        public int MajorVersionLimit { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minor version limit.
+        /// Note: 
+        /// </summary>
+        /// <value>
+        /// The minor version limit.
+        /// </value>
+        public int MinorVersionLimit { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether [enable ratings].
         /// </summary>
         /// <value>
@@ -155,6 +193,13 @@ namespace GSoft.Dynamite.Lists
         public bool EnableAttachements { get; set; }
 
         /// <summary>
+        /// Gets or sets the validation settings. Key is the locale, value is
+        /// a ListValidationInfo object containing the formula and the message.
+        /// </summary>
+        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
+        public IDictionary<string, ListValidationInfo> ValidationSettings { get; set; }
+
+        /// <summary>
         /// The default view fields for the list
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
@@ -167,5 +212,19 @@ namespace GSoft.Dynamite.Lists
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly", Justification = "Allow replacement of backing store for more flexible intialization of collection.")]
         public ICollection<BaseFieldInfo> FieldDefinitions { get; set; }
+
+        /// <summary>
+        /// Name of the key for the property that stores the list ID (GUID) once the list is created. 
+        /// If this property is empty, then the 'ensure' method will not store any value in the property bag. 
+        /// If this property is filled in, the 'ensure' method will write the list ID in a property with the related key in the web property bag
+        /// </summary>
+        public string PropertyBagKeyForListId { get; set; }
+
+        /// <summary>
+        /// Indicates whether or not the list will be variations-synced.
+        /// By default, a ListInfo will not be synced while a CatalogInfo
+        /// will be synced.
+        /// </summary>
+        public bool IsSynced { get; set; }
     }
 }

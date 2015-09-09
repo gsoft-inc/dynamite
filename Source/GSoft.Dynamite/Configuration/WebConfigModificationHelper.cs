@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -30,32 +31,10 @@ namespace GSoft.Dynamite.Configuration
             SPWebApplication webApplication = SPWebService.ContentService.WebApplications[webApp.Id];
 
             // Start by cleaning up any existing modification for all owners
-            foreach (var owner in webConfigModificationCollection.Select(modif => modif.Owner).Distinct())
-            {
-                // Remove all modification by the same owner.
-                // By Good practice, owner should be unique, so we do this to remove duplicates entries if any.
-                this.RemoveExistingModificationsFromOwner(webApplication, owner);
-            }
-
-            if (webApplication.Farm.TimerService.Instances.Count > 1)
-            {
-                // HACK:
-                //
-                // When there are multiple front-end Web servers in the
-                // SharePoint farm, we need to wait for the timer job that
-                // performs the Web.config modifications to complete before
-                // continuing. Otherwise, we may encounter the following error
-                // (e.g. when applying Web.config changes from two different
-                // features in rapid succession):
-                // 
-                // "A web configuration modification operation is already
-                // running."
-                WaitForOnetimeJobToFinish(
-                   webApplication.Farm,
-                   "Microsoft SharePoint Foundation Web.Config Update",
-                   120);
-            }
-
+            // By Good practice, owners should be unique, so we do this to remove duplicates entries if any.
+            var owners = webConfigModificationCollection.Select(modif => modif.Owner).Distinct().ToList();
+            this.RemoveExistingModificationsFromOwner(webApplication, owners);
+            
             // Add WebConfig modifications
             foreach (var webConfigModification in webConfigModificationCollection)
             {
@@ -68,13 +47,8 @@ namespace GSoft.Dynamite.Configuration
             // Push modifications through the farm
             webApplication.WebService.ApplyWebConfigModifications();
 
-            if (webApplication.Farm.TimerService.Instances.Count > 1)
-            {
-                WaitForOnetimeJobToFinish(
-                   webApplication.Farm,
-                   "Microsoft SharePoint Foundation Web.Config Update",
-                   120);
-            }
+            // Wait for timer job
+            WaitForWebConfigPropagation(webApplication.Farm);
         }
 
         /// <summary>
@@ -83,9 +57,23 @@ namespace GSoft.Dynamite.Configuration
         /// </summary>
         /// <param name="webApplication">The current Web Application</param>
         /// <param name="owner">The Owner key. Only one modification should have that owner</param>
+        /// <remarks>
+        /// All SPWebConfigModification Owner should be UNIQUE !
+        /// </remarks>
+        public void RemoveExistingModificationsFromOwner(SPWebApplication webApplication, string owner)
+        {
+            this.RemoveExistingModificationsFromOwner(webApplication, new List<string>() { owner });
+        }
+
+        /// <summary>
+        /// Method to remove all existing WebConfig Modifications for the listed owners.
+        /// By Design, owner should be unique per WebConfig modification so we can remove duplicates.
+        /// </summary>
+        /// <param name="webApplication">The current Web Application</param>
+        /// <param name="owners">A list of owners for which we want to remove modifications.</param>
         /// <remarks>All SPWebConfigModification Owner should be UNIQUE !</remarks>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Use of public static members discouraged in favor of dependency injection.")]
-        public void RemoveExistingModificationsFromOwner(SPWebApplication webApplication, string owner)
+        public void RemoveExistingModificationsFromOwner(SPWebApplication webApplication, IList<string> owners)
         {
             var removeCollection = new Collection<SPWebConfigModification>();
             var modificationCollection = webApplication.WebConfigModifications;
@@ -94,7 +82,7 @@ namespace GSoft.Dynamite.Configuration
             for (int i = 0; i < count; i++)
             {
                 SPWebConfigModification modification = modificationCollection[i];
-                if (modification.Owner == owner)
+                if (owners.Contains(modification.Owner))
                 {
                     // collect modifications to delete
                     removeCollection.Add(modification);
@@ -114,6 +102,27 @@ namespace GSoft.Dynamite.Configuration
 
                 // Push modifications through the farm
                 webApplication.WebService.ApplyWebConfigModifications();
+            }
+
+            // Wait for timer job
+            WaitForWebConfigPropagation(webApplication.Farm);
+        }
+        
+        /// <summary>
+        /// Waits for web configuration propagation.
+        /// When there are multiple front-end Web servers in the
+        /// SharePoint farm, we need to wait for the timer job that
+        /// performs the Web.config modifications to complete before
+        /// continuing. Otherwise, we may encounter the following error
+        /// (e.g. when applying Web.config changes from two different
+        /// features in rapid succession): "A web configuration modification operation is already running."
+        /// </summary>
+        /// <param name="farm">The SharePoint farm.</param>
+        private static void WaitForWebConfigPropagation(SPFarm farm)
+        {
+            if (farm.TimerService.Instances.Count > 1)
+            {
+                WaitForOnetimeJobToFinish(farm, "Microsoft SharePoint Foundation Web.Config Update", 120);
             }
         }
 

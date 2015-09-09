@@ -145,6 +145,7 @@ namespace GSoft.Dynamite.Configuration
         {
             var webApplication = SPWebApplication.Lookup(webApplicationUrl);
             this.Set(webApplication.Properties, null, propertyBagValues, webApplicationUrl.AbsoluteUri);
+            webApplication.Update();
         }
         #endregion Web Application scope
 

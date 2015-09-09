@@ -48,16 +48,19 @@
     <None Include="Dynamite.PowerShell.Toolkit\Data.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psd1" />
     <None Include="Dynamite.PowerShell.Toolkit\Dynamite.PowerShell.Toolkit.psm1" />
+    <None Include="Dynamite.PowerShell.Toolkit\Excel.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\FacetedSearch.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Feature.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Group.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\List.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Logging.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\ManagedPath.ps1" />
+    <None Include="Dynamite.PowerShell.Toolkit\Multithreading.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\PropertyBag.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Remote.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Search.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Security.ps1" />
+    <None Include="Dynamite.PowerShell.Toolkit\Sharegate.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\SiteCollection.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Solution.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Taxonomy.ps1" />
@@ -69,9 +72,13 @@
     <None Include="Dynamite.PowerShell.Toolkit\Variations.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Web.ps1" />
     <None Include="Dynamite.PowerShell.Toolkit\Workflow.ps1" />
+    <None Include="Install-DSPModuleImproved.ps1" />
     <None Include="Install-DSPModule.ps1" />
     <None Include="LICENSE" />
     <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dynamite.PowerShell.Toolkit\PesterTest.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

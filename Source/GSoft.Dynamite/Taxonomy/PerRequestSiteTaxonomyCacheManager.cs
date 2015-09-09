@@ -14,12 +14,15 @@ namespace GSoft.Dynamite.Taxonomy
     public class PerRequestSiteTaxonomyCacheManager : ISiteTaxonomyCacheManager
     {
         private const string KeyPrefix = "PerRequestSiteTaxonomyCacheManager_";
+        private ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Per-request taxonomy cache manager (using HttpContext.Items)
         /// </summary>
-        public PerRequestSiteTaxonomyCacheManager()
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
+        public PerRequestSiteTaxonomyCacheManager(ITaxonomyHelper taxonomyHelper)
         {
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         /// <summary>
@@ -31,15 +34,16 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreName">
         /// The term store name.
         /// </param>
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
         /// <returns>
         /// The <see cref="SiteTaxonomyCache"/>.
         /// </returns>
-        public SiteTaxonomyCache GetSiteTaxonomyCache(SPSite site, string termStoreName)
+        public SiteTaxonomyCache GetSiteTaxonomyCache(SPSite site, string termStoreName, ITaxonomyHelper taxonomyHelper)
         {
             // No caching if outside HttpContext
             if (HttpContext.Current == null)
             {
-                return new SiteTaxonomyCache(site, termStoreName);
+                return new SiteTaxonomyCache(site, termStoreName, taxonomyHelper);
             }
 
             string cacheKey = KeyPrefix + site.ID.ToString();
@@ -48,7 +52,7 @@ namespace GSoft.Dynamite.Taxonomy
             // we only cache per-request using the HttpContext cache.
             if (HttpContext.Current.Items[cacheKey] == null)
             {
-                var newTaxCache = new SiteTaxonomyCache(site, termStoreName);
+                var newTaxCache = new SiteTaxonomyCache(site, termStoreName, this.taxonomyHelper);
                 HttpContext.Current.Items[cacheKey] = newTaxCache;
             }
 

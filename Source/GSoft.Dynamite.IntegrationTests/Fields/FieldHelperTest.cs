@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Web;
-using System.Xml.Linq;
 using Autofac;
 using GSoft.Dynamite.Binding;
+using GSoft.Dynamite.Collections;
 using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Fields;
 using GSoft.Dynamite.Fields.Constants;
@@ -246,6 +247,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
         /// Validates that EnsureField intializes field definitions will all the FieldInfo's basic metadata
         /// </summary>
         [TestMethod]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "js is an accepted naming prefix.")]
         public void EnsureField_ShouldProperlyInitializeAllFieldBasicProperties()
         {
             using (var testScope = SiteTestScope.BlankSite())
@@ -291,6 +293,13 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     "DescriptionKeyDefaults",
                     "GroupKey");
 
+                TextFieldInfo jsLinkTextFieldInfo = new TextFieldInfo(
+                    "TestInternalNameJsLink",
+                    new Guid("{D329F232-7507-4168-A13B-46385C5D78AB}"),
+                    "NameKeyJsLink",
+                    "DescriptionKeyJsLink",
+                    "GroupKey") { JsLink = "/_layouts/15/test_jslink.js" };
+
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
                 {
                     IFieldHelper fieldHelper = injectionScope.Resolve<IFieldHelper>();
@@ -326,6 +335,16 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
 
                     SPField defaultsFieldRefetched = testScope.SiteCollection.RootWeb.Fields[defaultsTextFieldInfo.Id];
                     this.ValidateFieldBasicValues(defaultsTextFieldInfo, defaultsFieldRefetched);
+
+                    // 4) Js link configured field definition
+                    SPField jsLinkEnsuredField = fieldHelper.EnsureField(fieldsCollection, jsLinkTextFieldInfo);
+
+                    Assert.AreEqual(noOfFieldsBefore + 4, fieldsCollection.Count);
+                    Assert.IsNotNull(jsLinkEnsuredField);
+                    Assert.AreEqual(jsLinkTextFieldInfo.JsLink, jsLinkEnsuredField.JSLink);
+
+                    SPField jsLinkFieldRefetched = testScope.SiteCollection.RootWeb.Fields[jsLinkTextFieldInfo.Id];
+                    Assert.AreEqual(jsLinkTextFieldInfo.JsLink, jsLinkFieldRefetched.JSLink);
                 }
             }
         }
@@ -4833,6 +4852,224 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Choice and multiple choice field types should contain choices and default value
+
+        /// <summary>
+        /// Validates that EnsureField adds a choice field to the site collection with the defined choices and field specific attributes
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WithChoiceField_ShouldContainDefinedChoicesAndFieldSpecificAttributes()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldInfo = new ChoiceFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    FillInChoice = true,
+                    DefaultValue = "My choice 1",
+                    Format = ChoiceFieldFormat.RadioButtons,
+                };
+
+                fieldInfo.Choices.AddRange(new[] { "My choice 1", "My choice 2", "My choice 3" });
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+                    var noOfFieldsBefore = fieldsCollection.Count;
+
+                    // Act
+                    var field = fieldHelper.EnsureField(fieldsCollection, fieldInfo) as SPFieldChoice;
+
+                    // Assert
+                    Assert.AreEqual(noOfFieldsBefore + 1, fieldsCollection.Count);
+                    Assert.IsNotNull(field);
+                    Assert.AreEqual(fieldInfo.Id, field.Id);
+                    Assert.AreEqual(fieldInfo.InternalName, field.InternalName);
+                    Assert.AreEqual(fieldInfo.DisplayNameResourceKey, field.TitleResource.Value);
+                    Assert.AreEqual(fieldInfo.DescriptionResourceKey, field.DescriptionResource.Value);
+                    Assert.AreEqual(fieldInfo.GroupResourceKey, field.Group);
+
+                    // Assert field specific attributes
+                    Assert.AreEqual(SPChoiceFormatType.RadioButtons, field.EditFormat);
+                    Assert.IsTrue(field.FillInChoice);
+                    Assert.AreEqual(fieldInfo.Choices.Count, field.Choices.Count);
+                    Assert.AreEqual(fieldInfo.Choices[0], field.Choices[0]);
+                    Assert.AreEqual(fieldInfo.Choices[1], field.Choices[1]);
+                    Assert.AreEqual(fieldInfo.Choices[2], field.Choices[2]);
+                    Assert.AreEqual(fieldInfo.DefaultValue, field.DefaultValue);
+
+                    var fieldRefetched = testScope.SiteCollection.RootWeb.Fields[fieldInfo.Id] as SPFieldChoice;
+                    Assert.IsNotNull(fieldRefetched);
+                    Assert.AreEqual(fieldInfo.Id, fieldRefetched.Id);
+                    Assert.AreEqual(fieldInfo.InternalName, fieldRefetched.InternalName);
+                    Assert.AreEqual(fieldInfo.DisplayNameResourceKey, fieldRefetched.TitleResource.Value);
+                    Assert.AreEqual(fieldInfo.DescriptionResourceKey, fieldRefetched.DescriptionResource.Value);
+                    Assert.AreEqual(fieldInfo.GroupResourceKey, fieldRefetched.Group);
+
+                    // Assert field specific attributes
+                    Assert.AreEqual(SPChoiceFormatType.RadioButtons, field.EditFormat);
+                    Assert.IsTrue(fieldRefetched.FillInChoice);
+                    Assert.AreEqual(fieldInfo.Choices[0], fieldRefetched.Choices[0]);
+                    Assert.AreEqual(fieldInfo.Choices[1], fieldRefetched.Choices[1]);
+                    Assert.AreEqual(fieldInfo.Choices[2], fieldRefetched.Choices[2]);
+                    Assert.AreEqual(fieldInfo.DefaultValue, fieldRefetched.DefaultValue);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Validates that EnsureField adds a choice field to the site collection with the defined choices and field specific attributes
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WithMultiChoiceField_ShouldContainDefinedChoicesAndFieldSpecificAttributes()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                var fieldInfo = new MultiChoiceFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+                {
+                    FillInChoice = true,
+                    DefaultValue = "My choice 1",
+                };
+
+                fieldInfo.Choices.AddRange(new[] { "My choice 1", "My choice 2", "My choice 3" });
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                    var fieldsCollection = testScope.SiteCollection.RootWeb.Fields;
+                    var noOfFieldsBefore = fieldsCollection.Count;
+
+                    // Act
+                    var field = fieldHelper.EnsureField(fieldsCollection, fieldInfo) as SPFieldMultiChoice;
+
+                    // Assert
+                    Assert.AreEqual(noOfFieldsBefore + 1, fieldsCollection.Count);
+                    Assert.IsNotNull(field);
+                    Assert.AreEqual(fieldInfo.Id, field.Id);
+                    Assert.AreEqual(fieldInfo.InternalName, field.InternalName);
+                    Assert.AreEqual(fieldInfo.DisplayNameResourceKey, field.TitleResource.Value);
+                    Assert.AreEqual(fieldInfo.DescriptionResourceKey, field.DescriptionResource.Value);
+                    Assert.AreEqual(fieldInfo.GroupResourceKey, field.Group);
+
+                    // Assert field specific attributes
+                    Assert.IsTrue(field.FillInChoice);
+                    Assert.AreEqual(fieldInfo.Choices.Count, field.Choices.Count);
+                    Assert.AreEqual(fieldInfo.Choices[0], field.Choices[0]);
+                    Assert.AreEqual(fieldInfo.Choices[1], field.Choices[1]);
+                    Assert.AreEqual(fieldInfo.Choices[2], field.Choices[2]);
+                    Assert.AreEqual(fieldInfo.DefaultValue, field.DefaultValue);
+
+                    var fieldRefetched = testScope.SiteCollection.RootWeb.Fields[fieldInfo.Id] as SPFieldMultiChoice;
+                    Assert.IsNotNull(fieldRefetched);
+                    Assert.AreEqual(fieldInfo.Id, fieldRefetched.Id);
+                    Assert.AreEqual(fieldInfo.InternalName, fieldRefetched.InternalName);
+                    Assert.AreEqual(fieldInfo.DisplayNameResourceKey, fieldRefetched.TitleResource.Value);
+                    Assert.AreEqual(fieldInfo.DescriptionResourceKey, fieldRefetched.DescriptionResource.Value);
+                    Assert.AreEqual(fieldInfo.GroupResourceKey, fieldRefetched.Group);
+
+                    // Assert field specific attributes
+                    Assert.IsTrue(fieldRefetched.FillInChoice);
+                    Assert.AreEqual(fieldInfo.Choices[0], fieldRefetched.Choices[0]);
+                    Assert.AreEqual(fieldInfo.Choices[1], fieldRefetched.Choices[1]);
+                    Assert.AreEqual(fieldInfo.Choices[2], fieldRefetched.Choices[2]);
+                    Assert.AreEqual(fieldInfo.DefaultValue, fieldRefetched.DefaultValue);
+                }
+            }
+        }
+
+        #endregion
+
+        #region "Ensure" should mean "Create if new or return existing"
+
+        /// <summary>
+        /// Validates that EnsureField updates the field on a list if it is updated as a site column when the property "AreChangesPushedToList" is set to true.
+        /// </summary>
+        [TestMethod]
+        public void EnsureField_WhenFieldIsUpdatedOnRootSiteAndIsUsedInAListAndFieldInfoAreChangesPushedToListIsTrue_ShouldUpdateFieldOnList()
+        {
+            // Arrange
+            // Configure a field
+            var textFieldInfo = new TextFieldInfo(
+                    "TestInternalName",
+                    new Guid("{0C58B4A1-B360-47FE-84F7-4D8F58AE80F6}"),
+                    "NameKey",
+                    "DescriptionKey",
+                    "GroupKey")
+            {
+                Required = RequiredType.NotRequired,
+                MaxLength = 50,
+                AreChangesPushedToList = true
+            };           
+
+            // Configure a content type
+            var contentTypeId = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "0x0100{0:N}",
+                    new Guid("{F8B6FF55-2C9E-4FA2-A705-F55FE3D18777}"));
+
+            var contentTypeInfo = new ContentTypeInfo(contentTypeId, "NameKey", "DescriptionKey", "GroupKey")
+            {
+                Fields = new List<BaseFieldInfo>()
+                {
+                    textFieldInfo
+                }
+            };
+
+            // Configure a list
+            var listInfo = new ListInfo("Lists/SomeList", "nameKey", "descriptionKey")
+            {
+                ContentTypes = new List<ContentTypeInfo>()
+                {
+                    contentTypeInfo
+                }
+            };
+
+            using (var testScope = SiteTestScope.BlankSite())
+            using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+            {
+                // Act
+                var rootWeb = testScope.SiteCollection.RootWeb;
+                
+                var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+                var listHelper = injectionScope.Resolve<IListHelper>();
+                var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
+
+                // Create content type if initial field
+                var contentType = contentTypeHelper.EnsureContentType(rootWeb.ContentTypes, contentTypeInfo);
+
+                // Create list with the above content type
+                var list = listHelper.EnsureList(rootWeb, listInfo);
+
+                // Update the field definition
+                var updatedTextFieldInfo = textFieldInfo;
+                updatedTextFieldInfo.MaxLength = 200;
+
+                // Update the field in the root site
+                var updatedField = fieldHelper.EnsureField(rootWeb.Fields, updatedTextFieldInfo) as SPFieldText;
+
+                // Get Field from list
+                var updatedListField = list.Fields.Cast<SPField>().Single(f => f.InternalName.Equals(textFieldInfo.InternalName, StringComparison.InvariantCultureIgnoreCase)) as SPFieldText;
+                
+                // Assert
+                Assert.AreEqual(updatedTextFieldInfo.MaxLength, updatedField.MaxLength);
+                Assert.AreEqual(updatedTextFieldInfo.MaxLength, updatedListField.MaxLength);
+            }            
         }
 
         #endregion

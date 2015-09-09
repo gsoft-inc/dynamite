@@ -144,7 +144,7 @@ function Add-DSPGroupByXml() {
 			{
 				foreach ($permissionLevel in $xmlGroup.PermissionLevels.PermissionLevel) 
 				{
-					Set-DSPPermission -Web $Web -PermissionLevel $permissionLevel.Name -GroupName $xmlGroup.Name -Verbose:$Verbose			
+					Set-DSPPermission -Web $Web -PermissionLevel $permissionLevel.Name -GroupName $xmlGroup.Name			
 				}
 			}
 			

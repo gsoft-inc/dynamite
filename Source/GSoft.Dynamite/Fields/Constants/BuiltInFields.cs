@@ -250,6 +250,26 @@ namespace GSoft.Dynamite.Fields.Constants
         /// </summary>
         public const string ExpiresName = "Expires";
 
+        /// <summary>
+        /// DocIcon: The view field to display the document icon.
+        /// </summary>
+        public const string DocIconName = "DocIcon";
+
+        /// <summary>
+        /// LinkFilename: The view field to display the link to the file.
+        /// </summary>
+        public const string LinkFileNameName = "LinkFilename";
+
+        /// <summary>
+        /// CheckoutUser: The view field to display the user who checked out the file.
+        /// </summary>
+        public const string CheckoutUserName = "CheckoutUser";
+
+        /// <summary>
+        /// ModerationStatus: The approval status.
+        /// </summary>
+        public const string ModerationStatusName = "ModerationStatus";
+
         #endregion
 
         #region FieldInfo
@@ -758,6 +778,51 @@ namespace GSoft.Dynamite.Fields.Constants
                 return new MinimalFieldInfo<DateTime?>(ExpiresName, SPBuiltInFieldId.Expires);
             }
         }
+
+        /// <summary>
+        /// Document icon field info
+        /// </summary>
+        public static BaseFieldInfo DocIcon
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(DocIconName, SPBuiltInFieldId.DocIcon);
+            }
+        }
+
+        /// <summary>
+        /// Link file name field info
+        /// </summary>
+        public static BaseFieldInfo LinkFileName
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(LinkFileNameName, SPBuiltInFieldId.LinkFilename);
+            }
+        }
+
+        /// <summary>
+        /// Checkout user name field info
+        /// </summary>
+        public static BaseFieldInfo CheckoutUser
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(CheckoutUserName, SPBuiltInFieldId.CheckoutUser);
+            }
+        }
+
+        /// <summary>
+        /// Moderation status field info
+        /// </summary>
+        public static BaseFieldInfo ModerationStatus
+        {
+            get
+            {
+                return new MinimalFieldInfo<string>(CheckoutUserName, SPBuiltInFieldId._ModerationStatus);
+            }
+        }
+
         #endregion
     }
 }

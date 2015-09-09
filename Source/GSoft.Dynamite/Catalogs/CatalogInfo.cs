@@ -19,6 +19,7 @@ namespace GSoft.Dynamite.Catalogs
         public CatalogInfo()
         {
             this.IsAnonymous = false;
+            this.IsSynced = true;
             this.ManagedProperties = new List<ManagedPropertyInfo>();
         }
 
@@ -32,6 +33,7 @@ namespace GSoft.Dynamite.Catalogs
             : base(webRelativeUrl, displayNameResourceKey, descriptionResourceKey)
         {
             this.IsAnonymous = false;
+            this.IsSynced = true;
             this.ManagedProperties = new List<ManagedPropertyInfo>();
         }
 

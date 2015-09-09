@@ -192,20 +192,20 @@ namespace GSoft.Dynamite.Helpers
             SPFolder rootFolder = varRelationshipsList.RootFolder;
 
             // Automatic creation
-            rootFolder.Properties["EnableAutoSpawnPropertyName"] = variationSettings.EnableAutoSpawn;
+            rootFolder.Properties["EnableAutoSpawnPropertyName"] = variationSettings.IsAutomaticTargetPageCreation.ToString();
 
             // Recreate Deleted Target Page; set to false to enable recreation
-            rootFolder.Properties["AutoSpawnStopAfterDeletePropertyName"] = variationSettings.AutoSpawnStopAfterDelete;
+            rootFolder.Properties["AutoSpawnStopAfterDeletePropertyName"] = (!variationSettings.IsRecreateDeletedTargetPage).ToString();
 
             // Update Target Page Web Parts
-            rootFolder.Properties["UpdateWebPartsPropertyName"] = variationSettings.UpdateWebParts;
+            rootFolder.Properties["UpdateWebPartsPropertyName"] = variationSettings.IsUpdateTargetPageWebParts.ToString();
 
             // Resources
-            rootFolder.Properties["CopyResourcesPropertyName"] = variationSettings.CopyResources;
+            rootFolder.Properties["CopyResourcesPropertyName"] = variationSettings.IsCopyResourcesToTarget.ToString();
 
             // Notification
-            rootFolder.Properties["SendNotificationEmailPropertyName"] = variationSettings.SendNotificationEmail;
-            rootFolder.Properties["SourceVarRootWebTemplatePropertyName"] = variationSettings.SourceVarRootWebTemplate;
+            rootFolder.Properties["SendNotificationEmailPropertyName"] = variationSettings.IsSendNotificationEmail.ToString();
+            rootFolder.Properties["SourceVarRootWebTemplatePropertyName"] = variationSettings.SourceVariationTopLevelWebTemplate;
             rootFolder.Update();
 
             SPListItem item = null;
@@ -257,11 +257,12 @@ namespace GSoft.Dynamite.Helpers
 
                 item[SPBuiltInFieldId.Title] = label.Title;
                 item["Description"] = label.Description;
-                item["Flag Control Display Name"] = label.FlagControlDisplayName;
-                item["Language"] = label.Language;
-                item["Locale"] = label.Locale.ToString(CultureInfo.InvariantCulture);
-                item["Hierarchy Creation Mode"] = label.HierarchyCreationMode;
+                item["Flag Control Display Name"] = label.DisplayName;
+                item["Language"] = label.Language.Name;     // this outputs the "en-US" format the variation label list item expects
+                item["Locale"] = label.Locale.LCID.ToString(CultureInfo.InvariantCulture);      // for the Locale the list item expects the LCID
+                item["Hierarchy Creation Mode"] = label.HierarchyCreationMode.ToListItemValueString();      // using the extension method to grab the proper string value for that setting
                 item["Is Source"] = label.IsSource.ToString();
+                item["NotificationMode"] = label.IsAutomaticUpdate.ToString();
 
                 if (existingItems.Count > 0)
                 {
@@ -286,13 +287,8 @@ namespace GSoft.Dynamite.Helpers
         /// <param name="labels">The variation labels</param>
         public void CreateHierarchies(SPSite site, IList<VariationLabelInfo> labels)
         {
-            this.timerJobHelper.CreateJob(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
-
-            var jobId = this.timerJobHelper.StartJob(site, "VariationsCreateHierarchies");
-
-            DateTime startTime = DateTime.Now.ToUniversalTime();
-
-            this.timerJobHelper.WaitForJob(site, jobId, startTime);
+            this.timerJobHelper.CreateWorkItem(site, new Guid("e7496be8-22a8-45bf-843a-d1bd83aceb25"));
+            this.timerJobHelper.StartAndWaitForJob(site, BuiltInVariationsTimerJobs.VariationsCreateHierarchies);
 
             // Force the title of the label subsites, because the value of Flag Control Display Name doesn't get respected on destination labels most of the time.
             // Also take care of setting the regional settings on each site.
@@ -302,9 +298,9 @@ namespace GSoft.Dynamite.Helpers
                 {
                     // UICulture's gotta be in the same locale as the web being renamed (otherwise change won't go through - thanks MUI!)
                     var previousUiCulture = Thread.CurrentThread.CurrentUICulture;
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(label.Language);
+                    Thread.CurrentThread.CurrentUICulture = label.Language;
 
-                    labelWeb.Title = label.FlagControlDisplayName;
+                    labelWeb.Title = label.DisplayName;
                     labelWeb.Update();
 
                     Thread.CurrentThread.CurrentUICulture = previousUiCulture;

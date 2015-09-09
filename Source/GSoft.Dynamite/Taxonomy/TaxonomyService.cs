@@ -19,14 +19,17 @@ namespace GSoft.Dynamite.Taxonomy
     public class TaxonomyService : ITaxonomyService
     {
         private ISiteTaxonomyCacheManager taxonomyCacheManager;
+        private ITaxonomyHelper taxonomyHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaxonomyService" /> class.
         /// </summary>
         /// <param name="taxonomyCacheManager">The taxonomy cache manager</param>
-        public TaxonomyService(ISiteTaxonomyCacheManager taxonomyCacheManager)
+        /// <param name="taxonomyHelper">The taxonomy helper to use.</param>
+        public TaxonomyService(ISiteTaxonomyCacheManager taxonomyCacheManager, ITaxonomyHelper taxonomyHelper)
         {
             this.taxonomyCacheManager = taxonomyCacheManager;
+            this.taxonomyHelper = taxonomyHelper;
         }
 
         #region GetTaxonomyValueForLabel overloads
@@ -42,7 +45,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The taxonomy value or null if not found</returns>
         public TaxonomyValue GetTaxonomyValueForLabel(SPSite site, string termStoreName, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTaxonomyValueForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
@@ -58,8 +61,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The taxonomy value or null if not found</returns>
         public TaxonomyValue GetTaxonomyValueForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTaxonomyValueForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
@@ -77,8 +80,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The taxonomy value or null if not found</returns>
         public TaxonomyValue GetTaxonomyValueForLabel(SPSite site, string termSetName, string termLabel)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -100,7 +103,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term or null if not found</returns>
         public Term GetTermForLabel(SPSite site, string termStoreName, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTermForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
@@ -116,8 +119,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term or null if not found</returns>
         public Term GetTermForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTermForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
@@ -135,8 +138,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term or null if not found</returns>
         public Term GetTermForLabel(SPSite site, string termSetName, string termLabel)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -163,7 +166,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The specific term.</returns>
         public Term GetTermForId(SPSite site, string termStoreName, Guid id)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             return session.GetTerm(id);
         }
 
@@ -176,8 +179,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term</returns>
         public Term GetTermForIdInTermSet(SPSite site, string termSetName, Guid id)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -194,8 +197,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>The term</returns>
         public Term GetTermForIdInTermSet(SPSite site, string termStoreGroupName, string termSetName, Guid id)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = GetGroupFromTermStore(termStore, termStoreGroupName);
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -217,7 +220,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termStoreName, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTaxonomyValuesForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
@@ -233,8 +236,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTaxonomyValuesForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
@@ -252,8 +255,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForLabel(SPSite site, string termSetName, string termLabel)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -274,7 +277,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTaxonomyValuesForTermSetInternal(termStore, termStoreGroupName, termSetName);
@@ -289,8 +292,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForTermSet(SPSite site, string termStoreGroupName, string termSetName)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTaxonomyValuesForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
@@ -307,8 +310,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<TaxonomyValue> GetTaxonomyValuesForTermSet(SPSite site, string termSetName)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -330,7 +333,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of terms</returns>
         public IList<Term> GetTermsForLabel(SPSite site, string termStoreName, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTermsForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
@@ -347,8 +350,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of terms</returns>
         public IList<Term> GetTermsForLabel(SPSite site, string termStoreGroupName, string termSetName, string termLabel)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTermsForLabelInternal(termStore, termStoreGroupName, termSetName, termLabel);
         }
@@ -366,8 +369,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of terms</returns>
         public IList<Term> GetTermsForLabel(SPSite site, string termSetName, string termLabel)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
@@ -388,7 +391,7 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of terms</returns>
         public IList<Term> GetTermsForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName).TaxonomySession;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
             TermStore termStore = session.TermStores[termStoreName];
 
             return GetTermsForTermSetInternal(termStore, termStoreGroupName, termSetName);
@@ -403,8 +406,8 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of terms</returns>
         public IList<Term> GetTermsForTermSet(SPSite site, string termStoreGroupName, string termSetName)
         {
-            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null).TaxonomySession;
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TaxonomySession session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
 
             return GetTermsForTermSetInternal(termStore, termStoreGroupName, termSetName);
         }
@@ -421,13 +424,45 @@ namespace GSoft.Dynamite.Taxonomy
         /// <returns>A list of taxonomy values</returns>
         public IList<Term> GetTermsForTermSet(SPSite site, string termSetName)
         {
-            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null);
-            TermStore termStore = taxCache.TaxonomySession.DefaultSiteCollectionTermStore;
+            SiteTaxonomyCache taxCache = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper);
+            TermStore termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(taxCache.TaxonomySession);
             Group siteCollectionGroup = taxCache.SiteCollectionGroup;
             TermSet termSet = this.GetTermSetFromGroup(termStore, siteCollectionGroup, termSetName);
 
             return GetTermsForTermSetInternal(termStore, siteCollectionGroup, termSet);
         }
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within a desired term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreName">Name of the term store.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        public IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreName, string termStoreGroupName, string termSetName)
+        {
+            var session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, termStoreName, this.taxonomyHelper).TaxonomySession;
+            var termStore = session.TermStores[termStoreName];
+
+            return this.GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, termStoreGroupName, termSetName);
+        }
+
+        /// <summary>
+        /// Retrieves all terms used as simple link navigation nodes corresponding to a term set within the default term store.
+        /// </summary>
+        /// <param name="site">The site.</param>
+        /// <param name="termStoreGroupName">Name of the term store group.</param>
+        /// <param name="termSetName">Name of the term set.</param>
+        /// <returns>A list of terms used as simple link navigation nodes.</returns>
+        public IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSet(SPSite site, string termStoreGroupName, string termSetName)
+        {
+            var session = this.taxonomyCacheManager.GetSiteTaxonomyCache(site, null, this.taxonomyHelper).TaxonomySession;
+            var termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+
+            return this.GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, termStoreGroupName, termSetName);
+        }
+
         #endregion
 
         /// <summary>
@@ -484,18 +519,28 @@ namespace GSoft.Dynamite.Taxonomy
         /// Get all parent terms from a source term to root term in the term set.
         /// </summary>
         /// <param name="site">The current site collection.</param>
+        /// <param name="termStoreId">The parent term store</param>
         /// <param name="termSetId">The term set id.</param>
         /// <param name="termId">The term.</param>
         /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
         /// <returns>
         /// List of terms.
         /// </returns>
-        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termStoreId, Guid termSetId, Guid termId, bool parentFirst)
         {
             IList<Term> termHierarchy = new List<Term>();
 
             var session = new TaxonomySession(site);
-            TermStore termStore = session.DefaultSiteCollectionTermStore;
+            TermStore termStore = null;
+
+            if (termStoreId == Guid.Empty)
+            {
+                termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(session);
+            }
+            else
+            {
+                termStore = session.TermStores[termStoreId];
+            }
 
             // Always interact with the term sets in the term store's default language
             int originalWorkingLanguage = termStore.WorkingLanguage;
@@ -522,6 +567,22 @@ namespace GSoft.Dynamite.Taxonomy
             termStore.WorkingLanguage = originalWorkingLanguage;
             return parentFirst ? termHierarchy.Reverse().ToList() : termHierarchy;
         }
+        
+        /// <summary>
+        /// Get all parent terms from a source term to root term in the term set.
+        /// </summary>
+        /// <param name="site">The current site collection.</param>
+        /// <param name="termSetId">The term set id.</param>
+        /// <param name="termId">The term.</param>
+        /// <param name="parentFirst">if set to <c>true</c>, includes the [parent first].</param>
+        /// <returns>
+        /// List of terms.
+        /// </returns>
+        public IList<Term> GetTermPathFromRootToTerm(SPSite site, Guid termSetId, Guid termId, bool parentFirst)
+        {
+            return this.GetTermPathFromRootToTerm(site, Guid.Empty, termSetId, termId, parentFirst);
+        }
+
         #endregion GetTermPathFromRootToTerm
 
         #region Private utility methods     
@@ -751,6 +812,74 @@ namespace GSoft.Dynamite.Taxonomy
             TermSet termSet = this.GetTermSetFromGroup(termStore, group, termSetName);
 
             return GetTermsForTermSetInternal(termStore, group, termSet);
+        }
+
+        private IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSetInternal(TermStore termStore, string termStoreGroupName, string termSetName)
+        {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (string.IsNullOrEmpty(termStoreGroupName))
+            {
+                throw new ArgumentNullException("termStoreGroupName");
+            }
+
+            if (string.IsNullOrEmpty(termSetName))
+            {
+                throw new ArgumentNullException("termSetName");
+            }
+
+            var group = GetGroupFromTermStore(termStore, termStoreGroupName);
+            var termSet = this.GetTermSetFromGroup(termStore, group, termSetName);
+
+            return GetTermsAsSimpleLinkNavNodeForTermSetInternal(termStore, group, termSet);
+        }
+
+        private static IList<SimpleLinkTermInfo> GetTermsAsSimpleLinkNavNodeForTermSetInternal(TermStore termStore, Group termStoreGroup, TermSet termSet)
+        {
+            if (termStore == null)
+            {
+                throw new ArgumentNullException("termStore");
+            }
+
+            if (termStoreGroup == null)
+            {
+                throw new ArgumentNullException("termStoreGroup");
+            }
+
+            if (termSet == null)
+            {
+                throw new ArgumentNullException("termSet");
+            }
+
+            IList<SimpleLinkTermInfo> termsList = new List<SimpleLinkTermInfo>();
+
+            if (termSet.Terms.Any())
+            {
+                // If custom sort order is set, build term list in sorted order
+                var customSortOrder = termSet.CustomSortOrder;
+                if (!string.IsNullOrEmpty(customSortOrder))
+                {
+                    var terms = termSet.Terms.ToList();
+                    var sortedIds = customSortOrder.Split(':').Select(id => new Guid(id)).ToList();
+                    foreach (var sortedId in sortedIds)
+                    {
+                        var sortedTerm = terms.SingleOrDefault(term => term.Id.Equals(sortedId));
+                        if (sortedTerm != null)
+                        {
+                            termsList.Add(new SimpleLinkTermInfo(sortedTerm));
+                        }
+                    }
+                }
+                else
+                {
+                    termsList = termSet.Terms.Select(x => new SimpleLinkTermInfo(x)).ToList();
+                }
+            }
+
+            return termsList;
         }
 
         #endregion

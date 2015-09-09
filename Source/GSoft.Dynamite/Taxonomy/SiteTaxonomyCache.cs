@@ -11,13 +11,15 @@ namespace GSoft.Dynamite.Taxonomy
     /// </summary>
     public class SiteTaxonomyCache
     {
+        private ITaxonomyHelper taxonomyHelper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SiteTaxonomyCache"/> class.
         /// </summary>
         /// <param name="site">
         /// The site.
         /// </param>
-        public SiteTaxonomyCache(SPSite site) : this(site, null)
+        public SiteTaxonomyCache(SPSite site) : this(site, null, null)
         {
         }
 
@@ -30,9 +32,11 @@ namespace GSoft.Dynamite.Taxonomy
         /// <param name="termStoreName">
         /// The term store name.
         /// </param>
-        public SiteTaxonomyCache(SPSite site, string termStoreName)
+        /// <param name="taxonomyHelper">The taxonomy helper.</param>
+        public SiteTaxonomyCache(SPSite site, string termStoreName, ITaxonomyHelper taxonomyHelper)
         {
             SPMonitoredScope monitor = null;
+            this.taxonomyHelper = taxonomyHelper;
 
             try
             {
@@ -64,7 +68,21 @@ namespace GSoft.Dynamite.Taxonomy
             else
             {
                 // Use default term store
-                this.SiteCollectionGroup = this.TaxonomySession.DefaultSiteCollectionTermStore.GetSiteCollectionGroup(site);
+                TermStore termStore = null;
+
+                if (taxonomyHelper != null)
+                {
+                    termStore = this.taxonomyHelper.GetDefaultSiteCollectionTermStore(this.TaxonomySession);
+                }
+                else
+                {
+                    termStore = this.TaxonomySession.DefaultSiteCollectionTermStore;
+                }
+
+                if (termStore != null)
+                {
+                    this.SiteCollectionGroup = termStore.GetSiteCollectionGroup(site);
+                }
             }
 
             if (monitor != null)

@@ -34,6 +34,14 @@ namespace GSoft.Dynamite.Lists
         SPList GetByNameResourceKey(SPWeb web, string listNameResourceKey);
 
         /// <summary>
+        /// Method to find a list with the ListInfo
+        /// </summary>
+        /// <param name="web">The Web where to find the list</param>
+        /// <param name="listInfo">The ListInfo of the list to locate</param>
+        /// <returns>A SharePoint SPList</returns>
+        SPList TryGetList(SPWeb web, ListInfo listInfo);
+
+        /// <summary>
         /// Attempts to find a list by trying to match with: 1) the name of the list,
         /// 2) the web-relative URL of the list, 3) the list's root folder name (relative
         /// to /Lists/), 4) by resolving the list's title through its resource key

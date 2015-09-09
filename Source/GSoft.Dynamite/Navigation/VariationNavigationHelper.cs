@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
-using System.Web.Caching;
 using GSoft.Dynamite.Globalization.Variations;
-using GSoft.Dynamite.Helpers;
 using GSoft.Dynamite.Logging;
 using GSoft.Dynamite.Search;
-using GSoft.Dynamite.Utils;
 using Microsoft.Office.Server.Search.Administration;
 using Microsoft.Office.Server.Search.Query;
 using Microsoft.SharePoint;
@@ -60,8 +58,17 @@ namespace GSoft.Dynamite.Navigation
                     }
                     else
                     {
-                        if (TaxonomyNavigationContext.Current.NavigationTerm != null)
+                        var currentNavTerm = TaxonomyNavigationContext.Current.NavigationTerm;
+
+                        // If the current taxonomy nav term doesn't have a TargetUrlFforChildTerms,
+                        // we assume that we are using the basic taxonomy navigation without 
+                        // any catalog-specific logic (i.e. we want to return CategoryPage only when 
+                        // we're in a context of fancy catalog connections and url slugs).
+                        if (currentNavTerm != null
+                            && !string.IsNullOrEmpty(currentNavTerm.TargetUrlForChildTerms.Value))
                         {
+                            // Again, this assumes that TargetUrlForChildTerms will always be set in
+                            // a catalog context (e.g. News archive page, etc.).
                             navigationType = VariationNavigationType.CategoryPage;
                         }
                     }
@@ -87,36 +94,100 @@ namespace GSoft.Dynamite.Navigation
         /// <summary>
         /// Get the peer url for a SharePoint page
         /// </summary>
+        /// <param name="web">The web.</param>
         /// <param name="currentUrl">The current page url</param>
         /// <param name="label">The target label to resolve</param>
-        /// <returns>The url of the peer page</returns>
-        public Uri GetPeerPageUrl(Uri currentUrl, VariationLabelInfo label)
+        /// <returns>
+        /// The url of the peer page
+        /// </returns>
+        [SuppressMessage("Microsoft.Usage", "CA2234:PassSystemUriObjectsInsteadOfStrings", Justification = "Sometimes, it's easier to use a string than the Uri object!")]
+        public Uri GetPeerPageUrl(SPWeb web, Uri currentUrl, VariationLabelInfo label)
         {
+            // Special case for application pages under /_layouts:
+            // oftentimes, when on a _layouts page, the Httpcontext.Current.Request.Uri
+            // (a typical input for this method) will give you a false URL (even if visiting a 
+            // sub-web's _layouts page, HttpContext will give you the root web's corresponding 
+            // _layouts page).
             if (currentUrl.AbsolutePath.StartsWith("/_layouts", StringComparison.OrdinalIgnoreCase))
             {
-                var relativePart = new Uri(currentUrl.PathAndQuery, UriKind.Relative);
-                return new Uri(SPUtility.ConcatUrls(label.TopWebUrl.ToString(), relativePart.ToString()));
+                // Build an alternate currentUrl value that will be used at the end of the first catch block below... 
+                // and converted to use the proper peer variated web url (i.e. the peer variation sub-web 
+                // associated to current web might not have the same relative path vs. original language) 
+                string[] splitOnLayouts = currentUrl.ToString().Split(new string[] { "/_layouts" }, StringSplitOptions.None);
+                currentUrl = new Uri(SPUtility.ConcatUrls(SPUtility.ConcatUrls(web.Url, "/_layouts"), splitOnLayouts[1]));                                                                                                
             }
 
             try
             {
-                return new Uri(
-                    Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
-                    UriKind.Relative);
+                // Important: Use the server relative URL (absolute path) as the current URL parameter.
+                // In the case where a load balancer is used, the server URL might be changed.  
+                // Omit this problem by using the server relative URL.
+                var peerPageUri = new Uri(Variations.GetPeerUrl(web, currentUrl.AbsolutePath, label.Title), UriKind.Relative);
+                
+                // Special case for home page
+                if (SPContext.Current.ListItem != null
+                && web.RootFolder.WelcomePage == SPContext.Current.ListItem.Url)
+                {
+                    var peerHomePageUrl = Regex.Replace(peerPageUri.OriginalString, @"\/Pages\/.*", string.Empty);
+                    peerPageUri = new Uri(peerHomePageUrl, UriKind.Relative);
+                }
+
+                return peerPageUri;
             }
             catch (ArgumentOutOfRangeException)
             {
-                // TODO: rewrite and unit test the following logic - I do not trust this logic for Managed Path scenarios.
-                this.logger.Info(@"GetPeerUrl: Cannot find variation peer URL with 'Variations.GetPeerUrl'.  
-                                        Using label web URL with path and query strings as navigation URL.");
+                string webPeerServerRelativeUrl;
 
-                // Keep query string (except source)
+                // Keep query string (except source, and list,... and whichever other harmful-if-passed-on-variated-page-url argument)
                 var queryCollection = HttpUtility.ParseQueryString(currentUrl.Query);
                 queryCollection.Remove("Source");
+                queryCollection.Remove("List");
 
-                // Construct peer URL with top web URL + path + query.
-                var topWebUrl = new Uri(label.TopWebUrl + "/");
-                var pathAndQuerySegments = new List<string>(topWebUrl.Segments.Concat(currentUrl.Segments.Skip(topWebUrl.Segments.Length)));
+                try
+                {
+                    // Use a trick: use the current web's home page (welcome page on its root folder) to find the peer
+                    // web URL (i.e. the URL of the variated site which corresponds to the translated content - maybe with a 
+                    // different relative path - of the current web)
+                    var currentWebWelcomePageUrl = SPUtility.ConcatUrls(web.Url, web.RootFolder.WelcomePage);
+                    var currentWebWelcomePageUrlRelative = new Uri(currentWebWelcomePageUrl, UriKind.Absolute).AbsolutePath;
+                    webPeerServerRelativeUrl = Variations.GetPeerUrl(web, currentWebWelcomePageUrlRelative, label.Title);
+
+                    // We heavily assume that all welcome pages lives in a Pages library here:
+                    webPeerServerRelativeUrl = webPeerServerRelativeUrl.Split(new[] { "/Pages" }, StringSplitOptions.None)[0];     
+                    webPeerServerRelativeUrl = webPeerServerRelativeUrl.EndsWith("/", StringComparison.OrdinalIgnoreCase) ? webPeerServerRelativeUrl : webPeerServerRelativeUrl + "/";
+
+                    if (queryCollection["RootFolder"] != null)
+                    {
+                        // if we're successful, we're probably in a Pages library and we need the RootFolder
+                        // to get a replaced web URL as well
+                        var rootFolderParam = queryCollection["RootFolder"];
+                        var currentServerWebRelativeUrl = web.RootFolder.ServerRelativeUrl;
+                        rootFolderParam = rootFolderParam.Replace(currentServerWebRelativeUrl, webPeerServerRelativeUrl);
+                        queryCollection["RootFolder"] = rootFolderParam;
+                    }
+
+                    // the logic below expects an absolute URL with domain etc.
+                    var baseSiteAbsoluteUrl = new Uri(web.Site.Url);
+                    webPeerServerRelativeUrl = new Uri(baseSiteAbsoluteUrl, new Uri(webPeerServerRelativeUrl, UriKind.Relative)).ToString();
+                }
+                catch (ArgumentOutOfRangeException uglyNestedEx)
+                {
+                    // default to the top web of the target variation hierarchy if all else fails (no peer of current 
+                    // web welcome page found on target web)
+                    webPeerServerRelativeUrl = label.TopWebUrl + "/";
+
+                    this.logger.Warn(
+                        "GetPeerUrl: Cannot find variation peer URL with web '{0}', url '{1}' and label '{2}'. Exception message: '{3}'.",
+                        web.Url,
+                        currentUrl.AbsolutePath,
+                        label.Title,
+                        uglyNestedEx.Message);
+                }
+
+                // Construct peer URL with path + query.
+                var targetWebUrl = new Uri(webPeerServerRelativeUrl);
+                var currentUrlSegmentsMinusTargetses = currentUrl.Segments.Skip(targetWebUrl.Segments.Length);
+                var pathAndQuerySegments = new List<string>(targetWebUrl.Segments.Concat(currentUrlSegmentsMinusTargetses));
 
                 // If any query string, add to segments
                 if (queryCollection.HasKeys())
@@ -124,23 +195,26 @@ namespace GSoft.Dynamite.Navigation
                     pathAndQuerySegments.Add(string.Format(CultureInfo.InvariantCulture, "?{0}", queryCollection));
                 }
 
-                return new Uri(topWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
+                return new Uri(targetWebUrl, new Uri(string.Join(string.Empty, pathAndQuerySegments), UriKind.Relative));
             }
         }
 
         /// <summary>
         /// Get the peer url for a taxonomy navigation page (generated by a term set)
         /// </summary>
+        /// <param name="web">The web.</param>
         /// <param name="currentUrl">The current page url</param>
         /// <param name="label">The target label to resolve</param>
-        /// <returns>The url of the peer page</returns>
-        public Uri GetPeerCatalogCategoryUrl(Uri currentUrl, VariationLabelInfo label)
+        /// <returns>
+        /// The url of the peer page
+        /// </returns>
+        public Uri GetPeerCatalogCategoryUrl(SPWeb web, Uri currentUrl, VariationLabelInfo label)
         {
             // Get current navigation term ID
             var termId = TaxonomyNavigationContext.Current.NavigationTerm.Id;
 
             var labelSiteRelativeUrl = label.TopWebUrl.AbsolutePath;
-            using (var labelWeb = SPContext.Current.Site.OpenWeb(labelSiteRelativeUrl))
+            using (var labelWeb = web.Site.OpenWeb(labelSiteRelativeUrl))
             {
                 // Create view to return all navigation terms
                 var view = new NavigationTermSetView(labelWeb, StandardNavigationProviderNames.GlobalNavigationTaxonomyProvider)
@@ -177,7 +251,7 @@ namespace GSoft.Dynamite.Navigation
                     this.logger.Error("GetPeerCatalogCategoryUrl: Navigation term not found for term id '{0}'", termId);
 
                     return new Uri(
-                        Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title),
+                        Variations.GetPeerUrl(web, currentUrl.AbsolutePath, label.Title),
                         UriKind.Relative);
                 }
             }
@@ -203,23 +277,17 @@ namespace GSoft.Dynamite.Navigation
         {
             ValidateProperties("GetPeerCatalogItemUrl", associationKeyManagedPropertyName, associationKeyValue, catalogNavigationTermManagedPropertyName);
 
-            var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsoluteUri, label.Title), UriKind.Relative);
+            var url = new Uri(Variations.GetPeerUrl(SPContext.Current.Web, currentUrl.AbsolutePath, label.Title), UriKind.Relative);
 
             var searchResultSource = this.searchHelper.GetResultSourceByName(SPContext.Current.Site, LocalSharePointResultsSourceName, SearchObjectLevel.Ssa);
 
-            // We take the Title of the Label because the Label.Language is always a language from a language pack (supported). Sometimes, we deal with Not implemented language (ie Inuktitut "IU").
-            // Our workaround is to set the Title as the agnostic language label ("en", "fr", "iu", etc).
-            // For backward compatibility purpose, we will test the length of the Title. If it's not 2, we will fallback on the Language of the Label.
-            // This is not 100% robust but it the only way we found to deal with unsupported language.
-            var labelLocaleAgnosticLanguage = label.Title.Length == 2 ? label.Title : label.Language.Split('-').FirstOrDefault();
-
             var queryText = string.Format(
-                CultureInfo.InvariantCulture, 
-                "{0}:{1} {2}={3}", 
-                associationKeyManagedPropertyName, 
-                associationKeyValue, 
-                languageManagedPropertyName, 
-                labelLocaleAgnosticLanguage);
+                CultureInfo.InvariantCulture,
+                "{0}:{1} {2}:{3}",
+                associationKeyManagedPropertyName,
+                associationKeyValue,
+                languageManagedPropertyName,
+                label.Language);
 
             var query = new KeywordQuery(SPContext.Current.Web)
             {
@@ -231,17 +299,21 @@ namespace GSoft.Dynamite.Navigation
             query.SelectProperties.AddRange(new[] 
             { 
                 catalogNavigationTermManagedPropertyName,
-                BuiltInManagedProperties.Url, 
-                BuiltInManagedProperties.SiteUrl, 
-                BuiltInManagedProperties.ListId 
+                BuiltInManagedProperties.Url.Name, 
+                BuiltInManagedProperties.SiteUrl.Name, 
+                BuiltInManagedProperties.ListId.Name 
             });
             var tables = new SearchExecutor().ExecuteQuery(query);
             if (tables.Exists(KnownTableTypes.RelevantResults))
             {
                 var table = tables.Filter("TableType", KnownTableTypes.RelevantResults).Single(relevantTable => relevantTable.QueryRuleId == Guid.Empty);
-                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url))
+                if (table != null && table.ResultRows.Count == 1 && table.Table.Columns.Contains(BuiltInManagedProperties.Url.Name))
                 {
-                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url].ToString());
+                    url = new Uri(table.Table.Rows[0][BuiltInManagedProperties.Url.Name].ToString(), UriKind.Absolute);
+
+                    // Convert the absolute Uri into a relative Uri. This is required for environments using a load balancer,
+                    // because we need to ignore the load balancer's port found in the absolute Uri.
+                    url = new Uri(url.AbsolutePath, UriKind.Relative);
                 }
             }
 
