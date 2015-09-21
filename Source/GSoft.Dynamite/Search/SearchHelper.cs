@@ -864,11 +864,11 @@ namespace GSoft.Dynamite.Search
                    || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
         }
 
-        private static bool ShouldRecreateManagedProperty(SPManagedPropertyInfo spManagedPropertyInfo, ManagedPropertyInfo managedPropertyInfo)
+        private static bool ShouldRecreateManagedProperty(SPManagedPropertyInfo managedPropertyDefinition, ManagedPropertyInfo managedPropertyInfo)
         {
             // If the managed type has changed, the managed property needs to be recreated.
             // NOTE: Simply changing the 'ManagedType' property doesn't work EVEN IF IT'S NOT READ-ONLY.
-            return spManagedPropertyInfo.ManagedType != managedPropertyInfo.DataType;
+            return managedPropertyDefinition.ManagedType != managedPropertyInfo.DataType;
         }
     }
 }
