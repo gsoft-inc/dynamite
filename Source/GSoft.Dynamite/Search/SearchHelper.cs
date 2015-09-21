@@ -189,7 +189,7 @@ namespace GSoft.Dynamite.Search
 
             // Get the managed property and if null, create it
             var managedPropertyDefinition = this.GetManagedProperty(managedPropertyInfo, ssa, owner);
-            if (managedPropertyDefinition == null)
+            if ((managedPropertyDefinition == null) || ShouldRecreateManagedProperty(managedPropertyDefinition, managedPropertyInfo))
             {
                 // If managed property was created, make sure it sets the crawled property mappings and configuration
                 managedPropertyInfo.UpdateBehavior = ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists;
@@ -862,6 +862,13 @@ namespace GSoft.Dynamite.Search
             return (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteCrawledProperties)
                    || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.AppendCrawledProperties)
                    || (managedPropertyInfo.UpdateBehavior == ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists);
+        }
+
+        private static bool ShouldRecreateManagedProperty(SPManagedPropertyInfo spManagedPropertyInfo, ManagedPropertyInfo managedPropertyInfo)
+        {
+            // If the managed type has changed, the managed property needs to be recreated.
+            // NOTE: Simply changing the 'ManagedType' property doesn't work EVEN IF IT'S NOT READ-ONLY.
+            return spManagedPropertyInfo.ManagedType != managedPropertyInfo.DataType;
         }
     }
 }
