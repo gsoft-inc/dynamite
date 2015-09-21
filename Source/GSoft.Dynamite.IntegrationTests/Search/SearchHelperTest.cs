@@ -351,7 +351,8 @@ namespace GSoft.Dynamite.IntegrationTests.Search
                     UpdateBehavior = ManagedPropertyUpdateBehavior.OverwriteIfAlreadyExists
                 };
 
-                var overwrittenManagedPropertyInfo = new ManagedPropertyInfo(ManagedPropertyName, ManagedDataType.Text)
+                // Change data type for the overwritten managed property
+                var overwrittenManagedPropertyInfo = new ManagedPropertyInfo(ManagedPropertyName, ManagedDataType.DateTime)
                 {
                     Sortable = false,
                     Refinable = false,
@@ -380,12 +381,14 @@ namespace GSoft.Dynamite.IntegrationTests.Search
                         Assert.AreEqual(false, actualManagedProperty.Sortable);
                         Assert.AreEqual(false, actualManagedProperty.Refinable);
                         Assert.AreEqual(false, actualManagedProperty.Queryable);
+                        Assert.AreEqual(ManagedDataType.DateTime, actualManagedProperty.ManagedType);
                         Assert.IsTrue(actualManagedProperty.GetMappedCrawledProperties(1)[0].Name == "ows_Description");
 
                         Assert.IsNotNull(refetchedActualManagedProperty);
                         Assert.AreEqual(false, refetchedActualManagedProperty.Sortable);
                         Assert.AreEqual(false, refetchedActualManagedProperty.Refinable);
                         Assert.AreEqual(false, refetchedActualManagedProperty.Queryable);
+                        Assert.AreEqual(ManagedDataType.DateTime, actualManagedProperty.ManagedType);
                         Assert.IsTrue(ssa.GetManagedPropertyMappings(refetchedActualManagedProperty, owner)[0].CrawledPropertyName == "ows_Description");
                     }
                     finally
