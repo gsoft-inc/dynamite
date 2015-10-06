@@ -18,37 +18,51 @@ function New-DSPSiteCollectionRecusiveXml()
         [Parameter(Mandatory=$true, Position=1)]
         [string]$WebApplicationUrl
     )	
+    
+    # Remove the trailing slash
+    $WebApplicationUrl.Trimend('/')
 
     [string]$ContentDatabaseName = $Site.ContentDatabase
     [string]$SiteHostNamePath = $Site.HostNamePath
-    [string]$SiteRelativePath = $Site.RelativePath
+    [string]$SiteManagedPath = $Site.ManagedPath
+    [string]$SiteWildcardPath = $Site.WildcardPath
     [string]$Name = $Site.Name
     [string]$OwnerAlias = $Site.OwnerAlias
     [string]$SecondaryOwnerAlias = if ([string]::IsNullOrEmpty($Site.SecondaryOwnerAlias)) { "$env:USERDOMAIN\$env:USERNAME" } else { $Site.SecondaryOwnerAlias }
     [string]$Language = $Site.Language
     [string]$Locale = $Site.Locale	
     [string]$Template = $Site.Template
+    [bool]$IsWildCardInclusion = -not [string]::IsNullOrEmpty($SiteWildcardPath)
     [bool]$IsHostNamedSite = -not [string]::IsNullOrEmpty($SiteHostNamePath)
     [bool]$IsAnonymous = [bool]$Site.IsAnonymous
-    $SiteRelativeUrl = "/$SiteRelativePath"
-    $SiteAbsoluteUrl = if ($IsHostNamedSite) { "$SiteHostNamePath$SiteRelativeUrl" } else { "$WebApplicationUrl$SiteRelativeUrl" }
- 
-    # Create the Content Database if they do not exist
-    New-DSPContentDatabase -ContentDatabaseName $ContentDatabaseName -WebApplicationUrl $WebApplicationUrl
     
-    # Create the Managed Path if they do not exist
-    if($SiteRelativePath -and $SiteRelativePath -ne "/")
+    # Construct site relative url
+    $SiteRelativeUrl = "/"
+    if (-not [string]::IsNullOrEmpty($SiteManagedPath))
     {
+        $SiteRelativeUrl += $SiteManagedPath
+        
+        if (-not [string]::IsNullOrEmpty($SiteWildcardPath))
+        {
+            $SiteRelativeUrl += "/$SiteWildcardPath"
+        }      
+      
+        # Create the Managed Path if they do not exist
         if ($IsHostNamedSite)
         {
-            New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl -HostHeader
+            New-DSPManagedPath -RelativeURL $SiteManagedPath -Wildcard:$IsWildCardInclusion
         }
         else
         {
-            New-DSPManagedPath -SiteRelativePath $SiteRelativePath -WebApplicationUrl $WebApplicationUrl 
+            New-DSPManagedPath -RelativeURL $SiteManagedPath -WebApplication $WebApplicationUrl -Wildcard:$IsWildCardInclusion
         }
     }
-
+    
+    $SiteAbsoluteUrl = if ($IsHostNamedSite) { "$SiteHostNamePath$SiteRelativeUrl" } else { "$WebApplicationUrl$SiteRelativeUrl" }    
+    
+    # Create the Content Database if they do not exist
+    New-DSPContentDatabase -ContentDatabaseName $ContentDatabaseName -WebApplicationUrl $WebApplicationUrl
+    
     $spSite = Get-SPSite -Identity $SiteAbsoluteUrl -ErrorAction SilentlyContinue
     if ($spSite -eq $null)
     {
@@ -160,7 +174,7 @@ function New-DSPSiteCollectionRecusiveXml()
   Here is the Structure XML schema.
   
 <WebApplication Url="http://myWebApp">
-  <Site Name="Site Name" RelativePath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Locale="4105" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME" IsAnonymous="True">
+  <Site Name="Site Name" ManagedPath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Locale="4105" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME" IsAnonymous="True">
     <Groups>
       <Group Name="Site_Admin" OwnerName="ORG\admin" Description="Admin Group" IsAssociatedOwnerGroup="true">
         <PermissionLevels>
@@ -239,7 +253,7 @@ function New-DSPStructure()
   Here is the Structure XML schema.
   
 <WebApplication Url="http://myWebApp">
-  <Site Name="Site Name" RelativePath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME">
+  <Site Name="Site Name" ManagedPath="mySiteUrl" OwnerAlias="ORG\admin" Language="1033" Template="STS#1" ContentDatabase="CUSTOM_CONTENT_NAME">
     <Groups>
       <Group Name="Site_Admin" OwnerName="ORG\admin" Description="Admin Group" IsAssociatedOwnerGroup="true">
         <PermissionLevels>
@@ -278,7 +292,7 @@ function Remove-DSPStructure()
     foreach ($site in $Config.WebApplication.Site)
     {
         [bool]$IsHostNamedSite = -not [string]::IsNullOrEmpty($site.HostNamePath)
-        $SiteRelativeUrl = [string]::Concat("/", $site.RelativePath)
+        $SiteRelativeUrl = "/$($site.ManagedPath)/$($site.WildcardPath)"
         $SiteAbsoluteUrl = if ($IsHostNamedSite) { $site.HostNamePath + $SiteRelativeUrl } else { $site.ParentNode.Url + $SiteRelativeUrl }
         $site = Get-SPSite -Identity $SiteAbsoluteUrl -ErrorAction SilentlyContinue
         
