@@ -287,7 +287,7 @@ namespace GSoft.Dynamite.Navigation
                 associationKeyManagedPropertyName,
                 associationKeyValue,
                 languageManagedPropertyName,
-                label.Language);
+                label.Locale);
 
             var query = new KeywordQuery(SPContext.Current.Web)
             {
