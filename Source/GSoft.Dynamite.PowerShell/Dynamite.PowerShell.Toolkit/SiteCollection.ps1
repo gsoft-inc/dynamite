@@ -18,13 +18,19 @@ function New-DSPSiteCollectionRecusiveXml()
         [Parameter(Mandatory=$true, Position=1)]
         [string]$WebApplicationUrl
     )	
+
+	if (-not [string]::IsNullOrEmpty($site.RelativePath)){
+		Write-Host "[Depricated] The 'RelativePath' attribute is depricated and should no longer be used. Please use the 'ManagedPath' attribute instead." -foregroundcolor Red
+		$SiteManagedPath = $site.RelativePath
+	} else {	
+		$SiteManagedPath = $Site.ManagedPath
+	}
     
     # Remove the trailing slash
     $WebApplicationUrl.Trimend('/')
 
     [string]$ContentDatabaseName = $Site.ContentDatabase
     [string]$SiteHostNamePath = $Site.HostNamePath
-    [string]$SiteManagedPath = $Site.ManagedPath
     [string]$SiteWildcardPath = $Site.WildcardPath
     [string]$Name = $Site.Name
     [string]$OwnerAlias = $Site.OwnerAlias
@@ -153,6 +159,9 @@ function New-DSPSiteCollectionRecusiveXml()
     .PARAMETER  XmlPath
         Path to the Xml file describing the structure
 
+	.PARAMETER  XmlConfig
+        Xml describing the structure
+
   .EXAMPLE
         PS C:\> New-DSPStructure "c:\structure.xml"
 
@@ -202,15 +211,28 @@ function New-DSPSiteCollectionRecusiveXml()
 #>
 function New-DSPStructure()
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName="File")]
     param
     (
-        [Parameter(Mandatory=$true, Position=0)]
-        [string]$XmlPath
+        [Parameter(Mandatory=$true, Position=0, ParameterSetName="File")]
+        [string]$XmlPath,
+
+        [Parameter(Mandatory=$true, Position=0, ParameterSetName="Xml")]
+		[xml]$XmlConfig
     )
+
+	switch ($PsCmdlet.ParameterSetName) { 
+		"Xml" {
+			$Config = $XmlConfig
+			break
+		}
+		"File" {
+			$Config = [xml](Get-Content $XmlPath)
+			break
+		}
+	}
     
-    # Get the Xml content and start looping throught Site Collections and generate the structure
-    $Config = [xml](Get-Content $XmlPath)
+    # Start looping throught Site Collections and generate the structure
     $Config.WebApplication.Site | ForEach-Object {New-DSPSiteCollectionRecusiveXml -Site $_ -WebApplicationUrl $_.ParentNode.Url}
 }
 
@@ -291,9 +313,25 @@ function Remove-DSPStructure()
     $Config = [xml](Get-Content $XmlPath)
     foreach ($site in $Config.WebApplication.Site)
     {
+		if (-not [string]::IsNullOrEmpty($site.RelativePath)){
+			Write-Host "[Depricated] The 'RelativePath' attribute is depricated and should no longer be used. Please use the 'ManagedPath' attribute instead." -foregroundcolor Red
+			$site.ManagedPath = $site.RelativePath
+		}
+
+		# Construct site relative url
+		$SiteRelativeUrl = "/"
+		if (-not [string]::IsNullOrEmpty($Site.ManagedPath))
+		{
+			$SiteRelativeUrl += $Site.ManagedPath
+        
+			if (-not [string]::IsNullOrEmpty($Site.WildcardPath))
+			{
+				$SiteRelativeUrl += "/$($Site.WildcardPath)"
+			}
+		}
+
         [bool]$IsHostNamedSite = -not [string]::IsNullOrEmpty($site.HostNamePath)
-        $SiteRelativeUrl = "/$($site.ManagedPath)/$($site.WildcardPath)"
-        $SiteAbsoluteUrl = if ($IsHostNamedSite) { $site.HostNamePath + $SiteRelativeUrl } else { $site.ParentNode.Url + $SiteRelativeUrl }
+        $SiteAbsoluteUrl = if ($IsHostNamedSite) { $site.HostNamePath.Trimend('/') + $SiteRelativeUrl } else { $site.ParentNode.Url.Trimend('/') + $SiteRelativeUrl }
         $site = Get-SPSite -Identity $SiteAbsoluteUrl -ErrorAction SilentlyContinue
         
         if($site -ne $null)
