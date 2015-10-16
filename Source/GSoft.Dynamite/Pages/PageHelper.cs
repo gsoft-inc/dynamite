@@ -169,6 +169,7 @@ namespace GSoft.Dynamite.Pages
                 // Update the publishing associated content type
                 pageLayout.AssociatedContentType = ct;
                 pageLayout.Update();
+                pageLayout.ListItem.File.Publish("Dynamite Ensure Major Version");
             }
 
             return pageLayout;

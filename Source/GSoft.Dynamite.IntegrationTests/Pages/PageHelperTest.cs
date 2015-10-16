@@ -1,6 +1,9 @@
-﻿using Autofac;
+﻿using System.Linq;
+using Autofac;
+using GSoft.Dynamite.ContentTypes;
 using GSoft.Dynamite.Extensions;
 using GSoft.Dynamite.Pages;
+using Microsoft.SharePoint;
 using Microsoft.SharePoint.Publishing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -56,6 +59,35 @@ namespace GSoft.Dynamite.IntegrationTests.Pages
 
                     // Make sure we are truely talking about the same page.
                     Assert.AreEqual(initialPage.Url, updatedPage.Url, "The initial page and updated page should have the same url.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// When setting the associated content type to an existing page layout, then the page layout is published with a major version once updated.
+        /// </summary>
+        [TestMethod]
+        public void EnsurePageLayout_WhenSettingTheAssociatedContentType_ThenThePageLayoutIsPublishedWithAMajorVersion()
+        {
+            using (var testScope = SiteTestScope.PublishingSite())
+            {
+                // Arrange
+
+                // This page layout normally has article, we will set welcome page to it.
+                var pageLayoutInfoWithUpdatedCT = new PageLayoutInfo("ArticleLeft.aspx", "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4");
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(testScope.SiteCollection))
+                {
+                    var pageHelper = injectionScope.Resolve<IPageHelper>();
+
+                    // Act
+                    var actualPageLayout = pageHelper.EnsurePageLayout(testScope.SiteCollection, pageLayoutInfoWithUpdatedCT);
+
+                    // Assert
+                    Assert.IsTrue(actualPageLayout != null);
+
+                    var hasCurrentDraft = actualPageLayout.ListItem.Versions.Cast<SPListItemVersion>().Any(v => v.IsCurrentVersion && v.Level == SPFileLevel.Draft);
+                    Assert.IsTrue(!hasCurrentDraft, "The page layout should not have a draft version marked as current.");
                 }
             }
         }
