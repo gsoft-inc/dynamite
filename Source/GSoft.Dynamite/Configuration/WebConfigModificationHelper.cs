@@ -133,6 +133,7 @@ namespace GSoft.Dynamite.Configuration
                 throw new ArgumentNullException("webApplication");
             }
 
+            var indicesOfNullWebConfigModifications = new List<int>();
             var modificationsToRemove = new Collection<SPWebConfigModification>();
             var modificationCollection = webApplication.WebConfigModifications;
 
@@ -144,6 +145,7 @@ namespace GSoft.Dynamite.Configuration
             }
             else
             {
+                int currentIndex = 0;
                 foreach (SPWebConfigModification modification in modificationCollection)
                 {
                     if (modification != null)
@@ -165,18 +167,40 @@ namespace GSoft.Dynamite.Configuration
                     }
                     else
                     {
+                        indicesOfNullWebConfigModifications.Add(currentIndex);
                         this.logger.Warn(
                             "WebConfigModificationHelper: web application with ID {0} has a NULL modification.",
                             webApplication.Id);
                     }
+
+                    currentIndex++;
                 }
 
-                // now delete the modifications from the web application
-                if (modificationsToRemove.Count > 0)
+                // Now delete the modifications from the web application (and also clean up NULL values from web app's WebConfigModifications collection)
+                if (modificationsToRemove.Count > 0 || indicesOfNullWebConfigModifications.Count > 0)
                 {
+                    var webAppConfigModifications = webApplication.WebConfigModifications;
+
+                    if (indicesOfNullWebConfigModifications.Count > 0)
+                    {
+                        // WEIRD EDGE CASE: we detected NULL items in the web app's WebConfigModifications collection.
+                        // Let's clean those up before moving on (otherwise further additions to the collection might fail
+                        // to propagate correctly).
+                        this.logger.Warn(
+                                "WebConfigModificationHelper: web application with ID {0} has at least one NULL modification in its WebConfigModification collection. "
+                                + "Attempting to delete those NULL entries now because they might interfere with new additions to WebConfigModifications.",
+                                webApplication.Id);
+
+                        foreach (int indexOfNullWebConfigModification in indicesOfNullWebConfigModifications)
+                        {
+                            webAppConfigModifications.RemoveAt(indexOfNullWebConfigModification);
+                        }
+                    }
+
+                    // Remove the Owner's web config modification we want to clean up
                     foreach (SPWebConfigModification modificationItem in modificationsToRemove)
                     {
-                        webApplication.WebConfigModifications.Remove(modificationItem);
+                        webAppConfigModifications.Remove(modificationItem);
                     }
 
                     // Commit modification removals to the specified web application
