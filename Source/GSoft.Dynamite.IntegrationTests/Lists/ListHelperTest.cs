@@ -768,7 +768,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     list = rootWeb.GetList(Url);
                     Assert.IsNotNull(list);
                     Assert.AreEqual(listInfo.DisplayNameResourceKey, list.TitleResource.Value);
-                    Assert.IsTrue(list.EnableModeration);
+                    Assert.IsFalse(list.EnableModeration);
                     Assert.AreEqual(list.DraftVersionVisibility, expectedDraftVersionVisibility);
                 }
             }
@@ -2574,6 +2574,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     IsVersioningEnabled = true,
                     HasDraftVisibilityType = true,
                     DraftVisibilityType = DraftVisibilityType.Reader,
+                    IsModerationEnabled = true,
                     MajorVersionLimit = 10,
                     MinorVersionLimit = 5
                 };
@@ -2633,6 +2634,7 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     IsVersioningEnabled = true,
                     HasDraftVisibilityType = true,
                     DraftVisibilityType = DraftVisibilityType.Reader,
+                    IsModerationEnabled = true,
                     MajorVersionLimit = 20,
                     MinorVersionLimit = 5
                 };
@@ -2731,6 +2733,150 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                     Assert.AreEqual(true, list.EnableMinorVersions);
                     Assert.AreEqual(10, list.MajorVersionLimit);
                     Assert.AreEqual(5, list.MajorWithMinorVersionsLimit);
+                }
+            }
+        }
+
+        /// <summary>
+        /// When draft visibility is set to Approver, make sure Moderation is enabled if need be.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenDraftVisibilityIsApproverAndIsModerationEnableIsFalse_ThenSetModerationToTrue()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Approver,
+                    IsModerationEnabled = false
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableModeration);
+                    Assert.AreEqual(DraftVisibilityType.Approver, list.DraftVersionVisibility);                   
+                }
+            }
+        }
+
+        /// <summary>
+        /// When draft visibility is set to Author, make sure Moderation is enabled if no versioning settings are specified.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenDraftVisibilityIsAuthor_ThenModerationIsEnabledByDefault()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Author
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(true, list.EnableModeration);
+                    Assert.AreEqual(DraftVisibilityType.Author, list.DraftVersionVisibility);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make sure that moderation is not enabled automatically when draft visibility is Author and minor versions are enabled.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenDraftVisibilityIsAuthorAndMinorVersionsAreEnabled_ThenModerationIsNotEnabledByDefault()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Author,
+                    IsVersioningEnabled = true,
+                    AreMinorVersionsEnabled = true
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(false, list.EnableModeration, "Moderation should not be enabled.");
+                    Assert.AreEqual(true, list.EnableMinorVersions, "Minor versions should be enabled.");
+                    Assert.AreEqual(DraftVisibilityType.Author, list.DraftVersionVisibility, "Draft visibility should be set to author.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// When draft visibility is reader, no moderation is required.
+        /// </summary>
+        [TestMethod]
+        public void EnsureList_WhenDraftVisibilityIsReader_ThenModerationIsNotEnabledByDefault()
+        {
+            // Arrange
+            const string ListUrl = "Lists/libraryWithVersioningSettings";
+            const string ListName = "libraryWithVersioningSettingsName";
+            const string ListDescription = "libraryWithVersioningSettingsDescription";
+
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
+                {
+                    ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+                    HasDraftVisibilityType = true,
+                    DraftVisibilityType = DraftVisibilityType.Reader
+                };
+
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+                    var testRootWeb = testScope.SiteCollection.RootWeb;
+
+                    // Act
+                    var list = listHelper.EnsureList(testRootWeb, listInfo);
+
+                    // Assert
+                    Assert.AreEqual(false, list.EnableModeration);
+                    Assert.AreEqual(DraftVisibilityType.Reader, list.DraftVersionVisibility);
                 }
             }
         }

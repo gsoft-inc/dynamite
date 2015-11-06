@@ -107,11 +107,21 @@ namespace GSoft.Dynamite.Lists
 
         /// <summary>
         /// Gets or sets the type of the draft visibility.
+        /// The draft visibility type Approver requires Moderation to be enabled.
+        /// The draft visibility type Author requires Moderation or minor versions to be enabled.
         /// </summary>
         /// <value>
         /// The type of the draft visibility.
         /// </value>
         public DraftVisibilityType DraftVisibilityType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this list has moderation enabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this list has moderation enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsModerationEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [is versioning enabled].
