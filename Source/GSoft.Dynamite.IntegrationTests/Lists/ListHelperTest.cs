@@ -2679,7 +2679,8 @@ namespace GSoft.Dynamite.IntegrationTests.Lists
                 var listInfo = new ListInfo(ListUrl, ListName, ListDescription)
                 {
                     HasDraftVisibilityType = true,
-                    DraftVisibilityType = DraftVisibilityType.Reader
+                    DraftVisibilityType = DraftVisibilityType.Reader,
+                    IsModerationEnabled = true
                 };
 
                 using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope())
