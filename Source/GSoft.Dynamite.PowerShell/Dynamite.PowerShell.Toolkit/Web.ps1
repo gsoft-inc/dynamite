@@ -323,6 +323,68 @@ function Remove-DSPWeb {
 
 <#
     .SYNOPSIS
+        Get a list of SPWeb objects
+    
+    .DESCRIPTION
+        If -Recurse is specified, all subwebs are retrieved
+    --------------------------------------------------------------------------------------
+    Module 'Dynamite.PowerShell.Toolkit'
+    by: GSoft, Team Dynamite.
+    > GSoft & Dynamite : http://www.gsoft.com
+    > Dynamite Github : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    --------------------------------------------------------------------------------------
+        
+    .PARAMETER WebUrl
+        The source web url
+
+    .PARAMETER Recurse
+        Get all subsites recursively
+
+    .EXAMPLE
+            PS C:\> Get-DSPWeb -WebUrl "http://<site>/sites/test/" -Recurse 
+
+    .LINK
+    GSoft, Team Dynamite on Github
+    > https://github.com/GSoft-SharePoint
+    
+    Dynamite PowerShell Toolkit on Github
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit
+    
+    Documentation
+    > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
+    
+#>
+function Get-DSPWeb {
+
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [string]$WebUrl,
+
+        [Parameter(Mandatory=$false)]
+        [switch]$Recurse
+    )
+
+    $Web = Get-SPWeb -Identity $WebUrl
+
+    if ($Web)
+    {
+        if($Recurse)
+        {
+            $Web.Webs | ForEach-Object {
+        
+                Get-DSPWeb -WebUrl $_.Url -Recurse:$Recurse
+            }
+        }
+    }
+
+	return $Web
+}
+
+<#
+    .SYNOPSIS
         Export a SharePoint web structure as XML. 
     
     .DESCRIPTION
