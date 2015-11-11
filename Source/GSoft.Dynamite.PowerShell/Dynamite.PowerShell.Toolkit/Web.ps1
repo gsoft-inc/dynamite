@@ -358,7 +358,7 @@ function Remove-DSPWeb {
 function Get-DSPWeb {
 
     [CmdletBinding()]
-    param
+    Param
     (
         [Parameter(Mandatory=$true)]
         [string]$WebUrl,
@@ -380,6 +380,10 @@ function Get-DSPWeb {
         }
     }
 
+	# For C# developers, PowerShell treats every non-captured object (i.e. one that isn’t assigned to a variable) as return value.
+	# http://manski.net/2013/03/powershell-functions-for-the-uninitiated-c-programmer/
+	# So at the end of the function, all webs will be returned in an array of objects, where the first element will be the deepest web. 
+	# You could reverse the array if you want by manipulating the cmdlet output [array]::Reverse()
 	return $Web
 }
 
