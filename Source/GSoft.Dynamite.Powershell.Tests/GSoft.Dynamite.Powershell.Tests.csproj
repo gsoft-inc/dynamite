@@ -55,6 +55,7 @@
   <ItemGroup>
     <Content Include="Integration\Sharegate\Image1.jpg" />
     <Content Include="Integration\Sharegate\TestVariationsSettings.xml" />
+    <Content Include="Integration\SiteCollection\ImportSiteStructure.template.xml" />
     <Content Include="Integration\Taxonomy\TestVariationsSettings.xml" />
     <Content Include="Integration\Web\ImportWebStructure_Variations.xml" />
     <Content Include="Integration\Web\ImportWebStructure.xml" />
@@ -69,14 +70,18 @@
     <None Include="Integration\Invoke-AllIntegrationTests.ps1" />
     <None Include="Integration\Invoke-SlowIntegrationTests.ps1" />
     <None Include="Integration\Logging\Logging.Tests.ps1" />
+    <None Include="Integration\ManagedPath\ManagedPath.Tests.template.ps1" />
     <None Include="Integration\Sharegate\Document1.docx" />
     <None Include="Integration\Sharegate\Sharegate.Tests.template.ps1" />
+    <None Include="Integration\SiteCollection\SiteCollection.Tests.template.ps1" />
     <None Include="Integration\Taxonomy\Taxonomy.Tests.template.ps1" />
     <None Include="Integration\Taxonomy\TestSchema.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Integration\Tokens.DMX.ps1" />
     <None Include="Integration\Tokens.pgrefdev.ps1" />
+    <None Include="Integration\Tokens.SP2013-YOHAN.ps1" />
+    <None Include="Integration\Tokens.svd1100shrp02.ps1" />
     <None Include="Integration\Tokens.vmspphil.ps1" />
     <None Include="Integration\Tokens.sp2013tao.ps1" />
     <None Include="Integration\Tokens.FRANCK-VM2013.ps1" />

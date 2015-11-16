@@ -93,6 +93,26 @@ namespace GSoft.Dynamite.Lists
                 }
             }
 
+            // Validate draft visibility setting
+            if (listInfo.HasDraftVisibilityType && listInfo.DraftVisibilityType == DraftVisibilityType.Approver)
+            {
+                // Moderation is required when the draft visibility is set to approver.
+                if (!listInfo.IsModerationEnabled)
+                {
+                    this.logger.Warn("When ensuring a list with draft visibility type of Approver, moderation needs to be enabled. Setting moderation enabled to true automatically.");
+                    listInfo.IsModerationEnabled = true;
+                }
+            }
+            else if (listInfo.HasDraftVisibilityType && listInfo.DraftVisibilityType == DraftVisibilityType.Author)
+            {
+                // Moderation or minor versions need to be enabled for draft visibility to be set to author.
+                if (!listInfo.IsModerationEnabled && !(listInfo.AreMinorVersionsEnabled && listInfo.IsVersioningEnabled))
+                {
+                    this.logger.Warn("When ensuring a list with draft visibility type of Author, moderation or minor versions needs to be enabled. Setting moderation enabled to true automatically.");
+                    listInfo.IsModerationEnabled = true;
+                }
+            }
+
             list = this.listLocator.TryGetList(web, listInfo.WebRelativeUrl.ToString());
             
             // Ensure the list
@@ -175,13 +195,9 @@ namespace GSoft.Dynamite.Lists
 
             list = web.Lists[list.ID];
 
-            // Draft VisibilityType
-            if (listInfo.HasDraftVisibilityType)
-            {
-                list.EnableModeration = true;
-                list.DraftVersionVisibility = listInfo.DraftVisibilityType;
-            }
-
+            // Update the moderation setting
+            list.EnableModeration = listInfo.IsModerationEnabled;
+            
             // Versioning settings
             this.SetVersioning(
                 list, 
@@ -189,6 +205,12 @@ namespace GSoft.Dynamite.Lists
                 listInfo.AreMinorVersionsEnabled, 
                 listInfo.MajorVersionLimit, 
                 listInfo.MinorVersionLimit);
+
+            // Draft VisibilityType
+            if (listInfo.HasDraftVisibilityType)
+            {
+                list.DraftVersionVisibility = listInfo.DraftVisibilityType;
+            }
 
             // Ratings
             this.SetRatings(list, listInfo.RatingType, listInfo.EnableRatings);

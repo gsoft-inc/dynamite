@@ -22,14 +22,20 @@
     > Documentation : https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     --------------------------------------------------------------------------------------
     
-    .PARAMETER  SiteRelativePath
-        The Path of the managed path to create relative the the WebApplication
+    .PARAMETER  RelativeURL
+        The Path of the managed path to create relative the the WebApplication.
+        Do not include a leading forward slash.
 
-    .PARAMETER  WebApplicationUrl
-        The URL of the Web Application where to create the Managed Path
+    .PARAMETER  WebApplication
+        The Web Application where to create the Managed Path.
+        Do not specify this parameter if you wish to create a host header managed path.
+    
+    .PARAMETER  Wildcard
+        Specifies whether the managed path is explicit or wildcard.
+        If not provided, the managed path is an explicit path.
 
     .EXAMPLE
-        PS C:\> New-DSPManagedPath -SiteRelativePath 'mySite' -WebApplicationUrl 'http://myWebApp'
+        PS C:\> New-DSPManagedPath -RelativeURL 'mySite' -WebApplication 'http://myWebApp'
 
     .INPUTS
         System.String,System.String
@@ -48,53 +54,50 @@
     > https://github.com/GSoft-SharePoint/Dynamite-PowerShell-Toolkit/wiki
     
 #>
-function New-DSPManagedPath()
+function New-DSPManagedPath
 {
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory=$true, Position=0)]
-        [string]$SiteRelativePath,
+        [string]$RelativeURL,
         
-        [Parameter(Mandatory=$true, Position=1)]
-        [string]$WebApplicationUrl,
-
+        [Parameter(Mandatory=$false, Position=1)]
+        [Microsoft.SharePoint.PowerShell.SPWebApplicationPipeBind]$WebApplication,
+        
         [Parameter(Mandatory=$false, Position=2)]
-        [switch]$HostHeader
+        [switch]$Wildcard
     )
     
-    $SiteRelativeUrl = "/$SiteRelativePath"
-    $SiteAbsoluteUrl = "$WebApplicationUrl$SiteRelativeUrl"
-    
-    $ManagedPath = $SiteRelativeUrl.Trim("/")
-    
-    # Create Managed Path
-    if ($HostHeader) 
+    if ($WebApplication -ne $null) 
     {
-        $ExistingManagedPath = Get-SPManagedPath -HostHeader | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+        $webAppName = $WebApplication.Read().DisplayName
+        
+        $ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplication | Select-Object Name | Where {$_.Name -eq $RelativeURL}
         if ($ExistingManagedPath -eq $null)
         {
-            Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl is being created ..."
-            New-SPManagedPath -RelativeURL $SiteRelativeUrl -HostHeader -Explicit
-            Write-Verbose "The host header managed path at the address $SiteAbsoluteUrl was successfully created."
+            Write-Host "The managed path '$RelativeURL' is being created for the '$webAppName' Web Application ..."
+            New-SPManagedPath -RelativeURL $RelativeURL -WebApplication $WebApplication -Explicit:(-not $Wildcard) -ErrorAction Stop
+            Write-Host "Done!"
         }
         else
         {
-            Write-Verbose "The host header managed path '$ManagedPath' already exists"
+            Write-Host "The managed path '$RelativeURL' already exists for the '$webAppName' Web Application"
         }
     }
-    else 
+    else
     {
-        $ExistingManagedPath = Get-SPManagedPath -WebApplication $WebApplicationUrl | Select-Object Name | Where {$_.Name -eq $ManagedPath}
+        $ExistingManagedPath = Get-SPManagedPath -HostHeader | Select-Object Name | Where {$_.Name -eq $RelativeURL}
         if ($ExistingManagedPath -eq $null)
         {
-            Write-Verbose "The managed path at the address $SiteAbsoluteUrl is being created ..."
-            New-SPManagedPath -RelativeURL $SiteRelativeUrl -WebApplication $WebApplicationUrl -Explicit
-            Write-Verbose "The managed path at the address $SiteAbsoluteUrl was successfully created."
+            Write-Host "The host header managed path for all host header site collections is being created ..."
+            New-SPManagedPath -RelativeURL $RelativeURL -HostHeader -Explicit:(-not $Wildcard) -ErrorAction Stop
+            Write-Host "Done"
         }
         else
         {
-            Write-Verbose "The managed path '$ManagedPath' already exists"
+            Write-Host "The host header managed path '$RelativeURL' already exists"
         }
     }
+    
 }

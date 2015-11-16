@@ -7,14 +7,14 @@
     /// </summary>
     public class JavaScriptSerializer : ISerializer
     {
-        private readonly JavaScriptSerializer serializer;
+        private readonly System.Web.Script.Serialization.JavaScriptSerializer serializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JavaScriptSerializer"/> class.
         /// </summary>
         public JavaScriptSerializer()
         {
-            this.serializer = new JavaScriptSerializer();
+            this.serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
         }
 
         /// <summary>
