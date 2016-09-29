@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".solution items", ".solutio
 		fxcop.Debug.FxCop = fxcop.Debug.FxCop
 		fxcop.Release.FxCop = fxcop.Release.FxCop
 		Integration.testsettings = Integration.testsettings
+		..\README.md = ..\README.md
 		Settings.StyleCop = Settings.StyleCop
 	EndProjectSection
 EndProject
