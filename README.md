@@ -17,7 +17,7 @@ Pre-release builds [are available from a separate feed](https://github.com/GSoft
 Two main NuGet packages are available:
 
 1. **GSoft.Dynamite**
-    * C# library (DLL) with facilities for 
+    * C# library (DLL) with facilities for:
         * Dependency injection with Autofac
         * SharePoint object provisionning (fields, content types, lists)
         * Logging and globalization (i18n) 
@@ -59,7 +59,7 @@ Dynamite is meant exclusively for On-Premise, full-trust, server-side, custom Sh
 Its purpose is to encourage:
 
 * A correct approach to **service location** (dependency injection, inversion of control) **using Autofac** as its core container framework within the (particularily hairy) context of GAC-deployed SharePoint WSP solution packages
-* Repeatable, idempotent SharePoint artefact **provisionning** sequences (site columns, content types, lists)
+* **Repeatable, idempotent** SharePoint artefact **provisionning** sequences (site columns, content types, lists)
 * Less code repetition for typical **logging, internationalization** and SPListItem-to-business-entity mapping scenarios
 * Loosely coupled, easily unit tested, **modular, extensible architectures**
 * Environment-independent, **fully automated installation procedures** with PowerShell
@@ -68,14 +68,21 @@ Dynamite can be though of as an embodiment or spiritual successor to [Microsoft'
 
 Thus, the toolkit is firmly old-school in its **purely server-side/on-premise** approach. New development efforts outside of a full-trust context (e.g. Office 365, app model development, client-side, etc.) should probably look into alternatives such as the more recent [Office PnP](https://github.com/OfficeDev/PnP) project and its remote provisionning approach.
 
-> You can think of Dynamite as a *batteries-included, SharePoint-aware, opinionated .NET intrastructure-and-architecture toolkit* to build solid SharePoint 2013 full-trust server solutions
+> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* meant as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions
 
 
 Quick Start Guide
 =================
 
-Building your first Autofac container for service location
-----------------------------------------------------------
+Dependency injection & service location
+---------------------------------------
+
+One main objective of the Dynamite toolkit is to guide you in the implementation of a dependency injection container. 
+
+This container at the root of your application will server as an intermediary when your components need to depend on other modules,
+services and utilities.
+
+### Building your first Autofac container for service location
 
 Access to Dynamite's C# utilities is enabled through service locator-style dependency injection.
 
@@ -148,7 +155,14 @@ private static ISharePointServiceLocator singletonLocatorInstance = new SharePoi
     });
 ```
 
-All assemblies matching your condition will be loaded from the GAC_MSIL and scanned for [Autofac registration modules](http://docs.autofac.org/en/latest/configuration/modules.html) such as, for example:
+All assemblies matching your condition will be loaded from the GAC_MSIL and scanned for [Autofac registration modules](http://docs.autofac.org/en/latest/configuration/modules.html) such as the one in the example below.
+
+
+###Registering your interface-to-implementation configuration as Autofac registration modules
+
+Your Autofac service locator will scan the GAC for assemblies in search of **registration modules**.
+
+One of your own registration modules may look like this:
 
 ```
 using Autofac;
@@ -206,21 +220,42 @@ namespace Company.Project.SubProject
 }
 ```
 
-Note how object lifetime behavior can be configured to following *singleton-per-SPSite*, *singleton-per-SPWeb* and per-HTTP-request semantics through Dynamite's custom RegistrationExtensions. Please refer to the Dynamite wiki for [more detailed help on using service location and complex lifetime scope hierarchies](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
+Note how **custom object lifetime behavior** can be configured to obtain *singleton-per-SPSite*, *singleton-per-SPWeb* and per-HTTP-request semantics through Dynamite's custom RegistrationExtensions. Please refer to the Dynamite wiki for [more detailed help on using service location and complex lifetime scope hierarchies](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
+
+Make sure to brush up on the concept of [Lifetime Scopes](http://docs.autofac.org/en/v3.5.2/lifetime/index.html) if you haven't yet understood their power. Dynamite's `SharePointServiceLocator` and custom `InstancePerSite`, `InstancePerWeb` and `InstancePerRequest` lifetimes are meant to easily provide such fine-grained object scoping mechanics in a correct way within a full-trust SharePoint server context.
 
 > To enable `InstancePerRequest` behavior, you need to configure a HttpModule in your server's `web.config`. 
 >
 > Do this by enabling the WebApplication-scope feature `GSoft.Dynamite.SP_Web Config Modifications` (ID: `2f59e5c1-448c-42ee-a782-4beac0a30370`) available from the `GSoft.Dynamite.wsp` solution package (from NuGet package GSoft.Dynamite.SP).
+>
+> Without the `GSoft.Dynamite.ServiceLocator.Lifetime.RequestLifetimeHttpModule` configured through this feature activation, objects will not be disposed properly at the end of each request.
 
-Resolving Dynamite's utilities and your own registered dependencies
--------------------------------------------------------------------
 
-In a SharePoint farm solution, your typical code entry points are the following:
+### Dynamite's own registration module
+
+The class `AutofacDynamiteRegistrationModule` holds all the interface-to-implementation configuration for the various utilities found in the toolkit.
+
+See the [Dynamite registration code here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/ServiceLocator/AutofacDynamiteRegistrationModule.cs#L65) to take a look for yourself at the extent of available services and helpers.
+
+This module of utilities is loaded in first position every time you initialize a `SharePointServiceLocator`. 
+
+> Since Dynamite gives you this guarantee that your own Autofac registration modules will be scanned and loaded *after* Dynamite's own utilities,
+> this means you can override the base registrations with your own to *replace* or *extend* Dynamite's own internal use of these utilities.
+>
+> For example, do `builder.RegisterType<MyCustomLogger>().As<ILogger>()` from within you own module in order to swap out Dynamite's default
+> `TraceLogger` implementation (see [default logger code here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/Logging/TraceLogger.cs)).
+
+
+
+### Resolving Dynamite's utilities and your own registered dependencies
+
+In a SharePoint farm solution, your typical code entry points are the following (i.e. the UI-level parts of your application):
 
 1. An ASP.NET page lifecycle code-behind event such as `Page_Load`
 2. A SharePoint event receiver such as `FeatureActivated`
 
-You should aim to keep the logic in such entry points to a minimum, since they are coupled to the ASP.NET and SharePoint SPRequest pipelines. All heavy-lifting should be encapsulated within you own more-easily-tested utilities.
+You should aim to keep the logic in such entry points to a minimum, since they are coupled to the ASP.NET and SharePoint SPRequest pipelines. 
+All heavy-lifting and business logic components should be encapsulated within your own more-easily-unit-tested utilities.
 
 For example, the code-behind of a SharePoint menu WebPart's user control could look like this:
 
@@ -261,7 +296,7 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 }
 ```
 
-Note how a `using` block should always be used to surround the code which injects some dependencies to ensure proper disposal behavior of all resources through the disposal of the child lifetime scope returned by `BeginLifetimeScope`.
+Note how **a `using` block should always be used** to surround the code which injects some dependencies to ensure proper disposal behavior of all resources through the disposal of the child lifetime scope returned by `BeginLifetimeScope`.
 
 Beyond such UI-level entry points, all further dependencies down the call stack should be constructor-injected like so:
 
