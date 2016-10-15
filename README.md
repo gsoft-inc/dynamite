@@ -19,7 +19,7 @@ Two main NuGet packages are available:
 1. **GSoft.Dynamite**
     * C# library (DLL) with facilities for:
         * Dependency injection with Autofac
-        * SharePoint object provisionning (fields, content types, lists)
+        * SharePoint object provisioning (fields, content types, lists)
         * Logging and globalization (i18n) 
         * SPListItem-to-entity mapping
         * etc.
@@ -31,8 +31,8 @@ Two main NuGet packages are available:
 2. **GSoft.Dynamite.SP**
     * Full-trust solution package (WSP) ready to deploy to your on-premise farm 
         * Provisions the DLL from the GSoft.Dynamite package (see 1. above) to the GAC
-        * Deploy the WSP solution with `Add-SPSolution` from a SharePoint Management Shell
-    * PowerShell cmdlets module to help with provisionning
+        * Deploy the WSP solution with `Add-SPSolution` and `Deploy-SPSolution` from a SharePoint Management Shell
+    * PowerShell cmdlets module to help with provisioning
         * Will turn all your PowerShell shells into SharePoint Management Shell and register a Dynamite module of cmdlets
         * Install through `.\tools\Install-DSPModule.ps1`, review set of cmdlets with `Get-DSPCommand`
     * Should be installed *only once globally* in your Visual Studio solution
@@ -59,28 +59,45 @@ Dynamite is meant exclusively for On-Premise, full-trust, server-side, custom Sh
 Its purpose is to encourage:
 
 * A correct approach to **service location** (dependency injection, inversion of control) **using Autofac** as its core container framework within the (particularily hairy) context of GAC-deployed SharePoint WSP solution packages
-* **Repeatable, idempotent** SharePoint artefact **provisionning** sequences (site columns, content types, lists)
+* **Repeatable, idempotent** SharePoint artefact **provisioning** sequences (site columns, content types, lists)
 * Less code repetition for typical **logging, internationalization** and SPListItem-to-business-entity mapping scenarios
 * Loosely coupled, easily unit tested, **modular, extensible architectures**
 * Environment-independent, **fully automated installation procedures** with PowerShell
 
 Dynamite can be though of as an embodiment or spiritual successor to [Microsoft's patterns and practices team's famous SharePoint 2010 development guide](http://msdn.microsoft.com/en-us/library/ff770300.aspx).
 
-Thus, the toolkit is firmly old-school in its **purely server-side/on-premise** approach. New development efforts outside of a full-trust context (e.g. Office 365, app model development, client-side, etc.) should probably look into alternatives such as the more recent [Office PnP](https://github.com/OfficeDev/PnP) project and its remote provisionning approach.
+Thus, the toolkit is firmly old-school in its **purely server-side/on-premise** approach. New development efforts outside of a full-trust 
+context (e.g. Office 365, app model development, client-side, etc.) should probably look into alternatives such as the more recent [Office PnP](https://github.com/OfficeDev/PnP) 
+project and its remote provisioning approach.
 
-> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* meant as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions
+> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* meant 
+> as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions
 
 
 Quick Start Guide
 =================
 
+The Dynamite toolkit covers a lot of ground. Here are a few guidelines to get you up and running on these topics:
+
+* [Dependency injection & service location](#dependency-injection--service-location)
+   * Using Autofac correctly in a SharePoint server context
+* [Using Dynamite's provisioning utilities](#using-dynamites-provisioning-utilities)
+   * Creating fields, content types and lists in an idempotent way
+* [Other utilities: logging and globalization](#)
+* [The SharePoint entity binder: easy mappings from entities to SPListItems and back](#)
+
+
 Dependency injection & service location
 ---------------------------------------
 
-One main objective of the Dynamite toolkit is to guide you in the implementation of a dependency injection container. 
+One main objective of the Dynamite toolkit is to guide you in the implementation of a dependency injection container - without having 
+to worry too much about the particulars on how to do it "right" in a SharePoint on-premise, full-trust solution context. 
 
-This container at the root of your application will server as an intermediary when your components need to depend on other modules,
-services and utilities.
+This container at the root of your application will serve as an intermediary when your components need to depend on other modules,
+services and utilities. It is the "glue" that takes care of constructing concrete C# object instances while your own consumer code
+only depends on interface contracts. This makes it easier to depend on other modules without having to worry about their own dependencies
+and implementation details.
+
 
 ### Building your first Autofac container for service location
 
@@ -155,7 +172,8 @@ private static ISharePointServiceLocator singletonLocatorInstance = new SharePoi
     });
 ```
 
-All assemblies matching your condition will be loaded from the GAC_MSIL and scanned for [Autofac registration modules](http://docs.autofac.org/en/latest/configuration/modules.html) such as the one in the example below.
+All assemblies matching your condition will be loaded from the GAC_MSIL and scanned for [Autofac registration modules](http://docs.autofac.org/en/latest/configuration/modules.html)
+such as the one in the example below.
 
 
 ###Registering your interface-to-implementation configuration as Autofac registration modules
@@ -210,7 +228,7 @@ namespace Company.Project.SubProject
             builder.RegisterType<MySubWebSpecificCache>().As<ISubWebSpecificCache().InstancePerWeb();
 
             //
-            // Example of how to implement 1-OBJECT-INSTANCE-PER-HTTP-REQUEST behavior.
+            // Example of how to implement ONE-OBJECT-INSTANCE-PER-HTTP-REQUEST behavior.
             // Objects injected through an .IntancePerRequest configuration can depend on instances
             // from the current parent SPWeb (.InstancePerWeb) and SPSite (.InstancePerSite) scopes.
             //
@@ -220,9 +238,13 @@ namespace Company.Project.SubProject
 }
 ```
 
-Note how **custom object lifetime behavior** can be configured to obtain *singleton-per-SPSite*, *singleton-per-SPWeb* and per-HTTP-request semantics through Dynamite's custom RegistrationExtensions. Please refer to the Dynamite wiki for [more detailed help on using service location and complex lifetime scope hierarchies](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
+Note how **custom object lifetime behavior** can be configured to obtain *singleton-per-SPSite*, *singleton-per-SPWeb* and *per-HTTP-request* 
+semantics through Dynamite's custom RegistrationExtensions. Please refer to the Dynamite wiki for 
+[more detailed help on using service location and complex lifetime scope hierarchies](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
 
-Make sure to brush up on the concept of [Lifetime Scopes](http://docs.autofac.org/en/v3.5.2/lifetime/index.html) if you haven't yet understood their power. Dynamite's `SharePointServiceLocator` and custom `InstancePerSite`, `InstancePerWeb` and `InstancePerRequest` lifetimes are meant to easily provide such fine-grained object scoping mechanics in a correct way within a full-trust SharePoint server context.
+Make sure to brush up on the concept of [Lifetime Scopes](http://docs.autofac.org/en/v3.5.2/lifetime/index.html) if you haven't 
+yet understood their power. Dynamite's `SharePointServiceLocator` and custom `InstancePerSite`, `InstancePerWeb` and `InstancePerRequest` lifetimes 
+are meant to easily provide such fine-grained object scoping mechanics in a correct way within a full-trust SharePoint server context.
 
 > To enable `InstancePerRequest` behavior, you need to configure a HttpModule in your server's `web.config`. 
 >
@@ -244,10 +266,14 @@ This module of utilities is loaded in first position every time you initialize a
 >
 > For example, do `builder.RegisterType<MyCustomLogger>().As<ILogger>()` from within you own module in order to swap out Dynamite's default
 > `TraceLogger` implementation (see [default logger code here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/Logging/TraceLogger.cs)).
+> From then on, all logging will go through your `MyCustomLogger`, even the logging made by Dynamite's other utilities (which themselves only
+> depend loosely on the contract interface `ILogger`).
 
 
 
 ### Resolving Dynamite's utilities and your own registered dependencies
+
+At last, we reach the point where we can *actually use* the above-registered components.
 
 In a SharePoint farm solution, your typical code entry points are the following (i.e. the UI-level parts of your application):
 
@@ -285,18 +311,19 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 {
     var site = properties.Feature.Parent as SPSite;
 
-    using (var siteCollectionLevelScope = WebsiteContainer.BeginLifetimeScope(properties.Feature))
+    using (var siteCollectionLevelScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
     {
         var logger = siteCollectionLevelScope.Resolve<ILogger>();
         var mySiteCreator = siteCollectionLevelScope.Resolve<IMySiteCreator>();
 
-        // do site provisionning...
+        // do site provisioning...
         mySiteCreator.DoComplexStuffHere(site);
     }
 }
 ```
 
-Note how **a `using` block should always be used** to surround the code which injects some dependencies to ensure proper disposal behavior of all resources through the disposal of the child lifetime scope returned by `BeginLifetimeScope`.
+Note how **a `using` block should always be used** to surround the code which injects some dependencies to ensure 
+proper disposal behavior of all resources through the disposal of the child lifetime scope returned by `BeginLifetimeScope`.
 
 Beyond such UI-level entry points, all further dependencies down the call stack should be constructor-injected like so:
 
@@ -344,10 +371,55 @@ public class MySiteCreator : IMySiteCreator
 
 Thus, dependencies injected in the `MySiteCreator` constructor are easily mockable if you want to unit test your components.
 
-Note how a method parameter is used to pass the context's `SPSite` instance down the call stack: this is parameter injection. 
+Note how a method parameter is used to pass the context's `SPSite` instance down the call stack. 
 
-> A good tip: make sure you call `SPContext.Current.Web` and `SPContext.Current.Site` only from the UI level (e.g. `.ascx` code-behind code) and then pass the current `SPWeb` or `SPSite` as a method parameter down to your heavy-lifting utility classes. 
+> **A good tip:** make sure you call `SPContext.Current.Web` and `SPContext.Current.Site` only from the UI-level (e.g. `.ascx` 
+> code-behind code) but never from your own business-level class. From the UI entry-point code, pass the current `SPWeb` or `SPSite`
+>  as a method parameter down to your heavy-lifting utility classes. 
 >
-> This allows your utilities to be reused outside of a `HttpRequest` context (perhaps from a command-line application or when calling feature activation code from PowerShell - where any dependency on `SPContext` would be a deal breaker).
+> This allows your utilities to be reused outside of a `HttpRequest` context (perhaps from a command-line application or when calling 
+> feature activation code from PowerShell - where **any** dependency on `SPContext` would be a deal breaker).
+
+### More to read about Dynamite's service locator
+
+Head to the wiki [for more about building modular SharePoint farm solution](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
 
 
+Automating your deployments with PowerShell
+-------------------------------------------
+
+Large SharePoint deployments require a high level of automation to ensure repeatability across environments.
+
+The trick is to depend on PowerShell scripts to automate your deployments, even on local development environments. You depend
+less on Visual Studio magic to deploy everything and instead you use PowerShell scripts to:
+
+1. Retract and re-deploy your WSP full trust solutions
+    * See `Deploy-DSPSolution`: define a series of WSPs to deploy in a XML file and they will be retracted beforehand if required
+2. Create your test/staging/production SharePoint site collection(s) if they are not provisioned already
+    * See `New-DSPStructure` to create a site collection and subwebs hierarchy based on a XML file
+3. Following a sequence of feature (re)activation steps to provision your site's structural components (site columns, content types, lists, pages, etc.)
+    * See `Initialize-DSPFeature` to quickly deactivate then re-activate any SPFeature
+    * Maintaining a feature activation sequence on top of a basic site defintion (such as Team Site) like this is easier and more flexible than than trying to bundle your own custom site definition
+4. Configure dependencies on farm-level services such as Managed Metadata (taxonomy) or SharePoint Search
+    * We recommend using [Gary Lapointes's cmdlets `Export-SPTerms` and `Import-SPTerms`](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets)) to help you with term store exports/imports
+
+Dynamite provides you with the Dynamite PowerShell Toolkit ("DSP" for short), a module of cmdlets meant to help you build your own set of PowerShell deployment scripts.
+
+Please, read more on [how to install and use the DSP cmdlets module in the wiki](https://github.com/GSoft-SharePoint/Dynamite/wiki#2-automate-your-deployments-and-upgrades-end-to-end-with-the-dynamite-powershell-toolkit).
+
+
+Using Dynamite's provisioning utilities
+---------------------------------------
+
+What makes SharePoint special is that it comes out-of-the-box with high-level concepts such as Site collections, Site, Site Column, Content Types, Lists and so on.
+
+While building applications based on SharePoint, your first order of business is typically to follow a sequence resembling this one:
+
+1. Create a site collection
+2. Initialize your term store
+3. Configure some site columns (with taxonomy mappings to term store)
+4. Add some content types
+5. Create a few lists and document libraries
+6. Create a few page instances in Pages library and add some web parts
+
+### Create a site collection
