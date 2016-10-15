@@ -255,9 +255,9 @@ are meant to easily provide such fine-grained object scoping mechanics in a corr
 
 ### Dynamite's own registration module
 
-The class `AutofacDynamiteRegistrationModule` holds all the interface-to-implementation configuration for the various utilities found in the toolkit.
+The class `AutofacDynamiteRegistrationModule` holds all the interface-to-implementation configuration for the various utilities found in the Dynamite C# toolkit.
 
-See the [Dynamite registration code here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/ServiceLocator/AutofacDynamiteRegistrationModule.cs#L65) to take a look for yourself at the extent of available services and helpers.
+See the [Dynamite registration code in `AutofacDynamiteRegistrationModule.cs` here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/ServiceLocator/AutofacDynamiteRegistrationModule.cs#L65) to take a look for yourself at the extent of available services and helpers.
 
 This module of utilities is loaded in first position every time you initialize a `SharePointServiceLocator`. 
 
@@ -388,20 +388,29 @@ Head to the wiki [for more about building modular SharePoint farm solution](http
 Automating your deployments with PowerShell
 -------------------------------------------
 
-Large SharePoint deployments require a high level of automation to ensure repeatability across environments.
+A large SharePoint deployment requires a high level of automation to **ensure repeatability** across environments (dev/testing/staging/production).
 
 The trick is to depend on PowerShell scripts to automate your deployments, even on local development environments. You depend
 less on Visual Studio magic to deploy everything and instead you use PowerShell scripts to:
 
-1. Retract and re-deploy your WSP full trust solutions
+1. Publish a folder/zip of deployment artifacts, containing all scripts and WSP solutions that need to be run and deploy
+    * If you don't have a SharePoint build server, you can still package/publish your WSP solution with (gasp!) Visual Studio 
+        * Make sure you retract everything from the GAC before you attempt a clean build + publish, or suffer the shameful consequences DLL hell inherent to GAC deployments
+    * Then use `Copy-DSPFiles` to copy your PowerShell scripts, modules and input XML and `Copy-DSPSolutions` to bring all packaged WSPs to the deployment folder
+        * See [an example `Publish-DeploymentFolder.ps1` example](https://github.com/GSoft-SharePoint/Dynamite-Components/blob/develop/Source/GSoft.Dynamite.Models.StandardPublishingCMS/Publish-DeploymentFolder.ps1) and build your own!
+2. Retract and re-deploy your WSP full trust solutions
     * See `Deploy-DSPSolution`: define a series of WSPs to deploy in a XML file and they will be retracted beforehand if required
-2. Create your test/staging/production SharePoint site collection(s) if they are not provisioned already
+    * Make sure you configure all your SharePoint features to have no automatic activation behavior upon WSP deployment: the only bad side effect of a WSP retract+deploy run should be an IIS application pool recycle (not rogue feature activations).
+5. Configure dependencies on farm-level services such as Managed Metadata (taxonomy) and SharePoint search
+    * We recommend using [Gary Lapointes's cmdlets `Export-SPTerms` and `Import-SPTerms`](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets)) to help you with term store exports/imports
+3. Create your test/staging/production SharePoint site collection(s) if they are not provisioned already
     * See `New-DSPStructure` to create a site collection and subwebs hierarchy based on a XML file
-3. Following a sequence of feature (re)activation steps to provision your site's structural components (site columns, content types, lists, pages, etc.)
+4. Following a sequence of feature (re)activation steps to provision your site's structural components (site columns, content types, lists, pages, etc.)
     * See `Initialize-DSPFeature` to quickly deactivate then re-activate any SPFeature
     * Maintaining a feature activation sequence on top of a basic site defintion (such as Team Site) like this is easier and more flexible than than trying to bundle your own custom site definition
-4. Configure dependencies on farm-level services such as Managed Metadata (taxonomy) or SharePoint Search
-    * We recommend using [Gary Lapointes's cmdlets `Export-SPTerms` and `Import-SPTerms`](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets)) to help you with term store exports/imports
+5. Configure some more dependencies on farm-level services such as SharePoint Search
+6. *Last but not least*: Run some final integration Pester tests on your deployment to make sure provisioning completed successfully
+    * [Pester](https://github.com/pester/Pester) is a great tool for BDD testing and you should already be using it! What are you waiting for?
 
 Dynamite provides you with the Dynamite PowerShell Toolkit ("DSP" for short), a module of cmdlets meant to help you build your own set of PowerShell deployment scripts.
 
@@ -411,7 +420,7 @@ Please, read more on [how to install and use the DSP cmdlets module in the wiki]
 Using Dynamite's provisioning utilities
 ---------------------------------------
 
-What makes SharePoint special is that it comes out-of-the-box with high-level concepts such as Site collections, Site, Site Column, Content Types, Lists and so on.
+What makes SharePoint special is that it comes out-of-the-box with high-level concepts such as Site Collections, Site, Site Column, Content Types, Lists and so on.
 
 While building applications based on SharePoint, your first order of business is typically to follow a sequence resembling this one:
 
@@ -422,4 +431,76 @@ While building applications based on SharePoint, your first order of business is
 5. Create a few lists and document libraries
 6. Create a few page instances in Pages library and add some web parts
 
-### Create a site collection
+SharePoint acts as a structured database for your application.
+
+### 1. Create a site collection
+
+We recommend using the Dynamite PowerShell cmdlets to create your hierarchy of site collection and webs.
+
+Start with a configuration file `Tokens.YOUR-MACHINE-HOSTNAME.ps1` and add a few variables to it:
+
+```
+# Configuration for publishing site provisioning sequence
+
+# Site collection admin user
+$DSP_SiteCollectionAdmin = "DOMAIN\myuser"
+
+# Web app URL
+$DSP_PortalWebApplicationUrl = "http://my-web-application.example.com"
+
+# Hostname site collection URL + LCID for publishing site
+$DSP_SiteCollectionHostHeader = "http://my-publishing-intranet.example.com"
+$DSP_PubSiteLanguage = 1036
+
+# Content DB to use to store site collection content (will be created if it doesn't exist)
+$DSP_ContentDatabase = "SP_Content_MyPublishingSite"
+```
+
+Create the following `Sites.template.xml` definition file for a simple publishing site collection with two webs/subsites:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<WebApplication Url="[[DSP_PortalWebApplicationUrl]]">
+  <Site Name="My Publishing Site" HostNamePath="[[DSP_SiteCollectionHostHeader]]" IsAnonymous="True" OwnerAlias="[[DSP_SiteCollectionAdmin]]" Language="[[DSP_PubSiteLanguage]]" Template="BLANKINTERNET#0" ContentDatabase="[[DSP_PubDatabaseName]]">
+    <Webs>
+       <Web Name="My HR News Site" Path="rh" Template="BLANKINTERNET#0" Language="[[DSP_PubSiteLanguage]]">
+       </Web>
+       <Web Name="My Communications" Path="com" Template="BLANKINTERNET#0">
+       </Web>
+    </Webs>
+  </Site>
+</WebApplication>
+```
+
+You can use [any site definition/template ID](http://www.funwithsharepoint.com/sharepoint-2013-site-templates-codes-for-powershell/) supported by SharePoint, such as `STS#0` for Team Sites, etc.
+
+Then:
+1. Run `Update-DSPTokens` to instanciate the file `Sites.xml`
+    * Tokens matching `[[DSP_*]]` in the `*.template.xml` are replaced by the variables matching `$DSP_*` from the `Tokens.{MY-MACHINE-NAME}.ps1` file.
+2. Run `New-DSPStructure .\Sites.xml`
+    * The content database will be created if need be
+    * The site collection and subsites will be created and any missing subwebs
+    * If you want to remove any dev site you already have in place to test your full provisioning sequence (early in development this is usually the case), you can run `Remove-DSPStructure .\Sites.xml` beforehand.
+
+### 2. Initialize your term store
+
+As mentioned above, install the set of cmdlets [[from Gary Lapointe]](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets) to help with term store exports and imports.
+
+1. Log onto your term store interface and click-create your taxonomy hierarchy (term sets and terms with their multilingual labels)
+2. Run `Export-SPTerms` to give you `MyTermGroup.xml`
+3. Modify the XML file to replace all usernames with the string `[[DSP_SiteCollectionAdmin]]` and rename the file to `MyTermGroup.template.xml`
+4. Once you have this template file, you can run `Update-DSPTokens` to generate an environment-specific XML ready to import
+5. Delete everything from your term store
+5. Run `Import-SPTerms` to initialize your term store from stratch with your XML definition
+
+Recommendations:
+* Keep the same term et and term Guids between environments to simplify mappings between taxonomy site columns and the term store
+* Be extra careful with term reuses/pinned terms, since their misuse will lead to nasty orphaned terms problems
+* Use GSoft-SharePoint's above-linked fork of Gary Lapointe's cmdlets if you want to ensure your term local custom properties are exported and imported properly
+
+
+
+
+
+
+
