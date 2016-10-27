@@ -626,13 +626,9 @@ The Dynamite C# library includes many classes - all deriving from `BaseFieldInfo
 public static class MyFieldDefinitions
 {
     public const string MyTextFieldInternalName = "MyTextField";
-
     public const string MyHiddenBooleanFieldInternalName = "MyBooleanField";
-
     public const string MyDateOnlyFieldInternalName = "MyDateField";
-
     public const string MyTaxonomyFieldInternalName = "MyTaxonomyField";
-
     public const string MyTaxonomyMultiFieldInternalName = "MyTaxonomyMultiField";
 
     public static TextFieldInfo MyTextField
@@ -746,7 +742,6 @@ typically during a SharePoint feature activation. For example:
 public override void FeatureActivated(SPFeatureReceiverProperties properties)
 {
     var site = properties.Feature.Parent as SPSite;
-
     using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
     {
         var fieldHelper = injectionScope.Resolve<IFieldHelper>();
@@ -862,7 +857,6 @@ Then use the `IContentTypeHelper` from a feature event receiver to provision the
 public override void FeatureActivated(SPFeatureReceiverProperties properties)
 {
     var site = properties.Feature.Parent as SPSite;
-
     using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
     {
         var contentTypeHelper = injectionScope.Resolve<IContentTypeHelper>();
@@ -886,7 +880,7 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 >
 >     * `BaseFieldInfo` <--> `SPField`, `ContentTypeInfo` <--> `SPContentType`, `ListInfo` <--> `SPList`, etc.
 >
->     * What makes Dynamite's `FooInfo` objects special is that they are **easy to serialize*
+>     * What makes Dynamite's `FooInfo` objects special is that they are **easy to serialize**
 >
 > 2. Use a **`IFooHelper` utility to provision** your `FooInfo` definitions as SharePoint artefacts
 >
@@ -895,9 +889,84 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 
 ### C.5) Create a few lists and document libraries
 
+Fields and content types are great, but it's all boilerplate until you get to creating lists and document libraries.
+
+You can use the `IListHelper` to adjust existing lists or create new ones:
+
+```
+public override void FeatureActivated(SPFeatureReceiverProperties properties)
+{
+    var site = properties.Feature.Parent as SPSite;
+    using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
+    {
+        var listHelper = scope.Resolve<IListHelper>();
+        var viewFields = new[] 
+        {
+            BuiltInFields.TitleLink,
+            MyFieldDefinitions.MyDateOnlyField,
+            MyFieldDefinitions.MyTaxonomyField
+            BuiltInFields.Modified,
+            BuiltInFields.ModifiedBy,
+            new MinimalFieldInfo<UrlValue>("_dlc_DocIdUrl", new Guid("{3b63724f-3418-461f-868b-7706f69b029c}"))
+        };
+
+        // Change available content types on default general purpose doc lib to list only our own
+        var ootbDocLibWithAdjustedCTs = new ListInfo("Documents", "Core_Documents", "Core_Documents")
+        {
+            ContentTypes = new[] 
+            {
+                MyContentTypeDefinitions.MyDocument
+            },
+            DefaultViewFields = viewFields
+        };
+
+        SPList defaultDocLibUpdatedToUseMyCT = listHelper.EnsureList(site.RootWeb, ootbDocLibWithAdjustedCTs);
+
+        // Syndic-dedicated doc lib
+        var superDocLibInfo = new ListInfo("SuperDocLib", "DocLib_SuperTitle", "DocLib_SuperDescription")
+        {
+            ContentTypes = new[] 
+            {
+                DocContentTypes.MyDocument
+            },
+            ListTemplateInfo = BuiltInListTemplates.DocumentLibrary,
+            DefaultViewFields = viewFields
+        };
+
+        SPList superProvisionedList = listHelper.EnsureList(site.RootWeb, syndicDocLibInfo);
+    }
+
+```
+
 ### C.6) Create a few page instances in Pages library and add some web parts
 
+Let's keep the ball rolling and create a custom search results page with an extra web part at the bottom of the Center web part zone:
 
+```
+using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
+{
+    var pageHelper = scope.Resolve<IPageHelper>();
+    var pagesLibrary = site.RootWeb.GetPagesLibrary();
+
+    var welcomePageContentTypeId = "0x010100C568DB52D9D0A14D9B2FDCC96666E9F2007948130EC3DB064584E219954237AF390064DEA0F50FC8C147B0B6EA0636C4A7D4";
+    var searchPageLayout = new PageLayoutInfo("SearchResults.aspx", welcomePageContentTypeId);
+
+    var registreResultsPageInfo = new PageInfo()
+    {
+        FileName = "MySearchResultsPage",
+        Title = "My Search",
+        IsPublished = true,
+        PageLayout = searchPageLayout,
+        WebParts = new[] { 
+            new WebPartInfo("Center", new MyCustomWebPart(), 500)
+        }
+    };
+
+    pageHelper.EnsurePage(pagesLibrary, pagesLibrary.RootFolder, registreResultsPageInfo);
+}
+```
+
+## 
 
 
 
