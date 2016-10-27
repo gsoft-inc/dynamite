@@ -378,7 +378,7 @@ Thus, dependencies injected in the `MySiteCreator` constructor are easily mockab
 
 Note how a method parameter is used to pass the context's `SPSite` instance down the call stack. 
 
-> Depending on SPContext is evil 
+> #### Depending on SPContext is evil 
 >
 > **A good tip:** make sure you call `SPContext.Current.Web` and `SPContext.Current.Site` only from the UI-level (e.g. `.ascx` 
 > code-behind code) but never from your own business-level class. From the UI entry-point code, pass the current `SPWeb` or `SPSite`
@@ -614,7 +614,7 @@ Site columns are the field types that will be re-used across all content types i
 
 Instead of using good-old XML to define your fields (as is tradition), we recommend defining them as part of your C# code.
 
-> Sprinkling a little DRY on site columns
+> #### Sprinkling a little DRY on site columns
 >
 > We want to avoid repeating ourselves. When you define your column once in XML and then refer to them through code, you end up
 > duplicating information (the field Guids, their internal names) and this is one of the most common sources of error in SharePoint
@@ -722,7 +722,7 @@ Note how we define the taxonomy fields' mappings to the term store using the `Te
 See [the `GSoft.Dynamite.Field.Types` namespace here](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/Fields/Types) 
 for a full list of supported field types.
 
-> #### FieldType<ValueType>
+> #### FieldType <--> ValueType
 >
 > Note how all `*FieldInfo` types are defined by specifying through generics what the "associated value type" of each column is.
 >
@@ -772,7 +772,7 @@ Note how the `FieldHelper` knows:
     * If you deactivate and re-activate the above feature multiple times, nothing bad will happen
     * If you add more fields to the definition, re-deploy and re-activate the feature, your new fields will be provisioned
     * If you update the definition of fields, re-deploy and re-activate the feature, (as long as you keep the same field ID and Internal Name) your changes will be pushed to the already-deployed site column
-        * You should still be careful when defining site columns: updating a field definition can have unintended effect and should be tested carefully before rollout. Sometimes, when already in production, the best idea if to create a brand new column, migrate existing data to it and hide the previous field.
+        * You should still be careful when defining site columns: updating a field definition can have unintended effects and should be tested carefully before rollout. Sometimes, when already in production, the best idea is to create a brand new column, migrate existing data to it and hide the previous field.
 * How to link up taxonomy fields to their term set automatically (thanks to the `.TaxonomyConext` property), making your life less complicated.
 * How to use the `IResourceLocator` to initialize your site columns in a fully localized fashion using the resource keys you defined in your `*FieldInfo` constants.
     * For example, the string `"Field_MyTaxonomyField_Title"` is a key to a localized resource found in file `Company.Project.AppModule.en-US.resx` (maybe deployed as a Global Assembly Resource or to `$SharePointRoot\Resources`, both are looked up).
@@ -882,9 +882,15 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 >
 > Most of Dynamite's provisioning utils follow this pattern:
 >
-> 1. Use a declarative style for `FooInfo` object definitions
+> 1. Use a **declarative style** for **`FooInfo`** object definitions that have a parallel with a SharePoint artefact type
 >
-> 2. Use a `IFooHelper` utility to provision your `FooInfo` definitions as SharePoint artefacts
+>     * `BaseFieldInfo` <--> `SPField`, `ContentTypeInfo` <--> `SPContentType`, `ListInfo` <--> `SPList`, etc.
+>
+>     * What makes Dynamite's `FooInfo` objects special is that they are **easy to serialize*
+>
+> 2. Use a **`IFooHelper` utility to provision** your `FooInfo` definitions as SharePoint artefacts
+>
+>     * All provisioning helpers use "ensure" semantics to create-or-update in an **idempotent** way
 
 
 ### C.5) Create a few lists and document libraries
