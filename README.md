@@ -79,15 +79,16 @@ Quick Start Guide
 
 The Dynamite toolkit covers a lot of ground. Here are a few guidelines to get you up and running on these topics:
 
-* [Dependency injection & service location](#dependency-injection--service-location)
+* [A) Dependency injection & service location](#a-dependency-injection--service-location)
    * Using Autofac correctly in a SharePoint server context
-* [Using Dynamite's provisioning utilities](#using-dynamites-provisioning-utilities)
+* [B) Automating your deployments with PowerShell](#b-automating-your-deployments-with-powershell)
+* [C) Using Dynamite's provisioning utilities](#c-using-dynamites-provisioning-utilities)
    * Creating fields, content types and lists in an idempotent way
-* [Other utilities: logging and globalization](#)
-* [The SharePoint entity binder: easy mappings from entities to SPListItems and back](#)
+* [D) Other utilities: logging and globalization](#d-other-utilities-logging-and-globalization)
+* [E) The SharePoint entity binder: easy mappings from entities to SPListItems and back](#e-the-sharepoint-entity-binder-easy-mappings-from-entities-to-SPListItems-and-back)
 
 
-Dependency injection & service location
+A) Dependency injection & service location
 ---------------------------------------
 
 One main objective of the Dynamite toolkit is to guide you in the implementation of a dependency injection container - without having 
@@ -99,7 +100,7 @@ only depends on interface contracts. This makes it easier to depend on other mod
 and implementation details.
 
 
-### Building your first Autofac container for service location
+### A.1) Building your first Autofac container for service location
 
 Access to Dynamite's C# utilities is enabled through service locator-style dependency injection.
 
@@ -176,7 +177,7 @@ All assemblies matching your condition will be loaded from the GAC_MSIL and scan
 such as the one in the example below.
 
 
-###Registering your interface-to-implementation configuration as Autofac registration modules
+### A.2) Registering your interface-to-implementation configuration as Autofac registration modules
 
 Your Autofac service locator will scan the GAC for assemblies in search of **registration modules**.
 
@@ -253,7 +254,7 @@ are meant to easily provide such fine-grained object scoping mechanics in a corr
 > Without the `GSoft.Dynamite.ServiceLocator.Lifetime.RequestLifetimeHttpModule` configured through this feature activation, objects will not be disposed properly at the end of each request.
 
 
-### Dynamite's own registration module
+### A.3) Dynamite's own registration module
 
 The class `AutofacDynamiteRegistrationModule` holds all the interface-to-implementation configuration for the various utilities found in the Dynamite C# toolkit.
 
@@ -271,7 +272,7 @@ This module of utilities is loaded in first position every time you initialize a
 
 
 
-### Resolving Dynamite's utilities and your own registered dependencies
+### A.4) Resolving Dynamite's utilities and your own registered dependencies
 
 At last, we reach the point where we can *actually use* the above-registered components.
 
@@ -380,12 +381,42 @@ Note how a method parameter is used to pass the context's `SPSite` instance down
 > This allows your utilities to be reused outside of a `HttpRequest` context (perhaps from a command-line application or when calling 
 > feature activation code from PowerShell - where **any** dependency on `SPContext` would be a deal breaker).
 
-### More to read about Dynamite's service locator
+### A.5) More to read about Dynamite's service locator
 
 Head to the wiki [for more about building modular SharePoint farm solution](https://github.com/GSoft-SharePoint/Dynamite/wiki#1-a-modular-approach-to-building-sharepoint-farm-solutions-with-dynamite-and-autofac).
 
+### A.6) How to troubleshoot container registration problems
 
-Automating your deployments with PowerShell
+Dependency injection registrations are loaded upon the first call to the SharePointServiceLocator. Thus, it typically occurs upon application 
+startup or when you first load a page with a user control that depends on the container/service locator.
+
+1. Install [ULSViewer.exe](https://www.microsoft.com/en-ca/download/details.aspx?id=44020) on your SharePoint server to gain access to the Unified Logging Service output (i.e. your SharePoint logs).
+    * You will need to add the users running your app pools to the Local Users and Groups under the groups "Performance Log Users" and "Performance Monitor Users".
+    * After that, launching ULSViewer.exe as administrator and using the shortcut `Ctrl+Shift+U` should give you a live view of your local SharePoint server logs.
+2. If you are debugging a website component, make sure you `iisreset` or at least recycle your app pool.
+    * If you are running a PowerShell script, you will need to restart a new PowerShell process instead to ensure full Autofac container reinitialization.
+3. With ULSViewer rolling, refresh your web page or run the bit of PowerShell (perhaps a feature activation).
+    * This will trigger the use of the SharePointServiceLocator instance within your C# code.
+4. You can filter your ULSViewer output on the Category "GSoft.Dynamite" and/or the keyword "Autofac" in the Message field to help filter out the noise.
+5. You should see at least one log entry summarizing the registrations of the Autofac modules that were loaded.
+
+An example of logs that you will find. Note that the registrations at the end of the list will supercede any earlier registration done for the same interface.
+
+```
+10/27/2016 14:50:59.24	w3wp.exe (0x0AF8)	0x191C	Unknown	GSoft.Dynamite	00000	Medium	GSoft.Dynamite - Autofac component registry details for container GSoft.Dynamite: [Autofac.ILifetimeScope->Autofac.Core.Lifetime.LifetimeScope], [Autofac.IComponentContext->Autofac.Core.Lifetime.LifetimeScope], [GSoft.Dynamite.Logging.ILogger->GSoft.Dynamite.Logging.TraceLogger], [GSoft.Dynamite.Monitoring.IAggregateTimeTracker->GSoft.Dynamite.Monitoring.AggregateTimeTracker], [GSoft.Dynamite.Binding.SharePointDataRowEntitySchema->GSoft.Dynamite.Binding.SharePointDataRowEntitySchema], [GSoft.Dynamite.Binding.IEntitySchemaBuilder->GSoft.Dynamite.Binding.CachedSchemaBuilder], [GSoft.Dynamite.Binding.Converters.TaxonomyValueDataRowConverter->GSoft.Dynamite.Binding.Converters.TaxonomyValueDataRowConverter], [GSoft.Dynamite.Binding.Converters.TaxonomyValueCollectionDataRowConverter->GSoft.Dynamite.Binding.Converters.TaxonomyValueCollectionDataRowConverter], [GSoft.Dynamite.Binding.Converters.TaxonomyValueConverter->GSoft.Dynamite.Binding.Converters.TaxonomyValueConverter], [GSoft.Dynamite.Binding.Converters.TaxonomyValueCollectionConverter->GSoft.Dynamite.Binding.Converters.TaxonomyValueCollectionConverter], [GSoft.Dynamite.Binding.ISharePointEntityBinder->GSoft.Dynamite.Binding.SharePointEntityBinder], [GSoft.Dynamite.Cache.ICacheHelper->GSoft.Dynamite.Cache.CacheHelper], [GSoft.Dynamite.Caching.IAppCacheHelper->GSoft.Dynamite.Caching.AppCacheHelper], [GSoft.Dynamite.Caching.ISessionCacheHelper->GSoft.Dynamite.Caching.SessionCacheHelper], [GSoft.Dynamite.Configuration.IPropertyBagHelper->GSoft.Dynamite.Configuration.PropertyBagHelper], [GSoft.Dynamite.Configuration.IConfiguration->GSoft.Dynamite.Configuration.PropertyBagConfiguration], [GSoft.Dynamite.Definitions.IContentTypeBuilder->GSoft.Dynamite.Definitions.ContentTypeBuilder], [GSoft.Dynamite.Definitions.IFieldHelper->GSoft.Dynamite.Definitions.FieldHelper], [GSoft.Dynamite.Exceptions.ICatchAllExceptionHandler->GSoft.Dynamite.Exceptions.CatchAllExceptionHandler], [GSoft.Dynamite.Globalization.IResourceLocator->GSoft.Dynamite.Globalization.ResourceLocator], [GSoft.Dynamite.Globalization.IResourceLocatorConfig->GSoft.Dynamite.ServiceLocator.DefaultResourceLocatorConfig], [GSoft.Dynamite.Globalization.IMuiHelper->GSoft.Dynamite.Globalization.MuiHelper], [GSoft.Dynamite.Globalization.IDateHelper->GSoft.Dynamite.Globalization.DateHelper], [GSoft.Dynamite.Globalization.IRegionalSettingsHelper->GSoft.Dynamite.Globalization.RegionalSettingsHelper], [GSoft.Dynamite.Globalization.Variations.IVariationDirector->GSoft.Dynamite.Globalization.Variations.DefaultVariationDirector], [GSoft.Dynamite.Globalization.Variations.IVariationBuilder->GSoft.Dynamite.Globalization.Variations.CanadianEnglishAndFrenchVariationBuilder], [GSoft.Dynamite.Globalization.Variations.IVariationExpert->GSoft.Dynamite.Globalization.Variations.VariationExpert], [GSoft.Dynamite.Globalization.Variations.IVariationHelper->GSoft.Dynamite.Globalization.Variations.VariationHelper], [GSoft.Dynamite.Lists.IListHelper->GSoft.Dynamite.Lists.ListHelper], [GSoft.Dynamite.Lists.IListLocator->GSoft.Dynamite.Lists.ListLocator], [GSoft.Dynamite.Lists.IListSecurityHelper->GSoft.Dynamite.Lists.ListSecurityHelper], [GSoft.Dynamite.Catalogs.ICatalogBuilder->GSoft.Dynamite.Catalogs.CatalogBuilder], [GSoft.Dynamite.MasterPages.IMasterPageHelper->GSoft.Dynamite.MasterPages.MasterPageHelper], [GSoft.Dynamite.MasterPages.IExtraMasterPageBodyCssClasses->GSoft.Dynamite.MasterPages.ExtraMasterPageBodyCssClasses], [GSoft.Dynamite.Navigation.INavigationService->GSoft.Dynamite.Navigation.NavigationService], [GSoft.Dynamite.Navigation.INavigationNode->GSoft.Dynamite.Navigation.NavigationNode], [GSoft.Dynamite.Navigation.NavigationManagedProperties->GSoft.Dynamite.Navigation.NavigationManagedProperties], [GSoft.Dynamite.Repositories.IFolderRepository->GSoft.Dynamite.Repositories.FolderRepository], [GSoft.Dynamite.Repositories.IQueryHelper->GSoft.Dynamite.Repositories.QueryHelper], [GSoft.Dynamite.Repositories.IItemLocator->GSoft.Dynamite.Repositories.ItemLocator], [GSoft.Dynamite.Security.ISecurityHelper->GSoft.Dynamite.Security.SecurityHelper], [GSoft.Dynamite.Security.IUserHelper->GSoft.Dynamite.Security.UserHelper], [GSoft.Dynamite.Serializers.IXmlHelper->GSoft.Dynamite.Serializers.XmlHelper], [GSoft.Dynamite.Serializers.ISerializer->GSoft.Dynamite.Serializers.JsonNetSerializer], [GSoft.Dynamite.Setup.IFieldValueInfo->GSoft.Dynamite.Setup.FieldValueInfo], [GSoft.Dynamite.Setup.IFolderInfo->GSoft.Dynamite.Setup.FolderInfo], [GSoft.Dynamite.Setup.IPageInfo->GSoft.Dynamite.Setup.PageInfo], [GSoft.Dynamite.Setup.ITaxonomyInfo->GSoft.Dynamite.Setup.TaxonomyInfo], [GSoft.Dynamite.Setup.ITaxonomyMultiInfo->GSoft.Dynamite.Setup.TaxonomyMultiInfo], [GSoft.Dynamite.Setup.IFolderMaker->GSoft.Dynamite.Setup.FolderMaker], [GSoft.Dynamite.Setup.IPageCreator->GSoft.Dynamite.Setup.PageCreator], [GSoft.Dynamite.Taxonomy.ISiteTaxonomyCacheManager->GSoft.Dynamite.Taxonomy.PerRequestSiteTaxonomyCacheManager], [GSoft.Dynamite.Taxonomy.ITaxonomyService->GSoft.Dynamite.Taxonomy.TaxonomyService], [GSoft.Dynamite.Taxonomy.ITaxonomyHelper->GSoft.Dynamite.Taxonomy.TaxonomyHelper], [GSoft.Dynamite.TimerJobs.ITimerJobExpert->GSoft.Dynamite.TimerJobs.TimerJobExpert], [GSoft.Dynamite.Utils.IEventReceiverHelper->GSoft.Dynamite.Utils.EventReceiverHelper], [GSoft.Dynamite.Utils.ISearchHelper->GSoft.Dynamite.Utils.SearchHelper], [GSoft.Dynamite.Utils.ICustomActionHelper->GSoft.Dynamite.Utils.CustomActionHelper], [GSoft.Dynamite.Utils.IContentOrganizerHelper->GSoft.Dynamite.Utils.ContentOrganizerHelper], [GSoft.Dynamite.Utils.INavigationHelper->GSoft.Dynamite.Utils.NavigationHelper], [GSoft.Dynamite.Navigation.ICatalogNavigation->GSoft.Dynamite.Navigation.CatalogNavigation], [GSoft.Dynamite.Repositories.IComposedLookRepository->GSoft.Dynamite.Repositories.ComposedLookRepository], [GSoft.Dynamite.Branding.IDisplayTemplateHelper->GSoft.Dynamite.Branding.DisplayTemplateHelper], [GSoft.Dynamite.Branding.IImageRenditionHelper->GSoft.Dynamite.Branding.ImageRenditionHelper], [GSoft.Dynamite.Caml.ICamlBuilder->GSoft.Dynamite.Caml.CamlBuilder], [GSoft.Dynamite.Caml.ICamlUtils->GSoft.Dynamite.Caml.CamlUtils], [GSoft.Dynamite.WebConfig.IWebConfigModificationHelper->GSoft.Dynamite.WebConfig.WebConfigModificationHelper], [GSoft.Dynamite.WebParts.IWebPartHelper->GSoft.Dynamite.WebParts.WebPartHelper], [GSoft.Dynamite.ReusableContent.Contracts.Repositories.IReusableContentRepository->GSoft.Dynamite.ReusableContent.Core.Repositories.ReusableContentRepository], [GSoft.Dynamite.ReusableContent.Contracts.Entities.ReusableHtmlContent->GSoft.Dynamite.ReusableContent.Contracts.Entities.ReusableHtmlContent], [GSoft.Dynamite.ReusableContent.Contracts.Services.IReusableContentService->GSoft.Dynamite.ReusableContent.Core.Services.ReusableContentService], [GSoft.Dynamite.ReusableContent.Contracts.WebParts.IReusableContentWebPart->GSoft.Dynamite.ReusableContent.ReusableContentWebPart.ReusableContentWebPart], [GSoft.Dynamite.Globalization.IResourceLocatorConfig->GSoft.Dynamite.PowerShell.ServiceLocator.PowerShellResourceLocationConfig], [GSoft.Dynamite.Utils.ICatalogHelper->GSoft.Dynamite.Utils.CatalogHelper], [GSoft.Dynamite.Portal.Contracts.WebParts.IContentBySearchSchedule->GSoft.Dynamite.Portal.SP.Publishing.WebParts.ContentBySearchSchedule.ContentBySearchSchedule], [GSoft.Dynamite.Portal.Contracts.WebParts.IResultScriptSchedule->GSoft.Dynamite.Portal.SP.Publishing.WebParts.ResultScriptSchedule.ResultScriptSchedule], [GSoft.Dynamite.Portal.Contracts.WebParts.IContextualNavigation->GSoft.Dynamite.Portal.SP.Publishing.WebParts.ContextualNavigation.ContextualNavigation], [GSoft.Dynamite.Portal.Contracts.WebParts.IChildNodes->GSoft.Dynamite.Portal.SP.Publishing.WebParts.ChildNodes.ChildNodes], [GSoft.Dynamite.Portal.Contracts.Factories.IContentTypeFactory->GSoft.Dynamite.Portal.Core.Factories.ContentTypeFactory], [GSoft.Dynamite.Portal.Contracts.Utils.ISchedulingControl->GSoft.Dynamite.Portal.Core.Utils.SchedulingControl], [GSoft.Dynamite.Portal.Contracts.Utils.IContentAssociation->GSoft.Dynamite.Portal.Core.Utils.ContentAssociation], [GSoft.Dynamite.Globalization.IResourceLocatorConfig->GSoft.Dynamite.Portal.Core.Resources.PortalResourceLocatorConfig], [GSoft.Dynamite.Portal.Contracts.Factories.IListViewFactory->GSoft.Dynamite.Portal.Core.Factories.ListViewFactory], [GSoft.Dynamite.Portal.Contracts.Factories.IWebPartFactory->GSoft.Dynamite.Portal.Core.Factories.WebPartFactory], [GSoft.Dynamite.Portal.Contracts.Utils.INavigationBuilder->GSoft.Dynamite.Portal.Core.Utils.NavigationBuilder], [GSoft.Dynamite.Portal.Contracts.Services.INavigationService->GSoft.Dynamite.Portal.Core.Services.NavigationService],	7b9ab19d-394a-70f2-d900-4704378eeb9b
+```
+
+Slightly earlier in the logs, you should also find a log entry summarizing which DLLs were scanned and loaded from the GAC.
+
+> Being skilled at scanning and filtering the ULS logs is an essential skill for SharePoint on-premise developers. It is your last and best line of 
+> investigation when troubleshooting SharePoint and custom solution errors.
+>
+> Tip: When all else fails, try turning on the Verbose level logs in *Central Administration > Monitoring > Diagnostics logging* across all categories.
+> However, be prepared to be overwhelmed by the volume of logs produced, so you should launch ULSViewer only moments before you do the action that causes
+> the error you are trying to diagnose.
+
+
+B) Automating your deployments with PowerShell
 -------------------------------------------
 
 A large SharePoint deployment requires a high level of automation to **ensure repeatability** across environments (dev/testing/staging/production).
@@ -417,7 +448,7 @@ Dynamite provides you with the Dynamite PowerShell Toolkit ("DSP" for short), a 
 Please, read more on [how to install and use the DSP cmdlets module in the wiki](https://github.com/GSoft-SharePoint/Dynamite/wiki#2-automate-your-deployments-and-upgrades-end-to-end-with-the-dynamite-powershell-toolkit).
 
 
-Using Dynamite's provisioning utilities
+C) Using Dynamite's provisioning utilities
 ---------------------------------------
 
 What makes SharePoint special is that it comes out-of-the-box with high-level concepts such as Site Collections, Site, Site Column, Content Types, Lists and so on.
@@ -431,9 +462,10 @@ While building applications based on SharePoint, your first order of business is
 5. Create a few lists and document libraries
 6. Create a few page instances in Pages library and add some web parts
 
-SharePoint acts as a structured database for your application.
+From then on, SharePoint takes a role similar to that of a database in regular application development. Your SharePoint site structure acts as a back-end to your (hopefully) 
+isolated business logic
 
-### 1. Create a site collection
+### C.1) Create a site collection
 
 We recommend using the Dynamite PowerShell cmdlets to create your hierarchy of site collection and webs.
 
@@ -475,14 +507,14 @@ Create the following `Sites.template.xml` definition file for a simple publishin
 You can use [any site definition/template ID](http://www.funwithsharepoint.com/sharepoint-2013-site-templates-codes-for-powershell/) supported by SharePoint, such as `STS#0` for Team Sites, etc.
 
 Then:
-1. Run `Update-DSPTokens` to instanciate the file `Sites.xml`
+1. Run `Update-DSPTokens` to instantiate the file `Sites.xml`
     * Tokens matching `[[DSP_*]]` in the `*.template.xml` are replaced by the variables matching `$DSP_*` from the `Tokens.{MY-MACHINE-NAME}.ps1` file.
 2. Run `New-DSPStructure .\Sites.xml`
     * The content database will be created if need be
     * The site collection and subsites will be created and any missing subwebs
     * If you want to remove any dev site you already have in place to test your full provisioning sequence (early in development this is usually the case), you can run `Remove-DSPStructure .\Sites.xml` beforehand.
 
-### 2. Initialize your term store
+### C.2) Initialize your term store
 
 As mentioned above, install the set of cmdlets [[from Gary Lapointe]](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets) to help with term store exports and imports.
 
@@ -494,10 +526,239 @@ As mentioned above, install the set of cmdlets [[from Gary Lapointe]](https://gi
 5. Run `Import-SPTerms` to initialize your term store from stratch with your XML definition
 
 Recommendations:
-* Keep the same term et and term Guids between environments to simplify mappings between taxonomy site columns and the term store
+* Keep the same term set and term Guids between environments to simplify mappings between taxonomy site columns and the term store
 * Be extra careful with term reuses/pinned terms, since their misuse will lead to nasty orphaned terms problems
-* Use GSoft-SharePoint's above-linked fork of Gary Lapointe's cmdlets if you want to ensure your term local custom properties are exported and imported properly
+* Use [GSoft-SharePoint's fork of Gary Lapointe's cmdlets](https://github.com/GSoft-SharePoint/PowerShell-SPCmdlets) if you want to ensure your term local custom properties are exported and imported properly
+* Maintain a static class to document your term set and term group "constants" programmatically, as shown below:
 
+```
+public static class MyTermStoreDefinitions
+{
+    public static TermGroupInfo MyTermGroup
+    {
+        get
+        {
+            // If you don't specify a parent TermStoreInfo, it is assumed that your term group is part of 
+            // the default term store of your SharePoint farm. Multiple term stores can exist: in this case
+            // you should be explicit in initializing your TermGroupInfo's parent TermStoreInfo object.
+            return new TermGroupInfo(
+                new Guid("{7F9BADDB-A943-4423-A073-EA7B98554E53}"), 
+                "MyTermGroupName");
+        }
+    }
+
+    public static TermSetInfo MyFirstTermSet
+    {
+        get 
+        {
+            return new TermSetInfo(
+                new Guid("{4CCF8615-2BC5-4116-9714-4BC940066499}"), 
+                "MyFirstTermSetName", 
+                MyTermGroup);
+        }
+    }
+
+    public static TermSetInfo MySecondTermSet
+    {
+        get 
+        {
+            return new TermSetInfo(
+                new Guid("{4194B4E3-C4DA-4617-AFF7-1D0971FD6CFB}"), 
+                "MySecondTermSetName", 
+                MyTermGroup);
+        }
+    }
+
+    public static TermInfo MySpecialSnowflakeTerm
+    {
+        get
+        {
+            return new TermInfo(
+                new Guid("{BF656F1B-6055-4695-A597-423DEA9BDA78}"), 
+                "Default label of a term with special meaning in my app", 
+                MyFirstTermSet);
+        }
+    }
+}
+```
+
+> Note how these classes in the `GSoft.Dynamite.Taxonomy` namespace are organized in a hierarchical fashion: from a `TermInfo` you can navigate "up" to its 
+> parent term group (i.e. you can navigate `TermInfo -> TermSetInfo ->`TermGroupInfo -> TermStoreInfo`. A null `TermStoreInfo` instance going up the hierarchy indicates the default Farm term store
+> should be used. A null `TermGroupInfo` indicates the the special "Default Site Collection Term Group" is where the specified Term Set lies (i.e. the term set
+> created automatically when spawing a new publishing-type site collection and visible only from that site collection Term Store Management screen).
+
+### C.3) Configure some site columns (with taxonomy mappings to term store)
+
+Site columns are the field types that will be re-used across all content types in your information infrastructure.
+
+Instead of using good-old XML to define your fields (as is tradition), we recommend defining them as part of your C# code.
+
+> We want to avoid repeating ourselves. When you define your column once in XML and then refer to them through code, you end up
+> duplicating information (the field Guids, their internal names) and this is one of the most common sources of error in SharePoint
+> development.
+
+The Dynamite C# library includes many classes - all deriving from `BaseFieldInfo` - than can be used to define site columns. For example:
+
+```
+public static class MyFieldDefinitions
+{
+    public const string MyTextFieldInternalName = "MyTextField";
+
+    public const string MyHiddenBooleanFieldInternalName = "MyBooleanField";
+
+    public const string MyDateOnlyFieldInternalName = "MyDateField";
+
+    public const string MyTaxonomyFieldInternalName = "MyTaxonomyField";
+
+    public const string MyTaxonomyMultiFieldInternalName = "MyTaxonomyMultiField";
+
+    public static TextFieldInfo MyTextField
+    {
+        get
+        {
+            return new TextFieldInfo(
+                MyTextFieldInternalName,
+                new Guid("{B785DE83-EF92-4B36-96FD-7390B5523099}"),
+                "Field_MyTextField_Title",
+                "Field_MyTextField_Description",
+                "My_ContentGroup");
+        }
+    }
+
+    public static BooleanFieldInfo MyHiddenBooleanField
+    {
+        get
+        {
+            return new BooleanFieldInfo(
+                MyHiddenBooleanFieldInternalName,
+                new Guid("{51CA8736-6ABB-4DFD-BFAE-06FED2C873F8}"),
+                "Field_MyBooleanField_Title",
+                "Field_MyBooleanField_Description",
+                "My_ContentGroup")
+                {
+                    IsHidden = true
+                };
+        }
+    }
+    
+    public static DateTimeFieldInfo MyDateOnlyField
+    {
+        get
+        {
+            return new DateTimeFieldInfo(
+                MyDateOnlyFieldInternalName,
+                new Guid("{A96A8D8E-5C18-4B05-99D4-DE722CD76B6E}"),
+                "Field_MyDateField_Title",
+                "Field_MyDateField_Description",
+                "My_ContentGroup")
+                {
+                    DefaultFormula = "=[Today]",
+                    Format = DateTimeFieldFormat.DateOnly
+                };
+        }
+    }
+
+    public static TaxonomyFieldInfo MyTaxonomyField
+    {
+        get
+        {
+            return new TaxonomyFieldInfo(
+                MyTaxonomyFieldInternalName,
+                new Guid("{9661323A-1C6F-4DD1-8508-EF3FB49E29B6}"),
+                "Field_MyTaxonomyField_Title",
+                "Field_MyTaxonomyField_Description",
+                "My_ContentGroup")
+                {
+                    TermStoreMapping = new TaxonomyContext(MyTermStoreDefinitions.MyFirstTermSet),
+                    IsPathRendered = true
+                };
+        }
+    }
+        
+    public static TaxonomyMultiFieldInfo MyTaxonomyMultiField
+    {
+        get
+        {
+            return new TaxonomyMultiFieldInfo(
+                MyTaxonomyFieldInternalName,
+                new Guid("{2DC8FDBB-0FC1-4251-8FAC-349E5CDE41EF}"),
+                "Field_MyTaxonomyMultiField_Title",
+                "Field_MyTaxonomyMultiField_Description",
+                "My_ContentGroup")
+                {
+                    TermStoreMapping = new TaxonomyContext(MyTermStoreDefinitions.MySecondTermSet),
+                    CreateValuesInEditForm = true
+                };
+        }
+    }
+}
+```
+
+Note how we define the taxonomy fields' mappings to the term store using the `TermSetInfo` constants defined in section C.2) above.
+
+See [the `GSoft.Dynamite.Field.Types` namespace here](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/Fields/Types) 
+for a full list of supported field types.
+
+> Note how all `*FieldInfo` types are defined by specifying through generics what the "associated value type" of each column is.
+>
+> For example:
+> * `public class BooleanFieldInfo : BaseFieldInfoWithValueType<bool?>`
+> * `public class DateTimeFieldInfo : BaseFieldInfoWithValueType<DateTime?>`
+> * `TaxonomyFieldInfo : BaseFieldInfoWithValueType<TaxonomyValue>`
+> * `TaxonomyMultiFieldInfo : BaseFieldInfoWithValueType<TaxonomyValueCollection>`
+>
+> Deriving from the generic `BaseFieldInfoWithValueType<T>` gives you access to the property `.AssocatedValueType`.
+>
+> This introspective quality to `*FieldInfo` definitions and the strongly-typed relationship between **[Field Types](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/Fields/Types)** 
+> and **[Value Types](https://github.com/GSoft-SharePoint/Dynamite/tree/feature/readme_quick_start/Source/GSoft.Dynamite/ValueTypes)** 
+> forms the bridge between site column provisioning through `IFieldHelper` and SharePoint-SPListItem-to-entity binding made possible through
+> [`ISharePointEntityBinder`](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/Binding/ISharePointEntityBinder.cs) (introduced below in section C.6)
+
+Once your field definitions are in place, you can use the `IFieldHelper` utility to provision your site column definitions in your new site collections,
+typically during a SharePoint feature activation. For example:
+
+```
+public override void FeatureActivated(SPFeatureReceiverProperties properties)
+{
+    var site = properties.Feature.Parent as SPSite;
+
+    using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Feature))
+    {
+        var fieldHelper = injectionScope.Resolve<IFieldHelper>();
+
+        var fieldsToProvision = new List<BaseFieldInfo>() {
+            MyFieldDefinitions.MyTextField,
+            MyFieldDefinitions.MyHiddenBooleanField,
+            MyFieldDefinitions.MyDateOnlyField,
+            MyFieldDefinitions.MyTaxonomyField,
+            MyFieldDefinitions.MyTaxonomyMultiField
+        };
+
+        IEnumerable<SPField> provisionedSiteColumns = fieldHelper.EnsureField(site.RootWeb.Fields, fieldsToProvision);
+    }
+}
+```
+
+Deploy your WSP solution to the GAC, activate your feature and the fields should appear in the root web's available site columns. 
+From then on, you can use those fields in your content type definitions. 
+
+Note how the `FieldHelper` knows: 
+* How to link up taxonomy fields to their term set automatically (thanks to the `.TaxonomyConext` property), making your life less complicated.
+* How to use the `IResourceLocator` to initialize your site columns in a fully localized fashion using the resource keys you defined in your `*FieldInfo` constants.
+
+If you need to, you can use the returned `SPField` object collection to further tweak your site column definitions (as long as you don't forget to call `SPField.Update()` 
+to persist your further enhancements).
+
+> Note: Make sure you provision site columns on the Root Web of your site collections first. Defining a field within a sub-web
+> or on a list directly tends to limit you options. Dynamite's `FieldHelper` tries to be smart and will always attempt to 
+> provision your fields at the topmost level in your site collection (even if you pass it a SPFieldCollection from a sub-web
+> or a list) to make sure site columns are always provisioned before list columns.
+
+### C.4) Add some content types
+
+### C.5) Create a few lists and document libraries
+
+### C.6) Create a few page instances in Pages library and add some web parts
 
 
 
