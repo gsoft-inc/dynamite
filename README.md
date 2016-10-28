@@ -481,7 +481,7 @@ While building applications based on SharePoint, your first order of business is
 
 * [C.1) Create a site collection](#c1-create-a-site-collection)
 * [C.2) Initialize your term store](#c2-initialize-your-term-store)
-* [C.3) Configure some site columns](with taxonomy mappings to term store))[#c3-configure-some-site-columns-with-taxonomy-mappings-to-term-store]
+* [C.3) Configure some site columns(with taxonomy mappings to term store)](#c3-configure-some-site-columns-with-taxonomy-mappings-to-term-store)
 * [C.4) Add some content types](#c4-add-some-content-types)
 * [C.5) Create a few lists and document libraries](#c5-create-a-few-lists-and-document-libraries)
 * [C.6) Create a few page instances in the Pages library and add some web parts](#c6-create-a-few-page-instances-in-the-pages-library-and-add-some-web-parts)
@@ -612,8 +612,8 @@ public static class MyTermStoreDefinitions
 > 
 > Note how these classes in the `GSoft.Dynamite.Taxonomy` namespace are organized in a hierarchical fashion: 
 >
-> * from a `TermInfo` you can navigate "up" to its parent term group (i.e. you can navigate `TermInfo -> TermSetInfo ->`TermGroupInfo -> TermStoreInfo`). 
->    * however, you can't
+> * From a `TermInfo` you can navigate "up" to its parent term group (i.e. you can navigate `TermInfo -> TermSetInfo ->`TermGroupInfo -> TermStoreInfo`). 
+>    * however, you can't navigate "down" from a `TermSetInfo` to its children to avoid cycles, keeping these `*Info` data structures easy to serialize
 > * A null `TermStoreInfo` instance going up the hierarchy indicates the default Farm term store should be used for term lookups. 
 > 
 > * A null `TermGroupInfo` indicates the the special "Default Site Collection Term Group" is where the specified Term Set lies (i.e. the term set
@@ -936,7 +936,7 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 
         SPList defaultDocLibUpdatedToUseMyCT = listHelper.EnsureList(site.RootWeb, ootbDocLibWithAdjustedCTs);
 
-        // Syndic-dedicated doc lib
+        // A brand new document library definition
         var superDocLibInfo = new ListInfo("SuperDocLib", "DocLib_SuperTitle", "DocLib_SuperDescription")
         {
             ContentTypes = new[] 
@@ -947,7 +947,7 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
             DefaultViewFields = viewFields
         };
 
-        SPList superProvisionedList = listHelper.EnsureList(site.RootWeb, syndicDocLibInfo);
+        SPList superProvisionedList = listHelper.EnsureList(site.RootWeb, superDocLibInfo);
     }
 
 ```
@@ -989,9 +989,7 @@ As shown above logging to the SharePoint ULS is a piece of cake with Dynamite's 
 using(var scope = ProjectContainer.BeginLifetimeScope())
 {
     var logger = scope.Resolve<ILogger>();
-
     logger.Info("Formatted log trace at Level={1} and Category={2}", "Medium", "Company.Project");
-
     logger.Error("Unexpected-level event!");    
 }
 ```
@@ -1000,13 +998,13 @@ Don't hesitate to register your own `ILogger` implementation to enhance the basi
 
 Dynamite will also help with the internationalization of your solution. The `IResourceLocator` serves as a central utility to find resource strings that come from **both**:
 
-1. Global Assemble Resources (traditionaly used in code-behind and user controls)
-2. `$SharePointRoot\Resources`-deployed resources (traditionally)
+1. Global Assemble Resources (typically used in code-behind and user controls)
+2. `$SharePointRoot\Resources`-deployed resources (typically used in SharePoint Element.XML feature module definitions)
 
 All you have to do is deploy your resource files through your WSP package and then register a class that implements [`IResourceLocatorConfig`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Globalization/IResourceLocatorConfig.cs) and return the resource file prefixes you want resolved through the global `ResourceLocator`:
 
 ```
-public class MyResourceLocator : IResourceLocator
+public class MyResourceLocatorConfig : IResourceLocatorConfig
 {
     public ICollection<string> ResourceFileKeys
     {
@@ -1025,14 +1023,15 @@ public class MyResourceLocator : IResourceLocator
 }
 ```
 
-User the `IResourceLocator` like so:
+Use the `IResourceLocator` like so:
 
 ```
 using (var scope = ProjectContainer.BeginLifetimeScope())
 {
     var resourceLocator = scope.Resolve<IResourceLocator>();
 
-    // Fetch by key from all RESX files configured (using CurrentUILanguage)
+    // Fetch by key from all RESX files configured through 
+    // your IResourceLocatorConfig registrations (using CurrentUILanguage)
     var myLocalizedString = resourceLocator.Find("CT_MyDocumentTitle");
 
     // Specify a resource file name (helpful in case of resource key 
@@ -1041,13 +1040,13 @@ using (var scope = ProjectContainer.BeginLifetimeScope())
 }
 ```
 
-No need to worry if you created the resource file as Global Assembly Resources or as content deployed to the SharePoint Root resource folder, the locator will look in both places for you. 
+No need to worry if you created the resource file as Global Assembly Resources or as content deployed to the SharePoint Root resource folder: the `ResourceLocator` will look in both places for you. 
 
 ## E) The SharePoint entity binder: easy mappings from entities to SPListItems and back
 
-Suppose I have some very complex business logic to implement as part of my application. In an ideal world, I don't want to mix my business logic with data access code that interacts with SharePoint.
+Suppose we have some very complex business logic to implement as part of my application. In an ideal world, we don't want to mix my business logic with data access code that interacts with SharePoint.
 
-Instead of manipulating objects of type `SPListItem` - which are great as "dictionaries-of-values" -, you would prefer to map them to some business entities which are easier to reason with.
+Instead of manipulating objects of type `SPListItem` - which are great as "dictionaries-of-values" -, we would prefer to map them to some business entities which are easier to reason with.
 
 For example, lets configure a list that uses our `MyListItem` content type [we intialized above](#c4-add-some-content-types):
 
@@ -1068,7 +1067,7 @@ using(var scope = ProjectContainer.BeginLifetimeScope(properties.Feature))
 }
 ```
 
-Now, let's create a model class that represents the business-level entity corresponding to our content type:
+Now, let's create a model class that represents the business-level C# entity corresponding to our content type:
 
 ```
 public class MyEntity : BaseEntity
@@ -1091,7 +1090,9 @@ public class MyEntity : BaseEntity
 }
 ```
 
-Properties in our not-quite-POCOs are decorated with the `GSoft.Dynamite.Binding.Property` attribute, which effectively maps the object properties to site column internal names.
+Properties in our not-quite-POCOs are decorated with the `GSoft.Dynamite.Binding.Property` attribute, which effectively maps the object properties to site column internal names. Object properties that do not have the `Property` attribute will be ignored by the `SharePointEntityBinder` during mapping.
+
+> Note how Dynamite provides the [`BaseEntity`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/BaseEntity.cs) class that already has common list item properties like `ID`, `Title` and the read-only properties `Modified` and `Created` (use `BindingType.ReadOnly` in such cases, as shown in `BaseEntity`).
 
 #### Mapping from SPListItem to Entity
 
