@@ -74,14 +74,16 @@ Thus, the toolkit is firmly old-school in its **purely server-side/on-premise** 
 context (e.g. Office 365, app model development, client-side, etc.) should probably look into alternatives such as the more recent [Office PnP](https://github.com/OfficeDev/PnP) 
 project and its remote provisioning approach.
 
-> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* meant 
-> as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions
+> #### That's quite a mouthful!
+> 
+> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* that
+> acts as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions.
 
 
 Quick Start Guide
 =================
 
-The Dynamite toolkit covers a lot of ground. Here are a few guidelines to get you up and running on these topics:
+The Dynamite toolkit covers a lot of ground. Here are a few guidelines and examples to get you up and running on these topics:
 
 * [A) Dependency injection & service location](#a-dependency-injection--service-location)
    * Using Autofac correctly in a SharePoint server context
@@ -89,7 +91,7 @@ The Dynamite toolkit covers a lot of ground. Here are a few guidelines to get yo
 * [C) Using Dynamite's provisioning utilities](#c-using-dynamites-provisioning-utilities)
    * Creating fields, content types and lists in an idempotent way
 * [D) Other utilities: logging and globalization](#d-other-utilities-logging-and-globalization)
-* [E) The SharePoint entity binder: easy mappings from entities to SPListItems and back](#e-the-sharepoint-entity-binder-easy-mappings-from-entities-to-SPListItems-and-back)
+* [E) The SharePoint entity binder: easy mappings from entities to SPListItems and back](#e-the-sharepoint-entity-binder-easy-mappings-from-entities-to-splistitems-and-back)
 
 
 A) Dependency injection & service location
@@ -1140,11 +1142,11 @@ using (var scope = ProjectContainer.BeginLifetimeScope())
 
 To ensure the best mapping performance possible (i.e. to minimize calls to the SharePoint database), make sure you use the method `ICamlBuilder.ViewFieldsForEntityType` to properly define the SELECT component of your `SPQuery`.
 
-> Not initializing your `SPQuery.ViewFields` can lead to one database call per SPField access later on
+> Not initializing your `SPQuery.ViewFields` can lead to one database call being generated for each SPField being accessed later on - how terrible!
 
 Whenever possible, you should also use the `ISharePointEntityBinder.Get<T>` method overload which accepts a `SPListItemCollection`. Behind the scenes, the implementation takes care of applying `ToDataTable` to ensure all items are fetched with a single database call. 
 
-> Looping over a collection of list items can have the unintended consequence of generating one (or more - see comment about `ViewFields` above) database call for each `SPListItem`
+> Looping over a collection of list items can have the unintended and unfortunate consequence of generating one (or more - see comment about `ViewFields` above) database call for each `SPListItem` in the collection.
 
 #### Mapping from Entity to SPListItem
 
