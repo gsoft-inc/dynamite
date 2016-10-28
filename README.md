@@ -479,12 +479,12 @@ What makes SharePoint special is that it comes out-of-the-box with high-level co
 
 While building applications based on SharePoint, your first order of business is typically to follow a sequence resembling this one:
 
-[C.1) Create a site collection](#c1-create-a-site-collection)
-[C.2) Initialize your term store](#c2-initialize-your-term-store)
-[C.3) Configure some site columns (with taxonomy mappings to term store))[#c3-configure-some-site-columns-with-taxonomy-mappings-to-term-store]
-[C.4) Add some content types](#c4-add-some-content-types)
-[C.5) Create a few lists and document libraries](#c5-create-a-few-lists-and-document-libraries)
-[C.6) Create a few page instances in Pages library and add some web parts](#c6-create-a-few-page-instances-in-pages-library-and-add-some-web-parts)
+* [C.1) Create a site collection](#c1-create-a-site-collection)
+* [C.2) Initialize your term store](#c2-initialize-your-term-store)
+* [C.3) Configure some site columns](with taxonomy mappings to term store))[#c3-configure-some-site-columns-with-taxonomy-mappings-to-term-store]
+* [C.4) Add some content types](#c4-add-some-content-types)
+* [C.5) Create a few lists and document libraries](#c5-create-a-few-lists-and-document-libraries)
+* [C.6) Create a few page instances in the Pages library and add some web parts](#c6-create-a-few-page-instances-in-the-pages-library-and-add-some-web-parts)
 
 From then on, SharePoint takes a role similar to that of a database in regular application development. Your SharePoint site structure acts as a back-end to your (hopefully) 
 isolated business logic
@@ -852,8 +852,11 @@ public static class MyContentTypeDefinitions
                     Fields = new List<BaseFieldInfo>()
                     {
                         // Title field is already added implicitly since we derive from OOTB Item CT
+                        MyFieldDefinitions.MyTextField
+                        MyFieldDefinitions.MyHiddenBooleanField,
                         MyFieldDefinitions.MyDateOnlyField,
-                        MyFieldDefinitions.MyTaxonomyField
+                        MyFieldDefinitions.MyTaxonomyField,
+                        MyFieldDefinitions.MyTaxonomyMultiField
                     }
                 };
         }
@@ -949,7 +952,7 @@ public override void FeatureActivated(SPFeatureReceiverProperties properties)
 
 ```
 
-### C.6) Create a few page instances in Pages library and add some web parts
+### C.6) Create a few page instances in the Pages library and add some web parts
 
 Let's keep the ball rolling and create a custom search results page with an extra web part at the bottom of the Center web part zone:
 
@@ -1042,8 +1045,132 @@ No need to worry if you created the resource file as Global Assembly Resources o
 
 ## E) The SharePoint entity binder: easy mappings from entities to SPListItems and back
 
+Suppose I have some very complex business logic to implement as part of my application. In an ideal world, I don't want to mix my business logic with data access code that interacts with SharePoint.
 
+Instead of manipulating objects of type `SPListItem` - which are great as "dictionaries-of-values" -, you would prefer to map them to some business entities which are easier to reason with.
 
+For example, lets configure a list that uses our `MyListItem` content type [we intialized above](#c4-add-some-content-types):
 
+```
+// Somewhere in a FeatureActivated event
+using(var scope = ProjectContainer.BeginLifetimeScope(properties.Feature))
+{
+    var listHelper = scope.Resolve<IListHelper>();
+    var listDefinition = new ListInfo("MyWebRelativeUrl", "List_MyListTitle", "List_MyListDescription");
+    {
+        ContentTypes = new[]
+        {
+            MyContentTypeDefinitions.MyListItem
+        }
+    }        
 
+    var myCustomList = listHeper.EnsureList(currentWeb, listDefinition);    
+}
+```
 
+Now, let's create a model class that represents the business-level entity corresponding to our content type:
+
+```
+public class MyEntity : BaseEntity
+{
+    [Property(MyFieldDefinitions.MyTextFieldInternalName)]
+    public string MyTextField { get; set; }        
+
+    [Property(MyFieldDefinitions.MyHiddenBooleanFieldInternalName)]
+    public bool MyHiddenBooleanField { get; set }
+
+    // automatically mapped if property name and internal column name match
+    [Property]
+    public DateTime MyDateField { get; set; }
+
+    [Property]
+    public TaxonomyValue MyTaxonomyField { get; set; }
+
+    [Property]
+    public TaxonomyValueCollection MyTaxonomyMultiField { get; set; }
+}
+```
+
+Properties in our not-quite-POCOs are decorated with the `GSoft.Dynamite.Binding.Property` attribute, which effectively maps the object properties to site column internal names.
+
+#### Mapping from SPListItem to Entity
+
+Now we're ready to rock and whip out the `ISharePointEntityBinder`. Let's fetch some list items (with some help from the `IListLocator` and 
+`ICamlBuilder`) and convert them into entities:
+
+```
+// Somewhere in a user control...
+using (var scope = ProjectContainer.BeginLifetimeScope())
+{
+    var listLocator = scope.Resolve<IListLocator>();
+    var caml = scope.Resolve<ICamlBuilder>();
+    var mapper = scope.Resolve<ISharePointEntityBinder>();
+
+    // Using the web-relative URL instead of the list name's 
+    // resource key would also work here, thanks IListLocator!
+    var list = listLocator.TryGetList(SPContext.Current.Web, "List_MyListTitle");
+
+    // Define a simple CAML query with the ICamlBuilder to
+    // avoid string manipulation errors while building the 
+    // query markup
+    var query = new SPQuery();
+    query.Query = caml.Where(caml.BeginsWith(caml.FieldRef(BuiltInFields.Title), caml.Value("MySpecialTitlePrefix")));
+
+    // The method ViewFieldsForEntityType is very handy to 
+    // define the set of fields you want returned by the SPQuery
+    query.ViewFields = caml.ViewFieldsForEntityType(typeof(MyEntity));
+
+    SPListItemCollection results = query.GetItems(list);
+
+    // The pièce-de-résistance: one-liner to map from SPListItemCollection
+    // to a list of MyEntity objects.
+    IList<MyEntity> myResultsConvertedToEntities = mapper.Get<MyEntity>(results);
+
+    // Now we can use our easy-to-serialize entity with its 
+    // easy-to-navigate ValueType properties
+    var firstEntity = myResultsConvertedToEntities.First();
+
+    if (firstEntity.MyTaxonomyValue.Term.Id == MyTermStoreDefinitions.MySpecialSnowflakeTerm.Id)
+    {
+        // etc.
+    }
+}
+```
+
+To ensure the best mapping performance possible (i.e. to minimize calls to the SharePoint database), make sure you use the method `ICamlBuilder.ViewFieldsForEntityType` to properly define the SELECT component of your `SPQuery`.
+
+> Not initializing your `SPQuery.ViewFields` can lead to one database call per SPField access later on
+
+Whenever possible, you should also use the `ISharePointEntityBinder.Get<T>` method overload which accepts a `SPListItemCollection`. Behind the scenes, the implementation takes care of applying `ToDataTable` to ensure all items are fetched with a single database call. 
+
+> Looping over a collection of list items can have the unintended consequence of generating one (or more - see comment about `ViewFields` above) database call for each `SPListItem`
+
+#### Mapping from Entity to SPListItem
+
+The `ISharePointEntityBinder` can also map in the reverse direction to help you persist your entities as list items. For example:
+
+```
+// Somewhere in a user control...
+using (var scope = ProjectContainer.BeginLifetimeScope())
+{
+    var listLocator = scope.Resolve<IListLocator>();
+    var mapper = scope.Resolve<ISharePointEntityBinder>();
+
+    var list = listLocator.TryGetList(SPContext.Current.Web, "MyWebRelativeUrl");
+
+    var newItem = list.AddItem();
+    var newEntity = new MyEntity()
+    {
+        MyDateOnlyField = DateTime.Now
+        MyTaxonomyField = new TaxonomyValue(MyTermStoreDefinitions.MySpecialSnowflakeTerm)
+    };
+
+    // Map from entity to list item
+    mapper.FromEntity<MyEntity>(newEntity, newItem);
+    newItem.Update();
+}
+```
+
+Thanks for reading this guide! Hopefully Dynamite will help you build SharePoint full-trust solutions that are easier to maintain.
+
+Please don't hesitate to leave your comments and questions in the project Issues.
