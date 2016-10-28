@@ -8,6 +8,8 @@ A C# toolkit, PowerShell cmdlets and a WSP solution package to help you build ma
 * [Target Audience & Philosophy](#target-audience--philosophy)
 * [Quick Start Guide](#quick-start-guide)
 
+> **New to SharePoint development?** Try to get through [this SharePoint 101 course content](https://github.com/GSoft-SharePoint/SharePoint-101/wiki) to hit the ground running.
+
 NuGet Feeds
 ===========
 
@@ -74,10 +76,8 @@ Thus, the toolkit is firmly old-school in its **purely server-side/on-premise** 
 context (e.g. Office 365, app model development, client-side, etc.) should probably look into alternatives such as the more recent [Office PnP](https://github.com/OfficeDev/PnP) 
 project and its remote provisioning approach.
 
-> #### That's quite a mouthful!
-> 
-> You can think of Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* that
-> acts as a building block for maintainable and automated SharePoint 2013 server-side, full-trust solutions.
+> **In summary**, Dynamite as a *batteries-included, SharePoint-aware, architecture-opinionated, intrastructure-level .NET & PowerShell toolkit* that
+> acts as a building block for maintainable and automatically-provisioned SharePoint 2013 server-side, full-trust solutions.
 
 
 Quick Start Guide
