@@ -93,6 +93,8 @@ The Dynamite toolkit covers a lot of ground. Here are a few guidelines and examp
 * [D) Other utilities: logging and globalization](#d-other-utilities-logging-and-globalization)
 * [E) The SharePoint entity binder: easy mappings from entities to SPListItems and back](#e-the-sharepoint-entity-binder-easy-mappings-from-entities-to-splistitems-and-back)
 
+Then take a look at the [Dynamite project wiki](https://github.com/GSoft-SharePoint/Dynamite/wiki) for complementary articles & documentation.
+
 
 A) Dependency injection & service location
 ---------------------------------------
