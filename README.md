@@ -726,7 +726,7 @@ public static class MyFieldDefinitions
 }
 ```
 
-Note how we define the taxonomy fields' mappings to the term store using the `TermSetInfo` constants defined in section C.2) above.
+Note how we define the taxonomy fields' mappings to the term store using the `TermSetInfo` constants defined in [section C.2)](#c2-initialize-your-term-store) above.
 
 See [the `GSoft.Dynamite.Field.Types` namespace here](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/Fields/Types) 
 for a full list of supported field types.
@@ -985,7 +985,7 @@ using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Featu
 
 ## D) Other utilities: logging and globalization
 
-As shown above logging to the SharePoint ULS is a piece of cake with Dynamite's [`TraceLogger`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Logging/TraceLogger.cs):
+[As shown above](#a4-resolving-dynamites-utilities-and-your-own-registered-dependencies), logging to the SharePoint ULS is a piece of cake with Dynamite's [`TraceLogger`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Logging/TraceLogger.cs):
 
 ```
 using(var scope = ProjectContainer.BeginLifetimeScope())
@@ -996,7 +996,7 @@ using(var scope = ProjectContainer.BeginLifetimeScope())
 }
 ```
 
-Don't hesitate to register your own `ILogger` implementation to enhance the basic implementation's behavior!
+Don't hesitate to [register your own `ILogger` implementation](#an-easy-replace-and-extend-pattern) to enhance the basic implementation's behavior!
 
 Dynamite will also help with the internationalization of your solution. The `IResourceLocator` serves as a central utility to find resource strings that come from **both**:
 
@@ -1038,7 +1038,7 @@ using (var scope = ProjectContainer.BeginLifetimeScope())
 
     // Specify a resource file name (helpful in case of resource key 
     // conflicts across many files)
-    var myLocalizedString = resourceLocator.Find("Specific.ResourceFile.Prefix", "Some_Label_Name");
+    var myOtherLocalizedString = resourceLocator.Find("Specific.ResourceFile.Prefix", "Some_Label_Name");
 }
 ```
 
@@ -1080,7 +1080,7 @@ public class MyEntity : BaseEntity
     [Property(MyFieldDefinitions.MyHiddenBooleanFieldInternalName)]
     public bool MyHiddenBooleanField { get; set }
 
-    // automatically mapped if property name and internal column name match
+    // Automatically mapped if property name and internal column name match
     [Property]
     public DateTime MyDateField { get; set; }
 
@@ -1164,7 +1164,7 @@ using (var scope = ProjectContainer.BeginLifetimeScope())
     var newItem = list.AddItem();
     var newEntity = new MyEntity()
     {
-        MyDateOnlyField = DateTime.Now
+        MyDateOnlyField = DateTime.Now,
         MyTaxonomyField = new TaxonomyValue(MyTermStoreDefinitions.MySpecialSnowflakeTerm)
     };
 
