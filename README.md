@@ -3,6 +3,10 @@ Dynamite for SharePoint 2013
 
 A C# toolkit, PowerShell cmdlets and a WSP solution package to help you build maintainable SharePoint 2013 farm solutions (full-trust, on-premise).
 
+* [NuGet Feeds](#nuget-feeds)
+* [Continuous Integration](#continuous-integration)
+* [Target Audience & Philosophy](#target-audience--philosophy)
+* [Quick Start Guide](#quick-start-guide)
 
 NuGet Feeds
 ===========
@@ -99,6 +103,13 @@ services and utilities. It is the "glue" that takes care of constructing concret
 only depends on interface contracts. This loose coupling strategy makes it easier to depend on other modules without having to worry 
 about their own dependencies and implementation details.
 
+In this section:
+* [A.1) Building your first Autofac container for service location](#a1-building-your-first-autofac-container-for-service-location)
+* [A.2) Registering your interface-to-implementation configuration as Autofac registration modules](#a2-registering-your-interface-to-implementation-configuration-as-autofac-registration-modules)
+* [A.3) Dynamite's own registration module](#a3-dynamites-own-registration-module)
+* [A.4) Resolving Dynamite's utilities and your own registered dependencies](#a4-resolving-dynamites-utilities-and-your-own-registered-dependencies)
+* [A.5) More to read about Dynamite's service locator](#a5-more-to-read-about-dynamites-service-locator)
+* [A.6) How to troubleshoot container registration problems](#a6-how-to-troubleshoot-container-registration-problems)
 
 ### A.1) Building your first Autofac container for service location
 
@@ -260,7 +271,7 @@ are meant to easily provide such fine-grained object scoping mechanics in a corr
 
 The class `AutofacDynamiteRegistrationModule` holds all the interface-to-implementation configuration for the various utilities found in the Dynamite C# toolkit.
 
-See the [Dynamite registration code in `AutofacDynamiteRegistrationModule.cs` here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/ServiceLocator/AutofacDynamiteRegistrationModule.cs#L65) to take a look for yourself at the extent of available services and helpers.
+See the [Dynamite registration code in `AutofacDynamiteRegistrationModule.cs` here](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/ServiceLocator/AutofacDynamiteRegistrationModule.cs#L65) to take a look for yourself at the extent of available services and helpers.
 
 This module of utilities is loaded in first position every time you initialize a `SharePointServiceLocator`. 
 
@@ -270,7 +281,7 @@ This module of utilities is loaded in first position every time you initialize a
 > this means you can override the base registrations with your own to *replace* or *extend* Dynamite's own internal use of these utilities.
 >
 > For example, do `builder.RegisterType<MyCustomLogger>().As<ILogger>()` from within you own module in order to swap out Dynamite's default
-> `TraceLogger` implementation (see [default logger code here](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/Logging/TraceLogger.cs)).
+> `TraceLogger` implementation (see [default logger code here](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Logging/TraceLogger.cs)).
 > From then on, all logging will go through your `MyCustomLogger`, even the logging made by Dynamite's other utilities (which themselves only
 > depend loosely on the contract interface `ILogger`).
 
@@ -468,12 +479,12 @@ What makes SharePoint special is that it comes out-of-the-box with high-level co
 
 While building applications based on SharePoint, your first order of business is typically to follow a sequence resembling this one:
 
-1. Create a site collection
-2. Initialize your term store
-3. Configure some site columns (with taxonomy mappings to term store)
-4. Add some content types
-5. Create a few lists and document libraries
-6. Create a few page instances in Pages library and add some web parts
+[C.1) Create a site collection](#c1-create-a-site-collection)
+[C.2) Initialize your term store](#c2-initialize-your-term-store)
+[C.3) Configure some site columns (with taxonomy mappings to term store))[#c3-configure-some-site-columns-with-taxonomy-mappings-to-term-store]
+[C.4) Add some content types](#c4-add-some-content-types)
+[C.5) Create a few lists and document libraries](#c5-create-a-few-lists-and-document-libraries)
+[C.6) Create a few page instances in Pages library and add some web parts](#c6-create-a-few-page-instances-in-pages-library-and-add-some-web-parts)
 
 From then on, SharePoint takes a role similar to that of a database in regular application development. Your SharePoint site structure acts as a back-end to your (hopefully) 
 isolated business logic
@@ -731,9 +742,9 @@ for a full list of supported field types.
 > Deriving from the generic `BaseFieldInfoWithValueType<T>` gives you access to the property `.AssocatedValueType`.
 >
 > This introspective quality to `*FieldInfo` definitions and the strongly-typed relationship between **[Field Types](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/Fields/Types)** 
-> and **[Value Types](https://github.com/GSoft-SharePoint/Dynamite/tree/feature/readme_quick_start/Source/GSoft.Dynamite/ValueTypes)** 
+> and **[Value Types](https://github.com/GSoft-SharePoint/Dynamite/tree/develop/Source/GSoft.Dynamite/ValueTypes)** 
 > forms the bridge between site column provisioning through `IFieldHelper` and SharePoint-SPListItem-to-entity binding made possible through
-> [`ISharePointEntityBinder`](https://github.com/GSoft-SharePoint/Dynamite/blob/feature/readme_quick_start/Source/GSoft.Dynamite/Binding/ISharePointEntityBinder.cs) (introduced below in section C.6)
+> [`ISharePointEntityBinder`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Binding/ISharePointEntityBinder.cs) (introduced below in section C.6)
 
 Once your field definitions are in place, you can use the `IFieldHelper` utility to provision your site column definitions in your new site collections,
 typically during a SharePoint feature activation. For example:
@@ -966,7 +977,72 @@ using (var injectionScope = ProjectContainer.BeginLifetimeScope(properties.Featu
 }
 ```
 
-## 
+
+## D) Other utilities: logging and globalization
+
+As shown above logging to the SharePoint ULS is a piece of cake with Dynamite's [`TraceLogger`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Logging/TraceLogger.cs):
+
+```
+using(var scope = ProjectContainer.BeginLifetimeScope())
+{
+    var logger = scope.Resolve<ILogger>();
+
+    logger.Info("Formatted log trace at Level={1} and Category={2}", "Medium", "Company.Project");
+
+    logger.Error("Unexpected-level event!");    
+}
+```
+
+Don't hesitate to register your own `ILogger` implementation to enhance the basic implementation's behavior!
+
+Dynamite will also help with the internationalization of your solution. The `IResourceLocator` serves as a central utility to find resource strings that come from **both**:
+
+1. Global Assemble Resources (traditionaly used in code-behind and user controls)
+2. `$SharePointRoot\Resources`-deployed resources (traditionally)
+
+All you have to do is deploy your resource files through your WSP package and then register a class that implements [`IResourceLocatorConfig`](https://github.com/GSoft-SharePoint/Dynamite/blob/develop/Source/GSoft.Dynamite/Globalization/IResourceLocatorConfig.cs) and return the resource file prefixes you want resolved through the global `ResourceLocator`:
+
+```
+public class MyResourceLocator : IResourceLocator
+{
+    public ICollection<string> ResourceFileKeys
+    {
+        get
+        {
+            return new[]
+            {
+                // all files like "Company.Project.en-US.resx" and
+                // "Company.Project.fr-FR.resx" will be searched
+                // by the Dynamite ResourceLocator
+                "Company.Project"
+            }
+        }
+    }
+
+}
+```
+
+User the `IResourceLocator` like so:
+
+```
+using (var scope = ProjectContainer.BeginLifetimeScope())
+{
+    var resourceLocator = scope.Resolve<IResourceLocator>();
+
+    // Fetch by key from all RESX files configured (using CurrentUILanguage)
+    var myLocalizedString = resourceLocator.Find("CT_MyDocumentTitle");
+
+    // Specify a resource file name (helpful in case of resource key 
+    // conflicts across many files)
+    var myLocalizedString = resourceLocator.Find("Specific.ResourceFile.Prefix", "Some_Label_Name");
+}
+```
+
+No need to worry if you created the resource file as Global Assembly Resources or as content deployed to the SharePoint Root resource folder, the locator will look in both places for you. 
+
+## E) The SharePoint entity binder: easy mappings from entities to SPListItems and back
+
+
 
 
 
