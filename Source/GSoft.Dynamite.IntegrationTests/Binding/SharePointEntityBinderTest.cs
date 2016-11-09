@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using Autofac;
 using GSoft.Dynamite.Binding;
@@ -228,7 +229,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
                 };
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -693,7 +694,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -1184,7 +1185,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -1678,7 +1679,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -2459,7 +2460,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -2869,7 +2870,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -3245,7 +3246,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -3710,7 +3711,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "DescriptionKeyMulti",
                     "GroupKey");
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(

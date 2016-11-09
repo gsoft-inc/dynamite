@@ -3296,7 +3296,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     DefaultValue = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") }
                 };
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
@@ -4104,7 +4104,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     EnforceUniqueValues = true
                 };
                 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
                     "TestInternalNameUser",
@@ -4376,7 +4376,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     EnforceUniqueValues = true
                 };
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
                     "TestInternalNameUser",
@@ -4674,7 +4674,7 @@ namespace GSoft.Dynamite.IntegrationTests.Fields
                     EnforceUniqueValues = true
                 };
 
-                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(Environment.UserDomainName + "\\" + Environment.UserName);
+                var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
 
                 UserMultiFieldInfo userMultiFieldInfo = new UserMultiFieldInfo(
