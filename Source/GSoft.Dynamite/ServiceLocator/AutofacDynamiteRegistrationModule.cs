@@ -51,9 +51,7 @@ namespace GSoft.Dynamite.ServiceLocator
         /// for GSoft.Dynamite components with a default log category name.
         /// </summary>
         public AutofacDynamiteRegistrationModule() : this("GSoft.Dynamite")
-        {
-
-        }
+        { }
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
