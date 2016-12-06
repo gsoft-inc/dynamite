@@ -48,6 +48,15 @@ namespace GSoft.Dynamite.ServiceLocator
 
         /// <summary>
         /// Creates a new registration module to prepare dependency injection
+        /// for GSoft.Dynamite components with a default log category name.
+        /// </summary>
+        public AutofacDynamiteRegistrationModule() : this("GSoft.Dynamite")
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new registration module to prepare dependency injection
         /// for GSoft.Dynamite components
         /// </summary>
         /// <param name="logCategoryName">The ULS category in use when interacting with ILogger</param>
