@@ -6,8 +6,8 @@
         <safeControl assemblyName="GSoft.Dynamite.dll" namespaceName="GSoft.Dynamite" typeName="*" isSafeAgainstScript="false" />
       </safeControls>
     </projectOutputAssembly>
-    <customAssembly location="Autofac.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Autofac.3.5.0\lib\net40\Autofac.dll" />
-    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll" />
+    <customAssembly location="Autofac.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Autofac.4.2.1\lib\net45\Autofac.dll" />
+    <customAssembly location="Newtonsoft.Json.dll" deploymentTarget="GlobalAssemblyCache" sourcePath="..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll" />
   </assemblies>
   <features>
     <featureReference itemId="1505bd90-16f1-47d4-a99a-6007e090ca32" />
