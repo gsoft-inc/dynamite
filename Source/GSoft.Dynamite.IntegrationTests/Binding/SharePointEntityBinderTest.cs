@@ -3248,11 +3248,19 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
 
                 var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
+                var userLoginName = "OFFICE\\simon.debaene";
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
                     "TestInternalNameUser",
                     new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
                     "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey");
+
+                UserFieldInfo userFieldInfo2 = new UserFieldInfo(
+                    "TestInternalNameUser2",
+                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68B}"),
+                    "NameKeyUser2",
                     "DescriptionKeyUser",
                     "GroupKey");
 
@@ -3328,6 +3336,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         lookupFieldInfoAlt,
                         lookupMultiFieldInfo,
                         userFieldInfo,
+                        userFieldInfo2,
                         userMultiFieldInfo,
                         mediaFieldInfo,
                         taxoFieldInfo,
@@ -3399,6 +3408,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         LookupAltProperty = new LookupValue(2, "2"),
                         LookupMultiProperty = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") },
                         UserProperty = new UserValue(ensuredUser1),
+                        UserProperty2 = new UserValue(userLoginName),
                         UserMultiProperty = new UserValueCollection() { new UserValue(ensuredUser1), new UserValue(ensuredUser2) },
                         MediaProperty = new MediaValue()
                         {
@@ -3465,6 +3475,9 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
 
                     var userFieldVal = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUser"].ToString());
                     Assert.AreEqual(ensuredUser1.Name, userFieldVal.User.Name);
+
+                    var userFieldVal2 = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUser2"].ToString());
+                    Assert.AreEqual("Simon De Baene", userFieldVal2.User.Name);
 
                     // TODO: Make this work with ListItem converters
                     var userMultiFieldVal = new SPFieldUserValueCollection(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUserMulti"].ToString());
@@ -4078,6 +4091,12 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             /// </summary>
             [Property("TestInternalNameUser")]
             public UserValue UserProperty { get; set; }
+
+            /// <summary>
+            /// Test User property 2
+            /// </summary>
+            [Property("TestInternalNameUser2")]
+            public UserValue UserProperty2 { get; set; }
 
             /// <summary>
             /// Test user multi property

@@ -25,7 +25,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         public override void WriteValueToListItem(SPListItem item, FieldValueInfo fieldValueInfo)
         {
             var principal = fieldValueInfo.Value as PrincipalValue;
-            var newValue = principal != null ? FormatPrincipalString(principal) : null;
+            var newValue = principal != null ? FormatPrincipalString(item.Web, principal) : null;
 
             item[fieldValueInfo.FieldInfo.InternalName] = newValue;
         }
@@ -42,7 +42,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
             if (defaultValue != null)
             {
-                field.DefaultValue = FormatPrincipalString(defaultValue);
+                field.DefaultValue = FormatPrincipalString(parentFieldCollection.Web, defaultValue);
             }
             else
             {
@@ -64,12 +64,19 @@ namespace GSoft.Dynamite.ValueTypes.Writers
                     fieldValueInfo.FieldInfo.InternalName));
         }
 
-        private static string FormatPrincipalString(PrincipalValue principalValue)
+        private static string FormatPrincipalString(SPWeb web, PrincipalValue principalValue)
         {
+            // Ensure User in SharePoint of the id is 0
+            int userId = principalValue.Id;
+            if(userId == 0)
+            {
+                userId = web.EnsureUser(principalValue.LoginName).ID;
+            }
+
             return string.Format(
                 CultureInfo.InvariantCulture, 
-                "{0};#{1}", 
-                principalValue.Id, 
+                "{0};#{1}",
+                userId, 
                 (principalValue.DisplayName ?? string.Empty).Replace(";", ";;"));
         }
     }

@@ -29,6 +29,15 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Initializes a new instance of the <see cref="UserValue"/> class.
         /// </summary>
+        /// <param name="loginName">The principal login name.</param>
+        public UserValue(string loginName)
+            : base(loginName)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserValue"/> class.
+        /// </summary>
         /// <param name="user">The user.</param>
         public UserValue(SPUser user)
             : base(user)

@@ -30,6 +30,15 @@ namespace GSoft.Dynamite.ValueTypes
         /// <summary>
         /// Initializes a new instance of the <see cref="PrincipalValue"/> class.
         /// </summary>
+        /// <param name="loginName">The principal login name.</param>
+        public PrincipalValue(string loginName)
+        {
+            this.LoginName = loginName;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrincipalValue"/> class.
+        /// </summary>
         /// <param name="principal">The principal.</param>
         internal PrincipalValue(SPPrincipal principal)
         {

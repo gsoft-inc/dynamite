@@ -86,9 +86,16 @@ namespace GSoft.Dynamite.ValueTypes.Writers
 
         private static SPFieldUserValue CreateSharePointUserValue(SPWeb web, UserValue userValue)
         {
+            // Ensure User in SharePoint of the id is 0
+            int userId = userValue.Id;
+            if (userId == 0)
+            {
+                userId = web.EnsureUser(userValue.LoginName).ID;
+            }
+
             return new SPFieldUserValue(
                 web,
-                userValue.Id,
+                userId,
                 HttpUtility.HtmlEncode(userValue.DisplayName));
         }
     }
