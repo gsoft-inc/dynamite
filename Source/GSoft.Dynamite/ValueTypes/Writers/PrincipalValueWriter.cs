@@ -68,7 +68,7 @@ namespace GSoft.Dynamite.ValueTypes.Writers
         {
             // Ensure User in SharePoint of the id is 0
             int userId = principalValue.Id;
-            if(userId == 0)
+            if (userId == 0)
             {
                 userId = web.EnsureUser(principalValue.LoginName).ID;
             }
