@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using GSoft.Dynamite.Globalization;
 using Microsoft.SharePoint;
 
@@ -30,6 +31,7 @@ namespace GSoft.Dynamite.ValueTypes
         /// Initializes a new instance of the <see cref="UserValue"/> class.
         /// </summary>
         /// <param name="loginName">The principal login name.</param>
+        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Login", Justification = "Domain language.")]
         public UserValue(string loginName)
             : base(loginName)
         {
