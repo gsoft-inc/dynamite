@@ -306,9 +306,9 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "GroupKey")
                 {
                     DefaultValue = new TaxonomyValueCollection(
-                        new List<TaxonomyValue>() 
-                            { 
-                                new TaxonomyValue(levelTwoTermAA), 
+                        new List<TaxonomyValue>()
+                            {
+                                new TaxonomyValue(levelTwoTermAA),
                                 new TaxonomyValue(levelTwoTermAB)
                             }),
                     TermStoreMapping = new TaxonomyContext(levelOneTermA)   // choices limited to children of a specific term, instead of having full term set choices
@@ -372,7 +372,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
                     list.EnableVersioning = true;
                     list.Update();
-                    
+
                     // Create item on list
                     var itemOnList = list.AddItem();
                     itemOnList.Update();    // force DefaultValue to be applied
@@ -832,38 +832,38 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     itemOnList["TestInternalNameNote"] = "Note value";
                     itemOnList["TestInternalNameHtml"] = "<p class=\"some-css-class\">HTML value</p>";
                     itemOnList["TestInternalNameImage"] = new ImageFieldValue()
-                        {
-                            Hyperlink = "http://github.com/GSoft-SharePoint/",
-                            ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
-                        };
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
+                    };
                     itemOnList["TestInternalNameUrl"] = new SPFieldUrlValue()
-                        {
-                            Url = "http://github.com/GSoft-SharePoint/",
-                            Description = "patate!"
-                        };
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
                     itemOnList["TestInternalNameUrlImg"] = new SPFieldUrlValue()
-                        {
-                            Url = "http://github.com/GSoft-SharePoint/",
-                            Description = "patate!"
-                        };
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
 
                     itemOnList["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
                     itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
                     itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
                     itemOnList["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
-                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection() 
-                        {  
+                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection()
+                        {
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name),
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser2.ID, ensuredUser2.Name)
                         };
                     itemOnList["TestInternalNameMedia"] = new MediaFieldValue()
-                        {
-                            Title = "Some media file title",
-                            MediaSource = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
-                            AutoPlay = true,
-                            Loop = true,
-                            PreviewImageSource = "/_layouts/15/Images/logo.png"
-                        };
+                    {
+                        Title = "Some media file title",
+                        MediaSource = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
+                        AutoPlay = true,
+                        Loop = true,
+                        PreviewImageSource = "/_layouts/15/Images/logo.png"
+                    };
 
                     var taxonomyField = (TaxonomyField)itemOnList.Fields.GetFieldByInternalName("TestInternalNameTaxo");
                     taxonomyField.SetFieldValue(itemOnList, createdTermB);
@@ -1310,7 +1310,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     // Create item on list (Upload an empty file in root folder)
                     var fileInLib = list.RootFolder.Files.Add("SomeRootFile.txt", new byte[0]);
                     fileInLib.Update();
-                    var itemOnList = fileInLib.Item;                    
+                    var itemOnList = fileInLib.Item;
 
                     // Update with the field values through the SharePoint API
                     itemOnList["Title"] = "Item under test";
@@ -1345,8 +1345,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
                     itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
                     itemOnList["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
-                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection() 
-                        {  
+                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection()
+                        {
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name),
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser2.ID, ensuredUser2.Name)
                         };
@@ -1774,9 +1774,9 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "PageCTNameKey",
                     "PageCTDescrKey",
                     "ContentGroupKey")
-                    {
-                        Fields = fieldsToEnsure
-                    };
+                {
+                    Fields = fieldsToEnsure
+                };
 
                 // Note how we need to specify SPSite for injection context - ISharePointEntityBinder's implementation
                 // is lifetime-scoped to InstancePerSite.
@@ -1814,8 +1814,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     var serverRelativePageUrl = SPUtility.ConcatUrls(masterPageGallery.RootFolder.ServerRelativeUrl, "MyArticleLeftTest.aspx");
                     item.CopyTo(SPUtility.ConcatUrls(testScope.SiteCollection.Url, serverRelativePageUrl)); // assumes site collection doesn't have managed path (i.e. we're dealing with a host-name site coll.)
 
-                    PublishingWeb publishingWeb = PublishingWeb.GetPublishingWeb(testScope.SiteCollection.RootWeb);  
-                    PageLayout pageLayout = publishingWeb.GetAvailablePageLayouts().First(pl => pl.Name == "MyArticleLeftTest.aspx");  
+                    PublishingWeb publishingWeb = PublishingWeb.GetPublishingWeb(testScope.SiteCollection.RootWeb);
+                    PageLayout pageLayout = publishingWeb.GetAvailablePageLayouts().First(pl => pl.Name == "MyArticleLeftTest.aspx");
                     pageLayout.AssociatedContentType = myEnsuredContentType;
 
                     var myArticleLeftPageLayout = new PageLayoutInfo("MyArticleLeftTest.aspx", myEnsuredContentType.Id);
@@ -1841,21 +1841,21 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                                         new FieldValueInfo(noteFieldInfo, "Note value"),
                                         new FieldValueInfo(htmlFieldInfo, "<p class=\"some-css-class\">HTML value</p>"),
                                         new FieldValueInfo(
-                                            imageFieldInfo, 
+                                            imageFieldInfo,
                                             new ImageValue()
                                             {
                                                 Hyperlink = "http://github.com/GSoft-SharePoint/",
                                                 ImageUrl = "/_layouts/15/MyFolder/MyImage.png"
                                             }),
                                         new FieldValueInfo(
-                                            urlFieldInfo, 
+                                            urlFieldInfo,
                                             new UrlValue()
                                             {
                                                 Url = "http://github.com/GSoft-SharePoint/",
                                                 Description = "patate!"
                                             }),
                                         new FieldValueInfo(
-                                            urlFieldInfoImage, 
+                                            urlFieldInfoImage,
                                             new UrlValue()
                                             {
                                                 Url = "http://github.com/GSoft-SharePoint/",
@@ -1867,7 +1867,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                                         new FieldValueInfo(userFieldInfo, new UserValue(ensuredUser1)),
                                         new FieldValueInfo(userMultiFieldInfo, new UserValueCollection(new[] { new UserValue(ensuredUser1), new UserValue(ensuredUser2) })),
                                         new FieldValueInfo(
-                                            mediaFieldInfo, 
+                                            mediaFieldInfo,
                                             new MediaValue()
                                             {
                                                 Title = "Some media file title",
@@ -1881,7 +1881,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                                     }
                                 }
                             }
-                        });
+                            });
 
                     var pages = publishingWeb.GetPublishingPages();
                     var testPage = pages.Single(p => p.Title == "MyTestPage");
@@ -2107,7 +2107,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     "NameKeyGuid",
                     "DescriptionKeyGuid",
                     "GroupKey");
-                
+
                 var fieldsToEnsure = new List<BaseFieldInfo>()
                     {
                         integerFieldInfo,
@@ -2620,8 +2620,8 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
                     itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
                     itemOnList["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
-                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection() 
-                        {  
+                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection()
+                        {
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name),
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser2.ID, ensuredUser2.Name)
                         };
@@ -2651,7 +2651,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     var entityMapped = entityBinder.Get<TestItemEntityWithLookups>(itemOnList);
                     string serializedRepresentation = serializer.Serialize(entityMapped);
                     var deserializedObject = serializer.Deserialize<TestItemEntityWithLookups>(serializedRepresentation);
-                    
+
                     // Assert
                     // #1 Validate that deserialized object contains all field values
                     Assert.AreEqual("Item under test", deserializedObject.Title);
@@ -2695,7 +2695,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
 
                     Assert.AreEqual("Some media file title", deserializedObject.MediaProperty.Title);
                     Assert.AreEqual(
-                        HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"), 
+                        HttpUtility.UrlDecode("/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf"),
                         deserializedObject.MediaProperty.Url);
                     Assert.IsTrue(deserializedObject.MediaProperty.IsAutoPlay);
                     Assert.IsTrue(deserializedObject.MediaProperty.IsLoop);
@@ -3008,39 +3008,39 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                     itemOnList["TestInternalNameNote"] = "Note value";
                     itemOnList["TestInternalNameHtml"] = "<p class=\"some-css-class\">HTML value</p>";
                     itemOnList["TestInternalNameImage"] = new ImageFieldValue()
-                        {
-                            Hyperlink = "http://github.com/GSoft-SharePoint/",
-                            ImageUrl = "/_layouts/15/MyFolder/MyImage.png",
-                            BorderWidth = 0
-                        };
+                    {
+                        Hyperlink = "http://github.com/GSoft-SharePoint/",
+                        ImageUrl = "/_layouts/15/MyFolder/MyImage.png",
+                        BorderWidth = 0
+                    };
                     itemOnList["TestInternalNameUrl"] = new SPFieldUrlValue()
-                        {
-                            Url = "http://github.com/GSoft-SharePoint/",
-                            Description = "patate!"
-                        };
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
                     itemOnList["TestInternalNameUrlImg"] = new SPFieldUrlValue()
-                        {
-                            Url = "http://github.com/GSoft-SharePoint/",
-                            Description = "patate!"
-                        };
+                    {
+                        Url = "http://github.com/GSoft-SharePoint/",
+                        Description = "patate!"
+                    };
 
                     itemOnList["TestInternalNameLookup"] = new SPFieldLookupValue(1, "Test Item 1");
                     itemOnList["TestInternalNameLookupAlt"] = new SPFieldLookupValue(2, "2");
                     itemOnList["TestInternalNameLookupM"] = new SPFieldLookupValueCollection() { new SPFieldLookupValue(1, "Test Item 1"), new SPFieldLookupValue(2, "Test Item 2") };
                     itemOnList["TestInternalNameUser"] = new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name);
-                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection() 
-                        {  
+                    itemOnList["TestInternalNameUserMulti"] = new SPFieldUserValueCollection()
+                        {
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser1.ID, ensuredUser1.Name),
                             new SPFieldUserValue(testScope.SiteCollection.RootWeb, ensuredUser2.ID, ensuredUser2.Name)
                         };
                     itemOnList["TestInternalNameMedia"] = new MediaFieldValue()
-                        {
-                            Title = "Some media file title",
-                            MediaSource = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
-                            AutoPlay = true,
-                            Loop = true,
-                            PreviewImageSource = "/_layouts/15/Images/logo.png"
-                        };
+                    {
+                        Title = "Some media file title",
+                        MediaSource = "/sites/test/SiteAssets/01_01_ASP.NET%20MVC%203%20Fundamentals%20Intro%20-%20Overview.asf",
+                        AutoPlay = true,
+                        Loop = true,
+                        PreviewImageSource = "/_layouts/15/Images/logo.png"
+                    };
 
                     var taxonomyField = (TaxonomyField)itemOnList.Fields.GetFieldByInternalName("TestInternalNameTaxo");
                     taxonomyField.SetFieldValue(itemOnList, createdTermB);
@@ -3248,19 +3248,11 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
 
                 var ensuredUser1 = testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name);
                 var ensuredUser2 = testScope.SiteCollection.RootWeb.EnsureUser("OFFICE\\maxime.boissonneault");
-                var userLoginName = "OFFICE\\simon.debaene";
 
                 UserFieldInfo userFieldInfo = new UserFieldInfo(
                     "TestInternalNameUser",
                     new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68A}"),
                     "NameKeyUser",
-                    "DescriptionKeyUser",
-                    "GroupKey");
-
-                UserFieldInfo userFieldInfo2 = new UserFieldInfo(
-                    "TestInternalNameUser2",
-                    new Guid("{5B74DD50-0D2D-4D24-95AF-0C4B8AA3F68B}"),
-                    "NameKeyUser2",
                     "DescriptionKeyUser",
                     "GroupKey");
 
@@ -3336,7 +3328,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         lookupFieldInfoAlt,
                         lookupMultiFieldInfo,
                         userFieldInfo,
-                        userFieldInfo2,
                         userMultiFieldInfo,
                         mediaFieldInfo,
                         taxoFieldInfo,
@@ -3408,7 +3399,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         LookupAltProperty = new LookupValue(2, "2"),
                         LookupMultiProperty = new LookupValueCollection() { new LookupValue(1, "Test Item 1"), new LookupValue(2, "Test Item 2") },
                         UserProperty = new UserValue(ensuredUser1),
-                        UserProperty2 = new UserValue(userLoginName),
                         UserMultiProperty = new UserValueCollection() { new UserValue(ensuredUser1), new UserValue(ensuredUser2) },
                         MediaProperty = new MediaValue()
                         {
@@ -3420,9 +3410,9 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         },
                         TaxonomyProperty = new TaxonomyValue(createdTermB),
                         TaxonomyMultiProperty = new TaxonomyValueCollection(
-                        new List<TaxonomyValue>() 
-                            { 
-                                new TaxonomyValue(createdTermAA), 
+                        new List<TaxonomyValue>()
+                            {
+                                new TaxonomyValue(createdTermAA),
                                 new TaxonomyValue(createdTermAB)
                             })
                     };
@@ -3475,9 +3465,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
 
                     var userFieldVal = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUser"].ToString());
                     Assert.AreEqual(ensuredUser1.Name, userFieldVal.User.Name);
-
-                    var userFieldVal2 = new SPFieldUserValue(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUser2"].ToString());
-                    Assert.AreEqual("Simon De Baene", userFieldVal2.User.Name);
 
                     // TODO: Make this work with ListItem converters
                     var userMultiFieldVal = new SPFieldUserValueCollection(testScope.SiteCollection.RootWeb, itemOnList["TestInternalNameUserMulti"].ToString());
@@ -3577,6 +3564,80 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                 // Cleanup term set so that we don't pollute the metadata store
                 newTermSet.Delete();
                 defaultSiteCollectionTermStore.CommitAll();
+            }
+        }
+
+        [TestMethod]
+        public void FromEntityToEntityRoundTrip_ShouldEndUpWithIdenticalUserValuesInEntities()
+        {
+            using (var testScope = SiteTestScope.BlankSite())
+            {
+                // Arrange
+                UserFieldInfo TestInternalNameUser = new UserFieldInfo(
+                    "TestInternalNameUser",
+                    new Guid("{84E76E42-EE77-4718-9E8C-0657D03A8A31}"),
+                    "NameKeyUser",
+                    "DescriptionKeyUser",
+                    "GroupKey");
+
+                UserFieldInfo TestInternalNameUser2 = new UserFieldInfo(
+                    "TestInternalNameUser2",
+                    new Guid("{2A948D63-5240-4569-A839-62CC2EB6E673}"),
+                    "NameKeyUser2",
+                    "DescriptionKeyUser",
+                    "GroupKey");
+
+                ListInfo listInfo = new ListInfo("sometestlistpath", "DynamiteTestListNameKey", "DynamiteTestListDescriptionKey")
+                {
+                    FieldDefinitions = new List<BaseFieldInfo>()
+                    {
+                        TestInternalNameUser,
+                        TestInternalNameUser2
+                    }
+                };
+
+                // Note how we need to specify SPSite for injection context - ISharePointEntityBinder's implementation
+                // is lifetime-scoped to InstancePerSite.
+                using (var injectionScope = IntegrationTestServiceLocator.BeginLifetimeScope(testScope.SiteCollection))
+                {
+                    var listHelper = injectionScope.Resolve<IListHelper>();
+
+                    // Create the first test list
+                    SPList list = listHelper.EnsureList(testScope.SiteCollection.RootWeb, listInfo);
+
+                    // Initialize the entity object with all the property values we want to apply on the new list item
+                    var entityBinder = injectionScope.Resolve<ISharePointEntityBinder>();
+                    var entity = new TestItemEntityWithUserValuesOnly()
+                    {
+                        Title = "Some Test Title",
+
+                        // User value with a non existing user using only the login name.
+                        UserProperty = new UserValue("OFFICE\\maxime.boissonneault"),
+
+                        // User value with an existing user using only its principal id.
+                        UserProperty2 = new UserValue(testScope.SiteCollection.RootWeb.EnsureUser(WindowsIdentity.GetCurrent().Name).ID)
+                    };
+
+                    // Act 
+
+                    // Create the list item and bind the Entity's values to it
+                    var itemOnList = list.AddItem();
+                    entityBinder.FromEntity<TestItemEntityWithUserValuesOnly>(entity, itemOnList);
+                    itemOnList.Update();
+
+                    // Then use the list item as data source for a brand new entity
+                    var copyEntity = entityBinder.Get<TestItemEntityWithUserValuesOnly>(itemOnList);
+
+                    // Assert
+                    // #1: validate ListItem field values on the mapped item object
+                    Assert.AreEqual(entity.Title, copyEntity.Title);
+                    Assert.IsTrue(copyEntity.UserProperty.LoginName.IndexOf("maxime.boissonneault", StringComparison.OrdinalIgnoreCase) != -1);
+                    Assert.AreEqual(entity.UserProperty2.Id, copyEntity.UserProperty2.Id);
+
+                    // #2: Validate the values in the copied Entity
+                    Assert.AreNotEqual(default(int), copyEntity.UserProperty.Id);
+                    Assert.AreEqual(WindowsIdentity.GetCurrent().Name, copyEntity.UserProperty2.LoginName);
+                }
             }
         }
 
@@ -3889,15 +3950,15 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
                         },
                         TaxonomyProperty = new TaxonomyValue(createdTermB),
                         TaxonomyMultiProperty = new TaxonomyValueCollection(
-                        new List<TaxonomyValue>() 
-                            { 
-                                new TaxonomyValue(createdTermAA), 
+                        new List<TaxonomyValue>()
+                            {
+                                new TaxonomyValue(createdTermAA),
                                 new TaxonomyValue(createdTermAB)
                             })
                     };
 
                     // Act 
-                    
+
                     // Create the list item and bind the Entity's values to it
                     var itemOnList = list.AddItem();
                     entityBinder.FromEntity<TestItemEntityWithLookups>(entity, itemOnList);
@@ -4060,7 +4121,7 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             /// Test taxonomy multi property
             /// </summary>
             [Property("TestInternalNameTaxoMulti")]
-            public TaxonomyValueCollection TaxonomyMultiProperty { get; set; } 
+            public TaxonomyValueCollection TaxonomyMultiProperty { get; set; }
         }
 
         /// <summary>
@@ -4091,12 +4152,6 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             /// </summary>
             [Property("TestInternalNameUser")]
             public UserValue UserProperty { get; set; }
-
-            /// <summary>
-            /// Test User property 2
-            /// </summary>
-            [Property("TestInternalNameUser2")]
-            public UserValue UserProperty2 { get; set; }
 
             /// <summary>
             /// Test user multi property
@@ -4187,6 +4242,22 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             /// </summary>
             [Property("TestInternalNameGuid")]
             public Guid? GuidProperty { get; set; }
+        }
+
+        public class TestItemEntityWithUserValuesOnly : BaseEntity
+        {
+
+            /// <summary>
+            /// Test User property
+            /// </summary>
+            [Property("TestInternalNameUser")]
+            public UserValue UserProperty { get; set; }
+
+            /// <summary>
+            /// Test User property
+            /// </summary>
+            [Property("TestInternalNameUser2")]
+            public UserValue UserProperty2 { get; set; }
         }
     }
 }
