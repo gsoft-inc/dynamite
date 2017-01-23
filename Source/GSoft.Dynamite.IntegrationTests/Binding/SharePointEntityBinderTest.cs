@@ -3567,6 +3567,9 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             }
         }
 
+        /// <summary>
+        /// Test the creation of a user value and its binding when the user value is created with the login name or principal id.
+        /// </summary>
         [TestMethod]
         public void FromEntityToEntityRoundTrip_ShouldEndUpWithIdenticalUserValuesInEntities()
         {
@@ -4244,9 +4247,11 @@ namespace GSoft.Dynamite.IntegrationTests.Binding
             public Guid? GuidProperty { get; set; }
         }
 
+        /// <summary>
+        /// Entity with only user values
+        /// </summary>
         public class TestItemEntityWithUserValuesOnly : BaseEntity
         {
-
             /// <summary>
             /// Test User property
             /// </summary>
