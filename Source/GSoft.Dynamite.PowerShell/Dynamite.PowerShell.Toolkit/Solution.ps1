@@ -284,7 +284,7 @@ function global:Deploy-DSPSolution() {
 				$WSPName = Split-Path $Identity -Leaf
 				
 				$solutionQueue = @()
-				$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $Identity -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications $_.WebApplications.WebApplication -Force:$force
+				$solutionQueue += Get-QueueSolutionDefinition -PathToWSPFile $Identity -WSPName $WSPName -UpgradeExisting:$upgrade -WebApplications:$WebApplication -Force:$force
 				Process-SolutionQueue -SolutionQueue $solutionQueue
 				break
 			}
