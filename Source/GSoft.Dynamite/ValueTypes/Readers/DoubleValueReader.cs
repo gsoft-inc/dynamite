@@ -64,7 +64,7 @@ namespace GSoft.Dynamite.ValueTypes.Readers
 
             if (fieldValue != null && fieldValue != System.DBNull.Value)
             {
-                return double.Parse(fieldValue.ToString(), CultureInfo.InvariantCulture);
+                return Convert.ToDouble(fieldValue, CultureInfo.InvariantCulture);
             }
 
             return null;
