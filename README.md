@@ -1,3 +1,6 @@
+## :lock: This repository is no longer maintained :lock:
+---
+
 Dynamite for SharePoint 2013
 ============================
 
