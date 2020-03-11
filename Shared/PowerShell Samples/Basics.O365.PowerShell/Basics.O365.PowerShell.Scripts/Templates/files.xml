@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<pnp:Provisioning xmlns:pnp="http://schemas.dev.office.com/PnP/2015/08/ProvisioningSchema">
+  <pnp:Preferences Generator="OfficeDevPnP.Core, Version=1.8.1115.0, Culture=neutral, PublicKeyToken=null" />
+  <pnp:Templates ID="SPSamples-TEMPLATES">
+    <pnp:ProvisioningTemplate ID="FILES" Version="1">
+      <pnp:Files>
+        <pnp:File
+          Src="..\Files\Style Library\sp.custom.css"
+          Folder="~sitecollection/Style Library/Samples"
+          Overwrite="true"/>
+      </pnp:Files>
+    </pnp:ProvisioningTemplate>
+  </pnp:Templates>
+</pnp:Provisioning>

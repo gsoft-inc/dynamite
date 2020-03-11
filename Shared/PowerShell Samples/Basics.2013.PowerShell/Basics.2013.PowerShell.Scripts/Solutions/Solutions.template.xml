@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+ Copyright		: GSoft @2015
+ File         : Solutions.template.xml
+ Description	: SharePoint solutions configuration file    
+-->
+<Solutions>
+  <Solution Path="Solutions\Basics._2013.PowerShell.wsp" UpgradeExisting="false">
+    <WebApplications>
+      <WebApplication>[[DSP_WebAppUrl]]</WebApplication>
+    </WebApplications>
+  </Solution>
+</Solutions>

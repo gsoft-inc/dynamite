@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tokens>
+  <AdminTenantUrl>https://zarthia-admin.sharepoint.com/</AdminTenantUrl>
+  <SiteCollection>
+    <Url>https://zarthia.sharepoint.com/sites/SampleBasicPS</Url>
+    <Title>Sample Basic PowerShell</Title>
+</SiteCollection>
+</Tokens>

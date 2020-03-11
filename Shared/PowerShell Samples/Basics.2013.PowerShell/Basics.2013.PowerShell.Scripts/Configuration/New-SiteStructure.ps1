@@ -1,0 +1,1 @@
+﻿New-DSPStructure "./Configuration/SiteStructure-input.xml" -Verbose

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Module Name="StyleLibrary" Path="StyleLibrary" Url="Style Library/Samples" RootWebOnly="TRUE">
+    <File Path="sp.custom.css" Url="sp.custom.css" Type="GhostableInLibrary" ReplaceContent="TRUE" />
+  </Module>
+</Elements>
